@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<b5265e02bc691cfba41a29225518a02f>>
+ * @generated SignedSource<<451b18fba5c3680f231918922efe6cf9>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,29 +9,31 @@
 'use strict';
 
 var node = (function(){
-var v0 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "eventTypes"
-},
-v1 = {
-  "defaultValue": null,
-  "kind": "LocalArgument",
-  "name": "k8scontextIDs"
-},
-v2 = [
+var v0 = [
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "connectionIDs"
+  },
+  {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "eventTypes"
+  }
+],
+v1 = [
   {
     "alias": "meshsyncevents",
     "args": [
       {
         "kind": "Variable",
-        "name": "eventTypes",
-        "variableName": "eventTypes"
+        "name": "connectionIDs",
+        "variableName": "connectionIDs"
       },
       {
         "kind": "Variable",
-        "name": "k8scontextIDs",
-        "variableName": "k8scontextIDs"
+        "name": "eventTypes",
+        "variableName": "eventTypes"
       }
     ],
     "concreteType": "MeshSyncEvent",
@@ -57,7 +59,7 @@ v2 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "contextId",
+        "name": "connectionID",
         "storageKey": null
       }
     ],
@@ -66,38 +68,32 @@ v2 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [
-      (v0/*: any*/),
-      (v1/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "MeshSyncEventsSubscription",
-    "selections": (v2/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Subscription",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [
-      (v1/*: any*/),
-      (v0/*: any*/)
-    ],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "MeshSyncEventsSubscription",
-    "selections": (v2/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "587f7af94d634bb28ea91b1790e28e1f",
+    "cacheID": "29cb26069b69c2858bb31abe76540d9f",
     "id": null,
     "metadata": {},
     "name": "MeshSyncEventsSubscription",
     "operationKind": "subscription",
-    "text": "subscription MeshSyncEventsSubscription(\n  $k8scontextIDs: [String!]\n  $eventTypes: [MeshSyncEventType!]\n) {\n  meshsyncevents: subscribeMeshSyncEvents(k8scontextIDs: $k8scontextIDs, eventTypes: $eventTypes) {\n    type\n    object\n    contextId\n  }\n}\n"
+    "text": "subscription MeshSyncEventsSubscription(\n  $connectionIDs: [String!]\n  $eventTypes: [MeshSyncEventType!]\n) {\n  meshsyncevents: subscribeMeshSyncEvents(connectionIDs: $connectionIDs, eventTypes: $eventTypes) {\n    type\n    object\n    connectionID\n  }\n}\n"
   }
 };
 })();
 
-node.hash = "8d4a467a34c136646e2af2ec3107a204";
+node.hash = "422c02f316080b9b8d43a562f696a3d4";
 
 module.exports = node;

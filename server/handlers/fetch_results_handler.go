@@ -8,7 +8,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
 )
 
@@ -33,7 +32,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 
 	err := req.ParseForm()
 	if err != nil {
-		logrus.Error(ErrParseForm(err))
+		h.log.Error(ErrParseForm(err))
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
 		return
 	}
@@ -92,7 +91,7 @@ func (h *Handler) FetchResultsHandler(w http.ResponseWriter, req *http.Request, 
 func (h *Handler) FetchAllResultsHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, p models.Provider) {
 	err := req.ParseForm()
 	if err != nil {
-		logrus.Error(ErrParseForm(err))
+		h.log.Error(ErrParseForm(err))
 		http.Error(w, "unable to process the received data", http.StatusForbidden)
 		return
 	}
@@ -126,13 +125,13 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	// TODO: may be force login if token not found?????
 	id := mux.Vars(req)["id"]
 	if id == "" {
-		logrus.Error(ErrQueryGet("id"))
+		h.log.Error(ErrQueryGet("id"))
 		http.Error(w, "please provide a result id", http.StatusBadRequest)
 		return
 	}
 	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
-		logrus.Error(ErrQueryGet("key"))
+		h.log.Error(ErrQueryGet("key"))
 		http.Error(w, "please provide a valid result id", http.StatusBadRequest)
 		return
 	}
@@ -141,13 +140,13 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 
 	bdr, err := p.GetResult(tokenString, key)
 	if err != nil {
-		logrus.Error(ErrGetResult(err))
+		h.log.Error(ErrGetResult(err))
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
 	}
-	sp, err := bdr.ConvertToSpec()
+	sp, err := bdr.ConvertToSpec(h.log)
 	if err != nil {
-		logrus.Error(ErrConvertToSpec(err))
+		h.log.Error(ErrConvertToSpec(err))
 		http.Error(w, "error while getting load test results", http.StatusInternalServerError)
 		return
 	}
@@ -155,7 +154,7 @@ func (h *Handler) GetResultHandler(w http.ResponseWriter, req *http.Request, _ *
 	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="result_%s.yaml"`, bdr.ID))
 	b, err := yaml.Marshal(sp)
 	if err != nil {
-		logrus.Error(models.ErrMarshal(err, "test result"))
+		h.log.Error(models.ErrMarshal(err, "test result"))
 		http.Error(w, "error while getting test result", http.StatusInternalServerError)
 		return
 	}
@@ -181,14 +180,14 @@ func (h *Handler) FetchSmiResultsHandler(w http.ResponseWriter, req *http.Reques
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
-		logrus.Error(ErrParseForm(err))
+		h.log.Error(ErrParseForm(err))
 		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
 	}
 	q := req.Form
 
 	bdr, err := p.FetchSmiResults(req, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"))
 	if err != nil {
-		logrus.Error(ErrFetchSMIResults(err))
+		h.log.Error(ErrFetchSMIResults(err))
 		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
 	}
 	_, _ = w.Write(bdr)
@@ -199,20 +198,20 @@ func (h *Handler) FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.R
 	w.Header().Set("content-type", "application/json")
 	err := req.ParseForm()
 	if err != nil {
-		logrus.Error(ErrParseForm(err))
+		h.log.Error(ErrParseForm(err))
 		http.Error(w, ErrParseForm(err).Error(), http.StatusForbidden)
 	}
 	q := req.Form
 	id := mux.Vars(req)["id"]
 	key := uuid.FromStringOrNil(id)
 	if key == uuid.Nil {
-		logrus.Error(ErrQueryGet("key"))
+		h.log.Error(ErrQueryGet("key"))
 		http.Error(w, "please provide a valid result id", http.StatusBadRequest)
 		return
 	}
 	bdr, err := p.FetchSmiResult(req, q.Get("page"), q.Get("pageSize"), q.Get("search"), q.Get("order"), key)
 	if err != nil {
-		logrus.Error(ErrFetchSMIResults(err))
+		h.log.Error(ErrFetchSMIResults(err))
 		http.Error(w, ErrFetchSMIResults(err).Error(), http.StatusInternalServerError)
 	}
 	_, _ = w.Write(bdr)

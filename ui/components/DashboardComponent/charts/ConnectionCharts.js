@@ -1,21 +1,23 @@
 import React from 'react';
-import { Box, Typography, IconButton } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
-import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
-import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
-import {
-  CustomTextTooltip,
-  RenderTooltipContent,
-} from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetAllConnectionStatusQuery } from '@/rtk-query/connection';
-import { InfoOutlined } from '@material-ui/icons';
+import { InfoOutlined } from '@mui/icons-material';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import { useRouter } from 'next/router';
+import { DashboardSection } from '../style';
+import ConnectCluster from './ConnectCluster';
+import { Box, Typography, useTheme } from '@layer5/sistent';
 
-export default function ConnectionStatsChart({ classes }) {
+export default function ConnectionStatsChart() {
   const { data: statusData } = useGetAllConnectionStatusQuery();
+  const router = useRouter();
+  const theme = useTheme();
 
   const chartData =
     statusData?.connections_status
@@ -27,6 +29,9 @@ export default function ConnectionStatsChart({ classes }) {
       columns: chartData,
       type: donut(),
       colors: dataToColors(chartData),
+      onclick: function () {
+        router.push('/management/connections');
+      },
     },
     arc: {
       cornerRadius: {
@@ -51,39 +56,31 @@ export default function ConnectionStatsChart({ classes }) {
     },
   };
 
-  const url = `https://docs.meshery.io/concepts/logical/connections`;
-
   return (
-    <Link href="/management/connections">
-      <div className={classes.dashboardSection}>
+    <Link
+      href="/management/connections"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
+          ? 'none'
+          : 'auto',
+      }}
+    >
+      <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+          <Typography variant="h6" gutterBottom>
             Connections
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
-              backgroundColor="#3C494F"
-              interactive={true}
-              title={RenderTooltipContent({
-                showPriortext:
-                  'Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are managed by a state machine and used within one or more Environments.',
-                link: url,
-                showAftertext: 'to know more about Meshery Connections',
-              })}
+              title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
               placement="left"
             >
-              <IconButton
-                disableRipple={true}
-                disableFocusRipple={true}
-                disableTouchRipple={true}
-                sx={{ padding: '0px' }}
-              >
+              <div>
                 <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
+                  color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => e.stopPropagation()}
                 />
-              </IconButton>
+              </div>
             </CustomTextTooltip>
           </div>
         </div>
@@ -99,23 +96,10 @@ export default function ConnectionStatsChart({ classes }) {
           {chartData.length > 0 ? (
             <BBChart options={chartOptions} />
           ) : (
-            <div
-              style={{
-                padding: '2rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-                No connections found in your clusters
-              </Typography>
-              <ConnectClustersBtn />
-            </div>
+            <ConnectCluster message={'No connections found in your clusters'} />
           )}
         </Box>
-      </div>
+      </DashboardSection>
     </Link>
   );
 }

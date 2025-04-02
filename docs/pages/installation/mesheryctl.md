@@ -10,17 +10,24 @@ redirect_from:
 display-title: "true"
 language: en
 list: exclude
+suggested-reading: false
 # image: /assets/img/platforms/brew.png
 abstract: Install Meshery CLI
 ---
 
 Meshery's command line client is `mesheryctl` and is the recommended tool for configuring and deploying one or more Meshery deployments. To install `mesheryctl` on your system, you may choose from any of the following supported methods.
 
-`mesheryctl` can be installed via `bash`, [Homebrew]({{site.baseurl}}/installation/linux-mac/brew), [Scoop]({{site.baseurl}}/installation/windows/scoop) or [directly downloaded](https://github.com/meshery/meshery/releases/latest).
+`mesheryctl` can be installed via [bash]({{site.baseurl}}/installation/linux-mac/bash), [Homebrew]({{site.baseurl}}/installation/linux-mac/brew), [Scoop]({{site.baseurl}}/installation/windows/scoop) or [directly downloaded](https://github.com/meshery/meshery/releases/latest).
+
+# Install Meshery CLI with Brew
 
 {% include mesheryctl/installation-brew.md %}
 
+# Install Meshery CLI with Bash
+
 {% include mesheryctl/installation-bash.md %}
+
+# Install Meshery CLI with Scoop
 
 {% include mesheryctl/installation-scoop.md %}
 
@@ -41,10 +48,8 @@ Guides to using Meshery's various features and components.
     </li>
     {% endif %}
   {% endfor %}
-    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+    <li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
 </ul>
-
-{% include suggested-reading.html language="en" %}
 
 {% include related-discussions.html tag="mesheryctl" %}
 

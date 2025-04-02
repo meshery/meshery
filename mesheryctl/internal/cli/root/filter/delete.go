@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ mesheryctl filter delete [filter-name | ID]
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		if len(args) == 0 {
@@ -77,7 +77,7 @@ mesheryctl filter delete [filter-name | ID]
 			if err != nil {
 				return errors.Wrap(err, utils.FilterDeleteError(fmt.Sprintf("failed to delete filter %s", filter)))
 			}
-			utils.Log.Info("Filter ", filter, " deleted successfully")
+			utils.Log.Info("Filter ", filter, " deleted")
 			return nil
 		}
 

@@ -1,79 +1,36 @@
-import { withStyles } from '@material-ui/core';
-import { withSnackbar } from 'notistack';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Paper } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import {
-  OVERVIEW,
-  MODELS,
-  COMPONENTS,
-  RELATIONSHIPS,
-  REGISTRANTS,
-  GRAFANA,
-  PROMETHEUS,
-} from '../../constants/navigator';
-// import { SORT } from '../../constants/endpoints';
-import useStyles from '../../assets/styles/general/tool.styles';
+  MeshModelToolbar,
+  MainContainer,
+  InnerContainer,
+  CardStyle,
+  TreeWrapper,
+  DetailsContainer,
+} from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
 import { DisableButton } from './MeshModel.style';
-import CircularProgress from '@mui/material/CircularProgress';
-import { Colors } from '../../themes/app';
 import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
-import { ErrorBoundary } from '../General/ErrorBoundary';
 import {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
-import NoSsr from '@material-ui/core/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
-
-const meshmodelStyles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    height: 'auto',
-  },
-  tab: {
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.secondary.focused,
-    },
-  },
-  tabs: {
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.secondary.focused,
-    },
-  },
-  dashboardSection: {
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
-    overflowY: 'scroll',
-  },
-  duplicatesModelStyle: {
-    backgroundColor: theme.palette.secondary.focused,
-  },
-});
-
-const useMeshModelComponentRouter = () => {
-  const router = useRouter();
-  const { query } = router;
-
-  const searchQuery = query.searchText || null;
-  const selectedTab = query.tab === GRAFANA || query.tab === PROMETHEUS ? OVERVIEW : query.tab;
-  const selectedPageSize = query.pagesize || 14;
-
-  return { searchQuery, selectedTab, selectedPageSize };
-};
+import _ from 'lodash';
+import { Button, NoSsr } from '@layer5/sistent';
+import { iconSmall } from '../../css/icons.styles';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
+import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
+import ImportModelModal from './ImportModelModal';
+import CreateModelModal from './CreateModelModal';
 
 const MeshModelComponent_ = ({
   modelsCount,
@@ -83,10 +40,9 @@ const MeshModelComponent_ = ({
   settingsRouter,
 }) => {
   const router = useRouter();
-  const { handleChangeSelectedTab } = settingsRouter(router);
+  const { handleChangeSelectedTab, selectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const [, setCount] = useState();
-  const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
+  const { searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
     Components: 0,
@@ -95,28 +51,75 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  // const [sortOrder] = useState({
-  //   sort: SORT.ASCENDING,
-  //   order: '',
-  // });
-  const StyleClass = useStyles();
-  const [view, setView] = useState(OVERVIEW);
-  const [convert, setConvert] = useState(false);
+  const [view, setView] = useState(selectedTab);
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
   });
-  const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
-  // const [loading, setLoading] = useState(false);
+
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const [modelFilters, setModelsFilters] = useState({ page: 0 });
+  const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
+  const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
+  const [relationshipsFilters, setRelationshipsFilters] = useState({ page: 0 });
 
   /**
    * RTK Lazy Queries
    */
-  const [getMeshModelsData] = useLazyGetMeshModelsQuery();
-  const [getComponentsData] = useLazyGetComponentsQuery();
-  const [getRelationshipsData] = useLazyGetRelationshipsQuery();
-  const [getRegistrantsData] = useLazyGetRegistrantsQuery();
+  const [getMeshModelsData, modelsRes] = useLazyGetMeshModelsQuery();
+  const [getComponentsData, componentsRes] = useLazyGetComponentsQuery();
+  const [getRelationshipsData, relationshipsRes] = useLazyGetRelationshipsQuery();
+  const [getRegistrantsData, registrantsRes] = useLazyGetRegistrantsQuery();
+
+  const modelsData = modelsRes.data;
+  const registrantsData = registrantsRes.data;
+  const componentsData = componentsRes.data;
+  const relationshipsData = relationshipsRes.data;
+
+  const hasMoreModels = modelsData?.total_count > modelsData?.page_size * modelsData?.page;
+  const hasMoreRegistrants =
+    registrantsData?.total_count > registrantsData?.page_size * registrantsData?.page;
+  const hasMoreComponents =
+    componentsData?.total_count > componentsData?.page_size * componentsData?.page;
+  const hasMoreRelationships =
+    componentsData?.total_count > relationshipsData?.page_size * relationshipsData?.page;
+
+  const loadNextModelsPage = useCallback(() => {
+    if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
+      return;
+    }
+    setModelsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [modelsRes, hasMoreModels]);
+
+  const loadNextRegistrantsPage = useCallback(() => {
+    if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
+      return;
+    }
+    setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [registrantsRes, hasMoreRegistrants]);
+
+  const loadNextComponentsPage = useCallback(() => {
+    if (componentsRes.isLoading || componentsRes.isFetching || !hasMoreComponents) {
+      return;
+    }
+    setComponentsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
+  }, [componentsRes, hasMoreComponents]);
+
+  const loadNextRelationshipsPage = useCallback(() => {
+    if (relationshipsRes.isLoading || relationshipsRes.isFetching || !hasMoreRelationships) {
+      return;
+    }
+  }, [relationshipsRes, hasMoreRelationships]);
+  /**
+   * IntersectionObservers
+   */
+  const lastModelRef = useInfiniteScrollRef(loadNextModelsPage);
+  const lastComponentRef = useInfiniteScrollRef(loadNextComponentsPage);
+  const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
+  const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
   const fetchData = useCallback(async () => {
     try {
@@ -126,44 +129,40 @@ const MeshModelComponent_ = ({
           response = await getMeshModelsData(
             {
               params: {
-                page: searchText ? 1 : page.Models + 1,
-                pagesize: searchText || checked ? 'all' : rowsPerPage,
-                components: true,
-                relationships: true,
+                page: searchText ? 0 : modelFilters.page,
+                pagesize: searchText ? 'all' : 25,
+                components: false,
+                relationships: false,
                 search: searchText || '',
               },
             },
-            true,
+            true, // arg to use cache as default
           );
           break;
         case COMPONENTS:
           response = await getComponentsData(
             {
               params: {
-                page: searchText ? 1 : page.Components + 1,
+                page: searchText ? 0 : componentsFilters.page,
                 pagesize: searchText ? 'all' : rowsPerPage,
                 search: searchText || '',
-                trim: false,
-                annotations: false,
+                trim: true,
               },
             },
             true,
           );
-          setCount(response.total_count);
           break;
         case RELATIONSHIPS:
           response = await getRelationshipsData(
             {
               params: {
-                page: 1,
+                page: searchText ? 0 : relationshipsFilters.page,
                 pagesize: 'all',
-                paginated: true,
                 search: searchText || '',
               },
             },
             true,
           );
-          setCount(response?.total_count);
           break;
         case REGISTRANTS:
           response = await getRegistrants();
@@ -172,15 +171,27 @@ const MeshModelComponent_ = ({
           break;
       }
 
-      if (response.data) {
-        const newData =
-          searchText || checked || view === RELATIONSHIPS
-            ? [...response.data[view.toLowerCase()]]
-            : [...resourcesDetail, ...response.data[view.toLowerCase()]];
-        setResourcesDetail(newData);
+      if (response.data && response.data[view.toLowerCase()]) {
+        // When search or "show duplicates" functionality is active:
+        // Avoid appending data to the previous dataset.
+        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
+        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
+        let newData = [];
+        if (response.data[view.toLowerCase()]) {
+          newData =
+            searchText || view === RELATIONSHIPS
+              ? [...response.data[view.toLowerCase()]]
+              : [...resourcesDetail, ...response.data[view.toLowerCase()]];
+        }
 
-        if (rowsPerPage !== 14) {
-          setRowsPerPage(14);
+        // Set unique data
+        setResourcesDetail(_.uniqWith(newData, _.isEqual));
+
+        // Deeplink may contain higher rowsPerPage val for first time fetch
+        // In such case set it to default as 14 after UI renders
+        // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
+        if (rowsPerPage !== 25) {
+          setRowsPerPage(25);
         }
       }
     } catch (error) {
@@ -191,10 +202,12 @@ const MeshModelComponent_ = ({
     getComponentsData,
     getRelationshipsData,
     getRegistrantsData,
+    modelFilters,
+    registrantFilters,
     view,
-    searchText,
     page,
     rowsPerPage,
+    searchText,
     resourcesDetail,
     checked,
   ]);
@@ -205,8 +218,8 @@ const MeshModelComponent_ = ({
     registrantResponse = await getRegistrantsData(
       {
         params: {
-          page: searchText ? 1 : page.Registrants + 1,
-          pagesize: searchText ? 'all' : rowsPerPage,
+          page: searchText ? 0 : registrantFilters.page,
+          pagesize: searchText ? 'all' : 25,
           search: searchText || '',
         },
       },
@@ -221,20 +234,22 @@ const MeshModelComponent_ = ({
         const { data: modelRes } = await getMeshModelsData(
           {
             params: {
-              page: page?.Models + 1,
+              page: page?.Models,
               pagesize: 'all',
               registrant: hostname,
-              components: true,
-              relationships: true,
+              components: false,
+              relationships: false,
             },
           },
           true,
         );
-        const updatedRegistrant = {
-          ...registrant,
-          models: removeDuplicateVersions(modelRes.models) || [],
-        };
-        tempResourcesDetail.push(updatedRegistrant);
+        if (modelRes.models && modelRes.models.length > 0) {
+          const updatedRegistrant = {
+            ...registrant,
+            models: removeDuplicateVersions(modelRes.models) || [],
+          };
+          tempResourcesDetail.push(updatedRegistrant);
+        }
       }
       response = {
         data: {
@@ -242,17 +257,19 @@ const MeshModelComponent_ = ({
         },
       };
     }
-    setCount(response.total_count);
-    setRowsPerPage(14);
+    setRowsPerPage(25);
     return response;
   };
-
   const handleTabClick = (selectedView) => {
     handleChangeSelectedTab(selectedView);
     if (view !== selectedView) {
       setSearchText(null);
       setResourcesDetail([]);
     }
+    setModelsFilters({ page: 0 });
+    setRegistrantsFilters({ page: 0 });
+    setComponentsFilters({ page: 0 });
+    setRelationshipsFilters({ page: 0 });
     setPage({
       Models: 0,
       Components: 0,
@@ -264,10 +281,6 @@ const MeshModelComponent_ = ({
       type: '',
       data: {},
     });
-    if (!animate) {
-      setAnimate(true);
-      setConvert(true);
-    }
   };
 
   const modifyData = () => {
@@ -281,169 +294,180 @@ const MeshModelComponent_ = ({
       return resourcesDetail;
     }
   };
+
   useEffect(() => {
-    if (selectedTab && selectedTab !== OVERVIEW) {
-      setAnimate(true);
-      setConvert(true);
-      setView(selectedTab);
+    if (searchText !== null && page[view] > 0) {
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
+      });
     }
-  }, [selectedTab]);
+  }, [searchText]);
 
   useEffect(() => {
     fetchData();
-  }, [view, page, searchText, rowsPerPage, checked]);
+  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
 
   return (
     <div data-test="workloads">
-      <TabBar animate={animate} />
-      <div
-        className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
-      >
-        <div
-          className={`${StyleClass.innerContainer} ${
-            animate ? StyleClass.innerContainerAnimate : ''
-          }`}
-        >
+      <TabBar
+        openImportModal={() => setIsImportModalOpen(true)}
+        openCreateModal={() => setIsCreateModalOpen(true)}
+      />
+
+      <ImportModelModal
+        isImportModalOpen={isImportModalOpen}
+        setIsImportModalOpen={setIsImportModalOpen}
+      />
+      <CreateModelModal
+        isCreateModalOpen={isCreateModalOpen}
+        setIsCreateModalOpen={setIsCreateModalOpen}
+      />
+
+      <MainContainer>
+        <InnerContainer>
           <TabCard
             label="Models"
             count={modelsCount}
-            active={view === MODELS && animate}
-            animate={animate}
+            active={view === MODELS}
             onClick={() => handleTabClick(MODELS)}
           />
           <TabCard
             label="Components"
             count={componentsCount}
-            active={view === COMPONENTS && animate}
-            animate={animate}
+            active={view === COMPONENTS}
             onClick={() => handleTabClick(COMPONENTS)}
           />
           <TabCard
             label="Relationships"
             count={relationshipsCount}
-            active={view === RELATIONSHIPS && animate}
-            animate={animate}
+            active={view === RELATIONSHIPS}
             onClick={() => handleTabClick(RELATIONSHIPS)}
           />
           <TabCard
             label="Registrants"
             count={registrantCount}
-            active={view === REGISTRANTS && animate}
-            animate={animate}
+            active={view === REGISTRANTS}
             onClick={() => handleTabClick(REGISTRANTS)}
           />
-        </div>
-        {convert && (
-          <div
-            className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
+        </InnerContainer>
+
+        <TreeWrapper>
+          <DetailsContainer
+            isEmpty={!resourcesDetail.length}
+            style={{
+              padding: '0.6rem',
+              overflow: 'hidden',
+            }}
           >
-            <div
-              className={StyleClass.detailsContainer}
-              style={{
-                display: 'flex',
-                alignItems: resourcesDetail.length === 0 ? 'center' : '',
-                justifyContent: resourcesDetail.length === 0 ? 'center' : '',
-                padding: '0.6rem 0.6rem 0rem 0.6rem',
-                overflow: 'hidden',
-              }}
-            >
-              {resourcesDetail.length === 0 ? (
-                <CircularProgress sx={{ color: Colors.keppelGreen }} />
-              ) : (
-                <MesheryTreeView
-                  data={modifyData()}
-                  view={view}
-                  setSearchText={setSearchText}
-                  setPage={setPage}
-                  checked={checked}
-                  setChecked={setChecked}
-                  searchText={searchText}
-                  setShowDetailsData={setShowDetailsData}
-                  showDetailsData={showDetailsData}
-                />
-              )}
-            </div>
-            <MeshModelDetails
+            <MesheryTreeView
+              data={modifyData()}
               view={view}
+              setSearchText={setSearchText}
+              setPage={setPage}
+              checked={checked}
+              setChecked={setChecked}
+              searchText={searchText}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
+              setResourcesDetail={setResourcesDetail}
+              lastItemRef={{
+                [MODELS]: lastModelRef,
+                [REGISTRANTS]: lastRegistrantRef,
+                [COMPONENTS]: lastComponentRef,
+                [RELATIONSHIPS]: lastRelationshipRef,
+              }}
+              isFetching={{
+                [MODELS]: modelsRes.isFetching,
+                [REGISTRANTS]: registrantsRes.isFetching,
+                [COMPONENTS]: componentsRes.isFetching,
+                [RELATIONSHIPS]: relationshipsRes.isFetching,
+              }}
+              isLoading={{
+                [MODELS]: modelsRes.isLoading,
+                [REGISTRANTS]: registrantsRes.isLoading,
+                [COMPONENTS]: componentsRes.isLoading,
+                [RELATIONSHIPS]: relationshipsRes.isLoading,
+              }}
             />
-          </div>
-        )}
-      </div>
+          </DetailsContainer>
+          <MeshModelDetails
+            view={view}
+            setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+          />
+        </TreeWrapper>
+      </MainContainer>
     </div>
   );
 };
 
-const TabBar = ({ animate }) => {
-  const StyleClass = useStyles();
+const TabBar = ({ openImportModal, openCreateModal }) => {
   return (
-    <div
-      className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
-    >
-      <DisableButton
-        disabled
-        variant="contained"
+    <MeshModelToolbar>
+      <div
         style={{
-          visibility: `${animate ? 'visible' : 'hidden'}`,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '1rem', // Add some space between buttons
         }}
-        size="large"
-        startIcon={<UploadIcon />}
       >
-        Import
-      </DisableButton>
-      <DisableButton
-        disabled
-        variant="contained"
-        size="large"
-        style={{
-          visibility: `${animate ? 'visible' : 'hidden'}`,
-        }}
-        startIcon={<DoNotDisturbOnIcon />}
-      >
+        <Button
+          aria-label="Add Pattern"
+          variant="contained"
+          color="primary"
+          onClick={openCreateModal}
+          style={{ display: 'flex' }}
+          disabled={false} //TODO: Need to make key for this component
+          startIcon={<AddIcon style={iconSmall} />}
+        >
+          Create
+        </Button>
+        <Button
+          aria-label="Add Pattern"
+          variant="contained"
+          color="primary"
+          onClick={openImportModal}
+          style={{ display: 'flex' }}
+          disabled={false} //TODO: Need to make key for this component
+          startIcon={<UploadIcon />}
+        >
+          Import
+        </Button>
+      </div>
+      <DisableButton disabled variant="contained" startIcon={<DoNotDisturbOnIcon />}>
         Ignore
       </DisableButton>
-    </div>
+    </MeshModelToolbar>
   );
 };
 
-const TabCard = ({ label, count, active, onClick, animate }) => {
-  const StyleClass = useStyles();
+const TabCard = ({ label, count, active, onClick }) => {
   return (
-    <Paper
-      elevation={3}
-      className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-        active ? StyleClass.activeTab : ''
-      }`}
-      onClick={onClick}
-    >
+    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
       <span
         style={{
-          fontWeight: `${animate ? 'normal' : 'bold'}`,
-          fontSize: `${animate ? '1rem' : '3rem'}`,
-          marginLeft: `${animate && '4px'}`,
+          fontSize: '1rem',
+          marginLeft: '4px',
         }}
       >
-        {animate ? `(${count})` : `${count}`}
+        {`(${count})`}
       </span>
       {label}
-    </Paper>
+    </CardStyle>
   );
 };
 
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in NotificationCenter', e)}
-      >
-        <Provider store={store}>
-          <MeshModelComponent_ {...props} />
-        </Provider>
-      </ErrorBoundary>
+      <Provider store={store}>
+        <MeshModelComponent_ {...props} />
+      </Provider>
     </NoSsr>
   );
 };
-
-export default withStyles(meshmodelStyles)(withSnackbar(MeshModelComponent));
+export default MeshModelComponent;

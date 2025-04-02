@@ -6,9 +6,11 @@ import (
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/sirupsen/logrus"
+	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
 )
 
 func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider models.Provider, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
@@ -24,7 +26,7 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 			case <-ch:
 				meshModelSummary, err := r.getMeshModelSummary(ctx, provider, selector)
 				if err != nil {
-					logrus.Error(ErrMeshModelSummarySubscription(err))
+					r.Log.Error(ErrMeshModelSummarySubscription(err))
 					break
 				}
 				respChan <- meshModelSummary
@@ -41,7 +43,7 @@ func (r *Resolver) subscribeMeshModelSummary(ctx context.Context, provider model
 }
 
 func (r *Resolver) getMeshModelSummary(ctx context.Context, _ models.Provider, selector model.MeshModelSummarySelector) (*model.MeshModelSummary, error) {
-	regManager, ok := ctx.Value(models.RegistryManagerKey).(*meshmodel.RegistryManager)
+	regManager, ok := ctx.Value(models.RegistryManagerKey).(*registry.RegistryManager)
 	summary := &model.MeshModelSummary{}
 	if !ok {
 		err := errors.New("unable to get registry manager from context")
@@ -70,19 +72,19 @@ type MeshModelRelationshipResponse struct {
 	Subtype []string `json:"subType"`
 }
 
-func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.MeshModelRelationship {
-	res, _, _ := regManager.GetEntities(&v1alpha1.RelationshipFilter{})
+func getMeshModelRelationships(regManager *registry.RegistryManager) []*model.MeshModelRelationship {
+	res, _, _, _ := regManager.GetEntities(&regv1alpha3.RelationshipFilter{})
 	relationships := make([]*model.MeshModelRelationship, 0)
 	var relmap = make(map[string]*MeshModelRelationshipResponse)
 	for _, r := range res {
-		def, _ := r.(v1alpha1.RelationshipDefinition)
-		if relmap[def.Kind] == nil {
-			relmap[def.Kind] = &MeshModelRelationshipResponse{
-				Name:    def.Kind,
+		def, _ := r.(*relationship.RelationshipDefinition)
+		if relmap[string(def.Kind)] == nil {
+			relmap[string(def.Kind)] = &MeshModelRelationshipResponse{
+				Name:    string(def.Kind),
 				Subtype: []string{def.SubType},
 			}
 		} else {
-			relmap[def.Kind].Subtype = append(relmap[def.Kind].Subtype, def.SubType)
+			relmap[string(def.Kind)].Subtype = append(relmap[string(def.Kind)].Subtype, def.SubType)
 		}
 	}
 	for _, x := range relmap {
@@ -97,12 +99,12 @@ func getMeshModelRelationships(regManager *meshmodel.RegistryManager) []*model.M
 	return relationships
 }
 
-func getMeshModelComponents(regManager *meshmodel.RegistryManager) []*model.MeshModelComponent {
-	res, _, _ := regManager.GetEntities(&v1alpha1.ComponentFilter{})
+func getMeshModelComponents(regManager *registry.RegistryManager) []*model.MeshModelComponent {
+	res, _, _, _ := regManager.GetEntities(&regv1beta1.ComponentFilter{})
 	components := make([]*model.MeshModelComponent, 0)
 	var response = make(map[string]*MeshModelComponentResponse)
 	for _, r := range res {
-		def, _ := r.(v1alpha1.ComponentDefinition)
+		def, _ := r.(*component.ComponentDefinition)
 		if response[def.Model.Name] == nil {
 			response[def.Model.Name] = &MeshModelComponentResponse{
 				Name:     def.Model.Name,

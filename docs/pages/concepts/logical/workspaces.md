@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Workspaces
 permalink: concepts/logical/workspaces
 type: concepts
@@ -10,13 +10,11 @@ redirect_from:
 - concepts/workspaces
 ---
 
-Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources.
+Like a Google Drive, Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources.
 
 You may create Workspaces to organize project-based work or to create domains of responsibility for your teams or segregate Designs and Environments and track team activity.
 
-## Summary
-
-Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events.
+{% include alert.html type="dark" title="Your team collaboration point" content="Workspaces facilitate collaboration between you and your teams, allow you to control access to resources, and track activity and report on related events." %}
 
 ## Key Features
 

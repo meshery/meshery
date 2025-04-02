@@ -10,21 +10,21 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrReadFilepathCode             = "1118"
-	ErrNoProfileNameCode            = "1119"
-	ErrNoTestURLCode                = "1120"
-	ErrNotValidURLCode              = "1121"
-	ErrFailMarshalCode              = "1122"
-	ErrFailUnmarshalCode            = "1123"
-	ErrNoProfileFoundCode           = "1124"
-	ErrInvalidOutputChoiceCode      = "1125"
-	ErrUnauthenticatedCode          = "1126"
-	ErrFailUnmarshalFileCode        = "1127"
-	ErrInvalidTestConfigFileCode    = "1128"
-	ErrArgumentOverflowCode         = "1129"
-	ErrInvalidJSONFileCode          = "1130"
-	ErrHealthCheckerCode            = "1131"
-	ErrPerformanceProfileResultCode = "1132"
+	ErrReadFilepathCode             = "mesheryctl-1040"
+	ErrNoProfileNameCode            = "mesheryctl-1041"
+	ErrNoTestURLCode                = "mesheryctl-1042"
+	ErrNotValidURLCode              = "mesheryctl-1043"
+	ErrFailMarshalCode              = "mesheryctl-1044"
+	ErrFailUnmarshalCode            = "mesheryctl-1045"
+	ErrNoProfileFoundCode           = "mesheryctl-1046"
+	ErrInvalidOutputChoiceCode      = "mesheryctl-1047"
+	ErrUnauthenticatedCode          = "mesheryctl-1048"
+	ErrFailUnmarshalFileCode        = "mesheryctl-1049"
+	ErrInvalidTestConfigFileCode    = "mesheryctl-1050"
+	ErrArgumentOverflowCode         = "mesheryctl-1051"
+	ErrInvalidJSONFileCode          = "mesheryctl-1052"
+	ErrHealthCheckerCode            = "mesheryctl-1053"
+	ErrPerformanceProfileResultCode = "mesheryctl-1054"
 )
 
 func ErrReadFilepath(err error) error {

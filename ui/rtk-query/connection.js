@@ -14,6 +14,8 @@ const connectionsApi = api.injectEndpoints({
           pagesize: queryArg.pagesize,
           search: queryArg.search,
           order: queryArg.order,
+          status: queryArg.status,
+          kind: queryArg.kind,
         },
         method: 'GET',
       }),
@@ -78,6 +80,21 @@ const connectionsApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    cancelConnectionRegister: builder.mutation({
+      query: (queryArg) => ({
+        url: `integrations/connections/register`,
+        method: 'DELETE',
+        body: queryArg.body,
+      }),
+    }),
+    addKubernetesConfig: builder.mutation({
+      query: (queryArg) => ({
+        url: `system/kubernetes`,
+        method: 'POST',
+        body: queryArg.body,
+      }),
+      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
+    }),
   }),
 });
 
@@ -91,4 +108,6 @@ export const {
   useUpdateConnectionMutation,
   useGetAllConnectionStatusQuery,
   useGetConnectionByKindQuery,
+  useCancelConnectionRegisterMutation,
+  useAddKubernetesConfigMutation,
 } = connectionsApi;

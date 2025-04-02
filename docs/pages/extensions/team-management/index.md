@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Team Management in Layer5 Cloud
 permalink: extensions/team-management
 language: en

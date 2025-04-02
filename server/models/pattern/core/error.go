@@ -8,10 +8,10 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrGetK8sComponentsCode     = "1400"
-	ErrParseK8sManifestCode     = "1401"
-	ErrCreatePatternServiceCode = "1402"
-	ErrPatternFromCytoscapeCode = "1403"
+	ErrGetK8sComponentsCode     = "meshery-server-1314"
+	ErrParseK8sManifestCode     = "meshery-server-1315"
+	ErrCreatePatternServiceCode = "meshery-server-1316"
+	ErrPatternFromCytoscapeCode = "meshery-server-1317"
 )
 
 func ErrGetK8sComponents(err error) error {
@@ -23,7 +23,7 @@ func ErrParseK8sManifest(err error) error {
 }
 
 func ErrCreatePatternService(err error) error {
-	return errors.New(ErrCreatePatternServiceCode, errors.Alert, []string{"Failed to create design service from Manifest"}, []string{err.Error()}, []string{"Invalid Manifest", "Meshery doesn't identifies the Resource mentioned in the Manifest"}, []string{"Check if all of the meshery adapters are running", "Check if Meshery has successfully identified and registered Kubernetes components"})
+	return errors.New(ErrCreatePatternServiceCode, errors.Alert, []string{"Failed to create design service from Manifest"}, []string{err.Error()}, []string{"Invalid Manifest", "Meshery doesn't identifies the Resource mentioned in the Manifest"}, []string{"Check if all of the meshery adapters are running", "Check if Meshery has identified and registered Kubernetes components"})
 }
 
 func ErrPatternFromCytoscape(err error) error {

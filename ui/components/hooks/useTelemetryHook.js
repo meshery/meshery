@@ -17,8 +17,10 @@ export function useTelemetryHook(connectionType) {
 function PingPrometheus() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
+
   const ping = (name, server, connectionID) => {
     dispatch(updateProgress({ showProgress: true }));
+
     dataFetch(
       `/api/telemetry/metrics/ping/${connectionID}`,
       {
@@ -32,8 +34,21 @@ function PingPrometheus() {
           });
         }
       },
-      self.handleError,
+      (error) => {
+        let cleanErrorMessage = 'There was an error communicating with Prometheus';
+        let serverError;
+        if (error && typeof error === 'string') {
+          serverError = error.replace(/^Status Code: \d+\.\s*/, '').trim();
+        } else if (error.message) {
+          serverError = error;
+        }
+        notify({
+          message: `${cleanErrorMessage}: ${serverError}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      },
     );
+
     dispatch(updateProgress({ showProgress: false }));
   };
   return ping;
@@ -57,7 +72,12 @@ function PingGrafana() {
           });
         }
       },
-      self.handleError,
+      () => {
+        notify({
+          message: 'There was an error communicating with Grafana',
+          event_type: EVENT_TYPES.ERROR,
+        });
+      },
     );
     dispatch(updateProgress({ showProgress: false }));
   };

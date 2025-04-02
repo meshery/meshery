@@ -1,8 +1,8 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery Adapter for NGINX Service Mesh
 name: Meshery Adapter for NGINX Service Mesh
-mesh_name: NGINX Service Mesh
+component: NGINX Service Mesh
 earliest_version: v1.2.0
 port: 10010/gRPC
 project_status: stable
@@ -37,11 +37,11 @@ The {{ page.name }} is currently under construction ({{ page.project_status }} s
 
 ## Lifecycle management
 
-The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}} service mesh. A number of sample applications can be installed using the {{page.name}}.
+The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}} ewE E . A number of sample applications can be installed using the {{page.name}}.
 
 ### Features
 
-1. Lifecycle management of {{page.mesh_name}}
+1. Lifecycle management of {{page.component}}
 1. Lifecycle management of sample applications
 1. Performance testing
 
@@ -49,25 +49,24 @@ The {{page.name}} can install **{{page.earliest_version}}** of {{page.mesh_name}
 
 The {{ page.name }} includes a handful of sample applications. Use Meshery to deploy any of these sample applications.
 
-- [Emojivoto]({{site.baseurl}}/guides/sample-apps#emojivoto)
+- [Emojivoto]({{site.baseurl}}/guides/infrastructure-management/sample-apps)
 
   - A microservice application that allows users to vote for their favorite emoji, and tracks votes received on a leaderboard.
 
-- [Bookinfo]({{site.baseurl}}/guides/sample-apps#bookinfo)
+- [Bookinfo]({{site.baseurl}}/guides/infrastructure-management/sample-apps)
 
   - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
 
-- [Httpbin]({{site.baseurl}}/guides/sample-apps#httpbin)
+- [Httpbin]({{site.baseurl}}/guides/infrastructure-management/sample-apps)
 
   - Httpbin is a simple HTTP request and response service.
 
-- [NGINX Service Mesh Books](https://github.com/BuoyantIO/booksapp)
+- [NGINX Books](https://github.com/BuoyantIO/booksapp)
   - Application that helps you manage your bookshelf.
 
-Identify overhead involved in running {{page.mesh_name}}, various {{page.mesh_name}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
+Identify overhead involved in running {{page.component}}, various {{page.component}} configurations while running different workloads and on different infrastructure. The adapter facilitates data plane and control plane performance testing.
 
 1. Prometheus integration
 1. Grafana integration
 
-The [{{page.name}}]({{ page.github_link }}) will connect to NGINX Service Mesh's Prometheus and Grafana instances running in the control plane.
 

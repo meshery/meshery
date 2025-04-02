@@ -71,10 +71,18 @@ type CatalogPattern struct {
 }
 
 type CatalogSelector struct {
-	Page     string `json:"page"`
-	Pagesize string `json:"pagesize"`
-	Search   string `json:"search"`
-	Order    string `json:"order"`
+	Page        string    `json:"page"`
+	Pagesize    string    `json:"pagesize"`
+	Search      string    `json:"search"`
+	Order       string    `json:"order"`
+	Metrics     *string   `json:"metrics,omitempty"`
+	Populate    []*string `json:"populate,omitempty"`
+	Class       []*string `json:"class,omitempty"`
+	Technology  []*string `json:"technology,omitempty"`
+	PatternType []*string `json:"patternType,omitempty"`
+	Userid      []*string `json:"userid,omitempty"`
+	OrgID       []*string `json:"orgID,omitempty"`
+	WorkspaceID []*string `json:"workspaceID,omitempty"`
 }
 
 type ClusterResources struct {
@@ -226,16 +234,16 @@ type MeshModelSummarySelector struct {
 }
 
 type MeshSyncEvent struct {
-	Type      string      `json:"type"`
-	Object    interface{} `json:"object"`
-	ContextID string      `json:"contextId"`
+	Type         string      `json:"type"`
+	Object       interface{} `json:"object"`
+	ConnectionID string      `json:"connectionID"`
 }
 
 type MesheryControllersStatusListItem struct {
-	ContextID  string                  `json:"contextId"`
-	Controller MesheryController       `json:"controller"`
-	Status     MesheryControllerStatus `json:"status"`
-	Version    string                  `json:"version"`
+	ConnectionID string                  `json:"connectionID"`
+	Controller   MesheryController       `json:"controller"`
+	Status       MesheryControllerStatus `json:"status"`
+	Version      string                  `json:"version"`
 }
 
 type MesheryResult struct {
@@ -265,34 +273,12 @@ type NullString struct {
 	Valid  bool   `json:"Valid"`
 }
 
-type OAMCapability struct {
-	OamDefinition interface{} `json:"oam_definition,omitempty"`
-	ID            *string     `json:"id,omitempty"`
-	OamRefSchema  *string     `json:"oam_ref_schema,omitempty"`
-	Host          *string     `json:"host,omitempty"`
-	Restricted    *bool       `json:"restricted,omitempty"`
-	Metadata      interface{} `json:"metadata,omitempty"`
-}
-
 type OperatorControllerStatus struct {
-	Name      string `json:"name"`
-	Version   string `json:"version"`
-	Status    Status `json:"status"`
-	Error     *Error `json:"error,omitempty"`
-	ContextID string `json:"contextID"`
-}
-
-type OperatorControllerStatusPerK8sContext struct {
-	ContextID                string                    `json:"contextID"`
-	OperatorControllerStatus *OperatorControllerStatus `json:"OperatorControllerStatus"`
-}
-
-type OperatorStatus struct {
-	Status      Status                      `json:"status"`
-	Version     string                      `json:"version"`
-	Controllers []*OperatorControllerStatus `json:"controllers"`
-	Error       *Error                      `json:"error,omitempty"`
-	ContextID   string                      `json:"contextID"`
+	Name         string `json:"name"`
+	Version      string `json:"version"`
+	Status       Status `json:"status"`
+	Error        *Error `json:"error,omitempty"`
+	ConnectionID string `json:"connectionID"`
 }
 
 type OperatorStatusInput struct {
@@ -300,20 +286,17 @@ type OperatorStatusInput struct {
 	ContextID    string `json:"contextID"`
 }
 
-type OperatorStatusPerK8sContext struct {
-	ContextID      string          `json:"contextID"`
-	OperatorStatus *OperatorStatus `json:"operatorStatus"`
-}
-
 type PageFilter struct {
-	Page         string   `json:"page"`
-	PageSize     string   `json:"pageSize"`
-	Order        *string  `json:"order,omitempty"`
-	Search       *string  `json:"search,omitempty"`
-	From         *string  `json:"from,omitempty"`
-	To           *string  `json:"to,omitempty"`
-	UpdatedAfter *string  `json:"updated_after,omitempty"`
-	Visibility   []string `json:"visibility,omitempty"`
+	Page         string    `json:"page"`
+	PageSize     string    `json:"pageSize"`
+	Order        *string   `json:"order,omitempty"`
+	Search       *string   `json:"search,omitempty"`
+	From         *string   `json:"from,omitempty"`
+	To           *string   `json:"to,omitempty"`
+	UpdatedAfter *string   `json:"updated_after,omitempty"`
+	Visibility   []string  `json:"visibility,omitempty"`
+	Metrics      *string   `json:"metrics,omitempty"`
+	Populate     []*string `json:"populate,omitempty"`
 }
 
 type PatternPageResult struct {

@@ -1,0 +1,62 @@
+{
+  "capabilities": null,
+  "component": {
+    "kind": "KafkaTopic",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the topic.\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"The topic configuration.\",\n     \"type\": \"object\"\n    },\n    \"partitions\": {\n     \"description\": \"The number of partitions the topic should have. This cannot be decreased after topic creation. It can be increased after topic creation, but it is important to understand the consequences that has, especially for topics with semantic partitioning.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"replicas\": {\n     \"description\": \"The number of replicas the topic should have.\",\n     \"maximum\": 32767,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"topicName\": {\n     \"description\": \"The name of the topic. When absent this will default to the metadata.name of the topic. It is recommended to not set this unless the topic name is not a valid Kubernetes resource name.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"partitions\",\n    \"replicas\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Topic\"\n}",
+    "version": "kafka.strimzi.io/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Kafka Topic",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+     "isNamespaced": true,
+    "published": false
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "strimzi-kafka-operator-app",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://giantswarm.github.io/giantswarm-catalog/strimzi-kafka-operator-app-0.2.2.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.2.2"
+    },
+    "name": "strimzi-kafka-operator-app",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

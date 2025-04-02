@@ -4,10 +4,12 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha1"
 	"github.com/layer5io/meshkit/utils"
+
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
 )
 
@@ -39,6 +41,10 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		InstanceID:   instanceID,
 		Token:        token,
 	}
+}
+
+func (mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {
+	return mh.broker
 }
 
 func (mh *MeshsyncDataHandler) Run() error {
@@ -133,7 +139,7 @@ func (mh *MeshsyncDataHandler) subsribeToStoreUpdates(statusChan chan bool) {
 func (mh *MeshsyncDataHandler) Unmarshal(object interface{}) (meshsyncmodel.KubernetesResource, error) {
 	objectJSON, _ := utils.Marshal(object)
 	obj := meshsyncmodel.KubernetesResource{}
-	err := utils.Unmarshal(objectJSON, &obj)
+	err := encoding.Unmarshal([]byte(objectJSON), &obj)
 	if err != nil {
 		mh.log.Error(ErrUnmarshal(err, objectJSON))
 		return obj, ErrUnmarshal(err, objectJSON)
@@ -154,8 +160,9 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 	regQueue := GetMeshSyncRegistrationQueue()
 	switch event.EventType {
 	case broker.Add:
-		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
+		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
+		obj.Model = model
 		result := mh.dbHandler.Create(&obj)
 		go regQueue.Send(MeshSyncRegistrationData{MeshsyncDataHandler: *mh, Obj: obj})
 		// Try to update object if Create fails. If MeshSync is restarted, on initial sync the discovered data will have eventType as ADD, but the database would already have the data, leading to conflicts hence try to update the object in such cases.
@@ -166,9 +173,9 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 			}
 		}
 	case broker.Update:
-		compMetadata := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
+		compMetadata, model := mh.getComponentMetadata(obj.APIVersion, obj.Kind)
 		obj.ComponentMetadata = utils.MergeMaps(obj.ComponentMetadata, compMetadata)
-
+		obj.Model = model
 		result := mh.dbHandler.Session(&gorm.Session{FullSaveAssociations: true}).Updates(&obj)
 		if result.Error != nil {
 			return ErrDBPut(result.Error)
@@ -189,8 +196,9 @@ func (mh *MeshsyncDataHandler) meshsyncEventsAccumulator(event *broker.Message) 
 func (mh *MeshsyncDataHandler) persistStoreUpdate(object *meshsyncmodel.KubernetesResource) error {
 	mh.dbHandler.Lock()
 	defer mh.dbHandler.Unlock()
-	compMetadata := mh.getComponentMetadata(object.APIVersion, object.Kind)
+	compMetadata, model := mh.getComponentMetadata(object.APIVersion, object.Kind)
 	object.ComponentMetadata = utils.MergeMaps(object.ComponentMetadata, compMetadata)
+	object.Model = model
 	result := mh.dbHandler.Create(object)
 	regQueue := GetMeshSyncRegistrationQueue()
 
@@ -253,20 +261,30 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
-func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) map[string]interface{} {
-	var metadata map[string]interface{}
+func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}, model string) {
+	componentDef := component.ComponentDefinition{} // Retrieve the entire component
+	defer func() {
+		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
+		model = componentDef.Model.Name
+	}()
 
-	result := mh.dbHandler.Model(v1alpha1.ComponentDefinitionDB{}).Select("metadata").
-		Where("api_version = ? and kind = ?", apiVersion, kind).Scan(&metadata)
+	// Query the database for the complete component definition
+	result := mh.dbHandler.Model(component.ComponentDefinition{}).Preload("Model").
+		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
+		First(&componentDef)
+
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
 			mh.log.Error(ErrResultNotFound(result.Error))
-			metadata = K8sMeshModelMetadata
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
-			metadata = K8sMeshModelMetadata
 		}
+		// Provide a default or fallback component definition
+		componentDef = component.ComponentDefinition{
+			Styles: &K8sMeshModelMetadata.Styles,
+		}
+		return
 	}
 
-	return metadata
+	return
 }

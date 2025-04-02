@@ -2,9 +2,9 @@ import { graphql, requestSubscription } from 'react-relay';
 import { createRelayEnvironment } from '../../../lib/relayEnvironment';
 
 const mesheryControllersStatusSubscription = graphql`
-  subscription MesheryControllersStatusSubscription($k8scontextIDs: [String!]) {
-    subscribeMesheryControllersStatus(k8scontextIDs: $k8scontextIDs) {
-      contextId
+  subscription MesheryControllersStatusSubscription($connectionIDs: [String!]) {
+    subscribeMesheryControllersStatus(connectionIDs: $connectionIDs) {
+      connectionID
       controller
       status
       version
@@ -16,7 +16,7 @@ export default function subscribeMesheryControllersStatus(dataCB, variables) {
   const environment = createRelayEnvironment({});
   return requestSubscription(environment, {
     subscription: mesheryControllersStatusSubscription,
-    variables: { k8scontextIDs: variables },
+    variables: { connectionIDs: variables },
     onNext: dataCB,
     onError: (error) => console.log(`An error occured:`, error),
   });

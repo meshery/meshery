@@ -1,5 +1,5 @@
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { Grid, TableCell, TableSortLabel, Typography } from '@material-ui/core';
+import { Grid, Typography, TableCell, TableSortLabel } from '@layer5/sistent';
 
 export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
   return (
@@ -10,12 +10,7 @@ export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon,
             <b>{columnData.label}</b>
           </Typography>
           {icon ? (
-            <CustomTextTooltip
-              backgroundColor="#3C494F"
-              interactive={true}
-              title={tooltip ? tooltip : ''}
-              placement="top"
-            >
+            <CustomTextTooltip interactive={true} title={tooltip ? tooltip : ''} placement="top">
               <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
                 {icon}
               </Typography>
@@ -42,12 +37,7 @@ export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
             <b>{columnData.label}</b>
           </Typography>
           {icon ? (
-            <CustomTextTooltip
-              backgroundColor="#3C494F"
-              interactive={true}
-              title={tooltip ? tooltip : ''}
-              placement="top"
-            >
+            <CustomTextTooltip interactive={true} title={tooltip ? tooltip : ''} placement="top">
               <Typography style={{ display: 'flex', marginLeft: '5px' }} variant="span">
                 {icon}
               </Typography>

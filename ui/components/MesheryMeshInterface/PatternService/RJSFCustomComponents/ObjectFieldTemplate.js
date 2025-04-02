@@ -1,9 +1,7 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
 import { canExpand } from '@rjsf/utils';
-import { CssBaseline, useTheme, withStyles } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
-import { Box, IconButton, Typography } from '@material-ui/core';
+import { Grid, Box, IconButton, Typography, useTheme, CssBaseline } from '@layer5/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
@@ -11,21 +9,8 @@ import ExpandLessIcon from '../../../../assets/icons/ExpandLessIcon';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
-import { calculateGrid, getHyperLinkDiv } from '../helper';
+import { calculateGrid } from '../helper';
 
-const styles = (theme) => ({
-  objectFieldGrid: {
-    padding: '.5rem',
-    paddingTop: '0.7rem',
-    backgroundColor: theme.palette.type === 'dark' ? '#363636' : '#ffffff',
-    width: '100%',
-    margin: '0px',
-  },
-  typography: {
-    fontFamily: 'inherit',
-    fontSize: 13,
-  },
-});
 /**
  * Get the raw errors from the error schema.
  * @param {Object} errorSchema error schema.
@@ -36,7 +21,7 @@ const getRawErrors = (errorSchema) => {
   if (!errorSchema) return [];
   const errors = [];
   Object.keys(errorSchema).forEach((key) => {
-    if (errorSchema[key]?.__errors) {
+    if (errorSchema?.[key]?.__errors) {
       errors.push(...errorSchema[key].__errors);
     }
   });
@@ -54,7 +39,7 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
-  classes,
+
   errorSchema,
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
@@ -62,7 +47,7 @@ const ObjectFieldTemplate = ({
   const rawErrors = getRawErrors(errorSchema);
 
   // If the parent type is an `array`, then expand the current object.
-  const [show, setShow] = React.useState(false);
+  const [show, setShow] = React.useState(uiSchema['ui:options']?.expand || false);
   properties.forEach((property, index) => {
     if (schema.properties[property.name].type) {
       properties[index].type = schema.properties[property.name].type;
@@ -89,7 +74,7 @@ const ObjectFieldTemplate = ({
               >
                 <AddIcon
                   style={{
-                    backgroundColor: `${theme.palette.type === 'dark' ? '#00b39F' : '#647881'}`,
+                    backgroundColor: `${theme.palette.mode === 'dark' ? '#00b39F' : '#647881'}`,
                     width: '1rem',
                     height: '1rem',
                     color: '#ffffff',
@@ -115,13 +100,12 @@ const ObjectFieldTemplate = ({
           <Grid item mb={1} mt={1}>
             <Typography
               variant="body1"
-              className={classes.typography}
-              style={{ fontWeight: 'bold', display: 'inline' }}
+              style={{ fontWeight: 'bold', display: 'inline', fontFamily: 'inherit', fontSize: 13 }}
             >
               {title.charAt(0).toUpperCase() + title.slice(1)}{' '}
             </Typography>
             {description && (
-              <CustomTextTooltip backgroundColor="#3C494F" title={getHyperLinkDiv(description)}>
+              <CustomTextTooltip title={description}>
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"
@@ -131,19 +115,14 @@ const ObjectFieldTemplate = ({
                   <HelpOutlineIcon
                     width="1rem"
                     height="1rem"
-                    fill={theme.palette.type === 'dark' ? 'white' : 'black'}
+                    fill={theme.palette.mode === 'dark' ? 'white' : 'black'}
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>
               </CustomTextTooltip>
             )}
             {rawErrors.length !== 0 && (
-              <CustomTextTooltip
-                backgroundColor={ERROR_COLOR}
-                title={rawErrors?.map((error, index) => (
-                  <div key={index}>{error}</div>
-                ))}
-              >
+              <CustomTextTooltip bgColor={ERROR_COLOR} title={rawErrors?.join('  ')}>
                 <IconButton
                   disableTouchRipple="true"
                   disableRipple="true"
@@ -169,8 +148,15 @@ const ObjectFieldTemplate = ({
     <Grid
       container={true}
       spacing={2}
-      className={classes.objectFieldGrid}
-      style={Object.keys(properties).length === 0 || schema['$schema'] ? { border: 'none' } : null}
+      style={{
+        padding: '.5rem',
+        paddingTop: '0.7rem',
+        width: '100%',
+        margin: '0px',
+        ...(Object.keys(properties).length === 0 || schema['$schema']
+          ? { border: 'none', ...(uiSchema['styles'] || {}) }
+          : uiSchema['styles']),
+      }}
     >
       {properties.map((element, index) => {
         return element.hidden ? (
@@ -205,4 +191,4 @@ const ObjectFieldTemplate = ({
   );
 };
 
-export default withStyles(styles)(ObjectFieldTemplate);
+export default ObjectFieldTemplate;

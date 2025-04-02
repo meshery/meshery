@@ -5,8 +5,8 @@ const DOWNLOAD_PATH = {
     source_type
       ? `/api/pattern/download/${id}/${source_type}`
       : params
-      ? `/api/pattern/download/${id}?${params}`
-      : `/api/pattern/download/${id}`,
+        ? `/api/pattern/download/${id}?${params}`
+        : `/api/pattern/download/${id}`,
   [FILTER]: ({ id }) => `/api/filter/download/${id}`,
 };
 

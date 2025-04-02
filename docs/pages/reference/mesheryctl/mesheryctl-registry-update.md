@@ -16,7 +16,7 @@ Update the registry with latest data.
 
 ## Synopsis
 
-`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`
+Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry update [flags]
@@ -26,30 +26,26 @@ mesheryctl registry update [flags]
 
 ## Examples
 
+Update models from Meshery Integration Spreadsheet
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	// Update models from Meshery Integration Spreadsheet
+mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
 
 </div>
 </pre> 
 
+Updating models in the meshery/meshery repo
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl registry update --spreadsheet_id <id> --spreadsheet_cred <base64 encoded spreadsheet credential> -i [path to the directory containing models].
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
 
 </div>
 </pre> 
 
+Updating models in the meshery/meshery repo based on flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	// Updating models in the meshery/meshery repo
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	mesheryctl registry update --spreadsheet_id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet_cred $CRED
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 
 </div>
 </pre> 
@@ -60,8 +56,9 @@ mesheryctl registry update [flags]
 <div class='codeblock'>
   -h, --help                      help for update
   -i, --input string              relative or absolute input path to the models directory (default "../server/meshmodel")
-      --spreadsheet_cred string   base64 encoded credential to download the spreadsheet
-      --spreadsheet_id string     spreadsheet it for the integration spreadsheet
+  -m, --model string              specific model name to be generated
+      --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
+      --spreadsheet-id string     spreadsheet it for the integration spreadsheet
 
 </div>
 </pre>

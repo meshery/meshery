@@ -5,17 +5,17 @@ permalink: installation/kubernetes/aks
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/aks
+  - installation/platforms/aks
 display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/aks.svg
-abstract: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster. 
+abstract: Manage your AKS clusters with Meshery. Deploy Meshery in AKS in-cluster or out-of-cluster.
 ---
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cluster-installation) or outside of AKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to [Install Meshery in your AKS clusters](#install-meshery-into-your-aks-cluster)_**
+Manage your AKS clusters with Meshery. Deploy Meshery in AKS [in-cluster](#in-cluster-installation) or outside of AKS [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your AKS clusters_**
 
 <div class="prereqs"><h4>Prerequisites</h4>
 <ol>
@@ -33,11 +33,9 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
 - [In-cluster Installation](#in-cluster-installation)
     - [Preflight Checks](#preflight-checks)
     - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
-    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
     - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
     - [Installation: Using Helm](#installation-using-helm)
-- [Post-Installation Steps](#post-installation-steps)
-    - [Access Meshery UI](#access-meshery-ui)
+  - [Post-Installation Steps](#post-installation-steps)
 
 # In-cluster Installation
 
@@ -58,15 +56,6 @@ Read through the following considerations prior to deploying Meshery on AKS.
 {% capture code_content %}az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]{% endcapture %}
 {% include code.html code=code_content %}
 
-### Preflight: Plan your access to Meshery UI
-
-1. If you are using port-forwarding, please refer to the [port-forwarding]({{ site.baseurl }}/reference/mesheryctl/system/dashboard) guide for detailed instructions.
-2. If you are using a LoadBalancer, please refer to the [LoadBalancer]({{ site.baseurl }}/installation/kubernetes#exposing-meshery-serviceloadbalancer) guide for detailed instructions.
-3. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
-
-{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
-{% include code.html code=code_content %}
-
 ### Installation: Using `mesheryctl`
 
 Use Meshery's CLI to streamline your connection to your AKS cluster. Configure Meshery to connect to your AKS cluster by executing:
@@ -83,16 +72,14 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 ### Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
-# Post-Installation Steps
+## Post-Installation Steps
 
-### Access Meshery UI
+Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
-To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
+You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 
-Note: _You can also verify health of your system using [mesheryctl system check](/reference/mesheryctl/system/check)_
-
-{% include suggested-reading.html language="en" %}
+{% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 {% include related-discussions.html tag="meshery" %}

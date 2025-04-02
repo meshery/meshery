@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, useTheme } from '@material-ui/core';
+import { Box, Typography, useTheme, Checkbox } from '@layer5/sistent';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { StyledTreeItemRoot } from './MeshModel.style';
@@ -9,18 +9,19 @@ import { useWindowDimensions } from '@/utils/dimension';
  * Customized item component in mui-x-tree
  */
 const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
-  // const [checked, setChecked] = useState(false);
-  const { labelText, root, search, setSearchText, ...other } = props;
+  const [checked, setChecked] = useState(false);
+  const [hover, setHover] = useState(false);
+  const { labelText, root, search, setSearchText, check, ...other } = props;
   const theme = useTheme();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   return (
     <StyledTreeItemRoot
-      // onMouseEnter={() => setHover(true)}
-      // onMouseLeave={() => setHover(false)}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       root={root}
-      lineColor={theme.palette.secondary.text}
+      lineColor={theme.palette.text.default}
       label={
         <Box
           sx={{
@@ -45,22 +46,19 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
             </div>
           )}
 
-          {/* Currently the functionality of checkbox is not supported */}
-
-          {/* {check && (
+          {check && (
             <Checkbox
-              onClick={() => setChecked((prevcheck) => !prevcheck)}
+              onClick={(e) => {
+                e.stopPropagation();
+                setChecked((prevcheck) => !prevcheck);
+              }}
               size="small"
               checked={checked}
-              sx={{
-                visibility: hover || checked ? 'visible' : 'hidden',
-                color: '#00B39F',
-                '&.Mui-checked': {
-                  color: '#00B39F',
-                },
+              style={{
+                visibility: hover || checked ? 'hidden' : 'hidden', //TODO: make it visible when bulk status change is supported
               }}
             />
-          )} */}
+          )}
           {search && (
             <SearchBar
               onSearch={debounce((value) => setSearchText(value), 200)}

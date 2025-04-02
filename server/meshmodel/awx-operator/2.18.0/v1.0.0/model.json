@@ -1,0 +1,45 @@
+{
+  "category": {
+    "name": "Orchestration \u0026 Management"
+  },
+  "displayName": "AWX Operator",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "capabilities": null,
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#e00000",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 255.1 255.1\" style=\"enable-background:new 0 0 255.1 255.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#1A1918;}\n        .st1{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M255.1,127.6c0,70.5-57.1,127.6-127.6,127.6C57.1,255.1,0,198,0,127.6C0,57.1,57.1,0,127.6,0\n        C198,0,255.1,57.1,255.1,127.6\"/\u003e\n\u003cpath class=\"st1\" d=\"M129.7,77.9l33,81.5l-49.9-39.3L129.7,77.9L129.7,77.9z M188.4,178.2L137.6,56c-1.4-3.5-4.3-5.4-7.9-5.4\n        c-3.5,0-6.6,1.9-8.1,5.4L65.9,190H85l22.1-55.3l65.8,53.2c2.6,2.1,4.6,3.1,7,3.1c5,0,9.3-3.7,9.3-9.1\n        C189.2,181.1,188.9,179.7,188.4,178.2L188.4,178.2z\"/\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n\t viewBox=\"0 0 255.1 255.1\" style=\"enable-background:new 0 0 255.1 255.1;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n\t.st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M255.1,127.6c0,70.5-57.1,127.6-127.6,127.6C57.1,255.1,0,198,0,127.6C0,57.1,57.1,0,127.6,0\n\tC198,0,255.1,57.1,255.1,127.6\"/\u003e\n\u003cpath d=\"M129.7,77.9l33,81.5l-49.9-39.3L129.7,77.9L129.7,77.9z M188.4,178.2L137.6,56c-1.4-3.5-4.3-5.4-7.9-5.4\n\tc-3.5,0-6.6,1.9-8.1,5.4L65.9,190H85l22.1-55.3l65.8,53.2c2.6,2.1,4.6,3.1,7,3.1c5,0,9.3-3.7,9.3-9.1\n\tC189.2,181.1,188.9,179.7,188.4,178.2L188.4,178.2z\"/\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "2.18.0"
+  },
+  "name": "awx-operator",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Automation \u0026 Configuration",
+  "version": "v1.0.0",
+  "components": null,
+  "relationships": null
+}

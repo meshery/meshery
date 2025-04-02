@@ -1,0 +1,62 @@
+{
+  "capabilities": null,
+  "component": {
+    "kind": "Policy",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"tracee policy spec\",\n   \"properties\": {\n    \"defaultActions\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"description\": \"Rule is the structure of the rule in the policy file\",\n      \"properties\": {\n       \"actions\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"event\": {\n        \"type\": \"string\"\n       },\n       \"filters\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"event\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"scope\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"rules\",\n    \"scope\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Policy\",\n \"type\": \"object\"\n}",
+    "version": "tracee.aquasec.com/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Policy",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+     "isNamespaced": false,
+    "published": false
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "tracee",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/aquasecurity/helm-charts/releases/download/tracee-0.19.0/tracee-0.19.0.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.12.0"
+    },
+    "name": "tracee",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

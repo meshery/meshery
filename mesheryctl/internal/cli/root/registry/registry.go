@@ -18,38 +18,50 @@ import (
 	"fmt"
 
 	"errors"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	"github.com/spf13/cobra"
 )
 
 var (
-	availableSubcommands = []*cobra.Command{importCmd, publishCmd, updateCmd}
+	availableSubcommands = []*cobra.Command{generateCmd, publishCmd, updateCmd}
 
-	spreadsheeetID   string
-	spreadsheeetCred string
+	spreadsheeetID          string
+	spreadsheeetCred        string
+	modelName               string
+	modelCSVFilePath        string
+	componentCSVFilePath    string
+	relationshipCSVFilePath string
+	csvDirectory            string
 )
 
 // PublishCmd represents the publish command to publish Meshery Models to Websites, Remote Provider, Meshery
 var RegistryCmd = &cobra.Command{
-	Use:   "registry",
-	Short: "Meshery Registry Management",
-	Long:  `Manage the state and configuration of Meshery Registry.`,
-	Example: `
-	mesheryctl registry [subcommand]
-	`,
+	Use:     "registry",
+	Short:   "Model Database",
+	Long:    `Manage the state and contents of Meshery’s internal registry of capabilities.`,
+	Example: `mesheryctl registry [subcommand]`,
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl registry --help' to display usage guide.\n", args[0])))
+			return errors.New(utils.RegistryError(fmt.Sprintf("'%s' is an invalid command.  Use 'mesheryctl registry --help' to display usage guide.\n", args[0]), "registry"))
 		}
 		return nil
 	},
 }
 
 func init() {
+	cobra.OnInitialize(setupRegistryLogger)
 	RegistryCmd.AddCommand(availableSubcommands...)
+}
 
+func setupRegistryLogger() {
+	err := meshkitRegistryUtils.SetLogger(true)
+	if err != nil {
+		utils.Log.Info("Error setting logger: ", err)
+	}
 }

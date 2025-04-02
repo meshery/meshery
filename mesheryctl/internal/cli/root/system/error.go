@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,36 +25,34 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
-	ErrHealthCheckFailedCode             = "1133"
-	ErrDownloadFileCode                  = "1134"
-	ErrStopMesheryCode                   = "1135"
-	ErrResetMeshconfigCode               = "1136"
-	ErrApplyManifestCode                 = "1137"
-	ErrApplyOperatorManifestCode         = "1138"
-	ErrCreateDirCode                     = "1139"
-	ErrUnsupportedPlatformCode           = "1140"
-	ErrRetrievingCurrentContextCode      = "1141"
-	ErrSettingDefaultContextToConfigCode = "1142"
-	ErrSettingTemporaryContextCode       = "1143"
-	ErrCreateManifestsFolderCode         = "1144"
-	ErrRestartMesheryCode                = "1145"
-	ErrK8sQueryCode                      = "1146"
-	ErrK8sConfigCode                     = "1147"
-	ErrInitPortForwardCode               = "1148"
-	ErrRunPortForwardCode                = "1149"
-	ErrFailedGetEphemeralPortCode        = "1150"
-	ErrUnmarshalDockerComposeCode        = "1151"
-	ErrCreatingDockerClientCode          = "1152"
-	ErrWriteConfigCode                   = "1153"
-	ErrContextContentCode                = "1154"
-	ErrSwitchChannelResponseCode         = "1155"
-	ErrGetCurrentContextCode             = "1156"
-	ErrSetCurrentContextCode             = "1157"
-	ErrTokenContextCode                  = "1158"
-	ErrProviderInfoCode                  = "1159"
-	ErrValidProviderCode                 = "1160"
-	ErrUnmarshallConfigCode              = "1161"
-	ErrUploadFileParamsCode              = "1162"
+	ErrHealthCheckFailedCode             = "mesheryctl-1060"
+	ErrStopMesheryCode                   = "mesheryctl-1062"
+	ErrResetMeshconfigCode               = "mesheryctl-1063"
+	ErrApplyManifestCode                 = "mesheryctl-1064"
+	ErrApplyOperatorManifestCode         = "mesheryctl-1065"
+	ErrCreateDirCode                     = "mesheryctl-1066"
+	ErrUnsupportedPlatformCode           = "mesheryctl-1067"
+	ErrRetrievingCurrentContextCode      = "mesheryctl-1068"
+	ErrSettingDefaultContextToConfigCode = "mesheryctl-1069"
+	ErrSettingTemporaryContextCode       = "mesheryctl-1070"
+	ErrRestartMesheryCode                = "mesheryctl-1072"
+	ErrK8sQueryCode                      = "mesheryctl-1073"
+	ErrK8sConfigCode                     = "mesheryctl-1074"
+	ErrInitPortForwardCode               = "mesheryctl-1075"
+	ErrRunPortForwardCode                = "mesheryctl-1076"
+	ErrFailedGetEphemeralPortCode        = "mesheryctl-1077"
+	ErrUnmarshalDockerComposeCode        = "mesheryctl-1078"
+	ErrCreatingDockerClientCode          = "mesheryctl-1079"
+	ErrWriteConfigCode                   = "mesheryctl-1080"
+	ErrContextContentCode                = "mesheryctl-1081"
+	ErrSwitchChannelResponseCode         = "mesheryctl-1082"
+	ErrGetCurrentContextCode             = "mesheryctl-1083"
+	ErrSetCurrentContextCode             = "mesheryctl-1084"
+	ErrTokenContextCode                  = "mesheryctl-1085"
+	ErrProviderInfoCode                  = "mesheryctl-1086"
+	ErrValidProviderCode                 = "mesheryctl-1087"
+	ErrUnmarshallConfigCode              = "mesheryctl-1088"
+	ErrUploadFileParamsCode              = "mesheryctl-1089"
 )
 
 var (
@@ -106,12 +104,8 @@ func ErrHealthCheckFailed(err error) error {
 		errors.Alert,
 		[]string{"Health checks failed"},
 		[]string{"Failed to initialize healthchecker" + err.Error()},
-		[]string{"Health checks execution failed in starting Meshery server successfully"},
+		[]string{"Health checks execution failed in starting Meshery server"},
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
-}
-
-func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
 }
 
 func ErrStopMeshery(err error) error {
@@ -155,7 +149,7 @@ func ErrUnsupportedPlatform(platform string, config string) error {
 		ErrUnsupportedPlatformCode,
 		errors.Alert,
 		[]string{"Unsupported platform"},
-		[]string{"The provided platform is not supprted"},
+		[]string{"The provided platform is not supported."},
 		[]string{"The platform ", platform, " is not supported for the deployment of Meshery. "},
 		[]string{"Supported platforms are:\n\n- docker\n- kubernetes\n\n Verify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"})
 }
@@ -166,8 +160,8 @@ func ErrRetrievingCurrentContext(err error) error {
 		errors.Alert,
 		[]string{"Error retrieving current-context"},
 		[]string{err.Error()},
-		[]string{"current-context is not retrieved successfully"},
-		[]string{"Verify current-context is retrieved successfully and valid" + FormatErrorReference()})
+		[]string{"current-context is not retrieved"},
+		[]string{"Verify current-context is retrieved and valid" + FormatErrorReference()})
 }
 
 func ErrSettingDefaultContextToConfig(err error) error {
@@ -176,10 +170,6 @@ func ErrSettingDefaultContextToConfig(err error) error {
 
 func ErrSettingTemporaryContext(err error) error {
 	return errors.New(ErrSettingTemporaryContextCode, errors.Alert, []string{"Error setting temporary context"}, []string{err.Error()}, []string{"temporary context is not set properly"}, []string{"Verify the temporary context is set properly using the -c flag provided"})
-}
-
-func ErrCreateManifestsFolder(err error) error {
-	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
 }
 
 func ErrRestartMeshery(err error) error {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { updateProgress } from '../lib/store';
-import { Button, Typography, withStyles } from '@material-ui/core';
+import { Button, Typography, ResponsiveDataTable } from '@layer5/sistent';
 import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -8,46 +8,20 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
-import useStyles from '../assets/styles/general/tool.styles';
-import { PROMPT_VARIANTS } from './PromptComponent';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
-
-const styles = (theme) => ({
-  textCenter: {
-    textAlign: 'center',
-  },
-  textEnd: {
-    textAlign: 'end',
-  },
-  gapBottom: {
-    paddingBottom: '0.5rem',
-  },
-  DBBtn: {
-    margin: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    borderRadius: 5,
-    backgroundColor: '#8F1F00',
-    '&:hover': {
-      backgroundColor: '#B32700',
-    },
-  },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(2),
-  },
-});
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import { PROMPT_VARIANTS } from '@layer5/sistent';
 
 const DatabaseSummary = (props) => {
-  const { classes } = props;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
-  const StyleClass = useStyles();
+  const [sortOrder, setSortOrder] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
@@ -60,9 +34,10 @@ const DatabaseSummary = (props) => {
   };
 
   const { data: databaseSummary, refetch } = useGetDatabaseSummaryQuery({
-    page: page + 1,
+    page: page,
     pagesize: rowsPerPage,
     search: searchText,
+    order: sortOrder,
   });
 
   const handleResetDatabase = () => {
@@ -70,7 +45,7 @@ const DatabaseSummary = (props) => {
       let responseOfResetDatabase = await props.promptRef.current.show({
         title: 'Reset Meshery Database?',
         subtitle: 'Are you sure that you want to purge all data?',
-        options: ['RESET', 'CANCEL'],
+        primaryOption: 'RESET',
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (responseOfResetDatabase === 'RESET') {
@@ -96,9 +71,26 @@ const DatabaseSummary = (props) => {
     };
   };
 
+  const columns = [
+    {
+      name: 'name',
+      label: 'Name',
+      options: {
+        sort: true,
+      },
+    },
+    {
+      name: 'count',
+      label: 'Count',
+      options: {
+        sort: true,
+      },
+    },
+  ];
+
   const table_options = {
     filter: false,
-    sort: false,
+    sort: true,
     selectableRows: 'none',
     responsive: 'scrollMaxHeight',
     print: false,
@@ -116,18 +108,10 @@ const DatabaseSummary = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
+    onColumnSortChange: (_, direction) => {
+      setSortOrder(`name ${direction}`);
+    },
   };
-
-  const columns = [
-    {
-      name: 'name',
-      label: 'Name',
-    },
-    {
-      name: 'count',
-      label: 'Count',
-    },
-  ];
 
   const [tableCols, updateCols] = useState(columns);
 
@@ -147,18 +131,22 @@ const DatabaseSummary = (props) => {
 
   return (
     <>
-      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
-        <div>
+      <ToolWrapper style={customInlineStyle}>
+        <div style={{ display: 'flex' }}>
           <Button
             type="submit"
             variant="contained"
-            color="primary"
+            data-testid="database-reset-button"
+            color="error"
+            style={{
+              backgroundColor: '#8F1F00',
+            }}
             size="medium"
+            disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
             onClick={handleResetDatabase()}
-            className={classes.DBBtn}
             data-cy="btnResetDatabase"
           >
-            <Typography align="center" variant="subtitle2">
+            <Typography variant="subtitle2" sx={{ textAlign: 'center' }}>
               {' '}
               RESET DATABASE{' '}
             </Typography>
@@ -174,7 +162,7 @@ const DatabaseSummary = (props) => {
             placeholder="Search"
           />
         </div>
-      </div>
+      </ToolWrapper>
       <ResponsiveDataTable
         data={databaseSummary?.tables}
         options={table_options}
@@ -205,6 +193,4 @@ const DatabaseSummaryTable = (props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(DatabaseSummaryTable),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(DatabaseSummaryTable);

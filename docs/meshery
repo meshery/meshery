@@ -1,4 +1,4 @@
-# Copyright 2019 Layer5 Authors
+# Copyright Meshery Authors
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -11,6 +11,11 @@
 #   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
+
+
+# *******
+# Deprecated: See https://meshery.io/install instead
+# *******
 
 #!/usr/bin/env bash
 
@@ -182,7 +187,7 @@ else
   fi
 fi
 
-#Transfering permissions and ownership to client USER
+#Transferring permissions and ownership to client USER
 if [ "$SUDO_USER" == "" ] ;
 then
   if chown $WHOAMI $install_dir/mesheryctl ; then
@@ -255,5 +260,5 @@ if [ ! -z "$ADAPTERS" ]; then
     mesheryctl system context create custom -s $adapterString --yes
 fi
 
-printf "\nStarting Meshery...\n"
+printf "\nDeploying Meshery...\n"
 mesheryctl system start --yes --platform $PLATFORM

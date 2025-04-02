@@ -1,8 +1,33 @@
 import React from 'react';
-import useStyles from '../../assets/styles/general/tool.styles';
+import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
+import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
+import DownloadIcon from '@mui/icons-material/Download';
+import { REGISTRY_ITEM_STATES } from '../../utils/Enum';
+// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+import {
+  useUpdateEntityStatusMutation,
+  useGetComponentsQuery,
+  useGetMeshModelsQuery,
+} from '@/rtk-query/meshModel';
+import _ from 'lodash';
+import { JustifyAndAlignCenter } from './MeshModel.style';
+import { reactJsonTheme } from './helper';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, styled } from '@layer5/sistent';
+import dynamic from 'next/dynamic';
 
+import {
+  StyledKeyValueFormattedValue,
+  StyledKeyValuePropertyDiv,
+  StyledKeyValueProperty,
+} from './MeshModel.style';
+import { iconSmall } from 'css/icons.styles';
+const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
+
+const ExportAvailable = true;
 const KeyValue = ({ property, value }) => {
   let formattedValue = value;
 
@@ -11,61 +36,110 @@ const KeyValue = ({ property, value }) => {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        margin: '0.6rem 0',
-      }}
-    >
-      <p
-        style={{
-          padding: '0',
-          margin: '0 0.5rem 0 0',
-          fontSize: '16px',
-          fontWeight: '600',
-        }}
-      >
-        {property}
-      </p>
-      <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{formattedValue}</p>
+    <StyledKeyValuePropertyDiv>
+      <StyledKeyValueProperty>{property}</StyledKeyValueProperty>
+      <StyledKeyValueFormattedValue>{formattedValue}</StyledKeyValueFormattedValue>
+    </StyledKeyValuePropertyDiv>
+  );
+};
+
+const StyledTitle = styled('div')(({ theme }) => ({
+  fontSize: '1.25rem',
+  fontFamily: theme.typography.fontFamily,
+  textAlign: 'left',
+  lineHeight: '1.3rem',
+}));
+
+const RenderContents = ({
+  metaDataLeft,
+  metaDataRight,
+  PropertyFormattersLeft,
+  PropertyFormattersRight,
+  orderLeft,
+  orderRight,
+  jsonData,
+}) => {
+  const theme = useTheme();
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <Segment>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}>
+          <FormatStructuredData
+            data={reorderObjectProperties(metaDataLeft, orderLeft)}
+            propertyFormatters={PropertyFormattersLeft}
+            order={orderLeft}
+          />
+        </FullWidth>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column' }}>
+          <FormatStructuredData
+            data={reorderObjectProperties(metaDataRight, orderRight)}
+            propertyFormatters={PropertyFormattersRight}
+            order={orderRight}
+          />
+        </FullWidth>
+      </Segment>
+      {jsonData && (
+        <Accordion
+          style={{
+            borderRadius: '6px',
+            color: theme.palette.text.default,
+            margin: '0 -1rem',
+            padding: '0',
+          }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.text.default }} />}
+          >
+            Advanced Details
+          </AccordionSummary>
+          <AccordionDetails
+            style={{
+              padding: '0',
+              fontSize: '0.85rem',
+            }}
+          >
+            <ReactJson
+              theme={reactJsonTheme(theme.palette.mode)}
+              name={false}
+              displayDataTypes={false}
+              iconStyle="circle"
+              src={jsonData}
+              style={{
+                fontSize: '.85rem',
+                minHeight: 'inherit',
+                padding: '1.1rem',
+                margin: '0rem',
+              }}
+              collapsed={1} // expanded upto 1 level
+            />
+          </AccordionDetails>
+        </Accordion>
+      )}
     </div>
   );
 };
 
-const Title = ({ title }) => (
-  <p
-    style={{
-      fontSize: '19px',
-      fontWeight: 'bold',
-    }}
-  >
-    {title}
-  </p>
-);
-
-const ModelContents = ({ model }) => {
-  const StyleClass = useStyles();
+const ModelContents = ({ modelDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+    subCategory: (value) => <KeyValue property="Sub-Category" value={value} />,
+    modelVersion: (value) => <KeyValue property="Model Version" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const getCompRelValue = () => {
     let components = 0;
     let relationships = 0;
-
-    if (model.versionBasedData) {
-      model?.versionBasedData.forEach((model) => {
-        components = components + (model?.components === null ? 0 : model.components.length);
-        relationships =
-          relationships + (model?.relationships === null ? 0 : model.relationships.length);
+    if (modelDef?.versionBasedData) {
+      modelDef?.versionBasedData.forEach((modelDefVersion) => {
+        components = components + modelDefVersion?.components_count;
+        relationships = relationships + modelDefVersion?.relationships_count;
       });
     } else {
-      components = model?.components === null ? 0 : model?.components?.length;
-      relationships = model?.relationships === null ? 0 : model?.relationships?.length;
+      components = modelDef?.components_count;
+      relationships = modelDef?.relationships_count;
     }
     return {
       components,
@@ -74,10 +148,12 @@ const ModelContents = ({ model }) => {
   };
 
   const metaDataLeft = {
-    version: model?.version,
-    hostname: model?.hostname,
+    version: modelDef?.model?.version,
+    modelVersion: modelDef?.model?.modelVersion,
+    hostname: modelDef?.registrant?.hostname,
     components: getCompRelValue()?.components?.toString(),
-    subCategory: model?.subCategory,
+    subCategory: modelDef?.model?.subCategory,
+    registrant: modelDef?.registrant?.name,
   };
 
   const orderLeft = ['version', 'hostname', 'components', 'subCategory'];
@@ -90,44 +166,63 @@ const ModelContents = ({ model }) => {
   };
 
   const metaDataRight = {
-    category: model?.category?.name,
-    duplicates: model?.duplicates?.toString(),
+    category: modelDef?.category?.name,
+    duplicates: modelDef?.duplicates?.toString(),
     relationships: getCompRelValue().relationships.toString(),
   };
-
+  const handleExport = () => {
+    const a = document.createElement('a');
+    a.href = '/api/meshmodels/export?id=' + modelDef.id;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  };
   const orderRight = ['category', 'duplicates', 'relationships'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
+  const isShowStatusSelector = !Array.isArray(modelDef?.model.version);
 
   return (
-    <div className={StyleClass.segment}>
-      <div
-        className={StyleClass.fullWidth}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          paddingRight: '1rem',
-        }}
-      >
-        <FormatStructuredData
-          data={orderdMetadataLeft}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          {ExportAvailable ? (
+            <Button
+              aria-label="Export Model"
+              variant="contained"
+              alt="Export Model to OCI Image"
+              onClick={handleExport}
+              size="small"
+            >
+              <DownloadIcon style={iconSmall} />
+              Export
+            </Button>
+          ) : null}
+          {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
+        </div>
       </div>
-
-      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
-        <FormatStructuredData
-          data={orderdMetadataRight}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
+      <RenderContents
+        metaDataLeft={metaDataLeft}
+        metaDataRight={metaDataRight}
+        PropertyFormattersLeft={PropertyFormattersLeft}
+        PropertyFormattersRight={PropertyFormattersRight}
+        orderLeft={orderdMetadataLeft}
+        orderRight={orderdMetadataRight}
+        jsonData={modelDef}
+      />
     </div>
   );
 };
 
-const ComponentContents = ({ component }) => {
-  const StyleClass = useStyles();
+const ComponentContents = ({ componentDef }) => {
+  const { data, isSuccess } = useGetComponentsQuery({
+    params: {
+      id: componentDef.id,
+      apiVersion: componentDef.component.version,
+      trim: false,
+    },
+  });
+  const componentData = data?.components?.find((comp) => comp.id === componentDef.id);
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -136,10 +231,10 @@ const ComponentContents = ({ component }) => {
   };
 
   const metaDataLeft = {
-    version: component?.apiVersion,
-    modelName: component?.metadata?.modelDisplayName,
-    kind: component?.kind,
-    subCategory: component?.metadata?.subCategory,
+    version: componentData?.component?.version,
+    modelName: componentData?.model?.displayName,
+    kind: componentData?.component.kind,
+    subCategory: componentData?.model?.subCategory,
   };
 
   const orderLeft = ['version', 'modelName', 'kind'];
@@ -152,55 +247,57 @@ const ComponentContents = ({ component }) => {
   };
 
   const metaDataRight = {
-    registrant: component?.displayhostname,
-    duplicates: component?.duplicates?.toString(),
-    category: component?.model?.category?.name,
+    registrant: componentData?.registrant?.hostname,
+    duplicates: componentData?.duplicates?.toString(),
+    category: componentData?.model?.category?.name,
   };
 
   const orderRight = ['registrant', 'duplicates'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <div className={StyleClass.segment}>
-      <div
-        className={StyleClass.fullWidth}
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          paddingRight: '1rem',
-        }}
-      >
-        <FormatStructuredData
-          data={orderdMetadataLeft}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
-      </div>
-
-      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
-        <FormatStructuredData
-          data={orderdMetadataRight}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
-    </div>
+    <>
+      {isSuccess && componentData ? (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TitleWithImg
+              displayName={componentData?.displayName}
+              iconSrc={componentData?.styles?.svgColor}
+            />
+          </div>
+          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
+          <RenderContents
+            metaDataLeft={metaDataLeft}
+            metaDataRight={metaDataRight}
+            PropertyFormattersLeft={PropertyFormattersLeft}
+            PropertyFormattersRight={PropertyFormattersRight}
+            orderLeft={orderdMetadataLeft}
+            orderRight={orderdMetadataRight}
+            jsonData={componentData}
+          />
+        </div>
+      ) : (
+        <JustifyAndAlignCenter>
+          <CircularProgress size={24} />
+        </JustifyAndAlignCenter>
+      )}
+    </>
   );
 };
 
-const RelationshipContents = ({ relationship }) => {
+const RelationshipContents = ({ relationshipDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
-    modelName: (value) => <KeyValue property="Model Name" value={value} />,
-    kind: (value) => <KeyValue property="Kind" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const metaDataLeft = {
-    version: relationship.apiVersion,
-    modelName: relationship.model?.displayName,
+    registrant: relationshipDef.model.registrant.name,
+    modelName: relationshipDef.model?.displayName,
+    version: relationshipDef.schemaVersion,
   };
 
-  const orderLeft = ['version', 'modelName'];
+  const orderLeft = ['registrant', 'version'];
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
@@ -209,46 +306,29 @@ const RelationshipContents = ({ relationship }) => {
   };
 
   const metaDataRight = {
-    registrant: relationship.displayhostname,
-    subType: relationship.subType,
+    registrant: relationshipDef.model.registrant.hostname,
+    subType: relationshipDef.subType,
   };
 
   const orderRight = ['subType', 'registrant'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <>
-      <div
-        style={{
-          display: 'flex',
-          marginTop: '12px',
-          flexDirection: 'row',
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '50%',
-            paddingRight: '1rem',
-          }}
-        >
-          <FormatStructuredData
-            data={orderdMetadataLeft}
-            propertyFormatters={PropertyFormattersLeft}
-            order={orderLeft}
-          />
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-          <FormatStructuredData
-            data={orderdMetadataRight}
-            propertyFormatters={PropertyFormattersRight}
-            order={orderRight}
-          />
-        </div>
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <StyledTitle>{`${relationshipDef?.kind} :: ${relationshipDef.type} :: ${relationshipDef.subType}`}</StyledTitle>
+        <Description description={relationshipDef?.metadata?.description} />
       </div>
-    </>
+      <RenderContents
+        metaDataLeft={metaDataLeft}
+        metaDataRight={metaDataRight}
+        PropertyFormattersLeft={PropertyFormattersLeft}
+        PropertyFormattersRight={PropertyFormattersRight}
+        orderLeft={orderdMetadataLeft}
+        orderRight={orderdMetadataRight}
+        jsonData={relationshipDef}
+      />
+    </div>
   );
 };
 
@@ -259,7 +339,7 @@ const RegistrantContent = ({ registrant }) => {
   };
 
   const metaDataLeft = {
-    models: registrant.summary?.models?.toString(),
+    models: registrant?.summary?.models?.toString(),
     components: registrant.summary?.components?.toString(),
   };
 
@@ -279,34 +359,19 @@ const RegistrantContent = ({ registrant }) => {
   const orderRight = ['relationships', 'policies'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   return (
-    <div
-      style={{
-        display: 'flex',
-        marginTop: '12px',
-        flexDirection: 'row',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          width: '50%',
-          paddingRight: '1rem',
-        }}
-      >
-        <FormatStructuredData
-          data={orderdMetadataLeft}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <StyledTitle>{registrant?.hostname}</StyledTitle>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', width: '50%' }}>
-        <FormatStructuredData
-          data={orderdMetadataRight}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
+      <RenderContents
+        metaDataLeft={metaDataLeft}
+        metaDataRight={metaDataRight}
+        PropertyFormattersLeft={PropertyFormattersLeft}
+        PropertyFormattersRight={PropertyFormattersRight}
+        orderLeft={orderdMetadataLeft}
+        orderRight={orderdMetadataRight}
+        jsonData={registrant}
+      />
     </div>
   );
 };
@@ -320,56 +385,94 @@ const Description = ({ description }) => (
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
-    <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />
-    <Title title={displayName} />
+    {iconSrc && <img src={iconSrc} height="32px" width="32px" style={{ marginRight: '0.6rem' }} />}
+    <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
+const StatusChip = ({ entityData, entityType }) => {
+  const nextStatus = Object.values(REGISTRY_ITEM_STATES);
+  const [updateEntityStatus] = useUpdateEntityStatusMutation();
+  const { data: modelData, isSuccess } = useGetMeshModelsQuery({
+    params: {
+      id: entityData.model.id,
+      version: entityData.model.version,
+    },
+  });
+
+  const data = modelData?.models?.find((model) => model.id === entityData.id);
+  const handleStatusChange = (e) => {
+    updateEntityStatus({
+      entityType: _.toLower(entityType),
+      body: {
+        id: data?.id || entityData.id,
+        status: e.target.value,
+        displayname: entityData.displayName,
+      },
+    });
+  };
+
+  // const icons = {
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
+  // };
+
+  return (
+    <FormControl style={{ flexDirection: 'inherit' }}>
+      {isSuccess ? (
+        <Select
+          labelId="entity-status-select-label"
+          id={data?.id}
+          key={data?.id}
+          size="small"
+          value={data?.status || REGISTRY_ITEM_STATES.IGNORED}
+          defaultValue={data?.status || REGISTRY_ITEM_STATES.IGNORED}
+          onChange={(e) => handleStatusChange(e)}
+          sx={{
+            textTransform: 'capitalize',
+          }}
+          disabled={!isSuccess} // Disable the select when isSuccess is false
+        >
+          {nextStatus.map((status) => (
+            <MenuItem style={{ textTransform: 'capitalize' }} value={status} key={status}>
+              {status}
+            </MenuItem>
+          ))}
+        </Select>
+      ) : (
+        <CircularProgress size={24} />
+      )}
+    </FormControl>
+  );
+};
+
 const MeshModelDetails = ({ view, showDetailsData }) => {
-  const StyleClass = useStyles();
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
+  const renderEmptyDetails = () => (
+    <p style={{ color: '#979797', margin: 'auto' }}>No {view} selected</p>
+  );
+
+  const getContent = (type) => {
+    switch (type) {
+      case MODELS:
+        return <ModelContents modelDef={showDetailsData.data} />;
+      case RELATIONSHIPS:
+        return <RelationshipContents relationshipDef={showDetailsData.data} />;
+      case COMPONENTS:
+        return <ComponentContents componentDef={showDetailsData.data} />;
+      case REGISTRANTS:
+        return <RegistrantContent registrant={showDetailsData.data} />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <div
-      className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
-    >
-      {isEmptyDetails && <p style={{ color: '#969696', margin: 'auto' }}>No {view} selected</p>}
-      {showDetailsData.type === MODELS && (
-        <div>
-          <TitleWithImg
-            displayName={showDetailsData.data.displayName}
-            iconSrc={showDetailsData.data.metadata?.svgColor}
-          />
-          <ModelContents model={showDetailsData.data} />
-        </div>
-      )}
-      {showDetailsData.type === RELATIONSHIPS && (
-        <div>
-          <Title title={showDetailsData.data.kind} />
-          <Description description={showDetailsData.data.metadata?.description} />
-          <RelationshipContents relationship={showDetailsData.data} />
-        </div>
-      )}
-      {showDetailsData.type === COMPONENTS && (
-        <div>
-          <TitleWithImg
-            displayName={showDetailsData.data.displayName}
-            iconSrc={showDetailsData.data.metadata?.svgColor}
-          />
-          {showDetailsData.data.schema && (
-            <Description description={JSON.parse(showDetailsData.data.schema)?.description} />
-          )}
-          <ComponentContents component={showDetailsData.data} />
-        </div>
-      )}
-      {showDetailsData.type === REGISTRANTS && (
-        <div>
-          <Title title={showDetailsData.data.hostname} />
-          <RegistrantContent registrant={showDetailsData.data} />
-        </div>
-      )}
-    </div>
+    <DetailsContainer isEmpty={isEmptyDetails}>
+      {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+    </DetailsContainer>
   );
 };
 

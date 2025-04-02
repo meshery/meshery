@@ -1,60 +1,90 @@
-import { Box, Button, Grid, NoSsr, Typography, withStyles } from '@material-ui/core';
-import { Provider, connect } from 'react-redux';
+import { NoSsr } from '@layer5/sistent';
+import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import { Pagination, PaginationItem } from '@material-ui/lab';
+import {
+  AssignmentModal,
+  Box,
+  CustomColumnVisibilityControl,
+  Pagination,
+  PaginationItem,
+  ResponsiveDataTable,
+  TeamsIcon,
+  useDesignAssignment,
+  useEnvironmentAssignment,
+  useTeamAssignment,
+  useViewAssignment,
+  ViewIcon,
+  WorkspaceIcon,
+  Modal as SistentModal,
+  createAndEditWorkspaceSchema,
+  createAndEditWorkspaceUiSchema,
+  Button,
+  Grid,
+  Typography,
+  DeleteIcon,
+  SearchBar,
+  useTheme,
+  PROMPT_VARIANTS,
+  L5EditIcon,
+  L5DeleteIcon,
+  OutlinedPatternIcon,
+} from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import DesignsIcon from '../../../assets/icons/DesignIcon';
-import classNames from 'classnames';
-
-import { store } from '../../../store';
-import WorkspaceIcon from '../../../assets/icons/Workspace';
-import { EmptyState, GenericModal, TransferList } from '../General';
-import useStyles from '../../../assets/styles/general/tool.styles';
-import styles from '../Environments/styles';
-import SearchBar from '../../../utils/custom-search';
+import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
 import {
   useAssignDesignToWorkspaceMutation,
   useAssignEnvironmentToWorkspaceMutation,
+  useAssignTeamToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
   useCreateWorkspaceMutation,
   useDeleteWorkspaceMutation,
   useGetDesignsOfWorkspaceQuery,
   useGetEnvironmentsOfWorkspaceQuery,
+  useGetTeamsOfWorkspaceQuery,
+  useGetViewsOfWorkspaceQuery,
   useGetWorkspacesQuery,
   useUnassignDesignFromWorkspaceMutation,
   useUnassignEnvironmentFromWorkspaceMutation,
+  useUnassignTeamFromWorkspaceMutation,
+  useUnassignViewFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
 import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
-import WorkspaceCard from './workspace-card';
-import Modal from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import { RJSFModalWrapper } from '../../Modal';
+import _PromptComponent from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
-import { DeleteIcon } from '@layer5/sistent-svg';
-import theme from '../../../themes/app';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
-import { useGetSchemaQuery } from '@/rtk-query/schema';
 
-const ACTION_TYPES = {
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import WorkSpaceDataTable from './workspace-table';
+import { useWindowDimensions } from '@/utils/dimension';
+import { updateVisibleColumns } from '@/utils/responsive-column';
+import ViewSwitch from '@/components/ViewSwitch';
+import { TableIconsContainer, IconWrapper, CreateButtonWrapper, BulkActionWrapper } from './styles';
+import MesheryWorkspaceCard from './MesheryWorkspaceCard';
+
+export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
   EDIT: 'edit',
 };
 
-const Workspaces = ({ organization, classes }) => {
+const Workspaces = ({ organization }) => {
+  const theme = useTheme();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
   });
   const [page, setPage] = useState(0);
-  const [pageSize /*setPageSize*/] = useState(10);
-  const [sortOrder /*setSortOrder*/] = useState('');
+  const [pageSize, setPageSize] = useState(10);
+  const [sortOrder, setSortOrder] = useState('updated_at desc');
   const [search, setSearch] = useState('');
 
   const [orgId, setOrgId] = useState('');
@@ -62,32 +92,16 @@ const Workspaces = ({ organization, classes }) => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editWorkspaceId, setEditWorkspaceId] = useState('');
-
-  const [assignEnvironmentModal, setAssignEnvironmentModal] = useState(false);
+  const [viewType, setViewType] = useState('grid');
   const [environmentAssignWorkspace, setEnvironmentAssignWorkspace] = useState({});
-  const [environmentsData, setEnvironmentsData] = useState([]);
-  const [environmentsPage, setEnvironmentsPage] = useState(0);
-  const [environmentsPageSize /*setEnvironmentsPageSize*/] = useState(25);
-  const [workspaceEnvironmentsData, setWorkspaceEnvironmentsData] = useState([]);
-  const [skipEnvironments, setSkipEnvironments] = useState(true);
-  const [assignedEnvironments, setAssignedEnvironments] = useState([]);
-  const [environmentsOfWorkspacePage, setEnvironmentsOfWorkspacePage] = useState(0);
-  const [assignDesignModal, setAssignDesignModal] = useState(false);
+  const [teamAssignWorkspace, setTeamAssignWorkspace] = useState({});
   const [designAssignWorkspace, setDesignAssignWorkspace] = useState({});
-  const [designsData, setDesignsData] = useState([]);
-  const [workspaceDesignsData, setWorkspaceDesignsData] = useState([]);
-  const [assignedDesigns, setAssignedDesigns] = useState([]);
-  const [skipDesigns, setSkipDesigns] = useState(true);
-  const [designsOfWorkspacePage, setDesignsOfWorkspacePage] = useState(0);
-  const [designsPage, setDesignsPage] = useState(0);
-  const [designsPageSize /*setDesignssPageSize*/] = useState(25);
+  const [viewsAssignWorkspace, setViewsAssignWorkspace] = useState({});
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
-  const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
-  const [disableTranferButton, setDisableTranferButton] = useState(true);
 
   const ref = useRef(null);
+  const bulkDeleteRef = useRef(null);
   const { notify } = useNotification();
-  const StyleClass = useStyles();
 
   const {
     data: workspacesData,
@@ -112,100 +126,7 @@ const Workspaces = ({ organization, classes }) => {
 
   const [deleteWorkspace] = useDeleteWorkspaceMutation();
 
-  const {
-    data: environments,
-    isError: isEnvironmentsError,
-    error: environmentsError,
-  } = useGetEnvironmentsOfWorkspaceQuery(
-    {
-      workspaceId: environmentAssignWorkspace.id,
-      page: environmentsData.length === 0 ? 0 : environmentsPage,
-      pagesize: environmentsPageSize,
-      filter: '{"assigned":false}',
-    },
-    {
-      skip: skipEnvironments,
-    },
-  );
-
-  const {
-    data: environmentsOfWorkspace,
-    isError: isEnvironmentsOfWorkspaceError,
-    error: environmentsOfWorkspaceError,
-  } = useGetEnvironmentsOfWorkspaceQuery(
-    {
-      workspaceId: environmentAssignWorkspace.id,
-      page: workspaceEnvironmentsData.length === 0 ? 0 : environmentsOfWorkspacePage,
-      pagesize: environmentsPageSize,
-    },
-    {
-      skip: skipEnvironments,
-    },
-  );
-
-  const [assignEnvironmentToWorkspace] = useAssignEnvironmentToWorkspaceMutation();
-
-  const [unassignEnvironmentFromWorkspace] = useUnassignEnvironmentFromWorkspaceMutation();
-
-  const { data: designs } = useGetDesignsOfWorkspaceQuery(
-    {
-      workspaceId: designAssignWorkspace.id,
-      page: designsData.length === 0 ? 0 : designsPage,
-      pagesize: designsPageSize,
-      filter: '{"assigned":false}',
-    },
-    {
-      skip: skipDesigns,
-    },
-  );
-
-  const {
-    data: designsOfWorkspace,
-    isError: isDesignsOfWorkspaceError,
-    error: designsOfWorkspaceError,
-  } = useGetDesignsOfWorkspaceQuery(
-    {
-      workspaceId: designAssignWorkspace.id,
-      page: workspaceDesignsData.length === 0 ? 0 : designsOfWorkspacePage,
-      pagesize: designsPageSize,
-    },
-    {
-      skip: skipDesigns,
-    },
-  );
-
-  const { data: schemaWorkspace } = useGetSchemaQuery({
-    schemaName: 'workspace',
-  });
-
-  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
-
-  const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
-
   const workspaces = workspacesData?.workspaces ? workspacesData.workspaces : [];
-  const environmentsDataRtk = environments?.environments ? environments.environments : [];
-  const designsDataRtk = designs?.designs ? designs.designs : [];
-  const environmentsOfWorkspaceDataRtk = environmentsOfWorkspace?.environments
-    ? environmentsOfWorkspace.environments
-    : [];
-  const designsOfWorkspaceDataRtk = designsOfWorkspace?.designs ? designsOfWorkspace.designs : [];
-
-  useEffect(() => {
-    setEnvironmentsData((prevData) => [...prevData, ...environmentsDataRtk]);
-  }, [environments]);
-
-  useEffect(() => {
-    setDesignsData((prevData) => [...prevData, ...designsDataRtk]);
-  }, [designs]);
-
-  useEffect(() => {
-    setWorkspaceEnvironmentsData((prevData) => [...prevData, ...environmentsOfWorkspaceDataRtk]);
-  }, [environmentsOfWorkspace]);
-
-  useEffect(() => {
-    setWorkspaceDesignsData((prevData) => [...prevData, ...designsOfWorkspaceDataRtk]);
-  }, [designsOfWorkspace]);
-
   const handleCreateWorkspace = ({ organization, name, description }) => {
     createWorkspace({
       workspacePayload: {
@@ -248,42 +169,24 @@ const Workspaces = ({ organization, classes }) => {
     if (isWorkspacesError) {
       handleError(`Workspaces Fetching Error: ${workspacesError?.data}`);
     }
-    if (isEnvironmentsError) {
-      handleError(`Environments Fetching Error: ${environmentsError?.data}`);
-    }
-    if (isEnvironmentsOfWorkspaceError) {
-      handleError(
-        `Environments of Workspace Fetching Error: ${environmentsOfWorkspaceError?.data}`,
-      );
-    }
-    if (isDesignsOfWorkspaceError) {
-      handleError(`Designs of Workspace Fetching Error: ${designsOfWorkspaceError?.data}`);
-    }
-  }, [
-    isWorkspacesError,
-    workspacesError,
-    isEnvironmentsError,
-    environmentsError,
-    isEnvironmentsOfWorkspaceError,
-    environmentsOfWorkspaceError,
-    isDesignsOfWorkspaceError,
-    designsOfWorkspaceError,
-    handleError,
-  ]);
+  }, [isWorkspacesError, workspacesError, handleError]);
 
   useEffect(() => {
     setOrgId(organization?.id);
   }, [organization]);
 
   const fetchSchema = () => {
-    const updatedSchema = { ...schemaWorkspace };
-    updatedSchema.rjsfSchema?.properties?.organization &&
-      ((updatedSchema.rjsfSchema = {
-        ...updatedSchema.rjsfSchema,
+    const updatedSchema = {
+      schema: createAndEditWorkspaceSchema,
+      uiSchema: createAndEditWorkspaceUiSchema,
+    };
+    updatedSchema.schema?.properties?.organization &&
+      ((updatedSchema.schema = {
+        ...updatedSchema.schema,
         properties: {
-          ...updatedSchema.rjsfSchema.properties,
+          ...updatedSchema.schema.properties,
           organization: {
-            ...updatedSchema.rjsfSchema.properties.organization,
+            ...updatedSchema.schema.properties.organization,
             enum: [organization?.id],
             enumNames: [organization?.name],
           },
@@ -321,8 +224,8 @@ const Workspaces = ({ organization, classes }) => {
 
   const handleWorkspaceModalOpen = (e, actionType, workspaceObject) => {
     e.stopPropagation();
-    if (actionType === ACTION_TYPES.EDIT) {
-      setActionType(ACTION_TYPES.EDIT);
+    if (actionType === WORKSPACE_ACTION_TYPES.EDIT) {
+      setActionType(WORKSPACE_ACTION_TYPES.EDIT);
       setInitialData({
         name: workspaceObject.name,
         description: workspaceObject.description,
@@ -330,7 +233,7 @@ const Workspaces = ({ organization, classes }) => {
       });
       setEditWorkspaceId(workspaceObject.id);
     } else {
-      setActionType(ACTION_TYPES.CREATE);
+      setActionType(WORKSPACE_ACTION_TYPES.CREATE);
       setInitialData({
         name: undefined,
         description: '',
@@ -357,7 +260,6 @@ const Workspaces = ({ organization, classes }) => {
       );
     });
     setSelectedWorkspaces([]);
-    handleDeleteWorkspacesModalClose();
   };
 
   const handleBulkSelect = (e, id) => {
@@ -370,20 +272,12 @@ const Workspaces = ({ organization, classes }) => {
     }
   };
 
-  const handleDeleteWorkspacesModalClose = () => {
-    setDeleteWorkspacesModal(false);
-  };
-
-  const handleDeleteWorkspacesModalOpen = () => {
-    setDeleteWorkspacesModal(true);
-  };
-
   const handleDeleteWorkspaceConfirm = async (e, workspace) => {
     e.stopPropagation();
     let response = await ref.current.show({
       title: `Delete workspace ?`,
       subtitle: deleteWorkspaceModalContent(workspace.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
@@ -403,370 +297,541 @@ const Workspaces = ({ organization, classes }) => {
     </>
   );
 
-  const handleAssignEnvironmentModalClose = () => {
-    setAssignEnvironmentModal(false);
-    setSkipEnvironments(true);
+  const handleBulkDeleteWorkspaceConfirm = async (e) => {
+    e.stopPropagation();
+    let response = await bulkDeleteRef.current.show({
+      title: `Delete ${selectedWorkspaces.length} workspaces ?`,
+      subtitle: deleteBlukWorkspaceModalContent(),
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    if (response === 'DELETE') {
+      handleBulkDeleteWorkspace();
+    }
   };
+
+  const deleteBlukWorkspaceModalContent = () => (
+    <p>Are you sure you want to delete these workspaces? (This action is irreversible)</p>
+  );
+  const environmentAssignment = useEnvironmentAssignment({
+    workspaceId: environmentAssignWorkspace?.id,
+    useAssignEnvironmentToWorkspaceMutation: useAssignEnvironmentToWorkspaceMutation,
+    useGetEnvironmentsOfWorkspaceQuery: useGetEnvironmentsOfWorkspaceQuery,
+    useUnassignEnvironmentFromWorkspaceMutation: useUnassignEnvironmentFromWorkspaceMutation,
+    isEnvironmentsVisible: CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject),
+  });
+
+  const teamAssignment = useTeamAssignment({
+    workspaceId: teamAssignWorkspace?.id,
+    useAssignTeamToWorkspaceMutation: useAssignTeamToWorkspaceMutation,
+    useGetTeamsOfWorkspaceQuery: useGetTeamsOfWorkspaceQuery,
+    useUnassignTeamFromWorkspaceMutation: useUnassignTeamFromWorkspaceMutation,
+    isTeamsVisible: CAN(keys.VIEW_TEAMS.action, keys.VIEW_TEAMS.subject),
+  });
+
+  const designAssignment = useDesignAssignment({
+    workspaceId: designAssignWorkspace?.id,
+    useAssignDesignToWorkspaceMutation: useAssignDesignToWorkspaceMutation,
+    useGetDesignsOfWorkspaceQuery: useGetDesignsOfWorkspaceQuery,
+    useUnassignDesignFromWorkspaceMutation: useUnassignDesignFromWorkspaceMutation,
+    isDesignsVisible: CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject),
+  });
+
+  const viewAssignment = useViewAssignment({
+    workspaceId: viewsAssignWorkspace?.id,
+    useGetViewsOfWorkspaceQuery: useGetViewsOfWorkspaceQuery,
+    useAssignViewToWorkspaceMutation: useAssignViewToWorkspaceMutation,
+    useUnassignViewFromWorkspaceMutation: useUnassignViewFromWorkspaceMutation,
+    isViewsVisible: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
+  });
 
   const handleAssignEnvironmentModalOpen = (e, workspace) => {
     e.stopPropagation();
-    setAssignEnvironmentModal(true);
-    if (environmentAssignWorkspace.id !== workspace.id) {
-      setWorkspaceEnvironmentsData([]);
-      setEnvironmentsData([]);
-    }
     setEnvironmentAssignWorkspace(workspace);
-    setSkipEnvironments(false);
+    environmentAssignment.handleAssignModal();
   };
 
-  const handleAssignEnvironmentsData = (updatedAssignedData) => {
-    const { addedEnvironmentsIds, removedEnvironmentsIds } =
-      getAddedAndRemovedEnvironments(updatedAssignedData);
-    (addedEnvironmentsIds.length > 0 || removedEnvironmentsIds.length) > 0
-      ? setDisableTranferButton(false)
-      : setDisableTranferButton(true);
-
-    setAssignedEnvironments(updatedAssignedData);
-  };
-
-  const handleAssignEnvironments = () => {
-    const { addedEnvironmentsIds, removedEnvironmentsIds } =
-      getAddedAndRemovedEnvironments(assignedEnvironments);
-
-    addedEnvironmentsIds.map((id) =>
-      assignEnvironmentToWorkspace({
-        workspaceId: environmentAssignWorkspace.id,
-        environmentId: id,
-      }).unwrap(),
-    );
-
-    removedEnvironmentsIds.map((id) =>
-      unassignEnvironmentFromWorkspace({
-        workspaceId: environmentAssignWorkspace.id,
-        environmentId: id,
-      }).unwrap(),
-    );
-    setEnvironmentsData([]);
-    setWorkspaceEnvironmentsData([]);
-    handleAssignEnvironmentModalClose();
-  };
-
-  const getAddedAndRemovedEnvironments = (allAssignedEnvironments) => {
-    const originalEnvironmentsIds = workspaceEnvironmentsData.map((environment) => environment.id);
-    const updatedEnvironmentsIds = allAssignedEnvironments.map((environment) => environment.id);
-
-    const addedEnvironmentsIds = updatedEnvironmentsIds.filter(
-      (id) => !originalEnvironmentsIds.includes(id),
-    );
-    const removedEnvironmentsIds = originalEnvironmentsIds.filter(
-      (id) => !updatedEnvironmentsIds.includes(id),
-    );
-    return {
-      addedEnvironmentsIds,
-      removedEnvironmentsIds,
-    };
-  };
-
-  const handleAssignDesignModalClose = () => {
-    setAssignDesignModal(false);
-    setSkipDesigns(true);
+  const handleAssignTeamModalOpen = (e, workspace) => {
+    e.stopPropagation();
+    teamAssignment.handleAssignModal();
+    setTeamAssignWorkspace(workspace);
   };
 
   const handleAssignDesignModalOpen = (e, workspace) => {
     e.stopPropagation();
-    setAssignDesignModal(true);
-    if (designAssignWorkspace.id !== workspace.id) {
-      setWorkspaceDesignsData([]);
-      setDesignsData([]);
-    }
     setDesignAssignWorkspace(workspace);
-    setSkipDesigns(false);
+    setViewsAssignWorkspace(workspace);
+    designAssignment.handleAssignModal();
+    viewAssignment.handleAssignModal();
   };
 
-  const handleAssignDesignsData = (updatedAssignedData) => {
-    const { addedDesignsIds, removedDesignsIds } = getAddedAndRemovedDesigns(updatedAssignedData);
-    (addedDesignsIds.length > 0 || removedDesignsIds.length) > 0
-      ? setDisableTranferButton(false)
-      : setDisableTranferButton(true);
-
-    setAssignedDesigns(updatedAssignedData);
-  };
-
-  const handleAssignDesigns = () => {
-    const { addedDesignsIds, removedDesignsIds } = getAddedAndRemovedDesigns(assignedDesigns);
-
-    addedDesignsIds.map((id) =>
-      assignDesignToWorkspace({
-        workspaceId: designAssignWorkspace.id,
-        designId: id,
-      }).unwrap(),
-    );
-
-    removedDesignsIds.map((id) =>
-      unassignDesignFromWorkspace({
-        workspaceId: designAssignWorkspace.id,
-        designId: id,
-      }).unwrap(),
-    );
-    setDesignsData([]);
-    setWorkspaceDesignsData([]);
-    handleAssignDesignModalClose();
-  };
-
-  const getAddedAndRemovedDesigns = (allAssignedDesigns) => {
-    const originalDesignsIds = workspaceDesignsData.map((design) => design.id);
-    const updatedDesignsIds = allAssignedDesigns.map((design) => design.id);
-
-    const addedDesignsIds = updatedDesignsIds.filter((id) => !originalDesignsIds.includes(id));
-    const removedDesignsIds = originalDesignsIds.filter((id) => !updatedDesignsIds.includes(id));
-
-    return {
-      addedDesignsIds,
-      removedDesignsIds,
-    };
-  };
-
-  const handleAssignablePageEnvironment = () => {
-    const pagesCount = parseInt(
-      Math.ceil(parseInt(environments?.total_count) / environmentsPageSize),
-    );
-    if (environmentsPage < pagesCount - 1) {
-      setEnvironmentsPage((prevEnvironmentsPage) => prevEnvironmentsPage + 1);
+  const isDesignActivity = designAssignment?.isActivityOccurred(designAssignment?.assignedItems);
+  const isViewActivity = viewAssignment?.isActivityOccurred(viewAssignment?.assignedItems);
+  const handleAssignments = () => {
+    if (isDesignActivity) {
+      designAssignment.handleAssign();
+    }
+    if (isViewActivity) {
+      viewAssignment.handleAssign();
     }
   };
 
-  const handleAssignedPageEnvironment = () => {
-    const pagesCount = parseInt(
-      Math.ceil(parseInt(environmentsOfWorkspace?.total_count) / environmentsPageSize),
-    );
-    if (environmentsOfWorkspacePage < pagesCount - 1) {
-      setEnvironmentsOfWorkspacePage(
-        (prevEnvironmentsOfWorkspacePage) => prevEnvironmentsOfWorkspacePage + 1,
-      );
-    }
-  };
+  let colViews = [
+    ['id', 'na'],
+    ['name', 'xs'],
+    ['description', 'm'],
+    ['owner', 'xs'],
+    ['actions', 'xs'],
+    ['updated_at', 'l'],
+    ['created_at', 'na'],
+  ];
 
-  const handleAssignablePageDesign = () => {
-    const pagesCount = parseInt(Math.ceil(parseInt(designs?.total_count) / designsPageSize));
-    if (designsPage < pagesCount - 1) {
-      setDesignsPage((prevDesignsPage) => prevDesignsPage + 1);
-    }
-  };
+  const columns = [
+    {
+      name: 'id',
+      label: 'ID',
+      filter: false,
+    },
+    {
+      name: 'name',
+      label: 'Name',
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+      },
+    },
+    {
+      name: 'description',
+      label: 'Description',
+    },
+    {
+      name: 'owner',
+      label: 'Owner',
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+      },
+    },
+    {
+      name: 'created_at',
+      label: 'Created At',
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+      },
+    },
+    {
+      name: 'updated_at',
+      label: 'Updated At',
+      options: {
+        filter: false,
+        sort: true,
+        searchable: true,
+      },
+    },
+    {
+      name: 'actions',
+      label: 'Actions',
+      options: {
+        sort: false,
+        customBodyRender: (value, tableMeta) => {
+          return (
+            <TableIconsContainer>
+              <IconWrapper>
+                {
+                  <>
+                    <L5EditIcon
+                      title="Edit Workspace"
+                      key={`edit_role-${tableMeta.rowIndex}`}
+                      disabled={!CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
+                      onClick={(e) =>
+                        handleWorkspaceModalOpen(
+                          e,
+                          WORKSPACE_ACTION_TYPES.EDIT,
+                          workspacesData.workspaces[tableMeta.rowIndex],
+                        )
+                      }
+                    />
 
-  const handleAssignedPageDesign = () => {
-    const pagesCount = parseInt(
-      Math.ceil(parseInt(designsOfWorkspace?.total_count) / designsPageSize),
-    );
-    if (designsOfWorkspacePage < pagesCount - 1) {
-      setDesignsOfWorkspacePage((prevDesignsOfWorkspacePage) => prevDesignsOfWorkspacePage + 1);
-    }
+                    <L5DeleteIcon
+                      title="Delete Workspace"
+                      key={`delete_role-${tableMeta.rowIndex}`}
+                      disabled={!CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
+                      onClick={(e) =>
+                        handleDeleteWorkspaceConfirm(
+                          e,
+                          workspacesData.workspaces[tableMeta.rowIndex],
+                        )
+                      }
+                    />
+                  </>
+                }
+              </IconWrapper>
+            </TableIconsContainer>
+          );
+        },
+      },
+    },
+  ];
+  const [tableCols, updateCols] = useState(columns);
+  const { width } = useWindowDimensions();
+  const [columnVisibility, setColumnVisibility] = useState(() => {
+    let showCols = updateVisibleColumns(colViews, width);
+    // Initialize column visibility based on the original columns' visibility
+    const initialVisibility = {};
+    columns.forEach((col) => {
+      initialVisibility[col.name] = showCols[col.name];
+    });
+    return initialVisibility;
+  });
+
+  const options = {
+    filter: false,
+    viewColumns: false,
+    filterType: 'dropdown',
+    selectableRows: 'none',
+    responsive: 'standard',
+    expandableRows: true,
+    expandableRowsHeader: false,
+    expandableRowsOnClick: true,
+    count: workspaces?.total_count,
+    rowsPerPage: pageSize,
+    page,
+    print: false,
+    download: false,
+    elevation: 0,
+    serverSide: true,
+    search: false,
+    textLabels: {
+      selectedRows: {
+        text: 'user(s) selected',
+      },
+    },
+    sortOrder: {
+      name: sortOrder.split(' ')[0],
+      direction: sortOrder.split(' ')[1],
+    },
+    onTableChange: (action, tableState) => {
+      const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
+      let order = '';
+      if (tableState.activeColumn) {
+        order = `${columns[tableState.activeColumn].name} desc`;
+      }
+
+      switch (action) {
+        case 'changePage':
+          if (tableState.selectedRows.data.length) {
+            tableState.selectedRows = {
+              data: [],
+              lookup: {},
+            };
+          }
+
+          setPage(tableState.page);
+          break;
+        case 'changeRowsPerPage':
+          setPageSize(tableState.rowsPerPage);
+          break;
+        case 'search':
+          setSearch(tableState.searchText !== null ? tableState.searchText : '');
+          break;
+        case 'sort':
+          if (sortInfo.length == 2) {
+            if (sortInfo[1] === 'ascending') {
+              order = `${columns[tableState.activeColumn].name} asc`;
+            } else {
+              order = `${columns[tableState.activeColumn].name} desc`;
+            }
+          }
+          if (order !== sortOrder) {
+            setSortOrder(order);
+          }
+          break;
+        default:
+          break;
+      }
+    },
+    renderExpandableRow: (rowData) => <WorkSpaceDataTable rowData={rowData} />,
   };
 
   return (
     <NoSsr>
       {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
         <>
-          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-            <div className={classes.createButtonWrapper}>
+          <ToolWrapper>
+            <CreateButtonWrapper>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.CREATE)}
-                style={{
+                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
+                sx={{
+                  backgroundColor: '#607d8b',
                   padding: '8px',
-                  borderRadius: 5,
+                  borderRadius: '5px',
                   marginRight: '2rem',
                 }}
                 disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
                 data-cy="btnResetDatabase"
               >
-                <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
                 <Typography
-                  style={{
+                  sx={{
                     paddingLeft: '4px',
                     marginRight: '4px',
+                    textTransform: 'none',
                   }}
                 >
                   Create
                 </Typography>
               </Button>
-            </div>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search connections..."
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-            />
-          </div>
+            </CreateButtonWrapper>
+            <Box display={'flex'}>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search Workspaces..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+              {viewType !== 'grid' && (
+                <CustomColumnVisibilityControl
+                  columns={columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
+                />
+              )}
+              <ViewSwitch view={viewType} changeView={setViewType} />
+            </Box>
+          </ToolWrapper>
           {selectedWorkspaces.length > 0 && (
-            <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+            <BulkActionWrapper>
               <Typography>
                 {selectedWorkspaces.length > 1
                   ? `${selectedWorkspaces.length} workspaces selected`
                   : `${selectedWorkspaces.length} workspace selected`}
               </Typography>
-              <Button className={classes.iconButton}>
+              <Button>
                 <DeleteIcon
-                  fill={theme.palette.secondary.error}
-                  onClick={handleDeleteWorkspacesModalOpen}
+                  fill={theme.palette.text.default}
+                  onClick={handleBulkDeleteWorkspaceConfirm}
                   disabled={
+                    CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
                     selectedWorkspaces.length > 0
-                      ? !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)
+                      ? false
                       : true
                   }
                 />
               </Button>
-            </Box>
+            </BulkActionWrapper>
           )}
-          {workspaces.length > 0 ? (
-            <>
-              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-                {workspaces.map((workspace) => (
-                  <Grid item xs={12} md={6} key={workspace.id}>
-                    <WorkspaceCard
+          <>
+            {workspaces.length === 0 ? (
+              <EmptyState
+                icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+                message="No workspace available"
+                pointerLabel="Click “Create” to establish your first workspace."
+              />
+            ) : viewType === 'grid' ? (
+              <>
+                <Grid container spacing={2}>
+                  {workspaces.map((workspace) => (
+                    <MesheryWorkspaceCard
+                      key={workspace.id}
                       workspaceDetails={workspace}
-                      onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
-                      onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
-                      onSelect={(e) => handleBulkSelect(e, workspace.id)}
+                      handleAssignDesignModalOpen={handleAssignDesignModalOpen}
+                      handleAssignTeamModalOpen={handleAssignTeamModalOpen}
+                      handleAssignEnvironmentModalOpen={handleAssignEnvironmentModalOpen}
+                      handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+                      handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+                      handleBulkSelect={handleBulkSelect}
                       selectedWorkspaces={selectedWorkspaces}
-                      onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
-                      onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
-                      classes={classes}
                     />
-                  </Grid>
-                ))}
-              </Grid>
-              <Grid
-                container
-                sx={{ padding: '2rem 0' }}
-                style={{ marginTop: '20px' }}
-                flex
-                justifyContent="center"
-                spacing={2}
-              >
-                <Pagination
-                  count={Math.ceil(workspacesData?.total_count / pageSize)}
-                  page={page + 1}
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '1rem',
-                    padding: '0.5rem',
-                  }}
-                  onChange={debounce((_, page) => setPage(page - 1), 150)}
-                  boundaryCount={3}
-                  renderItem={(item) => (
-                    <PaginationItem
-                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-                      {...item}
-                    />
-                  )}
-                />
-              </Grid>
-            </>
-          ) : (
-            <EmptyState
-              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
-              message="No workspace available"
-              pointerLabel="Click “Create” to establish your first workspace."
-            />
-          )}
-          {(actionType === ACTION_TYPES.CREATE
+                  ))}
+                </Grid>
+                <Grid
+                  container
+                  sx={{ padding: '2rem 0', marginTop: '20px' }}
+                  flex
+                  justifyContent="center"
+                  spacing={2}
+                >
+                  <Pagination
+                    count={Math.ceil(workspacesData?.total_count / pageSize)}
+                    page={page + 1}
+                    onChange={debounce((_, page) => setPage(page - 1), 150)}
+                    boundaryCount={3}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                        {...item}
+                      />
+                    )}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <ResponsiveDataTable
+                columns={columns}
+                data={workspacesData?.workspaces}
+                options={options}
+                columnVisibility={columnVisibility}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                backgroundColor={theme.palette.background.card}
+              />
+            )}
+          </>
+          {(actionType === WORKSPACE_ACTION_TYPES.CREATE
             ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
             : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
             workspaceModal.open && (
-              <Modal
+              <SistentModal
                 open={workspaceModal.open}
-                schema={workspaceModal.schema.rjsfSchema}
-                uiSchema={workspaceModal.schema.uiSchema}
-                handleClose={handleWorkspaceModalClose}
-                handleSubmit={
-                  actionType === ACTION_TYPES.CREATE ? handleCreateWorkspace : handleEditWorkspace
+                closeModal={handleWorkspaceModalClose}
+                title={
+                  actionType === WORKSPACE_ACTION_TYPES.CREATE
+                    ? 'Create Workspace'
+                    : 'Edit Workspace'
                 }
-                title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
-                submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                initialData={initialData}
-              />
+              >
+                <RJSFModalWrapper
+                  schema={workspaceModal.schema.schema}
+                  uiSchema={workspaceModal.schema.uiSchema}
+                  handleSubmit={
+                    actionType === WORKSPACE_ACTION_TYPES.CREATE
+                      ? handleCreateWorkspace
+                      : handleEditWorkspace
+                  }
+                  submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                  initialData={initialData}
+                  handleClose={handleWorkspaceModalClose}
+                />
+              </SistentModal>
             )}
-          <GenericModal
-            open={assignEnvironmentModal}
-            handleClose={handleAssignEnvironmentModalClose}
+          <AssignmentModal
+            open={environmentAssignment.assignModal}
+            onClose={environmentAssignment.handleAssignModalClose}
             title={`Assign Environments to ${environmentAssignWorkspace.name}`}
-            body={
-              <TransferList
-                name="Environments"
-                assignableData={environmentsData}
-                assignedData={handleAssignEnvironmentsData}
-                originalAssignedData={workspaceEnvironmentsData}
-                emptyStateIconLeft={
-                  <EnvironmentIcon
-                    height="5rem"
-                    width="5rem"
-                    fill="#808080"
-                    secondaryFill="#979797"
-                  />
-                }
-                emtyStateMessageLeft="No environments available"
-                emptyStateIconRight={
-                  <EnvironmentIcon
-                    height="5rem"
-                    width="5rem"
-                    fill="#808080"
-                    secondaryFill="#979797"
-                  />
-                }
-                emtyStateMessageRight="No environments assigned"
-                assignablePage={handleAssignablePageEnvironment}
-                assignedPage={handleAssignedPageEnvironment}
-                originalLeftCount={environments?.total_count}
-                originalRightCount={environmentsOfWorkspace?.total_count}
+            headerIcon={
+              <EnvironmentIcon height="40" width="40" fill={theme.palette.common.white} />
+            }
+            name="Environments"
+            assignableData={environmentAssignment.data}
+            handleAssignedData={environmentAssignment.handleAssignData}
+            originalAssignedData={environmentAssignment.workspaceData}
+            emptyStateIcon={
+              <EnvironmentIcon
+                height="5rem"
+                width="5rem"
+                fill={theme.palette.icon.disabled}
+                secondaryFill={theme.palette.icon.disabled}
               />
             }
-            action={handleAssignEnvironments}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-            helpText="Assign environment to workspace"
-            maxWidth="md"
+            handleAssignablePage={environmentAssignment.handleAssignablePage}
+            handleAssignedPage={environmentAssignment.handleAssignedPage}
+            originalLeftCount={environmentAssignment.data?.length}
+            originalRightCount={environmentAssignment.assignedItems?.length}
+            onAssign={environmentAssignment.handleAssign}
+            disableTransfer={environmentAssignment.disableTransferButton}
+            helpText={`Assign Environments to ${environmentAssignWorkspace.name}`}
+            isAssignAllowed={CAN(
+              keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+              keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowed={CAN(
+              keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+              keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+            )}
           />
-          <GenericModal
-            open={assignDesignModal}
-            handleClose={handleAssignDesignModalClose}
-            title={`Assign Designs to ${designAssignWorkspace.name}`}
-            body={
-              <TransferList
-                name="Designs"
-                assignableData={designsData}
-                assignedData={handleAssignDesignsData}
-                originalAssignedData={workspaceDesignsData}
-                emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
-                emtyStateMessageLeft="No designs available"
-                emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
-                emtyStateMessageRight="No designs assigned"
-                assignablePage={handleAssignablePageDesign}
-                assignedPage={handleAssignedPageDesign}
-                originalLeftCount={designs?.total_count}
-                originalRightCount={designsOfWorkspace?.total_count}
-              />
+
+          <AssignmentModal
+            open={teamAssignment.assignModal}
+            onClose={teamAssignment.handleAssignModalClose}
+            title={`Assign Teams to ${teamAssignWorkspace.name}`}
+            headerIcon={
+              <TeamsIcon height="40" width="40" primaryFill={theme.palette.common.white} />
             }
-            action={handleAssignDesigns}
-            buttonTitle="Save"
-            disabled={disableTranferButton}
-            leftHeaderIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
-            helpText="Assign designs to workspace"
-            maxWidth="md"
+            name="Teams"
+            assignableData={teamAssignment.data}
+            handleAssignedData={teamAssignment.handleAssignData}
+            originalAssignedData={teamAssignment.workspaceData}
+            emptyStateIcon={<TeamsIcon height="5rem" width="5rem" />}
+            handleAssignablePage={teamAssignment.handleAssignablePage}
+            handleAssignedPage={teamAssignment.handleAssignedPage}
+            originalLeftCount={teamAssignment.data?.length}
+            originalRightCount={teamAssignment.assignedItems?.length}
+            onAssign={teamAssignment.handleAssign}
+            disableTransfer={teamAssignment.disableTransferButton}
+            helpText={`Assign Teams to ${teamAssignWorkspace.name}`}
+            isAssignAllowed={CAN(
+              keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+              keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowed={CAN(
+              keys.REMOVE_TEAM_FROM_WORKSPACE.action,
+              keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+            )}
           />
-          <GenericModal
-            open={deleteWorkspacesModal}
-            handleClose={handleDeleteWorkspacesModalClose}
-            title={'Delete Workspace'}
-            body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
-            action={handleBulkDeleteWorkspace}
+
+          <AssignmentModal
+            open={designAssignment.assignModal && viewAssignment.assignModal}
+            onClose={designAssignment.handleAssignModalClose}
+            title={`Assign Designs and Views to ${designAssignWorkspace.name}`}
+            headerIcon={
+              <OutlinedPatternIcon height="40" width="40" fill={theme.palette.icon.default} />
+            }
+            name="Designs"
+            assignableData={designAssignment.data}
+            handleAssignedData={designAssignment.handleAssignData}
+            originalAssignedData={designAssignment.workspaceData}
+            emptyStateIcon={
+              <OutlinedPatternIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
+            }
+            handleAssignablePage={designAssignment.handleAssignablePage}
+            handleAssignedPage={designAssignment.handleAssignedPage}
+            originalLeftCount={designAssignment.data?.total_count}
+            originalRightCount={designAssignment.workspaceData?.total_count}
+            onAssign={isDesignActivity || isViewActivity ? handleAssignments : null}
+            disableTransfer={
+              designAssignment.disableTransferButton && viewAssignment.disableTransferButton
+            }
+            helpText={`Assign Designs and Views to ${designAssignWorkspace.name}`}
+            isAssignAllowed={CAN(
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowed={CAN(
+              keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
+              keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
+            )}
+            showViews={CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject)}
+            emptyStateViewsIcon={
+              <ViewIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
+            }
+            nameViews="Views"
+            assignableViewsData={viewAssignment.data}
+            handleAssignedViewsData={viewAssignment.handleAssignData}
+            originalAssignedViewsData={viewAssignment.workspaceData}
+            handleAssignableViewsPage={viewAssignment.handleAssignablePage}
+            handleAssignedViewsPage={viewAssignment.handleAssignedPage}
+            originalLeftViewsCount={viewAssignment.data?.total_count}
+            originalRightViewsCount={viewAssignment.workspaceData?.total_count}
+            isAssignAllowedViews={CAN(
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowedViews={CAN(
+              keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
+              keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
+            )}
           />
-          <PromptComponent ref={ref} />
+          <_PromptComponent ref={ref} />
+          <_PromptComponent ref={bulkDeleteRef} />
         </>
       ) : (
         <DefaultError />
@@ -782,12 +847,12 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(
-    withRouter((props) => (
-      <Provider store={store}>
-        <Workspaces {...props} />
-      </Provider>
-    )),
-  ),
-);
+const WorkspacesPageWithErrorBoundary = (props) => {
+  return (
+    <NoSsr>
+      <Workspaces {...props} />
+    </NoSsr>
+  );
+};
+
+export default connect(mapStateToProps)(withRouter(WorkspacesPageWithErrorBoundary));

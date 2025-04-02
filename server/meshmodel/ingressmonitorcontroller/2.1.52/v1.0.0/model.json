@@ -1,0 +1,39 @@
+{
+  "category": {
+    "name": "Uncategorized"
+  },
+  "displayName": "Ingressmonitorcontroller",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "isAnnotation": false,
+    "published": false,
+    "subCategory": "Uncategorized",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "model": {
+    "version": "2.1.52"
+  },
+  "name": "ingressmonitorcontroller",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "ignored",
+  "subCategory": "Uncategorized",
+  "version": "v1.0.0",
+  "components": null,
+  "relationships": null
+}

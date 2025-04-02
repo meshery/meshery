@@ -18,7 +18,7 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
-.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build
+.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env
 
 ## Build Meshery Server and UI container.
 docker-build:
@@ -26,11 +26,17 @@ docker-build:
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
 	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
-## Build Meshery Server and UI container in Playground mode. 
+## Build Meshery Server and UI container in Playground mode.
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
+
+## Build Meshery Server and UI container for e2e testing.
+docker-testing-env-build:
+	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
+	# This method does NOT require that you have Go, NPM, etc. installed locally.
+	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t layer5/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -59,10 +65,23 @@ docker-cloud:
 	-p 9081:8080 \
 	layer5/meshery ./meshery
 
+## Runs Meshery in a container locally and points to remote
+## Remote Provider for user authentication.
+docker-testing-env:
+	docker run --rm --name mesherytesting  -d \
+	-e PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	-e DEBUG=true \
+	-e ADAPTER_URLS=$(ADAPTER_URLS) \
+	-e KEYS_PATH=$(KEYS_PATH) \
+	-v meshery-config:/home/appuser/.meshery/config \
+  -v $(HOME)/.kube:/home/appuser/.kube:ro \
+	-p 9081:8080 \
+	layer5/meshery-testing-env ./meshery
+
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error
+.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -98,11 +117,59 @@ build-server: dep-check
 	ADAPTER_URLS=$(ADAPTER_URLS) \
 	APP_PATH=$(APPLICATIONCONFIGPATH) \
 	KEYS_PATH=$(KEYS_PATH) \
-	GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
 	chmod +x ./main
+
+## Running the meshery server using binary.
+server-binary:
+	cd server/cmd; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	../../main; cd ../../
+
+## Running the meshery server using binary with local provider.
+server-binary-local:
+	cd server/cmd; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	../../main; cd ../../
+
+## Build and run Meshery Server on your local machine
+## and point to Remote Provider in staging environment
+server-stg: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go;
 
 ## Build and run Meshery Server on your local machine.
 server: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=$(PORT) \
+	DEBUG=true \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go;
+
+## Build and run Meshery Server with some Meshery Adapters on your local machine.
+server-with-adapters: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -139,7 +206,7 @@ server-skip-compgen:
  	SKIP_COMP_GEN=true \
 	KEYS_PATH=$(KEYS_PATH) \
 	go run main.go error.go;
-	
+
 ## Build and run Meshery Server on your local machine.
 ## Do not generate and register Kubernetes models.
 server-without-k8s: dep-check
@@ -222,7 +289,7 @@ error: dep-check
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 ## Runs meshkit error utility to update error codes for meshery server only.
-server-error-util:
+error-util:
 	go run github.com/layer5io/meshkit/cmd/errorutil -d . --skip-dirs mesheryctl update -i ./server/helpers/ -o ./server/helpers
 
 ## Build Meshery UI; Build and run Meshery Server on your local machine.
@@ -236,21 +303,29 @@ ui-server: ui-meshery-build ui-provider-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v19, $(shell node --version)), v19)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+ifeq ($(findstring v20, $(shell node --version)), v20)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
+else ifeq ($(findstring v19, $(shell node --version)), v19)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v18, $(shell node --version)), v18)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v17, $(shell node --version)), v17)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
-endif
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 
+endif
 ## Install dependencies for building Meshery UI.
 ui-setup:
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
+
+## Clean Install dependencies for building Meshery UI.
+ui-setup-ci:
+	cd ui && npm ci && cd ..
+	cd provider-ui && npm ci && cd ..
 
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
@@ -262,20 +337,20 @@ ui-provider:
 
 ## Lint check Meshery UI and Provider UI on your local machine.
 ui-lint:
-	cd ui; npm run lint; cd ..
+	cd ui; npm i eslint; npx eslint . --fix; cd ..
 
 ## Lint check Meshery Provider UI on your local machine.
 ui-provider-lint:
-	cd provider-ui; npm run lint; cd ..
+	cd provider-ui && npm i eslint && npx eslint .
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:
 	cd provider-ui; npm run test; cd ..
 
 ## Buils all Meshery UIs  on your local machine.
-ui-build:
+ui-build: ui-setup
 	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
-	cd provider-ui; npm run build && npm run export; cd ..
+	cd provider-ui; npm run lint:fix && npm run build && npm run export; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
@@ -283,9 +358,9 @@ ui-meshery-build:
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
-	cd provider-ui; npm run build && npm run export; cd ..
+	cd provider-ui; npm run build; cd ..
 
-## Run Meshery Cypress Integration Tests against your local Meshery UI (cypress runs in non-interactive mode).
+## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
 	cd ui; npm run ci-test-integration; cd ..
 
@@ -313,7 +388,7 @@ docs-build:
 
 ## Run Meshery Docs in a Docker container. Listen for changes.
 docs-docker:
-	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0.0 bash -c "bundle install; jekyll serve --drafts --livereload"
+	cd docs; docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll/jekyll:4.0 bash -c "bundle install; jekyll serve --drafts --livereload"
 
 ## Build Meshery CLI docs
 docs-mesheryctl:
@@ -374,6 +449,25 @@ graphql-docs-build:
 ## Build Meshery GraphQl API specifications
 graphql-build: dep-check
 	cd server; cd internal/graphql; go run -mod=mod github.com/99designs/gqlgen generate
+
+
+
+## testing
+test-setup-ui:
+	cd ui; npx playwright install --with-deps; cd ..
+
+test-ui:
+	cd ui; npm run test:e2e; cd ..
+
+test-e2e-ci:
+	cd ui; npm run test:e2e:ci; cd ..
+
+#-----------------------------------------------------------------------------
+# Rego Policies
+#-----------------------------------------------------------------------------
+rego-eval:
+	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
+	'data.relationship_evaluation_policy.evaluate' --format=pretty
 
 #-----------------------------------------------------------------------------
 # Dependencies

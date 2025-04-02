@@ -1,6 +1,7 @@
 <style>
   .posts {
     list-style-image: url("/assets/img/meshery/meshery-logo-light.svg");
+    line-height: 1rem;
   }
   .post {
     padding: 0.3rem 0.4rem;
@@ -28,7 +29,7 @@
   <!-- -->
   <li class="post">
     <span class="post-date"> {{ post.created_at | date: "%b %d" }} | </span>
-    <a href="http://discuss.meshery.io/t/{{ post.topics[0].slug }}/{{ post.id }}"> {{ post.title }}</a>
+    <a href="https://discuss.layer5.io/t/{{ post.slug }}/{{ post.id }}"> {{ post.title }}</a>
     <span class="poost-author">
       {%for user in users%} {% if(post.posters[0].user_id == user.id)%} {%assign author = user.name%} {%break%}
       {%endif%} {%endfor%} by {{author}}

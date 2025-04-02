@@ -4,6 +4,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 /**
  *  Show Snackbar when error occurs. Can be used in catch blocks
  *  of functions.
+ * @deprecated use the useNotification hook instead
  *
  */
 function HandleError() {

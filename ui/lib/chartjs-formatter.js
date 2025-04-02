@@ -1,4 +1,3 @@
-/* eslint block-scoped-var: 0 */
 export const linearXAxe = {
   type: 'linear',
   scaleLabel: {
@@ -18,7 +17,7 @@ export const logXAxe = {
   },
   ticks: {
     // min: dataH[0].x, // newer chart.js are ok with 0 on x axis too
-    callback: function (tick, index, ticks) {
+    callback: function (tick) {
       return tick.toLocaleString();
     },
   },
@@ -41,7 +40,7 @@ export const logYAxe = {
   ticks: {
     // min: 1, // log mode works even with 0s
     // Needed to not get scientific notation display:
-    callback: function (tick, index, ticks) {
+    callback: function (tick) {
       return tick.toString();
     },
   },

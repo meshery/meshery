@@ -44,6 +44,7 @@ func Connected() machines.State {
 			machines.Disconnect: machines.DISCONNECTED,
 			machines.Delete:     machines.DELETED,
 			machines.NotFound:   machines.NOTFOUND,
+			machines.Ignore:     machines.IGNORED,
 		},
 		Action: &ConnectAction{},
 	}
@@ -160,5 +161,6 @@ func AssignInitialCtx(ctx context.Context, machineCtx interface{}, log logger.Ha
 		return nil, eventBuilder.Build(), err
 	}
 	machinectx.log = log
+	AssignControllerHandlers(machinectx)
 	return machinectx, nil, nil
 }

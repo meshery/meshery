@@ -11,6 +11,7 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
@@ -81,7 +82,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 		defer cli.Close()
 
-		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+		containers, err := cli.ContainerList(ctx, container.ListOptions{All: true})
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
 		}
@@ -94,8 +95,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 
 		adapterImage := "layer5/" + adapter.Name + ":stable-latest"
 
-		// Pull the latest image
-		resp, err := cli.ImagePull(ctx, adapterImage, types.ImagePullOptions{})
+		resp, err := cli.ImagePull(ctx, adapterImage, image.PullOptions{})
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
 		}
@@ -111,7 +111,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 
 		for netName := range mesheryNetworkSettings.Networks {
-			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+			nets, err := cli.NetworkList(ctx, network.ListOptions{})
 			if err != nil {
 				return ErrDeployingAdapterInDocker(err)
 			}
@@ -152,7 +152,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 					if err != nil {
 						return ErrDeployingAdapterInDocker(err)
 					}
-					if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, types.ContainerStartOptions{}); err != nil {
+					if err := cli.ContainerStart(ctx, adapterContainerCreatedBody.ID, container.StartOptions{}); err != nil {
 						return ErrDeployingAdapterInDocker(err)
 					}
 				}
@@ -223,7 +223,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		}
 		defer cli.Close()
 
-		containers, err := cli.ContainerList(ctx, types.ContainerListOptions{})
+		containers, err := cli.ContainerList(ctx, container.ListOptions{})
 		if err != nil {
 			return ErrUnDeployingAdapterInDocker(err)
 		}
@@ -241,7 +241,7 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 		}
 
 		// Stop and remove the container
-		err = cli.ContainerRemove(ctx, containerID, types.ContainerRemoveOptions{
+		err = cli.ContainerRemove(ctx, containerID, container.RemoveOptions{
 			Force:         true,
 			RemoveVolumes: true,
 		})

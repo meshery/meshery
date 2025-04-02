@@ -82,10 +82,10 @@ export const adaptersList = {
   // },
 
   NGINX_SERVICE_MESH: {
-    name: 'Nginx Service Mesh',
+    name: 'NGINX Service Mesh',
     label: 'meshery-nginx-sm',
     imageSrc: '/static/img/nginx.svg',
-    description: adaptersDescription('Nginx Serice Mesh'),
+    description: adaptersDescription('NGINX Service Mesh'),
     defaultPort: 10010,
     enabled: false,
     url: '',
@@ -99,4 +99,18 @@ export const adaptersList = {
     enabled: false,
     url: '',
   },
+  NIGHTHAWK: {
+    name: 'Nighthawk',
+    label: 'meshery-nighthawk',
+    imageSrc: '/static/img/nighthawk-logo.svg',
+    description: adaptersDescription('Performance Characterization by Meshery Nighthawk'),
+    defaultPort: 10013,
+    enabled: false,
+    url: '',
+  },
+};
+
+export const ADAPTER_STATUS = {
+  ENABLED: 'ENABLED',
+  DISABLED: 'DISABLED',
 };

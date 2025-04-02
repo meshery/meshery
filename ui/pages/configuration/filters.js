@@ -1,19 +1,12 @@
 import React, { useEffect } from 'react';
-import { NoSsr, withStyles } from '@material-ui/core';
+import { NoSsr } from '@layer5/sistent';
 import MesheryFilters from '../../components/Filters';
 import { updatepagepath } from '../../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
-
-const styles = {
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  },
-};
+import { Box } from '@layer5/sistent';
 
 function NewFilters(props) {
   useEffect(() => {
@@ -25,7 +18,15 @@ function NewFilters(props) {
       <Head>
         <title>Filters | Meshery</title>
       </Head>
-      <MesheryFilters />
+      <Box
+        sx={{
+          maxWidth: '90%',
+          margin: 'auto',
+          overflow: 'hidden',
+        }}
+      >
+        <MesheryFilters />
+      </Box>
     </NoSsr>
   );
 }
@@ -34,4 +35,4 @@ const mapDispatchToProps = (dispatch) => ({
   updatepagepath: bindActionCreators(updatepagepath, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(NewFilters));
+export default connect(null, mapDispatchToProps)(NewFilters);

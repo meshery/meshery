@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Typography, Box } from '@material-ui/core';
+import { NoSsr } from '@layer5/sistent';
+import { Typography, Box, styled, useTheme } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
@@ -19,27 +19,19 @@ import { CONNECTION_KINDS } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 import { getCredentialByID } from '@/api/credentials';
 
-const grafanaStyles = (theme) => ({
-  buttons: {
-    display: 'flex',
-    //   justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: theme.spacing(3),
-    //   marginLeft: theme.spacing(1),
-  },
-  margin: { margin: theme.spacing(1) },
-  icon: { width: theme.spacing(2.5) },
-  alignRight: { textAlign: 'right' },
-  formControl: { margin: theme.spacing(1), minWidth: 180 },
-  panelChips: { display: 'flex', flexWrap: 'wrap' },
-  panelChip: { margin: theme.spacing(0.25) },
-  chartTitle: { marginLeft: theme.spacing(3), marginTop: theme.spacing(2), textAlign: 'center' },
-  grafanChartsWrapper: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
+const StyledChartTitle = styled(Typography)(({ theme }) => ({
+  marginLeft: theme.spacing(3),
+  marginTop: theme.spacing(2),
+  textAlign: 'center',
+}));
+
+const GrafanaChartsWrapper = styled(Box)(() => {
+  const theme = useTheme();
+  return {
+    backgroundColor: theme.palette.background.default,
     padding: theme.spacing(1),
     marginTop: theme.spacing(2),
-  },
+  };
 });
 
 const getGrafanaBoards = (self, cb = () => {}) => {
@@ -213,6 +205,7 @@ class GrafanaComponent extends Component {
   handleChange = (name) => (data) => {
     if (name === 'grafanaURL' && !!data) {
       this.setState({ urlError: false });
+      this.setState({ [name]: data.value });
     }
 
     const grafanaConnectionObj = data.target?.value;
@@ -360,7 +353,6 @@ class GrafanaComponent extends Component {
   }
 
   render() {
-    const { classes } = this.props;
     const {
       urlError,
       grafanaURL,
@@ -379,13 +371,10 @@ class GrafanaComponent extends Component {
               boardPanelConfigs={selectedBoardsConfigs}
               deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig}
             />
-            <Box className={classes.grafanChartsWrapper}>
-              <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+            <GrafanaChartsWrapper>
+              <StyledChartTitle variant="h6" gutterBottom>
                 Grafana charts
-              </Typography>
-              {/* <GrafanaCharts
-                    boardPanelConfigs={selectedBoardsConfigs}
-                    grafanaURL={grafanaURL} /> */}
+              </StyledChartTitle>
               <div style={{ padding: '0 1rem' }}>
                 <GrafanaCustomCharts
                   boardPanelConfigs={selectedBoardsConfigs}
@@ -393,7 +382,7 @@ class GrafanaComponent extends Component {
                   grafanaAPIKey={grafanaAPIKey}
                 />
               </div>
-            </Box>
+            </GrafanaChartsWrapper>
           </React.Fragment>
         );
       }
@@ -423,7 +412,6 @@ class GrafanaComponent extends Component {
           grafanaAPIKey={grafanaAPIKey}
           urlError={urlError}
           handleChange={(name) => {
-            // Simulating event.target.value
             return (value) => this.handleChange(name)({ target: { value } });
           }}
           handleChangeApiKey={this.handleChangeApiKey}
@@ -435,7 +423,6 @@ class GrafanaComponent extends Component {
 }
 
 GrafanaComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   scannedGrafana: PropTypes.array.isRequired,
 };
 
@@ -452,9 +439,7 @@ const mapStateToProps = (st) => {
   return { grafana: { ...grafana, ts: new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
 };
 
-export default withStyles(grafanaStyles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(withTelemetryHook(withNotify(GrafanaComponent), CONNECTION_KINDS.GRAFANA)),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withTelemetryHook(withNotify(GrafanaComponent), CONNECTION_KINDS.GRAFANA));

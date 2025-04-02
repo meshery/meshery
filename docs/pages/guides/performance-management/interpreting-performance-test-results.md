@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Interpreting Performance Test Results
 abstract: This guide is to help users to glean an insights of what the performance tests result should look like.
 permalink: guides/performance-management/interpreting-performance-test-results
@@ -8,7 +8,7 @@ category: performance
 language: en
 ---
 
-Once a performance tests and run, it's disco analysis is performed and test results persisted. Results or downloadable and persisted in the [Service Mesh Performance](https://smp-spec.io/) (SMP) format.
+Once a performance tests and run, it's disco analysis is performed and test results persisted. Results or downloadable and persisted in the [Cloud Native Performance](https://smp-spec.io/) format.
 
 ## Graphical View
 

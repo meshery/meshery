@@ -1,0 +1,62 @@
+{
+  "capabilities": null,
+  "component": {
+    "kind": "PipelineRun",
+    "schema": "",
+    "version": "tekton.dev/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Pipeline Run",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+     "isNamespaced": true,
+    "published": false
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "umbrella",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/eddycharly/tekton-helm/releases/download/umbrella-0.0.1/umbrella-0.0.1.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.0.1"
+    },
+    "name": "umbrella",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

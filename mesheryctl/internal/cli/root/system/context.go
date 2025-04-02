@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -93,6 +93,10 @@ Usage: mesheryctl system context create [context-name]`
 
 		if platform != "" {
 			tempCntxt.Platform = platform
+		}
+
+		if providerFlag != "" {
+			tempCntxt.Provider = providerFlag
 		}
 
 		if len(components) >= 1 {
@@ -449,6 +453,7 @@ func init() {
 	createContextCmd.Flags().BoolVarP(&set, "set", "s", false, "Set as current context")
 	createContextCmd.Flags().StringArrayVarP(&components, "components", "a", []string{}, "List of components")
 	createContextCmd.Flags().StringVarP(&platform, "platform", "p", "", "Platform to deploy Meshery")
+	createContextCmd.Flags().StringVar(&providerFlag, "provider", "", "Provider to use with the Meshery server")
 	deleteContextCmd.Flags().StringVarP(&newContext, "set", "s", "", "New context to deploy Meshery")
 	viewContextCmd.Flags().StringVarP(&currContext, "context", "c", "", "Show config for the context")
 	viewContextCmd.Flags().BoolVar(&allContext, "all", false, "Show configs for all of the context")

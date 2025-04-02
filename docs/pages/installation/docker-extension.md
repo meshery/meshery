@@ -15,162 +15,111 @@ abstract: Install Docker Extension for Meshery
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-## Docker Extension for Meshery
-
 The Docker Extension for Meshery extends Docker Desktop’s position as the developer’s go-to Kubernetes environment with easy access to full the capabilities of Meshery's collaborative cloud native management features.
+
+{% include alert.html type="info" title="Prerequisites" content="You need Docker Desktop version of 4.10 or higher for this." %}
+
+
+## Install the Docker Meshery Extension
+
+Select one of the following three options to install the Docker Meshery Extension:
+
+- [Install the Docker Meshery Extension](#install-the-docker-meshery-extension)
+  - [Using Docker Desktop](#using-docker-desktop)
+  - [Using Docker Hub](#using-docker-hub)
+  - [Using Docker CLI](#using-docker-cli)
+- [Remove Meshery as a Docker Extension](#remove-meshery-as-a-docker-extension)
 
 ### Using Docker Desktop
 
-1. Navigate to the Extensions Marketplace of Docker Desktop.
+Navigate to the **Extensions** marketplace of Docker Desktop. Search for Meshery and click the Install button to install the extension.
 
-2. From the Dashboard, select Add Extensions in the menu bar or open the Extensions Marketplace from the menu options.
+[![Docker Meshery Extension Install]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-install.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-install.png)
 
-<a href="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-1.png">
-  <img style="width:350px;" src="{{ site.baseurl }}/assets/img/platforms/docker-extension-marketplace-1.png">
-</a>
+Click **Open** when installation is done or click **Meshery** on the left under **Extensions**.
 
-3. Navigate to Meshery in the Marketplace and press install.
+[![Docker Meshery Extension Open]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-open.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-open.png)
 
-<a href="{{ site.baseurl }}/assets/img/platforms/docker-extension.png">
-  <img style="width:90%" src="{{ site.baseurl }}/assets/img/platforms/docker-extension.png">
-</a>
+Click **Login** to open the _Layer5 Cloud_ login page. Login or Sign up and you will be redirected back to Docker Desktop.
 
-OR
+[![Docker Meshery Extension Login]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-login.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-login.png)
 
-You can visit the [Docker Hub](https://hub.docker.com/extensions/meshery/docker-extension-meshery) marketplace to directly install Meshery extension in your Docker Desktop.
+Finally, click **Launch Meshery** to load Meshery Dashboard on a browser window. It runs at http://localhost:9081/ by default.
+
+[![Docker Meshery Extension Launch]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-launch.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-launch.png)
+
+You can also open http://localhost:9081/ directly on a browser on the local machine after installing the Docker extension and complete the _Layer5 Cloud_ login process to achieve the same result.
+
+### Using Docker Hub
+
+Another way to install the Meshery Docker Extension is from the Docker Hub. Navigate to the [Meshery Docker Extension](https://hub.docker.com/extensions/meshery/docker-extension-meshery) page and click Open in Docker Desktop to get started. Once installed, the rest of the process is same as above.
+
+[![Docker Hub Extension]({{site.baseurl}}/assets/img/platforms/docker-hub-meshery-extension.png)]({{site.baseurl}}/assets/img/platforms/docker-hub-meshery-extension.png)
 
 ### Using Docker CLI
 
-Meshery runs as a set of one or more containers inside your Docker Desktop virtual machine.
+Finally, you can also install the Meshery Docker Extension using the Docker CLI. Follow the commands in the clipboard below. 
 
 <!--
 {% capture code_content %}docker extension install meshery/docker-extension-meshery{% endcapture %} -->
 <!-- {% include code.html code=code_content %} -->
 
-<pre class="codeblock-pre" style="padding: 0; font-size:0px;"><div class="codeblock" style="display: block;">
- <div class="clipboardjs" style="padding: 0">
- <span style="font-size:0;">docker extension install meshery/docker-extension-meshery</span> 
- </div>
- <div class="window-buttons"></div>
- <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-            <span data-ty="input">docker extension install meshery/docker-extension-meshery</span>
-            <span data-ty="progress"></span>
-            <span data-ty="">Successfully installed Meshery</span>
-            <span data-ty="input">mesheryctl system dashboard</span>
+<pre class="codeblock-pre" style="padding: 0; font-size: 0px;">
+  <div class="codeblock" style="display: block;">
+    <!-- Updated style for clipboardjs -->
+    <div class="clipboardjs" style="padding: 0; height: 0.5rem; overflow: hidden;">
+      <span style="font-size: 0;">docker extension install meshery/docker-extension-meshery</span> 
+    </div>
+    <div class="window-buttons"></div>
+    <div id="termynal2" style="width: 100%; height: 200px; max-width: 100%;" data-termynal="">
+      <span data-ty="input">docker extension install meshery/docker-extension-meshery</span>
+      <span data-ty="progress"></span>
+      <span data-ty="">Successfully installed Meshery</span>
+      <span data-ty="input">mesheryctl system dashboard</span>
+    </div>
   </div>
- </div>
 </pre>
+
+It runs as a set of one or more containers inside your Docker Desktop virtual machine.
 
 ## Remove Meshery as a Docker Extension
 
-If you want to remove Meshery as a Docker extension from your system, follow these steps:
+You can remove the Docker Extension from Docker Desktop interface or from the CLI. 
 
-1. **Stop Meshery Container:**
+### Removing from Docker Desktop
 
-   - First, stop the running Meshery container (if it's currently running) using the following Docker command:
+Navigate to **Manage** under Extensions, click the ellipsis button (three vertical dots) and select **Uninstall**.
 
-   <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">docker stop meshery-container</span> 
-    </div>
-    <div class="window-buttons"></div>
-    <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-      <span data-ty="input">docker stop meshery-container</span>
-    </div>
-    </div>
-   </pre>
-    
-2. **Remove Meshery Container:**
+[![Remove Meshery Docker Desktop Extension]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-remove.png)]({{site.baseurl}}/assets/img/platforms/docker-desktop-meshery-extension-remove.png)
 
-   - After stopping the container, you can remove it using the following command:
+### Removing using Docker CLI
 
-   <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">docker rm meshery-container</span> 
-    </div>
-    <div class="window-buttons"></div>
-    <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-      <span data-ty="input">docker rm meshery-container</span>
-    </div>
-    </div>
-   </pre>
+To remove the extension from the command line, use the `docker extension rm` command.
 
-3. **Remove Meshery Images:**
+{% capture code_content %}$ docker extension rm meshery/docker-extension-meshery{% endcapture %}
+{% include code.html code=code_content %}
 
-   - Meshery might have pulled Docker images for its components. You can remove these images using the `docker rmi` command. Replace the image names with the actual ones you want to remove:
+### Additional Cleanup
 
-   <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">docker rmi meshery/meshery:latest</span> 
-    </div>
-    <div class="window-buttons"></div>
-    <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-      <span data-ty="input">docker rmi meshery/meshery:latest</span>
-    </div>
-    </div>
-   </pre>
+There could be redisual Images and Networks to remove after removing/uninstalling the extension. Follow the steps below to do so. 
 
-   <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">docker rmi meshery/adapters:latest</span> 
-    </div>
-    <div class="window-buttons"></div>
-    <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-      <span data-ty="input">docker rmi meshery/adapters:latest</span>
-    </div>
-    </div>
-   </pre>
+**Remove Meshery Images (if necessary)**
 
-      ...and so on for other Meshery-related images
+Meshery pulls Docker images for deploying the extension and there could be additional Meshery/Layer5 images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
 
-4. **Remove Meshery Volumes (if necessary):**
+{% capture code_content %}$ docker rmi layer5/meshery:stable-latest{% endcapture %}
+{% include code.html code=code_content %}
 
-   - Meshery may have created Docker volumes to persist data. You can list and remove these volumes using the `docker volume ls` and `docker volume rm` commands. For example:
 
-   <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">docker volume ls</span> 
-    </div>
-    <div class="window-buttons"></div>
-    <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-      <span data-ty="input">docker volume ls</span>
-    </div>
-    </div>
-   </pre>
+**Remove Meshery Docker Networks (if necessary)**
 
-   <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">docker volume rm meshery-data-volume</span> 
-    </div>
-    <div class="window-buttons"></div>
-    <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-      <span data-ty="input">docker volume rm meshery-data-volume</span>
-    </div>
-    </div>
-   </pre>
+Meshery creates custom Docker networks, and they could still be left after the extension uninstall. These can be removed using the `docker network rm` command. For example:
 
-    ...remove other Meshery-related volumes if present
+{% capture code_content %}$ docker network rm meshery_default{% endcapture %}
+{% include code.html code=code_content %}
+<br />
 
-5. **Remove Docker Network (if necessary):**
-
-   - If Meshery created a custom Docker network, you can remove it using the `docker network rm` command. For example:
-
-   <pre class="codeblock-pre" style="padding: 0; margin-top: 2px; font-size:0px;"><div class="codeblock" style="display: block;">
-    <div class="clipboardjs" style="padding: 0">
-    <span style="font-size:0;">docker network rm meshery-network</span> 
-    </div>
-    <div class="window-buttons"></div>
-    <div id="termynal2" style="width:100%; height:200px; max-width:100%;" data-termynal="">
-      <span data-ty="input">docker network rm meshery-network</span>
-    </div>
-    </div>
-   </pre>
-
-6. **Clean Up Configuration (optional):**
-   - If Meshery created configuration files or directories on your host machine, you can remove them manually if you no longer need them.
 
 <script src="{{ site.baseurl }}/assets/js/terminal.js" data-termynal-container="#termynal2"></script>
-
-{% include suggested-reading.html language="en" %}
 
 {% include related-discussions.html tag="meshery" %}

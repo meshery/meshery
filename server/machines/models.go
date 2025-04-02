@@ -151,7 +151,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			break
 		}
 
-		sm.Log.Debug("transitioning to next state: ", nextState)
+		sm.Log.Debugf("%s: transitioning to next state: %s", sm.Name, nextState)
 
 		// next state to transition
 		state, ok := sm.States[nextState]
@@ -175,7 +175,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 		if state.Action != nil {
 			// Execute entry actions for the state entered.
 			eventType, event, err = state.Action.ExecuteOnEntry(ctx, sm.Context, nil)
-			sm.Log.Debug("entry action executed, event emitted ", eventType)
+			sm.Log.Debugf("%s: entry action executed, event emitted ", sm.Name, eventType)
 
 			if err != nil {
 				sm.Log.Error(err)
@@ -186,7 +186,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			} else {
 				eventType, event, err = state.Action.Execute(ctx, sm.Context, payload)
 
-				sm.Log.Debug("inside action executed, event emitted ", eventType)
+				sm.Log.Debugf("%s: inside action executed, event emitted ", sm.Name, eventType)
 				if err != nil {
 					sm.Log.Error(err)
 					sm.Log.Debug(event)
@@ -211,7 +211,7 @@ func (sm *StateMachine) SendEvent(ctx context.Context, eventType EventType, payl
 			return events.NewEvent().WithDescription(fmt.Sprintf("Operation succeeded but failed to update the status of the connection to %s.", sm.CurrentState)).WithMetadata(map[string]interface{}{"error": err}).FromSystem(*sysID).FromUser(userUUID).ActedUpon(sm.ID).WithCategory("connection").WithAction("update").Build(), err
 		}
 
-		sm.Log.Debug("HTTP status:", statusCode, "updated status for connection", connection.ID)
+		sm.Log.Debugf("%s: HTTP status: %s updated \"status\" for connection with id: %s to \"%s\"", sm.Name, statusCode, connection.ID, sm.CurrentState)
 	}
 
 	// The action func only emits event when an error occurs.

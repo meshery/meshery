@@ -1,0 +1,87 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.",
+    "type": "SingularNodeInventoryWallet"
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "istio-base",
+    "model": {
+      "version": "v1.16.0"
+    },
+    "displayName": "Istio",
+    "category": {
+      "name": "Cloud Native Network",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "WASMFilter",
+            "model": {
+              "name": "meshery-core",
+              "registrant": {
+                "kind": "meshery"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "config"
+                ],
+                [
+                  "configuration",
+                  "wasm-filter"
+                ]
+              ],
+              "description": "WASM filter configuration to be applied to Envoy Filter."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "WasmPlugin",
+            "model": {
+              "name": "istio-base",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "pluginConfig"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "url"
+                ]
+              ],
+              "description": "Receive the WASM filter configuration."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

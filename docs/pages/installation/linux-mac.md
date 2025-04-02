@@ -40,10 +40,8 @@ Guides to using Meshery's various features and components.
     </li>
     {% endif %}
   {% endfor %}
-    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+    <li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
 </ul>
-
-{% include suggested-reading.html language="en" %}
 
 {% include related-discussions.html tag="mesheryctl" %}
 

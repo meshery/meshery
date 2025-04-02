@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Infrastructure Management Guides
 permalink: guides/infrastructure-management/
 language: en

@@ -1,0 +1,62 @@
+{
+  "capabilities": null,
+  "component": {
+    "kind": "BFDProfile",
+    "schema": "{\n \"description\": \"BFDProfile represents the settings of the bfd session that can be optionally associated with a BGP session.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BFDProfileSpec defines the desired state of BFDProfile.\",\n   \"properties\": {\n    \"detectMultiplier\": {\n     \"description\": \"Configures the detection multiplier to determine packet loss. The remote transmission interval will be multiplied by this value to determine the connection loss detection timer.\",\n     \"format\": \"int32\",\n     \"maximum\": 255,\n     \"minimum\": 2,\n     \"type\": \"integer\"\n    },\n    \"echoInterval\": {\n     \"description\": \"Configures the minimal echo receive transmission interval that this system is capable of handling in milliseconds. Defaults to 50ms\",\n     \"format\": \"int32\",\n     \"maximum\": 60000,\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    },\n    \"echoMode\": {\n     \"description\": \"Enables or disables the echo transmission mode. This mode is disabled by default, and not supported on multi hops setups.\",\n     \"type\": \"boolean\"\n    },\n    \"minimumTtl\": {\n     \"description\": \"For multi hop sessions only: configure the minimum expected TTL for an incoming BFD control packet.\",\n     \"format\": \"int32\",\n     \"maximum\": 254,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"passiveMode\": {\n     \"description\": \"Mark session as passive: a passive session will not attempt to start the connection and will wait for control packets from peer before it begins replying.\",\n     \"type\": \"boolean\"\n    },\n    \"receiveInterval\": {\n     \"description\": \"The minimum interval that this system is capable of receiving control packets in milliseconds. Defaults to 300ms.\",\n     \"format\": \"int32\",\n     \"maximum\": 60000,\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    },\n    \"transmitInterval\": {\n     \"description\": \"The minimum transmission interval (less jitter) that this system wants to use to send BFD control packets in milliseconds. Defaults to 300ms\",\n     \"format\": \"int32\",\n     \"maximum\": 60000,\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"BFD Profile\",\n \"type\": \"object\"\n}",
+    "version": "metallb.io/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "BFD Profile",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+     "isNamespaced": true,
+    "published": false
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "rapidphotodownloader",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/truecharts/helm-staging/releases/download/rapidphotodownloader-2.0.9/rapidphotodownloader-2.0.9.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "2.0.9"
+    },
+    "name": "rapidphotodownloader",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		}
 
 		if resp.StatusCode == 200 {
-			utils.Log.Info("filter successfully imported")
+			utils.Log.Info("filter imported")
 		} else {
 			utils.Log.Error(utils.ErrResponseStatus(resp.StatusCode))
 			return nil

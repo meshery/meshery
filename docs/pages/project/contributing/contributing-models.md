@@ -10,294 +10,445 @@ category: contributing
 list: include
 ---
 
-Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management. Meshery Models serve as the unit of packaging for the object models that define a type of managed infrastructure and their relationships, and details specifics of how to manage them.
+<!-- Concepts for which docs needs to be updated: -->
+<!-- Scopes - What they mean to contributors/expand on which takes precedence?
+1. Which policies get loaded?
+   1. What policies are loaded by default?
+   2. What happens in conflict?
+2. What controls are exposed to model contributors?
+3. Are there any global Meshery defaults (can user change them?)
+4. Instructions for Creating a New Connection
+5. Instructions for Creating a New Component -->
 
-Models typically represent infrastructure and application technologies, however, they are also capable of defining other types of constructs like annotations, like shapes (infrastructure ambiguous components). 
+## Understanding the internals of Meshery's logical object model
 
-## Difference Between Model Schemas, Definition, and Instance
+Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management and the capabilities Meshery has at its disposal. Meshery Models serve as the unit of packaging for the object models that define a registered capability or a type of managed infrastructure and their relationships, and details specifics of how to manage them.Models often represent infrastructure and application technologies, however, they are also capable of defining other types of entities like annotations, like shapes (infrastructure ambiguous components). Models are used to define the capabilities of Meshery. _See [Models]({{site.baseurl}}/concepts/logical/models) to learn more about models as a logical concept._
 
-The lifecycle of a Model can be summarized under three states.
+Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using on the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml). The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself. _See [Registry]({{site.baseurl}}/concepts/logical/registry) to learn more about Meshery's internal registry and how to use it._
 
-<!-- Model Definitions are read-only templates that contain instructions for creating a any given infrasture. A Model Definition is a snapshot or blueprint of the configuration, credentials(s) and dependencies required for an application to run.
+[![Model Entity Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
+_Figure: Model Entity Classification_
 
-Depending upon where they are in their lifecycle, Meshery Models can be referred to differently based on their are comprised of a handful of core constructs. -->
+## Meshery Entities and their Lifecycle
 
-1. `Schema` (static): The schema represents the skeletal structure of a construct and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the construct. The schema serves as a blueprint or template for creating instances of the construct. It is a static representation that defines the structure and properties but does not contain specific configuration values.
+This section aids in your understanding of the vernacular of Meshery's internal object model and discusses the difference beteween schemas, definitions, declarations, and instances. The lifecycle of Meshery entities (components, relationships, policies) is represented by the following terms, which are used to describe the various stages of their lifecycle.
 
-2. `Definition` (static): The definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
+### Schema
 
-        Things to keep in mind while creating RelationshipDefinitions:
+**Schema** _(static)_ **: the skeletal structure representing a logical view of the size, shape, characteristics of a construct.**
 
-        a. Targets of a Relationship can be specific Components or entire Models.
-        b. The values for Kind, Version  and Model are case-sensitive.
-        c. The convention is to use camel-casing for Kind and SubType values.
-        d. Absence of a field means in the selector means “*” (or wildcard).
-            - If we have a selector with {Kind: Pod, Model: Kubernetes}, the absence of the Version field here
-              means that all the versions of the Kubernetes Pod resource (e.g. k8s.io/v1/betav2) will match.
-        e. In the event of conflicting Relationship Definitions, union between them is taken.
-            - If we have two Relationships, one from (Component A) to (Component B and Component F), and another
-              from (Component A) to (Component B and Component C), then it is similar to having a Relationship
-              from Component A to Component B, C and F
-        f. In the event of an overlapping set of complementary Relationship Definitions, Union.
-        g. In the event of an overlapping set of conflicting  Relationship Definitions:
-            - No relationship type (Kind) is inherently more important than the next one, so will not be any case
-              of conflict
+The schema represents the skeletal structure of an entity and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the entity. The schema serves as a blueprint or template for creating instances of the entity. It is a static representation that defines the structure and properties but does not contain specific configuration values.
 
-3.  `Instance` (dynamic): The instance represents a realized construct. It is a dynamic representation that corresponds to a deployed or discovered instance of the construct. The instance is created based on the definition and represents an actual running or deployed version of the construct within the service mesh environment.
+{% include alert.html type="info" title="Schema example" content='<details><summary>Component schema excerpt</summary><pre> {
+"$id": "https://schemas.meshery.io/component.json",
+  "$schema": "<http://json-schema.org/draft-07/schema#>",
+"description": "Components are the atomic units for designing infrastructure. Learn more at <https://docs.meshery.io/concepts/components>",
+"required": [
+"apiVersion",
+"kind",
+"schema",
+"model"
+],
+"additionalProperties": false,
+"type": "object",
+"properties": {
+"apiVersion": {
+"type": "string",
+"description": "API Version of the component."
+},
+"kind": {
+"type": "string",
+"description": "Kind of the component."
+.
+.
+.
 
-If a specific attribute is not provided with a value in the definition, it means that the value for that attribute has to be written or configured per construct. In other words, the absence of a value indicates that the configuration for that attribute is required and specific to each individual construct instance.
+</pre></details> See <a href="https://github.com/meshery/schemas">github.com/meshery/schemas</a> for more details.' %}
 
-[![Model Contruct Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)
+### Definition
 
-_Figure: Model Contruct Classification_
+**Definition** _(static)_ **: An implementation of the Schema containing an outline of the specific attributes of a given, unconfigured entity.**
 
-### Generating Models does not require Meshery Server
+A definition is an implementation of the schema. It contains specific configurations and values for the entity at hand. The definition provides the actual configuration details for a specific instance of the entity. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate declarations of the entity.
 
-Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components.
+{% include alert.html type="info" title="Definition example" content="a generic, unconfigured Kubernetes Pod." %}
 
-### Contribute to Model Relationships
+### Declaration
 
-Relationships within Model play a crucial role in establishing concrete visualisations of efficient data flow between different components of Meshery. These are used to classify the nature of interaction between one or more interconnected Components.
+**Declaration** _(static)_ **: - A configured entity with detailed intentions of a given Definition.**
 
-1. Identify the relationship and any specific constraints to be enforced between the two specific components, their models or potentially other components, models, or environmental considerations.
-2. Propose a specific visual representation for the relationship.
-3. Visual representation examples:
-   - [Hierarchical]({{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_relationship.png)
-   - [Sibling]({{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png)
-   - [Binding]({{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png)
-   - [Edge]({{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png)
+{% include alert.html type="info" title="Declaration example" content="NGINX container as a Kubernetes Pod with port 443 and SSL termination." %}
 
-4. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
-5. Create a Relationship Definition (yaml).
-6. Create a policy for evaluation of the relationship (rego). See [examples](https://github.com/meshery/meshery/tree/master/server/meshmodel/policies/).
-7. Add in Documentation.
+### Instance
 
-**Existing Relationships, their Definitions and their Subtypes**
+**Instance** _(dynamic)_ **: A realized entity (deployed/discovered); An instantiation of the declaration.**
 
-1. `Hierarchical` relationships involve either an ancestral connection of the components i.e. the creation/ deletion of a Component higher up affects the existence of the Components below in the lineage or a connection which involves the inheritence of features from one Component to the other.  
-- [Parent](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/hierarchical_parent.json) - A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a "Namespace" can be a parent of "Pods" within that namespace. The namespace must exist before creating pods within it.
-- [Inventory](https://github.com/meshery/meshery/blob/master/server/meshmodel/relationships/hierarchical_inv_wasm_filters.json) - Wasm filters can inherit features and functionalities from Envoy filters. This can be used to build on existing functionalities provided by Envoy filters and further extend them using Wasm filters. It enables a modular and scalable approach to customize the behavior of the proxy while maintaining a clear hierarchy of features.
+An _instance_ represents a realized entity. An _instance_ is a dynamic representation that corresponds to a deployed or discovered instantiation of a _declaration_. An _instance_ is created based on its corresponding _definition_ and represents an actual running or deployed version of the entity within the environment.
 
-2. `Edge` relationships indicate the possibility of traffic flow between two components. They enable communication and interaction between different Components within the system.
-- [Mount](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/mount_edge.json) - This subtype addresses the storage and access possibility between involved components. For example, a "PersistentVolume" can be mounted to a "Pod" to provide persistent storage for the pod's data.
-- [Network](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_edge.json) - This deals with IP addresses and DNS names and provides stable endpoints for communication. For example, a "Service" provides a stable endpoint for accessing multiple replicas of a "Deployment."
-- [Firewall](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/network_policy_edge.json) - This acts as intermediary for communications which include standard networking protocols like TCP and UDP. It can enforce network policies to control traffic between components. For example, a "NetworkPolicy" can be used to manage the traffic flow between different "Pods" in the cluster.
-- [Permission](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/permission_edge.json) - This defines the permissions for components if they can have a possible relationship with other Components. It ensures that only authorized Components can interact with each other. For example, a "Role" can define permissions for Components to access specific resources.
+{% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
-3. `Sibling` relationships represent connections between components that are at the same hierarchical level or share a common parent. Siblings can have the same or similar functionalities or may interact with each other in specific ways. These relationships facilitate communication and cooperation between components that are in the same group or category.
-- [Sibling](https://github.com/meshery/meshery/tree/master/server/meshmodel/relationships/sibling.json)
+## Instructions for Creating a New Model
 
-### Structure of Selectors
+{% include alert.html type="info" title="Creating Models Quick Start" content="See the <a href='/project/contributing/contributing-models-quick-start'>quick start</a> for a no fluff guide to creating your first Meshery model." %}
 
-Selectors are structured as an array, wherein each entry comprises a 'from(self)' field and a 'to(other)' field (`[from: [{..}], to: [{..}]]`), delineating the components involved in a particular relationship. These entries define the constraints necessary for the existence of said relationship, thus providing scoping within a relationship. 
-Each item in the selector, uniquely defines a relation between the components listed. i.e. `from` and `to` fields are evaluated within the context of the selector.
+All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#). This spreadsheet serves as the source of truth for the definition of Meshery's models and is refreshed daily.
 
-Only the components within the same selector relates to each other via 1:many kind of relation between components listed inside the `from` and `to` field. i.e. Each object inside the `from` relates to each item inside the `two` field within a particular selector. 
+{% include alert.html type="light" title="Model Source Code" content="See examples of <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>Models defined in JSON in meshery/meshery</a>." %}
 
-When defining relationships that involve a large number of combinations between `from` and `to`, selectors provide a mechanism to organize and manage these relationships. This prevents the need for crafting complex deny attributes and facilitates easier maintenance.
+<div class="tab-container">
+  <!-- First Level Tab: mesheryctl -->
+  <input type="radio" id="tab1" name="tabs" checked>
+  <label for="tab1">
+    <i class="fa fa-terminal"></i> mesheryctl
+  </label>
+  <section class="tabbed">
+    <h3>Prerequisites:</h3>
+    <ul>
+      <li>Fork the <a href="https://github.com/meshery/meshery" target="_blank" rel="noopener">meshery/meshery repository.</a></li>
+      <li>Install the Meshery CLI by following the <a href="https://docs.meshery.io/installation/" target="_blank" rel="noopener">installation instructions.</a></li>
+    </ul>
 
-This arrangement enhances flexibility and reusability in the definition and configuration of relationships among components.
+    {% include alert.html type="info" title="Generating Models does not require Meshery Server" content="Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components." %}
 
-<details open>
-<summary>
- <b>Example Selector</b>
-</summary>
+    <br />
+    <!-- Second Level Tabs under mesheryctl -->
+    <div class="tab-container">
+      <!-- CSV Method -->
+      <input type="radio" id="csv-tab" name="mesheryctl-tabs" checked>
+      <label for="csv-tab">
+        <i class="fa fa-list"></i> Using CSV
+      </label>
+      <section class="tabbed">
+        <h4>1. Understanding the Template Directory</h4>
+        <p>Inside your forked Meshery repository, you'll find the templates-csvs directory containing three essential CSV files:</p>
+        <code>
+            mesheryctl/templates/templates-csvs/
+                <br />
+                ├── models.csv       # Define model metadata and core properties
+                <br />
+                ├── components.csv   # Specify individual components and their characteristics
+                <br />
+                └── relationships.csv # Define how components interact and connect
+                <br />
+        </code>
 
-```json
-selector: [
-  {
-    "allow": {
-      "from": [
-        {
-          "kind": "WASMFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "settings",
-                "config"
-              ],
-              [
-                "settings",
-                "wasm-filter"
-              ]
-            ],
-            "description": "WASM filter configuration to be applied to Envoy Filter."
-          }
-        },
-        {
-          "kind": "EBPFFilter",
-          .....
-        }
-      ],
-      "to": [
-        {
-          "kind": "EnvoyFilter",
-          "model": "istio-base",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "settings",
-                "configPatches",
-                "_",
-                "patch",
-                "value"
-              ]
-            ],
-            "description": "Receive the WASM filter configuration."
-          }
-        },
-        {
-          "kind" : "WASMPlugin",
-          ....
-        }
-        ...
-      ]
-    },
-    "deny": {
-      ...
-    }
-  },
-  {
-    "allow": {
-      "from": [
-        {
-          "kind": "ConfigMap",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatorRef": [
-              [
-                "name"
-              ]
-            ],
-            "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-          }
-        }
-      ],
-      "to": [
-        {
-          "kind": "Deployment",
-          "model": "kubernetes",
-          "patch": {
-            "patchStrategy": "replace",
-            "mutatedRef": [
-              [
-                "spec",
-                "containers",
-                "_",
-                "envFrom",
-                "configMapRef",
-                "name"
-              ]
-            ],
-            "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
-          }
-        },
-        {
-          "kind": "StatefulSets",
-          "model": "kubernetes",
-          "patch": {
-            ....
-          }
-        }
-        ...
-      ]
-    },
-    "deny": {
-      ...
-    }
-  }
-]
-```
-The `selector` defined for the relationship between `WasmFilter` and `EnvoyFilter` (the first item in the array) is entirely independent from the `selector` defined for the relationship between `ConfigMap` and `Deployment`. This ensures independence in how these components relate to each other while still permitting similar types of relationships. 
+        <h4>2. Customizing Your Model</h4>
+        <p>Creating your model involves modifying these CSV files to match your specific requirements. When making changes, you have two valuable references at your disposal: the existing entries in the CSV files serve as practical examples, while the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw">integration spreadsheet</a> provides comprehensive documentation of all possible fields and their purposes.</p>
 
-The above relation shows `WASMFilter` and `EBPFFilter` defined inside `from` relates to each component defined inside `to` `(EnvoyFilter, WASMPlugin...)`. 
-Similarly, `ConfigMap` defined inside `from` relates to each component defined inside `to`  `(Deployment, StatefulSet,...)`
-</details>
+        <h4>3. Generating Your Model</h4>
+        <p>Once you've customized your CSV files, you can generate your model using a single command. Ensure you're in the root directory of your forked Meshery repository, as this maintains the correct file path relationships:</p>
+        <code>mesheryctl registry generate --directory templates-csvs --model "YOUR_MODEL_NAME"</code>
 
-#### What is `evaluationQuery` attribute and how to determine value for `evaluationQuery` inside relationship definition?
+        <h4>4. Locating Generated Files</h4>
+        <p>After successful generation, your model's files will be created in the Meshery server's model directory. You can find these files at <code>meshery/server/meshmodel/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
 
-As all relationship definitions are backed by OPA policies and the relationships depending upon their Kind and Subtype needs to be evaluated with respective policies, the policy to invoke for evaluation is determined by the property `evaluationQuery`, which follows the convention as `kind_subtype_relationship`.
-```
-Eg: If you are defining/updating a relationship definition with kind: Edge and subType: Network, the value for the attribute `evaluationQuery` should be edge_network_relationship.
-```
+        <h4>5. Troubleshooting</h4>
+        <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>
+        <ul>
+          <li>Examine the detailed error logs at <code>~/.meshery/logs/registry/</code> to understand specific generation issues.</li>
+          <li>Review your CSV files for proper formatting, ensuring all required columns are present and correctly populated.</li>
+          <li>Confirm you're executing the command from the root of your forked Meshery repository.</li>
+        </ul>
+      </section>
 
-Each policy has set of rules defined and the `evaluationQuery` attribute corresponds to the main rule defined inside the policy, during the policy eval the results are collected from this rule.
+      <!-- Spreadsheet Method -->
+      <input type="radio" id="spreadsheet-tab" name="mesheryctl-tabs">
+      <label for="spreadsheet-tab">
+        <i class="fa fa-table"></i> Using Integration Spreadsheet
+      </label>
+      <section class="tabbed">
+        <h3>Setting Up Your Environment</h3>
+        <p>Before you begin working with the Integration Spreadsheet, you'll need to complete several important setup steps:</p>
 
-## Configuring the scopes of the relationship definitions
-Relationships has concept of scopes, which determine the extent upto which the relationships work
-1. Global Scope:
-The relationships can be configured to be applied to specific model, a specific model version or can be configured to be applied across model. The relationship schema has a `model` and `version` attribute which facilitates this control.
-Eg: If the model is specified as `aws-ec2-controller`, the relationship will work for those components which belongs to the `aws-ec2-controller` model.
-2. Local Scope:
-It is controlled via the `selectors` [Selectors](#structure-of-selectors) attribute in the relationships.
+        <h4>1. Spreadsheet Preparation</h4>
+        <p>Start by creating your own copy of the Meshery Integration Sheet:</p>
+        <ol>
+          <li>Visit the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" target="_blank" rel="noopener">Meshery Integration Sheet</a></li>
+          <li>Make a copy using File > Make a copy</li>
+          <li>Look at the URL of your new spreadsheet and note the ID (the long string between /d/ and /edit)</li>
+        </ol>
 
-### Best practises for defining new relationships
+        <h4>2. Google Cloud Configuration</h4>
+        <p>Set up your Google Cloud environment with these steps:</p>
+        <ol>
+          <li><a href="https://developers.google.com/workspace/guides/create-project" target="_blank" rel="noopener">Create a new Google Cloud Project or select an existing one</a></li>
+          <li><a href="https://support.google.com/googleapi/answer/6158841" target="_blank" rel="noopener">Enable the Google Sheets API for your project</a></li>
+          <li><a href="https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account" target="_blank" rel="noopener">Create service account credentials</a></li>
+        </ol>
 
-1. Ensure that the `deny` selectors and `allow` selectors do not conflict each other i.e. relations are not getting overlapped for `allow` and `deny` selectors.
-2. To configure a relationship to be applied across models, ensure `model` property for those relationships are set to `*`, to limit the relationships to specific model, specify correct `model`(case sensitive).
-3. To configure a relationship to be applied across all versions of a particular model, ensure `version` property for those relationships are set to `*`, to limit the relationships to specific version of a model, specify correct model version.
-4. Support for specifying version property as a regex to ensure relationships are applied to a subset of versions of a model is coming soon.
-5. The `evaluationQuery` property determines the OPA policy to invoke for relationship evaluation, specify correct rego query. To understand what query to specify [refer](#what-is-evaluationquery-attribute-and-how-to-determine-value-for-evaluationquery-inside-relationship-definition).
-6. If a path `mutatedRef/mutatorRef` contains more than one array path then only first array positin can be sprciifced as _ for others explicity meniton them as 0
-7. Currently `mutatedRef` doesn’t supoort having an aaray
+        <h4>3. Credential Configuration</h4>
+        <p>Set up your credentials in your local environment:</p>
+        <code>
+          base64 -w 0 /path/to/your-service-account-creds.json
+        </code>
+        <br />
+        <code>
+          echo 'export SHEET_CRED="[paste-base64-output-here]"' >> ~/.bashrc
+        </code>
+        <br />
+        <code>
+          source ~/.bashrc
+        </code>
+
+        <h4>4. Spreadsheet Access Configuration</h4>
+        <ol>
+          <li>Open your copied spreadsheet</li>
+          <li>Click "Share" in the top right</li>
+          <li>Add your service account email (ends with @developer.gserviceaccount.com)</li>
+          <li>Grant "Editor" permissions</li>
+          <li>Publish the spreadsheet:
+            <ul>
+              <li>File > Share > Publish to web</li>
+              <li>Select "Comma-separated values (.csv)"</li>
+              <li>Click "Publish"</li>
+            </ul>
+          </li>
+        </ol>
+
+        <h3>Working with the Integration Spreadsheet</h3>
+        <p>Once your environment is set up, you can begin working with the spreadsheet:</p>
+
+        <h4>1. Adding Your Model</h4>
+        <p>The integration spreadsheet contains existing model definitions that serve as practical examples. You can either create a new entry following the patterns in existing rows, or practice by generating an existing model first to understand the process. Each row represents a complete model definition, use them as reference for creating a new row.</p>
+
+        <h4>2. Generating the Model</h4>
+        <p>Use mesheryctl to generate your models. Make sure to run the command inside your forked <code>meshery/meshery</code> repo</p>
+        <code>mesheryctl registry generate --spreadsheet-id "YOUR_SPREADSHEET_ID" --spreadsheet-cred "$SHEET_CRED" --model "YOUR_MODEL_NAME"</code>
+
+        <p>The command will:</p>
+        <ul>
+          <li>Read your spreadsheet data</li>
+          <li>Validate the model definition</li>
+          <li>Generate the model files</li>
+          <li>For error logs your can checkout <code>~/.meshery/logs/registry/</code></li>
+        </ul>
+
+        <h4>3. Verification</h4>
+        <p>The model will be generated in <code>meshery/server/meshmodels/[YOUR_MODEL_NAME]</code></p>
+      </section>
+    </div>
 
 
-<details open>
-<summary>See all Visual Representations</summary>
-    <details close><summary>Hierarchical</summary>
-    <figure><br><figcaption>Hierarchical Parent</figcaption>
-    <img alt="Hierarchical Parent" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierachical_relationship_namespace_others.png"/>
-    </figure>
-    </details>
+    {% include alert.html type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" content="Meshery CLI has a set of commands that pertain to the lifecycle management of models:
+    <br />
 
-    <details close><summary>Sibling</summary>
-    <figure><br><figcaption>Sibling</figcaption>
-    <img alt=Sibling src="{{ site.baseurl }}/assets/img/meshmodel/relationships/sibling_relationship.png"/>
-    </figure>
-    </details>
+    - <code>mesheryctl registry</code> - interact with and update spreadsheets
+    <br />
+    - <code>mesheryctl models</code> - interact with and update Meshery Server
+    <br />
+    - <code>mesheryctl component</code> - interact with and update Meshery Server
+    <br />
+    - <code>mesheryctl relationships</code> - interact with and update Meshery Server" %}
+  </section>
 
-    <details close><summary>Binding</summary>
-    <figure><br><figcaption>Binding</figcaption>
-    <img alt=Binding src="{{ site.baseurl }}/assets/img/meshmodel/relationships/binding_relationship.png"/>
-    </figure>
-    </details>
+  <!-- First Level Tab: Meshery UI -->
+  <input type="radio" id="tab2" name="tabs">
+  <label for="tab2">
+    <i class="fa fa-desktop"></i> Meshery UI
+  </label>
+  <section class="tabbed">
+    <!-- Second Level Tabs under Meshery UI -->
+    <div class="tab-container">
+      <!-- URL Import Method -->
+      <input type="radio" id="url-tab" name="ui-tabs" checked>
+      <label for="url-tab">
+        <i class="fa fa-link"></i> URL Import
+      </label>
+      <section class="tabbed">
+        <p>The URL Import feature allows you to generate models in Meshery by providing URLs to source repositories or package registries. Here's how to use it:</p>
 
-    <details close><summary>Edge</summary>
-    <figure><br><figcaption>Mount Edge</figcaption>
-    <img alt="Mount Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/mount_edge_relationship.png"/>
-    </figure>
+        <h4>1. Access the Model Generation Interface</h4>
+        <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
 
-    <br>
-    <figure><figcaption>Network Edge</figcaption>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_ingress_service.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_pod.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_service.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_endpoints.png"/>
-    <img alt="Network Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_edge_relationship_service_deployment.png"/>
-    </figure>
+        <a href="/assets/img/registry/generate-model-from-UI.png">
+          <img src="/assets/img/registry/generate-model-from-UI.png" alt="registry generate model" style="width: 50%; max-width: 400px;">
+        </a>
 
-    <br>
-    <figure><figcaption>Permission Edge</figcaption>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_service.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_pod.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_role_deployment.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_pod.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_service.png"/>
-    <img alt="Permission Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/permission_edge_relationship_clusterrole_deployment.png"/>
-    </figure>
+        <h4>2. Provide Source Location</h4>
+        <p>You can provide either a GitHub repository URL or an ArtifactHub package URL as your source:</p>
 
-    <br>
-    <figure><figcaption>Network Policy Edge</figcaption>
-    <img alt="Network Policy Edge" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/network_policy_edge_relationship.png">
-    </figure>
+        <p><strong>For GitHub repositories:</strong><br>
+        Enter a URL in the format: <code>git://github.com/[organization or username]/[repository]/[branch]/path/to/crds</code><br>
+        For example: <code>git://github.com/cert-manager/cert-manager/master/deploy/crds</code></p>
 
-    </details>
+        <p><strong>For ArtifactHub packages:</strong><br>
+        Enter a URL in the format: <code>https://artifacthub.io/packages/search?ts_query_web={model-name}</code></p>
 
-</details>
+        <p><strong>Pro tip:</strong> Check the <code>sourceURL</code> column in the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" target="_blank" rel="noopener">Meshery Integration Sheet</a> and try one of the listed sources.</p>
 
-For more information refer - [Model - Construct Models in Meshery](https://docs.google.com/document/d/16z5hA8qVfSq885of9LXFUVvfom-hQXr-6oTD_GgoFmk/edit)
+        <a href="/assets/img/registry/url-import-github-url.png">
+          <img src="/assets/img/registry/url-import-github-url.png" alt="registry generate model source selection" style="width: 50%; max-width: 400px;">
+        </a>
 
+        <h4>3. Configure Model Details</h4>
+        <p>Enter the required information for your model:</p>
+        <ul>
+          <li><strong>Model Name:</strong> Should be in lowercase with hyphens. For example, cert-manager.</li>
+          <li><strong>Display Name:</strong> How you want your model to be named. For example, Cert Manager.</li>
+        </ul>
+
+        <a href="/assets/img/registry/url-import-model-name.png">
+          <img src="/assets/img/registry/url-import-model-name.png" alt="registry generate model name" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>4. Set Model Categorization</h4>
+        <p>Choose appropriate category and subcategory for your model from the dropdown menus. If your model doesn't fit existing categories, select "Uncategorized". This helps organize models in the registry and makes them easier to find.</p>
+
+        <a href="/assets/img/registry/url-import-category.png">
+          <img src="/assets/img/registry/url-import-category.png" alt="registry generate model categorization" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>5. Configure Model Styling</h4>
+        <p>Customize your model's appearance:</p>
+        <ul>
+          <li>Upload logos for both dark and light themes</li>
+          <li>Set primary and secondary colors for visual elements</li>
+          <li>Select a shape for the model's icon in the UI</li>
+        </ul>
+        <p>Note: If you don't provide custom styling, Meshery's default values will be used. You can change these later in the model definition.</p>
+
+        <a href="/assets/img/registry/url-import-model-styling.png">
+          <img src="/assets/img/registry/url-import-model-styling.png" alt="registry generate model styling" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>6. Additional Settings</h4>
+        <p>Before finishing, you can:</p>
+        <ul>
+          <li>Choose to register the model immediately for instant availability in Meshery instance.</li>
+          <li>Specify if the model is for visual annotation only</li>
+        </ul>
+
+        {% include alert.html type="light" title="Visual Annotation Models" content="When a model is marked for visual annotation only, it means the model will be used purely for visualization and diagramming purposes within Meshery's interface, rather than for actual infrastructure management." %}
+
+        <a href="/assets/img/registry/url-import-model-additional-settings.png">
+          <img src="/assets/img/registry/url-import-model-additional-settings.png" alt="registry generate model additional settings" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <p>After completing these steps, click "Finish" to generate your model. Once generated, you can find your model in the Registry section (if you checked "Register Model Immediately") else it'll download the generated model in an archive, ready for use in your Meshery environment.</p>
+      </section>
+
+      <!-- CSV Import Method -->
+      <input type="radio" id="ui-csv-tab" name="ui-tabs">
+      <label for="ui-csv-tab">
+        <i class="fa fa-list"></i> Using CSV
+      </label>
+      <section class="tabbed">
+        <p>The CSV Import feature allows you to generate models in Meshery by providing <a href="https://github.com/meshery/meshery/tree/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs" target="_blank" rel="noopener noreferrer">template CSV files</a> that define your model structure, components, and relationships. Here's a comprehensive guide on how to use this feature:</p>
+
+        <h4>1. Access the Model Generation Interface</h4>
+        <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
+
+        <a href="/assets/img/registry/generate-model-from-UI.png">
+          <img src="/assets/img/registry/generate-model-from-UI.png" alt="registry generate model" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <a href="/assets/img/registry/csv-import.png">
+          <img src="/assets/img/registry/csv-import.png" alt="CSV Import Initial Screen" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>2. Prepare Your CSV Files</h4>
+        <p>You'll need three essential CSV files to define your model. CSV templates can be found in the <a href="https://github.com/meshery/meshery/tree/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs" target="_blank" rel="noopener noreferrer">Meshery repository</a>. Each file serves a specific purpose:</p>
+
+        <ul>
+          <li><strong>models.csv:</strong> Defines your model's core metadata, including name, version, and general properties</li>
+          <li><strong>components.csv:</strong> Describes the individual components that make up your model</li>
+          <li><strong>relationships.csv:</strong> Specifies how different components interact and connect with each other</li>
+        </ul>
+
+        <p><strong>Pro tip:</strong> Look at existing models in the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">Meshery Integration Sheet</a> to understand how to structure your CSV files effectively.</p>
+
+        <h4>3. Upload Models, Components, and Relationships CSV</h4>
+
+        <a href="/assets/img/registry/csv-import-upload-model-csv.png">
+          <img src="/assets/img/registry/csv-import-upload-model-csv.png" alt="Model CSV Upload" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <a href="/assets/img/registry/csv-import-upload-components-csv.png">
+          <img src="/assets/img/registry/csv-import-upload-components-csv.png" alt="Component CSV Upload" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <a href="/assets/img/registry/csv-import-upload-relationship-csv.png">
+          <img src="/assets/img/registry/csv-import-upload-relationship-csv.png" alt="Relationship CSV Upload" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>6. Model Registration</h4>
+        <p>In the final step, you can choose to register your model immediately in your Meshery instance. This makes the model available for immediate use after generation.</p>
+
+        <a href="/assets/img/registry/csv-import-register-model.png">
+          <img src="/assets/img/registry/csv-import-register-model.png" alt="Model Registration Options" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <p>After completing these steps and successfully generating your model, you can find it in the Registry section if you chose to register it immediately. Otherwise, you'll receive a downloaded archive containing your generated model files.</p>
+      </section>
+    </div>
+  </section>
+</div>
+
+### Importing Generated Models
+
+The generated model can be importing using both Mesheryctl and Meshery UI. Read [Importing Models]({{site.baseurl}}/guides/configuration-management/importing-models) for detailed instructions on how to import models.
+
+### Post Model Generation
+
+During model generation, corresponding components are created. Next step is to enrich these component details and define their capabilities and relationships.
+
+1. **Enrich Component Details**
+   When a Component is initially generated, a new Component definition is created with default properties (e.g. colors, icons, capabilities, etc.), some of which are inherited from their respective Model.
+
+   - **1.1. Customize Shapes and Colors**
+
+     - Default shape for new components is a circle
+     - Consider enriching components' details based on what they represent
+     - Reference Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for possible shapes
+     - Example: Use a pentagon shape to represent a Deployment
+     - Know more about [components shapes and colors](https://docs.meshery.io/extensions/component-shape-guide)
+
+   - **1.2. Customize Icons**
+
+     - Components inherit the icon (colored and white SVGs) of their respective Model by default
+     - Propose specific icons best suited to visually represent each component
+     - Example: Use a skull icon for a DaemonSet
+
+   - **1.3. Review Capabilities**
+     - Review and confirm assigned capabilities
+     - Modify capabilities as needed
+
+    See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
+
+2. **Identify Relationships**
+
+   - **2.1. Review Available Types**
+     Review and familiarize yourself with the predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"]({{ site.baseurl }}/concepts/logical/relationships)
+
+   - **2.2. Map Component Relationships**
+
+     - Identify appropriate relationships for your new components
+     - Consider how components relate to others within the same model
+     - Consider relationships with components in other models
+
+   - **2.3. Create Definitions**
+     Codify the relationships you have identified into a Relationship Definition
+
+    See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
+
+<!-- ### Instructions for Creating a New Connection
+
+### Managed and Unmanaged Connections
+
+Each Meshery Model can contain one more ConnectionDefinitions (files), each Definition representing one Connection, and also, (as a matter of convenience multiple Connections can be described in the same ConnectionDefinition file).
+
+Connections can be:
+
+1. a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/) with hand-curated Connection attributes.
+2. a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model. -->
+
+## Next Steps
+
+The Meshery team is currently working on the following:
+
+- Extending the model to support additional entities
+- Improving the tooling for working with models
+- Defining relationships between components and embedding those policies within models
+
+We encourage you to get involved in the development of Meshery Models and to share your feedback.
+{% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}

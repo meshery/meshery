@@ -1,215 +1,117 @@
-import React, { useState, useEffect } from 'react';
-import { List, ListItem } from '@material-ui/core';
-import { Avatar } from '@layer5/sistent-components';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import Grow from '@material-ui/core/Grow';
-import IconButton from '@material-ui/core/IconButton';
-import ListItemText from '@material-ui/core/ListItemText';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuList from '@material-ui/core/MenuList';
-import NoSsr from '@material-ui/core/NoSsr';
-import Paper from '@material-ui/core/Paper';
-import Popper from '@material-ui/core/Popper';
-import classNames from 'classnames';
+import React, { useState, useRef, useEffect } from 'react';
+import { Avatar, Button } from '@layer5/sistent';
+import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import { useSelector, useDispatch } from 'react-redux';
-import dataFetch from '../lib/data-fetch';
+import { Provider, connect } from 'react-redux';
+import { store } from '../store';
+import { bindActionCreators } from 'redux';
+import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { styled } from '@mui/material/styles';
-
-const LinkDiv = styled('div')(() => ({
-  display: 'inline-flex',
-  width: '100%',
-  height: '30px',
-  alignItems: 'self-end',
-}));
-
-function exportToJsonFile(jsonData, filename) {
-  let dataStr = JSON.stringify(jsonData);
-  let dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-
-  let exportFileDefaultName = filename;
-
-  let linkElement = document.createElement('a');
-  linkElement.setAttribute('href', dataUri);
-  linkElement.setAttribute('download', exportFileDefaultName);
-  linkElement.click();
-  linkElement.remove();
-}
-
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
+import { IconButtonAvatar } from './Header.styles';
+/**
+ * Extension Point: Avatar behavior for User Modes
+ * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
+ */
 const User = (props) => {
-  const [user, setUser] = useState(null);
+  const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
-  const [capabilitiesLoaded, setCapabilitiesLoaded] = useState(false);
-  // const anchorEl = useRef(null);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const dispatch = useDispatch();
-  const router = useRouter();
+  const capabilitiesLoadedRef = useRef(false);
+  const { notify } = useNotification();
 
-  const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
+  const {
+    data: userData,
+    isSuccess: isGetUserSuccess,
+    isError: isGetUserError,
+    error: getUserError,
+  } = useGetLoggedInUserQuery();
 
-  const handleToggle = (event) => {
-    setAnchorEl(event.currentTarget);
+  const { capabilitiesRegistry } = props;
+
+  const getProfileUrl = () => {
+    return (account || [])?.find((item) => item.title === 'Cloud Account')?.href;
   };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    window.location = '/user/logout';
-  };
-
-  const handlePreference = () => {
-    router.push('/user/preferences');
-  };
-
-  const handleGetToken = () => {
-    dataFetch(
-      '/api/token',
-      { credentials: 'same-origin' },
-      (data) => {
-        exportToJsonFile(data, 'auth.json');
-      },
-      (error) => ({ error }),
-    );
+  const goToProfile = () => {
+    const profileUrl = getProfileUrl();
+    if (profileUrl) {
+      window.location = profileUrl;
+      return;
+    }
   };
 
   useEffect(() => {
-    dataFetch(
-      '/api/user',
-      {
-        credentials: 'same-origin',
-      },
-      (userData) => {
-        setUser(userData);
-        dispatch(updateUser({ user: userData }));
-      },
-      (error) => ({
-        error,
-      }),
-    );
-  }, [dispatch]);
+    if (!userLoaded && isGetUserSuccess) {
+      props.updateUser({ user: userData });
+      setUserLoaded(true);
+    } else if (isGetUserError) {
+      notify({
+        message: 'Error fetching user',
+        event_type: EVENT_TYPES.ERROR,
+        details: getUserError?.data,
+      });
+    }
+  }, [userData, isGetUserSuccess, isGetUserError]);
 
   useEffect(() => {
-    const { capabilitiesRegistry } = props;
-    if (!capabilitiesLoaded && capabilitiesRegistry) {
-      setCapabilitiesLoaded(true); // to prevent re-compute
+    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+      capabilitiesLoadedRef.current = true;
       setAccount(
         ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
       );
     }
-  }, [capabilitiesRegistry, capabilitiesLoaded]);
+  }, [capabilitiesRegistry]);
 
-  /**
-   * @param {import("../utils/ExtensionPointSchemaValidator").AccountSchema[]} children
-   */
-  function renderAccountExtension(children) {
-    if (children && children.length > 0) {
-      return (
-        <List disablePadding>
-          {children.map(({ id, href, title, show: showc }) => {
-            if (typeof showc !== 'undefined' && !showc) {
-              return '';
-            }
-            return (
-              <React.Fragment key={id}>
-                <ListItem button key={id}>
-                  {extensionPointContent(href, title)}
-                </ListItem>
-              </React.Fragment>
-            );
-          })}
-        </List>
-      );
-    }
-  }
+  const { color } = props;
 
-  function extensionPointContent(href, name) {
-    const { classes } = props;
+  const source = new URL('/api/user/token', window.location.origin);
+  const sourceURL = btoa(source.toString());
+  const refURL = btoa(window.location.href);
 
-    const content = (
-      <LinkDiv>
-        <ListItemText classes={{ primary: classes.itemPrimary }}>{name}</ListItemText>
-      </LinkDiv>
+  if (userData?.status == 'anonymous') {
+    const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
+
+    return (
+      <Link href={url}>
+        <Button variant="contained" color="primary" data-testid="sign-in-button">
+          Sign In
+        </Button>
+      </Link>
     );
-    if (href) {
-      return (
-        <Link href={href}>
-          <span
-            className={classNames(classes.link)}
-            onClick={() => props.updateExtensionType(name)}
-          >
-            {content}
-          </span>
-        </Link>
-      );
-    }
-
-    return content;
   }
-
-  const { color, iconButtonClassName, avatarClassName, classes } = props;
-  let avatar_url;
-  if (user && user !== null) {
-    avatar_url = user.avatar_url;
-  }
-
-  const open = Boolean(anchorEl);
 
   return (
     <div>
       <NoSsr>
-        <div data-test="profile-button">
-          <IconButton
-            color={color}
-            className={iconButtonClassName}
-            ref={anchorEl}
-            aria-owns={open ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-            onClick={handleToggle}
-          >
+        <div data-testid="profile-button">
+          <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
             <Avatar
-              className={avatarClassName}
-              src={avatar_url}
+              src={isGetUserSuccess ? userData?.avatar_url : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
-          </IconButton>
+          </IconButtonAvatar>
         </div>
-        <Popper
-          open={open}
-          anchorEl={anchorEl}
-          transition
-          style={{ zIndex: 10000 }}
-          placement="top-end"
-          onClose={handleClose}
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              id="menu-list-grow"
-              style={{
-                transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom',
-              }}
-            >
-              <Paper className={classes.popover}>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList>
-                    {account && account.length ? <>{renderAccountExtension(account)}</> : null}
-                    <MenuItem onClick={handleGetToken}>Get Token</MenuItem>
-                    <MenuItem onClick={handlePreference}>Preferences</MenuItem>
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                  </MenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
       </NoSsr>
     </div>
   );
 };
 
-export default User;
+const UserProvider = (props) => {
+  return (
+    <Provider store={store}>
+      <User {...props} />
+    </Provider>
+  );
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  updateUser: bindActionCreators(updateUser, dispatch),
+});
+
+const mapStateToProps = (state) => ({
+  capabilitiesRegistry: state.get('capabilitiesRegistry'),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProvider);

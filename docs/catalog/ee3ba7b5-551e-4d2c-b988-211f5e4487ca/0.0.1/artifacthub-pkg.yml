@@ -1,0 +1,20 @@
+version: 0.0.1
+name: minimal-nginx-ingress
+displayName: Minimal Nginx Ingress
+createdAt: "2023-01-30T07:34:51Z"
+description: '"Minimal Nginx Ingress" involves deploying a lightweight Nginx controller in Kubernetes to efficiently manage incoming HTTP and HTTPS traffic, directing it to the relevant services within the cluster. This approach emphasizes simplicity and essential functionality, making it ideal for straightforward routing needs without the overhead of complex configurations. It offers flexibility to scale with application demands while ensuring efficient resource utilization. However, it''s important to note that it may lack advanced features like intricate traffic routing based on headers or request parameters. Security measures such as SSL certificate management and monitoring tools are crucial for maintaining robust ingress operations. Overall, the minimal Nginx Ingress provides a streamlined solution for small to medium-scale deployments, prioritizing ease of setup and operational efficiency.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ee3ba7b5-551e-4d2c-b988-211f5e4487ca/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 173202fe-b94d-4064-8a86-1cf063732884
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

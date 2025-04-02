@@ -22,14 +22,14 @@ const handleError = (e) => {
 function componentToLatestApiVersion(components) {
   const componentToAPiVersionMap = {}; // this is for storing all the apiVersions of similar components in order to get the most recent at the end
 
-  [...components].forEach((component) => {
-    if (componentToAPiVersionMap?.[component.kind]) {
-      componentToAPiVersionMap[component.kind] = [
-        ...componentToAPiVersionMap[component.kind],
-        component.apiVersion,
+  [...components].forEach((componentDef) => {
+    if (componentToAPiVersionMap?.[componentDef.component.kind]) {
+      componentToAPiVersionMap[componentDef.component.kind] = [
+        ...componentToAPiVersionMap[componentDef.component.kind],
+        componentDef.component.version,
       ];
     } else {
-      componentToAPiVersionMap[component.kind] = [component.apiVersion];
+      componentToAPiVersionMap[componentDef.component.kind] = [componentDef.component.version];
     }
   });
 
@@ -40,15 +40,14 @@ function componentToLatestApiVersion(components) {
   return componentToAPiVersionMap;
 }
 
-function removeDuplicateMeshModelComponents(components) {
-  const componentClone = [...components];
+function removeDuplicateMeshModelComponents(componentDefs) {
+  const componentClone = [...componentDefs];
   const cmpToApiVersion = componentToLatestApiVersion(componentClone);
-
-  // component kind set keeps track of redudan components
+  // component kind set keeps track of redudant components
   const componentKindUniqueSet = new Set();
-
   return componentClone
-    .filter(({ kind }) => {
+    .filter((componentDef) => {
+      const kind = componentDef.component;
       // filter unique components
       // already found in the unique set, means that it is already filtered
       if (componentKindUniqueSet.has(kind)) {
@@ -58,15 +57,15 @@ function removeDuplicateMeshModelComponents(components) {
       componentKindUniqueSet.add(kind);
       return true;
     })
-    .map((component) => ({
+    .map((componentDef) => ({
       // on all unique components, set the apiVersion to latest one
-      ...component,
-      apiVersion: cmpToApiVersion[component.kind] || component.apiVersion, // fallback in case of mishap
+      ...componentDef,
+      apiVersion: cmpToApiVersion[componentDef.component.kind] || componentDef.component.version, // fallback in case of mishap
     }));
 }
 
-function sortMeshModelComponents(components) {
-  return [...components].sort((a, b) => a.kind.localeCompare(b.kind));
+function sortMeshModelComponents(componentDefs) {
+  return [...componentDefs].sort((a, b) => a.component.kind.localeCompare(b.component.kind));
 }
 
 export const removeDuplicatesAndSortByAlphabet = _.flowRight(
@@ -85,23 +84,31 @@ function getProcessedMeshModelResponseData(meshModelResponse) {
     .reverse(); // sort the versions in reverse order
 }
 
-function deduplicatedListOfComponentsFromAllVersions(components) {
-  const uniqueComponents = [...new Set(components.map((comp) => comp.kind))];
-  return uniqueComponents.map((compKind) => components.find((c) => c.kind === compKind));
+function deduplicatedListOfComponentsFromAllVersions(componentDefs) {
+  const uniqueComponents = [
+    ...new Set(componentDefs.map((componentDef) => componentDef.component.kind)),
+  ];
+  return uniqueComponents.map((compKind) =>
+    componentDefs.find((componentDef) => componentDef.component.kind === compKind),
+  );
 }
 
-function groupComponentsByVersion(components) {
-  const versions = [...new Set(components.map((component) => component.model.version))];
+function groupComponentsByVersion(componentDefs) {
+  const versions = [
+    ...new Set(componentDefs?.map((componentDef) => componentDef.model.model.version) || []),
+  ];
 
   if (versions.length > 1) {
     return [
       {
         version: WILDCARD_V,
-        components: deduplicatedListOfComponentsFromAllVersions(components),
+        components: deduplicatedListOfComponentsFromAllVersions(componentDefs),
       },
       ...versions.map((version) => ({
         version: version,
-        components: components.filter((component) => component.model.version === version),
+        components: componentDefs.filter(
+          (componentDef) => componentDef.model.model.version === version,
+        ),
       })),
     ];
   }
@@ -109,10 +116,11 @@ function groupComponentsByVersion(components) {
   // don't attach the wildcards
   return versions.map((version) => ({
     version: version,
-    components: components.filter((component) => component.model.version === version),
+    components: componentDefs.filter(
+      (componentDef) => componentDef.model.model.version === version,
+    ),
   }));
 }
-
 const getProcessedComponentsData = compose(
   getProcessedMeshModelResponseData,
   groupComponentsByVersion,
@@ -178,7 +186,9 @@ export function useMeshModelComponents() {
 
     if (
       !meshmodelComponents[modelName] ||
-      !convertToArray(meshmodelComponents[modelName])?.find((model) => model.version === version)
+      !convertToArray(meshmodelComponents[modelName])?.find(
+        (model) => model.model.version === version,
+      )
     ) {
       const modelData = await getVersionedComponentFromModel(modelName, version);
       setMeshModelComponents(

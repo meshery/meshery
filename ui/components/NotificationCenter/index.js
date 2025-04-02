@@ -1,23 +1,19 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import NoSsr from '@material-ui/core/NoSsr';
+import { CustomTooltip, NoSsr } from '@layer5/sistent';
 import {
-  Drawer,
   Divider,
   ClickAwayListener,
   Typography,
-  alpha,
   Chip,
   Button,
-  Badge,
   CircularProgress,
   Box,
   useTheme,
-  Tooltip,
   Checkbox,
   Collapse,
-} from '@material-ui/core';
+  IconButton,
+} from '@layer5/sistent';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
 import { iconMedium } from '../../css/icons.styles';
@@ -25,20 +21,29 @@ import {
   NOTIFICATION_CENTER_TOGGLE_CLASS,
   SEVERITY,
   SEVERITY_STYLE,
-  SEVERITY_TO_NOTIFICATION_TYPE_MAPPING,
   STATUS,
   STATUS_STYLE,
-  validateEvent,
 } from './constants';
-import classNames from 'classnames';
 import Notification from './notification';
 import { store } from '../../store';
-import { useNavNotificationIconStyles, useStyles } from './notificationCenter.style';
+import {
+  Container,
+  DarkBackdrop,
+  NotificationButton,
+  NotificationContainer,
+  SeverityChips,
+  SeverityChip,
+  SideList,
+  StyledBadge,
+  StyledNotificationDrawer,
+  Title,
+  TitleBellIcon,
+  StyledSubtitle,
+} from './notificationCenter.style';
 import {
   closeNotificationCenter,
   loadEvents,
   loadNextPage,
-  pushEvent,
   selectAreAllEventsChecked,
   selectCheckedEvents,
   selectEvents,
@@ -47,7 +52,6 @@ import {
   updateCheckAllEvents,
 } from '../../store/slices/events';
 import {
-  PROVIDER_TAGS,
   useDeleteEventsMutation,
   useGetEventsSummaryQuery,
   useLazyGetEventsQuery,
@@ -55,95 +59,43 @@ import {
 } from '../../rtk-query/notificationCenter';
 import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
-import {
-  ErrorBoundary,
-  withErrorBoundary,
-  withSuppressedErrorBoundary,
-} from '../General/ErrorBoundary';
 import { hasClass } from '../../utils/Elements';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
 import DeleteIcon from '../../assets/icons/DeleteIcon';
-import subscribeEvents from '../graphql/subscriptions/EventsSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
-import { api as mesheryApi } from '../../rtk-query';
+import { useActorRef } from '@xstate/react';
+import { operationsCenterActor } from 'machines/operationsCenter';
+import { useSelectorRtk } from '@/store/hooks';
+import { ErrorBoundary } from '@layer5/sistent';
+import CustomErrorFallback from '../General/ErrorBoundary';
+import { alpha } from '@mui/system';
 
-const EventsSubsciptionProvider_ = withSuppressedErrorBoundary(() => {
-  const { notify } = useNotification();
-  const dispatch = useDispatch();
-  const eventsSubscription = useCallback(
-    () =>
-      subscribeEvents((result) => {
-        if (!result.event) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        const [isValid, validatedEvent] = validateEvent({
-          ...result.event,
-          user_id: result.event.userID,
-          system_id: result.event.systemID,
-          updated_at: result.event.updatedAt,
-          created_at: result.event.createdAt,
-          deleted_at: result.event.deletedAt,
-          operation_id: result.event.operationID,
-        });
-        if (!isValid) {
-          console.error('Invalid event received', result);
-          return;
-        }
-        try {
-          dispatch(pushEvent(validatedEvent));
-          dispatch(mesheryApi.util.invalidateTags([PROVIDER_TAGS.EVENT]));
-          notify({
-            message: validatedEvent.description,
-            event_type: SEVERITY_TO_NOTIFICATION_TYPE_MAPPING[validatedEvent.severity],
-            id: validatedEvent.id,
-            showInNotificationCenter: true,
-          });
-        } catch (e) {
-          console.error('Error While Storing Event --Event-Subscription ', e);
-        }
-      }),
-    [],
-  );
-
-  useEffect(() => {
-    const subscription = eventsSubscription();
-    return () => {
-      subscription.dispose();
-    };
-  }, []);
-
-  return null;
-});
-
-const EventsSubsciptionProvider = () => {
-  return (
-    <Provider store={store}>
-      <EventsSubsciptionProvider_ />
-    </Provider>
-  );
-};
-
-const NotificationCenterContext = React.createContext({
+export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
   setDrawerAnchor: () => {},
   toggleButtonRef: null,
+  operationsCenterActorRef: null,
 });
 
 export const NotificationCenterProvider = ({ children }) => {
   const [drawerAnchorEl, setDrawerAnchor] = useState(null);
   const toggleButtonRef = useRef(null);
-
+  const { notify } = useNotification();
+  const operationsCenterActorRef = useActorRef(operationsCenterActor, {
+    input: {
+      notify,
+    },
+  });
   return (
     <NotificationCenterContext.Provider
       value={{
         drawerAnchorEl,
         setDrawerAnchor,
         toggleButtonRef,
+        operationsCenterActorRef,
       }}
     >
-      <EventsSubsciptionProvider />
       {children}
       <NotificationCenter />
     </NotificationCenterContext.Provider>
@@ -155,7 +107,7 @@ const getSeverityCount = (count_by_severity_level, severity) => {
 };
 
 const EmptyState = () => {
-  const theme = useTheme().palette.secondary;
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -167,8 +119,8 @@ const EmptyState = () => {
         marginY: '5rem',
       }}
     >
-      <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
-      <Typography variant="h6" style={{ margin: 'auto', color: theme.icon2 }}>
+      <DoneIcon height="10rem" width="8rem" fill={theme.palette.icon.secondary} />
+      <Typography variant="h6" sx={{ margin: 'auto', color: theme.palette.text.primary }}>
         {' '}
         No notifications to show{' '}
       </Typography>
@@ -176,44 +128,55 @@ const EmptyState = () => {
   );
 };
 
-const NavbarNotificationIcon = withErrorBoundary(() => {
-  const { data } = useGetEventsSummaryQuery();
+const NavbarNotificationIcon = () => {
+  const { data, error, isLoading } = useGetEventsSummaryQuery({
+    status: STATUS.UNREAD,
+  });
+
+  if (error || (!data && !isLoading)) {
+    console.log(
+      '[NavbarNotificationIcon] Error fetching notification summary for NotificationIconCount',
+      error,
+    );
+  }
+
   const count_by_severity_level = data?.count_by_severity_level || [];
 
   const currentTopSeverity =
     getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
       ? SEVERITY.ERROR
       : getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0
-      ? SEVERITY.WARNING
-      : null;
+        ? SEVERITY.WARNING
+        : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
-  const classes = useNavNotificationIconStyles({
-    badgeColor: currentSeverityStyle?.color,
-  });
   if (currentTopSeverity) {
     return (
-      <Badge id="notification-badge" badgeContent={topSeverityCount} className={classes.root}>
+      <StyledBadge
+        id="notification-badge"
+        badgeContent={topSeverityCount}
+        badgeColor={currentSeverityStyle?.color}
+      >
         <currentSeverityStyle.icon {...iconMedium} fill="#fff" />
-      </Badge>
+      </StyledBadge>
     );
   }
   return <BellIcon className={iconMedium} fill="#fff" />;
-});
+};
 
-const NotificationCountChip = withErrorBoundary(
-  ({ classes, notificationStyle, count, type, handleClick, severity }) => {
-    const theme = useTheme();
-    const selectedSeverity = useSelector(selectSeverity);
-    const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
-    const chipStyles = {
-      fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
-      height: '20px',
-      width: '20px',
-    };
-    count = Number(count).toLocaleString('en', { useGrouping: true });
-    return (
-      <Tooltip title={type} placement="bottom">
+const NotificationCountChip = ({ notificationStyle, count, type, handleClick, severity }) => {
+  const theme = useTheme();
+  const selectedSeverity = useSelector(selectSeverity);
+  const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
+  const chipStyles = {
+    fill: theme.palette.mode === 'dark' ? darkColor : notificationStyle?.color,
+    height: '20px',
+    width: '20px',
+  };
+  count = Number(count).toLocaleString('en', { useGrouping: true });
+  return (
+    <CustomTooltip title={type} placement="bottom">
+      <div>
         <Button
           style={{
             backgroundColor: alpha(chipStyles.fill, 0.2),
@@ -224,23 +187,32 @@ const NotificationCountChip = withErrorBoundary(
           }}
           onClick={handleClick}
         >
-          <div className={classes.severityChip}>
+          <SeverityChip>
             {<notificationStyle.icon {...chipStyles} />}
             <span>{count}</span>
-          </div>
+          </SeverityChip>
         </Button>
-      </Tooltip>
-    );
-  },
-);
+      </div>
+    </CustomTooltip>
+  );
+};
 
-const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
-  const { data } = useGetEventsSummaryQuery();
-  const { count_by_severity_level, total_count } = data || {
+const Header = ({ handleFilter, handleClose }) => {
+  const { data } = useGetEventsSummaryQuery({
+    status: STATUS.UNREAD,
+  });
+  const { count_by_severity_level } = data || {
     count_by_severity_level: [],
     total_count: 0,
   };
-  const classes = useStyles();
+  const {
+    data: { total_count: read_count } = {
+      total_count: 0,
+    },
+  } = useGetEventsSummaryQuery({
+    status: STATUS.READ,
+  });
+
   const onClickSeverity = (severity) => {
     handleFilter({
       severity: [severity],
@@ -254,22 +226,19 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
     });
   };
 
-  const unreadCount =
-    total_count - count_by_severity_level.reduce((acc, item) => acc + item.count, 0);
   return (
-    <div className={classNames(classes.container, classes.header)}>
-      <div className={classes.title}>
-        <div className={classes.titleBellIcon} onClick={handleClose}>
+    <NotificationContainer>
+      <Title>
+        <TitleBellIcon onClick={handleClose}>
           <BellIcon height="30" width="30" fill="#fff" />
-        </div>
+        </TitleBellIcon>
         <Typography variant="h6"> Notifications</Typography>
-      </div>
-      <div className={classes.severityChips}>
+      </Title>
+      <SeverityChips>
         {Object.values(SEVERITY).map((severity) => (
           <NotificationCountChip
             key={severity}
             severity={severity}
-            classes={classes}
             handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
             type={`Unread ${severity}(s)`}
@@ -277,17 +246,16 @@ const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
           />
         ))}
         <NotificationCountChip
-          classes={classes}
           notificationStyle={STATUS_STYLE[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
           severity={STATUS.READ}
-          count={unreadCount}
+          count={read_count}
         />
-      </div>
-    </div>
+      </SeverityChips>
+    </NotificationContainer>
   );
-});
+};
 
 const Loading = () => {
   return (
@@ -343,17 +311,19 @@ const BulkActions = () => {
       );
     }
     return (
-      <Tooltip title={tooltip} placement="top">
-        <IconButton onClick={onClick} disabled={disabled}>
-          <Icon
-            {...iconMedium}
-            style={{
-              opacity: disabled ? 0.5 : 1,
-            }}
-            fill="currentColor"
-          />
-        </IconButton>
-      </Tooltip>
+      <CustomTooltip title={tooltip} placement="top">
+        <div>
+          <IconButton onClick={onClick} disabled={disabled}>
+            <Icon
+              {...iconMedium}
+              style={{
+                opacity: disabled ? 0.5 : 1,
+              }}
+              fill="currentColor"
+            />
+          </IconButton>
+        </div>
+      </CustomTooltip>
     );
   };
 
@@ -363,7 +333,7 @@ const BulkActions = () => {
 
   return (
     <Box
-      style={{
+      sx={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -374,7 +344,7 @@ const BulkActions = () => {
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
       </Box>
       <Collapse in={checkedEvents.length > 0}>
-        <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <BulkActionButton
             tooltip="Delete selected notifications"
             Icon={DeleteIcon}
@@ -399,7 +369,7 @@ const BulkActions = () => {
   );
 };
 
-const EventsView = withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore }) => {
+const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents);
   // const page = useSelector((state) => state.events.current_view.page);
   const lastEventRef = useRef(null);
@@ -434,7 +404,7 @@ const EventsView = withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore 
     <>
       {events.map((event, idx) => (
         <div key={event.id + idx}>
-          <Notification event_id={event.id} />
+          <Notification eventData={event} event_id={event.id} />
         </div>
       ))}
 
@@ -444,9 +414,9 @@ const EventsView = withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore 
       {isFetching && hasMore && <Loading />}
     </>
   );
-});
+};
 
-const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
+const CurrentFilterView = ({ handleFilter }) => {
   const currentFilters = useSelector((state) => state.events.current_view.filters);
   const onDelete = (key, value) => {
     const newFilters = {
@@ -462,13 +432,13 @@ const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
   const Chips = ({ type, value }) => {
     if (typeof value === 'string') {
       return (
-        <Chip label={value} style={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
+        <Chip label={value} sx={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
       );
     }
 
     if (_.isArray(value) && value.length > 0) {
       return (
-        <div style={{ display: 'flex', gap: '0.2rem' }}>
+        <div sx={{ display: 'flex', gap: '0.2rem' }}>
           {value.map((item) => (
             <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />
           ))}
@@ -486,7 +456,7 @@ const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
           return (
             <div
               key={key}
-              style={{
+              sx={{
                 display: 'flex',
                 gap: '0.3rem',
                 alignItems: 'center',
@@ -494,10 +464,10 @@ const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
                 paddingTop: '.35rem',
               }}
             >
-              <Typography variant="subtitle2" style={{ textTransform: 'capitalize' }}>
+              <StyledSubtitle variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
                 {' '}
                 {key}:
-              </Typography>
+              </StyledSubtitle>
               <Chips value={value} type={key} />
             </div>
           );
@@ -505,7 +475,7 @@ const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
       })}
     </div>
   );
-});
+};
 
 const NotificationCenterDrawer = () => {
   const dispatch = useDispatch();
@@ -518,9 +488,11 @@ const NotificationCenterDrawer = () => {
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
 
+  const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
+
   useEffect(() => {
     dispatch(
-      loadEvents(fetchEvents, 1, {
+      loadEvents(fetchEvents, 0, {
         status: STATUS.UNREAD,
       }),
     );
@@ -537,12 +509,12 @@ const NotificationCenterDrawer = () => {
     dispatch(closeNotificationCenter());
     setAnchorEl(null);
   };
-  const classes = useStyles();
   // const { showFullNotificationCenter } = props;
   const open = Boolean(anchorEl) || isNotificationCenterOpen;
-
-  const handleFilter = (filters) => {
-    dispatch(loadEvents(fetchEvents, 1, filters));
+  const handleFilter = async (filters) => {
+    setIsLoadingFilters(true);
+    await dispatch(loadEvents(fetchEvents, 0, filters));
+    setIsLoadingFilters(false);
   };
   const drawerRef = useRef();
   const clickwayHandler = (e) => {
@@ -563,43 +535,46 @@ const NotificationCenterDrawer = () => {
 
   return (
     <>
+      <DarkBackdrop open={isNotificationCenterOpen} />
       <ClickAwayListener onClickAway={clickwayHandler}>
-        <Drawer
+        <StyledNotificationDrawer
           anchor="right"
           variant="persistent"
           open={open}
           ref={drawerRef}
-          classes={{
-            paper: classes.notificationDrawer,
-            paperAnchorRight: isNotificationCenterOpen ? classes.fullView : classes.peekView,
-          }}
+          isNotificationCenterOpen={isNotificationCenterOpen}
+          BackdropComponent={<DarkBackdrop open={isNotificationCenterOpen} />}
         >
           <div>
             <div>
-              <div className={classes.sidelist}>
+              <SideList>
                 <Header handleFilter={handleFilter} handleClose={handleClose}></Header>
                 <Divider light />
-                <div className={classes.container}>
+                <Container>
                   <Filter handleFilter={handleFilter}></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
                   <BulkActions />
-                  <EventsView
-                    handleLoadNextPage={loadMore}
-                    isFetching={isFetching}
-                    hasMore={hasMore}
-                  />
-                </div>
-              </div>
+
+                  {isLoadingFilters ? (
+                    <Loading />
+                  ) : (
+                    <EventsView
+                      handleLoadNextPage={loadMore}
+                      isFetching={isFetching}
+                      hasMore={hasMore}
+                    />
+                  )}
+                </Container>
+              </SideList>
             </div>
           </div>
-        </Drawer>
+        </StyledNotificationDrawer>
       </ClickAwayListener>
     </>
   );
 };
 
 const NotificationDrawerButton_ = () => {
-  const classes = useStyles();
   const { setDrawerAnchor, toggleButtonRef } = useContext(NotificationCenterContext);
   const dispatch = useDispatch();
   const handleToggle = () => {
@@ -607,9 +582,8 @@ const NotificationDrawerButton_ = () => {
   };
   return (
     <div ref={toggleButtonRef}>
-      <IconButton
+      <NotificationButton
         id="notification-button"
-        className={classes.notificationButton}
         color="inherit"
         onClick={handleToggle}
         onMouseOver={(e) => {
@@ -622,7 +596,7 @@ const NotificationDrawerButton_ = () => {
         }}
       >
         <NavbarNotificationIcon />
-      </IconButton>
+      </NotificationButton>
     </div>
   );
 };
@@ -636,12 +610,15 @@ export const NotificationDrawerButton = () => {
 };
 
 const NotificationCenter = (props) => {
+  const isOpen = useSelectorRtk((state) => state.events.isNotificationCenterOpen);
+
+  if (!isOpen) {
+    return null;
+  }
+
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in NotificationCenter', e)}
-      >
+      <ErrorBoundary customFallback={CustomErrorFallback}>
         <Provider store={store}>
           <NotificationCenterDrawer {...props} />
         </Provider>

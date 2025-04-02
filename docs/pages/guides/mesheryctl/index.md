@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Meshery CLI Guides
 permalink: guides/mesheryctl
 redirect_from: guides/mesheryctl/
@@ -21,10 +21,8 @@ From the Command Line: Guides to using Meshery's various features and components
     </li>
     {% endif %}
   {% endfor %}
-    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+    <li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
 </ul>
-
-{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
 
 {% include related-discussions.html tag="mesheryctl" %}
 

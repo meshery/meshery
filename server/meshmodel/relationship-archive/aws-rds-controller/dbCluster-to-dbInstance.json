@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "parent",
+    "subType": "inventory",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "DBCluster",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "dbClusterIdentifier"
+                  ]
+                ],
+                "description": "The DBCluster manages multiple DBInstances. The DBInstance inherits its cluster identifier from the DBCluster."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "DBInstance",
+              "model": {
+                "name": "aws-rds-controller",
+                "registrant": {
+                 "name": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "spec",
+                    "dbInstanceIdentifier"
+                  ]
+                ],
+                "description": "The DBInstance is part of a DBCluster and follows the configurations specified by the DBCluster."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

@@ -11,7 +11,7 @@ list: include
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
-  <ol><li><a ahref="contributing-ui">Contributing to Meshery UI</a></li></ol>
+  <ol><li><a href="contributing-ui">Contributing to Meshery UI</a></li></ol>
 </div>
 
 ## <a name="contributing-ui-notification-center">Contributing to Meshery UI - Notification Center</a>
@@ -28,7 +28,7 @@ The `NotificationCenter` component of Meshery UI Switching to Graphql subscripti
 - Robust filtering support inspired by GitHub's notification filtering style.
   - Search is also included.
 - Proper hierarchial presentation of error details, including probable cause and suggested remeditation.
-- Suport for notification status (notifications can be marked as read and unread)
+- Support for notification status (notifications can be marked as read and unread)
   - *Future: Notifications can be acknowledged or resolved.*
 - Event-based notification via Graphql subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
 - Infinite scroll for pagination.
@@ -219,4 +219,3 @@ Certain metadata, such as Kubernetes responses and Errors, hold high importance 
 ### Reusability
 While this system was initially developed for our events and notification center, the components it comprises are highly reusable and can be employed in other contexts where dynamic formatting of structured data is required.
 
-{% include suggested-reading.html %}

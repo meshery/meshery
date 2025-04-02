@@ -2,7 +2,10 @@ import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import thunkMiddleware from 'redux-thunk';
 import { fromJS } from 'immutable';
-
+import { createContext } from 'react';
+import { createDispatchHook, createSelectorHook } from 'react-redux';
+import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import { mesheryEventBus } from '@/utils/eventBus';
 const initialState = fromJS({
   page: {
     path: '',
@@ -73,11 +76,13 @@ const initialState = fromJS({
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
+  workspace: null,
   keys: null,
 });
 
 export const actionTypes = {
   UPDATE_PAGE: 'UPDATE_PAGE',
+  SET_WORKSPACE: 'SET_WORKSPACE',
   UPDATE_TITLE: 'UPDATE_TITLE',
   UPDATE_USER: 'UPDATE_USER',
   UPDATE_BETA_BADGE: 'UPDATE_BETA_BADGE',
@@ -212,7 +217,10 @@ export const reducer = (state = initialState, action) => {
       const updatedOrgState = state.mergeDeep({ organization: action.organization });
       sessionStorage.setItem('currentOrg', JSON.stringify(action.organization));
       return updatedOrgState;
-
+    case actionTypes.SET_WORKSPACE:
+      const updatedWorkspaceState = state.mergeDeep({ workspace: action.workspace });
+      sessionStorage.setItem('currentWorkspace', JSON.stringify(action.workspace));
+      return updatedWorkspaceState;
     default:
       return state;
   }
@@ -258,7 +266,15 @@ export const updateK8SConfig =
 export const setK8sContexts =
   ({ selectedK8sContexts }) =>
   (dispatch) => {
-    return dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
+    const result = dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
+
+    mesheryEventBus.publish({
+      type: 'K8S_CONTEXTS_UPDATED',
+      data: {
+        selectedK8sContexts: selectedK8sContexts,
+      },
+    });
+    return result;
   };
 
 export const updateLoadTestData =
@@ -387,7 +403,11 @@ export const setOrganization =
   (dispatch) => {
     return dispatch({ type: actionTypes.SET_ORGANIZATION, organization });
   };
-
+export const setWorkspace =
+  ({ workspace }) =>
+  (dispatch) => {
+    return dispatch({ type: actionTypes.SET_WORKSPACE, workspace });
+  };
 export const setKeys =
   ({ keys }) =>
   (dispatch) => {
@@ -411,3 +431,19 @@ export const resultsMerge = (arr1, arr2) => {
   arr2.map(compareAndAdd);
   return arr;
 };
+
+export const selectSelectedK8sClusters = (state) => {
+  const selectedK8sContexts = state.get('selectedK8sContexts');
+  const contexts = selectedK8sContexts?.toJS?.() || selectedK8sContexts;
+  return getK8sClusterIdsFromCtxId(contexts, selectK8sConfig(state));
+};
+
+export const selectK8sConfig = (state) => {
+  const k8scontext = state.get('k8sConfig');
+  return k8scontext?.toJS?.() || k8scontext;
+};
+
+export const LegacyStoreContext = createContext(null);
+
+export const useLegacySelector = createSelectorHook(LegacyStoreContext);
+export const useLegacyDispatch = createDispatchHook(LegacyStoreContext);

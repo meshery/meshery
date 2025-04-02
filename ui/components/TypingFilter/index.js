@@ -1,25 +1,23 @@
 import {
   ClickAwayListener,
   Divider,
-  Fade,
   IconButton,
   InputAdornment,
   List,
   Popper,
-  TextField,
-  Typography,
   useTheme,
-} from '@material-ui/core';
+  Fade,
+} from '@layer5/sistent';
+import { Description, DropDown, InputField, Item, Label, Root } from './style';
 import ContentFilterIcon from '../../assets/icons/ContentFilterIcon';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import CrossCircleIcon from '../../assets/icons/CrossCircleIcon';
-import clsx from 'clsx';
-import { useStyles, useFilterStyles } from './style';
+
 import { FILTERING_STATE, FILTER_EVENTS, filterReducer } from './state';
 import { getFilters, getCurrentFilterAndValue } from './utils';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
-  const classes = useFilterStyles();
   const selectFilter = (filter) => {
     dispatchFilterMachine({
       type: FILTER_EVENTS.SELECT,
@@ -36,28 +34,17 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) =>
   return (
     <List>
       {matchingFilters.length == 0 && (
-        <div className={classes.item}>
-          <Typography variant="body1" className={classes.label}>
-            Sorry we dont currently support this filter
-          </Typography>
-        </div>
+        <Item>
+          <Label variant="body1">Sorry we dont currently support this filter</Label>
+        </Item>
       )}
       {matchingFilters.map((filter) => {
         return (
           <>
-            <div
-              key={filter.value}
-              className={classes.item}
-              disableGutters
-              onClick={() => selectFilter(filter.value)}
-            >
-              <Typography variant="body1" className={classes.label}>
-                {filter.value}:
-              </Typography>
-              <Typography variant="body1" className={classes.description}>
-                {filter.description}
-              </Typography>
-            </div>
+            <Item key={filter.value} disableGutters onClick={() => selectFilter(filter.value)}>
+              <Label variant="body1">{filter.value}:</Label>
+              <Description variant="body1">{filter.description}</Description>
+            </Item>
             <Divider light />
           </>
         );
@@ -67,8 +54,6 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) =>
 };
 
 const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
-  const classes = useFilterStyles();
-
   const selectValue = (value) => {
     dispatchFilterMachine({
       type: FILTER_EVENTS.SELECT,
@@ -84,25 +69,16 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
   return (
     <List>
       {suggestions.length == 0 && (
-        <div className={classes.item}>
-          <Typography variant="body1" className={classes.label}>
-            No results available
-          </Typography>
-        </div>
+        <Item>
+          <Label variant="body1">No results available</Label>
+        </Item>
       )}
       {suggestions.map((value) => {
         return (
           <>
-            <div
-              key={value.value}
-              className={classes.item}
-              disableGutters
-              onClick={() => selectValue(value)}
-            >
-              <Typography variant="body1" className={classes.description}>
-                {value}
-              </Typography>
-            </div>
+            <Item key={value.value} disableGutters onClick={() => selectValue(value)}>
+              <Description variant="body1">{value}</Description>
+            </Item>
             <Divider light />
           </>
         );
@@ -160,9 +136,8 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  * @param {boolean} autoFilter - A boolean to indicate if the filter should be applied automatically (on user input) .
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
+const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placeholder }) => {
   const theme = useTheme();
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const isPopperOpen = Boolean(anchorEl);
   const inputFieldRef = useRef(null);
@@ -226,12 +201,28 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
         handleFilter(getFilters(e.target.value, filterSchema));
         setAnchorEl(null);
       }
+      if (e.key == 'Escape') {
+        setAnchorEl(null);
+        //remove focus from the input field
+        setTimeout(() => {
+          document.activeElement.blur();
+        });
+      }
     };
+
     inputFieldRef?.current?.addEventListener('keydown', handleKeyDown);
     return () => {
       inputFieldRef?.current?.removeEventListener('keydown', handleKeyDown);
     };
   }, [inputFieldRef.current]);
+
+  const toggleSuggestions = () => {
+    if (isPopperOpen) {
+      setAnchorEl(null);
+    } else {
+      setAnchorEl(inputFieldRef.current);
+    }
+  };
 
   useEffect(() => {
     if (autoFilter && filteringState.state == FILTERING_STATE.SELECTING_FILTER) {
@@ -240,14 +231,13 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
   }, [filteringState.state]);
 
   return (
-    <div className={clsx(classes.root, 'mui-fixed')}>
-      <TextField
+    <Root className="mui-fixed">
+      <InputField
         ref={inputFieldRef}
         variant="outlined"
-        placeholder="Filter Notifications"
+        placeholder={placeholder}
         fullWidth
         size="small"
-        className={classes.input}
         value={filteringState.context.value}
         onChange={handleFilterChange}
         onFocus={handleFocus}
@@ -255,16 +245,22 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
           startAdornment: (
             <InputAdornment position="start">
               {' '}
-              <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{' '}
+              <ContentFilterIcon fill={theme.palette.icon.default} />{' '}
             </InputAdornment>
           ),
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={handleClear}>
-                {filteringState.state !== FILTERING_STATE.IDLE && (
-                  <CrossCircleIcon fill={theme.palette.secondary.iconMain} />
-                )}
-              </IconButton>
+              {filteringState.state !== FILTERING_STATE.IDLE && (
+                <IconButton onClick={handleClear}>
+                  <CrossCircleIcon fill={theme.palette.icon.default} />
+                </IconButton>
+              )}
+              {filteringState.state !== FILTERING_STATE.IDLE && (
+                <IconButton onClick={toggleSuggestions}>
+                  {!anchorEl && <ExpandMore fill={theme.palette.icon.default} />}
+                  {anchorEl && <ExpandLess fill={theme.palette.icon.default} />}
+                </IconButton>
+              )}
             </InputAdornment>
           ),
         }}
@@ -281,34 +277,35 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
         {({ TransitionProps }) => {
           return (
             <Fade {...TransitionProps} timeout={100}>
-              <ClickAwayListener onKeydown onClickAway={handleClickAway}>
-                <div
-                  className={classes.dropDown}
-                  style={{
-                    width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
-                  }}
-                >
-                  {filteringState.state == FILTERING_STATE.SELECTING_FILTER && (
-                    <Filters
-                      filterStateMachine={filteringState}
-                      dispatchFilterMachine={dispatch}
-                      filterSchema={filterSchema}
-                    />
-                  )}
-                  {filteringState.state == FILTERING_STATE.SELECTING_VALUE && (
-                    <FilterValueSuggestions
-                      filterStateMachine={filteringState}
-                      dispatchFilterMachine={dispatch}
-                      filterSchema={filterSchema}
-                    />
-                  )}
-                </div>
-              </ClickAwayListener>
+              <div>
+                <ClickAwayListener onKeydown onClickAway={handleClickAway}>
+                  <DropDown
+                    style={{
+                      width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
+                    }}
+                  >
+                    {filteringState.state == FILTERING_STATE.SELECTING_FILTER && (
+                      <Filters
+                        filterStateMachine={filteringState}
+                        dispatchFilterMachine={dispatch}
+                        filterSchema={filterSchema}
+                      />
+                    )}
+                    {filteringState.state == FILTERING_STATE.SELECTING_VALUE && (
+                      <FilterValueSuggestions
+                        filterStateMachine={filteringState}
+                        dispatchFilterMachine={dispatch}
+                        filterSchema={filterSchema}
+                      />
+                    )}
+                  </DropDown>
+                </ClickAwayListener>
+              </div>
             </Fade>
           );
         }}
       </Popper>
-    </div>
+    </Root>
   );
 };
 

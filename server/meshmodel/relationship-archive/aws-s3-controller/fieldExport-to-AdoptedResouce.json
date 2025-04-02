@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "type": "binding",
+    "subType": "dependency",
+    "selectors": [
+      {
+        "allow": {
+          "from": [
+            {
+              "kind": "FieldExport",
+              "model": {
+                "name": "aws-s3-controller",
+                "registrant": {
+                  "kind": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "merge",
+                "mutatorRef": [
+                  [
+                    "spec",
+                    "exportSource"
+                  ]
+                ],
+                "description": "FieldExport depends on an AdoptedResource to manage or access the S3 Bucket for exporting data."
+              }
+            }
+          ],
+          "to": [
+            {
+              "kind": "AdoptedResource",
+              "model": {
+                "name": "aws-s3-controller",
+                "registrant": {
+                  "kind": "github"
+                }
+              },
+              "patch": {
+                "patchStrategy": "replace",
+                "mutatedRef": [
+                  [
+                    "status",
+                    "resourceState"
+                  ]
+                ],
+                "description": "The AdoptedResource provides the necessary access to the S3 Bucket for FieldExport operations."
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  

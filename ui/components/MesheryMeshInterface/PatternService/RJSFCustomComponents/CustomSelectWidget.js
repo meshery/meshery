@@ -1,26 +1,25 @@
 import React from 'react';
 import {
-  Checkbox,
   IconButton,
   InputAdornment,
   ListItemText,
   MenuItem,
   TextField,
   InputLabel,
-} from '@material-ui/core';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+  useTheme,
+} from '@layer5/sistent';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import theme from '../../../../themes/app';
 import { CustomTextTooltip } from '../CustomTextTooltip';
-import { getHyperLinkDiv } from '../helper';
 import {
   ariaDescribedByIds,
   enumOptionsIndexForValue,
   enumOptionsValueForIndex,
   labelValue,
 } from '@rjsf/utils';
+import { Checkbox } from '@layer5/sistent';
 
 export default function CustomSelectWidget({
   schema,
@@ -62,7 +61,7 @@ export default function CustomSelectWidget({
   const _onFocus = ({ target: { value } }) =>
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
-
+  const theme = useTheme();
   return (
     <>
       {xRjsfGridArea && (
@@ -83,21 +82,16 @@ export default function CustomSelectWidget({
         onChange={_onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
+        size="small"
         InputProps={{
           style: { paddingRight: '0px' },
           endAdornment: (
             <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
               {rawErrors?.length > 0 && (
                 <CustomTextTooltip
-                  backgroundColor={ERROR_COLOR}
+                  bgColor={ERROR_COLOR}
                   flag={formContext?.overrideFlag}
-                  title={
-                    <div>
-                      {rawErrors?.map((error, index) => (
-                        <div key={index}>{error}</div>
-                      ))}
-                    </div>
-                  }
+                  title={rawErrors?.join('  ')}
                   interactive={true}
                 >
                   <IconButton component="span" size="small">
@@ -112,16 +106,15 @@ export default function CustomSelectWidget({
               )}
               {schema?.description && (
                 <CustomTextTooltip
-                  backgroundColor="#3C494F"
                   flag={formContext?.overrideFlag}
-                  title={getHyperLinkDiv(schema?.description)}
+                  title={schema?.description}
                   interactive={true}
                 >
                   <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
                     <HelpOutlineIcon
                       width="14px"
                       height="14px"
-                      fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                      fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
                       style={{ verticalAlign: 'middle', ...iconSmall }}
                     />
                   </IconButton>

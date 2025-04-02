@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -177,6 +177,14 @@ mesheryctl system logs meshery-istio
 
 			if err != nil {
 				return err
+			}
+
+			// Get and display current context
+			currentContext, err := utils.GetCurrentK8sContext(client)
+			if err != nil {
+				log.Warn("Unable to determine current Kubernetes context: ", err)
+			} else {
+				log.Info("Using Kubernetes context: ", currentContext)
 			}
 
 			// List the pods in the MesheryNamespace

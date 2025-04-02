@@ -1,0 +1,62 @@
+{
+  "capabilities": null,
+  "component": {
+    "kind": "Backup",
+    "schema": "{\n \"description\": \"Backup is the Schema for the backups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the desired behavior of the backup. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"cluster\": {\n     \"description\": \"The cluster to backup\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup\",\n \"type\": \"object\"\n}",
+    "version": "postgresql.cnpg.io/v1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Backup",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+     "isNamespaced": true,
+    "published": false
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "teamspeak3",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/truecharts/helm-staging/releases/download/teamspeak3-6.0.8/teamspeak3-6.0.8.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "6.0.8"
+    },
+    "name": "teamspeak3",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

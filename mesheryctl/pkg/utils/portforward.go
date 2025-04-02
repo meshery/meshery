@@ -44,7 +44,7 @@ func NewPortForward(
 	ctx context.Context,
 	client *meshkitkube.Client,
 	namespace, deployName string,
-	host string, localPort, remotePort int,
+	host string, localPort, remotePort int, // I think "remotePort" should be idenitified dynamically based on the retrieved Pod configuration, instead of assuming 8080, or asking from user?
 	emitLogs bool,
 ) (*PortForward, error) {
 	timeoutSeconds := int64(30)

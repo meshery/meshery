@@ -1,0 +1,22 @@
+created_at: "2023-07-31T16:22:41+01:00"
+id: 957fbc9b-708d-4396-84b8-e2ba37c1adcc
+location:
+  branch: ""
+  host: ""
+  path: ""
+  type: local
+name: kumatest
+pattern_file: |
+  name: MesheryGeneratedPatternFile
+  services:
+    VirtualService-0.4157272729581598:
+      type: VirtualService
+      namespace: VirtualService
+      traits:
+        meshmap:
+          position:
+            posX: 313
+            posY: 173
+updated_at: "2023-07-31T16:22:41+01:00"
+user_id: 990f779c-708d-4396-84b8-e2ba37c1adcc
+

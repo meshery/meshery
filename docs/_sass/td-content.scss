@@ -8,12 +8,31 @@
 
   & > h2 {
     font-weight: 400;
-    margin: 3.2rem 0 1.6rem;
+    margin: 1.2rem 0 1.6rem;
   }
 
   & h3 {
-    margin: 3.2rem 0 1.6rem;
+    margin: 1.2rem 0 1.6rem;
     font-weight: 400;
+  }
+
+  @media (max-width: 320px) {
+    & > h1 {
+      font-size: 1.5rem;
+    }
+
+    & > h2 {
+      font-size: 1.3rem;
+      margin: 1rem 0 1.2rem;
+    }
+
+    & > h3 {
+      font-size: 1.1rem;
+      margin: 0.8rem 0 1rem;
+    }
+    & > h4 {
+      font-size: 1rem;
+    }
   }
 }
 
@@ -73,12 +92,12 @@
 .window-buttons {
   content: "";
   position: relative;
-  top: -3.2rem;
+  top: -2.8rem;
   left: 1.5rem;
   margin-bottom: -2rem;
   display: inline-block;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 0.85rem;
+  height: 0.85rem;
   border-radius: 50%;
   /* A little hack to display the window buttons in one pseudo element. */
   background: #d9515d;
@@ -89,10 +108,10 @@
 .clipboardjs::after {
   /* position: absolute; */
   color: var(--color-grey-medium);
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   /* left: 0%; */
   width: 100%;
-  font-size: 1.25rem;
+  font-size: 0.9rem;
   text-align: center;
 }
 

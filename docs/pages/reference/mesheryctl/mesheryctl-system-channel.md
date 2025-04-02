@@ -89,4 +89,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 ## See Also
 
+* [mesheryctl system channel set](/reference/mesheryctl/system/channel/set)
+* [mesheryctl system channel switch](/reference/mesheryctl/system/channel/switch)
+* [mesheryctl system channel view](/reference/mesheryctl/system/channel/view)
+
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

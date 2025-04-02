@@ -11,6 +11,7 @@ import (
 	"github.com/layer5io/meshery/server/machines/prometheus"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 )
 
@@ -33,7 +34,7 @@ func StatusToEvent(status connections.ConnectionStatus) machines.EventType {
 	}
 	return machines.EventType(machines.DefaultState)
 }
-func getMachine(initialState machines.StateType, mtype, id string, userID uuid.UUID, log logger.Handler) (*machines.StateMachine, error) {
+func getMachine(initialState machines.StateType, mtype, id string, userID uuid.UUID, log logger.Handler, dbHandler *database.Handler) (*machines.StateMachine, error) {
 	switch mtype {
 	case "kubernetes":
 		return kubernetes.New(id, userID, log)
@@ -81,7 +82,7 @@ func InitializeMachineWithContext(
 		return inst, nil
 	}
 
-	inst, err := getMachine(initialState, mtype, ID.String(), userID, log)
+	inst, err := getMachine(initialState, mtype, ID.String(), userID, log, provider.GetGenericPersister())
 	if err != nil {
 		log.Error(err)
 		return nil, err

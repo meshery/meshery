@@ -87,8 +87,12 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 	}
 
 	// failsafe for bad api call
-	if resp.StatusCode != 200 {
-		return nil, ErrFailReqStatus(resp.StatusCode)
+	if resp.StatusCode != 200 && resp.StatusCode != 201 {
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrFailReqStatus(resp.StatusCode, string(bodyBytes))
 	}
 
 	return resp, nil
@@ -328,7 +332,7 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 			return
 		}
 
-		fmt.Fprint(rw, "successfully logged in, you can close this window now")
+		fmt.Fprint(rw, "you have logged in, you can close this window now")
 		tokenChan <- token
 	})
 	if err != nil {
@@ -405,7 +409,7 @@ func chooseDirectProvider(provs map[string]Provider, option string) (Provider, e
 }
 
 func createProviderURI(provider Provider, host string, port int) (string, error) {
-	uri, err := url.Parse(provider.ProviderURL)
+	uri, err := url.Parse(provider.ProviderURL + "/login")
 	if err != nil {
 		return "", err
 	}
@@ -417,7 +421,6 @@ func createProviderURI(provider Provider, host string, port int) (string, error)
 	q.Add("provider_version", "v0.3.14")
 
 	uri.RawQuery = q.Encode()
-
 	return uri.String(), nil
 }
 
@@ -450,7 +453,7 @@ func getTokenObjFromMesheryServer(mctl *config.MesheryCtlConfig, provider, token
 }
 
 func IsServerRunning(serverAddr string) error {
-	serverAddr, _ = strings.CutPrefix(serverAddr, "http://")
+	serverAddr = strings.TrimPrefix(serverAddr, "http://")
 	// Attempt to establish a connection to the server
 	conn, err := net.DialTimeout("tcp", serverAddr, 2*time.Second)
 	if err != nil {

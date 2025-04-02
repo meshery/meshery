@@ -15,7 +15,7 @@ abstract: Install Meshery on Kubernetes. Deploy Meshery in Kubernetes in-cluster
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-cluster](#in-cluster-installation) or outside of kubernetes [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to [Install Meshery in your kubernetes clusters](#install-meshery-into-your-kubernetes-cluster)_**
+Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-cluster](#in-cluster-installation) or outside of kubernetes [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your kubernetes clusters_**
 
 <div class="prereqs"><h4>Prerequisites</h4>
   <ol>
@@ -30,13 +30,12 @@ Manage your kubernetes clusters with Meshery. Deploy Meshery in kubernetes [in-c
 - [In-cluster Installation](#in-cluster-installation)
   - [Preflight Checks](#preflight-checks)
     - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
-    - [Preflight: Plan your access to Meshery UI](#preflight-plan-your-access-to-meshery-ui)
   - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
   - [Installation: Using Helm](#installation-using-helm)
-- [Post-Installation Steps](#post-installation-steps)
-  - [Access Meshery UI](#access-meshery-ui)
+  - [Post-Installation Steps](#post-installation-steps)
 - [Out-of-cluster Installation](#out-of-cluster-installation)
-  - [Installation: Upload Config File in Meshery Web UI](#installation-upload-config-file-in-meshery-web-ui)
+  - [Set up Ingress on Minikube with the NGINX Ingress Controller](#set-up-ingress-on-minikube-with-the-nginx-ingress-controller)
+  - [Installing cert-manager with kubectl](#installing-cert-manager-with-kubectl)
 
 # In-cluster Installation
 
@@ -52,16 +51,6 @@ Verify your kubeconfig's current context is set the kubernetes cluster you want 
 {% capture code_content %}kubectl config current-context{% endcapture %}
 {% include code.html code=code_content %}
 
-### Preflight: Plan your access to Meshery UI
-
-1. If you are using port-forwarding, please refer to the [port-forwarding](/tasks/accessing-meshery-ui) guide for detailed instructions.
-2. Customize your Meshery Provider Callback URL. Meshery Server supports customizing authentication flow callback URL, which can be configured in the following way:
-
-{% capture code_content %}$ MESHERY_SERVER_CALLBACK_URL=https://custom-host mesheryctl system start{% endcapture %}
-{% include code.html code=code_content %}
-
-Meshery should now be running in your Kubernetes cluster and Meshery UI should be accessible at the `EXTERNAL IP` of `meshery` service.
-
 ## Installation: Using `mesheryctl`
 
 Once configured, execute the following command to start Meshery.
@@ -70,23 +59,23 @@ Before executing the below command, go to ~/.meshery/config.yaml and ensure that
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
 
-If you encounter any authentication issues, you can use `mesheryctl system login`. For more information, click [here](/guides/mesheryctl/authenticate-with-meshery-via-cli) to learn more.
-
 ## Installation: Using Helm
 
 For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
-# Post-Installation Steps
+## Post-Installation Steps
 
-## Access Meshery UI
+Optionally, you can verify the health of your Meshery deployment, using <a href='/reference/mesheryctl/system/check'>mesheryctl system check</a>.
 
-To access Meshery's UI, please refer to the [instruction](/tasks/accessing-meshery-ui) for detailed guidance.
+You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
+
+{% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 # Out-of-cluster Installation
 
 Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes cluster.
 
-## Installation: Upload Config File in Meshery Web UI
+<!-- ## Installation: Upload Config File in Meshery Web UI
 
 - Run the below command to generate the _"config_minikube.yaml"_ file for your cluster:
 
@@ -94,8 +83,25 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
  <div class="clipboardjs">kubectl config view --minify --flatten > config_minikube.yaml</div></div>
  </pre>
 
-- Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option.
+- Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option. -->
 
-{% include suggested-reading.html language="en" %}
+## Set up Ingress on Minikube with the NGINX Ingress Controller
+- Run the below command to enable the NGINX Ingress controller for your cluster:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">minikube addons enable ingress</div></div>
+ </pre>
+
+- To check if NGINX Ingress controller is running
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">kubectl get pods -n ingress-nginx</div></div>
+ </pre>
+
+## Installing cert-manager with kubectl
+- Run the below command to install cert-manager for your cluster:
+
+ <pre class="codeblock-pre"><div class="codeblock">
+ <div class="clipboardjs">kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml</div></div>
+ </pre>
 
 {% include related-discussions.html tag="meshery" %}

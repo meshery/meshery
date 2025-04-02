@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ import (
 var (
 	showProviderForAllContext bool
 	forceSetProvider          bool
+	MesheryProvider           = "Meshery"
+	NoneProvider              = "None"
 )
 
 // PrintProviderToStdout to return provider details for a context
@@ -348,7 +350,7 @@ mesheryctl system provider reset
 			return nil
 		}
 
-		currCtx.Provider = "Meshery"
+		currCtx.Provider = MesheryProvider
 
 		mctlCfg.Contexts[focusedContext] = *currCtx
 		viper.Set("contexts", mctlCfg.Contexts)

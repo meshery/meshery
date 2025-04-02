@@ -10,7 +10,7 @@ command: pattern
 subcommand: view
 ---
 
-# mesheryctl pattern view
+# mesheryctl design view
 
 Display pattern(s)
 
@@ -19,7 +19,7 @@ Display pattern(s)
 Displays the contents of a specific pattern based on name or id
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern view pattern name [flags]
+mesheryctl design view pattern name [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl pattern view pattern name [flags]
 view a pattern
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern view [pattern-name | ID]
+mesheryctl design view [pattern-name | ID]
 
 </div>
 </pre> 
@@ -58,7 +58,7 @@ mesheryctl pattern view [pattern-name | ID]
 
 ## Screenshots
 
-Usage of mesheryctl pattern view
+Usage of mesheryctl design view
 ![pattern-view-usage](/assets/img/mesheryctl/patternView.png)
 
 ## See Also

@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Configuring Autocompletion for `mesheryctl`
 permalink: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
 language: en
@@ -71,8 +71,6 @@ To load fish shell completions for each session, execute once:
  <div class="clipboardjs">mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish</div></div>
  </pre>
 
-#### Suggested Reading
-
 For an exhaustive list of `mesheryctl` commands and syntax:
 
 - See [`mesheryctl` Command Reference]({{ site.baseurl }}/reference/mesheryctl).
@@ -81,10 +79,9 @@ Guides to using Meshery's various features and components.
 
 {% capture tag %}
 
-<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+<li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
 
 {% endcapture %}
 
-{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
 
 {% include related-discussions.html tag="mesheryctl" %}

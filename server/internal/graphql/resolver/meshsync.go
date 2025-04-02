@@ -7,7 +7,6 @@ import (
 	"path"
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -117,13 +116,12 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			if err != nil {
 				return "", err
 			}
-			ch := meshmodel.NewEntityRegistrationHelper(r.Config, rm, r.Log)
 
 			go func() {
-				ch.SeedComponents()
+				models.SeedComponents(r.Log, r.Config, rm)
 				krh.SeedKeys(viper.GetString("KEYS_PATH"))
 			}()
-			r.Log.Info("Hard reset successfully completed")
+			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster
 			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
@@ -181,75 +179,4 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		}
 	}
 	return model.StatusProcessing, nil
-}
-
-func (r *Resolver) connectToBroker(ctx context.Context, provider models.Provider, ctxID string) error {
-	status, err := r.getOperatorStatus(ctx, provider, ctxID)
-	if err != nil {
-		return err
-	}
-	var currContext *models.K8sContext
-	var newContextFound bool
-	if ctxID == "" {
-		currContexts, ok := ctx.Value(models.KubeClustersKey).([]models.K8sContext)
-		if !ok || len(currContexts) == 0 {
-			r.Log.Error(ErrNilClient)
-			return ErrNilClient
-		}
-		currContext = &currContexts[0]
-	} else {
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
-		if !ok || len(allContexts) == 0 {
-			r.Log.Error(ErrNilClient)
-			return ErrNilClient
-		}
-		for _, ctx := range allContexts {
-			if ctx.ID == ctxID {
-				currContext = &ctx
-				break
-			}
-		}
-	}
-	if currContext == nil {
-		r.Log.Error(ErrNilClient)
-		return ErrNilClient
-	}
-	if connectionTrackerSingleton.Get(currContext.ID) == "" {
-		newContextFound = true
-	}
-	kubeclient, err := currContext.GenerateKubeHandler()
-	if err != nil {
-		r.Log.Error(ErrNilClient)
-		return ErrNilClient
-	}
-	if (r.BrokerConn.IsEmpty() || newContextFound) && status != nil && status.Status == model.MesheryControllerStatus(model.StatusEnabled) {
-		endpoint, err := model.SubscribeToBroker(provider, kubeclient, r.brokerChannel, r.BrokerConn, connectionTrackerSingleton)
-		if err != nil {
-			r.Log.Error(ErrAddonSubscription(err))
-			return err
-		}
-		r.Log.Info("Connected to broker at:", endpoint)
-		connectionTrackerSingleton.Set(currContext.ID, endpoint)
-		connectionTrackerSingleton.Log(r.Log)
-		return nil
-	}
-
-	if r.BrokerConn.Info() == broker.NotConnected {
-		return ErrBrokerNotConnected
-	}
-
-	return nil
-}
-
-func (r *Resolver) deployMeshsync(_ context.Context, _ models.Provider, _ string) (model.Status, error) {
-	//err := model.RunMeshSync(r.Config.KubeClient, false)
-	return model.StatusProcessing, nil
-}
-
-func (r *Resolver) connectToNats(ctx context.Context, provider models.Provider, k8scontextID string) (model.Status, error) {
-	err := r.connectToBroker(ctx, provider, k8scontextID)
-	if err != nil {
-		return model.StatusDisabled, err
-	}
-	return model.StatusConnected, nil
 }

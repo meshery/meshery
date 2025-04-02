@@ -1,0 +1,62 @@
+{
+  "capabilities": null,
+  "component": {
+    "kind": "TLSOption",
+    "schema": "{\n \"description\": \"TLSOption is the CRD implementation of a Traefik TLS Option, allowing to configure some parameters of the TLS connection. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#tls-options\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSOptionSpec defines the desired state of a TLSOption.\",\n   \"properties\": {\n    \"alpnProtocols\": {\n     \"description\": \"ALPNProtocols defines the list of supported application level protocols for the TLS handshake, in order of preference. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#alpn-protocols\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"cipherSuites\": {\n     \"description\": \"CipherSuites defines the list of supported cipher suites for TLS versions up to TLS 1.2. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#cipher-suites\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"clientAuth\": {\n     \"description\": \"ClientAuth defines the server's policy for TLS Client Authentication.\",\n     \"properties\": {\n      \"clientAuthType\": {\n       \"description\": \"ClientAuthType defines the client authentication type to apply.\",\n       \"enum\": [\n        \"NoClientCert\",\n        \"RequestClientCert\",\n        \"RequireAnyClientCert\",\n        \"VerifyClientCertIfGiven\",\n        \"RequireAndVerifyClientCert\"\n       ],\n       \"type\": \"string\"\n      },\n      \"secretNames\": {\n       \"description\": \"SecretNames defines the names of the referenced Kubernetes Secret storing certificate details.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"curvePreferences\": {\n     \"description\": \"CurvePreferences defines the preferred elliptic curves in a specific order. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#curve-preferences\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"maxVersion\": {\n     \"description\": \"MaxVersion defines the maximum TLS version that Traefik will accept. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13. Default: None.\",\n     \"type\": \"string\"\n    },\n    \"minVersion\": {\n     \"description\": \"MinVersion defines the minimum TLS version that Traefik will accept. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13. Default: VersionTLS10.\",\n     \"type\": \"string\"\n    },\n    \"preferServerCipherSuites\": {\n     \"description\": \"PreferServerCipherSuites defines whether the server chooses a cipher suite among his own instead of among the client's. It is enabled automatically when minVersion or maxVersion is set. Deprecated: https://github.com/golang/go/issues/45430\",\n     \"type\": \"boolean\"\n    },\n    \"sniStrict\": {\n     \"description\": \"SniStrict defines whether Traefik allows connections from clients connections that do not specify a server_name extension.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Option\",\n \"type\": \"object\"\n}",
+    "version": "traefik.containo.us/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "TLS Option",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+     "isNamespaced": true,
+    "published": false
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "rapidphotodownloader",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "metadata": {
+      "source_uri": "https://github.com/truecharts/helm-staging/releases/download/rapidphotodownloader-2.0.9/rapidphotodownloader-2.0.9.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "2.0.9"
+    },
+    "name": "rapidphotodownloader",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "artifacthub",
+      "name": "Artifact Hub",
+      "status": "discovered",
+      "sub_type": "",
+      "type": "registry",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "status": "ignored",
+    "version": "v1.0.0",
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "ignored",
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "version": "v1.0.0"
+}

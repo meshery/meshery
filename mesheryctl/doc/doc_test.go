@@ -1,4 +1,4 @@
-// Copyright 2023 Layer5, Inc.
+// Copyright Meshery Authors
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,139 +16,209 @@ package main
 
 import (
 	"bytes"
+	"os"
 	"testing"
 
-	. "github.com/onsi/ginkgo/v2"
-	. "github.com/onsi/gomega"
-
 	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 )
 
-// TestDoc is the main function for the TestDoc test
-func TestDoc(t *testing.T) {
-	RegisterFailHandler(Fail)
-	RunSpecs(t, "Doc tests")
+func TestPrepender(t *testing.T) {
+	t.Run("Simple file", func(t *testing.T) {
+		expected := `---
+layout: default
+title: test
+permalink: reference/test/main
+redirect_from: reference/test/main/
+type: reference
+display-title: "false"
+language: en
+command: test
+subcommand: nil
+---
+
+`
+		assert.Equal(t, expected, prepender("test.md"))
+	})
+
+	t.Run("File with subcommands", func(t *testing.T) {
+		expected := `---
+layout: default
+title: test-sub
+permalink: reference/test/sub
+redirect_from: reference/test/sub/
+type: reference
+display-title: "false"
+language: en
+command: sub
+subcommand: nil
+---
+
+`
+		assert.Equal(t, expected, prepender("test-sub.md"))
+
+		expected = `---
+layout: default
+title: test-sub-sub
+permalink: reference/test/sub/sub
+redirect_from: reference/test/sub/sub/
+type: reference
+display-title: "false"
+language: en
+command: sub
+subcommand: sub
+---
+
+`
+		assert.Equal(t, expected, prepender("test-sub-sub.md"))
+
+		expected = `---
+layout: default
+title: test-sub-sub-sub
+permalink: reference/test/sub/sub/sub
+redirect_from: reference/test/sub/sub/sub/
+type: reference
+display-title: "false"
+language: en
+command: sub
+subcommand: sub
+---
+
+`
+		assert.Equal(t, expected, prepender("test-sub-sub-sub.md"))
+	})
 }
 
-var _ = Describe("Tests for Doc", func() {
+func TestDoc(t *testing.T) {
+	cmd := &cobra.Command{
+		Use: "test",
+	}
 
-	// Create a new cobra command before each test
-	var cmd *cobra.Command
-	BeforeEach(func() {
-		cmd = &cobra.Command{
-			Use: "test",
+	t.Run("Test linkHandler function", func(t *testing.T) {
+		assert.Equal(t, "/main", linkHandler("test.md"))
+		assert.Equal(t, "sub", linkHandler("test-sub-sub.md"))
+		assert.Equal(t, "sub/sub", linkHandler("test-sub-sub-sub.md"))
+		assert.Equal(t, "sub", linkHandler("test-sub-sub-sub-sub.md"))
+	})
+
+	t.Run("Test GenMarkdownTreeCustom function", func(t *testing.T) {
+		cmd.AddCommand(&cobra.Command{
+			Use: "sub",
+		})
+		markDownPath := "../../docs/pages/reference/mesheryctl/"
+		err := GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
+		assert.NoError(t, err)
+	})
+
+	t.Run("Test HasSeeAlso function", func(t *testing.T) {
+
+		assert.False(t, hasSeeAlso(cmd))
+
+		parentCmd := &cobra.Command{Use: "parent"}
+		childCmd := &cobra.Command{Use: "child"}
+		parentCmd.AddCommand(childCmd)
+		assert.True(t, hasSeeAlso(childCmd))
+	})
+
+	t.Run("Test GenMarkdownCustom with initial setup", func(t *testing.T) {
+		cmd.Annotations = map[string]string{
+			"link":    "test_link",
+			"caption": "test_caption",
 		}
+		cmd.Example = "test_example"
+		cmd.Long = "test_long"
+		manuallyAddedContent, _ := getManuallyAddedContentMap("test.md")
+		buf := &bytes.Buffer{}
+		err := GenMarkdownCustom(cmd, buf, manuallyAddedContent)
+		assert.NoError(t, err)
+		output := buf.String()
+		assert.Contains(t, output, "test_link")
+		assert.Contains(t, output, "test_caption")
+		assert.Contains(t, output, "test_example")
 	})
 
-	// TestLinkHandler is the link handler for the markdown file
-	const TestLinkHandler = "/main"
-	Context("Test linkHandler function", func() {
-		It("should return the correct linkHandler", func() {
-			// call linkHandler
-			linkHandler := linkHandler("test.md")
-			// check if linkHandler is correct
-			Expect(linkHandler).To(Equal(TestLinkHandler))
+	t.Run("Test GenMarkdownCustom with parent command and manually added content", func(t *testing.T) {
+
+		parentCmd := &cobra.Command{Use: "parent"}
+		parentCmd.AddCommand(cmd)
+		cmd.Long = "Find test_long"
+		cmd.Run = func(cmd *cobra.Command, args []string) {}
+		cmd.Example = "// test_example"
+		file, _ := os.CreateTemp("", "test.md")
+		defer os.Remove(file.Name())
+		_, err := file.WriteString("{% include example.md %}")
+		assert.NoError(t, err)
+		file.Close()
+		manuallyAddedContent, _ := getManuallyAddedContentMap(file.Name())
+		buf := &bytes.Buffer{}
+		err = GenMarkdownCustom(cmd, buf, manuallyAddedContent)
+		assert.NoError(t, err)
+		output := buf.String()
+		assert.Contains(t, output, "test_link")
+		assert.Contains(t, output, "codeblock-pre")
+		assert.Contains(t, output, "test_caption")
+		assert.Contains(t, output, "test_example")
+		assert.Contains(t, output, "See Also")
+		assert.Contains(t, output, "preserving-manually-added-documentation")
+	})
+	t.Run("Test GenYamlTreeCustom function", func(t *testing.T) {
+		cmd.AddCommand(&cobra.Command{
+			Use: "sub",
 		})
+		yamlPath := "../../docs/pages/reference/mesheryctl/"
+		err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
+		assert.NoError(t, err)
 	})
 
-	// TestGenMarkdownTreeCustom is the test for GenMarkdownTreeCustom function
-	Context("Test GenMarkdownTreeCustom function", func() {
-		It("should return nil", func() {
-			// add a subcommand
-			cmd.AddCommand(&cobra.Command{
-				Use: "sub",
-			})
-			// path for docs
-			markDownPath := "../../docs/pages/reference/mesheryctl/"
+	t.Run("Test getManuallyAddedContentMap function", func(t *testing.T) {
+		_, err := getManuallyAddedContentMap("test.md")
+		assert.NoError(t, err)
 
-			// call GenMarkdownTreeCustom
-			err := GenMarkdownTreeCustom(cmd, markDownPath, prepender, linkHandler)
-			// check if err is nil
-			Expect(err).To(BeNil())
-		})
+		file, err := os.CreateTemp("", "test.md")
+		assert.NoError(t, err)
+		defer os.Remove(file.Name())
+
+		_, err = file.WriteString("{% include example.md %}")
+		assert.NoError(t, err)
+		file.Close()
+
+		contentMap, err := getManuallyAddedContentMap(file.Name())
+		assert.NoError(t, err)
+		assert.Contains(t, contentMap, 0)
+		assert.Equal(t, "example.md", contentMap[0])
 	})
 
-	// TestGenMarkdownCustom is the test for GenMarkdownCustom function
-	Context("Test GenMarkdownCustom function", func() {
-		It("should contain specific sub-strings", func() {
-			// add annotations "link" and "caption" to the command
-			cmd.Annotations = map[string]string{
-				"link":    "test_link",
-				"caption": "test_caption",
-			}
-
-			// add Example for cmd for test
-			cmd.Example = "test_example"
-			manuallyAddedContent, _ := getManuallyAddedContentMap("test.md")
-
-			// io.Writer
-			buf := &bytes.Buffer{}
-			// call GenMarkdownCustom
-			err := GenMarkdownCustom(cmd, buf, manuallyAddedContent)
-			// check if err is nil
-			Expect(err).To(BeNil())
-			// check if buf is not empty
-			Expect(buf.String()).NotTo(BeEmpty())
-			// check if buf contains the correct string
-			Expect(buf.String()).To(ContainSubstring("test_link"))
-			Expect(buf.String()).To(ContainSubstring("test_caption"))
-			Expect(buf.String()).To(ContainSubstring("test_example"))
-		})
+	t.Run("Test GenYamlCustom function", func(t *testing.T) {
+		cmd.Example = "test_example"
+		buf := &bytes.Buffer{}
+		err := GenYamlCustom(cmd, buf)
+		assert.NoError(t, err)
+		output := buf.String()
+		assert.Contains(t, output, "test_example")
 	})
 
-	// TestHasSeeAlso is the test for HasSeeAlso function
-	Context("Test HasSeeAlso function", func() {
-		It("should return false", func() {
-			// call HasSeeAlso
-			hasSeeAlso := hasSeeAlso(cmd)
-			// check if hasSeeAlso is false
-			Expect(hasSeeAlso).To(BeFalse())
-		})
+	t.Run("Test printOptions function", func(t *testing.T) {
+		cmdWithFlags := &cobra.Command{Use: "testWithFlags"}
+		cmdWithFlags.Flags().String("flag1", "default1", "description1")
+		cmdWithFlags.Flags().String("flag2", "default2", "description2")
+
+		buf := &bytes.Buffer{}
+		err := printOptions(buf, cmdWithFlags)
+		assert.NoError(t, err)
+		output := buf.String()
+		assert.Contains(t, output, "## Options")
+		assert.Contains(t, output, "--flag1")
+		assert.Contains(t, output, "--flag2")
+
+		parentCmd := &cobra.Command{Use: "parent"}
+		parentCmd.PersistentFlags().String("parentFlag", "defaultParent", "parent description")
+		parentCmd.AddCommand(cmdWithFlags)
+
+		buf = &bytes.Buffer{}
+		err = printOptions(buf, cmdWithFlags)
+		assert.NoError(t, err)
+		output = buf.String()
+		assert.Contains(t, output, "## Options inherited from parent commands")
+		assert.Contains(t, output, "--parentFlag")
 	})
-
-	// TestGenYamlTreeCustom is the test for GenYamlTreeCustom function
-	Context("Test GenYamlTreeCustom function", func() {
-		It("should return nil", func() {
-			// add a subcommand
-			cmd.AddCommand(&cobra.Command{
-				Use: "sub",
-			})
-			// path for docs
-			yamlPath := "../../docs/pages/reference/mesheryctl/"
-			// call GenYamlTreeCustom
-			err := GenYamlTreeCustom(cmd, yamlPath, prepender, linkHandler)
-			// check if err is nil
-			Expect(err).To(BeNil())
-		})
-	})
-
-	//Test getManuallyAddedContentMap
-	Context("Test getManuallyAddedContentMap function", func() {
-		It("should return nil", func() {
-
-			// call getManuallyAddedContentMap
-			_, err := getManuallyAddedContentMap("test.md")
-
-			// check if err is nil
-			Expect(err).To(BeNil())
-		})
-	})
-
-	//TestGenYamlCustom is the test for GenYamlCustom function
-	Context("Test GenYamlCustom function", func() {
-		It("should return specific sub-strings", func() {
-			// add Example for cmd for test
-			cmd.Example = "test_example"
-			// io.Writer
-			buf := &bytes.Buffer{}
-			// call GenYamlCustom
-			err := GenYamlCustom(cmd, buf)
-			// check if err is nil
-			Expect(err).To(BeNil())
-			// check if buf is not empty
-			Expect(buf.String()).NotTo(BeEmpty())
-			// check if buf contains the correct string
-			Expect(buf.String()).To(ContainSubstring("test_example"))
-		})
-	})
-})
+}

@@ -24,9 +24,9 @@ export const getFilteredDataForDetailsComponent = (data, selectedItemUUID) => {
       return REGISTRANTS;
     } else if (isPropertyIncluded(COMPONENTS) || isPropertyIncluded(RELATIONSHIPS)) {
       return MODELS;
-    } else if (isPropertyIncluded('evaluationQuery')) {
+    } else if (isPropertyIncluded('evaluationQuery') || isPropertyIncluded('selector')) {
       return RELATIONSHIPS;
-    } else if (isPropertyIncluded('schema')) {
+    } else if (isPropertyIncluded('component')) {
       return COMPONENTS;
     }
   };
@@ -65,14 +65,12 @@ export const groupRelationshipsByKind = (relationships) => {
  */
 export const removeDuplicateVersions = (data) => {
   const groupedModels = _.groupBy(data, 'name');
-
   const result = _.reduce(
     groupedModels,
     (acc, models, name) => {
-      const uniqueVersions = _.groupBy(models, 'version');
+      const uniqueVersions = _.groupBy(models, (modelDef) => modelDef?.model?.version);
       const arrayOfUniqueVersions = Object.values(uniqueVersions);
-
-      const existingModel = acc.find((m) => m.name === name);
+      const existingModelDef = acc.find((m) => m.name === name);
 
       const mergedData = arrayOfUniqueVersions.map((modelsWithSameVersion) => {
         let subVal = {
@@ -80,7 +78,9 @@ export const removeDuplicateVersions = (data) => {
           components: {},
         };
         modelsWithSameVersion.map((model) => {
-          subVal.relationships = _.union(subVal.relationships, model.relationships);
+          subVal.relationships = groupRelationshipsByKind(
+            _.union(subVal.relationships, model.relationships),
+          );
           subVal.components = _.union(subVal.components, model.components);
         });
         return {
@@ -89,17 +89,17 @@ export const removeDuplicateVersions = (data) => {
         };
       });
 
-      if (existingModel) {
-        existingModel.version = _.union(
-          existingModel.version,
-          mergedData.map((model) => model.version),
+      if (existingModelDef) {
+        existingModelDef.model.version = _.union(
+          existingModelDef.model.version,
+          mergedData.map((model) => model?.model?.version),
         );
-        existingModel.versionBasedData = existingModel.versionBasedData.concat(mergedData);
+        existingModelDef.versionBasedData = existingModelDef.versionBasedData.concat(mergedData);
       } else {
-        const selectedModel = models[0];
+        const selectedModelDef = models[0];
         acc.push({
-          ...selectedModel,
-          version: mergedData.map((model) => model.version),
+          ...selectedModelDef,
+          version: mergedData.map((model) => model?.model?.version),
           versionBasedData: mergedData,
         });
       }
@@ -111,3 +111,36 @@ export const removeDuplicateVersions = (data) => {
 
   return result;
 };
+
+/**
+ * To style JSON viewing in react-json-tree.
+ * Refer to base-16 theme styling guidelines for more info.
+ * https://github.com/chriskempson/base16/blob/main/styling.md
+ * @type {Object}
+ * @property {string} base00 - BACKGROUND_COLOR
+ * @property {string} base02 - OBJECT_OUTLINE_COLOR
+ * @property {string} base04 - OBJECT_DETAILS_COLOR
+ * @property {string} base07 - OBJECT_KEY_COLOR
+ * @property {string} base09 - ITEM_STRING_COLOR, DATE_COLOR, STRING_COLOR
+ * @property {string} base0A - SYMBOL_COLOR, FUNCTION_COLOR, UNDEFINED_COLOR, NULL_COLOR
+ * @property {string} base0D - ITEM_STRING_EXPANDED_COLOR, ARROW_COLOR
+ * @property {string} base0E - BOOLEAN_COLOR, NUMBER_COLOR
+ */
+export const reactJsonTheme = (themeType) => ({
+  base00: themeType === 'dark' ? '#303030' : '#ffffff',
+  base01: '#444c56',
+  base02: themeType === 'dark' ? '#586069' : '#abb2bf',
+  base03: '#6a737d',
+  base04: '#477E96',
+  base05: '#9ea7a6',
+  base06: '#d8dee9',
+  base07: themeType === 'dark' ? '#FFF3C5' : '#002B36',
+  base08: '#2a5491',
+  base09: '#d19a66',
+  base0A: '#EBC017',
+  base0B: '#237986',
+  base0C: '#56b6c2',
+  base0D: '#B1B6B8',
+  base0E: '#e1e6cf',
+  base0F: '#647881',
+});

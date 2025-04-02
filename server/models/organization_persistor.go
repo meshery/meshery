@@ -65,6 +65,14 @@ func (op *OrganizationPersister) GetOrganzation(id uuid.UUID) ([]byte, error) {
 	return marshalOrganization(&organization), err
 }
 
+func (op *OrganizationPersister) GetOrganizationsCount() (int64, error) {
+	var count int64
+	if err := op.DB.Model(&Organization{}).Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
 func marshalOrganization(org *Organization) []byte {
 	res, _ := json.Marshal(org)
 

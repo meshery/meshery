@@ -1,36 +1,31 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import { Autocomplete } from '@material-ui/lab';
-import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import { URLValidator } from '../../utils/URLValidator';
 import {
-  NoSsr,
-  Tooltip,
+  Button,
+  Typography,
   MenuItem,
   IconButton,
   CircularProgress,
-  FormControl,
-  FormLabel,
-  RadioGroup,
   FormControlLabel,
-  Radio,
-  Divider,
   Link,
-  ExpansionPanel,
-  ExpansionPanelSummary,
-  ExpansionPanelDetails,
-} from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
+  Grid,
+  CustomTooltip,
+  ModalBody,
+  ModalFooter,
+  Box,
+  AccordionDetails,
+  TextField,
+  NoSsr,
+  FormLabel,
+  Autocomplete,
+  RadioGroup,
+  AccordionSummary,
+} from '@layer5/sistent';
+import { URLValidator } from '../../utils/URLValidator';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import {
   updateLoadTestData,
   updateStaticPrometheusBoardConfig,
@@ -45,12 +40,26 @@ import { durationOptions } from '../../lib/prePopulatedOptions';
 import fetchControlPlanes from '../graphql/queries/ControlPlanesQuery';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { iconMedium } from '../../css/icons.styles';
-import { withNotify } from '../../utils/hooks/useNotification';
+import { useNotification, withNotify } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
+import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
+import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
+import { useGetMeshQuery } from '@/rtk-query/mesh';
+import { useLegacySelector, useLegacyDispatch } from '../../lib/store';
+import { ArrowBack } from '@mui/icons-material';
+import {
+  CenterTimer,
+  ExpansionPanelComponent,
+  FormContainer,
+  HelpIcon,
+  RadioButton,
+} from './style';
+import { getMeshModels } from '@/api/meshmodel';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -102,82 +111,6 @@ export function generatePerformanceProfile(data) {
   };
 }
 
-const styles = (theme) => ({
-  title: {
-    textAlign: 'center',
-    minWidth: 400,
-    padding: '10px',
-    color: '#fff',
-    backgroundColor:
-      theme.palette.type === 'dark'
-        ? theme.palette.secondary.headerColor
-        : theme.palette.secondary.mainBackground,
-  },
-  wrapperClss: {
-    padding: theme.spacing(10),
-    position: 'relative',
-    paddingTop: theme.spacing(5),
-  },
-  buttons: { display: 'flex', justifyContent: 'flex-end' },
-  spacing: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-  },
-  button: {
-    backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
-    '&:hover': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
-    },
-    color: '#fff',
-  },
-  iconColor: {
-    color: '#929292',
-  },
-  upload: {
-    paddingLeft: '0.7rem',
-    paddingTop: '8px',
-  },
-  expansionPanel: { boxShadow: 'none', border: '1px solid rgb(196,196,196)' },
-  margin: { margin: theme.spacing(1) },
-  chartTitle: { textAlign: 'center' },
-  chartTitleGraf: {
-    textAlign: 'center',
-    // marginTop: theme.spacing(5),
-  },
-  chartContent: {
-    // minHeight: window.innerHeight * 0.7,
-  },
-  centerTimer: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    top: '0',
-    left: '0',
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    zIndex: 1201,
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  paper: {
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
-  smallIcons: {
-    width: '15px',
-    height: '18px',
-    marginBottom: theme.spacing(1),
-    marginLeft: theme.spacing(0.3),
-  },
-  radio: {
-    '&.Mui-checked': {
-      color:
-        theme.palette.type === 'dark' ? theme.palette.secondary.focused : theme.palette.primary,
-    },
-  },
-});
 // =============================== PERFORMANCE COMPONENT =======================
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
@@ -213,7 +146,7 @@ const infoloadGenerators = (
 );
 
 let eventStream = null;
-const MesheryPerformanceComponent = (props) => {
+const MesheryPerformanceComponent_ = (props) => {
   const {
     testName = '',
     meshName = '',
@@ -221,7 +154,6 @@ const MesheryPerformanceComponent = (props) => {
     qps = '0',
     c = '0',
     t = '30s',
-    result,
     staticPrometheusBoardConfig,
     performanceProfileID,
     profileName,
@@ -232,6 +164,7 @@ const MesheryPerformanceComponent = (props) => {
     reqBody,
     contentType,
     metadata,
+    closeModal,
   } = props;
   const isJsonString = (str) => {
     try {
@@ -244,6 +177,7 @@ const MesheryPerformanceComponent = (props) => {
   // Create individual state variables for each property
   const [testNameState, setTestName] = useState(testName);
   const [meshNameState, setMeshName] = useState(meshName);
+  const [meshModels, setMeshModels] = useState([]);
   const [urlState, setUrl] = useState(url);
   const [qpsState, setQps] = useState(qps);
   const [cState, setC] = useState(c);
@@ -251,7 +185,9 @@ const MesheryPerformanceComponent = (props) => {
   const [tValueState, setTValue] = useState(t);
   const [loadGeneratorState, setLoadGenerator] = useState(loadGenerator || 'fortio');
   const [additionalOptionsState, setAdditionalOptions] = useState(additional_options || '');
-  const [resultState, setResult] = useState(result);
+  const [testResult, setTestResult] = useState();
+  const [testResultsOpen, setTestResultsOpen] = useState(false);
+
   const [headersState, setHeaders] = useState(headers || '');
   const [cookiesState, setCookies] = useState(cookies || '');
   const [reqBodyState, setReqBody] = useState(reqBody || '');
@@ -275,6 +211,29 @@ const MesheryPerformanceComponent = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+
+  const { notify } = useNotification();
+
+  const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
+    props?.selectedK8sContexts,
+  );
+
+  const [savePerformanceProfile] = useSavePerformanceProfileMutation();
+  const {
+    data: smpMeshes,
+    isSuccess: isSMPMeshesFetched,
+    isError: isSMPMeshError,
+  } = useGetMeshQuery();
+
+  useEffect(() => {
+    const fetchMeshModels = async () => {
+      const { models } = await getMeshModels();
+      const modelNames = models.map((model) => model.displayName);
+      setMeshModels(modelNames);
+    };
+    fetchMeshModels();
+  }, []);
+
   const handleChange = (name) => (event) => {
     const { value } = event.target;
     if (name === 'caCertificate') {
@@ -414,14 +373,17 @@ const MesheryPerformanceComponent = (props) => {
       tNum <= 0
     ) {
       setTError('error-autocomplete-value');
+      closeModal && closeModal();
       return;
     }
 
     if (!performanceProfileIDState) {
       submitProfile(({ id }) => submitLoadTest(id));
+      closeModal && closeModal();
       return;
     }
     submitLoadTest(performanceProfileIDState);
+    closeModal && closeModal();
   };
 
   const submitProfile = (cb) => {
@@ -467,25 +429,23 @@ const MesheryPerformanceComponent = (props) => {
 
   const handleProfileUpload = (body, generateNotif, cb) => {
     if (generateNotif) props.updateProgress({ showProgress: true });
-
-    dataFetch(
-      '/api/user/performance/profiles',
-      { method: 'POST', credentials: 'include', body: JSON.stringify(body) },
-      (result) => {
-        if (typeof result !== 'undefined') {
+    savePerformanceProfile({ body: body })
+      .unwrap()
+      .then((result) => {
+        if (result) {
           props.updateProgress({ showProgress: false });
           setPerformanceProfileID(result.id);
           if (cb) cb(result);
           if (generateNotif) {
             const notify = props.notify;
             notify({
-              message: 'Performance Profile Created!',
+              message: `Performance profile ${result.name} has been created`,
               event_type: EVENT_TYPES.SUCCESS,
             });
           }
         }
-      },
-      (err) => {
+      })
+      .catch((err) => {
         console.error(err);
         props.updateProgress({ showProgress: false });
         const notify = props.notify;
@@ -494,8 +454,7 @@ const MesheryPerformanceComponent = (props) => {
           event_type: EVENT_TYPES.ERROR,
           details: err.toString(),
         });
-      },
-    );
+      });
   };
 
   const submitLoadTest = (id) => {
@@ -538,6 +497,7 @@ const MesheryPerformanceComponent = (props) => {
         notify({
           message: 'fetched the data.',
           event_type: EVENT_TYPES.SUCCESS,
+          dataTestID: 'notify-fetch-data',
         });
         props.updateLoadTestData({
           loadTest: {
@@ -548,11 +508,13 @@ const MesheryPerformanceComponent = (props) => {
             c: cState,
             t: tState,
             loadGenerator: loadGeneratorState,
-            result: resultState,
+            result: result,
           },
         });
         setTestUUID(generateUUID());
-        setResult(result);
+
+        setTestResultsOpen(true);
+        setTestResult(result);
       }
       closeEventStream();
       setBlockRunTest(false);
@@ -578,12 +540,13 @@ const MesheryPerformanceComponent = (props) => {
     let track = 0;
     return (e) => {
       const data = JSON.parse(e.data);
+
       switch (data.status) {
         case 'info':
           notify({ message: data.message, event_type: EVENT_TYPES.INFO });
           if (track === 0) {
             setTimerDialogOpen(true);
-            setResult({});
+            // setResult({});
             track++;
           }
           break;
@@ -609,22 +572,15 @@ const MesheryPerformanceComponent = (props) => {
     getLoadTestPrefs();
     getSMPMeshes();
     if (props.runTestOnMount) handleSubmit();
-  }, []);
+  }, [userData, isUserDataFetched, smpMeshes]);
 
   const getLoadTestPrefs = () => {
-    dataFetch(
-      ctxUrl('/api/user/prefs', props?.selectedK8sContexts),
-      { credentials: 'same-origin', method: 'GET' },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          setQps(result.loadTestPrefs.qps);
-          setC(result.loadTestPrefs.c);
-          setT(result.loadTestPrefs.t);
-          setLoadGenerator(result.loadTestPrefs.gen);
-        }
-      },
-      () => {},
-    ); //error is already captured from the handler, also we have a redux-store for same & hence it's not needed here.
+    if (isUserDataFetched && userData && userData.loadTestPref) {
+      setQps(userData.loadTestPrefs.qps);
+      setC(userData.loadTestPrefs.c);
+      setT(userData.loadTestPrefs.t);
+      setLoadGenerator(userData.loadTestPrefs.gen);
+    }
   };
 
   const getStaticPrometheusBoardConfig = () => {
@@ -657,7 +613,11 @@ const MesheryPerformanceComponent = (props) => {
           setStaticPrometheusBoardConfig(result);
         }
       },
-      handleError('unable to fetch pre-configured boards'),
+      (err) => {
+        handleWarn(
+          'Unable to fetch pre-configured boards: No Kubernetes cluster is connected, so statistics will not be gathered from cluster',
+        )(err);
+      },
     );
   };
 
@@ -707,16 +667,11 @@ const MesheryPerformanceComponent = (props) => {
   };
 
   const getSMPMeshes = () => {
-    dataFetch(
-      '/api/mesh',
-      { credentials: 'include' },
-      (result) => {
-        if (result && Array.isArray(result.available_meshes)) {
-          setAvailableSMPMeshes(result.available_meshes.sort((m1, m2) => m1.localeCompare(m2)));
-        }
-      },
-      handleError('unable to fetch SMP meshes'),
-    );
+    if (isSMPMeshesFetched && smpMeshes) {
+      setAvailableSMPMeshes([...smpMeshes.available_meshes].sort((m1, m2) => m1.localeCompare(m2))); // shallow copy of the array to sort it
+    } else if (isSMPMeshError) {
+      handleError('unable to fetch SMP meshes');
+    }
   };
 
   function handleError(msg) {
@@ -732,6 +687,24 @@ const MesheryPerformanceComponent = (props) => {
       notify({
         message: finalMsg,
         event_type: EVENT_TYPES.ERROR,
+        details: error.toString(),
+      });
+    };
+  }
+
+  function handleWarn(msg) {
+    return (error) => {
+      // setBlockRunTest(false);
+      // setTimerDialogOpen(false);
+      // closeEventStream();
+      let finalMsg = msg;
+      if (typeof error === 'string') {
+        finalMsg = `${msg}`;
+      }
+
+      notify({
+        message: finalMsg,
+        event_type: EVENT_TYPES.WARNING,
         details: error.toString(),
       });
     };
@@ -754,7 +727,7 @@ const MesheryPerformanceComponent = (props) => {
   const handleTimerDialogClose = () => {
     setTimerDialogOpen(false);
   };
-  const { classes, grafana, prometheus } = props;
+  const { grafana, prometheus } = props;
   let localStaticPrometheusBoardConfig;
   if (
     props.staticPrometheusBoardConfig &&
@@ -790,7 +763,7 @@ const MesheryPerformanceComponent = (props) => {
     }
     displayStaticCharts = (
       <React.Fragment>
-        <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
           Node Metrics
         </Typography>
         <GrafanaCustomCharts
@@ -806,7 +779,7 @@ const MesheryPerformanceComponent = (props) => {
   if (prometheus.selectedPrometheusBoardsConfigs.length > 0) {
     displayPromCharts = (
       <React.Fragment>
-        <Typography variant="h6" gutterBottom className={classes.chartTitleGraf}>
+        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
           Prometheus charts
         </Typography>
         <GrafanaCustomCharts
@@ -819,7 +792,7 @@ const MesheryPerformanceComponent = (props) => {
   if (grafana.selectedBoardsConfigs.length > 0) {
     displayGCharts = (
       <React.Fragment>
-        <Typography variant="h6" gutterBottom className={classes.chartTitleGraf}>
+        <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
           Grafana charts
         </Typography>
         <GrafanaCustomCharts
@@ -830,12 +803,52 @@ const MesheryPerformanceComponent = (props) => {
       </React.Fragment>
     );
   }
+
+  const Results = () => {
+    if (!testResult || !testResult.runner_results) {
+      return null;
+    }
+
+    return (
+      <div>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <IconButton onClick={() => setTestResultsOpen(false)}>
+            <ArrowBack />
+          </IconButton>
+          <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }} id="timerAnchor">
+            Test Results
+          </Typography>
+          <IconButton
+            key="download"
+            aria-label="download"
+            color="inherit"
+            // onClick={() => self.props.closeSnackbar(key) }
+            href={`/api/perf/profile/result/${encodeURIComponent(testResult.meshery_id)}`}
+          >
+            <GetAppIcon style={iconMedium} />
+          </IconButton>
+        </Box>
+        <div style={chartStyle}>
+          <MesheryChart
+            rawdata={[testResult && testResult.runner_results ? testResult : {}]}
+            data={[testResult && testResult.runner_results ? testResult.runner_results : {}]}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  if (testResultsOpen) {
+    return <Results />;
+  }
+
   return (
     <NoSsr>
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <React.Fragment>
-            <div className={classes.wrapperClss} style={props.style || {}}>
+            {/* <div className={classes.wrapperClss} style={props.style || {}}> */}
+            <ModalBody>
               <Grid container spacing={1}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -852,9 +865,9 @@ const MesheryPerformanceComponent = (props) => {
                     }}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
-                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        <CustomTooltip title="Create a profile providing a name, if a profile name is not provided, a random one will be generated for you.">
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                        </CustomTooltip>
                       ),
                     }}
                   />
@@ -865,7 +878,7 @@ const MesheryPerformanceComponent = (props) => {
                     select
                     id="meshName"
                     name="meshName"
-                    label="Service Mesh"
+                    label="Technology"
                     fullWidth
                     value={
                       meshNameState === '' && selectedMeshState !== ''
@@ -876,18 +889,11 @@ const MesheryPerformanceComponent = (props) => {
                     variant="outlined"
                     onChange={handleChange('meshName')}
                   >
-                    {availableAdaptersState &&
-                      availableAdaptersState.map((mesh) => (
-                        <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
-                          {mesh}
-                        </MenuItem>
-                      ))}
-                    {availableAdaptersState && availableAdaptersState.length > 0 && <Divider />}
                     <MenuItem key="mh_-_none" value="None">
                       None
                     </MenuItem>
-                    {availableSMPMeshesState &&
-                      availableSMPMeshesState.map((mesh) => (
+                    {meshModels &&
+                      meshModels.map((mesh) => (
                         <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
                           {mesh}
                         </MenuItem>
@@ -910,9 +916,9 @@ const MesheryPerformanceComponent = (props) => {
                     onChange={handleChange('url')}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
-                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        <CustomTooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                        </CustomTooltip>
                       ),
                     }}
                   />
@@ -933,9 +939,9 @@ const MesheryPerformanceComponent = (props) => {
                     InputLabelProps={{ shrink: true }}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
-                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        <CustomTooltip title="Load Testing tool will create this many concurrent request against the endpoint.">
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                        </CustomTooltip>
                       ),
                     }}
                   />
@@ -956,15 +962,15 @@ const MesheryPerformanceComponent = (props) => {
                     InputLabelProps={{ shrink: true }}
                     InputProps={{
                       endAdornment: (
-                        <Tooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
-                          <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                        </Tooltip>
+                        <CustomTooltip title="The Number of queries/second. If not provided then the MAX number of queries/second will be requested">
+                          <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                        </CustomTooltip>
                       ),
                     }}
                   />
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <Tooltip
+                  <CustomTooltip
                     title={
                       "Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."
                     }
@@ -977,7 +983,7 @@ const MesheryPerformanceComponent = (props) => {
                       label="Duration*"
                       fullWidth
                       variant="outlined"
-                      className={classes.errorValue}
+                      // className={classes.errorValue}
                       classes={{ root: tErrorState }}
                       value={tValueState}
                       inputValue={tState}
@@ -990,22 +996,22 @@ const MesheryPerformanceComponent = (props) => {
                       )}
                       InputProps={{
                         endAdornment: (
-                          <Tooltip title="Default duration is 30 seconds">
-                            <HelpOutlineOutlinedIcon className={classes.iconColor} />
-                          </Tooltip>
+                          <CustomTooltip title="Default duration is 30 seconds">
+                            <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
+                          </CustomTooltip>
                         ),
                       }}
                     />
-                  </Tooltip>
+                  </CustomTooltip>
                 </Grid>
                 <Grid item xs={12} md={12}>
-                  <ExpansionPanel className={classes.expansionPanel}>
-                    <ExpansionPanelSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
+                  <ExpansionPanelComponent>
+                    <AccordionSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
                       <Typography align="center" color="textSecondary" variant="h6">
                         Advanced Options
                       </Typography>
-                    </ExpansionPanelSummary>
-                    <ExpansionPanelDetails>
+                    </AccordionSummary>
+                    <AccordionDetails>
                       <Grid container spacing={1}>
                         <Grid item xs={12}>
                           <TextField
@@ -1083,8 +1089,7 @@ const MesheryPerformanceComponent = (props) => {
                           <Grid item xs={6}>
                             <label
                               htmlFor="upload-additional-options"
-                              style={{ paddingLeft: '0' }}
-                              className={classes.upload}
+                              style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
                               fullWidth
                             >
                               <Button
@@ -1092,7 +1097,6 @@ const MesheryPerformanceComponent = (props) => {
                                 onChange={handleChange('additional_options')}
                                 aria-label="Upload Button"
                                 component="span"
-                                className={classes.button}
                                 style={{ margin: '0.5rem', marginTop: '1.15rem' }}
                               >
                                 <input
@@ -1105,9 +1109,9 @@ const MesheryPerformanceComponent = (props) => {
                                 />
                                 Browse
                               </Button>
-                              <Tooltip title={infoFlags} interactive>
-                                <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                              </Tooltip>
+                              <CustomTooltip title={infoFlags} interactive>
+                                <HelpIcon />
+                              </CustomTooltip>
                             </label>
                           </Grid>
                         </Grid>
@@ -1128,15 +1132,13 @@ const MesheryPerformanceComponent = (props) => {
                           <Grid item xs={6}>
                             <label
                               htmlFor="upload-cacertificate"
-                              className={classes.upload}
-                              style={{ paddingLeft: '0' }}
+                              style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
                             >
                               <Button
                                 variant="outlined"
                                 aria-label="Upload Button"
                                 onChange={handleChange('caCertificate')}
                                 component="span"
-                                className={classes.button}
                                 style={{ margin: '0.5rem' }}
                               >
                                 <input
@@ -1150,18 +1152,18 @@ const MesheryPerformanceComponent = (props) => {
                                 />
                                 Browse
                               </Button>
-                              <Tooltip title={infoCRTCertificates} interactive>
-                                <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                              </Tooltip>
+                              <CustomTooltip title={infoCRTCertificates} interactive>
+                                <HelpIcon />
+                              </CustomTooltip>
                             </label>
                           </Grid>
                         </Grid>
                       </Grid>
-                    </ExpansionPanelDetails>
-                  </ExpansionPanel>
+                    </AccordionDetails>
+                  </ExpansionPanelComponent>
                 </Grid>
                 <Grid item xs={12} md={4}>
-                  <FormControl component="loadGenerator" className={classes.margin}>
+                  <FormContainer component="loadGenerator">
                     <FormLabel
                       component="loadGenerator"
                       style={{
@@ -1171,9 +1173,9 @@ const MesheryPerformanceComponent = (props) => {
                       }}
                     >
                       Load generator
-                      <Tooltip title={infoloadGenerators} interactive>
-                        <HelpOutlineOutlinedIcon className={classes.smallIcons} />
-                      </Tooltip>
+                      <CustomTextTooltip title={infoloadGenerators} interactive>
+                        <HelpIcon />
+                      </CustomTextTooltip>
                     </FormLabel>
                     <RadioGroup
                       aria-label="loadGenerator"
@@ -1187,34 +1189,49 @@ const MesheryPerformanceComponent = (props) => {
                           key={index}
                           value={lg}
                           disabled={lg === 'wrk2'}
-                          control={<Radio color="primary" className={classes.radio} />}
+                          control={<RadioButton color="primary" />}
                           label={lg}
                         />
                       ))}
                     </RadioGroup>
-                  </FormControl>
+                  </FormContainer>
                 </Grid>
               </Grid>
+            </ModalBody>
+            <ModalFooter variant="filled">
               <React.Fragment>
-                <div className={classes.buttons}>
+                <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Button
                     type="submit"
                     variant="contained"
                     color="primary"
                     size="large"
-                    className={classes.spacing}
+                    sx={{ marginLeft: '1rem' }}
                     disabled={disableTestState}
                     onClick={() => handleAbort()}
                   >
                     Clear
                   </Button>
+                  {testResult && (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      csx={{ marginLeft: '1rem' }}
+                      disabled={disableTestState}
+                      onClick={() => setTestResultsOpen(true)}
+                    >
+                      Results
+                    </Button>
+                  )}
                   <Button
                     type="submit"
                     variant="contained"
                     color="primary"
                     size="large"
                     onClick={() => submitProfile()}
-                    className={classes.spacing}
+                    sx={{ marginLeft: '1rem' }}
                     disabled={disableTestState}
                     startIcon={<SaveOutlinedIcon />}
                   >
@@ -1222,11 +1239,12 @@ const MesheryPerformanceComponent = (props) => {
                   </Button>
                   <Button
                     type="submit"
+                    data-testid="run-performance-test"
                     variant="contained"
                     color="primary"
                     size="large"
                     onClick={handleSubmit}
-                    className={classes.spacing}
+                    sx={{ marginLeft: '1rem' }}
                     disabled={
                       blockRunTestState ||
                       disableTestState ||
@@ -1237,46 +1255,18 @@ const MesheryPerformanceComponent = (props) => {
                   </Button>
                 </div>
               </React.Fragment>
+            </ModalFooter>
 
-              {timerDialogOpenState ? (
-                <div className={classes.centerTimer}>
-                  <LoadTestTimerDialog
-                    open={timerDialogOpenState}
-                    t={tState}
-                    onClose={handleTimerDialogClose}
-                    countDownComplete={handleTimerDialogClose}
-                  />
-                </div>
-              ) : null}
-
-              {result && result.runner_results && (
-                <div>
-                  <Typography
-                    variant="h6"
-                    gutterBottom
-                    className={classes.chartTitle}
-                    id="timerAnchor"
-                  >
-                    Test Results
-                    <IconButton
-                      key="download"
-                      aria-label="download"
-                      color="inherit"
-                      // onClick={() => self.props.closeSnackbar(key) }
-                      href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
-                    >
-                      <GetAppIcon style={iconMedium} />
-                    </IconButton>
-                  </Typography>
-                  <div className={classes.chartContent} style={chartStyle}>
-                    <MesheryChart
-                      rawdata={[result && result.runner_results ? result : {}]}
-                      data={[result && result.runner_results ? result.runner_results : {}]}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
+            {timerDialogOpenState ? (
+              <CenterTimer>
+                <LoadTestTimerDialog
+                  open={timerDialogOpenState}
+                  t={tState}
+                  onClose={handleTimerDialogClose}
+                  countDownComplete={handleTimerDialogClose}
+                />
+              </CenterTimer>
+            ) : null}
           </React.Fragment>
 
           {displayStaticCharts}
@@ -1291,36 +1281,75 @@ const MesheryPerformanceComponent = (props) => {
     </NoSsr>
   );
 };
-MesheryPerformanceComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
-const mapDispatchToProps = (dispatch) => ({
-  updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
-  updateStaticPrometheusBoardConfig: bindActionCreators(
-    updateStaticPrometheusBoardConfig,
-    dispatch,
-  ),
-  updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
+//   updateStaticPrometheusBoardConfig: bindActionCreators(
+//     updateStaticPrometheusBoardConfig,
+//     dispatch,
+//   ),
+//   updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
+//   updateProgress: bindActionCreators(updateProgress, dispatch),
+// });
 
-const mapStateToProps = (state) => {
-  const grafana = state.get('grafana').toJS();
-  const prometheus = state.get('prometheus').toJS();
-  const k8sConfig = state.get('k8sConfig');
-  const staticPrometheusBoardConfig = state.get('staticPrometheusBoardConfig').toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
+// const mapStateToProps = (state) => {
+//   const grafana = state.get('grafana').toJS();
+//   const prometheus = state.get('prometheus').toJS();
+//   const k8sConfig = state.get('k8sConfig');
+//   const staticPrometheusBoardConfig = state.get('staticPrometheusBoardConfig').toJS();
+//   const selectedK8sContexts = state.get('selectedK8sContexts');
 
-  return {
+//   return {
+//     grafana,
+//     prometheus,
+//     staticPrometheusBoardConfig,
+//     k8sConfig,
+//     selectedK8sContexts,
+//   };
+// };
+
+export const MesheryPerformanceComponentWithStyles = withNotify(MesheryPerformanceComponent_);
+
+export const MesheryPerformanceComponent = (props) => {
+  const dispatch = useLegacyDispatch();
+
+  // Gather all required Redux states
+  const grafana = useLegacySelector((state) =>
+    state.get('grafana')?.toJS ? state.get('grafana').toJS() : state.get('grafana'),
+  );
+  const prometheus = useLegacySelector((state) =>
+    state.get('prometheus')?.toJS ? state.get('prometheus').toJS() : state.get('prometheus'),
+  );
+  const k8sConfig = useLegacySelector((state) => state.k8sConfig);
+  const staticPrometheusBoardConfig = useLegacySelector((state) =>
+    state.get('staticPrometheusBoardConfig')?.toJS
+      ? state.get('staticPrometheusBoardConfig').toJS()
+      : state.get('staticPrometheusBoardConfig'),
+  );
+  const selectedK8sContexts = useLegacySelector((state) =>
+    state.get('selectedK8sContexts').toJS
+      ? state.get('selectedK8sContexts').toJS()
+      : state.get('selectedK8sContexts'),
+  );
+
+  // Create dispatch methods matching the original connect mapping
+  const wrappedProps = {
+    ...props,
     grafana,
     prometheus,
-    staticPrometheusBoardConfig,
     k8sConfig,
+    staticPrometheusBoardConfig,
     selectedK8sContexts,
+
+    // Wrap dispatch actions to match original connect behavior
+    updateLoadTestData: (data) => dispatch(updateLoadTestData(data)),
+    updateStaticPrometheusBoardConfig: (config) =>
+      dispatch(updateStaticPrometheusBoardConfig(config)),
+    updateLoadTestPref: (pref) => dispatch(updateLoadTestPref(pref)),
+    updateProgress: (progress) => dispatch(updateProgress(progress)),
   };
+
+  return <MesheryPerformanceComponentWithStyles {...wrappedProps} />;
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryPerformanceComponent)),
-);
+export default MesheryPerformanceComponent;

@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -20,10 +19,13 @@ import (
 	"time"
 
 	"github.com/briandowns/spinner"
+	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -32,6 +34,8 @@ import (
 	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -48,44 +52,70 @@ const (
 	MeshsyncURL   = baseConfigURL + "samples/meshery_v1alpha1_meshsync.yaml"
 
 	// Documentation URLs
-	docsBaseURL       = "https://docs.meshery.io/"
-	rootUsageURL      = docsBaseURL + "reference/mesheryctl"
-	perfUsageURL      = docsBaseURL + "reference/mesheryctl/perf"
-	systemUsageURL    = docsBaseURL + "reference/mesheryctl/system"
-	systemStopURL     = docsBaseURL + "reference/mesheryctl/system/stop"
-	systemUpdateURL   = docsBaseURL + "reference/mesheryctl/system/update"
-	systemResetURL    = docsBaseURL + "reference/mesheryctl/system/reset"
-	systemStatusURL   = docsBaseURL + "reference/mesheryctl/system/status"
-	systemRestartURL  = docsBaseURL + "reference/mesheryctl/system/restart"
-	meshUsageURL      = docsBaseURL + "reference/mesheryctl/mesh"
-	expUsageURL       = docsBaseURL + "reference/mesheryctl/exp"
-	filterUsageURL    = docsBaseURL + "reference/mesheryctl/filter"
-	filterImportURL   = docsBaseURL + "reference/mesheryctl/filter/import"
-	filterDeleteURL   = docsBaseURL + "reference/mesheryctl/filter/delete"
-	filterListURL     = docsBaseURL + "reference/mesheryctl/filter/list"
-	filterViewURL     = docsBaseURL + "reference/mesheryctl/filter/view"
-	patternUsageURL   = docsBaseURL + "reference/mesheryctl/pattern"
-	patternViewURL    = docsBaseURL + "reference/mesheryctl/pattern/view"
-	appUsageURL       = docsBaseURL + "reference/mesheryctl/app"
-	appViewURL        = docsBaseURL + "reference/mesheryctl/app/view"
-	contextDeleteURL  = docsBaseURL + "reference/mesheryctl/system/context/delete"
-	contextViewURL    = docsBaseURL + "reference/mesheryctl/system/context/view"
-	contextCreateURL  = docsBaseURL + "reference/mesheryctl/system/context/create"
-	contextUsageURL   = docsBaseURL + "reference/mesheryctl/system/context"
-	channelUsageURL   = docsBaseURL + "reference/mesheryctl/system/channel"
-	channelSetURL     = docsBaseURL + "reference/mesheryctl/system/channel/set"
-	channelSwitchURL  = docsBaseURL + "reference/mesheryctl/system/channel/switch"
-	channelViewURL    = docsBaseURL + "reference/mesheryctl/system/channel/view"
-	providerUsageURL  = docsBaseURL + "reference/mesheryctl/system/provider"
-	providerViewURL   = docsBaseURL + "reference/mesheryctl/system/provider/view"
-	providerListURL   = docsBaseURL + "reference/mesheryctl/system/provider/list"
-	providerSetURL    = docsBaseURL + "reference/mesheryctl/system/provider/set"
-	providerResetURL  = docsBaseURL + "reference/mesheryctl/system/provider/reset"
-	providerSwitchURL = docsBaseURL + "reference/mesheryctl/system/provider/switch"
-	tokenUsageURL     = docsBaseURL + "reference/mesheryctl/system/token"
-	modelUsageURL     = docsBaseURL + "reference/mesheryctl/system/model"
-	modelListURL      = docsBaseURL + "reference/mesheryctl/system/model/list"
-	modelViewURL      = docsBaseURL + "reference/mesheryctl/system/model/view"
+	docsBaseURL                    = "https://docs.meshery.io/"
+	rootUsageURL                   = docsBaseURL + "reference/mesheryctl"
+	perfUsageURL                   = docsBaseURL + "reference/mesheryctl/perf"
+	systemUsageURL                 = docsBaseURL + "reference/mesheryctl/system"
+	systemStopURL                  = docsBaseURL + "reference/mesheryctl/system/stop"
+	systemUpdateURL                = docsBaseURL + "reference/mesheryctl/system/update"
+	systemResetURL                 = docsBaseURL + "reference/mesheryctl/system/reset"
+	systemStatusURL                = docsBaseURL + "reference/mesheryctl/system/status"
+	systemRestartURL               = docsBaseURL + "reference/mesheryctl/system/restart"
+	meshUsageURL                   = docsBaseURL + "reference/mesheryctl/mesh"
+	expUsageURL                    = docsBaseURL + "reference/mesheryctl/exp"
+	filterUsageURL                 = docsBaseURL + "reference/mesheryctl/filter"
+	filterImportURL                = docsBaseURL + "reference/mesheryctl/filter/import"
+	filterDeleteURL                = docsBaseURL + "reference/mesheryctl/filter/delete"
+	filterListURL                  = docsBaseURL + "reference/mesheryctl/filter/list"
+	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
+	designUsageURL                 = docsBaseURL + "reference/mesheryctl/design"
+	designViewURL                  = docsBaseURL + "reference/mesheryctl/design/view"
+	designExportURL                = docsBaseURL + "reference/mesheryctl/design/export"
+	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
+	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
+	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
+	contextUsageURL                = docsBaseURL + "reference/mesheryctl/system/context"
+	channelUsageURL                = docsBaseURL + "reference/mesheryctl/system/channel"
+	channelSetURL                  = docsBaseURL + "reference/mesheryctl/system/channel/set"
+	channelSwitchURL               = docsBaseURL + "reference/mesheryctl/system/channel/switch"
+	channelViewURL                 = docsBaseURL + "reference/mesheryctl/system/channel/view"
+	providerUsageURL               = docsBaseURL + "reference/mesheryctl/system/provider"
+	providerViewURL                = docsBaseURL + "reference/mesheryctl/system/provider/view"
+	providerListURL                = docsBaseURL + "reference/mesheryctl/system/provider/list"
+	providerSetURL                 = docsBaseURL + "reference/mesheryctl/system/provider/set"
+	providerResetURL               = docsBaseURL + "reference/mesheryctl/system/provider/reset"
+	providerSwitchURL              = docsBaseURL + "reference/mesheryctl/system/provider/switch"
+	tokenUsageURL                  = docsBaseURL + "reference/mesheryctl/system/token"
+	modelUsageURL                  = docsBaseURL + "reference/mesheryctl/system/model"
+	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
+	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
+	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
+	registryUsageURL               = docsBaseURL + "reference/mesheryctl/registry"
+	registryPublishURL             = docsBaseURL + "reference/mesheryctl/registry/publish"
+	registryGenerateURL            = docsBaseURL + "reference/mesheryctl/registry/generate"
+	registryUpdateURL              = docsBaseURL + "reference/mesheryctl/registry/update"
+	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
+	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
+	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
+	workspaceUsageURL              = docsBaseURL + "reference/mesheryctl/exp/workspace"
+	workspaceCreateURL             = docsBaseURL + "reference/mesheryctl/exp/workspace/create"
+	workspaceListURL               = docsBaseURL + "reference/mesheryctl/exp/workspace/list"
+	environmentUsageURL            = docsBaseURL + "reference/mesheryctl/exp/environment"
+	environmentCreateURL           = docsBaseURL + "reference/mesheryctl/exp/environment/create"
+	environmentDeleteURL           = docsBaseURL + "reference/mesheryctl/exp/environment/delete"
+	environmentListURL             = docsBaseURL + "reference/mesheryctl/exp/environment/list"
+	environmentViewURL             = docsBaseURL + "reference/mesheryctl/exp/environment/view"
+	componentUsageURL              = docsBaseURL + "reference/mesheryctl/exp/components"
+	componentListURL               = docsBaseURL + "reference/mesheryctl/exp/components/list"
+	componentSearchURL             = docsBaseURL + "reference/mesheryctl/exp/components/search"
+	componentViewURL               = docsBaseURL + "reference/mesheryctl/exp/components/view"
+	connectionUsageURL             = docsBaseURL + "reference/mesheryctl/exp/connections"
+	connectionDeleteURL            = docsBaseURL + "reference/mesheryctl/exp/connections/delete"
+	connectionListURL              = docsBaseURL + "reference/mesheryctl/exp/connections/list"
+	expRelationshipUsageURL        = docsBaseURL + "reference/mesheryctl/exp/relationship"
+	expRelationshipGenerateURL     = docsBaseURL + "reference/mesheryctl/exp/relationship/generate"
+	expRelationshipViewURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/view"
+	expRelationshipListURL         = docsBaseURL + "reference/mesheryctl/exp/relationship/list"
 
 	// Meshery Server Location
 	EndpointProtocol = "http"
@@ -94,45 +124,71 @@ const (
 type cmdType string
 
 const (
-	cmdRoot            cmdType = "root"
-	cmdPerf            cmdType = "perf"
-	cmdMesh            cmdType = "mesh"
-	cmdSystem          cmdType = "system"
-	cmdSystemStop      cmdType = "system stop"
-	cmdSystemUpdate    cmdType = "system update"
-	cmdSystemReset     cmdType = "system reset"
-	cmdSystemStatus    cmdType = "system status"
-	cmdSystemRestart   cmdType = "system restart"
-	cmdExp             cmdType = "exp"
-	cmdFilter          cmdType = "filter"
-	cmdFilterImport    cmdType = "filter import"
-	cmdFilterDelete    cmdType = "filter delete"
-	cmdFilterList      cmdType = "filter list"
-	cmdFilterView      cmdType = "filter view"
-	cmdPattern         cmdType = "pattern"
-	cmdPatternView     cmdType = "pattern view"
-	cmdApp             cmdType = "app"
-	cmdAppView         cmdType = "app view"
-	cmdContext         cmdType = "context"
-	cmdContextDelete   cmdType = "delete"
-	cmdContextCreate   cmdType = "create"
-	cmdContextView     cmdType = "context view"
-	cmdChannel         cmdType = "channel"
-	cmdChannelSet      cmdType = "channel set"
-	cmdChannelSwitch   cmdType = "channel switch"
-	cmdChannelView     cmdType = "channel view"
-	cmdProvider        cmdType = "provider"
-	cmdProviderSet     cmdType = "provider set"
-	cmdProviderSwitch  cmdType = "provider switch"
-	cmdProviderView    cmdType = "provider view"
-	cmdProviderList    cmdType = "provider list"
-	cmdProviderReset   cmdType = "provider reset"
-	cmdToken           cmdType = "token"
-	cmdModel           cmdType = "model"
-	cmdModelList       cmdType = "model list"
-	cmdModelView       cmdType = "model view"
-	cmdRegistryPublish cmdType = "registry publish"
-	cmdRegistry        cmdType = "regisry"
+	cmdRoot                     cmdType = "root"
+	cmdPerf                     cmdType = "perf"
+	cmdMesh                     cmdType = "mesh"
+	cmdSystem                   cmdType = "system"
+	cmdSystemStop               cmdType = "system stop"
+	cmdSystemUpdate             cmdType = "system update"
+	cmdSystemReset              cmdType = "system reset"
+	cmdSystemStatus             cmdType = "system status"
+	cmdSystemRestart            cmdType = "system restart"
+	cmdExp                      cmdType = "exp"
+	cmdFilter                   cmdType = "filter"
+	cmdFilterImport             cmdType = "filter import"
+	cmdFilterDelete             cmdType = "filter delete"
+	cmdFilterList               cmdType = "filter list"
+	cmdFilterView               cmdType = "filter view"
+	cmdDesign                   cmdType = "design"
+	cmdDesignView               cmdType = "design view"
+	cmdDesignExport             cmdType = "design export"
+	cmdContext                  cmdType = "context"
+	cmdContextDelete            cmdType = "delete"
+	cmdContextCreate            cmdType = "create"
+	cmdContextView              cmdType = "context view"
+	cmdChannel                  cmdType = "channel"
+	cmdChannelSet               cmdType = "channel set"
+	cmdChannelSwitch            cmdType = "channel switch"
+	cmdChannelView              cmdType = "channel view"
+	cmdProvider                 cmdType = "provider"
+	cmdProviderSet              cmdType = "provider set"
+	cmdProviderSwitch           cmdType = "provider switch"
+	cmdProviderView             cmdType = "provider view"
+	cmdProviderList             cmdType = "provider list"
+	cmdProviderReset            cmdType = "provider reset"
+	cmdToken                    cmdType = "token"
+	cmdModel                    cmdType = "model"
+	cmdModelList                cmdType = "model list"
+	cmdModelImport              cmdType = "model import"
+	cmdModelView                cmdType = "model view"
+	cmdRegistry                 cmdType = "regisry"
+	cmdRegistryPublish          cmdType = "registry publish"
+	cmdRegistryGenerate         cmdType = "registry generate"
+	cmdRegistryUpdate           cmdType = "registry update"
+	cmdConnection               cmdType = "connection"
+	cmdConnectionList           cmdType = "connection list"
+	cmdConnectionDelete         cmdType = "connection delete"
+	cmdRelationships            cmdType = "relationships"
+	cmdRelationshipGenerateDocs cmdType = "relationships generate docs"
+	cmdRelationshipView         cmdType = "relationship view"
+	cmdRelationshipSearch       cmdType = "relationship search"
+	cmdRelationshipList         cmdType = "relationship list"
+	cmdWorkspace                cmdType = "workspace"
+	cmdWorkspaceList            cmdType = "workspace list"
+	cmdWorkspaceCreate          cmdType = "workspace create"
+	cmdEnvironment              cmdType = "environment"
+	cmdEnvironmentCreate        cmdType = "environment create"
+	cmdEnvironmentDelete        cmdType = "environment delete"
+	cmdEnvironmentList          cmdType = "environment list"
+	cmdEnvironmentView          cmdType = "environment view"
+	cmdComponent                cmdType = "component"
+	cmdComponentList            cmdType = "component list"
+	cmdComponentSearch          cmdType = "component search"
+	cmdComponentView            cmdType = "component view"
+	cmdExpRelationship          cmdType = "exp relationship"
+	cmdExpRelationshipGenerate  cmdType = "exp relationship generate"
+	cmdExpRelationshipView      cmdType = "exp relationship view"
+	cmdExpRelationshipList      cmdType = "exp relationship list"
 )
 
 const (
@@ -165,10 +221,10 @@ var (
 	// MesheryNamespace is the namespace to which Meshery is deployed in the Kubernetes cluster
 	MesheryNamespace = "meshery"
 	// MesheryDeployment is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryDeployment = "meshery-deployment.yaml"
 	// MesheryService is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	MesheryService = "meshery-service.yaml"
 	//MesheryOperator is the file for default Meshery operator
 	//check https://github.com/layer5io/meshery-operator/blob/master/config/manifests/default.yaml
@@ -180,7 +236,7 @@ var (
 	//check https://github.com/layer5io/meshery-operator/blob/master/config/samples/meshery_v1alpha1_meshsync.yaml
 	MesheryOperatorMeshsync = "meshery_v1alpha1_meshsync.yaml"
 	// ServiceAccount is the name of a Kubernetes manifest file required to setup Meshery
-	// check https://github.com/layer5io/meshery/tree/master/install/deployment_yamls/k8s
+	// check https://github.com/meshery/meshery/tree/master/install/deployment_yamls/k8s
 	ServiceAccount = "service-account.yaml"
 	// To upload with param name
 	ParamName = "k8sfile"
@@ -203,6 +259,10 @@ var (
 	TokenFlag = "Not Set"
 	// global logger variable
 	Log logger.Handler
+	// Color for the whiteboard printer
+	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	//global logger error variable
+	LogError logger.Handler
 )
 
 var CfgFile string
@@ -228,7 +288,7 @@ var Services = map[string]Service{
 		Image:  "layer5/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://meshery.layer5.io",
+			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
@@ -242,7 +302,7 @@ var Services = map[string]Service{
 		Ports:  []string{"10000:10000"},
 	},
 	"meshery-linkerd": {
-		Image:  "layer5/meshery-linkerd:stable-latest",
+		Image:  "meshery/meshery-linkerd:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10001:10001"},
 	},
@@ -257,7 +317,7 @@ var Services = map[string]Service{
 		Ports:  []string{"10004:10004"},
 	},
 	"meshery-app-mesh": {
-		Image:  "layer5/meshery-app-mesh:stable-latest",
+		Image:  "meshery/meshery-app-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10005:10005"},
 	},
@@ -500,6 +560,9 @@ func TruncateID(id string) string {
 	ShortenedID := id[0:8]
 	return ShortenedID
 }
+func BoldString(s string) string {
+	return fmt.Sprintf("\033[1m%s\033[0m", s)
+}
 
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
@@ -515,7 +578,14 @@ func PrintToTable(header []string, data [][]string) {
 	table.SetHeaderLine(false)
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
+	table.SetNoWhiteSpace(false)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
 }
@@ -535,6 +605,13 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
 	table.SetNoWhiteSpace(true)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.SetFooter(footer)
 	table.Render() // Render the table
@@ -547,7 +624,11 @@ func ClearLine() {
 		clearCmd = exec.Command("cmd", "/c", "cls") // for Windows
 	}
 	clearCmd.Stdout = os.Stdout
-	clearCmd.Run()
+	err := clearCmd.Run()
+	if err != nil {
+		Log.Error(ErrClearLine(err))
+		return
+	}
 }
 
 // StringContainedInSlice returns the index in which a string is a substring in a list of strings
@@ -573,7 +654,11 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+	url := mesheryServerUrl + "/api/" + configuration + "?"
+	if configuration == "pattern" {
+		url += "populate=pattern_file&"
+	}
+	url += "page_size=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -592,7 +677,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		return idList, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -628,7 +713,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 		return nameIdMap, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return nameIdMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -725,7 +810,7 @@ func AskForInput(prompt string, allowed []string) string {
 // ParseURLGithub checks URL and returns raw repo, path, error
 func ParseURLGithub(URL string) (string, string, error) {
 	// GitHub URL:
-	// - https://github.com/layer5io/meshery/blob/master/.goreleaser.yml
+	// - https://github.com/meshery/meshery/blob/master/.goreleaser.yml
 	// - https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml
 	parsedURL, err := url.Parse(URL)
 	if err != nil {
@@ -804,7 +889,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	}
 
 	prefs := &models.Preference{}
-	err = utils.Unmarshal(string(body), prefs)
+	err = encoding.Unmarshal(body, prefs)
 	if err != nil {
 		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}
@@ -1047,7 +1132,7 @@ func ConvertMapInterfaceMapString(v interface{}) interface{} {
 }
 
 // SetOverrideValues returns the value overrides based on current context to install/upgrade helm chart
-func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[string]interface{} {
+func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, providerURL string) map[string]interface{} {
 	// first initialize all the components' "enabled" field to false
 	// this matches to the components listed in install/kubernetes/helm/meshery/values.yaml
 	valueOverrides := map[string]interface{}{
@@ -1097,7 +1182,19 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion string) map[stri
 	// set the provider
 	if ctx.GetProvider() != "" {
 		valueOverrides["env"] = map[string]interface{}{
-			"PROVIDER": ctx.GetProvider(),
+			constants.ProviderENV: ctx.GetProvider(),
+		}
+	}
+
+	if callbackURL != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			constants.CallbackURLENV: callbackURL,
+		}
+	}
+
+	if providerURL != "" {
+		valueOverrides["env"] = map[string]interface{}{
+			constants.ProviderURLsENV: providerURL,
 		}
 	}
 
@@ -1125,11 +1222,102 @@ func CheckFileExists(name string) (bool, error) {
 	return false, errors.Wrap(err, fmt.Sprintf("Failed to read/fetch the file %s", name))
 }
 
-func Contains(key string, col []string) int {
-	for i, n := range col {
-		if n == key {
-			return i
+// HandlePagination handles interactive pagination and prints the content in the terminal.
+// It takes the page size, data to paginate, header for the data table, and an optional footer.
+// If no footer is provided, it will be omitted.
+// Pagination allows users to navigate through the data using Enter or ↓ to continue,
+// Esc or Ctrl+C (Ctrl+Cmd for OS users) to exit.
+func HandlePagination(pageSize int, component string, data [][]string, header []string, footer ...[]string) error {
+
+	startIndex := 0
+	endIndex := min(len(data), startIndex+pageSize)
+	for {
+		// Clear the entire terminal screen
+		ClearLine()
+
+		// Print number of filter files and current page number
+		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
+		fmt.Println()
+		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
+		fmt.Println()
+
+		if len(footer) > 0 {
+			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+		} else {
+			PrintToTable(header, data[startIndex:endIndex])
+		}
+
+		// No user interaction required if all available data is displayed once
+		if len(data) <= pageSize {
+			break
+		}
+
+		keysEvents, err := keyboard.GetKeys(10)
+		if err != nil {
+			return err
+		}
+
+		defer func() {
+			_ = keyboard.Close()
+		}()
+
+		event := <-keysEvents
+		if event.Err != nil {
+			Log.Error(fmt.Errorf("unable to capture keyboard events"))
+			break
+		}
+
+		if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
+			break
+		}
+
+		if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
+			startIndex += pageSize
+			endIndex = min(len(data), startIndex+pageSize)
+		}
+
+		if startIndex >= len(data) {
+			break
 		}
 	}
-	return -1
+	return nil
+}
+
+func FindInSlice(key string, items []string) (int, bool) {
+	for idx, item := range items {
+		if item == key {
+			return idx, true
+		}
+	}
+	return -1, false
+}
+
+func DisplayCount(component string, count int64) {
+	whiteBoardPrinter.Println("Total number of ", component, ":", count)
+}
+
+func GetPageQueryParameter(cmd *cobra.Command, page int) string {
+	if !cmd.Flags().Changed("page") {
+		return "pagesize=all"
+	}
+	return fmt.Sprintf("page=%d", page)
+}
+func IsValidUrl(path string) bool {
+	u, err := url.Parse(path)
+	if err != nil {
+		return false
+	}
+	return u.Scheme != "" && u.Host != ""
+}
+
+// get current k8s context
+func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
+	if client == nil {
+		return "", fmt.Errorf("kubernetes client is nil")
+	}
+	config, err := client.GetKubeConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.CurrentContext, nil
 }

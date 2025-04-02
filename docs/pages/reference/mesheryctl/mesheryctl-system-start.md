@@ -66,12 +66,21 @@ mesheryctl system start -p docker
 </div>
 </pre> 
 
+Specify Provider to use.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system start --provider Meshery
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help              help for start
   -p, --platform string   platform to deploy Meshery to.
+      --provider string   (optional) Defaults to the provider specified in the current context
       --reset             (optional) reset Meshery's configuration file to default settings.
       --skip-browser      (optional) skip opening of MesheryUI in browser.
       --skip-update       (optional) skip checking for new Meshery's container images.

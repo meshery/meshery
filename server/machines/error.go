@@ -7,11 +7,11 @@ import (
 )
 
 const (
-	ErrInvalidTransitionCode      = "1541"
-	ErrInvalidTransitionEventCode = "1542"
-	ErrInititalizeK8sMachineCode  = "1543"
-	ErrAssetMachineCtxCode        = "1544"
-	ErrInvalidTypeCode            = "1551"
+	ErrInvalidTransitionCode      = "meshery-server-1214"
+	ErrInvalidTransitionEventCode = "meshery-server-1215"
+	ErrInititalizeK8sMachineCode  = "meshery-server-1216"
+	ErrAssetMachineCtxCode        = "meshery-server-1217"
+	ErrInvalidTypeCode            = "meshery-server-1218"
 )
 
 func ErrInvalidTransition(from, to StateType) error {

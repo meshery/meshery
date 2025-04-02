@@ -6,7 +6,7 @@ abstract: List of released Meshery versions and their release notes.
 redirect_from: project/releases/
 language: en
 type: project
-category: none
+category: project
 list: include
 ---
 

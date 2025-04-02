@@ -25,7 +25,7 @@ export const NGINX = 'nginx_service_mesh';
 export const APP_MESH = 'app_mesh';
 export const CITRIX_SM = 'citrix_Service_mesh';
 export const NETWORK_SM = 'network_service_mesh';
-export const OCTARINE = 'ocatarine';
+export const NIGHTHAWK = 'nighthawk';
 
 export const FILTER = 'filter';
 export const APPLICATION = 'application';
@@ -35,6 +35,8 @@ export const WORKLOAD = 'workload';
 export const FILTER_PLURAL = 'filters';
 export const APPLICATION_PLURAL = 'applications';
 export const PATTERN_PLURAL = 'patterns';
+
+export const CATALOG = 'catalog';
 
 export const PROFILES = 'profiles';
 export const SMI = 'service_mesh_interface';

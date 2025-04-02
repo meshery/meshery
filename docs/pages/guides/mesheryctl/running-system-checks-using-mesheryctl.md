@@ -1,5 +1,5 @@
 ---
-layout: enhanced
+layout: default
 title: Running system checks using Meshery CLI
 permalink: guides/mesheryctl/running-system-checks-using-mesheryctl
 language: en
@@ -88,15 +88,15 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 ##### Question: While running `mesheryctl system check --preflight` it says I didn't install Kubernetes, but I have Docker installed and the test returned "Meshery prerequisites met". Is that all good?
 
-**Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying service mesh and so on, if you want to do them via Meshery._
+**Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying infrastructure and so on, if you want to do them via Meshery._
 
-##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned postive results but I couldn't start Meshery. What to do?
+##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
 
 **Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{ site.baseurl }}/installation) to see instructions related to the platform you use._
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
-**Answer**: _Meshery's [performance management](tasks/performance/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management](/guides/performance-management/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 
@@ -126,7 +126,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 **Answer**: _For Kubernetes, version >=1.12.0 is recommended. For kubectl version >=1.12 is recommended._
 
-##### Question: In the "Meshery Adapter" section of check, I could see only some service mesh adapters up and running and not all. Is this fine?
+##### Question: In the "Meshery Adapter" section of check, I could see only some Meshery adapters up and running and not all. Is this fine?
 
 **Answer**: _Not a problem, if you feel you need to have all mesh adapters to be up running, you can do so by creating a new context `mesheryctl system context create [context-name] --set` (if you voluntarily deleted mesh adapters in your current context)_
 
@@ -144,11 +144,9 @@ Guides to using Meshery's various features and components.
 
 {% capture tag %}
 
-<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+<li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
 
 {% endcapture %}
-
-{% include suggested-reading.html diffName="true" isDiffTag="true" diffTag=tag %}
 
 {% include related-discussions.html tag="mesheryctl" %}
 
