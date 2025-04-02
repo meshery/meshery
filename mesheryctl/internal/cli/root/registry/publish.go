@@ -161,7 +161,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		case "remote-provider":
 			err = remoteProviderSystem()
 		case "website":
-			if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
+			if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" && outputFormat != "oci" {
 				return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
 			}
 			err = websiteSystem()
