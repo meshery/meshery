@@ -41,7 +41,7 @@ test.describe('Extensions Section Tests', () => {
     await expect(performanceEnableButton).toBeVisible();
   });
 
-  test('Verify Kanvas Details (Disabled)', { tag: '@unstable' }, async ({ page, context }) => {
+  test('Verify Kanvas Details (Disabled)', { tag: '@unstable' }, async ({ page }) => {
     // Verify Kanvas Details Is Disabled
     await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
     const kanvasDetailsButton = page.locator('div').filter({ hasText: /^Enabled$/ });
@@ -93,7 +93,9 @@ test.describe('Extensions Section Tests', () => {
       // Test the "Open Adapter docs" link
       const [docsPage] = await Promise.all([
         context.waitForEvent('page'),
-        await page.locator('div:nth-child(7) > .css-1slkrv6 > .MuiGrid-root > .MuiTypography-root > a').click()
+        await page
+          .locator('div:nth-child(7) > .css-1slkrv6 > .MuiGrid-root > .MuiTypography-root > a')
+          .click(),
       ]);
       await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
       await docsPage.close();
