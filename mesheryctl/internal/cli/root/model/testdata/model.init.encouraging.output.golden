@@ -1,5 +1,0 @@
-init command will be here soon
-model name = test-case-aws-ec2-controller
-path = .
-version = 0.1.0
-output format = json
