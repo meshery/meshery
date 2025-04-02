@@ -20,7 +20,7 @@ func TestListOrganizations(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "List organizations whith organization ID not provided",
+			Name:             "List organizations whithout providing organization ID",
 			Args:             []string{"list"},
 			URL:              fmt.Sprintf("/%s?all=true", organizationsApiPath),
 			Fixture:          "list.organization.response.golden",
