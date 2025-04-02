@@ -96,7 +96,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom path (same as above but path starts with a dot)",
+			Name:             "model init with custom relative to current directory path (same as above but path starts with a ./)",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
@@ -106,6 +106,18 @@ func TestModelInit(t *testing.T) {
 				"./test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
 			},
 			AfterTestRemoveDir: "./test_case_some_custom_dir",
+		},
+		{
+			Name:             "model init with custom relative to parent directory path (same as above but path starts with a ../)",
+			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
+			ExpectError:      false,
+			ExpectedResponse: "model.init.custom-relative-parent-dir.aws-ec2-controller.output.golden",
+			// do not need to check all dirs and files here, as we tested it in previous test case,
+			// just check the main directory is correct
+			ExpectedDirs: []string{
+				"../test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller",
+			},
+			AfterTestRemoveDir: "../test_case_some_custom_dir",
 		},
 		{
 			Name:             "model init with trailing folder separator in the path",
