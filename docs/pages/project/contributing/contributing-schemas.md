@@ -14,20 +14,29 @@ Meshery follows schema-driven development. As a project, Meshery has different t
 
 The schemas follow a versioned approach to maintain backward compatibility while allowing for the evolution of the definitions.
 
-{% include alert.html type="info" title="Meshery Documentation Core Concepts" content="To better understand how schemas fit into Meshery's architecture, read about Meshery's core concepts in the <a href='https://docs.meshery.io/concepts/logical'>Meshery documentation</a>.`" %}
+{% include alert.html type="info" title="Meshery Documentation Core Concepts" content="To better understand how schemas fit into Meshery's architecture, read about Meshery's core concepts in the <a href='/concepts/logical'>Meshery documentation</a>.`" %}
 
 ### Prerequisites
-- **oapi-codegen**: This tool is essential for generating Go code from OpenAPI specifications. Install it using:
 
-```bash
+1. **oapi-codegen**: This tool is essential for generating Go code from OpenAPI specifications.
+
+<details><summary>
+Install it using:
+<code>
 go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
-```
+</code>
+</details>
 
-- **make**: The repository uses Makefiles to automate various tasks. Ensure you have make installed on your system.
+2. **make**: The repository uses Makefiles to automate various tasks. Ensure you have make installed on your system.
 
 ### Development Workflow
 
+<!-- Need to export slides from Meshery architecture deck 
+  Place SVGs here.
+-->
+
 #### Schema Resolution Process
+
 When you work with the schemas, you'll frequently use this essential command:
 
 ```bash
@@ -35,12 +44,14 @@ make resolve-ref path="./schemas/constructs/[version]"
 ```
 
 **Key functions:**
+
 1.  Resolves `$ref` references between schema files
 2.  Adds code generation metadata tags
 3.  Creates complete, self-contained schemas
 4.  Validates reference consistency
 
 **Example:**
+
 Consider this schema snippet with an external reference:
 
 ```json
