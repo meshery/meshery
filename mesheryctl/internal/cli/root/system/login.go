@@ -15,7 +15,6 @@
 package system
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -58,7 +57,6 @@ mesheryctl system login -p Meshery
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			// Replace direct logging with proper MeshKit error
 			return ErrCheckServerStatus(err)
 		}
 
@@ -82,10 +80,7 @@ mesheryctl system login -p Meshery
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
-			// Attempt to create token if it doesn't already exists
 			token.Location = utils.AuthConfigFile
-
-			// Write new entry in the config
 			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
 				return ErrAddTokenToConfig(err)
 			}
@@ -99,22 +94,10 @@ mesheryctl system login -p Meshery
 	},
 }
 
-func showCommandHelp(cmd *cobra.Command, errMsg string) {
-	fmt.Printf("\n Error : %s \n", errMsg)
-	fmt.Println("\nCommand Reference :")
-	fmt.Println("-------------------")
-	if err := cmd.Help(); err != nil {
-		log.Errorf("Failed to display command help: %v", err)
-	}
-}
-
 func init() {
 	loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
 	loginCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
-		// Still show help for immediate user feedback
-		showCommandHelp(cmd, err.Error())
-
-		// Return a proper MeshKit error for logging/handling upstream
+		// Don't show immediate help, just return the structured error
 		return ErrInvalidFlag(err)
 	})
 }
