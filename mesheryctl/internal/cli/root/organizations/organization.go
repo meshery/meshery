@@ -52,7 +52,7 @@ mesheryctl organizations list
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid command. Use 'mesheryctl org --help' to display usage guide", args[0]))
+			return utils.ErrInvalidArgument(fmt.Errorf("'%s' is an invalid command. Use 'mesheryctl organization --help' to display usage guide", args[0]))
 		}
 
 		return nil

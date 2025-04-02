@@ -23,7 +23,7 @@ import (
 
 var listOrgCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List registered orgs",
+	Short: "List registered organizations",
 	Long: `List all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
 Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations/list
 	`,

@@ -34,7 +34,7 @@ func TestOrganization(t *testing.T) {
 			ExpectError:      true,
 		},
 		{
-			Name:             "Launch organization with unvalid subcommand name",
+			Name:             "Launch organization with invalid subcommand name",
 			Args:             []string{"test-invalid-subcommand"},
 			ExpectedResponse: "organization.invalid.subcommand.golden",
 			ExpectError:      true,
