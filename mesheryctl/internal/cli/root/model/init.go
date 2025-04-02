@@ -196,10 +196,6 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		}
 
 		// TODO put a model name into generated model file
-
-		// +++ TODO think about cleaning up partial data (if error occurs in the middle of execution).
-		// if delete a folder, only delete if the folder was created
-		// if the user specifies an existing folder it should not be
 		return nil
 	},
 }

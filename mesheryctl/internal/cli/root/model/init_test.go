@@ -172,14 +172,6 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "model.init.invalid-model-name.output.golden",
 		},
-		// +++ TODO check output for --path ../ (if folder ends on slash do not add one more slash in guiding output)
-		// +++ TODO test the case with no model name (maybe remove condition to have exactly one param and validate than model name is not empty manually)
-		// +++ TODO validate model name
-		// +++ TODO test if current process can create folder under specified path
-		// TODO test not covered branches and corner cases
-		// +++ TODO remove created during test folder structure after test run
-		// +++ TODO do not create if folder with model and version already exists
-
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
