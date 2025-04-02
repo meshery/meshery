@@ -30,7 +30,6 @@ Select one of the following three options to install the Docker Meshery Extensio
   - [Using Docker Desktop](#using-docker-desktop)
   - [Using Docker Hub](#using-docker-hub)
   - [Using Docker CLI](#using-docker-cli)
-- [Using mesheryctl with the Meshery Docker Extension](#using-mesheryctl-with-the-meshery-docker-extension)
 - [Remove Meshery as a Docker Extension](#remove-meshery-as-a-docker-extension)
 
 ### Using Docker Desktop
@@ -84,18 +83,6 @@ Finally, you can also install the Meshery Docker Extension using the Docker CLI.
 </pre>
 
 It runs as a set of one or more containers inside your Docker Desktop virtual machine.
-
-## Using mesheryctl with the Meshery Docker Extension
-
-After installing the Meshery Docker Extension, you can utilize the mesheryctl command-line tool to manage and interact with Meshery. This tool provides various commands to control Meshery's behavior and integrate it into your workflows.
-
-### Deploy meshery in cluster
-
-`mesheryctl system start` : This will initiate Meshery & deploy necessary resources to your cluster.
-
-### Launching the Meshery Dashboard
-
-`mesheryctl system dashboard` : This command directs your browser to the Meshery UI, typically accessible at http://localhost:9081.
 
 Finally, you can now fully utilize Meshery to manage and monitor your cloud-native infrastructure.
 
