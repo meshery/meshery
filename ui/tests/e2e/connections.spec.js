@@ -263,11 +263,11 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
   const responsePromise = page.waitForResponse(
     (response) =>
       response
-    .url()
-    .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status`) &&
-    response.status() === 202,
+        .url()
+        .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status`) &&
+      response.status() === 202,
   );
-  
+
   // Click "DELETE" button in the modal
   await page.getByRole('button', { name: 'DELETE' }).click();
 
