@@ -113,6 +113,15 @@ func TestModelInit(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
+			defer func() {
+				// clean up created folders on any test case outcome
+				if tc.AfterTestRemoveDir != "" {
+					if err := os.RemoveAll(tc.AfterTestRemoveDir); err != nil {
+						t.Fatal(err)
+					}
+					t.Log("removed created folders")
+				}
+			}()
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
@@ -160,11 +169,5 @@ func TestModelInit(t *testing.T) {
 				}
 			}
 		})
-		if tc.AfterTestRemoveDir != "" {
-			if err := os.RemoveAll(tc.AfterTestRemoveDir); err != nil {
-				t.Fatal(err)
-			}
-		}
-		t.Log("model init test finished")
 	}
 }
