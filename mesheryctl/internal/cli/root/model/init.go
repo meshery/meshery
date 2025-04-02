@@ -112,8 +112,8 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		utils.Log.Infof("Creating new Meshery model: %s", modelName)
 
-		modelFolder := strings.Join([]string{path, modelName}, string(os.PathSeparator))
-		modelVersionFolder := strings.Join([]string{modelFolder, version}, string(os.PathSeparator))
+		modelFolder := filepath.Join(path, modelName)
+		modelVersionFolder := filepath.Join(modelFolder, version)
 		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)
 		if err != nil {
@@ -124,7 +124,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			item.beforeHook()
 			itemFolderPath := modelVersionFolder
 			if item.folderPath != "" {
-				itemFolderPath = strings.Join([]string{modelVersionFolder, item.folderPath}, string(os.PathSeparator))
+				itemFolderPath = filepath.Join(modelVersionFolder, item.folderPath)
 				err = os.MkdirAll(itemFolderPath, initModelDirPerm)
 				if err != nil {
 					return ErrModelInit(err)
@@ -135,15 +135,13 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				if err != nil {
 					return ErrModelInit(err)
 				}
-				filePath := strings.Join(
-					[]string{
-						itemFolderPath,
-						strings.Join(
-							[]string{name, outputFormat},
-							".",
-						),
-					},
-					string(os.PathSeparator),
+				filePath := filepath.Join(
+
+					itemFolderPath,
+					strings.Join(
+						[]string{name, outputFormat},
+						".",
+					),
 				)
 				file, err := os.Create(filePath)
 				if err != nil {
