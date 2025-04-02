@@ -96,6 +96,18 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_custom_dir",
 		},
 		{
+			Name:             "model init with trailing folder separator in the path",
+			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "test_case_some_other_custom_dir/with/trailing/separator////"},
+			ExpectError:      false,
+			ExpectedResponse: "model.init.custom-dir-2.aws-ec2-controller.output.golden",
+			// do not need to check all dirs and diles here, as we tested it in previous test case,
+			// just check the main directory is correct
+			ExpectedDirs: []string{
+				"test_case_some_other_custom_dir/with/trailing/separator/test-case-aws-ec2-controller",
+			},
+			AfterTestRemoveDir: "test_case_some_other_custom_dir",
+		},
+		{
 			Name:             "model init with invalid version format",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--version", "1.2"},
 			ExpectError:      true,
@@ -127,7 +139,7 @@ func TestModelInit(t *testing.T) {
 		},
 		// TODO check output for --path ../ (if folder ends on slash do not add one more slash in guiding output)
 		// +++ TODO test the case with no model name (maybe remove condition to have exactly one param and validate than model name is not empty manually)
-		// ++ TODO validate model name
+		// +++ TODO validate model name
 		// TODO test if current process can create folder under specified path
 		// TODO test not covered branches and corner cases
 		// +++ TODO remove created during test folder structure after test run

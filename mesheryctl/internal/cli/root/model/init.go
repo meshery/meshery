@@ -90,6 +90,8 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		// validation done above that args contains exactly one argument
 		modelName := args[0]
 		path, _ := cmd.Flags().GetString("path")
+		// immediately remove trailing folder separator
+		path = strings.TrimRight(path, string(os.PathSeparator))
 		version, _ := cmd.Flags().GetString("version")
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
