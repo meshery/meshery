@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 setup() {
-    load "$SUPPORT_DESTDIR"
-    load "$ASSERT_DESTDIR"
+    load "$E2E_HELPERS_PATH/tests_helpers"
+	_tests_helper
 }
 
 @test "mesheryctl system help is succeeded and display help" {

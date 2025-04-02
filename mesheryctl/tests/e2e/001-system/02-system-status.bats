@@ -1,6 +1,15 @@
 #!/usr/bin/env bats
 
-@test "mesheryctl system status is succeeded" {
+setup() {
+   load "$E2E_HELPERS_PATH/tests_helpers"
+	_tests_helper
+
+}
+
+@test "mesheryctl system status display mesehry operator running pods" {
     run $MESHERYCTL_BIN system status -y
     [ "$status" -eq 0 ]
+
+    assert_line --regexp "meshery(|-(broker|meshsync|operator))"
+    assert_line --regexp "Running"
 }
