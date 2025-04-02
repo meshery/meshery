@@ -80,19 +80,6 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			}
 		}
 
-		{
-			// validate path
-			path, _ := cmd.Flags().GetString("path")
-			path = strings.TrimRight(path, string(os.PathSeparator))
-			// already validated that args has atgs[0]
-			modelName := args[0]
-			testDir := filepath.Join(path, modelName)
-			err := os.MkdirAll(testDir, initModelDirPerm)
-			if err != nil {
-				return ErrModelInit(err)
-			}
-			os.Remove(testDir) // Cleanup
-		}
 		return nil
 
 	},
