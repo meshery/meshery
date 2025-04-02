@@ -17,13 +17,16 @@ import {
   Link,
   Chip,
 } from '@layer5/sistent';
-// import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import ModelIcon from '@/assets/icons/ModelIcon';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import { CSV_TEMPLATE_BASE_URL } from './data';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import {
+  ModelDefinitionV1Beta1Schema,
+  ComponentDefinitionV1Beta1Schema,
+  RelationshipDefinitionV1Alpha3Schema,
+} from '@layer5/schemas';
 
 const StyledHeadingBox = styled(Box)({
   display: 'flex',
@@ -52,6 +55,9 @@ const StyledUploadSuccess = styled(Box)(({ theme }) => ({
 const StyledFileChip = styled(Chip)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
 }));
+
+const CSV_TEMPLATE_BASE_URL =
+  'https://raw.githubusercontent.com/meshery/meshery/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs/';
 
 const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
   const [modelCsvFile, setModelCsvFile] = React.useState(null);
@@ -181,8 +187,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . Models are versioned packages containing components, relationships and policies for
-            defining infrastructure in Meshery.
+            . {ModelDefinitionV1Beta1Schema.description}
           </>
         ),
       },
@@ -239,8 +244,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . Components are fundamental building blocks that represent distinct capabilities and
-            features of your infrastructure in Meshery.
+            . {ComponentDefinitionV1Beta1Schema.description}
           </>
         ),
       },
@@ -298,8 +302,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . Relationships define how components interact and connect with each other within your
-            infrastructure model in Meshery.
+            . {RelationshipDefinitionV1Alpha3Schema.description}
           </>
         ),
       },

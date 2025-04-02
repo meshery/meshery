@@ -3,7 +3,7 @@
   "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "RightTriangle",
-  "description": "",
+  "description": "A triangular shape pointing to the right, often used to indicate directional flow or hierarchical steps in processes or data sequences.",
   "format": "JSON",
   "model": {
     "id": "00000000-0000-0000-0000-000000000000",
