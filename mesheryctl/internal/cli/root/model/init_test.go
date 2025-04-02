@@ -143,6 +143,7 @@ func TestModelInit(t *testing.T) {
 		// TODO test if current process can create folder under specified path
 		// TODO test not covered branches and corner cases
 		// +++ TODO remove created during test folder structure after test run
+		// TODO do not create if filder with model and version already exists
 
 	}
 	for _, tc := range tests {
