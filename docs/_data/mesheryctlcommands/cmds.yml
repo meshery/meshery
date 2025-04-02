@@ -1138,7 +1138,7 @@ exp:
     subcommands:
       list:
         name: list
-        description: List all exp organizations registered in Meshery Server
+        description: List all organizations registered in Meshery Server
         usage: mesheryctl exp organization list [flags]
         flags:
           page:
