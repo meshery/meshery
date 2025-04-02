@@ -14,7 +14,7 @@ image:
 env:
   EVENT: mesheryLocal
   PROVIDER_BASE_URLS: https://cloud.layer5.io
-  ADAPTER_URLS: meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-kuma:10007 meshery-nginx-sm:10010 meshery-nsm:10004 meshery-app-mesh:10005 meshery-traefik-mesh:10006 meshery-cilium:10012
+  ADAPTER_URLS: ""
   PROVIDER: ""
   KEYS_PATH: "../../server/permissions/keys.csv"
   MESHERY_SERVER_CALLBACK_URL: ""
@@ -38,14 +38,11 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: "meshery-server"
 
-podSecurityContext:
-  {}
-  # fsGroup: 2000
+podSecurityContext: {} # fsGroup: 2000
 
 annotations: {}
 
-securityContext:
-  {}
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -63,29 +60,26 @@ ingress:
   enabled: false
   ingressClassName:
   apiVersion:
-  annotations:
-    {}
+  annotations: {}
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
 
   ## apiVersion:
 
   hosts:
-    - host: meshery.local
-      paths:
-        - path: /
-          pathType: Prefix
-
-      ## For Kubernetes >= 1.18 you should specify the pathType (determines how Ingress paths should be matched)
-      ## See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#better-path-matching-with-path-types
+  - host: meshery.local
+    paths:
+    - path: /
+      pathType: Prefix
+    ## For Kubernetes >= 1.18 you should specify the pathType (determines how Ingress paths should be matched)
+    ## See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#better-path-matching-with-path-types
 
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
 
-resources:
-  {}
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -169,4 +163,3 @@ mesherygateway:
   enabled: false
   selector:
     istio: ingressgateway
-
