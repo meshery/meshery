@@ -12,7 +12,6 @@ const (
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
 	ErrModelInitCode                    = "mesheryctl-1148" // TODO is it a correct code for this error?
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149" // TODO is it a correct code for this error?
-
 )
 
 func ErrExportModel(err error, name string) error {

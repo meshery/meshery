@@ -119,6 +119,16 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "model.init.wrong-number-of-arguments.output.golden",
 		},
+		{
+			Name:             "model init invalid model name (underscore)",
+			Args:             []string{"init", "test-case_aws-ec2-controller", "--output-format", "json", "--version", "v0.1.0"},
+			ExpectError:      true,
+			ExpectedResponse: "model.init.invalid-model-name.output.golden",
+		},
+		// TODO check output for --path ../ (if folder ends on slash do not add one more slash in guiding output)
+		// +++ TODO test the case with no model name (maybe remove condition to have exactly one param and validate than model name is not empty manually)
+		// ++ TODO validate model name
+		// TODO test if current process can create folder under specified path
 		// TODO test not covered branches and corner cases
 		// +++ TODO remove created during test folder structure after test run
 
