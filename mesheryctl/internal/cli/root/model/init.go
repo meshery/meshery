@@ -115,67 +115,91 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			}
 		}
 
+		infoOnModelFolder, err := os.Stat(modelFolder)
+		// this indicates if model folder already exists (before we created it)
+		// this information will be used for clean up
+		isModelFolderAlreadyExists := !os.IsNotExist(err) && infoOnModelFolder.IsDir()
+
 		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)
 		if err != nil {
 			return ErrModelInit(err)
 		}
 
-		for _, item := range initModelData {
-			item.beforeHook()
-			itemFolderPath := modelVersionFolder
-			if item.folderPath != "" {
-				itemFolderPath = filepath.Join(modelVersionFolder, item.folderPath)
-				err = os.MkdirAll(itemFolderPath, initModelDirPerm)
-				if err != nil {
-					return ErrModelInit(err)
+		// we need to wrap the next code block in the function which returns error
+		// because it has several return statements
+		// and we want to capture all of them and perform action on failure.
+		err = func() error {
+			for _, item := range initModelData {
+				item.beforeHook()
+				itemFolderPath := modelVersionFolder
+				if item.folderPath != "" {
+					itemFolderPath = filepath.Join(modelVersionFolder, item.folderPath)
+					err = os.MkdirAll(itemFolderPath, initModelDirPerm)
+					if err != nil {
+						return ErrModelInit(err)
+					}
+				}
+				for name, templatePath := range item.files {
+					content, err := getTemplateInOutputFormat(templatePath, outputFormat)
+					if err != nil {
+						return ErrModelInit(err)
+					}
+					filePath := filepath.Join(
+
+						itemFolderPath,
+						strings.Join(
+							[]string{name, outputFormat},
+							".",
+						),
+					)
+					file, err := os.Create(filePath)
+					if err != nil {
+						return ErrModelInit(err)
+					}
+					defer file.Close() // Ensure the file is closed when the function exits
+
+					_, err = file.Write(content)
+					if err != nil {
+						return ErrModelInit(err)
+					}
 				}
 			}
-			for name, templatePath := range item.files {
-				content, err := getTemplateInOutputFormat(templatePath, outputFormat)
-				if err != nil {
-					return ErrModelInit(err)
-				}
-				filePath := filepath.Join(
+			utils.Log.Infof("Created %s model at %s", modelName, modelFolder)
+			utils.Log.Info("")
+			utils.Log.Info(
+				initModelReplacePlaceholders(
+					initModelNextStepsText,
+					map[string]string{
+						"{modelName}":          modelName,
+						"{modelVersion}":       version,
+						"{modelFolder}":        modelFolder,
+						"{outputFormat}":       outputFormat,
+						"{modelVersionFolder}": modelVersionFolder,
+					},
+				),
+			)
+			return nil
+		}()
 
-					itemFolderPath,
-					strings.Join(
-						[]string{name, outputFormat},
-						".",
-					),
-				)
-				file, err := os.Create(filePath)
-				if err != nil {
-					return ErrModelInit(err)
-				}
-				defer file.Close() // Ensure the file is closed when the function exits
-
-				_, err = file.Write(content)
-				if err != nil {
-					return ErrModelInit(err)
-				}
+		if err != nil {
+			utils.Log.Info("Failure, cleaning up...")
+			if !isModelFolderAlreadyExists {
+				// if model folder didn'tv exist before -> delete it
+				utils.Log.Infof("Removing %s", modelFolder)
+				os.RemoveAll(modelFolder)
+			} else {
+				// otherwise remove only version folder
+				utils.Log.Infof("Removing %s", modelVersionFolder)
+				os.RemoveAll(modelVersionFolder)
 			}
 		}
-		utils.Log.Infof("Created %s model at %s", modelName, modelFolder)
-		utils.Log.Info("")
-		utils.Log.Info(
-			initModelReplacePlaceholders(
-				initModelNextStepsText,
-				map[string]string{
-					"{modelName}":          modelName,
-					"{modelVersion}":       version,
-					"{modelFolder}":        modelFolder,
-					"{outputFormat}":       outputFormat,
-					"{modelVersionFolder}": modelVersionFolder,
-				},
-			),
-		)
 
 		// TODO put a model name into generated model file
 
-		// TODO think about cleaning up partial data (if error occurs in the middle of execution).
+		// +++ TODO think about cleaning up partial data (if error occurs in the middle of execution).
 		// if delete a folder, only delete if the folder was created
-		// if the user specifies an existing folder it should not be deleted.
+		// if the user specifies an existing folder it should not be
 		return nil
 	},
 }
