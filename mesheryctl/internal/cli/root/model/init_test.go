@@ -22,6 +22,7 @@ func TestModelInit(t *testing.T) {
 	tests := []struct {
 		Name               string
 		Args               []string
+		SetupHook          func()
 		ExpectError        bool
 		ExpectedResponse   string
 		ExpectedDirs       []string
@@ -132,6 +133,16 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_other_custom_dir",
 		},
 		{
+			Name: "model init fail if model/version folder esists",
+			Args: []string{"init", "test-case-aws-ec2-controller", "--path", ".", "--version", "v1.0.0"},
+			SetupHook: func() {
+				os.MkdirAll("./test-case-aws-ec2-controller/v1.0.0", initModelDirPerm)
+			},
+			ExpectError:        true,
+			ExpectedResponse:   "model.init.folder-exists.output.golden",
+			AfterTestRemoveDir: "./test-case-aws-ec2-controller",
+		},
+		{
 			Name:             "model init with invalid version format",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--version", "1.2"},
 			ExpectError:      true,
@@ -167,7 +178,7 @@ func TestModelInit(t *testing.T) {
 		// +++ TODO test if current process can create folder under specified path
 		// TODO test not covered branches and corner cases
 		// +++ TODO remove created during test folder structure after test run
-		// TODO do not create if folder with model and version already exists
+		// +++ TODO do not create if folder with model and version already exists
 
 	}
 	for _, tc := range tests {
@@ -181,6 +192,9 @@ func TestModelInit(t *testing.T) {
 					t.Log("removed created folders")
 				}
 			}()
+			if tc.SetupHook != nil {
+				tc.SetupHook()
+			}
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)

@@ -114,6 +114,20 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		modelFolder := filepath.Join(path, modelName)
 		modelVersionFolder := filepath.Join(modelFolder, version)
+
+		{
+			// if model/version folder already exists return with error
+			info, err := os.Stat(modelVersionFolder)
+			if !os.IsNotExist(err) && info.IsDir() {
+				return ErrModelInitFromString(
+					fmt.Sprintf(
+						"folder %s exists, please specify different model name or version",
+						modelVersionFolder,
+					),
+				)
+			}
+		}
+
 		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)
 		if err != nil {
