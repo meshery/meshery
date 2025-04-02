@@ -7,7 +7,7 @@ export const TitleLink = ({ href, children, ...props }) => {
   return (
     <a
       href={href}
-      target="_blank"
+      target={'_blank'}
       rel="noopener noreferrer"
       style={{ color: 'inherit' }}
       {...props}
