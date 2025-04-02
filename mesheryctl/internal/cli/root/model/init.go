@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 	"regexp"
 	"slices"
 	"strings"
@@ -78,6 +79,20 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				)
 			}
 		}
+
+		{
+			// validate path
+			path, _ := cmd.Flags().GetString("path")
+			path = strings.TrimRight(path, string(os.PathSeparator))
+			// already validated that args has atgs[0]
+			modelName := args[0]
+			testDir := filepath.Join(path, modelName)
+			err := os.MkdirAll(testDir, initModelDirPerm)
+			if err != nil {
+				return ErrModelInit(err)
+			}
+			os.Remove(testDir) // Cleanup
+		}
 		return nil
 
 	},
@@ -97,11 +112,10 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		utils.Log.Infof("Creating new Meshery model: %s", modelName)
 
-		const DirPerm = 0755
 		modelFolder := strings.Join([]string{path, modelName}, string(os.PathSeparator))
 		modelVersionFolder := strings.Join([]string{modelFolder, version}, string(os.PathSeparator))
 		utils.Log.Infof("Creating directory structure...")
-		err = os.MkdirAll(modelVersionFolder, DirPerm)
+		err = os.MkdirAll(modelVersionFolder, initModelDirPerm)
 		if err != nil {
 			return ErrModelInit(err)
 		}
@@ -111,7 +125,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			itemFolderPath := modelVersionFolder
 			if item.folderPath != "" {
 				itemFolderPath = strings.Join([]string{modelVersionFolder, item.folderPath}, string(os.PathSeparator))
-				err = os.MkdirAll(itemFolderPath, DirPerm)
+				err = os.MkdirAll(itemFolderPath, initModelDirPerm)
 				if err != nil {
 					return ErrModelInit(err)
 				}
@@ -179,6 +193,7 @@ func initModelGetValidOutputFormat() []string {
 	// return []string{"json", "yaml", "csv"}
 }
 
+const initModelDirPerm = 0755
 const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
 const initModelTemplatePathModelJSON = "json_models/constructs/v1beta1/model.json"
 const initModelTemplatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
