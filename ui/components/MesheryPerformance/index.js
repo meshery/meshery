@@ -169,7 +169,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const isJsonString = (str) => {
     try {
       JSON.parse(str);
-    } catch (e) {
+    } catch {
       return false;
     }
     return true;
@@ -279,7 +279,7 @@ const MesheryPerformanceComponent_ = (props) => {
               JSON.parse(fileContent);
               setAdditionalOptions(fileContent);
               setJsonError(false);
-            } catch (error) {
+            } catch {
               setAdditionalOptions(event.target.result);
               setJsonError(true);
             }
@@ -293,7 +293,7 @@ const MesheryPerformanceComponent_ = (props) => {
           if (value !== '') JSON.parse(value);
           setAdditionalOptions(value);
           setJsonError(false);
-        } catch (error) {
+        } catch {
           setAdditionalOptions(value);
           setJsonError(true);
         }
@@ -357,7 +357,7 @@ const MesheryPerformanceComponent_ = (props) => {
     let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, tState.length - 1));
-    } catch (ex) {
+    } catch {
       err = true;
     }
 
