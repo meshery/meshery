@@ -70,7 +70,7 @@ func TestModelInit(t *testing.T) {
 			},
 			AfterTestRemoveDir: "test-case-aws-dynamodb-controller",
 		},
-		// I have added --output-format json in this test because somehow
+		// Added --output-format json in this test because somehow
 		// the --output-format yaml from the previous test case is propagated to this test case
 		// which is only the behaviour inside the test.
 		// TODO think about how to reset the flags between the test cases.
