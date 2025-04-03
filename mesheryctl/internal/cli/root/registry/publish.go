@@ -161,7 +161,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		case "remote-provider":
 			err = remoteProviderSystem()
 		case "website":
-			if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" {
+			if outputFormat != "md" && outputFormat != "mdx" && outputFormat != "js" && outputFormat != "oci" {
 				return errors.New(utils.RegistryError(fmt.Sprintf("invalid output format: %s", outputFormat), "publish"))
 			}
 			err = websiteSystem()
@@ -287,7 +287,7 @@ func init() {
 	// publishCmd.Flags().StringVarP(&modelsOutputPath, "models-output-path", "m", "", "models output path")
 	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
-	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
+	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js | oci]")
 
 	// publishCmd.MarkFlagRequired("system")
 	// publishCmd.MarkFlagRequired("google-sheet-credential")
