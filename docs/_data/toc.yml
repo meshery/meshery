@@ -251,7 +251,7 @@
             - title: "Design Principles"
               url: project/contributing/contributing-cli-guide
             - title: "End-to-End Testing"
-              url: project/contributing/contributing-cli-tests  
+              url: project/contributing/contributing-cli-tests
         - title: Docs
           url: project/contributing/contributing-docs
           grandchildren:
@@ -269,6 +269,8 @@
           grandchildren:
             - title: Notification Center
               url: project/contributing/contributing-ui-notification-center
+            - title: Dashboard Widgets
+              url: project/contributing/contributing-ui-widgets
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Policies

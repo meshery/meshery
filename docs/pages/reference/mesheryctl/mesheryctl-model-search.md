@@ -17,6 +17,7 @@ Search model(s)
 ## Synopsis
 
 Search model(s) by search string
+Documentation for models search can be found at https://docs.meshery.io/reference/mesheryctl/model/search
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model search [flags]
