@@ -102,7 +102,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for publish
-  -o, --output-format string   output format [md | mdx | js]
+  -o, --output-format string   output format [md | mdx | js | oci]
 
 </div>
 </pre>

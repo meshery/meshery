@@ -818,8 +818,8 @@ registry:
       flags:
         output-format:
           name: --output-format, -o
-          description: (optional) format to display in [md | mdx | js]
-          usage: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [md | mdx | js]
+          description: (optional) format to display in [md | mdx | js | oci]
+          usage: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [md | mdx | js | oci]
           example: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o md
     update:
       name: update
@@ -846,7 +846,7 @@ registry:
       flags:
         output-format:
           name: --output-format, -o
-          description: (optional) format to display in [md | mdx | js]
+          description: (optional) format to display in [md | mdx | js | oci]
         registrant_cred:
           name: --registrant-cred
           description: path pointing to the registrant credetial definition
