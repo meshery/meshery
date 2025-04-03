@@ -823,7 +823,7 @@ const Navigator_ = (props) => {
 
   const linkContent = (iconc, titlec, hrefc, linkc, drawerCollapsed) => {
     const updatedIcon = React.cloneElement(iconc, {
-      fill: state.path === hrefc ? theme.palette.icon.brand : undefined,
+      fill: state.path === hrefc ? theme.palette.icon.brand : theme.palette.common.white,
     });
     let linkContent = (
       <>
