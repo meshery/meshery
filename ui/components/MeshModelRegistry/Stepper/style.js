@@ -9,7 +9,7 @@ export const StyledSummaryBox = styled(Box)(({ theme }) => ({
 export const StyledSummaryItem = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
   padding: '0.7rem',
-  backgroundColor: theme.palette.background.paper || '#ffffff',
+  backgroundColor: theme.palette.background.hover,
   flexGrow: 1,
 }));
 
