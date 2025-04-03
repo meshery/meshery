@@ -1,4 +1,4 @@
-FROM golang:1.23 AS meshery-server
+FROM golang:1.24.2 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -9,7 +9,7 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:20-alpine AS base-node
+FROM node:23.11-alpine AS base-node
 
 # Installing NodeJS Dependencies
 FROM base-node AS meshery-ui-deps
@@ -49,7 +49,7 @@ RUN git config --global user.email "meshery@meshery.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.19.1 as seed_content
+FROM alpine:3.21.3 as seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
@@ -75,7 +75,7 @@ RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/ta
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM alpine:3.19.1
+FROM alpine:3.21.3
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
 RUN set -ex && \
