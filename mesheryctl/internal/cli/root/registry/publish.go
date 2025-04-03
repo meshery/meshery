@@ -287,7 +287,7 @@ func init() {
 	// publishCmd.Flags().StringVarP(&modelsOutputPath, "models-output-path", "m", "", "models output path")
 	// publishCmd.Flags().StringVarP(&imgsOutputPath, "imgs-output-path", "p", "", "images output path")
 
-	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js]")
+	publishCmd.Flags().StringVarP(&outputFormat, "output-format", "o", "", "output format [md | mdx | js | oci]")
 
 	// publishCmd.MarkFlagRequired("system")
 	// publishCmd.MarkFlagRequired("google-sheet-credential")
