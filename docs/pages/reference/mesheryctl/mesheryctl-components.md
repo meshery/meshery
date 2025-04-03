@@ -45,7 +45,7 @@ mesheryctl components list
 Search for component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components search [component-name]
+mesheryctl component search [component-name]
 
 </div>
 </pre> 
@@ -53,7 +53,7 @@ mesheryctl components search [component-name]
 View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components view [component-name]
+mesheryctl component view [component-name]
 
 </div>
 </pre> 
