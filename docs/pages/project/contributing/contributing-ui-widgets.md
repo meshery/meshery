@@ -1,10 +1,10 @@
 ---
 layout: page
-title: Contributing to Meshery UI - Widgets
+title: Contributing to Meshery UI - Dashboard Widgets
 permalink: project/contributing/contributing-ui-widgets
 abstract: Guide to extending Meshery dashboards with custom widgets.
 language: en
-display-title: true
+display-title: false
 type: project
 category: contributing
 list: include
@@ -21,6 +21,7 @@ This guide walks through the process of creating and integrating a custom widget
 ## 1. Widget Architecture
 
 Widgets are React components located [here](https://github.com/meshery/meshery/tree/master/ui/components/DashboardComponent/widgets):
+
 ```bash
 /ui/components/DashboardComponent/widgets/
 ```
@@ -28,6 +29,7 @@ Widgets are React components located [here](https://github.com/meshery/meshery/t
 Each widget is rendered inside a card component (`<PlainCard />`, `<DesignCard />`, etc.), which is sourced from the [Sistent design system](https://github.com/layer5io/sistent).
 
 Widgets can:
+
 - Pull data from APIs (REST, GraphQL, RSS)
 - Display static links or interactive components
 - Include icons and thumbnails for user familiarity
@@ -37,20 +39,19 @@ Widgets can:
 ## 2. Creating a New Widget
 
 Create a new file inside `widgets/`, e.g.:
+
 ```jsx
 /ui/components/DashboardComponent/widgets/LatestBlogs.js
 ```
 
 Use design system components from `@layer5/sistent`:
+
 ```jsx
-import { useTheme, PlainCard, BellIcon } from '@layer5/sistent';
+import { useTheme, PlainCard, BellIcon } from "@layer5/sistent";
 
 const LatestBlogs = (props) => {
   const theme = useTheme();
-  const [resources, setResources] = useState([]);
-  useEffect(() => {
-    // fetch data and populate resources
-  }, []);
+  const { data: blogs } = useFetchBlogsQuery(); // fetch data from rtk query
 
   return (
     <PlainCard
@@ -71,6 +72,7 @@ Use `useTheme()` for consistent color tokens across themes.
 ## 3. Adding Thumbnails
 
 Thumbnails are image previews of widgets. Place them here:
+
 ```bash
 /ui/components/DashboardComponent/widgets/Thumbnails/
 ```
@@ -78,8 +80,9 @@ Thumbnails are image previews of widgets. Place them here:
 Recommended format: `.png` or `.svg`
 
 Example:
+
 ```js
-import LatestBlogsThumbnail from './Thumbnails/LatestBlogs.png';
+import LatestBlogsThumbnail from "./Thumbnails/LatestBlogs.png";
 ```
 
 To verify your thumbnail appears correctly, click on the "Edit" button on the Dashboard. A visual card with your thumbnail and widget title will be listed there, allowing users to add it to their layout.
@@ -89,12 +92,13 @@ To verify your thumbnail appears correctly, click on the "Edit" button on the Da
 ## 4. Registering the Widget
 
 Register your widget inside `getWidgets.js`:
+
 ```jsx
 export const getWidgets = () => ({
   LATEST_BLOGS: {
-    title: 'Latest Blogs',
+    title: "Latest Blogs",
     isEnabled: alwaysShown,
-    component: <LatestBlogs />,  
+    component: <LatestBlogs />,
     defaultSizing: { w: 3, h: 2 },
     thumbnail: LatestBlogsThumbnail?.src,
   },
@@ -112,11 +116,13 @@ export const getWidgets = () => ({
 ## 5. Adding to Default Layout
 
 To include your widget in the default dashboard layout, add it to `LOCAL_PROVIDER_LAYOUT` in:
+
 ```bash
 /ui/components/DashboardComponent/defaultLayout.js
 ```
 
 Under each screen size key (e.g. `sm`, `xs`, `xxs`):
+
 ```js
 {
   h: 2,
@@ -145,8 +151,8 @@ Meshery stores user layout preferences either in local storage or via the provid
 
 This is how your widget would appear in the dashboard:
 
-<a href="{{ site.baseurl }}/assets/img/widget/dashboard-widgets.png">
-<img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/widget/dashboard-widgets.png" />
+<a href="{{ site.baseurl }}/assets/img/dashboard-widget/dashboard-widgets.png">
+<img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/dashboard-widget/dashboard-widgets.png" />
 </a>
 
 ---
@@ -165,11 +171,11 @@ This is how your widget would appear in the dashboard:
 
 ## 7. Other Examples
 
-| Widget            | File                     | Data Source       | UI Component  |
-|-------------------|--------------------------|-------------------|---------------|
-| Latest Blogs      | `LatestBlogs.js`         | RSS Feed          | PlainCard     |
-| Help Center       | `HelpCenterWidget.js`    | Static Links      | PlainCard     |
-| My Designs        | `MyDesignsWidget.js`     | GraphQL + REST    | DesignCard    |
+| Widget       | File                                                                                                                               | Data Source  | UI Component |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------- | ------------ | ------------ |
+| Latest Blogs | [LatestBlogs.js](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/widgets/LatestBlogs.js)           | RSS Feed     | PlainCard    |
+| Help Center  | [HelpCenterWidget.js](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/widgets/HelpCenterWidget.js) | Static Links | PlainCard    |
+| My Designs   | [MyDesignsWidget.js](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/widgets/MyDesignsWidget.js)   | REST Api     | DesignCard   |
 
 Note: `MyDesignsWidget` demonstrates integration with RTK Query hooks like `useGetLoggedInUserQuery()` and `useGetUserDesignsQuery()`.
 
@@ -180,8 +186,8 @@ Have a look at existing Widgets [here](https://github.com/meshery/meshery/tree/m
 ## 8. Publishing
 
 Once your widget is working:
+
 - Ensure it appears in the widget selector UI
 - Validate layout and responsiveness
 - Submit a PR with the new component, layout entry, and thumbnail. [Here](https://github.com/meshery/meshery/pull/13629) is a PR that adds Latest Blogs widget to Meshery Dashboard.
 - Add your widget in the [Meshery Extensions Catalog](https://meshery.io/extensions) if appropriate
-
