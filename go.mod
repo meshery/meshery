@@ -2,12 +2,12 @@ module github.com/layer5io/meshery
 
 go 1.23.4
 
-toolchain go1.24.1
-
 // replace github.com/meshery/schemas v0.8.5 => ../schemas
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
+// The following replaces are used for local development
+// replace github.com/meshery/schemas v0.8.5 => ../schemas
 // replace github.com/layer5io/meshkit v0.8.21 => ../meshkit
 
 require (
