@@ -91,13 +91,7 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({
-  meshsyncControllerState,
-  connectionMetadataState,
-  selectedFilter,
-  selectedConnectionId,
-  updateUrlWithConnectionId,
-}) => {
+const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, selectedFilter }) => {
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -172,7 +166,6 @@ const ConnectionTable = ({
         ? JSON.stringify([kindFilter])
         : '',
   });
-
   const {
     data: environmentsResponse,
     isSuccess: isEnvironmentsSuccess,
@@ -184,8 +177,24 @@ const ConnectionTable = ({
       skip: !organization?.id,
     },
   );
-
   let environments = environmentsResponse?.environments || [];
+
+  useEffect(() => {
+    updateCols(columns);
+    if (isEnvironmentsError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError.error}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+
+    if (isConnectionError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError.error}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  }, [environmentsError, connectionError, isEnvironmentsSuccess]);
 
   const modifiedConnections = connectionData?.connections.map((connection) => {
     return {
@@ -319,6 +328,15 @@ const ConnectionTable = ({
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'DELETE') {
+        // let bulkConnections = {}
+        // selected.data.map(({ index }) => {
+        //   bulkConnections = {
+        //     ...bulkConnections,
+        //     [connections[index].id]: CONNECTION_STATES.DELETED
+        //   };
+        // })
+        // const requestBody = JSON.stringify(bulkConnections);
+        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
@@ -463,44 +481,6 @@ const ConnectionTable = ({
   };
   const theme = useTheme();
 
-  const isHandlingExpansion = useRef(false);
-
-  useEffect(() => {
-    // Initialize table columns
-    updateCols(columns);
-
-    // Handle API errors (only when they occur)
-    if (isEnvironmentsError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError.error}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-
-    if (isConnectionError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError.error}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-  }, [environmentsError, connectionError, isEnvironmentsError, isConnectionError]);
-
-  useEffect(() => {
-    if (selectedConnectionId && connections?.length && !isHandlingExpansion.current) {
-      isHandlingExpansion.current = true;
-      try {
-        const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
-        if (index !== -1 && !rowsExpanded.includes(index)) {
-          setRowsExpanded([index]);
-        } else if (index === -1 && updateUrlWithConnectionId) {
-          updateUrlWithConnectionId('');
-        }
-      } finally {
-        isHandlingExpansion.current = false;
-      }
-    }
-  }, [selectedConnectionId, connections]);
-
   const columns = [
     {
       name: 'id',
@@ -558,6 +538,7 @@ const ConnectionTable = ({
                   )
                 }
                 handlePing={() => {
+                  // e.stopPropagation();
                   if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
                     ping(
                       getColumnValue(tableMeta.rowData, 'metadata.name', columns),
@@ -1012,26 +993,7 @@ const ConnectionTable = ({
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      if (isHandlingExpansion.current) return;
-      isHandlingExpansion.current = true;
-
-      try {
-        const expandedRows = allRowsExpanded.slice(-1);
-        setRowsExpanded(expandedRows.map((item) => item.index));
-
-        if (expandedRows.length > 0 && connections) {
-          const index = expandedRows[0].index;
-          const connection = connections[index];
-
-          if (connection && updateUrlWithConnectionId && connection.id !== selectedConnectionId) {
-            updateUrlWithConnectionId(connection.id);
-          }
-        } else if (updateUrlWithConnectionId && selectedConnectionId) {
-          updateUrlWithConnectionId('');
-        }
-      } finally {
-        isHandlingExpansion.current = false;
-      }
+      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;

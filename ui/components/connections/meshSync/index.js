@@ -38,15 +38,8 @@ const ACTION_TYPES = {
     error_msg: 'Failed to fetch meshsync resources',
   },
 };
-
 export default function MeshSyncTable(props) {
-  const {
-    updateProgress,
-    selectedK8sContexts,
-    k8sconfig,
-    selectedResourceId,
-    updateUrlWithResourceId,
-  } = props;
+  const { updateProgress, selectedK8sContexts, k8sconfig } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -426,6 +419,7 @@ export default function MeshSyncTable(props) {
     viewColumns: false,
     search: false,
     responsive: 'standard',
+    // resizableColumns: true,
     serverSide: true,
     selectableRows: 'none',
     count: meshSyncData?.total_count,
@@ -476,26 +470,8 @@ export default function MeshSyncTable(props) {
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      if (isHandlingExpansion.current) return;
-      isHandlingExpansion.current = true;
-
-      try {
-        const expandedRows = allRowsExpanded.slice(-1);
-        setRowsExpanded(expandedRows.map((item) => item.index));
-
-        if (expandedRows.length > 0 && meshSyncResources) {
-          const index = expandedRows[0].index;
-          const resource = meshSyncResources[index];
-
-          if (resource && updateUrlWithResourceId && resource.id !== selectedResourceId) {
-            updateUrlWithResourceId(resource.id);
-          }
-        } else if (updateUrlWithResourceId && selectedResourceId) {
-          updateUrlWithResourceId('');
-        }
-      } finally {
-        isHandlingExpansion.current = false;
-      }
+      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      // setShowMore(false);
     },
     renderExpandableRow: (rowData) => {
       const colSpan = rowData.length;
@@ -535,34 +511,20 @@ export default function MeshSyncTable(props) {
     },
   };
 
-  const isHandlingExpansion = useRef(false);
+  const handleError = (action) => (error) => {
+    updateProgress({ showProgress: false });
+    notify({
+      message: `${action.error_msg}: ${error}`,
+      event_type: EVENT_TYPES.ERROR,
+      details: error.toString(),
+    });
+  };
 
   useEffect(() => {
     if (meshSyncError) {
-      updateProgress({ showProgress: false });
-      notify({
-        message: `${ACTION_TYPES.FETCH_MESHSYNC_RESOURCES.error_msg}: ${meshSyncError}`,
-        event_type: EVENT_TYPES.ERROR,
-        details: meshSyncError.toString(),
-      });
+      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(meshSyncError);
     }
   }, [meshSyncError]);
-
-  useEffect(() => {
-    if (selectedResourceId && meshSyncResources?.length && !isHandlingExpansion.current) {
-      isHandlingExpansion.current = true;
-      try {
-        const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
-        if (index !== -1 && !rowsExpanded.includes(index)) {
-          setRowsExpanded([index]);
-        } else if (index === -1 && updateUrlWithResourceId) {
-          updateUrlWithResourceId('');
-        }
-      } finally {
-        isHandlingExpansion.current = false;
-      }
-    }
-  }, [selectedResourceId, meshSyncResources]);
 
   const filters = {
     kind: {
@@ -615,6 +577,10 @@ export default function MeshSyncTable(props) {
     });
     return initialVisibility;
   });
+
+  useEffect(() => {
+    updateCols(columns);
+  }, []);
 
   return (
     <>
