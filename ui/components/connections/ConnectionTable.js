@@ -160,28 +160,18 @@ const ConnectionTable = ({
     isError: isConnectionError,
     error: connectionError,
     refetch: getConnections,
-  } = useGetConnectionsQuery(
-    {
-      page: page,
-      pagesize: pageSize,
-      search: search,
-      order: sortOrder,
-      status: statusFilter ? JSON.stringify([statusFilter]) : '',
-      kind: selectedFilter
-        ? JSON.stringify([selectedFilter])
-        : kindFilter
-          ? JSON.stringify([kindFilter])
-          : '',
-    },
-    {
-      onError: (error) => {
-        notify({
-          message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${error?.error}`,
-          event_type: EVENT_TYPES.ERROR,
-        });
-      },
-    },
-  );
+  } = useGetConnectionsQuery({
+    page: page,
+    pagesize: pageSize,
+    search: search,
+    order: sortOrder,
+    status: statusFilter ? JSON.stringify([statusFilter]) : '',
+    kind: selectedFilter
+      ? JSON.stringify([selectedFilter])
+      : kindFilter
+        ? JSON.stringify([kindFilter])
+        : '',
+  });
 
   const {
     data: environmentsResponse,
@@ -192,12 +182,6 @@ const ConnectionTable = ({
     { orgId: organization?.id },
     {
       skip: !organization?.id,
-      onError: (error) => {
-        notify({
-          message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${error?.error}`,
-          event_type: EVENT_TYPES.ERROR,
-        });
-      },
     },
   );
 
