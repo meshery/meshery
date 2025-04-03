@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://charts.kubegems.io/kubegems/charts/kubegems-edge-1.24.2.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "1.23.6"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "edge.kubegems.io/v1beta1",
     "kind": "EdgeCluster",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"register\": {\n     \"properties\": {\n      \"bootstrapToken\": {\n       \"type\": \"string\"\n      },\n      \"certs\": {\n       \"properties\": {\n        \"ca\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"cert\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"expiresAt\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"hubName\": {\n       \"type\": \"string\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Edge Cluster\",\n \"type\": \"object\"\n}",
-    "version": "edge.kubegems.io/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"register\": {\n     \"properties\": {\n      \"bootstrapToken\": {\n       \"type\": \"string\"\n      },\n      \"certs\": {\n       \"properties\": {\n        \"ca\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"cert\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"key\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"expiresAt\": {\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"hubName\": {\n       \"type\": \"string\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Edge Cluster\",\n \"type\": \"object\"\n}"
   }
 }

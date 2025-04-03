@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Contributing to Meshery's End-to-End Tests
+title: Contributing to Meshery UI End-to-End Tests
 permalink: project/contributing/contributing-ui-tests
-abstract: How to contribute to End-to-End Tests using Playwright.
+abstract: How to contribute to end-to-end testing in Meshery UI using Playwright.
 language: en
 type: project
 category: contributing
@@ -184,7 +184,9 @@ test('Random test', async ({ provider }) => {
 
 ## Testing Policy
 
-To maintain consistency across test cases, every new test will be tagged with `@unstable`. This will ensure that it appears with a warning icon rather than a failing icon in the test reporter comments on pull requests. For example:
+After merging a pull request, ensuring test stability across CI/CD runs is crucial. A test may pass locally but fail in the CI/CD environment due to differences in execution conditions. While one approach is to mark all new tests as @unstable by default, a more effective strategy is to apply the @unstable tag only if a test exhibits intermittent failures or flaky behavior.
+
+After merging into the master branch, monitor the GitHub workflow that executes the new test case and assess its stability. If the test fails, raise another PR to mark it as @unstable and communicate this to the team. For example:
 
 ```javascript
 import { expect, test } from './fixtures/project';

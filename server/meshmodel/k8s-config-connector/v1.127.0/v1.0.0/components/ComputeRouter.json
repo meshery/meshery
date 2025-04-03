@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.127.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#aecbfa;}.cls-2{fill:#669df6;}.cls-3{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"9\" y=\"9\" width=\"6\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"11\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"7\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"15\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"11\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"7\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"15\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(8 32) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(4 36) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(12 28) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(-8 16) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(-12 20) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(-4 12) rotate(-90)\"/\u003e\u003cpath class=\"cls-1\" d=\"M5,5V19H19V5ZM17,17H7V7H17Z\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 15 15 15 12 12 9 15\"/\u003e\u003cpolygon class=\"cls-3\" points=\"12 12 15 15 15 9 12 12\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"9\" y=\"9\" width=\"6\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"11\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"7\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"15\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"11\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"7\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"15\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(8 32) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(4 36) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(12 28) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(-8 16) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(-12 20) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(-4 12) rotate(-90)\"/\u003e\u003cpath class=\"cls-1\" d=\"M5,5V19H19V5ZM17,17H7V7H17Z\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 15 15 15 12 12 9 15\"/\u003e\u003cpolygon class=\"cls-3\" points=\"12 12 15 15 15 9 12 12\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "compute.cnrm.cloud.google.com/v1beta1",
     "kind": "ComputeRouter",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bgp\": {\n     \"description\": \"BGP information specific to this router.\",\n     \"properties\": {\n      \"advertiseMode\": {\n       \"description\": \"User-specified flag to indicate which mode to use for advertisement. Default value: \\\"DEFAULT\\\" Possible values: [\\\"DEFAULT\\\", \\\"CUSTOM\\\"].\",\n       \"type\": \"string\"\n      },\n      \"advertisedGroups\": {\n       \"description\": \"User-specified list of prefix groups to advertise in custom mode.\\nThis field can only be populated if advertiseMode is CUSTOM and\\nis advertised to all peers of the router. These groups will be\\nadvertised in addition to any specified prefixes. Leave this field\\nblank to advertise no custom groups.\\n\\nThis enum field has the one valid value: ALL_SUBNETS.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"advertisedIpRanges\": {\n       \"description\": \"User-specified list of individual IP ranges to advertise in\\ncustom mode. This field can only be populated if advertiseMode\\nis CUSTOM and is advertised to all peers of the router. These IP\\nranges will be advertised in addition to any specified groups.\\nLeave this field blank to advertise no custom IP ranges.\",\n       \"items\": {\n        \"properties\": {\n         \"description\": {\n          \"description\": \"User-specified description for the IP range.\",\n          \"type\": \"string\"\n         },\n         \"range\": {\n          \"description\": \"The IP range to advertise. The value must be a\\nCIDR-formatted string.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"range\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"asn\": {\n       \"description\": \"Local BGP Autonomous System Number (ASN). Must be an RFC6996\\nprivate ASN, either 16-bit or 32-bit. The value will be fixed for\\nthis router resource. All VPN tunnels that link to this router\\nwill have the same local ASN.\",\n       \"type\": \"integer\"\n      },\n      \"keepaliveInterval\": {\n       \"description\": \"The interval in seconds between BGP keepalive messages that are sent\\nto the peer. Hold time is three times the interval at which keepalive\\nmessages are sent, and the hold time is the maximum number of seconds\\nallowed to elapse between successive keepalive messages that BGP\\nreceives from a peer.\\n\\nBGP will use the smaller of either the local hold time value or the\\npeer's hold time value as the hold time for the BGP connection\\nbetween the two peers. If set, this value must be between 20 and 60.\\nThe default is 20.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"asn\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"encryptedInterconnectRouter\": {\n     \"description\": \"Immutable. Indicates if a router is dedicated for use with encrypted VLAN\\nattachments (interconnectAttachments).\",\n     \"type\": \"boolean\"\n    },\n    \"networkRef\": {\n     \"description\": \"A reference to the network to which this router belongs.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. Region where the router resides.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"networkRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Router\",\n \"type\": \"object\"\n}",
-    "version": "compute.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bgp\": {\n     \"description\": \"BGP information specific to this router.\",\n     \"properties\": {\n      \"advertiseMode\": {\n       \"description\": \"User-specified flag to indicate which mode to use for advertisement. Default value: \\\"DEFAULT\\\" Possible values: [\\\"DEFAULT\\\", \\\"CUSTOM\\\"].\",\n       \"type\": \"string\"\n      },\n      \"advertisedGroups\": {\n       \"description\": \"User-specified list of prefix groups to advertise in custom mode.\\nThis field can only be populated if advertiseMode is CUSTOM and\\nis advertised to all peers of the router. These groups will be\\nadvertised in addition to any specified prefixes. Leave this field\\nblank to advertise no custom groups.\\n\\nThis enum field has the one valid value: ALL_SUBNETS.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"advertisedIpRanges\": {\n       \"description\": \"User-specified list of individual IP ranges to advertise in\\ncustom mode. This field can only be populated if advertiseMode\\nis CUSTOM and is advertised to all peers of the router. These IP\\nranges will be advertised in addition to any specified groups.\\nLeave this field blank to advertise no custom IP ranges.\",\n       \"items\": {\n        \"properties\": {\n         \"description\": {\n          \"description\": \"User-specified description for the IP range.\",\n          \"type\": \"string\"\n         },\n         \"range\": {\n          \"description\": \"The IP range to advertise. The value must be a\\nCIDR-formatted string.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"range\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"asn\": {\n       \"description\": \"Local BGP Autonomous System Number (ASN). Must be an RFC6996\\nprivate ASN, either 16-bit or 32-bit. The value will be fixed for\\nthis router resource. All VPN tunnels that link to this router\\nwill have the same local ASN.\",\n       \"type\": \"integer\"\n      },\n      \"keepaliveInterval\": {\n       \"description\": \"The interval in seconds between BGP keepalive messages that are sent\\nto the peer. Hold time is three times the interval at which keepalive\\nmessages are sent, and the hold time is the maximum number of seconds\\nallowed to elapse between successive keepalive messages that BGP\\nreceives from a peer.\\n\\nBGP will use the smaller of either the local hold time value or the\\npeer's hold time value as the hold time for the BGP connection\\nbetween the two peers. If set, this value must be between 20 and 60.\\nThe default is 20.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"asn\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"encryptedInterconnectRouter\": {\n     \"description\": \"Immutable. Indicates if a router is dedicated for use with encrypted VLAN\\nattachments (interconnectAttachments).\",\n     \"type\": \"boolean\"\n    },\n    \"networkRef\": {\n     \"description\": \"A reference to the network to which this router belongs.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeNetwork` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. Region where the router resides.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"networkRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Router\",\n \"type\": \"object\"\n}"
   }
 }

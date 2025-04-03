@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -46,16 +47,17 @@
     "model": {
       "version": "3.3.0-SNAPSHOT.12"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -67,7 +69,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -82,7 +83,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -97,7 +97,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -113,7 +112,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -129,7 +127,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -144,7 +141,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -159,7 +155,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -174,7 +169,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -184,15 +178,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "edp.epam.com/v1alpha1",
     "kind": "NexusUser",
-    "schema": "{\n \"description\": \"NexusUser is the Schema for the nexususers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusUserSpec defines the desired state of NexusUser.\",\n   \"properties\": {\n    \"email\": {\n     \"description\": \"Email is the email address of the user.\",\n     \"example\": \"john.doe@example\",\n     \"maxLength\": 254,\n     \"type\": \"string\"\n    },\n    \"firstName\": {\n     \"description\": \"FirstName of the user.\",\n     \"example\": \"John\",\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"description\": \"ID is the username of the user. ID should be unique across all users.\",\n     \"example\": \"new-user\",\n     \"maxLength\": 512,\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"lastName\": {\n     \"description\": \"LastName of the user.\",\n     \"example\": \"Doe\",\n     \"type\": \"string\"\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"roles\": {\n     \"description\": \"Roles is a list of roles assigned to user.\",\n     \"example\": [\n      \"nx-admin\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"secret\": {\n     \"description\": \"Secret is the reference of the k8s object Secret for the user password. Format: $secret-name:secret-key. Updating user password is not supported.\",\n     \"example\": \"$nexus-user-secret:password-filed\",\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"default\": \"active\",\n     \"description\": \"Status is a status of the user.\",\n     \"enum\": [\n      \"active\",\n      \"disabled\"\n     ],\n     \"example\": \"active\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"email\",\n    \"firstName\",\n    \"id\",\n    \"lastName\",\n    \"nexusRef\",\n    \"roles\",\n    \"secret\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus User\",\n \"type\": \"object\"\n}",
-    "version": "edp.epam.com/v1alpha1"
+    "schema": "{\n \"description\": \"NexusUser is the Schema for the nexususers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusUserSpec defines the desired state of NexusUser.\",\n   \"properties\": {\n    \"email\": {\n     \"description\": \"Email is the email address of the user.\",\n     \"example\": \"john.doe@example\",\n     \"maxLength\": 254,\n     \"type\": \"string\"\n    },\n    \"firstName\": {\n     \"description\": \"FirstName of the user.\",\n     \"example\": \"John\",\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"description\": \"ID is the username of the user. ID should be unique across all users.\",\n     \"example\": \"new-user\",\n     \"maxLength\": 512,\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"lastName\": {\n     \"description\": \"LastName of the user.\",\n     \"example\": \"Doe\",\n     \"type\": \"string\"\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"roles\": {\n     \"description\": \"Roles is a list of roles assigned to user.\",\n     \"example\": [\n      \"nx-admin\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"secret\": {\n     \"description\": \"Secret is the reference of the k8s object Secret for the user password. Format: $secret-name:secret-key. Updating user password is not supported.\",\n     \"example\": \"$nexus-user-secret:password-filed\",\n     \"type\": \"string\"\n    },\n    \"status\": {\n     \"default\": \"active\",\n     \"description\": \"Status is a status of the user.\",\n     \"enum\": [\n      \"active\",\n      \"disabled\"\n     ],\n     \"example\": \"active\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"email\",\n    \"firstName\",\n    \"id\",\n    \"lastName\",\n    \"nexusRef\",\n    \"roles\",\n    \"secret\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus User\",\n \"type\": \"object\"\n}"
   }
 }

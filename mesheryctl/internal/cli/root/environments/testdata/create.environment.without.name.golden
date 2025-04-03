@@ -1,0 +1,4 @@
+[ Organization ID | Name | Description ] aren't specified
+
+Usage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+Run 'mesheryctl environment create --help' to see detailed help message

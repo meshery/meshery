@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,14 +45,15 @@
     "model": {
       "version": "0.1.6"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,15 +174,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "networking.istio.io/v1alpha3",
     "kind": "WorkloadEntry",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Configuration affecting VMs onboarded into the mesh. See more details at: https://istio.io/docs/reference/config/networking/workload-entry.html\",\n   \"properties\": {\n    \"address\": {\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"One or more labels associated with the endpoint.\",\n     \"type\": \"object\"\n    },\n    \"locality\": {\n     \"description\": \"The locality associated with the endpoint.\",\n     \"type\": \"string\"\n    },\n    \"network\": {\n     \"type\": \"string\"\n    },\n    \"ports\": {\n     \"additionalProperties\": {\n      \"type\": \"integer\"\n     },\n     \"description\": \"Set of ports associated with the endpoint.\",\n     \"type\": \"object\"\n    },\n    \"serviceAccount\": {\n     \"type\": \"string\"\n    },\n    \"weight\": {\n     \"description\": \"The load balancing weight associated with the endpoint.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workload Entry\",\n \"type\": \"object\"\n}",
-    "version": "networking.istio.io/v1alpha3"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Configuration affecting VMs onboarded into the mesh. See more details at: https://istio.io/docs/reference/config/networking/workload-entry.html\",\n   \"properties\": {\n    \"address\": {\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"One or more labels associated with the endpoint.\",\n     \"type\": \"object\"\n    },\n    \"locality\": {\n     \"description\": \"The locality associated with the endpoint.\",\n     \"type\": \"string\"\n    },\n    \"network\": {\n     \"type\": \"string\"\n    },\n    \"ports\": {\n     \"additionalProperties\": {\n      \"type\": \"integer\"\n     },\n     \"description\": \"Set of ports associated with the endpoint.\",\n     \"type\": \"object\"\n    },\n    \"serviceAccount\": {\n     \"type\": \"string\"\n    },\n    \"weight\": {\n     \"description\": \"The load balancing weight associated with the endpoint.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workload Entry\",\n \"type\": \"object\"\n}"
   }
 }

@@ -178,7 +178,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   return <Typography {...typographyProps}> {elements}</Typography>;
 };
 
-export const KeyValue = ({ Key, Value }) => {
+export const KeyValue = ({ Key, Value, style }) => {
   const theme = useTheme();
   return (
     <div
@@ -195,7 +195,6 @@ export const KeyValue = ({ Key, Value }) => {
         style={{
           textTransform: 'capitalize',
           overflow: 'hidden',
-          whiteSpace: 'nowrap',
           color: theme.palette.text.default,
         }}
       />
@@ -208,9 +207,9 @@ export const KeyValue = ({ Key, Value }) => {
           style={{
             color: theme.palette.text.tertiary,
             textOverflow: 'ellipsis',
-            wordBreak: 'break-all',
+            wordBreak: 'break-word',
             overflow: 'hidden',
-            whiteSpace: 'nowrap',
+            ...style,
           }}
         />
       )}
@@ -255,7 +254,7 @@ export const SectionBody = ({ body, style = {} }) => {
     ></TextWithLinks>
   );
 };
-export const ArrayFormatter = ({ items }) => {
+export const ArrayFormatter = ({ items, style }) => {
   const theme = useTheme();
   return (
     <ol
@@ -266,7 +265,7 @@ export const ArrayFormatter = ({ items }) => {
       }}
     >
       {items.map((item) => (
-        <li key={item} style={{ color: theme.palette.text.tertiary }}>
+        <li key={item} style={{ color: theme.palette.text.tertiary, ...style }}>
           <Level>
             <DynamicFormatter data={item} />
           </Level>
@@ -286,16 +285,16 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
+const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
   if (_.isString(data)) {
-    return <SectionBody body={data}></SectionBody>;
+    return <SectionBody body={data} style={style}></SectionBody>;
   }
 
   if (_.isArray(data)) {
-    return <ArrayFormatter items={data} />;
+    return <ArrayFormatter items={data} style={style} />;
   }
 
   if (_.isObject(data)) {
@@ -322,11 +321,11 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
             spacing={3}
             style={{
               marginBlock: '0.4rem',
-              maxWidth: title !== 'age' && 'fit-content',
+              maxWidth: title !== 'age' && 'fit-content', // for age, we need to show the full text it is used in kanvas
               marginRight: '1rem',
             }}
           >
-            <KeyValue key={title} Key={title} Value={data} />
+            <KeyValue key={title} Key={title} Value={data} style={style} />
           </Grid>
         );
       }
@@ -345,7 +344,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
             {title}
           </SectionHeading>
           <Level>
-            <DynamicFormatter level={level + 1} data={data} />
+            <DynamicFormatter level={level + 1} data={data} style={style} />
           </Level>
         </Grid>
       );
@@ -355,7 +354,13 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
   return null;
 };
 
-export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, isLevel }) => {
+export const FormatStructuredData = ({
+  propertyFormatters = {},
+  data,
+  uiSchema,
+  isLevel,
+  style,
+}) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
   }
@@ -373,7 +378,7 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
           overflowWrap: 'break-word',
         }}
       >
-        <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
+        <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} style={style} />
       </Grid>
     </FormatterContext.Provider>
   );
