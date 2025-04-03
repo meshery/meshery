@@ -15,13 +15,10 @@
 package model
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	"github.com/fatih/color"
-
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -33,10 +30,7 @@ import (
 )
 
 var (
-	// Maximum number of rows to be displayed in a page
-	maxRowsPerPage = 25
-	// Color for the whiteboard printer
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommads
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd}
 )
@@ -45,7 +39,8 @@ var (
 var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "Manage models",
-	Long:  "Export, generate, import, list, search and view model(s) and detailed informations",
+	Long: `Export, generate, import, list, search and view model(s) and detailed informations
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model`,
 	Example: `
 // Display number of available models in Meshery
 mesheryctl model --count
@@ -88,7 +83,7 @@ mesheryctl model view [model-name]
 
 			baseUrl := mctlCfg.GetBaseMesheryURL()
 			url := fmt.Sprintf("%s/api/meshmodels/models?page=1", baseUrl)
-			models, err := fetchModels(url)
+			models, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 
 			if err != nil {
 				return err
@@ -120,30 +115,31 @@ func init() {
 	ModelCmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
 }
 
-func fetchModels(url string) (*models.MeshmodelsAPIResponse, error) {
-	req, err := utils.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
+func displayModels(modelsResponse *models.MeshmodelsAPIResponse, cmd *cobra.Command) error {
+	header := []string{"Model", "Category", "Version"}
+	rows := [][]string{}
+
+	for _, model := range modelsResponse.Models {
+		if len(model.DisplayName) > 0 {
+			rows = append(rows, []string{model.Name, string(model.Category.Name), model.Version})
+		}
 	}
 
-	resp, err := utils.MakeRequest(req)
-	if err != nil {
-		return nil, err
+	count, _ := cmd.Flags().GetBool("count")
+
+	dataToDisplay := display.DisplayedData{
+		DataType:         "model",
+		Header:           header,
+		Rows:             rows,
+		Count:            int64(modelsResponse.Count),
+		DisplayCountOnly: count,
+		IsPage:           cmd.Flags().Changed("page"),
 	}
 
-	// defers the closing of the response body after its use, ensuring that the resources are properly released.
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
+	err := display.List(dataToDisplay)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	modelsResponse := &models.MeshmodelsAPIResponse{}
-	err = json.Unmarshal(data, modelsResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	return modelsResponse, nil
+	return nil
 }
