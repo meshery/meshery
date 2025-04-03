@@ -125,7 +125,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     const [isDeploying, setIsDeploying] = useState(false);
     const [deployEvent, setDeployEvent] = useState();
     const [deployError, setDeployError] = useState(null);
-    // const router = useRouter();
 
     useEffect(() => {
       try {
