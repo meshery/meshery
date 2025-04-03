@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 3rd 2025, 5:22:55 pm
+- Testing started at: April 3rd 2025, 5:59:06 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 30 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 12 minutes and 35 seconds_
+⌛ _Duration: 12 minutes and 43 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -23,12 +23,12 @@
 | :---: | :---: | :--- | :---: | :---: |
 | 1 | chromium-meshery-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
 | 2 | chromium-meshery-provider | Test if Settings button is displayed |  | ❌ |
-| 3 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 4 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 5 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 6 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 7 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 8 | chromium-meshery-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
+| 3 | chromium-meshery-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
+| 4 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
+| 5 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 6 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 7 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 8 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
 | 9 | chromium-meshery-provider | Verify Performance Analysis Details | unstable | ⚠️ |
 | 10 | chromium-meshery-provider | Test if Notification button is displayed |  | ❌ |
 | 11 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
