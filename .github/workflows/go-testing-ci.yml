@@ -23,7 +23,7 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: [1.24]
+        go: [1.23]
         os: [ubuntu-24.04]
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
