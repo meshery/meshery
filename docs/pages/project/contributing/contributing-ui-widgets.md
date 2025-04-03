@@ -138,9 +138,7 @@ Under each screen size key (e.g. `sm`, `xs`, `xxs`):
 Meshery’s dashboard uses breakpoints to adapt widget layout across devices. Each breakpoint (sm, xs, xxs) represents different screen widths. For example:
 
     sm: tablets and desktops
-
     xs: large phones
-
     xxs: small phones
 
 Define the widget’s position (x, y) and size (w, h) in each breakpoint for responsive behavior. The code for it can be found [here](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/defaultLayout.js).
