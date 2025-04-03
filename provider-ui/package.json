@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "node ui_dev_server.js",
     "build": "npm run clean && next build",
-    "export": "next export",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
