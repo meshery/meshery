@@ -775,7 +775,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         component: (
           <FinishDeploymentStep performDeployment={handleFinish} deploymentType="register" />
         ),
-        label: 'Finsh',
+        label: 'Finish',
         icon: FinishFlagIcon,
       },
     ],

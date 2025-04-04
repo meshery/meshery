@@ -1,24 +1,4 @@
-import React, { useState } from 'react';
 import {
-  Modal,
-  FormControlLabel,
-  FormControl,
-  RadioGroup,
-  Radio,
-  importModelUiSchema,
-  importModelSchema,
-  Typography,
-} from '@layer5/sistent';
-import { RJSFModalWrapper } from '../Modal';
-import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
-import { MESHERY_DOCS_URL } from '@/constants/endpoints';
-import { getUnit8ArrayDecodedFile } from '@/utils/utils';
-import { updateProgress } from 'lib/store';
-import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
-import React, { useState, useEffect } from 'react';
-import _ from 'lodash';
-import {
-  Modal,
   FormControlLabel,
   Button,
   FormControl,
@@ -29,12 +9,15 @@ import {
   Typography,
   ModalFooter,
   Box,
+  Modal,
 } from '@layer5/sistent';
 import { RJSFModalWrapper } from '../Modal';
-import { updateProgress } from 'lib/store';
 import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
-import { useContext } from 'react';
+import { getUnit8ArrayDecodedFile } from '@/utils/utils';
+import { updateProgress } from 'lib/store';
+import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
+import React, { useState, useEffect, useContext } from 'react';
 import { capitalize } from 'lodash';
 import { Loading } from '@/components/DesignLifeCycle/common';
 import { NotificationCenterContext } from '../NotificationCenter';
@@ -44,23 +27,11 @@ import {
   ModelImportMessages,
 } from '../NotificationCenter/formatters/model_registration';
 
-import { Button, NoSsr } from '@layer5/sistent';
-import { iconSmall } from '../../css/icons.styles';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
-import ImportModelModal from './ImportModelModal';
-
 const FinishDeploymentStep = ({ deploymentType, handleClose }) => {
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
-  const [isDeploying, setIsDeploying] = useState(false);
+  const [isDeploying, setIsDeploying] = useState(true);
   const [deployEvent, setDeployEvent] = useState();
 
-  useEffect(() => {
-    try {
-      setIsDeploying(true);
-    } catch (error) {
-      setIsDeploying(false);
-    }
-  }, []);
   useEffect(() => {
     const subscription = operationsCenterActorRef.on(
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
