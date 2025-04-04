@@ -103,8 +103,10 @@
   url: guides
   links:
     - title: Infrastructure Management ↆ
-      url: guides/infrastructure-management/overview
+      url: guides/infrastructure-management
       children:
+        - title: Overview
+          url: guides/infrastructure-management/overview
         - title: GitOps with Meshery
           url: guides/infrastructure-management/gitops-with-meshery
         - title: Deploying Sample Apps
@@ -118,9 +120,11 @@
           grandchildren:
             - title: Registering a Connection
               url: guides/infrastructure-management/registering-a-connection
-    - title: Configuring Kubernetes Infrastructure ↆ
-      url: guides/configuration-management/working-with-designs
+    - title: Configuring Management ↆ
+      url: guides/configuration-management
       children:
+        - title: Overview
+          url: guides/configuration-management/working-with-designs
         - title: Creating a Meshery Design
           url: guides/configuration-management/creating-a-meshery-design
         - title: Importing Designs
@@ -134,18 +138,20 @@
         - title: Cloud Native Design Patterns
           url: guides/configuration-management/pattern-management
     - title: Performance Management ↆ
-      url: guides/performance-management/performance-management
+      url: guides/performance-management
       children:
+        - title: Overview
+          url: guides/performance-management/performance-management
         - title: Using Metrics in Meshery
           url: guides/performance-management/meshery-metrics
         - title: Managing Performance
           url: guides/performance-management/managing-performance
         - title: Interpreting Performance Test Results
           url: guides/performance-management/interpreting-performance-test-results
-    - title: Using Meshery CLI Guides ↆ
+    - title: Using Meshery CLI ↆ
       url: guides/mesheryctl
       children:
-        - title: Using mesheryctl
+        - title: Overview
           url: guides/mesheryctl/working-with-mesheryctl
         - title: Autocompletion Setup
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
@@ -158,11 +164,11 @@
     - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
       children:
-        - title: Installation Issues
+        - title: Installation
           url: guides/troubleshooting/installation
         - title: Operator & MeshSync
           url: guides/troubleshooting/meshery-operator-meshsync
-        - title: Runtime Errors
+        - title: Meshery Server
           url: guides/troubleshooting/meshery-server
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
@@ -234,28 +240,28 @@
       children:
         - title: Build & Release (CI) ↆ
           url: project/contributing/build-and-release
-        - title: Contributing to Adapters
+        - title: Adapters
           url: project/contributing/contributing-adapters
-        - title: CLI Contributions ↆ
+        - title: CLI ↆ
           url: project/contributing/contributing-cli
           grandchildren:
             - title: Design Principles
               url: project/contributing/contributing-cli-guide
             - title: End-to-End CLI Tests
               url: project/contributing/contributing-cli-tests
-        - title: Docs Contributions ↆ
+        - title: Docs ↆ
           url: project/contributing/contributing-docs
           grandchildren:
-            - title: Documentation Structure
+            - title: Docs Structure
               url: project/contributing/contributing-docs-structure
-        - title: Server Contributions ↆ
+        - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
             - title: Server Events
               url: project/contributing/contributing-server-events
             - title: Server Errors
               url: project/contributing/contributing-error
-        - title: UI Contributions ↆ
+        - title: UI ↆ
           url: project/contributing/contributing-ui
           grandchildren:
             - title: Notification Center
@@ -270,7 +276,7 @@
           url: project/contributing/contributing-docker-extension
         - title: Policies
           url: project/contributing/contributing-policies
-        - title: Models Contributions ↆ
+        - title: Models ↆ
           url: project/contributing/contributing-models
           grandchildren:
             - title: Model Components
@@ -285,22 +291,22 @@
 - title: 📖 Reference & Extensibility
   url: reference
   links:
-    - title: Error Code Reference
+    - title: Error Code
       url: reference/error-codes
-    - title: Permission Keys Reference
+    - title: Permission Keys
       url: reference/permissions
-    - title: Meshery Operator CRD Reference
+    - title: Meshery Operator CRD
       url: reference/meshery-operator-crds
-    - title: CLI Command Reference
+    - title: CLI Command
       url: reference/mesheryctl
-    - title: REST & GraphQL API Reference ↆ
+    - title: REST & GraphQL API ↆ
       url: extensibility/api
       children:
-        - title: GraphQL API Reference
+        - title: GraphQL API
           url: reference/graphql-apis
-        - title: REST API Reference
+        - title: REST API
           url: reference/rest-apis
-    - title: Extensibility Reference ↆ
+    - title: Extensibility ↆ
       url: extensibility
       children:
         - title: Authorization

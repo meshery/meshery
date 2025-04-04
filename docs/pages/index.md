@@ -19,7 +19,7 @@ list: exclude
 <div class="flex flex-col--2 container">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="{{ site.baseurl }}/project/overview">
+    <a href="{{ site.baseurl }}/installation">
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <!-- <h6>Getting Started</h6> -->
@@ -322,7 +322,7 @@ list: exclude
     <!-- REFERENCE -->
 
   <div class="section">
-  <a href="{{ site.baseurl }}/installation/quick-start">
+  <a href="{{ site.baseurl }}/reference">
         <div class="btn-primary">Reference</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6> -->
