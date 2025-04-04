@@ -9,16 +9,16 @@ test.describe('Logout Page Tests', () => {
       route.fulfill({
         status: 302,
         headers: {
-          'Location': '/provider'
-        }
+          Location: '/provider',
+        },
       });
     });
-  
+
     const waitForLogoutRequest = page.waitForRequest('/user/logout');
-  
+
     await page.getByTestId('header-menu').click();
     await page.getByRole('menuitem', { name: 'Logout' }).click();
-  
+
     const request = await waitForLogoutRequest;
     expect(request.url()).toContain('/user/logout');
 
