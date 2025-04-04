@@ -39,7 +39,7 @@ var ModelExpCmd = &cobra.Command{
 	Long:  `Temporal container to deliver model init subcommand to exp command`,
 	Example: `
 // Scaffold a folder structure for model creation
-mesheryctl model init [model-name]
+mesheryctl exp model init [model-name]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
