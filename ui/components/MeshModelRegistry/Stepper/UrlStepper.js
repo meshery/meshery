@@ -39,8 +39,71 @@ import {
   ModelDefinitionV1Beta1Schema,
   SubCategoryDefinitionV1Beta1Schema,
 } from '@layer5/schemas';
+import { updateProgress } from 'lib/store';
+import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
+import {
+  ModelImportedSection,
+  ModelImportMessages,
+} from '@/components/NotificationCenter/formatters/model_registration';
+import { ErrorMetadataFormatter } from '@/components/NotificationCenter/formatters/error';
 
-const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
+const FinishModelGenerateStep = ({ modelData, generateType }) => {
+  const { url, model, register } = modelData;
+  const [generateEvent, setGenerateEvent] = useState();
+  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+  const [importMeshModel, { isLoading, error }] = useImportMeshModelMutation();
+
+  useEffect(() => {
+    const requestBody = {
+      importBody: {
+        url: url,
+        model: model,
+      },
+      uploadType: 'url',
+      register: register,
+    };
+
+    const performImport = async () => {
+      await importMeshModel({ importBody: requestBody });
+    };
+
+    performImport();
+  }, []);
+
+  useEffect(() => {
+    const subscription = operationsCenterActorRef.on(
+      OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      (event) => {
+        const serverEvent = event.data.event;
+        if (serverEvent.action === generateType) {
+          setGenerateEvent(serverEvent);
+        }
+      },
+    );
+
+    return () => subscription.unsubscribe();
+  }, [operationsCenterActorRef, generateType]);
+
+  const progressMessage = `${capitalize(generateType)}ing model`;
+
+  if (isLoading) {
+    return <Loading message={progressMessage} />;
+  }
+  if (error) {
+    return (
+      <ErrorMetadataFormatter metadata={generateEvent?.metadata.error} event={generateEvent} />
+    );
+  }
+
+  return (
+    <>
+      <ModelImportMessages message={generateEvent?.metadata?.ModelImportMessage} />
+      <ModelImportedSection modelDetails={generateEvent?.metadata?.ModelDetails} />
+    </>
+  );
+};
+
+const UrlStepper = React.memo(({ handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
   const [modelName, setModelName] = React.useState('');
   const [modelDisplayName, setModelDisplayName] = React.useState('');
@@ -136,104 +199,24 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     }
   };
 
-  const FinishDeploymentStep = ({ performDeployment, deploymentType }) => {
-    const { operationsCenterActorRef } = useContext(NotificationCenterContext);
-    const [isDeploying, setIsDeploying] = useState(false);
-    const [deployEvent, setDeployEvent] = useState();
-    const [deployError, setDeployError] = useState(null);
-
-    useEffect(() => {
-      try {
-        setIsDeploying(true);
-        performDeployment();
-      } catch (error) {
-        setDeployError(error);
-        setIsDeploying(false);
-      }
-    }, []);
-
-    useEffect(() => {
-      const subscription = operationsCenterActorRef.on(
-        OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
-        (event) => {
-          const serverEvent = event.data.event;
-          if (serverEvent.action === deploymentType) {
-            setIsDeploying(false);
-            setDeployEvent(serverEvent);
-          }
-        },
-      );
-
-      return () => subscription.unsubscribe();
-    }, []);
-
-    const progressMessage = `${capitalize(deploymentType)}ing model`;
-
-    if (isDeploying) {
-      return <Loading message={progressMessage} />;
-    }
-    if (deployError) {
-      return (
-        <Typography variant="h5" color="error">
-          Error deploying design: {JSON.stringify(deployError)}
-        </Typography>
-      );
-    }
-
-    if (!deployEvent) {
-      return null;
-    }
-
-    return <DeploymentSummaryFormatter event={deployEvent} />;
-  };
-
-  // const handleFinish = () => {
-  //   handleClose();
-  //   handleGenerateModal({
-  //     register: registerModel,
-  //     url: modelUrl,
-  //     model: {
-  //       model: modelName,
-  //       modelDisplayName: modelDisplayName,
-  //       registrant: modelSource,
-  //       category: modelCategory,
-  //       subCategory: modelSubcategory,
-  //       shape: modelShape,
-  //       primaryColor: primaryColor,
-  //       secondaryColor: secondaryColor,
-  //       svgColor: logoLightThemePath,
-  //       svgWhite: logoDarkThemePath,
-  //       isAnnotation: isAnnotation,
-  //       publishToRegistry: true,
-  //     },
-  //   });
-  // };
-
-  const handleFinish = async () => {
-    try {
-      const modelData = {
-        uploadType: 'URL Import',
-        register: registerModel,
-        url: modelUrl,
-        model: {
-          model: modelName,
-          modelDisplayName: modelDisplayName,
-          registrant: modelSource,
-          category: modelCategory,
-          subCategory: modelSubcategory,
-          shape: modelShape,
-          primaryColor: primaryColor,
-          secondaryColor: secondaryColor,
-          svgColor: logoLightThemePath,
-          svgWhite: logoDarkThemePath,
-          isAnnotation: isAnnotation,
-          publishToRegistry: true,
-        },
-      };
-      await handleGenerateModal(modelData);
-    } catch (error) {
-      return error;
-    }
+  const modelData = {
+    uploadType: 'URL Import',
+    register: registerModel,
+    url: modelUrl,
+    model: {
+      model: modelName,
+      modelDisplayName: modelDisplayName,
+      registrant: modelSource,
+      category: modelCategory,
+      subCategory: modelSubcategory,
+      shape: modelShape,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      svgColor: logoLightThemePath,
+      svgWhite: logoDarkThemePath,
+      isAnnotation: isAnnotation,
+      publishToRegistry: true,
+    },
   };
 
   // Summary field component with consistent styling
@@ -772,15 +755,13 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         ),
       },
       {
-        component: (
-          <FinishDeploymentStep performDeployment={handleFinish} deploymentType="register" />
-        ),
+        component: <FinishModelGenerateStep modelData={modelData} generateType="register" />,
         label: 'Finish',
         icon: FinishFlagIcon,
       },
     ],
   });
-  //
+
   const transitionConfig = {
     0: {
       canGoNext: () =>
