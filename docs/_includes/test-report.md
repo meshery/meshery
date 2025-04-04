@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 4th 2025, 1:03:11 pm
+- Testing started at: April 4th 2025, 1:10:42 pm
 
 **📦 Test Result Summary**
 
@@ -51,8 +51,8 @@
 | 28 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
 | 29 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 30 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 31 | chromium-local-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
-| 32 | chromium-meshery-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 31 | chromium-meshery-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 32 | chromium-local-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
 | 33 | chromium-meshery-provider | Verify Meshery Adapter for Istio Section | unstable | ⚠️ |
 | 34 | chromium-local-provider | Verify Performance Analysis Details | unstable | ⚠️ |
 | 35 | chromium-local-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
