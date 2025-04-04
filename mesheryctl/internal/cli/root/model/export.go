@@ -119,6 +119,10 @@ func export(modelName string, url string, output *outputDetail) error {
 	return nil
 }
 
+func ExportCmd() *cobra.Command {
+	return exportModelCmd
+}
+
 func init() {
 	exportModelCmd.Flags().StringP("output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModelCmd.Flags().StringP("output-location", "l", "./", "(optional) output location (default = current directory)")
