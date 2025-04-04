@@ -16,7 +16,8 @@ Generate models from a file
 
 ## Synopsis
 
-Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.
+Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
+Documentation for models generate can be found at https://docs.meshery.io/reference/mesheryctl/model/generate
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model generate [flags]
