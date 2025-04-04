@@ -58,7 +58,7 @@ module.exports = defineConfig({
       testMatch: 'tests/e2e/*.teardown.js',
       use: {
         storageState: ENV.AUTHFILEMESHERYPROVIDER,
-      }
+      },
     },
     {
       name: 'chromium-meshery-provider',
