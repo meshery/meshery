@@ -21,12 +21,9 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -56,14 +53,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := buildSearchUrl(baseUrl)
-		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
+		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](buildSearchUrl())
 
 		if err != nil {
 			return err
@@ -103,14 +93,14 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
 }
 
-func buildSearchUrl(baseUrl string) string {
+func buildSearchUrl() string {
 	var searchUrl strings.Builder
 
 	if searchModelName == "" {
-		searchUrl.WriteString(fmt.Sprintf("%s/api/meshmodels/relationships?", baseUrl))
+		searchUrl.WriteString(fmt.Sprintf("api/meshmodels/relationships?"))
 	} else {
 		escapeModelName := url.QueryEscape(searchModelName)
-		searchUrl.WriteString(fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?", baseUrl, escapeModelName))
+		searchUrl.WriteString(fmt.Sprintf("api/meshmodels/models/%s/relationships?", escapeModelName))
 	}
 
 	if searchType != "" {
