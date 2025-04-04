@@ -10,6 +10,7 @@ import {
   ModalFooter,
   Box,
   Modal,
+  useTheme,
 } from '@layer5/sistent';
 import { RJSFModalWrapper } from '../Modal';
 import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
@@ -49,19 +50,26 @@ const FinishDeploymentStep = ({ deploymentType, handleClose }) => {
 
   const progressMessage = `${capitalize(deploymentType)}ing model`;
 
-  if (isDeploying) {
-    return <Loading message={progressMessage} />;
-  }
-
-  if (!deployEvent) {
-    return null;
-  }
-
+  const theme = useTheme();
   return (
     <>
-      <Box sx={{ padding: '0.4rem' }}>
-        <ModelImportMessages message={deployEvent.metadata?.ModelImportMessage} />
-        <ModelImportedSection modelDetails={deployEvent.metadata?.ModelDetails} />
+      <Box
+        sx={{
+          padding: '1rem',
+          overflow: 'hidden',
+          backgroundColor: theme.palette.background.surfaces,
+        }}
+      >
+        {isDeploying ? (
+          <Box style={{ padding: '1rem' }}>
+            <Loading message={progressMessage} />
+          </Box>
+        ) : (
+          <>
+            <ModelImportMessages message={deployEvent?.metadata?.ModelImportMessage} />
+            <ModelImportedSection modelDetails={deployEvent?.metadata?.ModelDetails} />
+          </>
+        )}
       </Box>
       <ModalFooter
         variant="filled"

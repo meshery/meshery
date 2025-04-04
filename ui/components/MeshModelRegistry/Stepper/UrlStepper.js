@@ -541,7 +541,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
       },
       {
         component: (
-          <Box>
+          <Box sx={{ maxHeight: '40vh' }}>
             <Box display="flex" alignItems="center" mb={1}>
               <Typography variant="h6" sx={{ fontWeight: 500 }}>
                 Model Generation Summary
@@ -670,20 +670,22 @@ const UrlStepper = React.memo(({ handleClose }) => {
         component: (
           <FinishModelGenerateStep
             requestBody={{
-              url: modelUrl,
-              model: {
-                model: modelName,
-                modelDisplayName: modelDisplayName,
-                registrant: modelSource,
-                category: modelCategory,
-                subCategory: modelSubcategory,
-                shape: modelShape,
-                primaryColor: primaryColor,
-                secondaryColor: secondaryColor,
-                svgColor: logoLightThemePath,
-                svgWhite: logoDarkThemePath,
-                isAnnotation: isAnnotation,
-                publishToRegistry: true,
+              importBody: {
+                url: modelUrl,
+                model: {
+                  model: modelName,
+                  modelDisplayName: modelDisplayName,
+                  registrant: modelSource,
+                  category: modelCategory,
+                  subCategory: modelSubcategory,
+                  shape: modelShape,
+                  primaryColor: primaryColor,
+                  secondaryColor: secondaryColor,
+                  svgColor: logoLightThemePath,
+                  svgWhite: logoDarkThemePath,
+                  isAnnotation: isAnnotation,
+                  publishToRegistry: true,
+                },
               },
               uploadType: 'url',
               register: registerModel,
