@@ -27,6 +27,8 @@ import {
   ComponentDefinitionV1Beta1Schema,
   RelationshipDefinitionV1Alpha3Schema,
 } from '@layer5/schemas';
+import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
+import FinishModelGenerateStep from './FinishModelGenerateStep';
 
 const StyledHeadingBox = styled(Box)({
   display: 'flex',
@@ -59,11 +61,13 @@ const StyledFileChip = styled(Chip)(({ theme }) => ({
 const CSV_TEMPLATE_BASE_URL =
   'https://raw.githubusercontent.com/meshery/meshery/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs/';
 
-const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
+const CsvStepper = React.memo(({ handleClose }) => {
+  const [modelData, setModelData] = React.useState({});
   const [modelCsvFile, setModelCsvFile] = React.useState(null);
   const [componentCsvFile, setComponentCsvFile] = React.useState(null);
   const [relationshipCsvFile, setRelationshipCsvFile] = React.useState(null);
-  const [registerModel] = React.useState(true);
+  const registerModel = true;
+
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -95,17 +99,6 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
     }
   };
 
-  const handleFinish = () => {
-    handleClose();
-    handleGenerateModal({
-      model_csv: `data:text/csv;base64,${modelCsvFile?.base64?.split(',')[1]}`,
-      component_csv: `data:text/csv;base64,${componentCsvFile?.base64?.split(',')[1]}`,
-      relationship_csv: relationshipCsvFile
-        ? `data:text/csv;base64,${relationshipCsvFile?.base64?.split(',')[1]}`
-        : null,
-      register: registerModel,
-    });
-  };
   const theme = useTheme();
   const handleDownload = async (fileName) => {
     try {
@@ -306,6 +299,24 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
           </>
         ),
       },
+      {
+        component: (
+          <FinishModelGenerateStep
+            requestBody={{
+              importBody: {
+                model_csv: modelData.model_csv,
+                component_csv: modelData.component_csv,
+                relationship_csv: modelData.relationship_csv,
+              },
+              uploadType: 'csv',
+              register: modelData.register,
+            }}
+            generateType="register"
+          />
+        ),
+        label: 'Finish',
+        icon: FinishFlagIcon,
+      },
     ],
   });
 
@@ -321,9 +332,24 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
       nextAction: () => csvStepper.handleNext(),
     },
     2: {
+      canGoNext: () => relationshipCsvFile !== null,
+      nextButtonText: 'Generate',
+      nextAction: () => {
+        csvStepper.handleNext();
+        setModelData({
+          model_csv: `data:text/csv;base64,${modelCsvFile?.base64?.split(',')[1]}`,
+          component_csv: `data:text/csv;base64,${componentCsvFile?.base64?.split(',')[1]}`,
+          relationship_csv: relationshipCsvFile
+            ? `data:text/csv;base64,${relationshipCsvFile?.base64?.split(',')[1]}`
+            : null,
+          register: registerModel,
+        });
+      },
+    },
+    3: {
       canGoNext: () => true,
       nextButtonText: 'Finish',
-      nextAction: handleFinish,
+      nextAction: handleClose,
     },
   };
 

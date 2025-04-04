@@ -25,13 +25,7 @@ import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
-import { useContext, useState } from 'react';
 import { capitalize } from 'lodash';
-import { Loading } from '@/components/DesignLifeCycle/common';
-import { NotificationCenterContext } from '../../NotificationCenter';
-import { useEffect } from 'react';
-import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
-import { DeploymentSummaryFormatter } from '../../DesignLifeCycle/DeploymentSummary';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import {
@@ -39,69 +33,7 @@ import {
   ModelDefinitionV1Beta1Schema,
   SubCategoryDefinitionV1Beta1Schema,
 } from '@layer5/schemas';
-import { updateProgress } from 'lib/store';
-import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
-import {
-  ModelImportedSection,
-  ModelImportMessages,
-} from '@/components/NotificationCenter/formatters/model_registration';
-import { ErrorMetadataFormatter } from '@/components/NotificationCenter/formatters/error';
-
-const FinishModelGenerateStep = ({ modelData, generateType }) => {
-  const { url, model, register } = modelData;
-  const [generateEvent, setGenerateEvent] = useState();
-  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
-  const [importMeshModel, { isLoading, error }] = useImportMeshModelMutation();
-
-  useEffect(() => {
-    const requestBody = {
-      importBody: {
-        url: url,
-        model: model,
-      },
-      uploadType: 'url',
-      register: register,
-    };
-
-    const performImport = async () => {
-      await importMeshModel({ importBody: requestBody });
-    };
-
-    performImport();
-  }, []);
-
-  useEffect(() => {
-    const subscription = operationsCenterActorRef.on(
-      OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
-      (event) => {
-        const serverEvent = event.data.event;
-        if (serverEvent.action === generateType) {
-          setGenerateEvent(serverEvent);
-        }
-      },
-    );
-
-    return () => subscription.unsubscribe();
-  }, [operationsCenterActorRef, generateType]);
-
-  const progressMessage = `${capitalize(generateType)}ing model`;
-
-  if (isLoading) {
-    return <Loading message={progressMessage} />;
-  }
-  if (error) {
-    return (
-      <ErrorMetadataFormatter metadata={generateEvent?.metadata.error} event={generateEvent} />
-    );
-  }
-
-  return (
-    <>
-      <ModelImportMessages message={generateEvent?.metadata?.ModelImportMessage} />
-      <ModelImportedSection modelDetails={generateEvent?.metadata?.ModelDetails} />
-    </>
-  );
-};
+import FinishModelGenerateStep from './FinishModelGenerateStep';
 
 const UrlStepper = React.memo(({ handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
@@ -126,7 +58,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
   );
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
-  const [registerModel] = React.useState(true);
+  const registerModel = true;
   const modelProperties = ModelDefinitionV1Beta1Schema.properties;
   const categories = CategoryDefinitionV1Beta1Schema.properties.name.enum;
   const subCategories = SubCategoryDefinitionV1Beta1Schema.enum;
@@ -197,26 +129,6 @@ const UrlStepper = React.memo(({ handleClose }) => {
         setUrlError('');
       }
     }
-  };
-
-  const modelData = {
-    uploadType: 'URL Import',
-    register: registerModel,
-    url: modelUrl,
-    model: {
-      model: modelName,
-      modelDisplayName: modelDisplayName,
-      registrant: modelSource,
-      category: modelCategory,
-      subCategory: modelSubcategory,
-      shape: modelShape,
-      primaryColor: primaryColor,
-      secondaryColor: secondaryColor,
-      svgColor: logoLightThemePath,
-      svgWhite: logoDarkThemePath,
-      isAnnotation: isAnnotation,
-      publishToRegistry: true,
-    },
   };
 
   // Summary field component with consistent styling
@@ -755,7 +667,30 @@ const UrlStepper = React.memo(({ handleClose }) => {
         ),
       },
       {
-        component: <FinishModelGenerateStep modelData={modelData} generateType="register" />,
+        component: (
+          <FinishModelGenerateStep
+            requestBody={{
+              url: modelUrl,
+              model: {
+                model: modelName,
+                modelDisplayName: modelDisplayName,
+                registrant: modelSource,
+                category: modelCategory,
+                subCategory: modelSubcategory,
+                shape: modelShape,
+                primaryColor: primaryColor,
+                secondaryColor: secondaryColor,
+                svgColor: logoLightThemePath,
+                svgWhite: logoDarkThemePath,
+                isAnnotation: isAnnotation,
+                publishToRegistry: true,
+              },
+              uploadType: 'url',
+              register: registerModel,
+            }}
+            generateType="register"
+          />
+        ),
         label: 'Finish',
         icon: FinishFlagIcon,
       },
@@ -790,9 +725,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
     4: {
       canGoNext: () => true,
       nextButtonText: 'Next',
-      nextAction: () => {
-        urlStepper.handleNext();
-      },
+      nextAction: () => urlStepper.handleNext(),
     },
     5: {
       canGoNext: () => true,

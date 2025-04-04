@@ -91,23 +91,8 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
 
   const handleClose = () => {
     setIsImportModalOpen(false);
+    setIsCsvModalOpen(false);
     setActiveStep(0);
-  };
-  const handleGenerateModal = async (data) => {
-    const { component_csv, model_csv, relationship_csv, register } = data;
-    let requestBody = {
-      importBody: {
-        model_csv: model_csv,
-        component_csv: component_csv,
-        relationship_csv: relationship_csv,
-      },
-      uploadType: 'csv',
-      register: register,
-    };
-
-    updateProgress({ showProgress: true });
-    await importModelReq({ importBody: requestBody });
-    updateProgress({ showProgress: false });
   };
 
   const handleImportModelSubmit = async (data) => {
@@ -255,10 +240,7 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
           zIndex: 1500,
         }}
       >
-        <CsvStepper
-          handleGenerateModal={handleGenerateModal}
-          handleClose={() => setIsCsvModalOpen(false)}
-        />
+        <CsvStepper handleClose={handleClose} />
       </Modal>
     </>
   );
