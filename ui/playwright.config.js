@@ -30,7 +30,7 @@ module.exports = defineConfig({
   /* Retry on CI only */
   retries: 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 4 : 1,
+  workers: 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: process.env.CI ? "./tests/e2e/custom-playwright-reporter.js" : "list",
   reporter: [['./tests/e2e/custom-playwright-reporter.js']],
@@ -51,6 +51,14 @@ module.exports = defineConfig({
     {
       name: 'setup',
       testMatch: 'tests/e2e/*.setup.js',
+      teardown: 'teardown',
+    },
+    {
+      name: 'teardown',
+      testMatch: 'tests/e2e/*.teardown.js',
+      use: {
+        storageState: ENV.AUTHFILEMESHERYPROVIDER,
+      }
     },
     {
       name: 'chromium-meshery-provider',
