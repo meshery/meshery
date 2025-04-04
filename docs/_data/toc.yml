@@ -151,7 +151,7 @@
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
         - title: CLI Authentication
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
-        - title: System Checks
+        - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
         - title: System Commands
           url: guides/mesheryctl/system-commands
