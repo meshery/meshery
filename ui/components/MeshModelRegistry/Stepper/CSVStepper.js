@@ -306,30 +306,6 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
           </>
         ),
       },
-      // {
-      //   component: (
-      //     <div>
-      //       <FormControl component="fieldset" marginTop={'1rem'}>
-      //         <FormControlLabel
-      //           labelPlacement="start"
-      //           style={{ marginLeft: '0' }}
-      //           control={
-      //             <Checkbox
-      //               checked={registerModel}
-      //               onChange={(e) => setRegisterModel(e.target.checked)}
-      //               name="registerModel"
-      //               color="primary"
-      //             />
-      //           }
-      //           label="Would you like to register the model now so you can use it immediately after it's generated?"
-      //         />
-      //       </FormControl>
-      //     </div>
-      //   ),
-      //   icon: AppRegistrationIcon,
-      //   label: 'Register Model',
-      //   helpText: 'Choose whether to register the model.',
-      // },
     ],
   });
 

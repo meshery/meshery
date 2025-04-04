@@ -82,10 +82,16 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
   const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
   const [importModelReq] = useImportMeshModelMutation();
   const [activeStep, setActiveStep] = useState(0);
+
   const handleNext = () => {
     if (activeStep === 0) {
       setActiveStep(1);
     }
+  };
+
+  const handleClose = () => {
+    setIsImportModalOpen(false);
+    setActiveStep(0);
   };
   const handleGenerateModal = async (data) => {
     const { component_csv, model_csv, relationship_csv, register } = data;
@@ -146,7 +152,7 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
         break;
       }
       case 'CSV Import': {
-        setIsImportModalOpen(false);
+        handleClose();
         setIsCsvModalOpen(true);
         return;
       }
@@ -205,7 +211,7 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
     <>
       <Modal
         open={isImportModalOpen}
-        closeModal={() => setIsImportModalOpen(false)}
+        closeModal={handleClose}
         maxWidth="sm"
         title="Import Model"
         style={{
@@ -219,7 +225,7 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
             handleSubmit={handleImportModelSubmit}
             handleNext={handleNext}
             submitBtnText="Next"
-            handleClose={() => setIsImportModalOpen(false)}
+            handleClose={handleClose}
             widgets={widgets}
             helpText={
               <p>
@@ -237,10 +243,7 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
             }
           />
         ) : (
-          <FinishDeploymentStep
-            deploymentType="register"
-            handleClose={() => setIsImportModalOpen(false)}
-          />
+          <FinishDeploymentStep deploymentType="register" handleClose={handleClose} />
         )}
       </Modal>
       <Modal
