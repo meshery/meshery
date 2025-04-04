@@ -358,6 +358,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 		// include trace instead of design file in the event
 		event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 			WithMetadata(map[string]interface{}{
+				"designId":     evaluationResponse.Design.Id,
 				"trace":        evaluationResponse.Trace,
 				"evaluated_at": *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()

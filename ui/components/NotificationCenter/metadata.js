@@ -52,9 +52,18 @@ const PropertyLinkFormatters = {
       View File
     </TitleLink>
   ),
+  designId: (value) => (
+    <TitleLink
+      href={'/extension/meshmap?mode=design&design=' + encodeURIComponent(value)}
+      style={{ textAlign: 'end', color: 'inherit' }}
+      target="_self"
+    >
+      View Design
+    </TitleLink>
+  ),
 };
 
-const linkOrder = ['doc', 'DownloadLink', 'ViewLink'];
+const linkOrder = ['doc', 'DownloadLink', 'ViewLink', 'designId'];
 
 const EventTypeFormatters = {
   [eventDetailFormatterKey(EVENT_TYPE.DEPLOY_DESIGN)]: DeploymentSummaryFormatter,
