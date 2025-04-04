@@ -258,32 +258,11 @@ This involves parsing a flag for the binry to be built whether it exists or not.
   bash run_tests_local.sh -b
 ```
 
-### Find Tests here
-Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
-
-## Using Sheet Views in the Meshery Test Plan
-
-The *Meshery Test Plan v0.8.0* spreadsheet is a critical resource for contributing to Meshery CLI end-to-end tests. It leverages Google Sheets’ "Filter Views" to help you focus on CLI-specific test cases or those needing contributors ("Help Wanted"), streamlining your contribution process.
-
-### Accessing the Test Plan
-The test plan is available [here](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=838298230#gid=838298230). Below is a screenshot of the spreadsheet with a filter applied to highlight CLI-related tests:
+### CLI Tests in the Meshery Test Plan
+To view only CLI-related test cases:
+1. Open the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing)
+2. Navigate to: **Data** → **Change view**
+3. Select **"CLI"**
 
 ![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
 
-### How to Use Sheet Views
-1. **Open the Spreadsheet**: Navigate to the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=838298230#gid=838298230).
-2. **Select a Filter View**:
-   - Go to the "Data" menu and select "Filter Views."
-   - Choose a predefined view, such as:
-     - **"CLI Tests Only"**: Filters for tests with *Component* like "CLI/system," "CLI/adapter," or "CLI/design" (e.g., Test #12: `mesheryctl system start -p docker`).
-     - **"Help Wanted"**: Displays tests marked "Absent (Help Wanted)" (e.g., Test #14: Invalid platform start).
-   - These views hide irrelevant rows, letting you zero in on CLI tasks.
-3. **Interpret the Data**:
-   - Check for conditional formatting (e.g., yellow for "Help Wanted") to identify priority tests.
-   - Review the *Action* and *Expected Outcome* columns for test specifics (e.g., Test #1: Install Meshery on Kubernetes).
-4. **Contribute**:
-   - Pick a test case (e.g., Test #12).
-   - Write or update the test using BATS (Bash Automated Testing System) as per the contributing guidelines.
-   - Log your results in the spreadsheet’s *Actual Outcome* column (e.g., "Deployed successfully on Docker").
-
-Using these Sheet Views, you can efficiently target CLI tests and enhance Meshery’s quality assurance!
