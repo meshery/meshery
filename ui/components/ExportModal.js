@@ -97,10 +97,10 @@ const ExportModal = (props) => {
         'Download the design as an OCI Image, that can be pushed to a container registry. This is a lossless export.',
     },
     {
-      title: 'Helm Chart (Coming Soon)',
+      title: 'Helm Chart',
       icon: <HelmIcon width={'30'} height="30" />,
-      onClick: () => {},
-      disabled: true,
+      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=Helm Chart'),
+      disabled: false,
       description:
         'Download the design as a Helm Chart. This is a lossy export as some meshery specific metadata gets stripped off.',
     },
