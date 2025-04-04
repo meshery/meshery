@@ -119,10 +119,6 @@ func export(modelName string, url string, output *outputDetail) error {
 	return nil
 }
 
-func ExportCmd() *cobra.Command {
-	return exportModelCmd
-}
-
 func init() {
 	exportModelCmd.Flags().StringP("output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModelCmd.Flags().StringP("output-location", "l", "./", "(optional) output location (default = current directory)")
@@ -131,4 +127,8 @@ func init() {
 	exportModelCmd.Flags().BoolP("discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
 	exportModelCmd.Flags().StringP("version", "", "", "(optional) model version to export (default = \"\")")
 	exportModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+}
+
+func ExportCmd() *cobra.Command {
+	return exportModelCmd
 }
