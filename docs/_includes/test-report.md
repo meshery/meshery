@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 4th 2025, 10:04:22 am
+- Testing started at: April 4th 2025, 12:50:07 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 29 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 12 minutes and 37 seconds_
+⌛ _Duration: 12 minutes and 46 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -52,11 +52,11 @@
 | 29 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
 | 30 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 31 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 32 | chromium-local-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
-| 33 | chromium-meshery-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 32 | chromium-meshery-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 33 | chromium-local-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
 | 34 | chromium-meshery-provider | Verify Meshery Adapter for Istio Section | unstable | ⚠️ |
-| 35 | chromium-local-provider | Verify Performance Analysis Details | unstable | ⚠️ |
-| 36 | chromium-local-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
+| 35 | chromium-local-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
+| 36 | chromium-local-provider | Verify Performance Analysis Details | unstable | ⚠️ |
 | 37 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 38 | chromium-local-provider | Verify Meshery Adapter for Istio Section | unstable | ⚠️ |
 | 39 | chromium-local-provider | Add performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
