@@ -97,7 +97,7 @@ func buildSearchUrl() string {
 	var searchUrl strings.Builder
 
 	if searchModelName == "" {
-		searchUrl.WriteString(fmt.Sprintf("api/meshmodels/relationships?"))
+		searchUrl.WriteString("api/meshmodels/relationships?")
 	} else {
 		escapeModelName := url.QueryEscape(searchModelName)
 		searchUrl.WriteString(fmt.Sprintf("api/meshmodels/models/%s/relationships?", escapeModelName))
