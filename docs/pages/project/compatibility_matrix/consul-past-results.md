@@ -8,7 +8,7 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-consul"
-subheading: "Meshery-Consul"
+subheading: "meshery-consul"
 ---
 
 

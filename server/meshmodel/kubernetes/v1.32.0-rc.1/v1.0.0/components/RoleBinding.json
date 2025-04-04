@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Scheduling \u0026 Orchestration",
@@ -44,10 +45,10 @@
     "model": {
       "version": "v1.32.0-rc.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "height": 25,
@@ -55,8 +56,11 @@
     "secondaryColor": "#7aa1f0",
     "shape": "round-rectangle",
     "svgColor": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M9.5 90C9.5 80.9069 13.2402 72.1861 19.8977 65.7563C26.5553 59.3265 35.5848 55.7143 45 55.7143C54.4152 55.7143 63.4448 59.3265 70.1023 65.7563C76.7598 72.1861 80.5 80.9069 80.5 90H9.5ZM45 51.4286C30.2897 51.4286 18.375 39.9214 18.375 25.7143C18.375 11.5071 30.2897 0 45 0C59.7103 0 71.625 11.5071 71.625 25.7143C71.625 39.9214 59.7103 51.4286 45 51.4286ZM50.2667 65.3093C51.2299 64.4512 52.6811 64.4717 53.6202 65.3566L53.7669 65.4948C54.8323 66.4986 54.8224 68.2067 53.7455 69.1979L47.4463 74.9962C46.4609 75.9031 44.9434 75.8678 44.0006 74.916L43.7607 74.6738C43.6803 74.5926 43.6065 74.5073 43.5394 74.4186H41.6493C41.8517 74.9434 42.163 75.436 42.5844 75.8613L42.8243 76.1035C44.3957 77.6899 46.9249 77.7488 48.5671 76.2372L54.8663 70.4389C56.6612 68.7868 56.6776 65.9401 54.9019 64.267L54.7553 64.1288C53.1901 62.654 50.7715 62.6199 49.166 64.05L42.7736 69.7442C42.6632 69.8425 42.5593 69.9453 42.4619 70.0521H44.9423L50.2667 65.3093ZM35.3331 83.038C36.2723 83.9229 37.7234 83.9434 38.6867 83.0854L44.011 78.3425H46.4914C46.394 78.4493 46.2901 78.5521 46.1798 78.6504L39.7873 84.3447C38.1819 85.7747 35.7633 85.7406 34.1981 84.2658L34.0514 84.1276C32.2758 82.4545 32.2922 79.6078 34.087 77.9557L40.3863 72.1574C42.0285 70.6458 44.5577 70.7047 46.1291 72.2911L46.369 72.5333C46.7903 72.9587 47.1017 73.4513 47.3041 73.976H45.4139C45.3469 73.8873 45.2731 73.802 45.1927 73.7208L44.9528 73.4787C44.0099 72.5268 42.4924 72.4915 41.5071 73.3984L35.2079 79.1967C34.131 80.188 34.1211 81.896 35.1865 82.8999L35.3331 83.038Z\" fill=\"#326CE5\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M9.5 90C9.5 80.9069 13.2402 72.1861 19.8977 65.7563C26.5553 59.3265 35.5848 55.7143 45 55.7143C54.4152 55.7143 63.4448 59.3265 70.1023 65.7563C76.7598 72.1861 80.5 80.9069 80.5 90H9.5ZM45 51.4286C30.2897 51.4286 18.375 39.9214 18.375 25.7143C18.375 11.5071 30.2897 0 45 0C59.7103 0 71.625 11.5071 71.625 25.7143C71.625 39.9214 59.7103 51.4286 45 51.4286ZM50.2667 65.3093C51.2299 64.4512 52.6811 64.4717 53.6202 65.3566L53.7669 65.4948C54.8323 66.4986 54.8224 68.2067 53.7455 69.1979L47.4463 74.9962C46.4609 75.9031 44.9434 75.8678 44.0006 74.916L43.7607 74.6738C43.6803 74.5926 43.6065 74.5073 43.5394 74.4186H41.6493C41.8517 74.9434 42.163 75.436 42.5844 75.8613L42.8243 76.1035C44.3957 77.6899 46.9249 77.7488 48.5671 76.2372L54.8663 70.4389C56.6612 68.7868 56.6776 65.9401 54.9019 64.267L54.7553 64.1288C53.1901 62.654 50.7715 62.6199 49.166 64.05L42.7736 69.7442C42.6632 69.8425 42.5593 69.9453 42.4619 70.0521H44.9423L50.2667 65.3093ZM35.3331 83.038C36.2723 83.9229 37.7234 83.9434 38.6867 83.0854L44.011 78.3425H46.4914C46.394 78.4493 46.2901 78.5521 46.1798 78.6504L39.7873 84.3447C38.1819 85.7747 35.7633 85.7406 34.1981 84.2658L34.0514 84.1276C32.2758 82.4545 32.2922 79.6078 34.087 77.9557L40.3863 72.1574C42.0285 70.6458 44.5577 70.7047 46.1291 72.2911L46.369 72.5333C46.7903 72.9587 47.1017 73.4513 47.3041 73.976H45.4139C45.3469 73.8873 45.2731 73.802 45.1927 73.7208L44.9528 73.4787C44.0099 72.5268 42.4924 72.4915 41.5071 73.3984L35.2079 79.1967C34.131 80.188 34.1211 81.896 35.1865 82.8999L35.3331 83.038Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n",
     "width": 25,
+    "x": 7,
+    "y": 7,
     "z-index": 4
   },
   "capabilities": [
@@ -68,7 +72,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -83,7 +86,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -98,7 +100,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -114,7 +115,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -130,7 +130,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -145,7 +144,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -160,7 +158,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -175,7 +172,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -185,7 +181,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -193,8 +191,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "rbac.authorization.k8s.io/v1",
     "kind": "RoleBinding",
-    "schema": "{\"description\":\"RoleBinding references a role, but does not contain it.  It can reference a Role in the same namespace or a ClusterRole in the global namespace. It adds who information via Subjects and namespace information by which namespace it exists in.  RoleBindings in a given namespace only have effect in that namespace.\",\"properties\":{\"roleRef\":{\"allOf\":[{\"description\":\"RoleRef contains information that points to the role being used\",\"properties\":{\"apiGroup\":{\"default\":\"\",\"description\":\"APIGroup is the group for the resource being referenced\",\"type\":\"string\"},\"kind\":{\"default\":\"\",\"description\":\"Kind is the type of resource being referenced\",\"type\":\"string\"},\"name\":{\"default\":\"\",\"description\":\"Name is the name of resource being referenced\",\"type\":\"string\"}},\"required\":[\"apiGroup\",\"kind\",\"name\"],\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{},\"description\":\"RoleRef can reference a Role in the current namespace or a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error. This field is immutable.\"},\"subjects\":{\"description\":\"Subjects holds references to the objects the role applies to.\",\"items\":{\"allOf\":[{\"description\":\"Subject contains a reference to the object or user identities a role binding applies to.  This can either hold a direct API object reference, or a value for non-objects such as user and group names.\",\"properties\":{\"apiGroup\":{\"description\":\"APIGroup holds the API group of the referenced subject. Defaults to \\\"\\\" for ServiceAccount subjects. Defaults to \\\"rbac.authorization.k8s.io\\\" for User and Group subjects.\",\"type\":\"string\"},\"kind\":{\"default\":\"\",\"description\":\"Kind of object being referenced. Values defined by this API group are \\\"User\\\", \\\"Group\\\", and \\\"ServiceAccount\\\". If the Authorizer does not recognized the kind value, the Authorizer should report an error.\",\"type\":\"string\"},\"name\":{\"default\":\"\",\"description\":\"Name of the object being referenced.\",\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace of the referenced object.  If the object kind is non-namespace, such as \\\"User\\\" or \\\"Group\\\", and this value is not empty the Authorizer should report an error.\",\"type\":\"string\"}},\"required\":[\"kind\",\"name\"],\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"roleRef\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"RoleBinding\",\"version\":\"v1\"}]}",
-    "version": "rbac.authorization.k8s.io/v1"
+    "schema": "{\"description\":\"RoleBinding references a role, but does not contain it.  It can reference a Role in the same namespace or a ClusterRole in the global namespace. It adds who information via Subjects and namespace information by which namespace it exists in.  RoleBindings in a given namespace only have effect in that namespace.\",\"properties\":{\"roleRef\":{\"allOf\":[{\"description\":\"RoleRef contains information that points to the role being used\",\"properties\":{\"apiGroup\":{\"default\":\"\",\"description\":\"APIGroup is the group for the resource being referenced\",\"type\":\"string\"},\"kind\":{\"default\":\"\",\"description\":\"Kind is the type of resource being referenced\",\"type\":\"string\"},\"name\":{\"default\":\"\",\"description\":\"Name is the name of resource being referenced\",\"type\":\"string\"}},\"required\":[\"apiGroup\",\"kind\",\"name\"],\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{},\"description\":\"RoleRef can reference a Role in the current namespace or a ClusterRole in the global namespace. If the RoleRef cannot be resolved, the Authorizer must return an error. This field is immutable.\"},\"subjects\":{\"description\":\"Subjects holds references to the objects the role applies to.\",\"items\":{\"allOf\":[{\"description\":\"Subject contains a reference to the object or user identities a role binding applies to.  This can either hold a direct API object reference, or a value for non-objects such as user and group names.\",\"properties\":{\"apiGroup\":{\"description\":\"APIGroup holds the API group of the referenced subject. Defaults to \\\"\\\" for ServiceAccount subjects. Defaults to \\\"rbac.authorization.k8s.io\\\" for User and Group subjects.\",\"type\":\"string\"},\"kind\":{\"default\":\"\",\"description\":\"Kind of object being referenced. Values defined by this API group are \\\"User\\\", \\\"Group\\\", and \\\"ServiceAccount\\\". If the Authorizer does not recognized the kind value, the Authorizer should report an error.\",\"type\":\"string\"},\"name\":{\"default\":\"\",\"description\":\"Name of the object being referenced.\",\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace of the referenced object.  If the object kind is non-namespace, such as \\\"User\\\" or \\\"Group\\\", and this value is not empty the Authorizer should report an error.\",\"type\":\"string\"}},\"required\":[\"kind\",\"name\"],\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"roleRef\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"RoleBinding\",\"version\":\"v1\"}]}"
   }
 }

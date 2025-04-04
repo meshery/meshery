@@ -64,11 +64,11 @@ const MyDesignsWidget = (props) => {
           <DesignIcon
             {...props.iconsProps}
             fill={theme.palette.icon.default}
-            primaryFill={theme.palette.background.brand.default}
+            primaryFill={theme.palette.icon.default}
             secondaryFill={theme.palette.icon.default}
           />
         }
-        title="MY DESIGNS"
+        title="MY RECENT DESIGNS"
         actionButton={true}
         href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
         btnTitle="See All Designs"

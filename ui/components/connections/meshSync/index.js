@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Grid, FormControl, MenuItem, CustomTooltip, Table } from '@layer5/sistent';
-import { formatDate } from '../../DataFormatter';
+import { Tooltip, Grid, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -30,7 +29,6 @@ import {
   useGetMeshSyncResourceKindsQuery,
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
-
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 
@@ -40,7 +38,6 @@ const ACTION_TYPES = {
     error_msg: 'Failed to fetch meshsync resources',
   },
 };
-
 export default function MeshSyncTable(props) {
   const { updateProgress, selectedK8sContexts, k8sconfig } = props;
   const callbackRef = useRef();
@@ -48,12 +45,17 @@ export default function MeshSyncTable(props) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState(null);
+  const [sortOrder, setSortOrder] = useState('creation_timestamp desc');
   const [rowsExpanded, setRowsExpanded] = useState([]);
-  const [selectedKind, setSelectedKind] = useState('');
-
+  const [modelFilter, setModeFilter] = useState();
+  const [kindFilter, setKindFilter] = useState();
+  const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
+  const [selectedFilters, setSelectedFilters] = useState({
+    kind: 'All',
+    model: 'All',
+    namespace: 'All',
+  });
   const [registerConnection, setRegisterConnection] = useState({
     metadata: {},
     kind: '',
@@ -75,7 +77,9 @@ export default function MeshSyncTable(props) {
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    kind: selectedKind,
+    kind: kindFilter,
+    model: modelFilter,
+    namespace: namespaceFilter,
     clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
   });
   if (isError) {
@@ -95,13 +99,18 @@ export default function MeshSyncTable(props) {
     clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig),
   });
   const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
-
+  const availableModels = [
+    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean)),
+  ];
+  const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];
 
   let colViews = [
     ['metadata.name', 'xs'],
     ['apiVersion', 'na'],
     ['kind', 'm'],
+    ['model', 'm'],
+    ['metadata.namespace', 'xs'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],
     ['metadata.creationTimestamp', 'l'],
@@ -112,10 +121,21 @@ export default function MeshSyncTable(props) {
   const columns = [
     {
       name: 'metadata.name',
+      sortName: 'name',
       label: 'Name',
       options: {
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        sort: true,
+        sortThirdClickReset: true,
+        sortName: 'name',
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={{ ...column, name: 'name' }}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
         },
         customBodyRender: (value) => {
           const maxCharLength = 30;
@@ -166,6 +186,43 @@ export default function MeshSyncTable(props) {
             <SortableTableCell
               index={index}
               columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'model',
+      label: 'Model',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'metadata.namespace',
+      sortName: 'namespace',
+      label: 'Namespace',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={{ ...column, name: 'namespace' }}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
             />
@@ -231,18 +288,24 @@ export default function MeshSyncTable(props) {
     },
     {
       name: 'metadata.creationTimestamp',
+      sortName: 'creation_timestamp',
       label: 'Discovered At',
       options: {
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        sort: true,
+        sortThirdClickReset: true,
+        sortName: 'creation_timestamp',
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={{ ...column, name: 'creation_timestamp' }}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
         },
         customBodyRender: function CustomBody(value) {
-          const renderValue = formatDate(value);
-          return (
-            <CustomTooltip title={renderValue} placement="top" arrow interactive>
-              {renderValue}
-            </CustomTooltip>
-          );
+          return <FormattedTime date={value} />;
         },
       },
     },
@@ -365,32 +428,21 @@ export default function MeshSyncTable(props) {
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: sortOrder.split(' ')[0].replace('metadata.', ''),
+      direction: sortOrder.split(' ')[1],
+    },
     textLabels: {
       selectedRows: {
         text: 'connection(s) selected',
       },
     },
-    // customToolbarSelect: (selected) => (
-    //   <Button
-    //     variant="contained"
-    //     color="primary"
-    //     size="large"
-    //     // @ts-ignore
-    //     // onClick={() => handleDeleteConnections(selected)}
-    //     style={{ background: '#8F1F00', marginRight: '10px' }}
-    //   >
-    //     <DeleteForeverIcon style={iconMedium} />
-    //     Delete
-    //   </Button>
-    // ),
     enableNestedDataAccess: '.',
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      const columnName = camelcaseToSnakecase(columns[tableState.activeColumn]?.name);
-      if (tableState.activeColumn) {
-        order = `${columnName} desc`;
-      }
+      const activeColumn = columns[tableState.activeColumn];
+
       switch (action) {
         case 'changePage':
           setPage(tableState.page.toString());
@@ -400,14 +452,12 @@ export default function MeshSyncTable(props) {
           break;
         case 'sort':
           if (sortInfo.length == 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columnName} asc`;
-            } else {
-              order = `${columnName} desc`;
+            const columnName = activeColumn?.sortName || camelcaseToSnakecase(activeColumn?.name);
+            const direction = sortInfo[1] === 'ascending' ? 'asc' : 'desc';
+            order = `${columnName} ${direction}`;
+            if (order !== sortOrder) {
+              setSortOrder(order);
             }
-          }
-          if (order !== sortOrder) {
-            setSortOrder(order);
           }
           break;
       }
@@ -435,25 +485,21 @@ export default function MeshSyncTable(props) {
         <TableCell colSpan={colSpan}>
           <InnerTableContainer>
             <Table>
-              <TableRow style={{ padding: 0 }}>
-                <TableCell style={{ padding: '20px 0' }}>
-                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                    <ContentContainer item xs={12} md={12}>
-                      <Grid container spacing={1}>
-                        <ContentContainer
-                          item
-                          xs={12}
-                          md={12}
-                          style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            padding: '0 20px',
-                            gap: 30,
-                          }}
-                        >
-                          <MeshSyncDataFormatter metadata={metadata} />
-                        </ContentContainer>
-                      </Grid>
+              <TableRow>
+                <TableCell>
+                  <Grid container style={{ textTransform: 'lowercase' }}>
+                    <ContentContainer
+                      item
+                      xs={12}
+                      md={12}
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        padding: '0 20px',
+                        gap: 30,
+                      }}
+                    >
+                      <MeshSyncDataFormatter metadata={metadata} />
                     </ContentContainer>
                   </Grid>
                 </TableCell>
@@ -490,15 +536,34 @@ export default function MeshSyncTable(props) {
         })),
       ],
     },
+    model: {
+      name: 'Model',
+      options: [
+        ...availableModels.map((model) => ({
+          value: model,
+          label: model,
+        })),
+      ],
+    },
+    namespace: {
+      name: 'Namespace',
+      options: [
+        ...availableNamespaces.map((ns) => ({
+          value: ns,
+          label: ns,
+        })),
+      ],
+    },
   };
 
   const handleApplyFilter = () => {
-    const columnName = Object.keys(selectedFilters)[0];
-    const columnValue = selectedFilters[columnName];
+    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
+    const modelFilter = selectedFilters.model === 'All' ? null : selectedFilters.model;
+    const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
 
-    // Check if the selected value is "All"
-    const newSelectedKind = columnValue === 'All' ? '' : columnValue;
-    setSelectedKind(newSelectedKind);
+    setKindFilter(kindFilter);
+    setModeFilter(modelFilter);
+    setNamespaceFilter(namespaceFilter);
   };
 
   const [tableCols, updateCols] = useState(columns);

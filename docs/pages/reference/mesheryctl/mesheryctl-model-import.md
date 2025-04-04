@@ -12,11 +12,12 @@ subcommand: import
 
 # mesheryctl model import
 
-Import models from mesheryctl command
+Import models
 
 ## Synopsis
 
-Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.
+Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
+Documentation for models import can be found at https://docs.meshery.io/reference/mesheryctl/model/import
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model import [flags]
@@ -26,37 +27,42 @@ mesheryctl model import [flags]
 
 ## Examples
 
+Import model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f [ URI ]
+mesehryctl model import -f [URI]
 
 </div>
 </pre> 
 
+Import model from a URL
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f URL 
+mesehryctl model import -f [URL]
 
 </div>
 </pre> 
 
+Import model from a OCI
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f OCI 
+mesehryctl model import -f [OCI]
 
 </div>
 </pre> 
 
+Import model from a tar.gz file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f model.tar.gz 
+mesehryctl model import -f [path-to-model.tar.gz]
 
 </div>
 </pre> 
 
+Import model(s) from a path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f /path/to/models
+mesehryctl model import -f [path-to-models]
 
 </div>
 </pre> 

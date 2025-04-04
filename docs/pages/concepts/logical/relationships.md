@@ -302,6 +302,12 @@ Meshery employs a policy-driven approach to evaluate relationships between compo
 - Validating existing relationships and identifying potential conflicts
 - Automating the configuration of components based on established relationships
 
+During evaluation, in addition to the input design, the evaluation engine has access to all relationships stored in the registry. These relationships serve as the source of truth for policies to validate existing relationships  or identify new ones. Since relationships can be associated with different models, not all of them are relevant to a given design. To ensure efficiency, the evaluation process intelligently filters the registered relationships, retaining only those that directly impact the design.
+
+Currently, the filtering logic includes only relationships from models that are already part of the design. For example, if the design consists solely of Kubernetes components, relationships from the AWS model will not be loaded for evaluation.
+
+Beyond this automatic filtering, relationship evaluation can also be selectively disabled within the design. This is achieved by setting preferences to false for specific relationship categories, defined by their kind, type, and subtype.
+
 ![Meshery Relationship](/assets/img/concepts/logical/relationship-evaluation-flow.svg)
 
 ### How Relationships are formed?

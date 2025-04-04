@@ -1,0 +1,53 @@
+name: Update Jekyll Page with Test Report
+
+on:
+  workflow_run:
+    workflows: ['Meshery UI and Server']  
+    types: [completed]
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  update-jekyll:
+    if: >
+        github.repository == 'meshery/meshery' && 
+        github.event.workflow_run.event == 'push' && 
+        github.event.workflow_run.head_branch == 'master'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.RELEASE_NOTES_PAT }}
+          ref: 'master'
+
+      - name: Download e2e test report artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+           name: e2e-test-reporter
+           path: e2e-test-reporter
+           github-token: ${{ secrets.GITHUB_TOKEN }}
+           run-id: ${{ github.event.workflow_run.id }}
+      
+      - name: Move test report to Jekyll folder
+        run: |
+            if [ ! -f e2e-test-reporter/ui/test-report.md ]; then
+            echo "Error: Test report not found!" && exit 1
+            fi
+            mkdir -p docs/_includes
+            mv e2e-test-reporter/ui/test-report.md docs/_includes/
+            
+      - name: Pull changes from remote
+        run: git pull origin master
+
+      - name: Commit artifact to Jekyll folder
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          file_pattern: "docs/_includes/test-report.md"
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
+          commit_options: "--signoff"
+          commit_message: "[Docs] Updated test report in Jekyll"

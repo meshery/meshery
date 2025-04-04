@@ -15,11 +15,10 @@
 package relationships
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -33,11 +32,14 @@ var listCmd = &cobra.Command{
 	Short: "List registered relationships",
 	Long:  "List all relationships registered in Meshery Server",
 	Example: `
-// View list of relationship
+// List of relationships
 mesheryctl exp relationship list
 
-// View list of relationship with specified page number (25 relationships per page)
-mesheryctl exp relationship list --page 2
+// List of relationships for a specified page
+mesheryctl relationship list --page [page-number]
+
+// Display number of available relationships in Meshery
+mesheryctl relationship list --count
 `,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationship list \nRun 'mesheryctl exp relationship list --help' to see detailed help message"
@@ -56,44 +58,19 @@ mesheryctl exp relationship list --page 2
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		var url string
-		if cmd.Flags().Changed("page") {
-			url = fmt.Sprintf("%s/api/meshmodels/relationships?page=%d", baseUrl, pageNumberFlag)
-		} else {
-			url = fmt.Sprintf("%s/api/meshmodels/relationships?pagesize=all", baseUrl)
-		}
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		page, _ := cmd.Flags().GetInt("page")
+		url := fmt.Sprintf("%s/api/meshmodels/relationships?%s", baseUrl, utils.GetPageQueryParameter(cmd, page))
+
+		relationships, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
+
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
-		err = json.Unmarshal(data, relationshipsResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		header := []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"}
+		count, _ := cmd.Flags().GetBool("count")
 		var rows [][]string
 
-		for _, rel := range relationshipsResponse.Relationships {
+		for _, rel := range relationships.Relationships {
 			evaluationQuery := ""
 			if rel.EvaluationQuery != nil {
 				evaluationQuery = *rel.EvaluationQuery
@@ -103,27 +80,21 @@ mesheryctl exp relationship list --page 2
 			}
 		}
 
-		if len(rows) == 0 {
-			// if no component is found
-			fmt.Println("No relationship(s) found")
-			return nil
+		dataToDisplay := display.DisplayedData{
+			DataType:         "relationship",
+			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
+			Rows:             rows,
+			Count:            relationships.Count,
+			DisplayCountOnly: count,
+			IsPage:           cmd.Flags().Changed("page"),
 		}
 
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			maxRowsPerPage := 25
-			err := utils.HandlePagination(maxRowsPerPage, "relationships", rows, header)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-		}
-		return nil
+		return display.List(dataToDisplay)
 	},
 }
 
 func init() {
 	// Add the new exp relationship commands to the listRelationshipsCmd
-	listCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
+	listCmd.Flags().IntP("page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
+	listCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of relationship(s) in total")
 }

@@ -3,8 +3,10 @@ package model
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -13,16 +15,17 @@ import (
 
 var listModelCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list registered models",
-	Long:  "list name of all registered models",
+	Short: "List registered models",
+	Long: `List all registered models by pagingation (25 models per page)
+Documentation for models list can be found at https://docs.meshery.io/reference/mesheryctl/model/list`,
 	Example: `
-// View list of models
+// List of models
 mesheryctl model list
 
-// View list of models with specified page number (25 models per page)
-mesheryctl model list --page 2
+// List of models for a specified page
+mesheryctl model list --page [page-number]
 
-// View number of available models in Meshery
+// Display number of available models in Meshery
 mesheryctl model list --count
     `,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -35,8 +38,20 @@ mesheryctl model list --count
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
+		page, _ := cmd.Flags().GetInt("page")
+		url := fmt.Sprintf("%s/%s?%s", baseUrl, modelsApiPath, utils.GetPageQueryParameter(cmd, page))
 
-		return listModel(cmd, url, false)
+		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
+
+		if err != nil {
+			return err
+		}
+
+		return displayModels(modelsResponse, cmd)
 	},
+}
+
+func init() {
+	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 }

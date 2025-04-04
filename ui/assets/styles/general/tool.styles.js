@@ -13,109 +13,83 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   zIndex: '101',
 }));
 
-export const MeshModelToolbar = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isAnimated',
-})(({ theme, isAnimated }) => ({
+export const MeshModelToolbar = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   backgroundColor: theme.palette.background.card,
-
   boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
-  height: isAnimated ? '4rem' : '0rem',
-  padding: isAnimated ? '0.68rem' : '0rem',
+  height: '4rem',
+  padding: '0.68rem',
   borderRadius: '0.5rem',
   position: 'relative',
-  zIndex: isAnimated ? '125' : '0',
+  zIndex: '125',
   marginBottom: '0.5rem',
   marginTop: '1rem',
 }));
 
-export const MainContainer = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isAnimated',
-})(({ theme, isAnimated }) => ({
+export const MainContainer = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
-
-  height: isAnimated ? '73vh' : '25rem',
+  borderRadius: '0.5rem',
+  height: '68vh',
   display: 'flex',
   position: 'relative',
-  marginTop: '1rem',
   [theme.breakpoints.down('sm')]: {
-    height: isAnimated ? '73rem' : '47rem',
+    height: '73rem',
   },
 }));
 
-export const InnerContainer = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isAnimated',
-})(({ theme, isAnimated }) => ({
+export const InnerContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   position: 'absolute',
-  ...(isAnimated
-    ? {
-        width: '100%',
-        top: '0%',
-        paddingX: '2rem',
-        transform: 'translate(0%, 0%)',
-        justifyContent: 'center',
-        left: '0%',
-        backgroundColor: tabMenu.main,
-      }
-    : {
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-      }),
+  gap: '1rem',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  top: '0%',
+  paddingX: '2rem',
+  transform: 'translate(0%, 0%)',
+  left: '0%',
+  borderTopLeftRadius: '0.5rem',
+  borderTopRightRadius: '0.5rem',
+  overflow: 'scroll',
+  backgroundColor: theme.palette.background.tabs,
   [theme.breakpoints.down('sm')]: {
-    flexDirection: isAnimated ? 'row' : 'column',
-    ...(isAnimated && {
-      paddingLeft: '1rem',
-      overflowX: 'auto',
-      padding: '0.4rem',
-    }),
+    flexDirection: 'row',
+    paddingLeft: '1rem',
+    overflowX: 'auto',
+    padding: '0.4rem',
   },
 }));
 
 export const CardStyle = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isAnimated' && prop !== 'isSelected',
-})(({ theme, isAnimated, isSelected }) => ({
-  background: isAnimated ? tabMenu.hover : tabMenu.main,
+  shouldForwardProp: (prop) => prop !== 'isSelected',
+})(({ theme, isSelected }) => ({
+  background: isSelected
+    ? tabMenu.hover
+    : theme.palette.mode === 'dark'
+      ? theme.palette.background.card
+      : theme.palette.background.inverse,
   color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
-  height: isAnimated ? '3rem' : '10rem',
-  width: isAnimated ? '15rem' : '13rem',
+  height: '3rem',
+  width: '15rem',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   margin: '0rem 0.7rem',
   paddingTop: '0.2rem',
-  flexDirection: isAnimated ? 'row-reverse' : 'column',
+  flexDirection: 'row-reverse',
   cursor: 'pointer',
-  ...(isAnimated && {
-    borderRadius: '8px 8px 0px 0px',
-    paddingTop: '0.2rem',
-    marginTop: '0.7rem',
-  }),
-  ...(isSelected && {
-    backgroundColor: theme.palette.background.card,
-  }),
+  borderRadius: '8px 8px 0px 0px',
+  marginTop: '0.7rem',
   [theme.breakpoints.down('md')]: {
-    ...(!isAnimated && {
-      height: '10rem',
-      width: '8.5rem',
-    }),
+    width: '8.5rem',
   },
   [theme.breakpoints.down('sm')]: {
-    ...(isAnimated
-      ? {
-          padding: '0.1rem',
-          flexDirection: 'column',
-          margin: '0rem 0.2rem',
-          width: '10rem',
-        }
-      : {
-          width: '13rem',
-          marginTop: '0.7rem',
-          marginRight: '0.5rem',
-        }),
+    padding: '0.1rem',
+    flexDirection: 'column',
+    margin: '0rem 0.2rem',
+    width: '10rem',
   },
 }));
 
@@ -156,11 +130,8 @@ export const TreeContainer = styled(Box)(({ theme }) => ({
   },
 }));
 
-export const TreeWrapper = styled(Box, {
-  shouldForwardProp: (prop) => prop !== 'isAnimated',
-})(({ theme, isAnimated }) => ({
+export const TreeWrapper = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
-
   display: 'flex',
   gap: '1rem',
   padding: '1rem',
@@ -168,7 +139,8 @@ export const TreeWrapper = styled(Box, {
   width: '100%',
   position: 'absolute',
   top: '3.7rem',
-  opacity: isAnimated ? '1' : '0',
+  borderBottomLeftRadius: '0.5rem',
+  borderBottomRightRadius: '0.5rem',
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'column-reverse',
   },
