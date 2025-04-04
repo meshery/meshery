@@ -264,6 +264,8 @@
               url: project/contributing/contributing-ui-sistent
             - title: UI End-to-End Tests
               url: project/contributing/contributing-ui-tests
+            - title: Dashboard Widgets
+              url: project/contributing/contributing-ui-widgets
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Policies

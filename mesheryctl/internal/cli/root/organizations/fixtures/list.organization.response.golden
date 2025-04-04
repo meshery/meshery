@@ -1,0 +1,35 @@
+{
+    "page": 0,
+    "page_size": 10,
+    "total_count": 1,
+    "organizations": [
+        {
+            "id": "d475eb6c-e26c-4eb6-b110-22653de9b2fd",
+            "name": "name",
+            "country": "country",
+            "region": "(UTC-04:00) Atlantic Time (Canada)",
+            "owner": "d475eb6c-e26c-4eb6-b110-22653de9b2fd",
+            "metadata": {
+                "preferences": {
+                    "theme": {
+                        "logo": {
+                            "desktop_view": {},
+                            "mobile_view": {},
+                            "dark_desktop_view": {},
+                            "dark_mobile_view":{}
+                        }
+                    },
+                    "dashboard": {
+                        "layout": null
+                    }
+                }
+            },
+            "created_at": "2024-03-16T01:39:35.179176Z",
+            "updated_at": "2024-05-01T14:25:36.491489Z",
+            "deleted_at": {
+                "Time": "0001-01-01T00:00:00Z",
+                "Valid": false
+            }
+        }
+    ]
+}
