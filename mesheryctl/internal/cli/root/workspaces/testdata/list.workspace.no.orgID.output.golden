@@ -1,0 +1,5 @@
+[ Organization ID ] isn't specified
+
+Usage: 
+mesheryctl  exp workspace list --orgId [Organization ID]
+mesheryctl  exp workspace list --help' to see detailed help message
