@@ -45,16 +45,17 @@
     "model": {
       "version": "3.4.0-SNAPSHOT.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "edp.epam.com/v1alpha1",
     "kind": "NexusRole",
-    "schema": "{\n \"description\": \"NexusRole is the Schema for the nexusroles API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusRoleSpec defines the desired state of NexusRole.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description of nexus role.\",\n     \"example\": \"Administrator role\",\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"description\": \"ID is the id of the role.\\nID should be unique across all roles.\",\n     \"example\": \"nx-admin\",\n     \"maxLength\": 512,\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the role.\",\n     \"example\": \"nx-admin\",\n     \"type\": \"string\"\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"privileges\": {\n     \"description\": \"Privileges is a list of privileges assigned to role.\",\n     \"example\": [\n      \"nx-all\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Role\",\n \"type\": \"object\"\n}",
-    "version": "edp.epam.com/v1alpha1"
+    "schema": "{\n \"description\": \"NexusRole is the Schema for the nexusroles API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusRoleSpec defines the desired state of NexusRole.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description of nexus role.\",\n     \"example\": \"Administrator role\",\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"description\": \"ID is the id of the role.\\nID should be unique across all roles.\",\n     \"example\": \"nx-admin\",\n     \"maxLength\": 512,\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the role.\",\n     \"example\": \"nx-admin\",\n     \"type\": \"string\"\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"privileges\": {\n     \"description\": \"Privileges is a list of privileges assigned to role.\",\n     \"example\": [\n      \"nx-all\"\n     ],\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Role\",\n \"type\": \"object\"\n}"
   }
 }
