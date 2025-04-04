@@ -65,7 +65,11 @@ export const InnerContainer = styled(Box)(({ theme }) => ({
 export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
 })(({ theme, isSelected }) => ({
-  background: isSelected ? tabMenu.hover : theme.palette.background.card,
+  background: isSelected
+    ? tabMenu.hover
+    : theme.palette.mode === 'dark'
+      ? theme.palette.background.card
+      : theme.palette.background.inverse,
   color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
   height: '3rem',
   width: '15rem',
