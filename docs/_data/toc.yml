@@ -280,7 +280,7 @@
         - title: Dev Setup on Windows
           url: project/contributing/meshery-windows
 
-- title: 📖 Reference
+- title: 📖 Reference & Extensibility
   url: reference
   links:
     - title: Error Code Reference
@@ -299,7 +299,7 @@
         - title: REST API Reference
           url: reference/rest-apis
     - title: Extensibility Reference ↆ
-      url: extensibility
+      url: &
       children:
         - title: Authorization
           url: extensibility/authorization
