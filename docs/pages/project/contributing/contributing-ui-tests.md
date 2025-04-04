@@ -216,11 +216,12 @@ Watch the training session on Playwright testing and trace debugging.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/x-W60mvDYuo?si=coN7RpRjkI4a_ndk&amp;start=1524" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-### UI Tests in the Meshery Test Plan
-To view only UI-related test cases:
-1. Open the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing)
-2. Navigate to: **Data** → **Change view**
-3. Select **"UI"**
+### Find Tests here
+Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
+
+To filter and view only UI-related tests using the Sheet Views feature:
+1. In the top menu bar, click Data → Change view
+2. Choose the pre-defined view labeled "UI"
 
 ![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
 
