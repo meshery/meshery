@@ -83,6 +83,7 @@ Roles specify the context for applying colors. Different roles can share the sam
 - Import the `useTheme` hook from `@layer5/sistent` to access the current theme.
 - Utilize the `useTheme` hook to access theme properties and apply them to your components, such as setting the background style of the `Button`.
 
+{% raw %}
 ```javascript
 import {Button, useTheme} from "@layer5/sistent";
 
@@ -107,5 +108,6 @@ function MyComponent() {
 
 export default MyComponent;
 ```
+{% endraw %}
 
 {% include alert.html type="info" title="NOTE" content="The <a href='https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts'>tokens</a> and their roles are specific to their use. For example, use the background palette for background styles and the text palette for text styles." %}
