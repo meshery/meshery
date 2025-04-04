@@ -20,7 +20,7 @@ import (
 )
 
 var initModelCmd = &cobra.Command{
-	Use:   "init [model-name]",
+	Use:   "init",
 	Short: "generates scaffolding for convenient model creation",
 	Long:  "generates a folder structure and guides user on model creation",
 	Example: `
