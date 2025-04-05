@@ -5,6 +5,7 @@ permalink: extensions/kubectl-meshsync-snapshot
 language: en
 abstract: A native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.
 display-title: "false"
+redirect_from: extensions/kubectl-kanvas-snapshot
 list: include
 type: extensions
 category: kanvas
