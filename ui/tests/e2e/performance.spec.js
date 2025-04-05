@@ -57,7 +57,6 @@ test.describe('Performance Section Tests', () => {
 
     test('Action buttons on adapters tab', { tag: '@unstable' }, async ({ page }) => {
       await page.getByTestId('settings-tab-adapters').click();
-      await page.waitForTimeout(500);
 
       for (const buttonId of ACTION_BUTTONS) {
         await expect(
