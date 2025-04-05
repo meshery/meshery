@@ -125,7 +125,7 @@ func ErrResetMeshconfig(err error) error {
 		ErrResetMeshconfigCode,
 		errors.Alert,
 		[]string{"Error resetting meshconfig to default settings"},
-		[]string{fmt.Sprintf("Error: %s", err.Error())},
+		[]string{err.Error()},
 		[]string{"Meshery server config file is not reset to default settings"},
 		[]string{fmt.Sprintf("Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`. %s", FormatErrorReference())})
 }
@@ -270,7 +270,7 @@ func ErrGetCurrentContext(err error) error {
 		ErrGetCurrentContextCode,
 		errors.Fatal,
 		[]string{"Unable to get current-context"},
-		[]string{fmt.Sprintf("Error: %s", err.Error())},
+		[]string{err.Error()},
 		[]string{"Invalid context name provided"},
 		[]string{fmt.Sprintf("Ensure a valid context name is provided. %s Also %s", contextdocs, contextDir)},
 	)
@@ -292,7 +292,7 @@ func ErrTokenContext(err error) error {
 		ErrTokenContextCode,
 		errors.Fatal,
 		[]string{"Unable to get token"},
-		[]string{fmt.Sprintf("Error: %s", err.Error())},
+		[]string{err.Error()},
 		[]string{"No token found for the Current context"},
 		[]string{fmt.Sprintf("Ensure your Meshconfig file has a valid token provided. %s", FormatErrorReference())},
 	)
