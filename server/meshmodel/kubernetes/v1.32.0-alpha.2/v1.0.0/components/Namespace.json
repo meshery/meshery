@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Scheduling \u0026 Orchestration",
@@ -44,10 +45,10 @@
     "model": {
       "version": "v1.32.0-alpha.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "background-image": "none",
@@ -70,7 +71,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -85,7 +85,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -100,7 +99,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -116,7 +114,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -132,7 +129,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -147,7 +143,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -162,7 +157,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -177,7 +171,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -187,7 +180,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "parent",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -195,8 +190,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "v1",
     "kind": "Namespace",
-    "schema": "{\"description\":\"Namespace provides a scope for Names. Use of multiple namespaces is optional.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"NamespaceSpec describes the attributes on a Namespace.\",\"properties\":{\"finalizers\":{\"description\":\"Finalizers is an opaque list of values that must be empty to permanently remove object from storage. More info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Spec defines the behavior of the Namespace. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"Namespace\",\"version\":\"v1\"}]}",
-    "version": "v1"
+    "schema": "{\"description\":\"Namespace provides a scope for Names. Use of multiple namespaces is optional.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"NamespaceSpec describes the attributes on a Namespace.\",\"properties\":{\"finalizers\":{\"description\":\"Finalizers is an opaque list of values that must be empty to permanently remove object from storage. More info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Spec defines the behavior of the Namespace. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"Namespace\",\"version\":\"v1\"}]}"
   }
 }

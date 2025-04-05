@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +45,17 @@
     "model": {
       "version": "2.0.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "k8s.netris.ai/v1alpha1",
     "kind": "VNetMeta",
-    "schema": "{\n \"description\": \"VNetMeta is the Schema for the vnetmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VNetMetaSpec defines the desired state of VNetMeta\",\n   \"properties\": {\n    \"gateways\": {\n     \"items\": {\n      \"description\": \"VNetMetaGateway .\",\n      \"properties\": {\n       \"dhcp\": {\n        \"type\": \"boolean\"\n       },\n       \"dhcpEndIP\": {\n        \"type\": \"string\"\n       },\n       \"dhcpOptionSetID\": {\n        \"type\": \"integer\"\n       },\n       \"dhcpStartIP\": {\n        \"type\": \"string\"\n       },\n       \"gateway\": {\n        \"type\": \"string\"\n       },\n       \"gwLength\": {\n        \"type\": \"integer\"\n       },\n       \"id\": {\n        \"type\": \"integer\"\n       },\n       \"nos\": {\n        \"type\": \"string\"\n       },\n       \"vaVlanId\": {\n        \"type\": \"integer\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"gateway\",\n       \"gwLength\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"type\": \"boolean\"\n    },\n    \"members\": {\n     \"items\": {\n      \"description\": \"VNetMetaMember .\",\n      \"properties\": {\n       \"access\": {\n        \"type\": \"boolean\"\n       },\n       \"id\": {\n        \"type\": \"integer\"\n       },\n       \"lacp\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"state\": {\n        \"type\": \"string\"\n       },\n       \"untagged\": {\n        \"type\": \"string\"\n       },\n       \"vlan\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"access\",\n       \"id\",\n       \"lacp\",\n       \"name\",\n       \"state\",\n       \"vlan\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"owner\": {\n     \"type\": \"string\"\n    },\n    \"provisioning\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"sites\": {\n     \"items\": {\n      \"description\": \"VNetMetaSite .\",\n      \"properties\": {\n       \"id\": {\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"state\": {\n     \"type\": \"string\"\n    },\n    \"tenants\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"vaMode\": {\n     \"type\": \"boolean\"\n    },\n    \"vaNativeVlan\": {\n     \"type\": \"integer\"\n    },\n    \"vaVlans\": {\n     \"type\": \"string\"\n    },\n    \"vlanid\": {\n     \"type\": \"string\"\n    },\n    \"vnetGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"vnetName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"gateways\",\n    \"id\",\n    \"imported\",\n    \"members\",\n    \"name\",\n    \"owner\",\n    \"provisioning\",\n    \"reclaimPolicy\",\n    \"sites\",\n    \"state\",\n    \"tenants\",\n    \"vaMode\",\n    \"vaNativeVlan\",\n    \"vaVlans\",\n    \"vlanid\",\n    \"vnetGeneration\",\n    \"vnetName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"V Net Meta\",\n \"type\": \"object\"\n}",
-    "version": "k8s.netris.ai/v1alpha1"
+    "schema": "{\n \"description\": \"VNetMeta is the Schema for the vnetmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VNetMetaSpec defines the desired state of VNetMeta\",\n   \"properties\": {\n    \"gateways\": {\n     \"items\": {\n      \"description\": \"VNetMetaGateway .\",\n      \"properties\": {\n       \"dhcp\": {\n        \"type\": \"boolean\"\n       },\n       \"dhcpEndIP\": {\n        \"type\": \"string\"\n       },\n       \"dhcpOptionSetID\": {\n        \"type\": \"integer\"\n       },\n       \"dhcpStartIP\": {\n        \"type\": \"string\"\n       },\n       \"gateway\": {\n        \"type\": \"string\"\n       },\n       \"gwLength\": {\n        \"type\": \"integer\"\n       },\n       \"id\": {\n        \"type\": \"integer\"\n       },\n       \"nos\": {\n        \"type\": \"string\"\n       },\n       \"vaVlanId\": {\n        \"type\": \"integer\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"gateway\",\n       \"gwLength\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"type\": \"boolean\"\n    },\n    \"members\": {\n     \"items\": {\n      \"description\": \"VNetMetaMember .\",\n      \"properties\": {\n       \"access\": {\n        \"type\": \"boolean\"\n       },\n       \"id\": {\n        \"type\": \"integer\"\n       },\n       \"lacp\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"state\": {\n        \"type\": \"string\"\n       },\n       \"untagged\": {\n        \"type\": \"string\"\n       },\n       \"vlan\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"access\",\n       \"id\",\n       \"lacp\",\n       \"name\",\n       \"state\",\n       \"vlan\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"owner\": {\n     \"type\": \"string\"\n    },\n    \"provisioning\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"sites\": {\n     \"items\": {\n      \"description\": \"VNetMetaSite .\",\n      \"properties\": {\n       \"id\": {\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"state\": {\n     \"type\": \"string\"\n    },\n    \"tenants\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"vaMode\": {\n     \"type\": \"boolean\"\n    },\n    \"vaNativeVlan\": {\n     \"type\": \"integer\"\n    },\n    \"vaVlans\": {\n     \"type\": \"string\"\n    },\n    \"vlanid\": {\n     \"type\": \"string\"\n    },\n    \"vnetGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"vnetName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"gateways\",\n    \"id\",\n    \"imported\",\n    \"members\",\n    \"name\",\n    \"owner\",\n    \"provisioning\",\n    \"reclaimPolicy\",\n    \"sites\",\n    \"state\",\n    \"tenants\",\n    \"vaMode\",\n    \"vaNativeVlan\",\n    \"vaVlans\",\n    \"vlanid\",\n    \"vnetGeneration\",\n    \"vnetName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"V Net Meta\",\n \"type\": \"object\"\n}"
   }
 }

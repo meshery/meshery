@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +45,17 @@
     "model": {
       "version": "0.3.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "\u003csvg width=\"45\" height=\"51\" viewBox=\"0 0 45 51\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"#3ABC9B\"/\u003e\n\u003cpath d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"#3ABC9B\"/\u003e\n\u003cpath d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"#3ABC9B\"/\u003e\n\u003c/svg\u003e\r",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"45\" height=\"51\" viewBox=\"0 0 45 51\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\r"
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "traefik.containo.us/v1alpha1",
     "kind": "IngressRoute",
-    "schema": "{\n \"description\": \"IngressRoute is an Ingress CRD specification.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressRouteSpec is a specification for a IngressRouteSpec resource.\",\n   \"properties\": {\n    \"entryPoints\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"routes\": {\n     \"items\": {\n      \"description\": \"Route contains the set of routes.\",\n      \"properties\": {\n       \"kind\": {\n        \"enum\": [\n         \"Rule\"\n        ],\n        \"type\": \"string\"\n       },\n       \"match\": {\n        \"type\": \"string\"\n       },\n       \"middlewares\": {\n        \"items\": {\n         \"description\": \"MiddlewareRef is a ref to the Middleware resources.\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"services\": {\n        \"items\": {\n         \"description\": \"Service defines an upstream to proxy traffic.\",\n         \"properties\": {\n          \"kind\": {\n           \"enum\": [\n            \"Service\",\n            \"TraefikService\"\n           ],\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name is a reference to a Kubernetes Service object (for a load-balancer of servers), or to a TraefikService object (service load-balancer, mirroring, etc). The differentiation between the two is specified in the Kind field.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          },\n          \"passHostHeader\": {\n           \"type\": \"boolean\"\n          },\n          \"port\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"responseForwarding\": {\n           \"description\": \"ResponseForwarding holds configuration for the forward of the response.\",\n           \"properties\": {\n            \"flushInterval\": {\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"scheme\": {\n           \"type\": \"string\"\n          },\n          \"serversTransport\": {\n           \"type\": \"string\"\n          },\n          \"sticky\": {\n           \"description\": \"Sticky holds the sticky configuration.\",\n           \"properties\": {\n            \"cookie\": {\n             \"description\": \"Cookie holds the sticky configuration based on cookie.\",\n             \"properties\": {\n              \"httpOnly\": {\n               \"type\": \"boolean\"\n              },\n              \"name\": {\n               \"type\": \"string\"\n              },\n              \"sameSite\": {\n               \"type\": \"string\"\n              },\n              \"secure\": {\n               \"type\": \"boolean\"\n              }\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"strategy\": {\n           \"type\": \"string\"\n          },\n          \"weight\": {\n           \"description\": \"Weight should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"match\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tls\": {\n     \"description\": \"TLS contains the TLS certificates configuration of the routes. To enable Let's Encrypt, use an empty TLS struct, e.g. in YAML: \\n \\t tls: {} # inline format \\n \\t tls: \\t   secretName: # block format\",\n     \"properties\": {\n      \"certResolver\": {\n       \"type\": \"string\"\n      },\n      \"domains\": {\n       \"items\": {\n        \"description\": \"Domain holds a domain name with SANs.\",\n        \"properties\": {\n         \"main\": {\n          \"type\": \"string\"\n         },\n         \"sans\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"options\": {\n       \"description\": \"Options is a reference to a TLSOption, that specifies the parameters of the TLS connection.\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"secretName\": {\n       \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n       \"type\": \"string\"\n      },\n      \"store\": {\n       \"description\": \"Store is a reference to a TLSStore, that specifies the parameters of the TLS store.\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"routes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Ingress Route\",\n \"type\": \"object\"\n}",
-    "version": "traefik.containo.us/v1alpha1"
+    "schema": "{\n \"description\": \"IngressRoute is an Ingress CRD specification.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressRouteSpec is a specification for a IngressRouteSpec resource.\",\n   \"properties\": {\n    \"entryPoints\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"routes\": {\n     \"items\": {\n      \"description\": \"Route contains the set of routes.\",\n      \"properties\": {\n       \"kind\": {\n        \"enum\": [\n         \"Rule\"\n        ],\n        \"type\": \"string\"\n       },\n       \"match\": {\n        \"type\": \"string\"\n       },\n       \"middlewares\": {\n        \"items\": {\n         \"description\": \"MiddlewareRef is a ref to the Middleware resources.\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"services\": {\n        \"items\": {\n         \"description\": \"Service defines an upstream to proxy traffic.\",\n         \"properties\": {\n          \"kind\": {\n           \"enum\": [\n            \"Service\",\n            \"TraefikService\"\n           ],\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name is a reference to a Kubernetes Service object (for a load-balancer of servers), or to a TraefikService object (service load-balancer, mirroring, etc). The differentiation between the two is specified in the Kind field.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          },\n          \"passHostHeader\": {\n           \"type\": \"boolean\"\n          },\n          \"port\": {\n           \"anyOf\": [\n            {\n             \"type\": \"integer\"\n            },\n            {\n             \"type\": \"string\"\n            }\n           ],\n           \"x-kubernetes-int-or-string\": true\n          },\n          \"responseForwarding\": {\n           \"description\": \"ResponseForwarding holds configuration for the forward of the response.\",\n           \"properties\": {\n            \"flushInterval\": {\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"scheme\": {\n           \"type\": \"string\"\n          },\n          \"serversTransport\": {\n           \"type\": \"string\"\n          },\n          \"sticky\": {\n           \"description\": \"Sticky holds the sticky configuration.\",\n           \"properties\": {\n            \"cookie\": {\n             \"description\": \"Cookie holds the sticky configuration based on cookie.\",\n             \"properties\": {\n              \"httpOnly\": {\n               \"type\": \"boolean\"\n              },\n              \"name\": {\n               \"type\": \"string\"\n              },\n              \"sameSite\": {\n               \"type\": \"string\"\n              },\n              \"secure\": {\n               \"type\": \"boolean\"\n              }\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"strategy\": {\n           \"type\": \"string\"\n          },\n          \"weight\": {\n           \"description\": \"Weight should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n           \"type\": \"integer\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"match\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tls\": {\n     \"description\": \"TLS contains the TLS certificates configuration of the routes. To enable Let's Encrypt, use an empty TLS struct, e.g. in YAML: \\n \\t tls: {} # inline format \\n \\t tls: \\t   secretName: # block format\",\n     \"properties\": {\n      \"certResolver\": {\n       \"type\": \"string\"\n      },\n      \"domains\": {\n       \"items\": {\n        \"description\": \"Domain holds a domain name with SANs.\",\n        \"properties\": {\n         \"main\": {\n          \"type\": \"string\"\n         },\n         \"sans\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"options\": {\n       \"description\": \"Options is a reference to a TLSOption, that specifies the parameters of the TLS connection.\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"secretName\": {\n       \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n       \"type\": \"string\"\n      },\n      \"store\": {\n       \"description\": \"Store is a reference to a TLSStore, that specifies the parameters of the TLS store.\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"routes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Ingress Route\",\n \"type\": \"object\"\n}"
   }
 }

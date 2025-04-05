@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.123.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#aecbfa;}.cls-2{fill:#669df6;}.cls-3{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"9\" y=\"9\" width=\"6\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"11\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"7\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"15\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"11\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"7\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"15\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(8 32) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(4 36) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(12 28) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(-8 16) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(-12 20) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(-4 12) rotate(-90)\"/\u003e\u003cpath class=\"cls-1\" d=\"M5,5V19H19V5ZM17,17H7V7H17Z\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 15 15 15 12 12 9 15\"/\u003e\u003cpolygon class=\"cls-3\" points=\"12 12 15 15 15 9 12 12\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"9\" y=\"9\" width=\"6\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"11\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"7\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"15\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"11\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"7\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"15\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(8 32) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(4 36) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(12 28) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(-8 16) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(-12 20) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(-4 12) rotate(-90)\"/\u003e\u003cpath class=\"cls-1\" d=\"M5,5V19H19V5ZM17,17H7V7H17Z\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 15 15 15 12 12 9 15\"/\u003e\u003cpolygon class=\"cls-3\" points=\"12 12 15 15 15 9 12 12\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "compute.cnrm.cloud.google.com/v1beta1",
     "kind": "ComputeReservation",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"specificReservation\": {\n     \"description\": \"Reservation for instances with specific machine shapes.\",\n     \"properties\": {\n      \"count\": {\n       \"description\": \"The number of resources that are allocated.\",\n       \"type\": \"integer\"\n      },\n      \"inUseCount\": {\n       \"description\": \"How many instances are in use.\",\n       \"type\": \"integer\"\n      },\n      \"instanceProperties\": {\n       \"description\": \"Immutable. The instance properties for the reservation.\",\n       \"properties\": {\n        \"guestAccelerators\": {\n         \"description\": \"Immutable. Guest accelerator type and count.\",\n         \"items\": {\n          \"properties\": {\n           \"acceleratorCount\": {\n            \"description\": \"Immutable. The number of the guest accelerator cards exposed to\\nthis instance.\",\n            \"type\": \"integer\"\n           },\n           \"acceleratorType\": {\n            \"description\": \"Immutable. The full or partial URL of the accelerator type to\\nattach to this instance. For example:\\n'projects/my-project/zones/us-central1-c/acceleratorTypes/nvidia-tesla-p100'\\n\\nIf you are creating an instance template, specify only the accelerator name.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"acceleratorCount\",\n           \"acceleratorType\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"localSsds\": {\n         \"description\": \"Immutable. The amount of local ssd to reserve with each instance. This\\nreserves disks of type 'local-ssd'.\",\n         \"items\": {\n          \"properties\": {\n           \"diskSizeGb\": {\n            \"description\": \"Immutable. The size of the disk in base-2 GB.\",\n            \"type\": \"integer\"\n           },\n           \"interface\": {\n            \"description\": \"Immutable. The disk interface to use for attaching this disk. Default value: \\\"SCSI\\\" Possible values: [\\\"SCSI\\\", \\\"NVME\\\"].\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"diskSizeGb\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"machineType\": {\n         \"description\": \"Immutable. The name of the machine type to reserve.\",\n         \"type\": \"string\"\n        },\n        \"minCpuPlatform\": {\n         \"description\": \"Immutable. The minimum CPU platform for the reservation. For example,\\n'\\\"Intel Skylake\\\"'. See\\nthe CPU platform availability reference](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform#availablezones)\\nfor information on available CPU platforms.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"machineType\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"count\",\n      \"instanceProperties\"\n     ],\n     \"type\": \"object\"\n    },\n    \"specificReservationRequired\": {\n     \"description\": \"Immutable. When set to true, only VMs that target this reservation by name can\\nconsume this reservation. Otherwise, it can be consumed by VMs with\\naffinity for any reservation. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"zone\": {\n     \"description\": \"Immutable. The zone where the reservation is made.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"specificReservation\",\n    \"zone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Reservation\",\n \"type\": \"object\"\n}",
-    "version": "compute.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"specificReservation\": {\n     \"description\": \"Reservation for instances with specific machine shapes.\",\n     \"properties\": {\n      \"count\": {\n       \"description\": \"The number of resources that are allocated.\",\n       \"type\": \"integer\"\n      },\n      \"inUseCount\": {\n       \"description\": \"How many instances are in use.\",\n       \"type\": \"integer\"\n      },\n      \"instanceProperties\": {\n       \"description\": \"Immutable. The instance properties for the reservation.\",\n       \"properties\": {\n        \"guestAccelerators\": {\n         \"description\": \"Immutable. Guest accelerator type and count.\",\n         \"items\": {\n          \"properties\": {\n           \"acceleratorCount\": {\n            \"description\": \"Immutable. The number of the guest accelerator cards exposed to\\nthis instance.\",\n            \"type\": \"integer\"\n           },\n           \"acceleratorType\": {\n            \"description\": \"Immutable. The full or partial URL of the accelerator type to\\nattach to this instance. For example:\\n'projects/my-project/zones/us-central1-c/acceleratorTypes/nvidia-tesla-p100'\\n\\nIf you are creating an instance template, specify only the accelerator name.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"acceleratorCount\",\n           \"acceleratorType\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"localSsds\": {\n         \"description\": \"Immutable. The amount of local ssd to reserve with each instance. This\\nreserves disks of type 'local-ssd'.\",\n         \"items\": {\n          \"properties\": {\n           \"diskSizeGb\": {\n            \"description\": \"Immutable. The size of the disk in base-2 GB.\",\n            \"type\": \"integer\"\n           },\n           \"interface\": {\n            \"description\": \"Immutable. The disk interface to use for attaching this disk. Default value: \\\"SCSI\\\" Possible values: [\\\"SCSI\\\", \\\"NVME\\\"].\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"diskSizeGb\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"machineType\": {\n         \"description\": \"Immutable. The name of the machine type to reserve.\",\n         \"type\": \"string\"\n        },\n        \"minCpuPlatform\": {\n         \"description\": \"Immutable. The minimum CPU platform for the reservation. For example,\\n'\\\"Intel Skylake\\\"'. See\\nthe CPU platform availability reference](https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform#availablezones)\\nfor information on available CPU platforms.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"machineType\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"count\",\n      \"instanceProperties\"\n     ],\n     \"type\": \"object\"\n    },\n    \"specificReservationRequired\": {\n     \"description\": \"Immutable. When set to true, only VMs that target this reservation by name can\\nconsume this reservation. Otherwise, it can be consumed by VMs with\\naffinity for any reservation. Defaults to false.\",\n     \"type\": \"boolean\"\n    },\n    \"zone\": {\n     \"description\": \"Immutable. The zone where the reservation is made.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"specificReservation\",\n    \"zone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Reservation\",\n \"type\": \"object\"\n}"
   }
 }
