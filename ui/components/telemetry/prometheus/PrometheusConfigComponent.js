@@ -26,12 +26,7 @@ const ButtonContainer = styled('div')(({ theme }) => ({
 }));
 
 // change this to display all connected prometheuses connecion and based on the selection updat tht erduc prom object
-const PrometheusConfigComponent = ({
-  prometheusURL,
-  urlError,
-  handleChange,
-  handlePrometheusConfigure,
-}) => {
+const PrometheusConfigComponent = ({ urlError, handleChange, handlePrometheusConfigure }) => {
   const [availablePrometheusConnection, setAvailablePrometheusConnection] = useState([]);
 
   useEffect(() => {
@@ -61,7 +56,6 @@ const PrometheusConfigComponent = ({
                 label: connection?.metadata?.url,
                 ...connection,
               }))}
-              value={prometheusURL}
               label="Prometheus Base URL"
               placeholder="Address of Prometheus Server"
               noOptionsMessage="No Prometheus servers discovered"
