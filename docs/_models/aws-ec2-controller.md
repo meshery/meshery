@@ -86,7 +86,15 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
   description: 
-components-count: 19
+- name: launch-template
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/color/launch-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/white/launch-template-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+components-count: 21
 relationships: 
 relationship-count: 0
 featureList: [
