@@ -90,12 +90,9 @@ test.describe('Extensions Section Tests', () => {
     'Verify Meshery Adapter for Istio Section',
     { tag: '@unstable' },
     async ({ page, context }) => {
-      // Test the "Open Adapter docs" link
       const [docsPage] = await Promise.all([
         context.waitForEvent('page'),
-        await page
-          .locator('div:nth-child(7) > .css-1slkrv6 > .MuiGrid-root > .MuiTypography-root > a')
-          .click(),
+        await page.getByText('Meshery Adapter for IstioDeploy the Meshery Adapter for Istio in order to').getByRole('link').click(),
       ]);
       await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
       await docsPage.close();
