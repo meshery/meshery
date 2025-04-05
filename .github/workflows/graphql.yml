@@ -6,6 +6,8 @@ on:
     paths:
       - "server/internal/graphql/schema/schema.graphql"
 
+permissions:
+  contents: write
 jobs:
   test:
     runs-on: ubuntu-24.04
