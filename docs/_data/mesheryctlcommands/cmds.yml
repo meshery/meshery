@@ -1149,7 +1149,7 @@ exp:
             description: (optional) Get the total of registrered organizations
   model:
     name: model
-    description: Interact with existing organizations
+    description: Manages models
     usage: mesheryctl exp model
     flags:
       help:
