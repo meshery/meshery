@@ -94,7 +94,7 @@ const ExportModal = (props) => {
       onClick: (e) =>
         handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
       description:
-        '<p>Download your design as a standard Kubernetes Manifest file. This file contains the Kubernetes resource definitions from your design and can be directly applied to a cluster using tools `kubectl`.</p><p><strong>Lossy Export:</strong> This process strips out Meshery-specific information (e.g., visual arrangement, comments, and so on). The resulting manifest only includes the core Kubernetes resource definitions, not the extra context that might be present in your Meshery design.</p>',
+        <div><p>Download your design as a standard Kubernetes Manifest file. This file contains the Kubernetes resource definitions from your design and can be directly applied to a cluster using tools `kubectl`.</p><p><strong>Lossy Export:</strong> This process strips out Meshery-specific information (e.g., visual arrangement, comments, and so on). The resulting manifest only includes the core Kubernetes resource definitions, not the extra context that might be present in your Meshery design.</p></div>,
     },
     {
       title: 'Helm Chart (tar.gz) (Coming Soon)',
@@ -102,7 +102,7 @@ const ExportModal = (props) => {
       onClick: () => {},
       disabled: true,
       description:
-        '<p>Download your design as a Helm Chart.</p><p><strong>Lossy Export:</strong> This process strips out Meshery-specific information (e.g., visual arrangement, comments, and so on). The resulting manifest only includes the core Kubernetes resource definitions, not the extra context that might be present in your Meshery design.</p>',
+       <div><p>Download your design as a Helm Chart.</p><p><strong>Lossy Export:</strong> This process strips out Meshery-specific information (e.g., visual arrangement, comments, and so on). The resulting manifest only includes the core Kubernetes resource definitions, not the extra context that might be present in your Meshery design.</p></div>,
     },
     ...extensionExportOptions,
   ];
