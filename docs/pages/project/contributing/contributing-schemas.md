@@ -27,212 +27,113 @@ go install github.com/deepmap/oapi-codegen/cmd/oapi-codegen@latest
 
 ### Development Workflow
 
-#### Schema Resolution Process
-When you work with the schemas, you'll frequently use this essential command:
 
+#### **Schema Definition in Meshery**
+Meshery uses **OpenAPI v3** specification to define schemas. Given the complexity of the project, where multiple constructs and APIs exist, we adopt a structured approach to schema management:
+- **Schemas are versioned** to maintain backward compatibility.
+- **Schemas are modular** to support different components of Meshery independently.
+- **Schemas are used for validation, API definition, and automatic code generation.**
+
+### **Schema Directory Structure**
+All schemas are stored in the **`schemas`** directory at the root of the project. The structure follows:
+
+```
+schemas/
+  constructs/
+    <schema-version>/  # e.g., v1beta1
+      <construct>/  # e.g., model, component
+        <construct>.json    # Schema definition for the construct (noun)
+        subschemas/         # Any subschemas used within the construct
+        openapi.yml         # OpenAPI schema defining API operations (verbs like create, update, delete)
+```
+
+### **Explanation**
+- **`constructs/`** – Contains schemas for different versions.
+- **`<schema-version>/`** – Each schema version (e.g., `v1beta1`, `v1alpha2`) is a separate directory.
+- **`<construct>/`** – Each construct (e.g., `capability`, `category`) has its own folder.
+- **`<construct>.json`** – Defines the **schema for the noun** (i.e., the entity).
+- **`subschemas/`** – Contains reusable subschemas for modularity.
+- **`openapi.yml`** – Defines **API operations** (verbs: `create`, `update`, `delete`) and serves as the **entry point** for the schema.
+
+This approach ensures that **schemas are well-organized, reusable, and scalable** across different Meshery components.
+
+---
+
+## **Adding a New Schema**
+
+To add a new schema, follow these steps:
+1. **Create a new directory** under `schemas/constructs/` for the new schema version.
+2. **Create a new directory** for the construct under the version directory.
+3. **Define the schema** in JSON format and save it as `<construct>.json`.
+4. **Create a subschemas directory** if needed, and add any reusable subschemas.
+5. **Define the OpenAPI schema** in `openapi.yml` to specify API operations.
+6. **Update the `generate.sh` script** to include the new schema for code generation.
+7. **Run the code generation script** to generate the necessary code files.
+
+
+
+## **Code Generation**
+Meshery supports **automatic code generation** for:
+- **Golang** (structs and types)
+- **TypeScript** (interfaces and types)
+
+### **Generating Code from Schemas**
+The schema-to-code mapping is defined in **`generate.sh`**, which automates the generation process.
+
+#### **Generating Golang Models**
+To generate Go structs from schemas, use:
 ```bash
-make resolve-ref path="./schemas/constructs/[version]"
+make golang-generate
 ```
 
-**Key functions:**
-1.  Resolves `$ref` references between schema files
-2.  Adds code generation metadata tags
-3.  Creates complete, self-contained schemas
-4.  Validates reference consistency
+This also generates a merged_openapi.yml file which can be used to generate the redoc documentation and for rtk-api
 
-**Example:**
-Consider this schema snippet with an external reference:
-
-```json
-"capabilities": {
-  "type": "array",
-  "description": "Meshery manages components...",
-  "items": {
-    "$ref": "../v1alpha1/capability.json" // reference here
-  }
-}
-```
-
-After running the command, it becomes a complete, self-contained schema:
-
-```json
-"capabilities": {
-  "type": "array",
-  "description": "Meshery manages components...",
-  "items": {
-    "$id": "https://schemas.meshery.io/capability.json",
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "description": "Meshery manages entities...",
-    "additionalProperties": false,
-    "type": "object",
-    "required": [
-      "schemaVersion",
-      "version",
-      "displayName",
-      "kind",
-      "type",
-      "entityState",
-      "status"
-    ],
-    "x-oapi-codegen-extra-tags": { // additional metadata tag
-      "gorm": "type:bytes;serializer:json"
-    }
-  }
-}
-```
-
-**When to run this command?**
-
-Whenever you:
--   Modify schema files
--   Add new schema references
--   Before generating Go code
--   When troubleshooting code generation issues
-
-#### Code Generation and Configuration
-
-The code generation process uses two key configuration files:
-1. **scripts/config.yml**: Controls oapi-codegen behavior
-
-```yml
-package: organization  # Set your desired package name
-
-generate:
-  models: true  # Generate model structs
-
-import-mapping:  # Map schema references to Go imports
-  "../v1beta1/model.json": "github.com/meshery/schemas/models/v1beta1/model"
-  "../v1alpha1/capability.json": "github.com/meshery/schemas/models/v1alpha1/capability"
-
-output: models/v1beta1/organization.go  # Specify output file
-output-options:
-  skip-prune: true
-  include-tags:  # Filter generated code by tags
-  - organizations
-```
-
-2. **schemas/constructs/openapi/models.yml**: Defines OpenAPI schema references
-
-```yml
-openapi: 3.0.0
-components:
-  schemas:
-    component_definition:
-      $ref: ../v1beta1/component.json
-```
-
-#### Workflow
-
-1.  Update schema references in **models.yml**:
-    -   Uncomment/add needed schema references
-    -   Each reference generates corresponding Go structs
-2.  Modify **config.yml**:
-    -   Set appropriate package name
-    -   Update output file path
-    -   Add required import mappings
-    -   Configure include-tags if needed
-3. Generate code:
-
+#### **Generating TypeScript Models**
+To generate TypeScript types and and ts objects for the schemas use:
 ```bash
-oapi-codegen -config scripts/config.yml schemas/constructs/openapi/models.yml
+make generate-ts
 ```
 
-**Key Points:**
--   Run `make resolve-ref` before code generation (only for JSON schemas)
--   Keep import mappings synchronized with schema references
--   Generated code inherits package name from config
--   Use tags to filter generated structs
+This will generate the typescript types and also javascript objects for the schemas
+the javascript objects can be used to do run time validation of data or for getting information from the schema
 
-### Handling Schema Changes and Field Ordering
 
-When modifying schema structs or their fields, there are two common scenarios:
+### **Schema-to-Code Mapping**
+Example mapping in **`generate.sh`**:
+```bash
+generate_schema_models <construct> <schema-version>
+generate_schema_models "capability" "v1alpha1"
+generate_schema_models "category" "v1beta1"
+generate_schema_models "component" "v1beta1"
+generate_schema_models "pattern" "v1beta1" "schemas/constructs/v1beta1/design/openapi.yml"
+generate_schema_models "core" "v1alpha1"
+generate_schema_models "catalog" "v1alpha2"
+```
+- The **package name matches the construct name**.
+- Example: For the `capability` construct in `v1alpha1`, the generated Go code will be in:
+  ```
+  models/v1alpha1/capability/capability.go
+  ```
 
-#### 1. Adding a New Field or Struct
-
--   **Revert Logic:** If you add a new field, the entire file may change due to automated code generation. **What to do:**
-    
-    -   Identify the new field or struct you have added.
-        
-    -   Copy this new addition.
-        
-    -   Revert the rest of the file to its original state.
-        
-    -   Re-insert the new field or struct into its appropriate location.
-
->**Note:** We are working on streamlining this process, any contributions to improve automation are welcome! 🚀
-
-#### 2. Preserving Field Order with `x-order` Tag
-
--   **x-order Tag Usage:** If you only add an `x-order` tag, it ensures fields remain in a specific order. **Steps:**
-    
-    -   Run the usual commands to resolve references and generate the code.
-        
-    -   If the field order changes unexpectedly, manually rearrange them.
-        
-    -   Commit the changes, ensuring the `x-order` tag is included to maintain order in future generations.
-
-### Example
-
-Let's walk through a practical example, you made some changes in the **component.json**
-1. First, ensure your schema references are resolved:
-
-```yml
-make resolve-ref path="./schemas/constructs/v1beta1"
+### **Example Output**
+```bash
+./generate-golang.sh
+🔹 Processing: capability (v1alpha1)...
+✅ Generated: models/v1alpha1/capability/capability.go
+🔹 Processing: category (v1beta1)...
+✅ Generated: models/v1beta1/category/category.go
+🔹 Processing: pattern (v1beta1)...
+✅ Generated: models/v1beta1/pattern/pattern.go
+🔹 Processing: core (v1alpha1)...
+✅ Generated: models/v1alpha1/core/core.go
+🔹 Processing: catalog (v1alpha2)...
+✅ Generated: models/v1alpha2/catalog/catalog.go
 ```
 
-2. Update `schemas/constructs/openapi/models.yml` to reference component.json:
+This ensures that schemas remain the **single source of truth**, making development **efficient, consistent, and scalable**.
 
-```yml
-openapi: 3.0.0
-components:
-  schemas:
-    component_definition:
-      $ref: ../v1beta1/component.json
-```
 
-3. Configure **config.yml**:
 
-<code>
-package: component
-
-generate:
-  models: true
-
-import-mapping:
-  "../v1beta1/model.json": "github.com/meshery/schemas/models/v1beta1/model"
-  "../v1alpha1/capability.json": "github.com/meshery/schemas/models/v1alpha1/capability"
-
-output: models/v1beta1/component/component.go
-output-options:
-  skip-prune: true
-  include-tags:
-  - components
-</code>
-
-4. Generate code
-
-```yml
-oapi-codegen -config scripts/config.yml schemas/constructs/openapi/models.yml
-```
-
-### Contributing to Documentation
-
-1. **Schema Documentation**
--   Add detailed descriptions in schema fields
--   Include example values where helpful
--   Document validation rules and constraints
-
-```json
-{
-  "displayName": {
-    "type": "string",
-    "description": "Human-readable name for the component.", // <-- description here
-    "minLength": 1,
-    "maxLength": 100,
-    "examples": ["nginx-deployment"] // <-- examples
-  }
-}
-```
 
 ### Getting Help
 
