@@ -118,8 +118,9 @@ mesheryctl design apply [design-name]
 			if !validURL {
 				content, err := os.ReadFile(file)
 				if err != nil {
-					utils.Log.Error(utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path ", file)))
-					return nil
+					wrappedErr := utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path", file))
+					utils.Log.Error(wrappedErr)
+					return wrappedErr
 				}
 
 				// if --skip-save is not passed we save the pattern first
