@@ -10,6 +10,8 @@ const (
 	ErrExportModelCode                  = "mesheryctl-1127"
 	ErrTemplateFileNotPresentCode       = "mesheryctl-1131"
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
+	ErrModelInitCode                    = "mesheryctl-1148"
+	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
 )
 
 func ErrExportModel(err error, name string) error {
@@ -22,4 +24,16 @@ func ErrTemplateFileNotPresent() error {
 
 func ErrModelUnsupportedOutputFormat(message string) error {
 	return errors.New(ErrModelUnsupportedOutputFormatCode, errors.Fatal, []string{"Error viewing model"}, []string{message}, []string{"Output format not supported"}, []string{"Ensure giving a valid format"})
+}
+
+func ErrModelUnsupportedVersion(message string) error {
+	return errors.New(ErrModelUnsupportedVersionCode, errors.Fatal, []string{"Error in model version format"}, []string{message}, []string{"Version format not supported"}, []string{"Ensure giving a semver version format"})
+}
+
+func ErrModelInitFromString(message string) error {
+	return errors.New(ErrModelInitCode, errors.Fatal, []string{"Error model init"}, []string{message}, []string{"Error during run of model init command"}, []string{"Ensure passing all params according to the command description"})
+}
+
+func ErrModelInit(err error) error {
+	return ErrModelInitFromString(err.Error())
 }
