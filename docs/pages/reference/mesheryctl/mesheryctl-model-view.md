@@ -17,6 +17,7 @@ View model
 ## Synopsis
 
 View a model queried by its name
+Documentation for models view can be found at https://docs.meshery.io/reference/mesheryctl/model/view
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [flags]

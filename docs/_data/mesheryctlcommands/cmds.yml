@@ -1122,17 +1122,30 @@ exp:
           org:
             name: -o, -orgId
             description: organization id 
-  org:
-    name: org
-    description: show existing organizations with their name,id, date of creation
-    usage: mesheryctl exp org 
+  organization:
+    name: organization
+    description: Interact with existing organizations
+    usage: mesheryctl exp organization
     flags:
-      description: 
-        pageNo:
-          name: -p --pagenumber
-          description: page number to fetch
-        pagesize:
-          name: -s --size
-          description: page size
+      count:
+        name: --count
+        description: (optional) Get the total of registrered organizations
+      help:
+        name: --help, -h
+        description: help for organization command
+        usage: mesheryctl exp organization --help
+        example: mesheryctl exp organization --help
+    subcommands:
+      list:
+        name: list
+        description: List all organizations registered in Meshery Server
+        usage: mesheryctl exp organization list [flags]
+        flags:
+          page:
+            name: --page, -p
+            description: list organizations by specific page number (25 models per page)  
+          count:
+            name: --count
+            description: (optional) Get the total of registrered organizations
       
 

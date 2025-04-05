@@ -528,7 +528,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           return (
             <>
               <TooltipWrappedConnectionChip
-                tooltip={'Server: ' + server}
+                tooltip={server && 'Server: ' + server}
                 title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
                 status={getColumnValue(tableMeta.rowData, 'status', columns)}
                 onDelete={() =>

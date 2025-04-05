@@ -39,51 +39,83 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
 	return nil
 }
 
-func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition) (st map[string]interface{}, success bool, err error) {
+func DryRunHelper(client *meshkube.Client, comp component.ComponentDefinition, isDelete bool) (st map[string]interface{}, success bool, err error) {
 	resource := converter.CreateK8sResourceStructure(&comp)
 	// Define a function to extract namesapce, labels and annotations in the componetn definiotn
 	namespace := getNamespaceForComponent(&comp)
-	return dryRun(client.KubeClient.RESTClient(), resource, namespace)
+	return dryRun(client.KubeClient.RESTClient(), resource, namespace, isDelete)
 }
 
-// does dry-run on the kubernetes server for the given k8s resource and returns the Status object returned by the k8s server
+// dryRun performs a dry-run operation on the given Kubernetes resource using the provided REST client.
+// It constructs the appropriate API request based on the resource type and operation (create/update or delete).
+// Returns the status response from the Kubernetes server, a success flag, and any encountered error.
 // TODO: add more tests for this function
-func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string) (st map[string]interface{}, success bool, err error) {
+func dryRun(rClient rest.Interface, k8sResource map[string]interface{}, namespace string, isDelete bool) (st map[string]interface{}, success bool, err error) {
+	// Validate resource has required fields
 	if k8sResource["kind"] == "" || k8sResource["apiVersion"] == "" {
 		err = ErrDryRun(fmt.Errorf("invalid resource or namespace not provided"), "\"kind\" and \"apiVersion\" cannot be empty")
 		return
 	}
 
+	// Determine API path prefix (api vs apis)
 	aV := k8sResource["apiVersion"].(string)
-	// for non-core resources, the endpoint should use 'apis' instead of 'api'
 	apiString := "api"
 	if len(strings.Split(aV, "/")) > 1 {
-		apiString = apiString + "s"
+		// for non-core resources, the endpoint should use 'apis' instead of 'api'
+		apiString += "s"
 	}
 
-	var path string
+	// Build the base resource path
+	resourcePath := kindToResource(k8sResource["kind"].(string))
+	basePath := fmt.Sprintf("/%s/%s", apiString, aV)
 
+	// Add namespace to path if provided
 	if namespace != "" {
-		path = fmt.Sprintf("/%s/%s/namespaces/%s/%s", apiString, aV, namespace, kindToResource(k8sResource["kind"].(string)))
+		basePath = fmt.Sprintf("%s/namespaces/%s", basePath, namespace)
+	}
+
+	var req *rest.Request
+
+	if isDelete {
+		// For delete operations, we need the resource name
+		metadata, ok := k8sResource["metadata"].(map[string]interface{})
+		if !ok {
+			err = ErrDryRun(fmt.Errorf("metadata not found"), "metadata is required for delete operations")
+			return
+		}
+
+		name, ok := metadata["name"].(string)
+		if !ok || name == "" {
+			err = ErrDryRun(fmt.Errorf("resource name not found"), "resource name is required for delete operations")
+			return
+		}
+
+		// Complete path with resource name for DELETE
+		path := fmt.Sprintf("%s/%s/%s", basePath, resourcePath, name)
+		req = rClient.Delete().AbsPath(path).SetHeader("Accept", "application/json").Param("dryRun", "All")
 	} else {
-		path = fmt.Sprintf("/%s/%s/%s", apiString, aV, kindToResource(k8sResource["kind"].(string)))
+		// For create/update operations
+		path := fmt.Sprintf("%s/%s", basePath, resourcePath)
+
+		data, err := json.Marshal(k8sResource)
+		if err != nil {
+			return nil, false, models.ErrMarshal(err, "k8s resource")
+		}
+
+		req = rClient.Post().
+			AbsPath(path).
+			Body(data).
+			SetHeader("Content-Type", "application/json").
+			SetHeader("Accept", "application/json").
+			Param("dryRun", "All").
+			Param("fieldValidation", "Strict").
+			Param("fieldManager", "meshery")
 	}
 
-	data, err := json.Marshal(k8sResource)
-	if err != nil {
-		err = models.ErrMarshal(err, "k8s resource")
-		return
-	}
-
-	req := rClient.Post().AbsPath(path).Body(data).SetHeader("Content-Type", "application/json").SetHeader("Accept", "application/json").Param("dryRun", "All").Param("fieldValidation", "Strict").Param("fieldManager", "meshery")
+	// Execute the request and process response
 	res := req.Do(context.Background())
-
-	// ignoring the error since this client-go treats failure of dryRun as an error
 	resp, err := res.Raw()
-
-	st, success, err = formatDryRunResponse(resp, err)
-
-	return
+	return formatDryRunResponse(resp, err)
 }
 
 func kindToResource(kind string) string {

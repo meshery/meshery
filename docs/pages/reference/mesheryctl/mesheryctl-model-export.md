@@ -17,6 +17,7 @@ Export registered models
 ## Synopsis
 
 Export the registered model to the specified output type
+Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [flags]

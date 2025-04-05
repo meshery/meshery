@@ -18,7 +18,11 @@ components:
   colorIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
   whiteIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
   description: 
-components-count: 2
+- name: node-slice-pool
+  colorIcon: assets/img/integrations/whereabouts/components/node-slice-pool/icons/color/node-slice-pool-color.svg
+  whiteIcon: assets/img/integrations/whereabouts/components/node-slice-pool/icons/white/node-slice-pool-white.svg
+  description: 
+components-count: 3
 relationships: 
 relationship-count: 0
 featureList: [

@@ -54,7 +54,27 @@ components:
   colorIcon: assets/img/integrations/cilium/components/cilium-node/icons/color/cilium-node-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-node/icons/white/cilium-node-white.svg
   description: 
-components-count: 11
+- name: cilium-bgp-advertisement
+  colorIcon: assets/img/integrations/cilium/components/cilium-bgp-advertisement/icons/color/cilium-bgp-advertisement-color.svg
+  whiteIcon: assets/img/integrations/cilium/components/cilium-bgp-advertisement/icons/white/cilium-bgp-advertisement-white.svg
+  description: 
+- name: cilium-bgp-cluster-config
+  colorIcon: assets/img/integrations/cilium/components/cilium-bgp-cluster-config/icons/color/cilium-bgp-cluster-config-color.svg
+  whiteIcon: assets/img/integrations/cilium/components/cilium-bgp-cluster-config/icons/white/cilium-bgp-cluster-config-white.svg
+  description: 
+- name: cilium-bgp-node-config-override
+  colorIcon: assets/img/integrations/cilium/components/cilium-bgp-node-config-override/icons/color/cilium-bgp-node-config-override-color.svg
+  whiteIcon: assets/img/integrations/cilium/components/cilium-bgp-node-config-override/icons/white/cilium-bgp-node-config-override-white.svg
+  description: 
+- name: cilium-bgp-node-config
+  colorIcon: assets/img/integrations/cilium/components/cilium-bgp-node-config/icons/color/cilium-bgp-node-config-color.svg
+  whiteIcon: assets/img/integrations/cilium/components/cilium-bgp-node-config/icons/white/cilium-bgp-node-config-white.svg
+  description: 
+- name: cilium-bgp-peer-config
+  colorIcon: assets/img/integrations/cilium/components/cilium-bgp-peer-config/icons/color/cilium-bgp-peer-config-color.svg
+  whiteIcon: assets/img/integrations/cilium/components/cilium-bgp-peer-config/icons/white/cilium-bgp-peer-config-white.svg
+  description: 
+components-count: 16
 relationships: 
 relationship-count: 0
 featureList: [

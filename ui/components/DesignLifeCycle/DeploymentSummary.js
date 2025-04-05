@@ -53,6 +53,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
+  const errorAction = event?.action;
   const router = useRouter();
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
@@ -84,7 +85,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             fontWeight: 'bold',
           }}
         />
-        {is_operator_enabled && (
+        {is_operator_enabled && errorAction != 'register' && (
           <Button
             variant="contained"
             color="primary"

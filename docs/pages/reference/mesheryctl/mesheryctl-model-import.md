@@ -16,7 +16,8 @@ Import models
 
 ## Synopsis
 
-Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.
+Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
+Documentation for models import can be found at https://docs.meshery.io/reference/mesheryctl/model/import
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model import [flags]

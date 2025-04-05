@@ -23,7 +23,8 @@ import {
   RegisteredChip,
   ConnectionStyledMenuItem,
 } from './styles';
-import { iconMedium } from 'css/icons.styles';
+import { iconMedium, iconSmall } from 'css/icons.styles';
+import ConnectionIcon from '@/assets/icons/Connection';
 
 export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
@@ -47,12 +48,12 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
             }
           >
             <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
-              <img style={iconMedium} src="/static/img/kubernetes.svg" />
+              <ConnectionIcon {...iconSmall} />
             </Avatar>
           </BadgeAvatars>
         ) : (
           <Avatar src={iconSrc} sx={iconMedium}>
-            <img style={iconMedium} src="/static/img/kubernetes.svg" alt="kubernetes-icon" />
+            <ConnectionIcon {...iconSmall} />
           </Avatar>
         )
       }

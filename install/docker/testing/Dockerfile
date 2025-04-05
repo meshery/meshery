@@ -49,7 +49,7 @@ COPY --from=ui-provider-deps /app/node_modules ./node_modules
 ENV NEXT_TELEMETRY_DISABLED=1
 
 COPY provider-ui .
-RUN npm run build && npm run export
+RUN npm run build
 
 # This image will be reuse for wrk2, seed content and the last built
 FROM alpine:3.15.3 AS base-alpine

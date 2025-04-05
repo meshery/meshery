@@ -129,7 +129,7 @@ Guides to using, operating, and troubleshooting Meshery's various features and c
       <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Configuration Management</a>
+          <a href="{{ site.baseurl }}/guides/configuration-management" class="text-black">Configuration Management</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -148,7 +148,7 @@ Guides to using, operating, and troubleshooting Meshery's various features and c
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Troubleshooting</a>
+          <a href="{{ site.baseurl }}/guides/troubleshooting" class="text-black">Troubleshooting</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -167,7 +167,7 @@ Guides to using, operating, and troubleshooting Meshery's various features and c
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">🧑‍🔬 Tutorials</a>
+          <a href="{{ site.baseurl }}/guides//tutorials" class="text-black">🧑‍🔬 Tutorials</a>
         </p>
       </summary>
       <ul class="section-title">
