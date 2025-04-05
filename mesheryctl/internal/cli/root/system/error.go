@@ -53,6 +53,14 @@ const (
 	ErrValidProviderCode                 = "mesheryctl-1087"
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
+	ErrProcessingLoginConfigCode         = "mesheryctl-1090"
+	ErrMesheryServerNotRunningCode       = "mesheryctl-1091"
+	ErrAuthenticationFailedCode          = "mesheryctl-1092"
+	ErrWriteTokenToFileCode              = "mesheryctl-1093"
+	ErrGetTokenForContextCode            = "mesheryctl-1094"
+	ErrAddTokenToConfigCode              = "mesheryctl-1095"
+	ErrCheckServerStatusCode             = "mesheryctl-1096"
+	ErrInvalidFlagCode                   = "mesheryctl-1097"
 )
 
 var (
@@ -103,7 +111,7 @@ func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode,
 		errors.Alert,
 		[]string{"Health checks failed"},
-		[]string{"Failed to initialize healthchecker" + err.Error()},
+		[]string{fmt.Sprintf("Failed to initialize healthchecker: %s", err.Error())},
 		[]string{"Health checks execution failed in starting Meshery server"},
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
@@ -119,7 +127,7 @@ func ErrResetMeshconfig(err error) error {
 		[]string{"Error resetting meshconfig to default settings"},
 		[]string{err.Error()},
 		[]string{"Meshery server config file is not reset to default settings"},
-		[]string{"Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`" + FormatErrorReference()})
+		[]string{fmt.Sprintf("Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`. %s", FormatErrorReference())})
 }
 
 func ErrApplyManifest(err error, deleteStatus, updateStatus bool) error {
@@ -264,7 +272,8 @@ func ErrGetCurrentContext(err error) error {
 		[]string{"Unable to get current-context"},
 		[]string{err.Error()},
 		[]string{"Invalid context name provided"},
-		[]string{"Ensure a valid context name is provided. " + contextdocs + "Also " + contextDir})
+		[]string{fmt.Sprintf("Ensure a valid context name is provided. %s Also %s", contextdocs, contextDir)},
+	)
 }
 
 func ErrSetCurrentContext(err error) error {
@@ -274,7 +283,8 @@ func ErrSetCurrentContext(err error) error {
 		[]string{"Unable to set current-context"},
 		[]string{err.Error()},
 		[]string{"Invalid context name provided"},
-		[]string{"Ensure a valid context name is provided. " + contextdocs + "Also " + contextDir})
+		[]string{fmt.Sprintf("Ensure a valid context name is provided. %s Also %s", contextdocs, contextDir)},
+	)
 }
 
 func ErrTokenContext(err error) error {
@@ -284,7 +294,8 @@ func ErrTokenContext(err error) error {
 		[]string{"Unable to get token"},
 		[]string{err.Error()},
 		[]string{"No token found for the Current context"},
-		[]string{"Ensure your Meshconfig file has valid token provided." + FormatErrorReference()})
+		[]string{fmt.Sprintf("Ensure your Meshconfig file has a valid token provided. %s", FormatErrorReference())},
+	)
 }
 
 func ErrProviderInfo(err error) error {
@@ -292,9 +303,10 @@ func ErrProviderInfo(err error) error {
 		ErrProviderInfoCode,
 		errors.Fatal,
 		[]string{"Unable to verify provider"},
-		[]string{err.Error()},
-		[]string{"Unable to verify provider  as Meshery server was unreachable"},
-		[]string{"Start Meshery to verify provider. Run `mesheryctl system provider set [provider] --force` to force set the provider" + FormatErrorReference()})
+		[]string{fmt.Sprintf("Error: %s", err.Error())},
+		[]string{"Unable to verify provider as Meshery server was unreachable"},
+		[]string{fmt.Sprintf("Start Meshery to verify provider. Run `mesheryctl system provider set [provider] --force` to force set the provider. %s", FormatErrorReference())},
+	)
 }
 
 func ErrValidProvider() error {
@@ -304,7 +316,8 @@ func ErrValidProvider() error {
 		[]string{"Invalid provider"},
 		[]string{"Unable to validate provider"},
 		[]string{"A wrong provider was specified"},
-		[]string{"Specify a valid provider" + FormatErrorReference()})
+		[]string{fmt.Sprintf("Specify a valid provider. %s", FormatErrorReference())},
+	)
 }
 
 func ErrUnmarshallConfig(err error) error {
@@ -312,9 +325,9 @@ func ErrUnmarshallConfig(err error) error {
 		ErrUnmarshallConfigCode,
 		errors.Fatal,
 		[]string{"Invalid config"},
-		[]string{err.Error()},
+		[]string{fmt.Sprintf("Error: %s", err.Error())},
 		[]string{"Unable to decode Meshconfig."},
-		[]string{"Ensure you have the right configuration set in your Meshconfig file." + FormatErrorReference()})
+		[]string{fmt.Sprintf("Ensure you have the right configuration set in your Meshconfig file. %s", FormatErrorReference())})
 }
 
 func ErrUploadFileParams(err error) error {
@@ -322,8 +335,91 @@ func ErrUploadFileParams(err error) error {
 		ErrUploadFileParamsCode,
 		errors.Fatal,
 		[]string{"Unable to upload"},
-		[]string{err.Error()},
+		[]string{fmt.Sprintf("Error: %s", err.Error())},
 		[]string{"Unable to upload parameters from config file with provided context"},
-		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
+		[]string{fmt.Sprintf("Ensure you have a strong network connection and the right configuration set in your Meshconfig file. %s", FormatErrorReference())})
 
+}
+
+func ErrProcessingLoginConfig(err error) error {
+	return errors.New(
+		ErrProcessingLoginConfigCode,
+		errors.Fatal,
+		[]string{"Error processing configuration for login"},
+		[]string{fmt.Sprintf("Failed to process Meshery configuration: %s", err.Error())},
+		[]string{"Configuration file might be corrupted or invalid"},
+		[]string{"Verify your configuration at ~/.meshery/config.yaml or run `mesheryctl system config` to reset it"})
+}
+
+func ErrMesheryServerNotRunning() error {
+	return errors.New(
+		ErrMesheryServerNotRunningCode,
+		errors.Alert,
+		[]string{"Meshery Server is not running"},
+		[]string{"Cannot authenticate when Meshery Server is not running"},
+		[]string{"Meshery Server is not currently active on your system"},
+		[]string{"Run \"mesheryctl system start\" to start Meshery Server before attempting to login"})
+}
+
+func ErrAuthenticationFailed(url string) error {
+	return errors.New(
+		ErrAuthenticationFailedCode,
+		errors.Alert,
+		[]string{"Authentication failed with Meshery provider"},
+		[]string{fmt.Sprintf("Failed to authenticate with Meshery server at %s. Could not establish a valid session.", url)},
+		[]string{"Meshery Server might be experiencing issues", "Network connectivity problems", "Invalid credentials or token"},
+		[]string{"Verify your provider settings",
+			"Check that the server is properly configured",
+			"Try logging in again with a different provider using the -p flag"})
+}
+
+func ErrWriteTokenToFile(err error) error {
+	return errors.New(
+		ErrWriteTokenToFileCode,
+		errors.Alert,
+		[]string{"Failed to write authentication token"},
+		[]string{fmt.Sprintf("Failed to write  the token to the filesystem: %s", err.Error())},
+		[]string{"Insufficient permissions or disk space issues"},
+		[]string{"Ensure you have write permissions to the Meshery configuration directory"})
+}
+
+func ErrGetTokenForContext(err error, contextName string) error {
+	return errors.New(
+		ErrGetTokenForContextCode,
+		errors.Alert,
+		[]string{"Failed to retrieve token for context"},
+		[]string{fmt.Sprintf("Failed to retrieve token for context %s: %s", contextName, err.Error())},
+		[]string{"Token might not be configured for this context"},
+		[]string{"Log in again or check your Meshery configuration"})
+}
+
+func ErrAddTokenToConfig(err error) error {
+	return errors.New(
+		ErrAddTokenToConfigCode,
+		errors.Fatal,
+		[]string{"Failed to add token to configuration"},
+		[]string{fmt.Sprintf("Failed to find token path for the current context: %s", err.Error())},
+		[]string{"Configuration file may be inaccessible or corrupted"},
+		[]string{"Check permissions on your Meshery configuration directory"})
+}
+
+func ErrCheckServerStatus(err error) error {
+	return errors.New(
+		ErrCheckServerStatusCode,
+		errors.Alert,
+		[]string{"Failed to check Meshery Server status"},
+		[]string{fmt.Sprintf("Error occurred while checking Meshery Server status: %s", err.Error())},
+		[]string{"Network connectivity issues", "Docker or Kubernetes service not running"},
+		[]string{"Ensure your environment is properly configured",
+			"Run `mesheryctl system check` to verify system prerequisites"})
+}
+
+func ErrInvalidFlag(err error) error {
+	return errors.New(
+		ErrInvalidFlagCode,
+		errors.Alert,
+		[]string{"Invalid command flag"},
+		[]string{fmt.Sprintf("Error parsing command flags: %s", err.Error())},
+		[]string{"Incorrect flag format or unsupported flag provided"},
+		[]string{"Check the command reference for supported flags and proper usage"})
 }
