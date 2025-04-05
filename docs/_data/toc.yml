@@ -120,7 +120,7 @@
           grandchildren:
             - title: Registering a Connection
               url: guides/infrastructure-management/registering-a-connection
-    - title: Configuring Management ↆ
+    - title: Configuration Management ↆ
       url: guides/configuration-management
       children:
         - title: Overview
