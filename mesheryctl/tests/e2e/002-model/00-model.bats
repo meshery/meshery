@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-@test "mesheryctl model --count is succeeded and return total numbers of models" {
+@test "mesheryctl model --count return total numbers of models" {
   run $MESHERYCTL_BIN model --count
   [ "$status" -eq 0 ]
 
