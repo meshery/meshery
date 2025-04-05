@@ -314,6 +314,10 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 	}
 
 	if outputFormat == "yaml" {
+		// TODO
+		// this does not prevent the order of the fields
+		// making fields to be ordered in alphabetical order;
+		// need to generate yaml from schema instead
 		yamlContent, err := yaml.JSONToYAML(content)
 		if err != nil {
 			return nil, utils.ErrJSONToYAML(err)
