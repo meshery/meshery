@@ -136,7 +136,10 @@ func TestModelInit(t *testing.T) {
 			Name: "model init fail if model/version folder esists",
 			Args: []string{"init", "test-case-aws-ec2-controller", "--path", ".", "--version", "v1.0.0"},
 			SetupHook: func() {
-				os.MkdirAll("./test-case-aws-ec2-controller/v1.0.0", initModelDirPerm)
+				err := os.MkdirAll("./test-case-aws-ec2-controller/v1.0.0", initModelDirPerm)
+				if err != nil {
+					t.Fatal("error in SetupHook when creating folder", err)
+				}
 			},
 			ExpectError:        true,
 			ExpectedResponse:   "model.init.folder-exists.output.golden",
