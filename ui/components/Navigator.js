@@ -4,12 +4,10 @@ import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HelpIcon from '@mui/icons-material/Help';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
-import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
 import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
@@ -21,12 +19,6 @@ import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import {
-  faAngleLeft,
-  faCaretDown,
-  faExternalLinkAlt,
-  faDigitalTachograph,
-} from '@fortawesome/free-solid-svg-icons';
 import {
   updatepagetitle,
   updatebetabadge,
@@ -45,6 +37,10 @@ import {
   Box,
   NoSsr,
   Zoom,
+  LeftArrowIcon,
+  ExternalLinkIcon as IconExternalLink,
+  TachographDigitalIcon,
+  useTheme,
 } from '@layer5/sistent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
@@ -54,7 +50,6 @@ import {
   CONFIGURATION,
   DASHBOARD,
   CATALOG,
-  FILTER,
   LIFECYCLE,
   SERVICE_MESH,
   PERFORMANCE,
@@ -69,8 +64,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import {
-  ChevronIcon,
-  ExpandMoreIcon,
   HideScrollbar,
   LinkContainer,
   ListIconSide,
@@ -95,6 +88,7 @@ import {
   ChevronButtonWrapper,
   FixedSidebarFooter,
   SidebarDrawer,
+  ExpandMore,
 } from './General/style';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
@@ -103,7 +97,10 @@ import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
 
-const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRegistryObj) => [
+const getNavigatorComponents = (
+  /** @type {CapabilitiesRegistry} */ capabilityRegistryObj,
+  theme,
+) => [
   {
     id: DASHBOARD,
     icon: <DashboardIcon style={drawerIconsStyle} />,
@@ -203,19 +200,19 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
           subject: keys.VIEW_CATALOG.subject,
         },
       },
-      {
-        id: FILTER,
-        icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
-        href: '/configuration/filters',
-        title: 'Filters',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
-        link: true,
-        isBeta: true,
-        permission: {
-          action: keys.VIEW_FILTERS.action,
-          subject: keys.VIEW_FILTERS.subject,
-        },
-      },
+      // {
+      //   id: FILTER,
+      //   icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
+      //   href: '/configuration/filters',
+      //   title: 'Filters',
+      //   show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
+      //   link: true,
+      //   isBeta: true,
+      //   permission: {
+      //     action: keys.VIEW_FILTERS.action,
+      //     subject: keys.VIEW_FILTERS.subject,
+      //   },
+      // },
       {
         id: DESIGN,
         icon: <PatternIcon style={{ ...drawerIconsStyle }} />,
@@ -243,9 +240,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     children: [
       {
         id: PROFILES,
-        icon: (
-          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24, color: 'white' }} />
-        ),
+        icon: <TachographDigitalIcon fill={theme.palette.icon.default} />,
         href: '/performance/profiles',
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
@@ -274,45 +269,6 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
   },
 ];
 
-const ExternalLinkIcon = (
-  <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
-);
-
-const externlinks = [
-  {
-    id: 'doc',
-    href: 'https://docs.meshery.io',
-    title: 'Documentation',
-    icon: <DocumentIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
-  },
-  {
-    id: 'community',
-    href: 'https://slack.meshery.io',
-    title: 'Community',
-    icon: (
-      <SlackIcon
-        style={{ ...drawerIconsStyle, height: '1.5rem', width: '1.5rem', marginTop: '' }}
-      />
-    ),
-    external_icon: ExternalLinkIcon,
-  },
-  {
-    id: 'forum',
-    href: 'https://meshery.io/community#community-forums',
-    title: 'Discussion Forum',
-    icon: <ChatIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
-  },
-  {
-    id: 'issues',
-    href: 'https://github.com/meshery/meshery/issues/new/choose',
-    title: 'Issues',
-    icon: <GithubIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
-  },
-];
-
 const NavigatorWrapper = (props) => {
   const isMobile = useMediaQuery('(max-width:599px)');
 
@@ -327,6 +283,8 @@ const NavigatorWrapper = (props) => {
 
 const Navigator_ = (props) => {
   const { meshAdapters: initialMeshAdapters } = props;
+
+  const theme = useTheme();
 
   const [state, setState] = useState({
     path: '',
@@ -388,6 +346,49 @@ const Navigator_ = (props) => {
     updateState({ path });
   }, [props.meshAdapters, props.meshAdaptersts, window.location.pathname]);
 
+  const ExternalLinkIcon = (
+    <IconExternalLink
+      {...externalLinkIconStyle}
+      transform="shrink-7"
+      fill={theme.palette.icon.default}
+    />
+  );
+
+  const externlinks = [
+    {
+      id: 'doc',
+      href: 'https://docs.meshery.io',
+      title: 'Documentation',
+      icon: <DocumentIcon style={drawerIconsStyle} />,
+      external_icon: ExternalLinkIcon,
+    },
+    {
+      id: 'community',
+      href: 'https://slack.meshery.io',
+      title: 'Community',
+      icon: (
+        <SlackIcon
+          style={{ ...drawerIconsStyle, height: '1.5rem', width: '1.5rem', marginTop: '' }}
+        />
+      ),
+      external_icon: ExternalLinkIcon,
+    },
+    {
+      id: 'forum',
+      href: 'https://meshery.io/community#community-forums',
+      title: 'Discussion Forum',
+      icon: <ChatIcon style={drawerIconsStyle} />,
+      external_icon: ExternalLinkIcon,
+    },
+    {
+      id: 'issues',
+      href: 'https://github.com/meshery/meshery/issues/new/choose',
+      title: 'Issues',
+      icon: <GithubIcon style={drawerIconsStyle} />,
+      external_icon: ExternalLinkIcon,
+    },
+  ];
+
   const fetchCapabilities = async () => {
     const { data: result, isSuccess, isError, error } = await getProviderCapabilities();
 
@@ -424,7 +425,7 @@ const Navigator_ = (props) => {
   };
 
   const createNavigatorComponents = (capabilityRegistryObj) => {
-    return getNavigatorComponents(capabilityRegistryObj);
+    return getNavigatorComponents(capabilityRegistryObj, theme);
   };
 
   const handleTitleClick = () => {
@@ -821,6 +822,9 @@ const Navigator_ = (props) => {
   };
 
   const linkContent = (iconc, titlec, hrefc, linkc, drawerCollapsed) => {
+    const updatedIcon = React.cloneElement(iconc, {
+      fill: state.path === hrefc ? theme.palette.icon.brand : theme.palette.common.white,
+    });
     let linkContent = (
       <>
         <LinkContainer>
@@ -831,7 +835,7 @@ const Navigator_ = (props) => {
             disableHoverListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
           >
-            <MainListIcon>{iconc}</MainListIcon>
+            <MainListIcon>{updatedIcon}</MainListIcon>
           </CustomTooltip>
           <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
         </LinkContainer>
@@ -947,11 +951,11 @@ const Navigator_ = (props) => {
                       <SideBarText drawerCollapsed={props.isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </Link>
-                  <ExpandMoreIcon
-                    icon={faCaretDown}
+                  <ExpandMore
                     onClick={() => toggleItemCollapse(childId)}
-                    isCollapsed={state.openItems.includes(childId)} // Pass collapsed state
-                    isDrawerCollapsed={props.isDrawerCollapsed} // Pass drawer state
+                    isCollapsed={state.openItems.includes(childId)}
+                    isDrawerCollapsed={props.isDrawerCollapsed}
+                    theme={theme}
                     hasChildren={!!children}
                   />
                 </SideBarListItem>
@@ -1086,20 +1090,17 @@ const Navigator_ = (props) => {
         }
         onClick={toggleMiniDrawer}
       >
-        <>
-          <ChevronIcon
-            icon={faAngleLeft}
-            fixedWidth
-            size="2x"
-            style={{
-              margin: '0.75rem 0.2rem ',
-              width: '0.8rem',
-              verticalAlign: 'middle',
-              color: props.isDrawerCollapsed ? '#fff' : 'inherit',
-            }}
-            alt="Sidebar collapse toggle icon"
-          />
-        </>
+        <LeftArrowIcon
+          alt="Sidebar collapse toggle"
+          style={{
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          fill={theme.palette.icon.default}
+          stroke={theme.palette.icon.default}
+          width="1.2rem"
+          height="2.8rem"
+        />
       </div>
     </ChevronButtonWrapper>
   );

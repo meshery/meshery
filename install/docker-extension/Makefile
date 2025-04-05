@@ -60,4 +60,4 @@ link:
 reset:
 	docker extension dev reset meshery/docker-extension-meshery:${GIT_STRIPPED_VERSION}
 
-.PHONY: prepare-buildx push-extension extension ui
+.PHONY: prepare-buildx push-extension extension ui bin

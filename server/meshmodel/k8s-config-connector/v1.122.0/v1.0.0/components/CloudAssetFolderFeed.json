@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.122.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cg transform=\"translate(2.000000, 4.000000)\" fill=\"#4285F4\"\u003e\n            \u003cpolygon id=\"Fill-1\" points=\"12.114144 0 11.139744 0.9744 18.228504 8.04552 12.114144 14.15988 6.000624 8.04552 8.920464 5.124 7.955304 4.15968 4.069464 8.04552 12.114144 16.09104 20.160504 8.04552\"\u003e\u003c/polygon\u003e\n            \u003cpolygon id=\"Fill-2\" points=\"10.122672 9.813216 8.355312 8.045856 10.122672 6.277656 11.890032 8.045856\"\u003e\u003c/polygon\u003e\n            \u003cpolygon id=\"Fill-3\" points=\"8.045352 0 -0.000168 8.04552 8.045352 16.09104 9.008832 15.12672 1.930992 8.04552 8.045352 1.93116 14.158872 8.04552 11.239032 10.9662 12.205032 11.9322 16.090872 8.04552\"\u003e\u003c/polygon\u003e\n        \u003c/g\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M14.1143 4L13.1399 4.9744L20.2286 12.0455L14.1143 18.1599L8.00074 12.0455L10.9206 9.124L9.95542 8.15968L6.06958 12.0455L14.1143 20.091L22.1606 12.0455L14.1143 4Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.1226 13.8129L10.3552 12.0455L12.1226 10.2773L13.8899 12.0455L12.1226 13.8129Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M10.0455 4L2 12.0455L10.0455 20.091L11.009 19.1267L3.93116 12.0455L10.0455 5.93116L16.159 12.0455L13.2392 14.9662L14.2052 15.9322L18.091 12.0455L10.0455 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "cloudasset.cnrm.cloud.google.com/v1alpha1",
     "kind": "CloudAssetFolderFeed",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"assetNames\": {\n     \"description\": \"A list of the full names of the assets to receive updates. You must specify either or both of\\nassetNames and assetTypes. Only asset updates matching specified assetNames and assetTypes are\\nexported to the feed. For example: //compute.googleapis.com/projects/my_project_123/zones/zone1/instances/instance1.\\nSee https://cloud.google.com/apis/design/resourceNames#fullResourceName for more info.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"assetTypes\": {\n     \"description\": \"A list of types of the assets to receive updates. You must specify either or both of assetNames\\nand assetTypes. Only asset updates matching specified assetNames and assetTypes are exported to\\nthe feed. For example: \\\"compute.googleapis.com/Disk\\\"\\nSee https://cloud.google.com/asset-inventory/docs/supported-asset-types for a list of all\\nsupported asset types.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"billingProject\": {\n     \"description\": \"Immutable. The project whose identity will be used when sending messages to the\\ndestination pubsub topic. It also specifies the project for API\\nenablement check, quota, and billing.\",\n     \"type\": \"string\"\n    },\n    \"condition\": {\n     \"description\": \"A condition which determines whether an asset update should be published. If specified, an asset\\nwill be returned only when the expression evaluates to true. When set, expression field\\nmust be a valid CEL expression on a TemporalAsset with name temporal_asset. Example: a Feed with\\nexpression \\\"temporal_asset.deleted == true\\\" will only publish Asset deletions. Other fields of\\ncondition are optional.\",\n     \"properties\": {\n      \"description\": {\n       \"description\": \"Description of the expression. This is a longer text which describes the expression,\\ne.g. when hovered over it in a UI.\",\n       \"type\": \"string\"\n      },\n      \"expression\": {\n       \"description\": \"Textual representation of an expression in Common Expression Language syntax.\",\n       \"type\": \"string\"\n      },\n      \"location\": {\n       \"description\": \"String indicating the location of the expression for error reporting, e.g. a file\\nname and a position in the file.\",\n       \"type\": \"string\"\n      },\n      \"title\": {\n       \"description\": \"Title for the expression, i.e. a short string describing its purpose.\\nThis can be used e.g. in UIs which allow to enter the expression.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"expression\"\n     ],\n     \"type\": \"object\"\n    },\n    \"contentType\": {\n     \"description\": \"Asset content type. If not specified, no content but the asset name and type will be returned. Possible values: [\\\"CONTENT_TYPE_UNSPECIFIED\\\", \\\"RESOURCE\\\", \\\"IAM_POLICY\\\", \\\"ORG_POLICY\\\", \\\"OS_INVENTORY\\\", \\\"ACCESS_POLICY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"feedId\": {\n     \"description\": \"Immutable. This is the client-assigned asset feed identifier and it needs to be unique under a specific parent.\",\n     \"type\": \"string\"\n    },\n    \"feedOutputConfig\": {\n     \"description\": \"Output configuration for asset feed destination.\",\n     \"properties\": {\n      \"pubsubDestination\": {\n       \"description\": \"Destination on Cloud Pubsub.\",\n       \"properties\": {\n        \"topic\": {\n         \"description\": \"Destination on Cloud Pubsub topic.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"topic\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"pubsubDestination\"\n     ],\n     \"type\": \"object\"\n    },\n    \"folder\": {\n     \"description\": \"Immutable. The folder this feed should be created in.\",\n     \"type\": \"string\"\n    },\n    \"folderRef\": {\n     \"description\": \"The folder that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Folder` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"billingProject\",\n    \"feedId\",\n    \"feedOutputConfig\",\n    \"folder\",\n    \"folderRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud Asset Folder Feed\",\n \"type\": \"object\"\n}",
-    "version": "cloudasset.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"assetNames\": {\n     \"description\": \"A list of the full names of the assets to receive updates. You must specify either or both of\\nassetNames and assetTypes. Only asset updates matching specified assetNames and assetTypes are\\nexported to the feed. For example: //compute.googleapis.com/projects/my_project_123/zones/zone1/instances/instance1.\\nSee https://cloud.google.com/apis/design/resourceNames#fullResourceName for more info.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"assetTypes\": {\n     \"description\": \"A list of types of the assets to receive updates. You must specify either or both of assetNames\\nand assetTypes. Only asset updates matching specified assetNames and assetTypes are exported to\\nthe feed. For example: \\\"compute.googleapis.com/Disk\\\"\\nSee https://cloud.google.com/asset-inventory/docs/supported-asset-types for a list of all\\nsupported asset types.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"billingProject\": {\n     \"description\": \"Immutable. The project whose identity will be used when sending messages to the\\ndestination pubsub topic. It also specifies the project for API\\nenablement check, quota, and billing.\",\n     \"type\": \"string\"\n    },\n    \"condition\": {\n     \"description\": \"A condition which determines whether an asset update should be published. If specified, an asset\\nwill be returned only when the expression evaluates to true. When set, expression field\\nmust be a valid CEL expression on a TemporalAsset with name temporal_asset. Example: a Feed with\\nexpression \\\"temporal_asset.deleted == true\\\" will only publish Asset deletions. Other fields of\\ncondition are optional.\",\n     \"properties\": {\n      \"description\": {\n       \"description\": \"Description of the expression. This is a longer text which describes the expression,\\ne.g. when hovered over it in a UI.\",\n       \"type\": \"string\"\n      },\n      \"expression\": {\n       \"description\": \"Textual representation of an expression in Common Expression Language syntax.\",\n       \"type\": \"string\"\n      },\n      \"location\": {\n       \"description\": \"String indicating the location of the expression for error reporting, e.g. a file\\nname and a position in the file.\",\n       \"type\": \"string\"\n      },\n      \"title\": {\n       \"description\": \"Title for the expression, i.e. a short string describing its purpose.\\nThis can be used e.g. in UIs which allow to enter the expression.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"expression\"\n     ],\n     \"type\": \"object\"\n    },\n    \"contentType\": {\n     \"description\": \"Asset content type. If not specified, no content but the asset name and type will be returned. Possible values: [\\\"CONTENT_TYPE_UNSPECIFIED\\\", \\\"RESOURCE\\\", \\\"IAM_POLICY\\\", \\\"ORG_POLICY\\\", \\\"OS_INVENTORY\\\", \\\"ACCESS_POLICY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"feedId\": {\n     \"description\": \"Immutable. This is the client-assigned asset feed identifier and it needs to be unique under a specific parent.\",\n     \"type\": \"string\"\n    },\n    \"feedOutputConfig\": {\n     \"description\": \"Output configuration for asset feed destination.\",\n     \"properties\": {\n      \"pubsubDestination\": {\n       \"description\": \"Destination on Cloud Pubsub.\",\n       \"properties\": {\n        \"topic\": {\n         \"description\": \"Destination on Cloud Pubsub topic.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"topic\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"pubsubDestination\"\n     ],\n     \"type\": \"object\"\n    },\n    \"folder\": {\n     \"description\": \"Immutable. The folder this feed should be created in.\",\n     \"type\": \"string\"\n    },\n    \"folderRef\": {\n     \"description\": \"The folder that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Folder` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"billingProject\",\n    \"feedId\",\n    \"feedOutputConfig\",\n    \"folder\",\n    \"folderRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Cloud Asset Folder Feed\",\n \"type\": \"object\"\n}"
   }
 }

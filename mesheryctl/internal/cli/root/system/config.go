@@ -383,7 +383,7 @@ func setToken() {
 	if err != nil {
 		utils.Log.Error(err)
 	}
-	if contexts == nil || len(contexts) < 1 {
+	if len(contexts) < 1 {
 		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))
 	}
 	choosenCtx := contexts[0]

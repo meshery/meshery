@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Scheduling \u0026 Orchestration",
@@ -44,10 +45,10 @@
     "model": {
       "version": "v1.31.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "height": 22,
@@ -55,8 +56,11 @@
     "secondaryColor": "#7aa1f0",
     "shape": "round-rectangle",
     "svgColor": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M45.0081 44.8831C56.1488 44.8831 65.1801 35.8518 65.1801 24.7111C65.1801 13.5704 56.1488 4.53906 45.0081 4.53906C33.8674 4.53906 24.8361 13.5704 24.8361 24.7111C24.8361 35.8518 33.8674 44.8831 45.0081 44.8831ZM30.3872 45.9442C30.7929 45.8851 31.203 45.9906 31.5499 46.2092C35.1824 48.498 39.8427 49.8733 44.9246 49.8733C50.0356 49.8733 54.7202 48.4822 58.3616 46.1697C58.701 45.9542 59.1018 45.847 59.5006 45.8982C69.2512 47.1502 76.7862 55.4814 76.7862 65.5725V73.3866C76.7862 80.0552 71.3802 85.4612 64.7115 85.4612H25.5121C18.8435 85.4612 13.4375 80.0552 13.4375 73.3866V65.5725C13.4375 55.5976 20.8 47.3422 30.3872 45.9442Z\" fill=\"#326CE5\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M45.0081 44.8831C56.1488 44.8831 65.1801 35.8518 65.1801 24.7111C65.1801 13.5704 56.1488 4.53906 45.0081 4.53906C33.8674 4.53906 24.8361 13.5704 24.8361 24.7111C24.8361 35.8518 33.8674 44.8831 45.0081 44.8831ZM30.3872 45.9442C30.7929 45.8851 31.203 45.9906 31.5499 46.2092C35.1824 48.498 39.8427 49.8733 44.9246 49.8733C50.0356 49.8733 54.7202 48.4822 58.3616 46.1697C58.701 45.9542 59.1018 45.847 59.5006 45.8982C69.2512 47.1502 76.7862 55.4814 76.7862 65.5725V73.3866C76.7862 80.0552 71.3802 85.4612 64.7115 85.4612H25.5121C18.8435 85.4612 13.4375 80.0552 13.4375 73.3866V65.5725C13.4375 55.5976 20.8 47.3422 30.3872 45.9442Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n",
     "width": 22,
+    "x": 8.5,
+    "y": 7.5,
     "z-index": 4
   },
   "capabilities": [
@@ -68,7 +72,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -83,7 +86,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -98,7 +100,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -114,7 +115,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -130,7 +130,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -145,7 +144,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -160,7 +158,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -175,7 +172,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -185,7 +181,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false,
@@ -193,8 +191,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "rbac.authorization.k8s.io/v1",
     "kind": "Role",
-    "schema": "{\"description\":\"Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding.\",\"properties\":{\"rules\":{\"description\":\"Rules holds all the PolicyRules for this Role\",\"items\":{\"allOf\":[{\"description\":\"PolicyRule holds information that describes a policy rule, but does not contain information about who the rule applies to or which namespace the rule applies to.\",\"properties\":{\"apiGroups\":{\"description\":\"APIGroups is the name of the APIGroup that contains the resources.  If multiple API groups are specified, any action requested against one of the enumerated resources in any API group will be allowed. \\\"\\\" represents the core API group and \\\"*\\\" represents all API groups.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"nonResourceURLs\":{\"description\":\"NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path Since non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding. Rules can either apply to API resources (such as \\\"pods\\\" or \\\"secrets\\\") or non-resource URL paths (such as \\\"/api\\\"),  but not both.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"resourceNames\":{\"description\":\"ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"resources\":{\"description\":\"Resources is a list of resources this rule applies to. '*' represents all resources.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"verbs\":{\"description\":\"Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule. '*' represents all verbs.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"verbs\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"Role\",\"version\":\"v1\"}]}",
-    "version": "rbac.authorization.k8s.io/v1"
+    "schema": "{\"description\":\"Role is a namespaced, logical grouping of PolicyRules that can be referenced as a unit by a RoleBinding.\",\"properties\":{\"rules\":{\"description\":\"Rules holds all the PolicyRules for this Role\",\"items\":{\"allOf\":[{\"description\":\"PolicyRule holds information that describes a policy rule, but does not contain information about who the rule applies to or which namespace the rule applies to.\",\"properties\":{\"apiGroups\":{\"description\":\"APIGroups is the name of the APIGroup that contains the resources.  If multiple API groups are specified, any action requested against one of the enumerated resources in any API group will be allowed. \\\"\\\" represents the core API group and \\\"*\\\" represents all API groups.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"nonResourceURLs\":{\"description\":\"NonResourceURLs is a set of partial urls that a user should have access to.  *s are allowed, but only as the full, final step in the path Since non-resource URLs are not namespaced, this field is only applicable for ClusterRoles referenced from a ClusterRoleBinding. Rules can either apply to API resources (such as \\\"pods\\\" or \\\"secrets\\\") or non-resource URL paths (such as \\\"/api\\\"),  but not both.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"resourceNames\":{\"description\":\"ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"resources\":{\"description\":\"Resources is a list of resources this rule applies to. '*' represents all resources.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"verbs\":{\"description\":\"Verbs is a list of Verbs that apply to ALL the ResourceKinds contained in this rule. '*' represents all verbs.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"required\":[\"verbs\"],\"type\":\"object\"}],\"default\":{}},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"rbac.authorization.k8s.io\",\"kind\":\"Role\",\"version\":\"v1\"}]}"
   }
 }

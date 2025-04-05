@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Cloud Native Network"
     },
+    "subCategory": "",
     "metadata": {
       "isAnnotation": false,
       "source_uri": "https://zufardhiyaulhaq.com/istio-ratelimit-operator/charts/releases/istio-ratelimit-operator-2.11.1.tgz",
@@ -38,16 +40,17 @@
     "model": {
       "version": "2.9.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#466BB0",
     "secondaryColor": "#93b0e9",
     "shape": "circle",
     "svgColor": "\u003csvg width=\"160\" height=\"240\" viewBox=\"0 0 160 240\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 210H160L60 240L0 210Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M0 200L60 190V80L0 200Z\" fill=\"#466BB0\"/\u003e\n\u003cpath d=\"M70 190L160 200L70 0V190Z\" fill=\"#466BB0\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
     "svgWhite": "\u003csvg viewBox=\"6.386270046234131 3.7419400215148926 18.227430820465088 25.258059978485107\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\" width='18.227430820465' height='25.2580599784851'\u003e\u003cpath d=\"M6.38627 24.7904L13.2215 23.738V12.1613L6.38627 24.7904Z\" fill=\"white\"/\u003e\u003cpath d=\"M6.38627 25.8427H24.6137L13.2215 29L6.38627 25.8427Z\" fill=\"white\"/\u003e\u003cpath d=\"M14.3608 23.7379L24.6137 24.7904L14.3608 3.74194V23.7379Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
   },
   "capabilities": [
@@ -59,7 +62,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -74,7 +76,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -89,7 +90,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -105,7 +105,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -121,7 +120,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -136,7 +134,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -151,7 +148,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -166,7 +162,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -176,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "ratelimit.zufardhiyaulhaq.com/v1alpha1",
     "kind": "LocalRateLimit",
-    "schema": "{\n \"description\": \"LocalRateLimit is the Schema for the localratelimits API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LocalRateLimitSpec defines the desired state of LocalRateLimit\",\n   \"properties\": {\n    \"config\": {\n     \"type\": \"string\"\n    },\n    \"limit\": {\n     \"properties\": {\n      \"requests_per_unit\": {\n       \"type\": \"integer\"\n      },\n      \"unit\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"route\": {\n       \"type\": \"string\"\n      },\n      \"vhost\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"vhost\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Local Rate Limit\",\n \"type\": \"object\"\n}",
-    "version": "ratelimit.zufardhiyaulhaq.com/v1alpha1"
+    "schema": "{\n \"description\": \"LocalRateLimit is the Schema for the localratelimits API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LocalRateLimitSpec defines the desired state of LocalRateLimit\",\n   \"properties\": {\n    \"config\": {\n     \"type\": \"string\"\n    },\n    \"limit\": {\n     \"properties\": {\n      \"requests_per_unit\": {\n       \"type\": \"integer\"\n      },\n      \"unit\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"route\": {\n       \"type\": \"string\"\n      },\n      \"vhost\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"vhost\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Local Rate Limit\",\n \"type\": \"object\"\n}"
   }
 }

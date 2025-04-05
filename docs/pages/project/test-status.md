@@ -118,6 +118,14 @@ th, td {
     </tbody>
 </table>
 
+## Latest E2E Test Report
+
+[🔗 View Build UI and Server Workflow](https://github.com/meshery/meshery/actions/workflows/build-ui-and-server.yml?query=branch%3Amaster)
+
+
+{% include test-report.md %}
+
+
 <script>
 // JavaScript for toggling the accordion content
 document.addEventListener("DOMContentLoaded", function () {

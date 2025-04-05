@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Cloud Native Network"
     },
     "subCategory": "Service Mesh",
@@ -43,15 +44,16 @@
     "model": {
       "version": "2.9.4"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "kuma.io/v1alpha1",
     "kind": "MeshService",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshService resource.\",\n   \"properties\": {\n    \"identities\": {\n     \"items\": {\n      \"properties\": {\n       \"type\": {\n        \"enum\": [\n         \"ServiceTag\"\n        ],\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"type\",\n       \"value\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"ports\": {\n     \"items\": {\n      \"properties\": {\n       \"appProtocol\": {\n        \"default\": \"tcp\",\n        \"description\": \"Protocol identifies a protocol supported by a service.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"targetPort\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"x-kubernetes-int-or-string\": true\n       }\n      },\n      \"required\": [\n       \"port\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-map-keys\": [\n      \"port\",\n      \"appProtocol\"\n     ],\n     \"x-kubernetes-list-type\": \"map\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"dataplaneRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"dataplaneTags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"state\": {\n     \"description\": \"State of MeshService. Available if there is at least one healthy endpoint. Otherwise, Unavailable.\\nIt's used for cross zone communication to check if we should send traffic to it, when MeshService is aggregated into MeshMultiZoneService.\",\n     \"enum\": [\n      \"Available\",\n      \"Unavailable\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh Service\",\n \"type\": \"object\"\n}",
-    "version": "kuma.io/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec is the specification of the Kuma MeshService resource.\",\n   \"properties\": {\n    \"identities\": {\n     \"items\": {\n      \"properties\": {\n       \"type\": {\n        \"enum\": [\n         \"ServiceTag\"\n        ],\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"type\",\n       \"value\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"ports\": {\n     \"items\": {\n      \"properties\": {\n       \"appProtocol\": {\n        \"default\": \"tcp\",\n        \"description\": \"Protocol identifies a protocol supported by a service.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"port\": {\n        \"format\": \"int32\",\n        \"type\": \"integer\"\n       },\n       \"targetPort\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"x-kubernetes-int-or-string\": true\n       }\n      },\n      \"required\": [\n       \"port\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-map-keys\": [\n      \"port\",\n      \"appProtocol\"\n     ],\n     \"x-kubernetes-list-type\": \"map\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"dataplaneRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"dataplaneTags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"state\": {\n     \"description\": \"State of MeshService. Available if there is at least one healthy endpoint. Otherwise, Unavailable.\\nIt's used for cross zone communication to check if we should send traffic to it, when MeshService is aggregated into MeshMultiZoneService.\",\n     \"enum\": [\n      \"Available\",\n      \"Unavailable\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mesh Service\",\n \"type\": \"object\"\n}"
   }
 }

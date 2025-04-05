@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Scheduling \u0026 Orchestration",
@@ -44,10 +45,10 @@
     "model": {
       "version": "v1.32.0-alpha.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "background-image": "none",
@@ -69,7 +70,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -84,7 +84,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -99,7 +98,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -115,7 +113,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -131,7 +128,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -146,7 +142,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -161,7 +156,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -176,7 +170,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -186,7 +179,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "parent",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -194,8 +189,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "autoscaling/v1",
     "kind": "HorizontalPodAutoscaler",
-    "schema": "{\"description\":\"configuration of a horizontal pod autoscaler.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"specification of a horizontal pod autoscaler.\",\"properties\":{\"maxReplicas\":{\"default\":0,\"description\":\"maxReplicas is the upper limit for the number of pods that can be set by the autoscaler; cannot be smaller than MinReplicas.\",\"format\":\"int32\",\"type\":\"integer\"},\"minReplicas\":{\"description\":\"minReplicas is the lower limit for the number of replicas to which the autoscaler can scale down.  It defaults to 1 pod.  minReplicas is allowed to be 0 if the alpha feature gate HPAScaleToZero is enabled and at least one Object or External metric is configured.  Scaling is active as long as at least one metric value is available.\",\"format\":\"int32\",\"type\":\"integer\"},\"scaleTargetRef\":{\"allOf\":[{\"description\":\"CrossVersionObjectReference contains enough information to let you identify the referred resource.\",\"properties\":{\"apiVersion\":{\"description\":\"apiVersion is the API version of the referent\",\"type\":\"string\"},\"kind\":{\"default\":\"\",\"description\":\"kind is the kind of the referent; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"name\":{\"default\":\"\",\"description\":\"name is the name of the referent; More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\"type\":\"string\"}},\"required\":[\"kind\",\"name\"],\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{},\"description\":\"reference to scaled resource; horizontal pod autoscaler will learn the current resource consumption and will set the desired number of pods by using its Scale subresource.\"},\"targetCPUUtilizationPercentage\":{\"description\":\"targetCPUUtilizationPercentage is the target average CPU utilization (represented as a percentage of requested CPU) over all the pods; if not specified the default autoscaling policy will be used.\",\"format\":\"int32\",\"type\":\"integer\"}},\"required\":[\"scaleTargetRef\",\"maxReplicas\"],\"type\":\"object\"}],\"default\":{},\"description\":\"spec defines the behaviour of autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"autoscaling\",\"kind\":\"HorizontalPodAutoscaler\",\"version\":\"v1\"}]}",
-    "version": "autoscaling/v1"
+    "schema": "{\"description\":\"configuration of a horizontal pod autoscaler.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"specification of a horizontal pod autoscaler.\",\"properties\":{\"maxReplicas\":{\"default\":0,\"description\":\"maxReplicas is the upper limit for the number of pods that can be set by the autoscaler; cannot be smaller than MinReplicas.\",\"format\":\"int32\",\"type\":\"integer\"},\"minReplicas\":{\"description\":\"minReplicas is the lower limit for the number of replicas to which the autoscaler can scale down.  It defaults to 1 pod.  minReplicas is allowed to be 0 if the alpha feature gate HPAScaleToZero is enabled and at least one Object or External metric is configured.  Scaling is active as long as at least one metric value is available.\",\"format\":\"int32\",\"type\":\"integer\"},\"scaleTargetRef\":{\"allOf\":[{\"description\":\"CrossVersionObjectReference contains enough information to let you identify the referred resource.\",\"properties\":{\"apiVersion\":{\"description\":\"apiVersion is the API version of the referent\",\"type\":\"string\"},\"kind\":{\"default\":\"\",\"description\":\"kind is the kind of the referent; More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\"type\":\"string\"},\"name\":{\"default\":\"\",\"description\":\"name is the name of the referent; More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\"type\":\"string\"}},\"required\":[\"kind\",\"name\"],\"type\":\"object\",\"x-kubernetes-map-type\":\"atomic\"}],\"default\":{},\"description\":\"reference to scaled resource; horizontal pod autoscaler will learn the current resource consumption and will set the desired number of pods by using its Scale subresource.\"},\"targetCPUUtilizationPercentage\":{\"description\":\"targetCPUUtilizationPercentage is the target average CPU utilization (represented as a percentage of requested CPU) over all the pods; if not specified the default autoscaling policy will be used.\",\"format\":\"int32\",\"type\":\"integer\"}},\"required\":[\"scaleTargetRef\",\"maxReplicas\"],\"type\":\"object\"}],\"default\":{},\"description\":\"spec defines the behaviour of autoscaler. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status.\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"autoscaling\",\"kind\":\"HorizontalPodAutoscaler\",\"version\":\"v1\"}]}"
   }
 }

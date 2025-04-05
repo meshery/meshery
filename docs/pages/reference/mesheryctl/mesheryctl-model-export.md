@@ -12,11 +12,12 @@ subcommand: export
 
 # mesheryctl model export
 
-export registered models
+Export registered models
 
 ## Synopsis
 
-export the registered model to the specified output type
+Export the registered model to the specified output type
+Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [flags]
@@ -26,7 +27,7 @@ mesheryctl model export [flags]
 
 ## Examples
 
-Export a model by name
+Export a model by name 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
@@ -34,20 +35,23 @@ mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
 </div>
 </pre> 
 
+Export a model by name in JSON type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] -t json (default is yaml)
+mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
 
 </div>
 </pre> 
 
+Export a model by name in YAML type in a specific location
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] -l /home/meshery/
+mesheryctl model export [model-name] -l [path-to-location]
 
 </div>
 </pre> 
 
+Export a model by name in YAML type discarding components and relationships
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] --discard-components --discard-relationships
@@ -55,16 +59,10 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 </div>
 </pre> 
 
+Export a model version by name in YAML type
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export [model-name] --version v0.7.3
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    
+mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 
 </div>
 </pre> 
@@ -79,6 +77,7 @@ mesheryctl model export [model-name] --version v0.7.3
   -t, --output-format string     (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
   -l, --output-location string   (optional) output location (default = current directory) (default "./")
   -o, --output-type string       (optional) format to display in [oci|tar] (default = oci) (default "oci")
+  -p, --page int                 (optional) List next set of models with --page (default = 1) (default 1)
       --version string           (optional) model version to export (default = "")
 
 </div>
