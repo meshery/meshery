@@ -404,7 +404,7 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 			if err != nil {
 				return resp, err
 			}
-			dResp, err := dryRunComponent(cl, cmp)
+			dResp, err := dryRunComponent(cl, cmp, sap.opIsDelete)
 			if err != nil {
 				return resp, err
 			}
@@ -420,8 +420,8 @@ func (sap *serviceActionProvider) DryRun(comps []*component.ComponentDefinition)
 	return
 }
 
-func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition) (core.DryRunResponseWrapper, error) {
-	st, ok, err := k8s.DryRunHelper(cl, *cmd)
+func dryRunComponent(cl *meshkube.Client, cmd *component.ComponentDefinition, isDelete bool) (core.DryRunResponseWrapper, error) {
+	st, ok, err := k8s.DryRunHelper(cl, *cmd, isDelete)
 	dResp := core.DryRunResponseWrapper{Success: ok, Component: cmd}
 	if ok {
 		dResp.Component.Configuration = filterConfiguration(st)
