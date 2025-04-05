@@ -62,9 +62,6 @@ mesheryctl model search [model-name]
 
 // View a specific model
 mesheryctl model view [model-name]
-
-// Scaffold a folder structure for model creation
-mesheryctl model init [model-name]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
