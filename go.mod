@@ -8,9 +8,8 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // The following replaces are used for local development
 
-// replace github.com/meshery/schemas v0.8.15 => ../schemas
- replace github.com/layer5io/meshkit v0.8.25 => ../meshkit
-
+// replace github.com/meshery/schemas v0.8.5 => ../schemas
+replace github.com/layer5io/meshkit v0.8.22 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
