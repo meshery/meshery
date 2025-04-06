@@ -55,7 +55,6 @@ teardown() {
   [ "$status" -eq 0 ]
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-   assert_output --partial "Exported model to $TESTDATA_DIR"
   if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
     echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
     exit 1
@@ -63,14 +62,18 @@ teardown() {
 }
 
 @test "mesheryctl model export includes version when specified" {
-  run $MESHERYCTL_BIN model export accurate --version v0.7.3
+  run $MESHERYCTL_BIN model export accurate --version v1.7.0 -l $TESTDATA_DIR
   [ "$status" -eq 0 ]
 
-  assert_output --partial "&version=v0.7.3"
+  assert_output --partial "Exported model to $TESTDATA_DIR"
+  if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
+    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
+    exit 1
+  fi
 }
 
 @test "mesheryctl model export handles discard flags correctly" {
-  run $MESHERYCTL_BIN model export accurate --discard-components --discard-relationships
+  run $MESHERYCTL_BIN model export accurate $TESTDATA_DIR --discard-components --discard-relationships
   [ "$status" -eq 0 ]
 
   assert_output --partial "components=false"
