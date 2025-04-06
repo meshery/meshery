@@ -8,7 +8,7 @@ replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
 // The following replaces are used for local development
 // replace github.com/meshery/schemas v0.8.5 => ../schemas
-replace github.com/layer5io/meshkit v0.8.22 => ../meshkit
+//replace github.com/layer5io/meshkit v0.8.22 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.0
