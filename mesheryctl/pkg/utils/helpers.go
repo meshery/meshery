@@ -1231,9 +1231,11 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 
 	startIndex := 0
 	endIndex := min(len(data), startIndex+pageSize)
+
 	for {
 		// Clear the entire terminal screen
 		ClearLine()
+		remaining := len(data) - endIndex
 
 		// Print number of filter files and current page number
 		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
@@ -1241,13 +1243,17 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
-		whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
-
 		if len(footer) > 0 {
 			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
 		} else {
 			PrintToTable(header, data[startIndex:endIndex])
 		}
+
+		// No user interaction required if no more data to display
+		if !hasDataToDisplay(len(data), remaining, startIndex, pageSize) {
+			break
+		}
+
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
 			return err
@@ -1277,6 +1283,16 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		}
 	}
 	return nil
+}
+
+func hasDataToDisplay(length int, remaining int, startIndex int, pageSize int) bool {
+	if length <= pageSize {
+		return false
+	}
+	if remaining <= pageSize && startIndex+pageSize >= length {
+		return false
+	}
+	return true
 }
 
 func FindInSlice(key string, items []string) (int, bool) {

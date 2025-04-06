@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { NoSsr } from '@layer5/sistent';
+import { CustomTooltip, NoSsr } from '@layer5/sistent';
 import {
   Divider,
   ClickAwayListener,
@@ -10,7 +10,6 @@ import {
   CircularProgress,
   Box,
   useTheme,
-  Tooltip,
   Checkbox,
   Collapse,
   IconButton,
@@ -176,23 +175,25 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
   };
   count = Number(count).toLocaleString('en', { useGrouping: true });
   return (
-    <Tooltip title={type} placement="bottom">
-      <Button
-        style={{
-          backgroundColor: alpha(chipStyles.fill, 0.2),
-          border:
-            selectedSeverity === severity
-              ? `solid 2px ${chipStyles.fill}`
-              : 'solid 2px transparent',
-        }}
-        onClick={handleClick}
-      >
-        <SeverityChip>
-          {<notificationStyle.icon {...chipStyles} />}
-          <span>{count}</span>
-        </SeverityChip>
-      </Button>
-    </Tooltip>
+    <CustomTooltip title={type} placement="bottom">
+      <div>
+        <Button
+          style={{
+            backgroundColor: alpha(chipStyles.fill, 0.2),
+            border:
+              selectedSeverity === severity
+                ? `solid 2px ${chipStyles.fill}`
+                : 'solid 2px transparent',
+          }}
+          onClick={handleClick}
+        >
+          <SeverityChip>
+            {<notificationStyle.icon {...chipStyles} />}
+            <span>{count}</span>
+          </SeverityChip>
+        </Button>
+      </div>
+    </CustomTooltip>
   );
 };
 
@@ -310,17 +311,19 @@ const BulkActions = () => {
       );
     }
     return (
-      <Tooltip title={tooltip} placement="top">
-        <IconButton onClick={onClick} disabled={disabled}>
-          <Icon
-            {...iconMedium}
-            style={{
-              opacity: disabled ? 0.5 : 1,
-            }}
-            fill="currentColor"
-          />
-        </IconButton>
-      </Tooltip>
+      <CustomTooltip title={tooltip} placement="top">
+        <div>
+          <IconButton onClick={onClick} disabled={disabled}>
+            <Icon
+              {...iconMedium}
+              style={{
+                opacity: disabled ? 0.5 : 1,
+              }}
+              fill="currentColor"
+            />
+          </IconButton>
+        </div>
+      </CustomTooltip>
     );
   };
 

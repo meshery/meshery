@@ -925,10 +925,10 @@ model:
          - mesheryctl model export [model-name] -o yaml
          - mesheryctl model export [model-name] --version v0.7.3
 
-components:
-  name: components
+component:
+  name: component
   description: Fundamental building block used to represent and define the infrastructure under management
-  usage: mesheryctl components [command] [flags]
+  usage: mesheryctl component [command] [flags]
   flags:
     count:
       name: --count
@@ -936,13 +936,13 @@ components:
     help:
       name: --help, -h
       description: help for components
-      usage: mesheryctl components --help
-      example: mesheryctl components --help
+      usage: mesheryctl component --help
+      example: mesheryctl component --help
   subcommands:
     list:
       name: list
       description: List all components registered in Meshery Server
-      usage: mesheryctl components list [flags]
+      usage: mesheryctl component list [flags]
       flags:
         page:
           name: --page, -p
@@ -950,11 +950,11 @@ components:
     search:
       name: search
       description: Using a keyword(s) search the registry for matching component(s)
-      usage: mesheryctl components search [keyword]
+      usage: mesheryctl component search [keyword]
     view:
       name: view
       description: View details of a specific component
-      usage: mesheryctl components view [component-name]
+      usage: mesheryctl component view [component-name]
       flags:
         output-format:
           name: -o, --output-format
@@ -962,8 +962,8 @@ components:
         save:
           name: --save
           description: Save output as a JSON/YAML file
-          usage: mesheryctl components view --output-format [json|yaml] --save [filepath]
-          example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
+          usage: mesheryctl component view --output-format [json|yaml] --save [filepath]
+          example: mesheryctl component view --save "bookInfo.yaml" --output-format yaml
 
 environment:
   name: environment
@@ -1122,17 +1122,30 @@ exp:
           org:
             name: -o, -orgId
             description: organization id 
-  org:
-    name: org
-    description: show existing organizations with their name,id, date of creation
-    usage: mesheryctl exp org 
+  organization:
+    name: organization
+    description: Interact with existing organizations
+    usage: mesheryctl exp organization
     flags:
-      description: 
-        pageNo:
-          name: -p --pagenumber
-          description: page number to fetch
-        pagesize:
-          name: -s --size
-          description: page size
+      count:
+        name: --count
+        description: (optional) Get the total of registrered organizations
+      help:
+        name: --help, -h
+        description: help for organization command
+        usage: mesheryctl exp organization --help
+        example: mesheryctl exp organization --help
+    subcommands:
+      list:
+        name: list
+        description: List all organizations registered in Meshery Server
+        usage: mesheryctl exp organization list [flags]
+        flags:
+          page:
+            name: --page, -p
+            description: list organizations by specific page number (25 models per page)  
+          count:
+            name: --count
+            description: (optional) Get the total of registrered organizations
       
 

@@ -56,6 +56,12 @@ main() {
    export MESHERY_CONFIG_FILE_PATH="$HOME/.meshery/config.yaml"
 
    export MESHERY_AUTH_FILE="$HOME/.meshery/auth.json"
+
+   export SUPPORT_DESTDIR="../helpers/bats-support/load.bash"
+
+	export ASSERT_DESTDIR="../helpers/bats-assert/load.bash"
+   
+	export DETIK_DESTDIR="../helpers/bats-detik//lib/detik.bash"
    
    echo -e "\nCreate temp directory for test data"
    TEMP_DATA_DIR=`mktemp -d`

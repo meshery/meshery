@@ -775,7 +775,7 @@ function MesheryFilters({
     },
     {
       name: 'created_at',
-      label: 'Upload Timestamp',
+      label: 'Created At',
       options: {
         filter: false,
         sort: true,
@@ -797,7 +797,7 @@ function MesheryFilters({
     },
     {
       name: 'updated_at',
-      label: 'Update Timestamp',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,
@@ -977,7 +977,7 @@ function MesheryFilters({
 
     onRowsDelete: async function handleDelete(row) {
       let response = await showmodal(Object.keys(row.lookup).length);
-      console.log(response);
+
       if (response === 'Delete') {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));

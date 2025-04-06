@@ -476,9 +476,13 @@ func setDefaultValues(model *meshkitRegistryUtils.ModelCSV) {
 	setIfEmpty(&model.SecondaryColor, "#00D3A9")
 	setIfEmpty(&model.SVGColor, svgColor)
 	setIfEmpty(&model.SVGWhite, svgWhite)
-	setIfEmpty(&model.Category, "Uncategorized")
 	setIfEmpty(&model.Shape, "Circle")
-	setIfEmpty(&model.SubCategory, "Uncategorized")
+	if model.Category == "" {
+		model.Category = "Uncategorized"
+	}
+	if model.SubCategory == "" {
+		model.SubCategory = "Uncategorized"
+	}
 }
 
 func setIfEmpty(field *string, defaultValue string) {

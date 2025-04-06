@@ -27,14 +27,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-// represents the mesheryctl components search [query-text] subcommand.
+// represents the mesheryctl component search [query-text] subcommand.
 var searchComponentsCmd = &cobra.Command{
 	Use:   "search",
 	Short: "search registered components",
 	Long:  "search components registered in Meshery Server based on kind",
 	Example: `
 // Search for components using a query
-mesheryctl components search [query-text]
+mesheryctl component search [query-text]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp component search [query-text]\nRun 'mesheryctl exp component search --help' to see detailed help message"

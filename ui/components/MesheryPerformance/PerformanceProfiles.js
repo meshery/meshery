@@ -275,7 +275,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
     },
     {
       name: 'updated_at',
-      label: 'Updated On',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,

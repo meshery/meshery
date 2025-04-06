@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo -e "\n\n\nCleaning up test data directory: $TEMP_TEST_DATA_DIR"
 rm -rf $TEMP_TEST_DATA_DIR

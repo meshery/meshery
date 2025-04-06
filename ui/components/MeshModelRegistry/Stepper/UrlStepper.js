@@ -20,26 +20,49 @@ import {
   MenuItem,
   Radio,
 } from '@layer5/sistent';
+import { StyledSummaryBox, StyledSummaryItem, SectionHeading, StyledColorBox } from './style';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
+import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
+import { capitalize } from 'lodash';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import { modelCategories, modelShapes, modelSubCategories } from './data';
+import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
+import {
+  CategoryDefinitionV1Beta1Schema,
+  ModelDefinitionV1Beta1Schema,
+  SubCategoryDefinitionV1Beta1Schema,
+} from '@layer5/schemas';
+import FinishModelGenerateStep from './FinishModelGenerateStep';
 
-const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
+const UrlStepper = React.memo(({ handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
   const [modelName, setModelName] = React.useState('');
   const [modelDisplayName, setModelDisplayName] = React.useState('');
-  const [modelCategory, setModelCategory] = React.useState('');
-  const [modelSubcategory, setModelSubcategory] = React.useState('');
-  const [modelShape, setModelShape] = React.useState('');
+  const [modelCategory, setModelCategory] = React.useState(
+    CategoryDefinitionV1Beta1Schema.properties.name.default,
+  );
+  const [modelSubcategory, setModelSubcategory] = React.useState(
+    SubCategoryDefinitionV1Beta1Schema.default,
+  );
+  const [modelShape, setModelShape] = React.useState(
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.default,
+  );
   const [modelUrl, setModelUrl] = React.useState('');
   const [urlError, setUrlError] = React.useState('');
-  const [primaryColor, setPrimaryColor] = React.useState('#000000');
-  const [secondaryColor, setSecondaryColor] = React.useState('#000000');
+  const [primaryColor, setPrimaryColor] = React.useState(
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.primaryColor.default,
+  );
+  const [secondaryColor, setSecondaryColor] = React.useState(
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.secondaryColor.default,
+  );
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
-  const [registerModel] = React.useState(true);
+  const registerModel = true;
+  const modelProperties = ModelDefinitionV1Beta1Schema.properties;
+  const categories = CategoryDefinitionV1Beta1Schema.properties.name.enum;
+  const subCategories = SubCategoryDefinitionV1Beta1Schema.enum;
+  const shapes = ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.enum;
   const [isAnnotation, setIsAnnotation] = React.useState(false);
 
   const handleLogoLightThemeChange = async (event) => {
@@ -76,34 +99,31 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     }
   };
 
-  const validateUrl = (url, source) => {
+  const validateUrl = (url) => {
+    let testUrl;
     if (!url) {
       return false;
     }
 
-    if (source === 'github') {
-      return url.startsWith('git://github.com/');
-    } else if (source === 'artifacthub') {
-      return (
-        url.startsWith('https://artifacthub.io/packages/') ||
-        url.startsWith('http://artifacthub.io/packages/') ||
-        url.startsWith('artifacthub.io/packages/')
-      );
+    if (modelSource === 'github') {
+      testUrl = '^git://github\\.com/[\\w.-]+/[\\w.-]+(/[\\w.-]+/[\\w/-]+)?$';
+    } else if (modelSource === 'artifacthub') {
+      testUrl =
+        '^https:\\/\\/artifacthub\\.io\\/packages\\/(search\\?ts_query_web=[\\w.-]+|[\\w.-]+\\/[\\w.-]+\\/[\\w.-]+)$';
     }
-
-    return false;
+    return new RegExp(testUrl).test(url);
   };
 
   const handleUrlChange = (e) => {
     const newUrl = e.target.value;
     setModelUrl(newUrl);
     if (modelSource) {
-      const isValid = validateUrl(newUrl, modelSource);
+      const isValid = validateUrl(newUrl);
       if (!isValid) {
         setUrlError(
           modelSource === 'github'
             ? 'Invalid GitHub URL. Format: git://github.com/org/repo/branch/path'
-            : 'Invalid ArtifactHub URL. Example: https://artifacthub.io/packages/helm/org/package',
+            : 'Invalid ArtifactHub URL. Example: https://artifacthub.io/packages/search?ts_query_web={meshery-operator}',
         );
       } else {
         setUrlError('');
@@ -111,28 +131,38 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     }
   };
 
-  const handleFinish = () => {
-    handleClose();
-    handleGenerateModal({
-      uploadType: 'URL Import',
-      register: registerModel,
-      url: modelUrl,
-      model: {
-        model: modelName,
-        modelDisplayName: modelDisplayName,
-        registrant: modelSource,
-        category: modelCategory,
-        subCategory: modelSubcategory,
-        shape: modelShape,
-        primaryColor: primaryColor,
-        secondaryColor: secondaryColor,
-        svgColor: logoLightThemePath,
-        svgWhite: logoDarkThemePath,
-        isAnnotation: isAnnotation,
-        publishToRegistry: true,
-      },
-    });
+  // Summary field component with consistent styling
+  const SummaryField = ({ label, value, color }) => (
+    <StyledSummaryItem>
+      <Typography variant="textB2SemiBold" color="textSecondary">
+        {label}
+      </Typography>
+      <Typography mt={1} style={color ? { color: color } : {}}>
+        {value}
+      </Typography>
+    </StyledSummaryItem>
+  );
+
+  // SVG Logo display component that renders SVG content
+  const SvgLogoDisplay = ({ svgContent }) => {
+    if (!svgContent) {
+      return (
+        <Typography color="textSecondary" variant="body2">
+          No logo uploaded
+        </Typography>
+      );
+    }
+
+    // Create a data URL from the SVG content
+    const svgDataUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
+
+    return (
+      <Box mt={1}>
+        <img src={svgDataUrl} alt="Logo" height="40" style={{ maxWidth: '100%' }} />
+      </Box>
+    );
   };
+
   const urlStepper = useStepper({
     steps: [
       {
@@ -152,8 +182,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     id="model-name"
                     label="Model Name"
                     placeholder="my-model"
-                    helperText="Model name should be in lowercase with hyphens, not whitespaces."
-                    error={modelName.length > 0 && !/^[a-z0-9-]+$/.test(modelName)}
+                    helperText={modelProperties.name.helperText}
+                    error={
+                      modelName.length > 0 &&
+                      !new RegExp(modelProperties.name.pattern).test(modelName)
+                    }
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                     variant="outlined"
@@ -165,11 +198,12 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                   <TextField
                     required
                     id="model-display-name"
-                    label="Model Display Name"
-                    placeholder="a friendly name for my model"
-                    helperText="Model display name should be a friendly name for your model."
+                    label={'Model Display Name'}
+                    placeholder={modelProperties.displayName.description}
+                    helperText={modelProperties.displayName.helperText}
                     error={
-                      modelDisplayName.length > 0 && !/^[a-zA-Z0-9\s]+$/.test(modelDisplayName)
+                      modelDisplayName.length > 0 &&
+                      !new RegExp(modelProperties.displayName.pattern).test(modelDisplayName)
                     }
                     value={modelDisplayName}
                     onChange={(e) => setModelDisplayName(e.target.value)}
@@ -186,18 +220,17 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <>
             <ul>
               <li>
-                <strong>Model Name:</strong> Should be in lowercase with hyphens. For example,{' '}
-                <em>cert-manager</em>. This is the unique name for the model within the scope of a
-                registrant (
+                <strong>Model Name:</strong> {modelProperties.name.helperText} For example,{' '}
+                <em>{modelProperties.name.examples[0]}</em>. {modelProperties.name.description} (
                 <a href="https://docs.meshery.io/concepts/logical/registry">
-                  learn more about registrants
+                  learn more about registry
                 </a>
                 ).
               </li>
               <br />
               <li>
-                <strong>Display Name:</strong> Model display name should be a friendly name for your
-                model. For example, <em>Cert Manager</em>.
+                <strong>Display Name:</strong> {modelProperties.displayName.helperText} For example,{' '}
+                <em>{modelProperties.displayName.examples[0]}</em>.
               </li>
             </ul>
           </>
@@ -209,7 +242,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             <Box display="flex" alignItems="center" mb={2}>
               <Typography>
                 {' '}
-                Please select the appropriate <strong>Category</strong> and
+                Please select the appropriate <strong>Category</strong> and{' '}
                 <strong>Subcategory</strong> relevant to your model.
                 <br />
                 <em>
@@ -230,8 +263,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     value={modelCategory}
                     label="Category"
                     onChange={(e) => setModelCategory(e.target.value)}
+                    MenuProps={{
+                      style: { zIndex: 1500 },
+                    }}
                   >
-                    {modelCategories.map((category, idx) => (
+                    {categories.map((category, idx) => (
                       <MenuItem key={idx} value={category}>
                         {category}
                       </MenuItem>
@@ -248,8 +284,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     value={modelSubcategory}
                     label="Subcategory"
                     onChange={(e) => setModelSubcategory(e.target.value)}
+                    MenuProps={{
+                      style: { zIndex: 1500 },
+                    }}
                   >
-                    {modelSubCategories.map((subCategory, idx) => (
+                    {subCategories.map((subCategory, idx) => (
                       <MenuItem key={idx} value={subCategory}>
                         {subCategory}
                       </MenuItem>
@@ -266,10 +305,10 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <>
             <ul>
               <li>
-                <strong>Category:</strong> Determines the main grouping.
+                <strong>Category:</strong> {modelProperties.category.description}
               </li>
               <li>
-                <strong>Subcategory:</strong> Allows for more specific classification.
+                <strong>Subcategory:</strong> {modelProperties.subCategory.description}
               </li>
             </ul>
           </>
@@ -349,8 +388,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     value={modelShape}
                     label="Shape"
                     onChange={(e) => setModelShape(e.target.value)}
+                    MenuProps={{
+                      style: { zIndex: 1500 },
+                    }}
                   >
-                    {modelShapes.map((shape, idx) => (
+                    {shapes.map((shape, idx) => (
                       <MenuItem key={idx} value={shape}>
                         {shape}
                       </MenuItem>
@@ -371,15 +413,17 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             </p>
             <ul>
               <li>
-                <strong>Primary Color:</strong> The main color used in your model&apos;s theme.
+                <strong>Primary Color:</strong>{' '}
+                {modelProperties.metadata.properties.primaryColor.description}
               </li>
               <br />
               <li>
-                <strong>Secondary Color:</strong> The accent color used in your model&apos;s theme.
+                <strong>Secondary Color:</strong>{' '}
+                {modelProperties.metadata.properties.secondaryColor.description}
               </li>
               <br />
               <li>
-                <strong>Shape:</strong> The shape used for visual elements in your model.
+                <strong>Shape:</strong> {modelProperties.metadata.properties.shape.description}
               </li>
             </ul>
           </>
@@ -425,9 +469,9 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 disabled={!modelSource}
                 placeholder={
                   modelSource === 'github'
-                    ? 'git://github.com/org/repo/branch/path'
-                    : modelSource === 'artifacthub'
-                      ? 'https://artifacthub.io/packages/helm/org/package'
+                    ? 'git://github.com/cert-manager/cert-manager/master/deploy/crds'
+                    : modelSource === 'artifact hub'
+                      ? 'https://artifacthub.io/packages/search?ts_query_web={model-name}'
                       : 'Select a source first'
                 }
               />
@@ -461,43 +505,23 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       },
       {
         component: (
-          <div>
-            {/* <Grid item xs={12}>
-              <FormControl component="fieldset">
-                <FormControlLabel
-                  style={{ marginLeft: '0' }}
-                  label="Would you like to register the model now so you can use it immediately after it's generated?"
-                  labelPlacement="start"
-                  control={
-                    <Checkbox
-                      checked={registerModel}
-                      onChange={(e) => setRegisterModel(e.target.checked)}
-                      name="registerModel"
-                      color="primary"
-                      st
-                    />
-                  }
-                />
-              </FormControl>
-            </Grid> */}
-            <Grid item xs={12} style={{ marginTop: '1rem' }}>
-              <FormControl component="fieldset">
-                <FormControlLabel
-                  style={{ marginLeft: '0' }}
-                  label="The components in this model are visual annotations only."
-                  labelPlacement="start"
-                  control={
-                    <Checkbox
-                      checked={isAnnotation}
-                      onChange={(e) => setIsAnnotation(e.target.checked)}
-                      name="registerModel"
-                      color="primary"
-                    />
-                  }
-                />
-              </FormControl>
-            </Grid>
-          </div>
+          <Grid item xs={12} style={{ marginTop: '1rem' }}>
+            <FormControl component="fieldset">
+              <FormControlLabel
+                style={{ marginLeft: '0' }}
+                label="The components in this model are visual annotations only."
+                labelPlacement="start"
+                control={
+                  <Checkbox
+                    checked={isAnnotation}
+                    onChange={(e) => setIsAnnotation(e.target.checked)}
+                    name="registerModel"
+                    color="primary"
+                  />
+                }
+              />
+            </FormControl>
+          </Grid>
         ),
         icon: AppRegistrationIcon,
         label: 'Additional Details',
@@ -505,11 +529,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <>
             <p>Specify your preferences for model registration and usage:</p>
             <ul>
-              {/* <li>
-                <strong>Register Model Now</strong>: Choose this option to register the model
-                immediately after it&apos;s generated, allowing you to use it right away.
-              </li>
-              <br /> */}
               <li>
                 <strong>Visual Annotation Only</strong>: Select this if the model is exclusively for
                 visual annotation purposes and its compoonents are not to be orchestrated
@@ -520,12 +539,173 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           </>
         ),
       },
+      {
+        component: (
+          <Box sx={{ maxHeight: '40vh' }}>
+            <Box display="flex" alignItems="center" mb={1}>
+              <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                Model Generation Summary
+              </Typography>
+            </Box>
+
+            <StyledSummaryBox>
+              <SectionHeading variant="subtitle1">Basic Information</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Model Name" value={modelName} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Display Name" value={modelDisplayName} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Category" value={modelCategory} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Subcategory" value={modelSubcategory} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Styling</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Primary Color
+                    </Typography>
+                    <Box mt={1} display="flex" alignItems="center">
+                      <StyledColorBox color={primaryColor} />
+                      <Typography>{primaryColor}</Typography>
+                    </Box>
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Secondary Color
+                    </Typography>
+                    <Box mt={1} display="flex" alignItems="center">
+                      <StyledColorBox color={secondaryColor} />
+                      <Typography>{secondaryColor}</Typography>
+                    </Box>
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Shape" value={modelShape} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Logos</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Light Theme Logo
+                    </Typography>
+                    <SvgLogoDisplay svgContent={logoLightThemePath} />
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Dark Theme Logo
+                    </Typography>
+                    <SvgLogoDisplay svgContent={logoDarkThemePath} />
+                  </StyledSummaryItem>
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Source</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Source Type" value={capitalize(modelSource || '')} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="URL" value={modelUrl} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Additional Configuration</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <SummaryField
+                    label="Visual Annotation Only"
+                    value={isAnnotation ? 'Yes' : 'No'}
+                  />
+                </Grid>
+              </Grid>
+            </StyledSummaryBox>
+
+            <Box sx={{ marginTop: '1rem' }}>
+              <Typography variant="body2" color="textSecondary">
+                Please review all details before proceeding with model generation. Once you click
+                Generate, the model will be created with the configuration shown above.
+              </Typography>
+            </Box>
+          </Box>
+        ),
+        icon: DeploymentSelectorIcon,
+        label: 'Finalize Generation',
+        helpText: (
+          <>
+            <p>
+              Review all the details before generating your model. This summary shows all the
+              configuration options youve selected throughout the wizard.
+            </p>
+
+            <p>
+              If you need to make any changes, use the Back button to navigate to the step and
+              modify your selections.
+            </p>
+            <p>
+              Learn more about{' '}
+              <a href="https://docs.meshery.io/guides/configuration-management/generating-models">
+                Model Generation
+              </a>
+              .
+            </p>
+          </>
+        ),
+      },
+      {
+        component: (
+          <FinishModelGenerateStep
+            requestBody={{
+              importBody: {
+                url: modelUrl,
+                model: {
+                  model: modelName,
+                  modelDisplayName: modelDisplayName,
+                  registrant: modelSource,
+                  category: modelCategory,
+                  subCategory: modelSubcategory,
+                  shape: modelShape,
+                  primaryColor: primaryColor,
+                  secondaryColor: secondaryColor,
+                  svgColor: logoLightThemePath,
+                  svgWhite: logoDarkThemePath,
+                  isAnnotation: isAnnotation,
+                  publishToRegistry: true,
+                },
+              },
+              uploadType: 'url',
+              register: registerModel,
+            }}
+            generateType="register"
+          />
+        ),
+        label: 'Finish',
+        icon: FinishFlagIcon,
+      },
     ],
   });
-  //
+
   const transitionConfig = {
     0: {
-      canGoNext: () => modelDisplayName && modelName,
+      canGoNext: () =>
+        modelDisplayName &&
+        modelName &&
+        new RegExp(modelProperties.name.pattern).test(modelName) &&
+        new RegExp(modelProperties.displayName.pattern).test(modelDisplayName),
       nextButtonText: 'Next',
       nextAction: () => urlStepper.handleNext(),
     },
@@ -546,8 +726,18 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     },
     4: {
       canGoNext: () => true,
+      nextButtonText: 'Next',
+      nextAction: () => urlStepper.handleNext(),
+    },
+    5: {
+      canGoNext: () => true,
+      nextButtonText: 'Generate',
+      nextAction: () => urlStepper.handleNext(),
+    },
+    6: {
+      canGoNext: () => true,
       nextButtonText: 'Finish',
-      nextAction: handleFinish,
+      nextAction: handleClose,
     },
   };
 
