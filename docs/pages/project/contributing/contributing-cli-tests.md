@@ -260,3 +260,10 @@ This involves parsing a flag for the binry to be built whether it exists or not.
 
 ### Find Tests here
 Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
+
+To filter and view only CLI-related test cases using the Sheet Views feature:
+1. In the top menu bar, click Data → Change view
+2. Choose the pre-defined view labeled "CLI"
+
+![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
+
