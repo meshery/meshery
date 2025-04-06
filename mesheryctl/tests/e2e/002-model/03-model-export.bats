@@ -5,7 +5,18 @@ setup() {
  load "$E2E_HELPERS_PATH/tests_helpers"
 	_tests_helper
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
-  export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-export/"
+  export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/"
+
+  if [ ! -d "$TESTDATA_DIR" ]; then
+    mkdir -p "$TESTDATA_DIR"
+  fi
+}
+
+teardown() {
+  # Remove the model-export directory created in setup, if it exists
+  if [ -d "$TESTDATA_DIR" ]; then
+    rm -rf "$TESTDATA_DIR"
+  fi
 }
 
 @test "mesheryctl model export displays usage instructions when no model name provided" {
@@ -21,20 +32,34 @@ setup() {
   [ "$status" -eq 0 ]
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
+  if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
+    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
+    exit 1
+  fi
 }
 
 @test "mesheryctl model export succeeds with tar output type" {
-  run $MESHERYCTL_BIN model export accurare -o tar
+  run $MESHERYCTL_BIN model export accurate -l $TESTDATA_DIR -o tar
   [ "$status" -eq 0 ]
 
-  assert_output --partial "file_type=tar"
+  assert_output --partial "Exported model to $TESTDATA_DIR"
+  if [ ! -f "$TESTDATA_DIR/accurate.tar.gz" ]; then
+    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
+    exit 1
+  fi
+
 }
 
 @test "mesheryctl model export succeeds with json output format" {
-  run $MESHERYCTL_BIN model export accurare -t json
+  run $MESHERYCTL_BIN model export accurate -t json -l $TESTDATA_DIR
   [ "$status" -eq 0 ]
 
-  assert_output --partial "output_format=json"
+  assert_output --partial "Exported model to $TESTDATA_DIR"
+   assert_output --partial "Exported model to $TESTDATA_DIR"
+  if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
+    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
+    exit 1
+  fi
 }
 
 @test "mesheryctl model export includes version when specified" {
