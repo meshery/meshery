@@ -119,7 +119,6 @@ mesheryctl design apply [design-name]
 				content, err := os.ReadFile(file)
 				if err != nil {
 					wrappedErr := utils.ErrFileRead(errors.Errorf("file path %s is invalid. Enter a valid path", file))
-					utils.Log.Error(wrappedErr)
 					return wrappedErr
 				}
 
