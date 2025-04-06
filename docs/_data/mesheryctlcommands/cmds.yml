@@ -1160,7 +1160,7 @@ exp:
     subcommands:
       init:
         name: init
-        description: Scaffold a folder structure for model creatio
+        description: Scaffold a folder structure for model creation
         usage: mesheryctl exp model init [model-name] [flags]
         flags:
           output-format:
