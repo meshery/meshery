@@ -268,7 +268,7 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
       response.status() === 202,
   );
 
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByRole('button', { name: 'DELETE', exact: true }).click();
 
   await responsePromise;
 });
