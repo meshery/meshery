@@ -2,8 +2,6 @@ module github.com/layer5io/meshery
 
 go 1.23.4
 
-// replace github.com/meshery/schemas v0.8.5 => ../schemas
-
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
 // The following replaces are used for local development
@@ -40,12 +38,12 @@ require (
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
 	github.com/layer5io/meshkit v0.8.23
-	github.com/layer5io/meshsync v0.8.5
+	github.com/layer5io/meshsync v0.8.6
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/schemas v0.8.6
+	github.com/meshery/schemas v0.8.9
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
