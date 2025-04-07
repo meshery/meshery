@@ -29,3 +29,6 @@ Thumbs.db
 
 # Docs
 docs
+
+# Include only the catalog folder in the docs directory
+!docs/catalog
