@@ -48,8 +48,8 @@ require (
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.20.5
-	github.com/prometheus/common v0.62.0
+	github.com/prometheus/client_golang v1.21.1
+	github.com/prometheus/common v0.63.0
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.9.1
@@ -64,14 +64,14 @@ require (
 	gonum.org/v1/gonum v0.15.1
 	google.golang.org/api v0.218.0
 	google.golang.org/grpc v1.70.0
-	google.golang.org/protobuf v1.36.4
+	google.golang.org/protobuf v1.36.5
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/gorm v1.25.12
-	k8s.io/api v0.32.1
-	k8s.io/apiextensions-apiserver v0.32.1
-	k8s.io/apimachinery v0.32.1
-	k8s.io/client-go v0.32.1
+	k8s.io/api v0.32.3
+	k8s.io/apiextensions-apiserver v0.32.3
+	k8s.io/apimachinery v0.32.3
+	k8s.io/client-go v0.32.3
 	sigs.k8s.io/controller-runtime v0.20.1
 )
 
@@ -323,9 +323,9 @@ require (
 	gorm.io/driver/postgres v1.5.11 // indirect
 	gorm.io/driver/sqlite v1.5.7 // indirect
 	helm.sh/helm/v3 v3.17.0 // indirect
-	k8s.io/apiserver v0.32.1 // indirect
+	k8s.io/apiserver v0.32.3 // indirect
 	k8s.io/cli-runtime v0.32.1 // indirect
-	k8s.io/component-base v0.32.1 // indirect
+	k8s.io/component-base v0.32.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241212222426-2c72e554b1e7 // indirect
 	k8s.io/kubectl v0.32.1 // indirect
