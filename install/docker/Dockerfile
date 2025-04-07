@@ -59,12 +59,12 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
     do \
     curl -LO $line \
     done
-# bundling patterns
-RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
-    && mkdir service-mesh-patterns \
-    && mkdir -p /seed_content/patterns \
-    && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
-    && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
+# Antiquated patterns; no longer compatible with the current version of Meshery
+# RUN curl -L -s https://github.com/service-mesh-patterns/service-mesh-patterns/tarball/master -o service-mesh-patterns.tgz \
+#     && mkdir service-mesh-patterns \
+#     && mkdir -p /seed_content/patterns \
+#     && tar xzf service-mesh-patterns.tgz --directory=service-mesh-patterns \
+#     && mv service-mesh-patterns/*/samples/* /seed_content/patterns/
 
 #FROM ubuntu AS nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
