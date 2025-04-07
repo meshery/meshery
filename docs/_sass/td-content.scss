@@ -19,9 +19,9 @@
   blockquote {
     padding: 0.8em 1.2em;
     margin: 1.2em 0;
-    border-left: 4px solid #dfe2e5;
-    background-color: #f9f9f9;
-    color: #6a737d;
+    border-left: 4px solid var(--color-secondary-medium);
+    background-color: var(--color-primary-dark);     
+    color: var(--color-grey-medium);                 
   }  
 
   @media (max-width: 320px) {
