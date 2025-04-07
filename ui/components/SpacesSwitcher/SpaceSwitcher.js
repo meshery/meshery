@@ -16,7 +16,7 @@ import {
   useTheme,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
+import { setKeys, setOrganization } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { store } from '../../store';
@@ -100,9 +100,10 @@ function OrgMenu(props) {
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
-  const { organization, setOrganization, open } = props;
+
+  const { organization, setOrganization, open, setKeys } = props;
   const { notify } = useNotification();
-  useGetCurrentAbilities(organization, props.setKeys);
+  useGetCurrentAbilities(organization, setKeys);
   useEffect(() => {
     if (isOrgsError) {
       notify({
@@ -181,107 +182,6 @@ function OrgMenu(props) {
   );
 }
 
-// export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
-//   const [orgId, setOrgId] = useState('');
-//   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
-//     {
-//       page: 0,
-//       pagesize: 10,
-//       search: '',
-//       order: '',
-//       orgId: orgId,
-//     },
-//     {
-//       skip: !orgId ? true : false,
-//     },
-//   );
-
-//   const handleWorkspaceSelect = (e) => {
-//     const id = e.target.value;
-//     const selected = workspacesData.workspaces.find((org) => org.id === id);
-//     setWorkspace({ workspace: selected });
-//   };
-
-//   useEffect(() => {
-//     setOrgId(organization?.id);
-//   }, [organization]);
-
-//   if (!organization || !workspace) {
-//     return null;
-//   }
-
-//   return (
-//     <NoSsr>
-//       {!isWorkspacesError && workspace && (
-//         <div
-//           style={{
-//             width: open ? 'auto' : 0,
-//             overflow: open ? '' : 'hidden',
-//             transition: 'all 1s',
-//           }}
-//         >
-//           <FormControl component="fieldset">
-//             <FormGroup>
-//               <FormControlLabel
-//                 key="SpacesPreferences"
-//                 control={
-//                   <Grid container spacing={1} alignItems="flex-end">
-//                     <Grid item xs={12} data-cy="mesh-adapter-url">
-//                       <StyledSelect
-//                         value={workspace.id}
-//                         onChange={handleWorkspaceSelect}
-//                         SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
-//                         MenuProps={{
-//                           anchorOrigin: {
-//                             vertical: 'bottom',
-//                             horizontal: 'left',
-//                           },
-//                           transformOrigin: {
-//                             vertical: 'top',
-//                             horizontal: 'left',
-//                           },
-//                           getContentAnchorEl: null,
-//                         }}
-//                       >
-//                         {workspacesData?.workspaces?.map((works) => (
-//                           <MenuItem key={works.id} value={works.id}>
-//                             <span>{works.name}</span>
-//                           </MenuItem>
-//                         ))}
-//                       </StyledSelect>
-//                     </Grid>
-//                   </Grid>
-//                 }
-//               />
-//             </FormGroup>
-//           </FormControl>
-//         </div>
-//       )}
-//     </NoSsr>
-//   );
-// }
-
-// export const FileNameInput = ({
-//   fileName,
-//   handleFileNameChange,
-//   handleFocus,
-//   activateWalkthrough,
-// }) => {
-//   return (
-//     <StyledTextField
-//       id="design-name-textfield"
-//       onChange={handleFileNameChange}
-//       label="Name"
-//       value={fileName || ''}
-//       autoComplete="off"
-//       size="small"
-//       variant="standard"
-//       onFocus={handleFocus}
-//       onMouseEnter={() => activateWalkthrough && activateWalkthrough()}
-//     />
-//   );
-// };
-
 function DefaultHeader({ title, isBeta }) {
   return (
     <StyledHeader variant="h5" data-cy="headerPageTitle">
@@ -293,7 +193,6 @@ function DefaultHeader({ title, isBeta }) {
 
 function SpaceSwitcher(props) {
   const [orgOpen, setOrgOpen] = useState(false);
-  // const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
   return (
     <NoSsr>
@@ -306,14 +205,6 @@ function SpaceSwitcher(props) {
             <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
-          {/* /
-          <Button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-          >
-            <WorkspaceOutlinedIcon {...iconXLarge} />
-          </Button>
-          <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
           <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
           {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
         </StyledSwitcher>
@@ -324,16 +215,13 @@ function SpaceSwitcher(props) {
 
 const mapStateToProps = (state) => {
   const organization = state.get('organization');
-  const workspace = state.get('workspace');
   return {
     organization,
-    workspace,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   setOrganization: bindActionCreators(setOrganization, dispatch),
-  setWorkspace: bindActionCreators(setWorkspace, dispatch),
   setKeys: bindActionCreators(setKeys, dispatch),
 });
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Concepts
+title: Logical
 permalink: concepts/logical
 language: en
 list: exclude
