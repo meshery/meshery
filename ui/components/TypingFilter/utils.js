@@ -18,11 +18,11 @@ export const getFilters = (filterString, filterSchema) => {
     const [filter, value] = filterValuePair.split(Delimiter.FILTER_VALUE);
 
     if (getFilterByValue(filter, filterSchema)?.multiple == false) {
-      filters[filter] = value;
+      filters[filter] = value || '';
       return;
     }
 
-    if (filter && value) {
+    if (filter) {
       filters[filter] = filters[filter] || [];
       if (!filters[filter].includes(value)) {
         filters[filter].push(value);
@@ -46,7 +46,10 @@ export const getFilterString = (filters) => {
 
 export const getCurrentFilterAndValue = (filteringState) => {
   const { context } = filteringState;
-  const currentFilterValue = context.value.split(Delimiter.FILTER).at(-1);
+  const currentFilterValue =
+    context.searchValue?.split(Delimiter.FILTER).at(-1) ||
+    context.value?.split(Delimiter.FILTER).at(-1) ||
+    '';
   const currentFilter = currentFilterValue.split(Delimiter.FILTER_VALUE)?.[0] || '';
   const currentValue = currentFilterValue.split(Delimiter.FILTER_VALUE)?.[1] || '';
   return {

@@ -64,21 +64,13 @@ const filterSelectionReducer = (stateMachine, action, nextState, nextValue) => {
           ...context,
           value: newValue + nextDelimiter,
           prevValue: [...context.prevValue, newValue],
+          searchValue: '',
         },
       };
     }
     //" " is used to separate multiple filters
     case FILTER_EVENTS.INPUT_CHANGE:
       // prevent transition when the the filter/value is empty
-      if (action.payload.value.endsWith(nextDelimiter) && context.value.endsWith(prevDelimiter)) {
-        return stateMachine;
-      }
-
-      // prevent adding multiple delimeters together
-      if (action.payload.value.endsWith(prevDelimiter) && context.value.endsWith(prevDelimiter)) {
-        return stateMachine;
-      }
-
       if (action.payload.value == context.prevValue.at(-1)) {
         return {
           state: prevState,
@@ -86,11 +78,12 @@ const filterSelectionReducer = (stateMachine, action, nextState, nextValue) => {
             ...context,
             prevValue: context.prevValue.slice(0, -1),
             value: action.payload.value,
+            searchValue: action.payload.searchValue,
           },
         };
       }
 
-      if (action.payload.value.endsWith(nextDelimiter)) {
+      if (action.payload.value?.endsWith(nextDelimiter)) {
         const newValue = action.payload.value;
         return {
           state: nextState,
@@ -107,6 +100,8 @@ const filterSelectionReducer = (stateMachine, action, nextState, nextValue) => {
         context: {
           ...context,
           value: action.payload.value,
+          searchValue: action.payload.searchValue,
+          prevValue: action.payload.prevValue ? action.payload.prevValue : context.prevValue,
         },
       };
     default:
