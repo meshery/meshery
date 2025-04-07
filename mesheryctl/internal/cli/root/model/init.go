@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strings"
 
 	"github.com/google/uuid"
 	"github.com/spf13/cobra"
@@ -24,8 +26,12 @@ var modelInitCmd = &cobra.Command{
 	Short: "Initialize a new Meshery model",
 	Long:  `Creates a scaffold directory structure for a new Meshery model with optional flags for format, version and path.`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) < 1 {
-			return fmt.Errorf("model name is required")
+		if len(args) < 1 || strings.TrimSpace(args[0]) == "" {
+			return fmt.Errorf("model name is required and cannot be empty or whitespace")
+		}
+		// limit allowed characters (alphanumeric, dash, underscore)
+		if !regexp.MustCompile(`^[a-zA-Z0-9_-]+$`).MatchString(args[0]) {
+			return fmt.Errorf("invalid model name: only letters, numbers, hyphens, and underscores are allowed")
 		}
 		modelName = args[0]
 		return nil
@@ -46,15 +52,16 @@ var modelInitCmd = &cobra.Command{
 			}
 		}
 
-		if outputFormat == "yaml" {
+		switch outputFormat {
+		case "yaml":
 			if err := generateOrderedYAMLModel(modelPath); err != nil {
 				return err
 			}
-		} else if outputFormat == "json" {
+		case "json":
 			if err := generateJSONModel(modelPath); err != nil {
 				return err
 			}
-		} else {
+		default:
 			return fmt.Errorf("unsupported output format: %s", outputFormat)
 		}
 
@@ -73,6 +80,7 @@ func init() {
 func generateOrderedYAMLModel(outputPath string) error {
 	id := uuid.New().String()
 
+	// Using ordered map to preserve field order in YAML output
 	om := orderedmap.New[string, any]()
 	om.Set("id", id)
 	om.Set("schemaVersion", "v1beta1")
