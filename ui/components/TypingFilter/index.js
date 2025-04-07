@@ -7,6 +7,7 @@ import {
   Popper,
   useTheme,
   Fade,
+  Chip,
 } from '@layer5/sistent';
 import { Description, DropDown, InputField, Item, Label, Root } from './style';
 import ContentFilterIcon from '../../assets/icons/ContentFilterIcon';
@@ -28,6 +29,7 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) =>
   };
 
   const { filter: currentFilter } = getCurrentFilterAndValue(filterStateMachine);
+  console.log('amit currentFilter', currentFilter);
   const matchingFilters = currentFilter
     ? Object.values(filterSchema).filter((filter) => filter.value.startsWith(currentFilter))
     : Object.values(filterSchema);
@@ -50,6 +52,22 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) =>
         );
       })}
     </List>
+  );
+};
+
+const FilterChips = ({ filterValue, filterSchema, onDelete }) => {
+  const filters = getFilters(filterValue, filterSchema);
+
+  return (
+    <div style={{ display: 'flex', gap: '4px', marginLeft: '0.5rem' }}>
+      {Object.entries(filters).map(([filter, value]) => {
+        value = Array.isArray(value) ? value : [value];
+        console.log('amit value', value);
+        const label = `${filter}: ${value ? value.join('; ') : ''}`;
+        console.log('raj label', label);
+        return <Chip key={filter} size="small" label={label} onDelete={() => onDelete(filter)} />;
+      })}
+    </div>
   );
 };
 
@@ -136,6 +154,7 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  * @param {boolean} autoFilter - A boolean to indicate if the filter should be applied automatically (on user input) .
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
+
 const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placeholder }) => {
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -144,6 +163,7 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
   const [filteringState, dispatch] = useReducer(filterReducer, {
     context: {
       value: '',
+      searchValue: '',
       prevValue: [''],
     },
     state: FILTERING_STATE.IDLE,
@@ -163,7 +183,9 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
     dispatch({
       type: FILTER_EVENTS.INPUT_CHANGE,
       payload: {
-        value: e.target.value,
+        searchValue: e.target.value,
+        // if existing value is empty, set the new value else set the existing value
+        value: filteringState.context.value == '' ? e.target.value : filteringState.context.value,
       },
     });
   };
@@ -230,22 +252,58 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
     }
   }, [filteringState.state]);
 
+  const deleteFilter = (filterToDelete) => {
+    const currentFilters = getFilters(filteringState.context.value, filterSchema);
+    delete currentFilters[filterToDelete];
+
+    // Convert remaining filters back to string format
+    const newValue = Object.entries(currentFilters)
+      .map(([filter, value]) => `${filter}:${value}`)
+      .join(' ');
+
+    if (newValue == '') {
+      dispatch({
+        type: FILTER_EVENTS.CLEAR,
+      });
+      return;
+    }
+    const newPaylod = {
+      value: newValue,
+      prevValue: filteringState.context.prevValue.filter((v) => {
+        return !v.includes(filterToDelete);
+      }),
+    };
+
+    dispatch({
+      type: FILTER_EVENTS.INPUT_CHANGE,
+      payload: newPaylod,
+    });
+
+    // Update filters if autoFilter is enabled
+    if (autoFilter) {
+      handleFilter(currentFilters);
+    }
+  };
   return (
     <Root className="mui-fixed">
       <InputField
         ref={inputFieldRef}
         variant="outlined"
-        placeholder={placeholder}
+        placeholder={filteringState.context.value == '' ? placeholder : ''}
         fullWidth
         size="small"
-        value={filteringState.context.value}
+        value={filteringState.context.searchValue}
         onChange={handleFilterChange}
         onFocus={handleFocus}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
-              {' '}
-              <ContentFilterIcon fill={theme.palette.icon.default} />{' '}
+              <ContentFilterIcon fill={theme.palette.icon.default} />
+              <FilterChips
+                filterValue={filteringState.context.value}
+                filterSchema={filterSchema}
+                onDelete={deleteFilter}
+              />
             </InputAdornment>
           ),
           endAdornment: (

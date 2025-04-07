@@ -5,7 +5,6 @@ import {
   Divider,
   ClickAwayListener,
   Typography,
-  Chip,
   Button,
   CircularProgress,
   Box,
@@ -38,7 +37,6 @@ import {
   StyledNotificationDrawer,
   Title,
   TitleBellIcon,
-  StyledSubtitle,
 } from './notificationCenter.style';
 import {
   closeNotificationCenter,
@@ -57,7 +55,6 @@ import {
   useLazyGetEventsQuery,
   useUpdateEventsMutation,
 } from '../../rtk-query/notificationCenter';
-import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
 import { hasClass } from '../../utils/Elements';
 import ReadIcon from '../../assets/icons/ReadIcon';
@@ -340,8 +337,9 @@ const BulkActions = () => {
         padding: '0.15rem',
       }}
     >
-      <Box>
+      <Box display={'flex'} alignItems="center">
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
+        <Typography variant="body2">Select All</Typography>
       </Box>
       <Collapse in={checkedEvents.length > 0}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -413,67 +411,6 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
       <div ref={lastEventRef}></div>
       {isFetching && hasMore && <Loading />}
     </>
-  );
-};
-
-const CurrentFilterView = ({ handleFilter }) => {
-  const currentFilters = useSelector((state) => state.events.current_view.filters);
-  const onDelete = (key, value) => {
-    const newFilters = {
-      ...currentFilters,
-      [key]:
-        typeof currentFilters[key] === 'string'
-          ? null
-          : currentFilters[key].filter((item) => item !== value),
-    };
-    handleFilter(newFilters);
-  };
-
-  const Chips = ({ type, value }) => {
-    if (typeof value === 'string') {
-      return (
-        <Chip label={value} sx={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
-      );
-    }
-
-    if (_.isArray(value) && value.length > 0) {
-      return (
-        <div sx={{ display: 'flex', gap: '0.2rem' }}>
-          {value.map((item) => (
-            <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />
-          ))}
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  return (
-    <div>
-      {Object.entries(currentFilters).map(([key, value]) => {
-        if (value && value?.length > 0) {
-          return (
-            <div
-              key={key}
-              sx={{
-                display: 'flex',
-                gap: '0.3rem',
-                alignItems: 'center',
-                marginLeft: '1rem',
-                paddingTop: '.35rem',
-              }}
-            >
-              <StyledSubtitle variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
-                {' '}
-                {key}:
-              </StyledSubtitle>
-              <Chips value={value} type={key} />
-            </div>
-          );
-        }
-      })}
-    </div>
   );
 };
 
@@ -552,7 +489,6 @@ const NotificationCenterDrawer = () => {
                 <Divider light />
                 <Container>
                   <Filter handleFilter={handleFilter}></Filter>
-                  <CurrentFilterView handleFilter={handleFilter} />
                   <BulkActions />
 
                   {isLoadingFilters ? (
