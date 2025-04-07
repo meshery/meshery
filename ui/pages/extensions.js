@@ -245,10 +245,7 @@ const MesheryHelmKanvasLogo = () => {
 
 const MesheryHelmKanvasExtension = () => {
   const handleLearnMore = (e) => {
-    window.open(
-      'https://docs.meshery.io/extensions/helm-kanvas-snapshot',
-      '_blank',
-    );
+    window.open('https://docs.meshery.io/extensions/helm-kanvas-snapshot', '_blank');
     e.stopPropagation();
   };
 
