@@ -16,6 +16,14 @@
     font-weight: 400;
   }
 
+  blockquote {
+    padding: 0.8em 1.2em;
+    margin: 1.2em 0;
+    border-left: 4px solid #dfe2e5;
+    background-color: #f9f9f9;
+    color: #6a737d;
+  }  
+
   @media (max-width: 320px) {
     & > h1 {
       font-size: 1.5rem;
@@ -163,4 +171,3 @@
     opacity: 0;
   }
 }
-
