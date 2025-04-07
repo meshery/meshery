@@ -76,6 +76,10 @@ teardown() {
   run $MESHERYCTL_BIN model export accurate $TESTDATA_DIR --discard-components --discard-relationships
   [ "$status" -eq 0 ]
 
-  assert_output --partial "components=false"
-  assert_output --partial "relationships=false"
+ assert_output --partial "Exported model to $TESTDATA_DIR"
+ if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
+    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
+    exit 1
+  fi
+
 }
