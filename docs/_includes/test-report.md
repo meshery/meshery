@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 7th 2025, 3:56:00 am
+- Testing started at: April 7th 2025, 2:57:56 pm
 
 **📦 Test Result Summary**
 
@@ -30,8 +30,8 @@
 | 7 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 8 | chromium-meshery-provider | Verify Performance Analysis Details | unstable | ⚠️ |
 | 9 | chromium-meshery-provider | Add performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 10 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
-| 11 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 10 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 11 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
 | 12 | chromium-meshery-provider | Verify Kanvas Details | unstable | ⚠️ |
 | 13 | chromium-meshery-provider | View detailed result of a performance profile (Graph Visualiser) with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 14 | chromium-meshery-provider | Verify Meshery Adapter for Istio Section | unstable | ⚠️ |
