@@ -73,7 +73,7 @@ teardown() {
 }
 
 @test "mesheryctl model export handles discard flags correctly" {
-  run $MESHERYCTL_BIN model export accurate $TESTDATA_DIR --discard-components --discard-relationships
+  run $MESHERYCTL_BIN model export accurate $TESTDATA_DIR --discard-components --discard-relationships -l $TESTDATA_DIR
   [ "$status" -eq 0 ]
 
  assert_output --partial "Exported model to $TESTDATA_DIR"
