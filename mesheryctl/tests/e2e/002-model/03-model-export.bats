@@ -13,7 +13,6 @@ setup() {
 }
 
 teardown() {
-  # Remove the model-export directory created in setup, if it exists
   if [ -d "$TESTDATA_DIR" ]; then
     rm -rf "$TESTDATA_DIR"
   fi
@@ -33,7 +32,6 @@ teardown() {
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
   if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
     exit 1
   fi
 }
@@ -44,7 +42,6 @@ teardown() {
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
   if [ ! -f "$TESTDATA_DIR/accurate.tar.gz" ]; then
-    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
     exit 1
   fi
 
@@ -56,7 +53,6 @@ teardown() {
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
   if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
     exit 1
   fi
 }
@@ -67,7 +63,6 @@ teardown() {
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
   if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
     exit 1
   fi
 }
@@ -78,7 +73,6 @@ teardown() {
 
  assert_output --partial "Exported model to $TESTDATA_DIR"
  if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    echo "Expected file accurate.tar was not found in $TESTDATA_DIR"
     exit 1
   fi
 
