@@ -1,0 +1,31 @@
+# Git
+.git
+.gitignore
+
+# Node modules (should be installed within Docker build stages)
+node_modules
+ui/node_modules
+provider-ui/node_modules
+install/docker-extension/ui/node_modules
+
+# Build artifacts / Distributables
+build
+dist
+*.exe
+*.bin
+meshery
+
+# IDE/Editor config
+.vscode
+.idea
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Docs
+docs
