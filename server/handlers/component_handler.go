@@ -1600,8 +1600,17 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	}
 	defer os.RemoveAll(modelDir)
 
-	components := model.Components.([]component.ComponentDefinition)
-	rels := model.Relationships.([]relationship.RelationshipDefinition)
+	components := []component.ComponentDefinition{}
+	// Components can be nil if hasComponents is false
+	if model.Components != nil {
+		components = model.Components.([]component.ComponentDefinition)
+	}
+
+	relationships := []relationship.RelationshipDefinition{}
+	// Relationships can be nil if hasRelationships is false
+	if model.Relationships != nil {
+		relationships = model.Relationships.([]relationship.RelationshipDefinition)
+	}
 
 	model.Relationships = nil
 	model.Components = nil
@@ -1624,7 +1633,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-	for _, rel := range rels {
+	for _, rel := range relationships {
 		rel.Model = *model
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
