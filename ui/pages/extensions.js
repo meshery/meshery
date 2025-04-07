@@ -246,7 +246,7 @@ const MesheryHelmKanvasLogo = () => {
 const MesheryHelmKanvasExtension = () => {
   const handleLearnMore = (e) => {
     window.open(
-      'https://artifacthub.io/packages/helm-plugin/helm-kanvas-snapshot/helm-kanvas-snapshot',
+      'https://docs.meshery.io/extensions/helm-kanvas-snapshot',
       '_blank',
     );
     e.stopPropagation();
