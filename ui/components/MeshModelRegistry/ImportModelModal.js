@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
 import {
-  Modal,
   FormControlLabel,
+  Button,
   FormControl,
   RadioGroup,
   Radio,
   importModelUiSchema,
   importModelSchema,
   Typography,
+  ModalFooter,
+  Box,
+  Modal,
+  useTheme,
 } from '@layer5/sistent';
 import { RJSFModalWrapper } from '../Modal';
 import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
@@ -15,26 +18,89 @@ import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { updateProgress } from 'lib/store';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
+import React, { useState, useEffect, useContext } from 'react';
+import { capitalize } from 'lodash';
+import { Loading } from '@/components/DesignLifeCycle/common';
+import { NotificationCenterContext } from '../NotificationCenter';
+import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
+import {
+  ModelImportedSection,
+  ModelImportMessages,
+} from '../NotificationCenter/formatters/model_registration';
+
+const FinishDeploymentStep = ({ deploymentType, handleClose }) => {
+  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+  const [isDeploying, setIsDeploying] = useState(true);
+  const [deployEvent, setDeployEvent] = useState();
+
+  useEffect(() => {
+    const subscription = operationsCenterActorRef.on(
+      OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      (event) => {
+        const serverEvent = event.data.event;
+        if (serverEvent.action === deploymentType) {
+          setIsDeploying(false);
+          setDeployEvent(serverEvent);
+        }
+      },
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const progressMessage = `${capitalize(deploymentType)}ing model`;
+
+  const theme = useTheme();
+  return (
+    <>
+      <Box
+        sx={{
+          padding: '1rem',
+          overflow: 'hidden',
+          backgroundColor: theme.palette.background.surfaces,
+        }}
+      >
+        {isDeploying ? (
+          <Box style={{ padding: '1rem' }}>
+            <Loading message={progressMessage} />
+          </Box>
+        ) : (
+          <>
+            <ModelImportMessages message={deployEvent?.metadata?.ModelImportMessage} />
+            <ModelImportedSection modelDetails={deployEvent?.metadata?.ModelDetails} />
+          </>
+        )}
+      </Box>
+      <ModalFooter
+        variant="filled"
+        helpText={
+          'Click Finish to complete the model import process. The imported model will be available in your Model Registry.'
+        }
+      >
+        <Button variant="contained" color="primary" onClick={handleClose}>
+          Finish
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
 
 const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }) => {
   const [importModalDescription, setImportModalDescription] = useState('');
   const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
   const [importModelReq] = useImportMeshModelMutation();
-  const handleGenerateModal = async (data) => {
-    const { component_csv, model_csv, relationship_csv, register } = data;
-    let requestBody = {
-      importBody: {
-        model_csv: model_csv,
-        component_csv: component_csv,
-        relationship_csv: relationship_csv,
-      },
-      uploadType: 'csv',
-      register: register,
-    };
+  const [activeStep, setActiveStep] = useState(0);
 
-    updateProgress({ showProgress: true });
-    await importModelReq({ importBody: requestBody });
-    updateProgress({ showProgress: false });
+  const handleNext = () => {
+    if (activeStep === 0) {
+      setActiveStep(1);
+    }
+  };
+
+  const handleClose = () => {
+    setIsImportModalOpen(false);
+    setIsCsvModalOpen(false);
+    setActiveStep(0);
   };
 
   const handleImportModelSubmit = async (data) => {
@@ -79,7 +145,7 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
         break;
       }
       case 'CSV Import': {
-        setIsImportModalOpen(false);
+        handleClose();
         setIsCsvModalOpen(true);
         return;
       }
@@ -138,35 +204,40 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
     <>
       <Modal
         open={isImportModalOpen}
-        closeModal={() => setIsImportModalOpen(false)}
+        closeModal={handleClose}
         maxWidth="sm"
         title="Import Model"
         style={{
           zIndex: 1500,
         }}
       >
-        <RJSFModalWrapper
-          schema={importModelSchema}
-          uiSchema={importModelUiSchema}
-          handleSubmit={handleImportModelSubmit}
-          submitBtnText="Import"
-          handleClose={() => setIsImportModalOpen(false)}
-          widgets={widgets}
-          helpText={
-            <p>
-              {importModalDescription} <br />
-              Learn more about importing Models in our{' '}
-              <StyledDocsRedirectLink
-                href={`${MESHERY_DOCS_URL}/guides/configuration-management/importing-models`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                documentation
-              </StyledDocsRedirectLink>
-              .
-            </p>
-          }
-        />
+        {activeStep === 0 ? (
+          <RJSFModalWrapper
+            schema={importModelSchema}
+            uiSchema={importModelUiSchema}
+            handleSubmit={handleImportModelSubmit}
+            handleNext={handleNext}
+            submitBtnText="Next"
+            handleClose={handleClose}
+            widgets={widgets}
+            helpText={
+              <p>
+                {importModalDescription} <br />
+                Learn more about importing Models in our{' '}
+                <StyledDocsRedirectLink
+                  href={`${MESHERY_DOCS_URL}/guides/configuration-management/importing-models`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  documentation
+                </StyledDocsRedirectLink>
+                .
+              </p>
+            }
+          />
+        ) : (
+          <FinishDeploymentStep deploymentType="register" handleClose={handleClose} />
+        )}
       </Modal>
       <Modal
         open={isCsvModalOpen}
@@ -177,10 +248,7 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
           zIndex: 1500,
         }}
       >
-        <CsvStepper
-          handleGenerateModal={handleGenerateModal}
-          handleClose={() => setIsCsvModalOpen(false)}
-        />
+        <CsvStepper handleClose={handleClose} />
       </Modal>
     </>
   );
