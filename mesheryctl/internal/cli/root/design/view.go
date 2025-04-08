@@ -371,7 +371,7 @@ func findComponentsAndRelationships(design map[string]interface{}) ([]interface{
 
 // displayComponentDetails formats and logs component details
 func displayComponentDetails(components []interface{}) {
-	if components == nil || len(components) == 0 {
+	if len(components) == 0 {
 		return
 	}
 
