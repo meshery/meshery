@@ -471,8 +471,8 @@ func determinePluralWord(count int, word string) string {
 }
 
 func setDefaultValues(model *meshkitRegistryUtils.ModelCSV) {
-	const initModelModelSchema = "schemas/constructs/v1alpha1/capability/capability.json"
-	schema, err := schemas.Schemas.ReadFile(initModelModelSchema)
+	const capabilitySchema = "schemas/constructs/v1alpha1/capability/capability.json"
+	schema, err := schemas.Schemas.ReadFile(capabilitySchema)
 	if err != nil {
 		return
 	}
