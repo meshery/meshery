@@ -1333,3 +1333,10 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	}
 	return config.CurrentContext, nil
 }
+
+func SafeCastToString(val interface{}) string {
+	if s, ok := val.(string); ok {
+		return s
+	}
+	return fmt.Sprintf("%v", val)
+}
