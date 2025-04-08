@@ -18,6 +18,9 @@ import data.feasibility_evaluation_utils.is_relationship_feasible_from
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
 import data.core_utils.truncate_set
 
+
+import data.eval_rules.approve_pending_relationships_action
+
 # Module: Alias Relationship Evaluator
 #
 # Purpose: Manages relationships where one component references (aliases) a field in another component.
@@ -309,19 +312,7 @@ action_phase(design_file, relationship_policy_identifier) := result if {
 	}
 
 	components_to_add := truncate_set(alias_components_to_add(design_file, alias_relationships),MAX_ALIASES)
-	relationships_to_add :=  truncate_set({action |
-		some alias_rel in alias_relationships
-		alias_rel.status == "pending"
-		rel := json.patch(alias_rel, [{
-			"op": "replace",
-			"path": "/status",
-			"value": "approved",
-		}])
-		action := {
-			"op": "add_relationship",
-			"value": rel,
-		}
-	},MAX_ALIASES)
+	relationships_to_add :=  approve_pending_relationships_action(alias_relationships, MAX_ALIASES)
 
 	# Relationships that are deleted already at the validation phase
 	relationships_to_delete := {action |
