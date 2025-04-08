@@ -1,6 +1,7 @@
 module github.com/layer5io/meshery
 
 go 1.23.4
+toolchain go1.24.1
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
@@ -12,7 +13,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 require (
 	cuelang.org/go v0.12.1
-	fortio.org/fortio v1.66.2
+	fortio.org/fortio v1.69.1
 	github.com/99designs/gqlgen v0.17.45
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
@@ -65,7 +66,7 @@ require (
 	golang.org/x/text v0.24.0
 	gonum.org/v1/gonum v0.16.0
 	google.golang.org/api v0.228.0
-	google.golang.org/grpc v1.71.0
+	google.golang.org/grpc v1.71.1
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
@@ -90,12 +91,13 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
 	cloud.google.com/go/compute/metadata v0.6.0 // indirect
 	dario.cat/mergo v1.0.1 // indirect
-	fortio.org/cli v1.9.0 // indirect
-	fortio.org/dflag v1.7.2 // indirect
-	fortio.org/log v1.16.0 // indirect
-	fortio.org/scli v1.15.2 // indirect
-	fortio.org/sets v1.2.0 // indirect
-	fortio.org/struct2env v0.4.1 // indirect
+	fortio.org/cli v1.10.0 // indirect
+	fortio.org/dflag v1.8.1 // indirect
+	fortio.org/log v1.17.2 // indirect
+	fortio.org/safecast v1.0.0 // indirect
+	fortio.org/scli v1.16.1 // indirect
+	fortio.org/sets v1.3.0 // indirect
+	fortio.org/struct2env v0.4.2 // indirect
 	fortio.org/version v1.0.4 // indirect
 	github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6 // indirect
 	github.com/Azure/azure-sdk-for-go/sdk/azcore v1.17.0 // indirect
@@ -309,9 +311,9 @@ require (
 	go.opentelemetry.io/proto/otlp v1.4.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.36.0 // indirect
-	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect
+	golang.org/x/crypto/x509roots/fallback v0.0.0-20250406160420-959f8f3db0fb // indirect
 	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
-	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/term v0.30.0 // indirect
