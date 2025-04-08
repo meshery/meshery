@@ -159,15 +159,17 @@ func (e *EventsPersister) getCountBySeverity(userID uuid.UUID, eventStatus event
 	if eventStatus == "" {
 		eventStatus = events.Unread
 	}
+	// Get the system ID from the config for the current instance. This is used to filter events that are not associated with the user but are associated with the system
 	systemID := viper.GetString("INSTANCE_ID")
 	sysID := uuid.FromStringOrNil(systemID)
+
 	eventsBySeverity := []*CountBySeverityLevel{}
 	err := e.DB.Model(&events.Event{}).
 		Select("severity, count(severity) as count").
 		Where("status = ? AND (user_id = ? OR user_id = ?)", eventStatus, userID, sysID).
 		Group("severity").
 		Find(&eventsBySeverity).Error
-		
+
 	if err != nil {
 		return nil, err
 	}
