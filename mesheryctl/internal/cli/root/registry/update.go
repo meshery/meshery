@@ -15,7 +15,7 @@
 package registry
 
 import (
-	"bytes"
+	// "bytes"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -195,45 +195,20 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						tmpFilePath := filepath.Join(versionPath, "components", "tmp_model.json")
 
-						// Ensure the temporary file is removed regardless of what happens
-						defer func() {
-							_ = os.Remove(tmpFilePath)
-						}()
+						_, err = os.Stat(compPath)
 
-						if _, err := os.Stat(compPath); err == nil {
-							existingData, err := os.ReadFile(compPath)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							newData, err := os.ReadFile(tmpFilePath)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							if bytes.Equal(existingData, newData) {
-								utils.Log.Info("No changes detected for ", componentDef.Component.Kind)
-								continue
-							} else {
-								err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
-								if err != nil {
-									utils.Log.Error(err)
-									continue
-								}
-								totalCompsUpdatedPerModelPerVersion++
-
-							}
+						if err != nil {
+							utils.Log.Error(err)
+							continue
 						}
+
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
+						totalCompsUpdatedPerModelPerVersion++
 					}
 
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{
