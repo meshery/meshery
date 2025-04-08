@@ -335,15 +335,6 @@ const ConnectionTable = ({
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'DELETE') {
-        // let bulkConnections = {}
-        // selected.data.map(({ index }) => {
-        //   bulkConnections = {
-        //     ...bulkConnections,
-        //     [connections[index].id]: CONNECTION_STATES.DELETED
-        //   };
-        // })
-        // const requestBody = JSON.stringify(bulkConnections);
-        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
@@ -488,19 +479,22 @@ const ConnectionTable = ({
   };
   const theme = useTheme();
 
-  const isHandlingExpansion = useRef(false);
-  const isInitialLoad = useRef(true);
-  const isUrlExpansion = useRef(false);
-  const lastProcessedId = useRef(null);
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
 
   // Update rowsExpanded when a specific connection ID is selected
   useEffect(() => {
-    if (!selectedConnectionId || isHandlingExpansion.current) return;
-    if (lastProcessedId.current === selectedConnectionId) return;
+    if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
 
     if (connections && connections.length > 0) {
-      isUrlExpansion.current = true;
-      lastProcessedId.current = selectedConnectionId;
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedConnectionId;
 
       const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
       if (index !== -1) {
@@ -509,8 +503,8 @@ const ConnectionTable = ({
         updateUrlWithConnectionId('');
       }
 
-      isUrlExpansion.current = false;
-      isInitialLoad.current = false;
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
     }
   }, [selectedConnectionId, connections]);
 
@@ -1026,9 +1020,9 @@ const ConnectionTable = ({
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      if (isUrlExpansion.current) return;
+      if (expansionFlags.current.isUrlExpansion) return;
 
-      isHandlingExpansion.current = true;
+      expansionFlags.current.isHandlingExpansion = true;
       const expandedRows = allRowsExpanded.slice(-1);
       setRowsExpanded(expandedRows.map((item) => item.index));
 
@@ -1039,15 +1033,15 @@ const ConnectionTable = ({
         if (
           connection &&
           updateUrlWithConnectionId &&
-          (!isInitialLoad.current || connection.id !== selectedConnectionId)
+          (!expansionFlags.current.isInitialLoad || connection.id !== selectedConnectionId)
         ) {
           updateUrlWithConnectionId(connection.id);
         }
-      } else if (updateUrlWithConnectionId && !isInitialLoad.current) {
+      } else if (updateUrlWithConnectionId && !expansionFlags.current.isInitialLoad) {
         updateUrlWithConnectionId('');
       }
 
-      isHandlingExpansion.current = false;
+      expansionFlags.current.isHandlingExpansion = false;
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;

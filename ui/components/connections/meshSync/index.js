@@ -476,9 +476,9 @@ export default function MeshSyncTable(props) {
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      if (isUrlExpansion.current) return;
+      if (expansionFlags.current.isUrlExpansion) return;
 
-      isHandlingExpansion.current = true;
+      expansionFlags.current.isHandlingExpansion = true;
       const expandedRows = allRowsExpanded.slice(-1);
       setRowsExpanded(expandedRows.map((item) => item.index));
 
@@ -489,15 +489,15 @@ export default function MeshSyncTable(props) {
         if (
           resource &&
           updateUrlWithResourceId &&
-          (!isInitialLoad.current || resource.id !== selectedResourceId)
+          (!expansionFlags.current.isInitialLoad || resource.id !== selectedResourceId)
         ) {
           updateUrlWithResourceId(resource.id);
         }
-      } else if (updateUrlWithResourceId && !isInitialLoad.current) {
+      } else if (updateUrlWithResourceId && !expansionFlags.current.isInitialLoad) {
         updateUrlWithResourceId('');
       }
 
-      isHandlingExpansion.current = false;
+      expansionFlags.current.isHandlingExpansion = false;
     },
     renderExpandableRow: (rowData) => {
       const colSpan = rowData.length;
@@ -552,18 +552,21 @@ export default function MeshSyncTable(props) {
     }
   }, [meshSyncError]);
 
-  const isHandlingExpansion = useRef(false);
-  const isInitialLoad = useRef(true);
-  const isUrlExpansion = useRef(false);
-  const lastProcessedId = useRef(null);
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
 
   // Find and expand the selected resource when it becomes available
   useEffect(() => {
-    if (!selectedResourceId || isHandlingExpansion.current) return;
-    if (lastProcessedId.current === selectedResourceId) return;
+    if (!selectedResourceId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedResourceId) return;
     if (meshSyncResources && meshSyncResources.length > 0) {
-      isUrlExpansion.current = true;
-      lastProcessedId.current = selectedResourceId;
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedResourceId;
 
       const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
       if (index !== -1) {
@@ -572,9 +575,8 @@ export default function MeshSyncTable(props) {
         updateUrlWithResourceId('');
       }
 
-      isUrlExpansion.current = false;
-
-      isInitialLoad.current = false;
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
     }
   }, [selectedResourceId, meshSyncResources]);
 
