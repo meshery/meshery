@@ -10,11 +10,11 @@ import (
 
 // Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
 func Fetch[T any](url string) (*T, error) {
-	return makeReques[T](url, http.MethodGet, nil)
+	return makeRequest[T](url, http.MethodGet, nil)
 }
 
 // Send a Http request to meshery server from mesheryctl cli
-func makeReques[T any](url string, httpMethod string, body io.Reader) (*T, error) {
+func makeRequest[T any](url string, httpMethod string, body io.Reader) (*T, error) {
 	req, err := utils.NewRequest(httpMethod, url, body)
 	if err != nil {
 		return nil, err

@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "node ui_dev_server.js",
     "build": "npm run clean && next build",
-    "export": "next export",
     "start": "NODE_ENV=production node server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -26,7 +25,6 @@
     "babel-plugin-istanbul": "^7.0.0",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
-    "mui-datatables": "^4.3.0",
     "next": "^15.2.4",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",

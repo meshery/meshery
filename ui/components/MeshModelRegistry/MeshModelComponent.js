@@ -51,16 +51,14 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [view, setView] = useState(selectedTab);
+  const [view, setView] = useState(selectedTab ?? 'Models');
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
   });
   const [checked, setChecked] = useState(false);
-
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-
   const [modelFilters, setModelsFilters] = useState({ page: 0 });
   const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
   const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
