@@ -20,17 +20,22 @@ import {
   MenuItem,
   Radio,
 } from '@layer5/sistent';
+import { StyledSummaryBox, StyledSummaryItem, SectionHeading, StyledColorBox } from './style';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
+import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
+import { capitalize } from 'lodash';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import {
   CategoryDefinitionV1Beta1Schema,
   ModelDefinitionV1Beta1Schema,
   SubCategoryDefinitionV1Beta1Schema,
 } from '@layer5/schemas';
+import FinishModelGenerateStep from './FinishModelGenerateStep';
 
-const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
+const UrlStepper = React.memo(({ handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
   const [modelName, setModelName] = React.useState('');
   const [modelDisplayName, setModelDisplayName] = React.useState('');
@@ -53,7 +58,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   );
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
-  const [registerModel] = React.useState(true);
+  const registerModel = true;
   const modelProperties = ModelDefinitionV1Beta1Schema.properties;
   const categories = CategoryDefinitionV1Beta1Schema.properties.name.enum;
   const subCategories = SubCategoryDefinitionV1Beta1Schema.enum;
@@ -126,27 +131,38 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     }
   };
 
-  const handleFinish = () => {
-    handleClose();
-    handleGenerateModal({
-      register: registerModel,
-      url: modelUrl,
-      model: {
-        model: modelName,
-        modelDisplayName: modelDisplayName,
-        registrant: modelSource,
-        category: modelCategory,
-        subCategory: modelSubcategory,
-        shape: modelShape,
-        primaryColor: primaryColor,
-        secondaryColor: secondaryColor,
-        svgColor: logoLightThemePath,
-        svgWhite: logoDarkThemePath,
-        isAnnotation: isAnnotation,
-        publishToRegistry: true,
-      },
-    });
+  // Summary field component with consistent styling
+  const SummaryField = ({ label, value, color }) => (
+    <StyledSummaryItem>
+      <Typography variant="textB2SemiBold" color="textSecondary">
+        {label}
+      </Typography>
+      <Typography mt={1} style={color ? { color: color } : {}}>
+        {value}
+      </Typography>
+    </StyledSummaryItem>
+  );
+
+  // SVG Logo display component that renders SVG content
+  const SvgLogoDisplay = ({ svgContent }) => {
+    if (!svgContent) {
+      return (
+        <Typography color="textSecondary" variant="body2">
+          No logo uploaded
+        </Typography>
+      );
+    }
+
+    // Create a data URL from the SVG content
+    const svgDataUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
+
+    return (
+      <Box mt={1}>
+        <img src={svgDataUrl} alt="Logo" height="40" style={{ maxWidth: '100%' }} />
+      </Box>
+    );
   };
+
   const urlStepper = useStepper({
     steps: [
       {
@@ -523,9 +539,166 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           </>
         ),
       },
+      {
+        component: (
+          <Box sx={{ maxHeight: '40vh' }}>
+            <Box display="flex" alignItems="center" mb={1}>
+              <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                Model Generation Summary
+              </Typography>
+            </Box>
+
+            <StyledSummaryBox>
+              <SectionHeading variant="subtitle1">Basic Information</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Model Name" value={modelName} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Display Name" value={modelDisplayName} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Category" value={modelCategory} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Subcategory" value={modelSubcategory} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Styling</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Primary Color
+                    </Typography>
+                    <Box mt={1} display="flex" alignItems="center">
+                      <StyledColorBox color={primaryColor} />
+                      <Typography>{primaryColor}</Typography>
+                    </Box>
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Secondary Color
+                    </Typography>
+                    <Box mt={1} display="flex" alignItems="center">
+                      <StyledColorBox color={secondaryColor} />
+                      <Typography>{secondaryColor}</Typography>
+                    </Box>
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Shape" value={modelShape} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Logos</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Light Theme Logo
+                    </Typography>
+                    <SvgLogoDisplay svgContent={logoLightThemePath} />
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Dark Theme Logo
+                    </Typography>
+                    <SvgLogoDisplay svgContent={logoDarkThemePath} />
+                  </StyledSummaryItem>
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Source</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Source Type" value={capitalize(modelSource || '')} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="URL" value={modelUrl} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Additional Configuration</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <SummaryField
+                    label="Visual Annotation Only"
+                    value={isAnnotation ? 'Yes' : 'No'}
+                  />
+                </Grid>
+              </Grid>
+            </StyledSummaryBox>
+
+            <Box sx={{ marginTop: '1rem' }}>
+              <Typography variant="body2" color="textSecondary">
+                Please review all details before proceeding with model generation. Once you click
+                Generate, the model will be created with the configuration shown above.
+              </Typography>
+            </Box>
+          </Box>
+        ),
+        icon: DeploymentSelectorIcon,
+        label: 'Finalize Generation',
+        helpText: (
+          <>
+            <p>
+              Review all the details before generating your model. This summary shows all the
+              configuration options youve selected throughout the wizard.
+            </p>
+
+            <p>
+              If you need to make any changes, use the Back button to navigate to the step and
+              modify your selections.
+            </p>
+            <p>
+              Learn more about{' '}
+              <a href="https://docs.meshery.io/guides/configuration-management/generating-models">
+                Model Generation
+              </a>
+              .
+            </p>
+          </>
+        ),
+      },
+      {
+        component: (
+          <FinishModelGenerateStep
+            requestBody={{
+              importBody: {
+                url: modelUrl,
+                model: {
+                  model: modelName,
+                  modelDisplayName: modelDisplayName,
+                  registrant: modelSource,
+                  category: modelCategory,
+                  subCategory: modelSubcategory,
+                  shape: modelShape,
+                  primaryColor: primaryColor,
+                  secondaryColor: secondaryColor,
+                  svgColor: logoLightThemePath,
+                  svgWhite: logoDarkThemePath,
+                  isAnnotation: isAnnotation,
+                  publishToRegistry: true,
+                },
+              },
+              uploadType: 'url',
+              register: registerModel,
+            }}
+            generateType="register"
+          />
+        ),
+        label: 'Finish',
+        icon: FinishFlagIcon,
+      },
     ],
   });
-  //
+
   const transitionConfig = {
     0: {
       canGoNext: () =>
@@ -553,8 +726,18 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     },
     4: {
       canGoNext: () => true,
+      nextButtonText: 'Next',
+      nextAction: () => urlStepper.handleNext(),
+    },
+    5: {
+      canGoNext: () => true,
+      nextButtonText: 'Generate',
+      nextAction: () => urlStepper.handleNext(),
+    },
+    6: {
+      canGoNext: () => true,
       nextButtonText: 'Finish',
-      nextAction: handleFinish,
+      nextAction: handleClose,
     },
   };
 
