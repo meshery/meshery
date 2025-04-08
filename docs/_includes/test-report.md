@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 8th 2025, 5:01:04 pm
+- Testing started at: April 8th 2025, 5:02:57 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 25 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 10 minutes and 38 seconds_
+⌛ _Duration: 10 minutes and 41 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -36,12 +36,12 @@
 | 13 | chromium-meshery-provider | Verify Kanvas Details | unstable | ⚠️ |
 | 14 | chromium-meshery-provider | View detailed result of a performance profile (Graph Visualiser) with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 15 | chromium-meshery-provider | Verify Meshery Adapter for Istio Section | unstable | ⚠️ |
-| 16 | chromium-local-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
-| 17 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 18 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 19 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 20 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 21 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 16 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
+| 17 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 18 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 19 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 20 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 21 | chromium-local-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
 | 22 | chromium-meshery-provider | Edit the configuration of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 23 | chromium-local-provider | Verify Performance Analysis Details | unstable | ⚠️ |
 | 24 | chromium-local-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
