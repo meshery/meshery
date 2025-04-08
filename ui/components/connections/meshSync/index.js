@@ -38,8 +38,15 @@ const ACTION_TYPES = {
     error_msg: 'Failed to fetch meshsync resources',
   },
 };
+
 export default function MeshSyncTable(props) {
-  const { updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const {
+    updateProgress,
+    selectedK8sContexts,
+    k8sconfig,
+    selectedResourceId,
+    updateUrlWithResourceId,
+  } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -419,7 +426,6 @@ export default function MeshSyncTable(props) {
     viewColumns: false,
     search: false,
     responsive: 'standard',
-    // resizableColumns: true,
     serverSide: true,
     selectableRows: 'none',
     count: meshSyncData?.total_count,
@@ -470,8 +476,28 @@ export default function MeshSyncTable(props) {
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-      // setShowMore(false);
+      if (isUrlExpansion.current) return;
+
+      isHandlingExpansion.current = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && meshSyncResources) {
+        const index = expandedRows[0].index;
+        const resource = meshSyncResources[index];
+
+        if (
+          resource &&
+          updateUrlWithResourceId &&
+          (!isInitialLoad.current || resource.id !== selectedResourceId)
+        ) {
+          updateUrlWithResourceId(resource.id);
+        }
+      } else if (updateUrlWithResourceId && !isInitialLoad.current) {
+        updateUrlWithResourceId('');
+      }
+
+      isHandlingExpansion.current = false;
     },
     renderExpandableRow: (rowData) => {
       const colSpan = rowData.length;
@@ -526,6 +552,32 @@ export default function MeshSyncTable(props) {
     }
   }, [meshSyncError]);
 
+  const isHandlingExpansion = useRef(false);
+  const isInitialLoad = useRef(true);
+  const isUrlExpansion = useRef(false);
+  const lastProcessedId = useRef(null);
+
+  // Find and expand the selected resource when it becomes available
+  useEffect(() => {
+    if (!selectedResourceId || isHandlingExpansion.current) return;
+    if (lastProcessedId.current === selectedResourceId) return;
+    if (meshSyncResources && meshSyncResources.length > 0) {
+      isUrlExpansion.current = true;
+      lastProcessedId.current = selectedResourceId;
+
+      const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithResourceId('');
+      }
+
+      isUrlExpansion.current = false;
+
+      isInitialLoad.current = false;
+    }
+  }, [selectedResourceId, meshSyncResources]);
+
   const filters = {
     kind: {
       name: 'Kind',
@@ -577,10 +629,6 @@ export default function MeshSyncTable(props) {
     });
     return initialVisibility;
   });
-
-  useEffect(() => {
-    updateCols(columns);
-  }, []);
 
   return (
     <>
