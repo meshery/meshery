@@ -7,15 +7,11 @@ setup() {
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/"
 
-  if [ ! -d "$TESTDATA_DIR" ]; then
-    mkdir -p "$TESTDATA_DIR"
-  fi
+[ -d "$TESTDATA_DIR" ] || mkdir -p "$TESTDATA_DIR"
 }
 
 teardown() {
-  if [ -d "$TESTDATA_DIR" ]; then
-    rm -rf "$TESTDATA_DIR"
-  fi
+ [ -d "$TESTDATA_DIR" ] && rm -rf "$TESTDATA_DIR"
 }
 
 @test "mesheryctl model export displays usage instructions when no model name provided" {
@@ -31,9 +27,7 @@ teardown() {
   [ "$status" -eq 0 ]
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-  if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    exit 1
-  fi
+  [ -f "$TESTDATA_DIR/accurate.tar" ]
 }
 
 @test "mesheryctl model export succeeds with tar output type" {
@@ -41,9 +35,8 @@ teardown() {
   [ "$status" -eq 0 ]
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-  if [ ! -f "$TESTDATA_DIR/accurate.tar.gz" ]; then
-    exit 1
-  fi
+  
+  [ -f "$TESTDATA_DIR/accurate.tar.gz" ]
 
 }
 
@@ -52,9 +45,7 @@ teardown() {
   [ "$status" -eq 0 ]
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-  if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    exit 1
-  fi
+  [ -f "$TESTDATA_DIR/accurate.tar" ]
 }
 
 @test "mesheryctl model export includes version when specified" {
@@ -62,9 +53,7 @@ teardown() {
   [ "$status" -eq 0 ]
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-  if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    exit 1
-  fi
+  [ -f "$TESTDATA_DIR/accurate.tar" ]
 }
 
 @test "mesheryctl model export handles discard flags correctly" {
@@ -72,8 +61,6 @@ teardown() {
   [ "$status" -eq 0 ]
 
  assert_output --partial "Exported model to $TESTDATA_DIR"
- if [ ! -f "$TESTDATA_DIR/accurate.tar" ]; then
-    exit 1
-  fi
+ [ -f "$TESTDATA_DIR/accurate.tar" ]
 
 }
