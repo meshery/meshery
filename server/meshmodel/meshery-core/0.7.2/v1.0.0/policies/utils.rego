@@ -4,6 +4,14 @@ import rego.v1
 
 #--- General datastructures and algorithm  utils
 
+set_to_array(set) := [val |
+	some val in set
+]
+
+array_to_set(arr) := {val |
+	some val in arr
+}
+
 new_uuid(seed) := id if {
 	now := format_int(time.now_ns(), 10)
 	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
