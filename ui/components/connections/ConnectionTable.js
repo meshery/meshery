@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
   CustomTooltip,
   CustomColumnVisibilityControl,
@@ -92,6 +93,7 @@ const ACTION_TYPES = {
 };
 
 const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, selectedFilter }) => {
+  const router = useRouter();
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -116,6 +118,11 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   const open = Boolean(anchorEl);
   const modalRef = useRef(null);
 
+  useEffect(() => {
+    if (router.query.searchText) {
+      setSearch(router.query.searchText);
+    }
+  }, [router.query.searchText]);
   const filters = {
     status: {
       name: 'Status',

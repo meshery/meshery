@@ -8,6 +8,7 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/dustin/go-humanize"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/viper"
@@ -177,13 +178,15 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {
-				successMessage += fmt.Sprintf(" %d %s", value, label)
+				successMessage += fmt.Sprintf(" %s %s,", humanize.Comma(value), label)
 			}
 		}
 		appendIfNonZero(host.Summary.Models, "models")
 		appendIfNonZero(host.Summary.Components, "components")
 		appendIfNonZero(host.Summary.Relationships, "relationships")
 		appendIfNonZero(host.Summary.Policies, "policies")
+
+		successMessage = strings.TrimSuffix(successMessage, ",") + "."
 
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{

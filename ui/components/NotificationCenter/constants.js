@@ -74,4 +74,8 @@ export const EVENT_TYPE = {
     category: 'relationship',
     action: 'evaluation',
   },
+  REGISTRANT_SUMMARY: {
+    category: 'entity',
+    action: 'get_summary',
+  },
 };

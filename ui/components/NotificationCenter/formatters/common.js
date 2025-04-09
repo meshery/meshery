@@ -15,7 +15,7 @@ export const TitleLink = ({ href, children, ...props }) => {
       <Typography
         variant="h5"
         style={{
-          textDecorationLine: 'underline',
+          // textDecorationLine: 'underline',
           cursor: 'pointer',
           marginBottom: '0.5rem',
           fontWeight: 'bolder !important',
