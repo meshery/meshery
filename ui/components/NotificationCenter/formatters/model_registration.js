@@ -3,6 +3,7 @@ import { Typography, Grid, Box } from '@layer5/sistent';
 import { ErrorMetadataFormatter } from './error';
 import { TitleLink } from './common';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
+import { iconMedium } from 'css/icons.styles';
 
 const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   const entityTypesAndQuantities = {};
@@ -111,7 +112,7 @@ const ComponentWithIcon = ({ component }) => {
             justifyContent: 'center',
           }}
         >
-          <img src={finalPath} style={{ width: '30px', height: '30px' }} alt={DisplayName} />
+          <img src={finalPath} {...iconMedium} alt={DisplayName} />
         </div>
       </Grid>
       <Grid item>
