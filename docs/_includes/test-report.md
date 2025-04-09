@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 7th 2025, 1:05:23 am
+- Testing started at: April 9th 2025, 5:01:07 am
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 25 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 10 minutes and 38 seconds_
+⌛ _Duration: 10 minutes and 36 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -43,8 +43,8 @@
 | 20 | chromium-local-provider | Verify Kanvas Snapshot using data-testid | unstable | ⚠️ |
 | 21 | chromium-meshery-provider | Edit the configuration of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 22 | chromium-local-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
-| 23 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 24 | chromium-local-provider | Verify Performance Analysis Details | unstable | ⚠️ |
+| 23 | chromium-local-provider | Verify Performance Analysis Details | unstable | ⚠️ |
+| 24 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 25 | chromium-local-provider | Verify Meshery Adapter for Istio Section | unstable | ⚠️ |
 | 26 | chromium-meshery-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 27 | chromium-local-provider | Add performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
