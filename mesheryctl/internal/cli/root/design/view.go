@@ -18,7 +18,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"strconv"
 	"strings"
 
 	"github.com/ghodss/yaml"
@@ -213,34 +212,14 @@ mesheryctl design view [design-name | ID]
 			utils.Log.Info("\nNote: Components and relationships may appear as null at the top level")
 			utils.Log.Info("but are present inside the pattern_file structure.")
 
-			// Components details section
-			hasComponents := len(components) > 0
-			componentsCount := len(components)
-
-			if hasComponents {
-				utils.Log.Info("\nComponents: " + strconv.Itoa(componentsCount))
+			// Components and Relationships details sections
+			logResourceCount("Components", len(components), sourceType == "manifest")
+			if len(components) > 0 {
 				displayComponentDetails(components)
-			} else {
-				if sourceType == "manifest" {
-					utils.Log.Info("Components: None (Manifest imports may require additional processing)")
-				} else {
-					utils.Log.Info("Components: None")
-				}
 			}
-
-			// Relationships details section
-			hasRelationships := len(relationships) > 0
-			relationshipsCount := len(relationships)
-
-			if hasRelationships {
-				utils.Log.Info("\nRelationships: " + strconv.Itoa(relationshipsCount))
+			logResourceCount("Relationships", len(relationships), false)
+			if len(relationships) > 0 {
 				displayRelationshipDetails(relationships)
-			} else {
-				if sourceType == "manifest" {
-					utils.Log.Info("Relationships: None (Manifest imports typically don't include relationship data)")
-				} else {
-					utils.Log.Info("Relationships: None")
-				}
 			}
 
 			// Provide guidance for manifest imports
@@ -262,6 +241,21 @@ func init() {
 	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 }
 
+// logResourceCount logs the count of a resource type or a message if none are found
+func logResourceCount(resourceType string, count int, isManifest bool) {
+	if count > 0 {
+		utils.Log.Info(fmt.Sprintf("\n%s: %d", resourceType, count))
+		return
+	}
+
+	// No resources found
+	if resourceType == "Components" && isManifest {
+		utils.Log.Info(fmt.Sprintf("%s: None (Manifest imports may require additional processing)", resourceType))
+	} else {
+		utils.Log.Info(fmt.Sprintf("%s: None", resourceType))
+	}
+}
+
 // extractDesignInfo extracts design name and source type from a design map
 func extractDesignInfo(design map[string]interface{}) (string, string) {
 	designName := ""
@@ -273,11 +267,7 @@ func extractDesignInfo(design map[string]interface{}) (string, string) {
 
 	// Extract design name if exists
 	if nameVal, exists := design["name"]; exists && nameVal != nil {
-		if name, ok := nameVal.(string); ok {
-			designName = name
-		} else {
-			designName = fmt.Sprintf("%v", nameVal)
-		}
+		designName = utils.SafeCastToString(nameVal)
 	}
 
 	// Extract source type from pattern_file if exists
@@ -285,11 +275,7 @@ func extractDesignInfo(design map[string]interface{}) (string, string) {
 		// Check if pattern_file is a map
 		if patternFile, ok := patternFileVal.(map[string]interface{}); ok && patternFile != nil {
 			if sourceTypeVal, exists := patternFile["source_type"]; exists && sourceTypeVal != nil {
-				if st, ok := sourceTypeVal.(string); ok {
-					sourceType = st
-				} else {
-					sourceType = fmt.Sprintf("%v", sourceTypeVal)
-				}
+				sourceType = utils.SafeCastToString(sourceTypeVal)
 			}
 		}
 	}
@@ -306,59 +292,60 @@ func findComponentsAndRelationships(design map[string]interface{}) ([]interface{
 		return components, relationships
 	}
 
-	// Check top-level components
-	if compsVal, exists := design["components"]; exists && compsVal != nil {
-		if comps, ok := compsVal.([]interface{}); ok && len(comps) > 0 {
-			components = comps
+	// Helper function to extract array data from a map if it exists and is non-empty
+	extractArray := func(data map[string]interface{}, key string) []interface{} {
+		if val, exists := data[key]; exists && val != nil {
+			if arr, ok := val.([]interface{}); ok && len(arr) > 0 {
+				return arr
+			}
 		}
+		return nil
 	}
 
-	// Check top-level relationships
-	if relsVal, exists := design["relationships"]; exists && relsVal != nil {
-		if rels, ok := relsVal.([]interface{}); ok && len(rels) > 0 {
-			relationships = rels
-		}
+	// Check top-level components and relationships
+	if arr := extractArray(design, "components"); arr != nil {
+		components = arr
+	}
+
+	if arr := extractArray(design, "relationships"); arr != nil {
+		relationships = arr
 	}
 
 	// Check for components and relationships within pattern_file
 	if patternFileVal, exists := design["pattern_file"]; exists && patternFileVal != nil {
 		// Try pattern_file as map
 		if patternFile, ok := patternFileVal.(map[string]interface{}); ok && patternFile != nil {
-			// Check for components in pattern_file map
-			if pfCompsVal, exists := patternFile["components"]; exists && pfCompsVal != nil {
-				if pfComponents, ok := pfCompsVal.([]interface{}); ok && len(pfComponents) > 0 {
-					components = pfComponents
+			// Only overwrite components if we haven't found any yet
+			if len(components) == 0 {
+				if arr := extractArray(patternFile, "components"); arr != nil {
+					components = arr
 				}
 			}
 
-			// Check for relationships in pattern_file map
-			if pfRelsVal, exists := patternFile["relationships"]; exists && pfRelsVal != nil {
-				if pfRelationships, ok := pfRelsVal.([]interface{}); ok && len(pfRelationships) > 0 {
-					relationships = pfRelationships
+			// Only overwrite relationships if we haven't found any yet
+			if len(relationships) == 0 {
+				if arr := extractArray(patternFile, "relationships"); arr != nil {
+					relationships = arr
 				}
 			}
 		}
 
-		// Try pattern_file as string and parse JSON
+		// Try pattern_file as string and parse JSON if we're still missing data
 		if len(components) == 0 || len(relationships) == 0 {
 			if pfStr, ok := patternFileVal.(string); ok && pfStr != "" {
 				var pfObj map[string]interface{}
 				if err := json.Unmarshal([]byte(pfStr), &pfObj); err == nil && pfObj != nil {
-					// Check for components in parsed pattern_file
+					// Only extract components if we haven't found any yet
 					if len(components) == 0 {
-						if pfCompsVal, exists := pfObj["components"]; exists && pfCompsVal != nil {
-							if pfComponents, ok := pfCompsVal.([]interface{}); ok && len(pfComponents) > 0 {
-								components = pfComponents
-							}
+						if arr := extractArray(pfObj, "components"); arr != nil {
+							components = arr
 						}
 					}
 
-					// Check for relationships in parsed pattern_file
+					// Only extract relationships if we haven't found any yet
 					if len(relationships) == 0 {
-						if pfRelsVal, exists := pfObj["relationships"]; exists && pfRelsVal != nil {
-							if pfRelationships, ok := pfRelsVal.([]interface{}); ok && len(pfRelationships) > 0 {
-								relationships = pfRelationships
-							}
+						if arr := extractArray(pfObj, "relationships"); arr != nil {
+							relationships = arr
 						}
 					}
 				}
@@ -387,21 +374,13 @@ func displayComponentDetails(components []interface{}) {
 		kind := "Unknown"
 
 		if nameVal, exists := comp["displayName"]; exists && nameVal != nil {
-			if name, ok := nameVal.(string); ok {
-				displayName = name
-			} else {
-				displayName = fmt.Sprintf("%v", nameVal)
-			}
+			displayName = utils.SafeCastToString(nameVal)
 		}
 
 		if compDataVal, exists := comp["component"]; exists && compDataVal != nil {
 			if compData, ok := compDataVal.(map[string]interface{}); ok && compData != nil {
 				if kindVal, exists := compData["kind"]; exists && kindVal != nil {
-					if k, ok := kindVal.(string); ok {
-						kind = k
-					} else {
-						kind = fmt.Sprintf("%v", kindVal)
-					}
+					kind = utils.SafeCastToString(kindVal)
 				}
 			}
 		}
