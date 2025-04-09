@@ -36,6 +36,7 @@ import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
 import ShareIcon from '../../assets/icons/ShareIcon';
 import DeleteIcon from '../../assets/icons/DeleteIcon';
+import ErrorIcon from '@/assets/icons/ErrorIcon';
 import {
   useUpdateStatusMutation,
   useDeleteEventMutation,
@@ -50,7 +51,7 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { FormattedLinkMetadata, FormattedMetadata } from './metadata';
+import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
 
 export const eventPreventDefault = (e) => {
@@ -109,6 +110,10 @@ const BasicMenu = ({ event }) => {
     setIsSocialShareOpen((prev) => !prev);
   };
   const theme = useTheme();
+  const links = Object.entries(event.metadata || {})
+    .map(([key, value]) => PropertyLinkFormatters[key]?.(value))
+    .filter(Boolean);
+  const errorCodes = getErrorCodesFromEvent(event);
   return (
     <div className="mui-fixed" onClick={(e) => e.stopPropagation()}>
       <IconButton
@@ -153,7 +158,39 @@ const BasicMenu = ({ event }) => {
               </SocialListItem>
             </Collapse>
           </OptionList>
-
+          {errorCodes?.length > 0 && (
+            <OptionList>
+              <ListButton
+                component="a"
+                href={`https://docs.meshery.io/reference/error-codes#${errorCodes[0]}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ErrorIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+                <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                  View Error Code Docs
+                </Typography>
+              </ListButton>
+            </OptionList>
+          )}
+          <OptionList>
+            {links.map((link, index) => (
+              <OptionListItem key={index} sx={{ width: '100%' }}>
+                <ListButton
+                  component="a"
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                    {link.label}
+                  </Typography>
+                </ListButton>
+              </OptionListItem>
+            ))}
+          </OptionList>
           <DeleteEvent event={event} />
           <ChangeStatus event={event} />
         </MenuPaper>
