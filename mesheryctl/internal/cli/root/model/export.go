@@ -90,7 +90,7 @@ func export(modelName string, url string, output *outputDetail) error {
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		return ErrExportModel(errors.New("an error occurred on server during export process"), modelName)
+		return err
 	}
 
 	// ensure proper cleaning of resources
@@ -110,7 +110,7 @@ func export(modelName string, url string, output *outputDetail) error {
 	}
 	err = os.WriteFile(exportedModelPath, data, 0644)
 	if err != nil {
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil
 	}
 
