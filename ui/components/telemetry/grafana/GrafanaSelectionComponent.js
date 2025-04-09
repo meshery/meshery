@@ -65,7 +65,7 @@ function GrafanaSelectionComponent(props) {
   const [grafanaBoards, setGrafanaBoards] = useState([]);
   const [grafanaBoard, setGrafanaBoard] = useState('');
   const [templateVars, setTemplateVars] = useState([]);
-  const [templateVarOptions, setTemplateVarOptions] = useState([]);
+  const [templateVarOptions, setTemplateVarOptions] = useState([]); // will contain the array of options at the respective index, ex: [[v1], [v3, v4]]
   const [panels, setPanels] = useState([]);
   const [selectedPanels, setSelectedPanels] = useState([]);
   const [selectedTemplateVars, setSelectedTemplateVars] = useState([]);
