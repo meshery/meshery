@@ -51,8 +51,7 @@ mesheryctl design view [design-name | ID]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		pattern := ""
 		isID := false
@@ -63,8 +62,7 @@ mesheryctl design view [design-name | ID]
 			}
 			pattern, isID, err = utils.ValidId(mctlCfg.GetBaseMesheryURL(), args[0], "pattern")
 			if err != nil {
-				utils.Log.Error(ErrPatternInvalidNameOrID(err))
-				return nil
+				return ErrPatternInvalidNameOrID(err)
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
@@ -84,27 +82,23 @@ mesheryctl design view [design-name | ID]
 
 		req, err := utils.NewRequest("GET", url, nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		res, err := utils.MakeRequest(req)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		defer res.Body.Close()
 		body, err := io.ReadAll(res.Body)
 		if err != nil {
-			utils.Log.Error(utils.ErrReadResponseBody(err))
-			return nil
+			return utils.ErrReadResponseBody(err)
 		}
 
 		var dat map[string]interface{}
 		if err = json.Unmarshal(body, &dat); err != nil {
-			utils.Log.Error(utils.ErrUnmarshal(err))
-			return nil
+			return utils.ErrUnmarshal(err)
 		}
 
 		// Variables to track design structure for summary
@@ -130,34 +124,29 @@ mesheryctl design view [design-name | ID]
 			}
 
 			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		} else if viewAllFlag {
 			// only keep the pattern key from the response when viewing all the patterns
 			if body, err = json.MarshalIndent(map[string]interface{}{"patterns": dat["patterns"]}, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		} else {
 			// use the first match from the result when searching by pattern name
 			patternsVal, exists := dat["patterns"]
 			if !exists || patternsVal == nil {
-				utils.Log.Error(ErrDesignNotFound())
-				return nil
+				return ErrDesignNotFound()
 			}
 
 			patterns, ok := patternsVal.([]interface{})
 			if !ok || len(patterns) == 0 {
-				utils.Log.Error(ErrDesignNotFound())
-				return nil
+				return ErrDesignNotFound()
 			}
 
 			firstMatchVal := patterns[0]
 			firstMatch, ok := firstMatchVal.(map[string]interface{})
 			if !ok || firstMatch == nil {
-				utils.Log.Error(ErrDesignNotFound())
-				return nil
+				return ErrDesignNotFound()
 			}
 
 			// Extract design info and find components/relationships
@@ -176,8 +165,7 @@ mesheryctl design view [design-name | ID]
 			}
 
 			if body, err = json.MarshalIndent(firstMatch, "", "  "); err != nil {
-				utils.Log.Error(utils.ErrMarshalIndent(err))
-				return nil
+				return utils.ErrMarshalIndent(err)
 			}
 		}
 
@@ -186,12 +174,10 @@ mesheryctl design view [design-name | ID]
 
 		if outFormatFlag == "yaml" {
 			if body, err = yaml.JSONToYAML(body); err != nil {
-				utils.Log.Error(utils.ErrJSONToYAML(err))
-				return nil
+				return utils.ErrJSONToYAML(err)
 			}
 		} else if outFormatFlag != "json" {
-			utils.Log.Error(utils.ErrOutFormatFlag())
-			return nil
+			return utils.ErrOutFormatFlag()
 		}
 
 		// Display the design content
