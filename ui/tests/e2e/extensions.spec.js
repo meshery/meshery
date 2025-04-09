@@ -45,8 +45,9 @@ test.describe('Extensions Section Tests', () => {
 
   test('Verify Kanvas Details', { tag: '@unstable' }, async ({ page }) => {
     await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
-    const kanvasDetailsButton = page.locator('div').filter({ hasText: /^Enabled$/ });
+    const kanvasDetailsButton = page.getByTestId('kanvas-signup-btn');
     await expect(kanvasDetailsButton).toBeVisible();
+    await expect(kanvasDetailsButton).toBeDisabled();
   });
 
   test(
@@ -91,13 +92,9 @@ test.describe('Extensions Section Tests', () => {
     'Verify Meshery Adapter for Istio Section',
     { tag: '@unstable' },
     async ({ page, context }) => {
-      // Test the "Open Adapter docs" link
       const [docsPage] = await Promise.all([
         context.waitForEvent('page'),
-        await page
-          .getByText('Meshery Adapter for IstioDeploy the Meshery Adapter for Istio in order to')
-          .getByRole('link')
-          .click(),
+        await page.getByTestId('adapter-docs').first().click(),
       ]);
       await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
       await docsPage.close();
