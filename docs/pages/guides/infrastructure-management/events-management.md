@@ -28,6 +28,10 @@ Each notification in Meshery includes a clear summary of what occurred in your s
 
 You can mark notifications as read or unread to stay organized and focused. Meshery highlights critical, actionable events in red, helping you quickly spot and respond to urgent issues.
 
+<a href="{{ site.baseurl }}/assets/img/notification-center/description.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/description.png" alt="Event Descriptions" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
+
 🔗 For more technical details, see the [Contributor Reference](#).
 
 ### Notification Timestamps
