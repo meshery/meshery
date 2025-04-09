@@ -135,6 +135,10 @@ function GrafanaSelectionComponent(props) {
         templateVars[ind].query.startsWith('label_values') &&
         templateVars[ind].query.indexOf(',') > -1
       ) {
+        // series query needs a start and end time or else it will take way longer to return. . .
+        // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
+        // hence for now just limiting the time period to the last 24hrs
+
         const ed = new Date();
         const sd = new Date();
         sd.setDate(sd.getDate() - 1);
