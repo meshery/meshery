@@ -33,7 +33,9 @@ You can mark notifications as read or unread to stay organized and focused. Mesh
 ### Notification Timestamps
 Each notification includes a timestamp showing when the event happened. The time is displayed based on your local device’s time zone, so it reflects your current time.
 
-![Notification Timestamps]({{ site.baseurl }}/assets/img/notification-center/timestamps.png)
+<a href="{{ site.baseurl }}/assets/img/notification-center/timestamps.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/timestamps.png" alt="Notification Timestamps" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
 ### Data Sharing
 Need to collaborate?
@@ -72,7 +74,9 @@ Filter notifications based on whether they have been read. These statuses are de
 
 Meshery uses avatar icons to indicate who triggered a notification and what system was involved. These icons help users quickly understand the origin and nature of each event.
 
-![Notification Logos and Icons]({{ site.baseurl }}/assets/img/notification-center/avatar-icons.png)
+<a href="{{ site.baseurl }}/assets/img/notification-center/avatar-icons.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/avatar-icons.png" alt="Avatar Icons" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
 | Icon Type                       | Meaning                                                                 |
 |----------------------------------|-------------------------------------------------------------------------|
