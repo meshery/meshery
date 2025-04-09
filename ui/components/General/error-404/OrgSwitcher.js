@@ -30,12 +30,12 @@ const OrgSwitcher = (props) => {
     error: orgsError,
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization } = props;
+  const { organization, setOrganization, setKeys } = props;
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
 
-  useGetCurrentAbilities(organization, props.setKeys, skip);
+  useGetCurrentAbilities(organization, setKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {

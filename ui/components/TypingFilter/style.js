@@ -1,5 +1,4 @@
-import { alpha } from '@mui/system';
-import { TextField, Typography, styled } from '@layer5/sistent';
+import { TextField, styled } from '@layer5/sistent';
 export const Root = styled('div')(() => ({
   position: 'relative',
 }));
@@ -16,6 +15,7 @@ export const InputField = styled(TextField)(({ theme }) => ({
     },
   },
 }));
+
 export const DropDown = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#294957' : '#fff',
   borderRadius: '6px',
@@ -25,25 +25,4 @@ export const DropDown = styled('div')(({ theme }) => ({
   marginTop: '0.2rem',
   maxHeight: '20rem',
   overflowY: 'auto',
-}));
-export const Item = styled('div')(({ theme }) => ({
-  display: 'flex',
-  gap: '0.3rem',
-  margin: '0.3rem',
-  padding: '0.3rem',
-  paddingInline: '3rem',
-  borderRadius: '6px',
-  cursor: 'pointer',
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.text.brand, 0.25),
-  },
-}));
-export const Label = styled(Typography)(({ theme }) => ({
-  fontWeight: 500,
-  color: theme.palette.text.primary,
-}));
-
-export const Description = styled(Typography)(({ theme }) => ({
-  fontWeight: 400,
-  color: theme.palette.secondary.number,
 }));
