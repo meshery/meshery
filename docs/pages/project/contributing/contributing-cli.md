@@ -82,7 +82,10 @@ Annotations: linkDocPatternApply,
 {% endcapture %}
 {% include code.html code=code_content %}
 
-**NOTE: It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the script.**
+{% include alert.html
+    type="warning"
+    title="Avoid documentation being overwritten"
+    content='It is advised not to modify the changes in `docs` folder, rather should be done in `mesheryctl` folder as the changes will get overwritten by the CI workflows.' %}
 
 ### Adding New/Removing Existing commands in the reference index
 
