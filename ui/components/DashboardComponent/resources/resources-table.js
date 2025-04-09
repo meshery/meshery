@@ -7,6 +7,7 @@ import {
   ResponsiveDataTable,
   SearchBar,
   Slide,
+  UniversalFilter,
 } from '@layer5/sistent';
 import View from '../view';
 import { ALL_VIEW, SINGLE_VIEW } from './config';
@@ -18,6 +19,7 @@ import { useSelector } from 'react-redux';
 
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -36,11 +38,37 @@ const ResourcesTable = (props) => {
   const [pageSize, setPageSize] = useState();
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
+  const [namespaceFilter, setNamespaceFilter] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState({
+    namespace: 'All',
+  });
   const [selectedResource, setSelectedResource] = useState({});
   const [view, setView] = useState(ALL_VIEW);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { width } = useWindowDimensions();
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
+  const handleApplyFilter = () => {
+    const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
+    setNamespaceFilter(namespaceFilter);
+  };
+
+  const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
+    page: page,
+    pagesize: 'all',
+    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
+  });
+
+  const filters = {
+    namespace: {
+      name: 'Namespace',
+      options: [
+        ...clusterSummary?.namespaces.map((ns) => ({
+          value: ns,
+          label: ns,
+        })),
+      ],
+    },
+  };
 
   const switchView = (view, resource) => {
     setSelectedResource(resource);
@@ -85,10 +113,17 @@ const ResourcesTable = (props) => {
     }
     if (!resourceName) search = '';
     if (!sortOrder) sortOrder = '';
+
+    let apiUrl = `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+      resourceName,
+    )}&order=${encodeURIComponent(sortOrder)}`;
+
+    if (namespaceFilter) {
+      apiUrl += `&namespace=${encodeURIComponent(namespaceFilter)}`;
+    }
+
     dataFetch(
-      `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        resourceName,
-      )}&order=${encodeURIComponent(sortOrder)}`,
+      apiUrl,
       {
         credentials: 'include',
         method: 'GET',
@@ -113,7 +148,7 @@ const ResourcesTable = (props) => {
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder, clusterIds]);
+  }, [page, pageSize, search, sortOrder, clusterIds, namespaceFilter]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(tableConfig.colViews, width);
@@ -245,7 +280,12 @@ const ResourcesTable = (props) => {
                     setExpanded={setIsSearchExpanded}
                     placeholder={`Search ${tableConfig.name}...`}
                   />
-
+                  <UniversalFilter
+                    filters={filters}
+                    selectedFilters={selectedFilters}
+                    setSelectedFilters={setSelectedFilters}
+                    handleApplyFilter={handleApplyFilter}
+                  />
                   <CustomColumnVisibilityControl
                     id="ref"
                     columns={tableConfig.columns}
