@@ -337,9 +337,8 @@ const BulkActions = () => {
         padding: '0.15rem',
       }}
     >
-      <Box display={'flex'} alignItems="center">
+      <Box>
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
-        <Typography variant="body2">Select All</Typography>
       </Box>
       <Collapse in={checkedEvents.length > 0}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
