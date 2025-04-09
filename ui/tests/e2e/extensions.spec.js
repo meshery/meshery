@@ -31,6 +31,7 @@ test.describe('Extensions Section Tests', () => {
 
     const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
     await expect(enableButton).toBeVisible();
+    await expect(enableButton).toBeEnabled();
 
     await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
   });
@@ -39,6 +40,7 @@ test.describe('Extensions Section Tests', () => {
     await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
     const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
     await expect(performanceEnableButton).toBeVisible();
+    await expect(performanceEnableButton).toBeEnabled();
   });
 
   test('Verify Kanvas Details', { tag: '@unstable' }, async ({ page }) => {
