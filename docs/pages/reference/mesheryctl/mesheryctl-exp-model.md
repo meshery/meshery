@@ -1,25 +1,35 @@
 ---
 layout: default
-title: mesheryctl-exp
-permalink: reference/mesheryctl/exp
-redirect_from: reference/mesheryctl/exp/
+title: mesheryctl-exp-model
+permalink: reference/mesheryctl/exp/model
+redirect_from: reference/mesheryctl/exp/model/
 type: reference
 display-title: "false"
 language: en
 command: exp
-subcommand: nil
+subcommand: model
 ---
 
-# mesheryctl exp
+# mesheryctl exp model
 
-Experimental commands for mesheryctl
+Experimental commands for mesheryctl model
 
 ## Synopsis
 
-Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.
+Temporal container to deliver model init subcommand to exp command
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp [flags]
+mesheryctl exp model [flags]
+
+</div>
+</pre> 
+
+## Examples
+
+Scaffold a folder structure for model creation
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp model init [model-name]
 
 </div>
 </pre> 
@@ -28,7 +38,7 @@ mesheryctl exp [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for exp
+  -h, --help   help for model
 
 </div>
 </pre>
@@ -45,10 +55,6 @@ mesheryctl exp [flags]
 
 ## See Also
 
-* [mesheryctl exp connections](/reference/mesheryctl/exp/connections)
-* [mesheryctl exp model](/reference/mesheryctl/exp/model)
-* [mesheryctl exp organization](/reference/mesheryctl/exp/organization)
-* [mesheryctl exp relationship](/reference/mesheryctl/exp/relationship)
-* [mesheryctl exp workspace](/reference/mesheryctl/exp/workspace)
+* [mesheryctl exp model init](/reference/mesheryctl/exp/model/init)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
