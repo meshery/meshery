@@ -78,7 +78,9 @@ evaluate := eval_results if {
 			"type": "parent",
 			"subtype": "alias",
 		},
+		eval.edge_network_policy_identifier
 	]
+
 
 	# Iterate over relationships in the design file and resolve patches.
 	resultant_patches := {patched_object |
@@ -186,6 +188,7 @@ evaluate := eval_results if {
 	relationships_added := evaluate_relationships_added(updated_pending_rels, all_valid_relationships)
 	relationships_deleted := evaluate_relationships_deleted(updated_pending_rels, all_valid_relationships)
 
+
 	# Concatenate updated relationships.
 	final_rels_added := array.concat(updated_pending_rels, relationships_added)
 
@@ -216,6 +219,7 @@ evaluate := eval_results if {
 			"value": {comp | some comp in input.components},
 		},
 	])
+
 
 	#1. Validate Relationships
 	validated_rels := union({rels |
