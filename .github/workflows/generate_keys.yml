@@ -76,7 +76,7 @@ jobs:
 
       - name: Send Email on Generate permission keys failure
         if: ${{ failure() }}
-        uses: dawidd6/action-send-mail@v3.7.1
+        uses: dawidd6/action-send-mail@v4
         env:
           msg: ${{ env.reason != '' && env.reason || ' Generate permission keys failure' }}
         with:
