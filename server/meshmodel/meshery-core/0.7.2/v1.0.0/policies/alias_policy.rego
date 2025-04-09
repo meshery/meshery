@@ -19,7 +19,7 @@ import data.feasibility_evaluation_utils.is_relationship_feasible_to
 import data.core_utils.truncate_set
 
 
-import data.eval_rules.approve_pending_relationships_action
+import data.eval_rules
 
 # Module: Alias Relationship Evaluator
 #
@@ -86,6 +86,7 @@ is_alias_policy_identifier(relationship_policy_identifier) if {
 }
 
 identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
+
 	is_alias_policy_identifier(relationship_policy_identifier)
 
 	eval_results := union({new_relationships |
@@ -185,7 +186,11 @@ identify_alias_relationships(component, relationship) := {rel |
 	])
 }
 
-alias_relationship_already_exists(design_file, relationship) := existing_rel if {
+# this check is different than the comman duplicacy check in eval_rules.rego
+# as the to selector is newly created with new id so we need to check
+# if there is any existing relationship in the design of kind "alias" and the to ( alias component) is same
+# only one alias relationship is allowed for a component at a particular path is allowed so we dont need to check for the from selector
+alias_relationship_already_exists(design_file, relationship) := true if {
 	some existing_rel in design_file.relationships
 	existing_rel.status != "deleted" # check if the relationship is not deleted
 	is_alias_relationship(existing_rel)
@@ -312,7 +317,7 @@ action_phase(design_file, relationship_policy_identifier) := result if {
 	}
 
 	components_to_add := truncate_set(alias_components_to_add(design_file, alias_relationships),MAX_ALIASES)
-	relationships_to_add :=  approve_pending_relationships_action(alias_relationships, MAX_ALIASES)
+	relationships_to_add :=  eval_rules.approve_pending_relationships_action(alias_relationships, MAX_ALIASES)
 
 	# Relationships that are deleted already at the validation phase
 	relationships_to_delete := {action |
