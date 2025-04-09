@@ -9,7 +9,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/api/types/network"
@@ -86,7 +85,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		if err != nil {
 			return ErrDeployingAdapterInDocker(err)
 		}
-		var mesheryNetworkSettings *types.SummaryNetworkSettings
+		var mesheryNetworkSettings *container.NetworkSettingsSummary
 		for _, container := range containers {
 			if strings.Contains(container.Image, "layer5/meshery") {
 				mesheryNetworkSettings = container.NetworkSettings
