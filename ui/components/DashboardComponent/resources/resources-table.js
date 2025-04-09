@@ -51,18 +51,21 @@ const ResourcesTable = (props) => {
     const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
     setNamespaceFilter(namespaceFilter);
   };
-
-  const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
-    page: page,
-    pagesize: 'all',
-    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
-  });
+  const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
+  const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery(
+    {
+      page: page,
+      pagesize: 'all',
+      clusterIds: clusterIds,
+    },
+    { skip: clusterIds.length === 0 },
+  );
 
   const filters = {
     namespace: {
       name: 'Namespace',
       options: [
-        ...clusterSummary?.namespaces.map((ns) => ({
+        ...(clusterSummary?.namespaces || []).map((ns) => ({
           value: ns,
           label: ns,
         })),
@@ -93,9 +96,7 @@ const ResourcesTable = (props) => {
         selectedK8sContexts,
       );
 
-  const clusterIds = encodeURIComponent(
-    JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
-  );
+  const encodedClusterIds = encodeURIComponent(JSON.stringify(clusterIds));
 
   const { notify } = useNotification();
 
@@ -106,7 +107,7 @@ const ResourcesTable = (props) => {
       query.resourceName ||
       (['Node', 'Namespace'].includes(query.resource) ? query.resource : search);
     const resourceCategory = query.resource || tableConfig.name;
-    const decodedClusterIds = JSON.parse(decodeURIComponent(clusterIds));
+    const decodedClusterIds = JSON.parse(decodeURIComponent(encodedClusterIds));
     if (decodedClusterIds.length === 0) {
       setLoading(false);
       return;
@@ -114,7 +115,7 @@ const ResourcesTable = (props) => {
     if (!resourceName) search = '';
     if (!sortOrder) sortOrder = '';
 
-    let apiUrl = `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+    let apiUrl = `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${encodedClusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
       resourceName,
     )}&order=${encodeURIComponent(sortOrder)}`;
 
@@ -148,7 +149,7 @@ const ResourcesTable = (props) => {
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder, clusterIds, namespaceFilter]);
+  }, [page, pageSize, search, sortOrder, encodedClusterIds, namespaceFilter]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(tableConfig.colViews, width);
