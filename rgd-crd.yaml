@@ -1,0 +1,23 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: resourcegraphdefinitions.k8s.example.com
+spec:
+  group: k8s.example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+      schema:
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+  scope: Namespaced
+  names:
+    plural: resourcegraphdefinitions
+    singular: resourcegraphdefinition
+    kind: ResourceGraphDefinition
+    shortNames:
+    - rgd
