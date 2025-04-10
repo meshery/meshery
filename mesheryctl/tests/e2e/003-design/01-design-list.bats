@@ -24,9 +24,5 @@ load '../helpers/bats-assert/load'
   run $MESHERYCTL_BIN design list -v
   assert_success
   # Check for either designs or "No pattern(s) found" message
-  if [[ "$output" == *"No pattern(s) found"* ]]; then
-    assert_output --partial "No pattern(s) found"
-  else
-    assert_output --partial "DESIGN ID"
-  fi
+  assert_output --regexp "(No pattern(s) found|.*DESIGN ID.*)"
 }
