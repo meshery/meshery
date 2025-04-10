@@ -19,11 +19,9 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // represents the mesheryctl exp relationships list command
@@ -42,26 +40,16 @@ mesheryctl relationship list --page [page-number]
 mesheryctl relationship list --count
 `,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationship list \nRun 'mesheryctl exp relationship list --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp relationship list\nRun 'mesheryctl exp relationship list --help' to see detailed help message"
 		if len(args) != 0 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.RelationshipsError("this command takes no arguments\n", "list"))
-		}
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
 		page, _ := cmd.Flags().GetInt("page")
-		url := fmt.Sprintf("%s/api/meshmodels/relationships?%s", baseUrl, utils.GetPageQueryParameter(cmd, page))
 
-		relationships, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
+		relationships, err := api.Fetch[MeshmodelRelationshipsAPIResponse](fmt.Sprintf("api/meshmodels/relationships?%s", utils.GetPageQueryParameter(cmd, page)))
 
 		if err != nil {
 			return err
