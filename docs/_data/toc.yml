@@ -1,8 +1,6 @@
 - title: 🗺 Overview & Installation
   url: project/overview
   links:
-    - title: FAQs
-      url: project/faq
     - title: 🚀 Quick Start
       url: installation/quick-start
     - title: Installation ↆ
@@ -53,6 +51,8 @@
           url: installation/multiple-adapters
         - title: Meshery Playground
           url: installation/playground
+        - title: FAQs
+          url: project/faq
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -231,7 +231,7 @@
 - title: 🧑‍💻 Contributing & Community
   url: project
   links:
-    - title: Meshery Community
+    - title: Community
       url: project/community
     - title: Meshery Playground
       url: installation/playground
@@ -288,9 +288,22 @@
         - title: Dev Setup on Windows
           url: project/contributing/meshery-windows
 
-- title: 📖 Reference & Extensibility
+- title: 📖 Extensibility & Reference
   url: reference
   links:
+    - title: Extensibility ↆ
+      url: extensibility
+      children:
+        - title: Authorization
+          url: extensibility/authorization
+        - title: Load Generators
+          url: extensibility/load-generators
+        - title: Providers
+          url: extensibility/providers
+        - title: Compatibility Guide
+          url: extensibility/verify-compatibility
+        - title: UI Plugins
+          url: extensibility/ui
     - title: Error Code
       url: reference/error-codes
     - title: Permission Keys
@@ -306,18 +319,5 @@
           url: reference/graphql-apis
         - title: REST API
           url: reference/rest-apis
-    - title: Extensibility ↆ
-      url: extensibility
-      children:
-        - title: Authorization
-          url: extensibility/authorization
-        - title: Load Generators
-          url: extensibility/load-generators
-        - title: Providers
-          url: extensibility/providers
-        - title: Compatibility Guide
-          url: extensibility/verify-compatibility
-        - title: UI Plugins
-          url: extensibility/ui
     - title: Security Vulnerabilities
       url: project/security-vulnerabilities

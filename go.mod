@@ -7,7 +7,7 @@ replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api v0.0.0-20230704153349-abb98ff04d03
 
 // The following replaces are used for local development
-// replace github.com/meshery/schemas v0.8.5 => ../schemas
+// replace github.com/meshery/schemas v0.8.10 => ../schemas
 // replace github.com/layer5io/meshkit v0.8.22 => ../meshkit
 
 require (
@@ -45,7 +45,7 @@ require (
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/schemas v0.8.9
+	github.com/meshery/schemas v0.8.10
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
