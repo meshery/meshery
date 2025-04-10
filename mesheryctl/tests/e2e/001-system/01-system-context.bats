@@ -14,7 +14,8 @@ setup() {
 # bats test_tags=system:context
 @test "mesheryctl system context view --all display valid content" {
    run $MESHERYCTL_BIN system context view --all
-   [ "$status" -eq 0 ]
+   assert_success
+
    assert_line --regexp "$ENDPOINT_REGEX_MATCH"
    assert_line --regexp "$TOKEN_REGEX_MATCH"
    assert_line --regexp "$PLATFORM_REGEX_MATCH"
@@ -24,7 +25,8 @@ setup() {
 # bats test_tags=system:context
 @test "mesheryctl system context view display valid content" {
    run $MESHERYCTL_BIN system context view
-   [ "$status" -eq 0 ]
+   assert_success
+   
    assert_line --regexp "$CONTEXT_REGEXP_MATCH"
    assert_line --regexp "$ENDPOINT_REGEX_MATCH"
    assert_line --regexp "$TOKEN_REGEX_MATCH"
