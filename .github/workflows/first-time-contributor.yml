@@ -5,6 +5,10 @@ on:
     branches:
       - master
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   welcome:
     runs-on: ubuntu-24.04  # Specify the environment for the job
