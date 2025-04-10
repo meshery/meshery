@@ -92,15 +92,20 @@ patch_mutators_action(relationship,design_file) := { action |
       from := selector.allow.from[0]
       to := selector.allow.to[0]
       some i in numbers.range(0, count(from.patch.mutatorRef) - 1)
+
       mutatorRef  := from.patch.mutatorRef[i]
       mutatedRef :=  to.patch.mutatedRef[i]
-#      print("mutatorRef", mutatorRef, "mutatedRef", mutatedRef)
+
       from_component := component_declaration_by_id(design_file, from.id)
+      to_component := component_declaration_by_id(design_file, to.id)
+    
       mutatorValue :=  core_utils.configuration_for_component_at_path(mutatorRef, from_component, design_file)
-#      print("mutator value", mutatorValue)
+      old_value := core_utils.configuration_for_component_at_path(mutatedRef, to_component, design_file)
+
+      old_value != mutatorValue
 
       action := {
-        "op": actions.update_component_op,
+        "op": actions.get_component_update_op(mutatedRef),
         "value": {
             "id": to.id,
             "path": mutatedRef,

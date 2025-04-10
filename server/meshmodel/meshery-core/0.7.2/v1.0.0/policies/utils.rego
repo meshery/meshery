@@ -91,13 +91,6 @@ normalize_path(p) := out if {
 }
 
 
-#walk() will throw an error if the full path doesn't exist — so if it succeeds, the path exists.
-path_exists(obj, path) := true if {
-  is_array(path)
-  _ = walk(obj, path)
-} else := false
-
-#-----------
 
 #-------- Get Component Configuration -----------
 

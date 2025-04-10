@@ -88,6 +88,7 @@ evaluate := eval_results if {
 	resultant_patches := {patched_object |
 		some rel in rels_in_design_file
 
+        rel.subType in  {"inventory"}
 		# Skip relationships with status "deleted".
 		status := lower(rel.status)
 		allowed_status := {"pending", "approved"}
@@ -261,7 +262,7 @@ evaluate := eval_results if {
 		actions := eval.action_phase(design_file_to_apply_actions, identifier)
 	})
 
-	 print("all actions",actions_to_apply)
+	print("all actions",actions_to_apply)
 
 	actions_response := trace_from_actions(actions_to_apply)
 
@@ -277,6 +278,7 @@ evaluate := eval_results if {
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
 		"design": design_to_return,
+		"actions": actions_to_apply,
 		"trace": {
 #			"componentsUpdated": updated_declarations,
 			"componentsAdded": array_to_set(components_added) | actions_response.components_to_add,

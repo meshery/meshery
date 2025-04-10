@@ -3,8 +3,16 @@ package actions
 import rego.v1
 import data.core_utils
 
-# { "op": "update_component", "value": { "id": "xxx-xxx", "path": ["configuration","spec"], "value": 2 }  op: "replace"| "merge" }
+# { "op": "update_component", "value": { "id": "xxx-xxx", "path": ["name"], "value": 2 }  op: "replace"| "merge" }
 update_component_op := "update_component"
+
+
+# This is specially handled as configurations are complex and need to be specialy patched ( lot of array index edgecases)
+# right now this is handled from golang
+# { "op": "update_component_configuration", "value": { "id": "xxx-xxx", "path": ["configuration","spec"], "value": 2 }  op: "replace"| "merge" }
+update_component_configuration_op := "update_component_configuration"
+
+
 # { "op": "delete_component", "value": { "id": "xxx-xxx" } }
 delete_component_op := "delete_component"
 # { "op": "add_component", "value": { item : <component_declaration> }
@@ -17,11 +25,16 @@ delete_relationship_op := "delete_relationship"
 # { "op": "add_relationship", "value": { item : <relationship_declaration> } }
 add_relationship_op := "add_relationship"
 
+get_component_update_op(path) := op if {
+    path[0] == "configuration"
+    op := update_component_configuration_op
+} else :=  update_component_op
+
 
 
 # applies all of the updates for a single item like component or relationship
 apply_updates_to_item(original,updates,op) := updated if {
-    # print("apply_object_update_action",original.id,op)
+    print("apply_object_update_action",original.id,op)
 
     valid_updates := {update |
         some update in updates
@@ -34,7 +47,7 @@ apply_updates_to_item(original,updates,op) := updated if {
     json_ops := [patch |
          some update in valid_updates
          path := core_utils.normalize_path(update.value.path)
-         print("normalized path =>" , path)
+         print("path",path)
          patch := {
              "op":   "replace",
              "path": path,
@@ -125,7 +138,7 @@ apply_relationship_delete_actions(design_file,actions) := json.patch(design_file
 apply_all_actions_to_design(design_file,actions) := final_design if {
    with_deleted_components := apply_component_delete_actions(design_file,actions)
    with_added_components := apply_component_add_actions(with_deleted_components,actions)
-   with_updated_components := apply_component_update_actions(with_added_components,actions)
+   with_updated_components := apply_component_update_actions(with_added_components,actions) # move to golang to handle complex paths
 
    with_deleted_relationships := apply_relationship_delete_actions(with_updated_components,actions)
    with_added_relationships := apply_relationship_add_actions(with_deleted_relationships,actions)
