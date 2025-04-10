@@ -44,7 +44,13 @@ const Filter = ({ handleFilter }) => {
     <TypingFilter
       handleFilter={handleFilter}
       filterSchema={filterSchema}
-      autoFilter={true}
+      defaultFilters={[
+        {
+          type: 'STATUS',
+          value: 'unread',
+          label: 'status: unread',
+        },
+      ]}
       placeholder="Filter Notifications"
     />
   );
