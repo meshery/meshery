@@ -7,7 +7,7 @@ setup() {
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/"
 
-[ -d "$TESTDATA_DIR" ] || mkdir -p "$TESTDATA_DIR"
+  [ -d "$TESTDATA_DIR" ] || mkdir -p "$TESTDATA_DIR"
 }
 
 teardown() {
@@ -24,43 +24,43 @@ teardown() {
 
 @test "mesheryctl model export succeeds with default options" {
   run $MESHERYCTL_BIN model export accurate -l $TESTDATA_DIR
-  [ "$status" -eq 0 ]
+  assert_success
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-  [ -f "$TESTDATA_DIR/accurate.tar" ]
+  assert_file_exists "$TESTDATA_DIR/accurate.tar"
 }
 
 @test "mesheryctl model export succeeds with tar output type" {
   run $MESHERYCTL_BIN model export accurate -l $TESTDATA_DIR -o tar
-  [ "$status" -eq 0 ]
+  assert_success
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
   
-  [ -f "$TESTDATA_DIR/accurate.tar.gz" ]
+  assert_file_exists "$TESTDATA_DIR/accurate.tar.gz"
 
 }
 
 @test "mesheryctl model export succeeds with json output format" {
   run $MESHERYCTL_BIN model export accurate -t json -l $TESTDATA_DIR
-  [ "$status" -eq 0 ]
+  assert_success
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-  [ -f "$TESTDATA_DIR/accurate.tar" ]
+  assert_file_exists "$TESTDATA_DIR/accurate.tar"
 }
 
 @test "mesheryctl model export includes version when specified" {
   run $MESHERYCTL_BIN model export accurate --version v1.7.0 -l $TESTDATA_DIR
-  [ "$status" -eq 0 ]
+  assert_success
 
   assert_output --partial "Exported model to $TESTDATA_DIR"
-  [ -f "$TESTDATA_DIR/accurate.tar" ]
+  assert_file_exists "$TESTDATA_DIR/accurate.tar"
 }
 
 @test "mesheryctl model export handles discard flags correctly" {
   run $MESHERYCTL_BIN model export accurate $TESTDATA_DIR --discard-components --discard-relationships -l $TESTDATA_DIR
-  [ "$status" -eq 0 ]
+  assert_success
 
  assert_output --partial "Exported model to $TESTDATA_DIR"
- [ -f "$TESTDATA_DIR/accurate.tar" ]
+ assert_file_exists "$TESTDATA_DIR/accurate.tar"
 
 }
