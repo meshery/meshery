@@ -37,6 +37,14 @@ array_endswith(arr, item) if {
 	arr[count(arr) - 1] == item
 }
 
+# coalesce is a utility function that returns the first non-null value from the provided arguments.
+coalesce(val,defautl) := val if {
+    val != null
+}
+coalesce(val,defautl) := defautl if {
+    val == null
+}
+
 # truncate_set restricts a set to a maximum number of elements
 #
 # Note: It's legal to define the same function twice in Rego,
@@ -67,6 +75,27 @@ truncate_set(s, max_length) := result if {
 	count(arr) > max_length
 	result := {arr[i] | i < max_length}
 }
+
+# normalize_path normalizes a given path to a slash-separated string compatible with json.patch.
+normalize_path(p) := out if {
+  # If input is a string, return as-is
+  is_string(p)
+  out := p
+}
+
+normalize_path(p) := out if {
+  # If input is an array, convert to slash-separated string
+  is_array(p)
+  joined := concat("/", p)
+  out := sprintf("/%s", [joined])
+}
+
+
+#walk() will throw an error if the full path doesn't exist — so if it succeeds, the path exists.
+path_exists(obj, path) := true if {
+  is_array(path)
+  _ = walk(obj, path)
+} else := false
 
 #-----------
 
@@ -160,3 +189,20 @@ get_array_aware_configuration_for_component_at_path(ref, component, design) := r
 		"paths": [ref],
 	}
 }
+
+
+# upsert item into set
+# if the item already exists in the set, it will be replaced with the new item
+# if the item does not exist in the set, it will be added to the set
+upsert_into_set(set, item, keys) := result if {
+   without_item := { x |
+      some x in set
+      every key  in keys {
+         x[key] != item[key]
+      }
+   }
+
+   result := without_item | item
+}
+
+

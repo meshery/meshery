@@ -3,26 +3,58 @@ package eval_rules
 import rego.v1
 
 import data.core_utils.truncate_set
+import data.actions
 
 
-approve_pending_relationships_action(relationships,max_limit) := relationships_to_add if {
-   relationships_to_add :=  truncate_set({action |
+#approve_identified_relationships_action(relationships,max_limit) := relationships_to_add if {
+#   relationships_to_add :=  truncate_set({action |
+#		some pending_rel in relationships
+#
+#		pending_rel.status == "identified"
+#
+#		rel := json.patch(pending_rel, [{
+#			"op": "replace",
+#			"path": "/status",
+#			"value": "approved",
+#		}])
+#
+#		action := {
+#			"op": actions.add_relationship_op,
+#			"value": {"item":rel}
+#		}
+#	},max_limit)
+#
+#}
+
+
+approve_relationships_action(relationships,status,max_limit) := update_actions if {
+   update_actions :=  truncate_set({action |
 		some pending_rel in relationships
-
-		pending_rel.status == "pending"
-
-		rel := json.patch(pending_rel, [{
-			"op": "replace",
-			"path": "/status",
-			"value": "approved",
-		}])
+		pending_rel.status in status
 
 		action := {
-			"op": "add_relationship",
-			"value": rel,
+			"op": actions.update_relationship_op,
+			"value": {
+			   "id" : pending_rel.id,
+			   "path": "/status",
+			   "value": "approved",
+			}
 		}
 	},max_limit)
+}
 
+approve_pending_relationships_action(relationships,max_limit) :=  approve_relationships_action(relationships,{"pending"},max_limit)
+approve_identified_relationships_action(relationships,max_limit) :=  approve_relationships_action(relationships,{"identified"},max_limit)
+
+cleanup_deleted_relationships_actions(relationships) := delete_actions if {
+   delete_actions := {action |
+		some rel in relationships
+		rel.status == "deleted"
+		action := {
+			"op": actions.delete_relationship_op,
+			"value": {"id": rel.id},
+		}
+	}
 }
 
 same_relationship_identitfier(rel_a,rel_b) := true if {
@@ -40,7 +72,7 @@ same_relationship_selector_clause(clause_a,clause_b) := true if {
 
 relationships_are_same(rel_a,rel_b) := true if {
 
-   same_relationship_identitfier(rel_a,rel_b)
+    same_relationship_identitfier(rel_a,rel_b)
 
     some selector_a in rel_a.selectors
     some selector_b in rel_b.selectors
@@ -54,7 +86,7 @@ relationship_already_exists(design_file, relationship) := true if {
     existing_rel.status != "deleted" # check if the relationship is not deleted
 
     relationships_are_same(existing_rel, relationship)
-}
+}else := false
 
 #any_comman_selector(relationship_a, relationship_b) := true if {
 #    some selector_a in relationship_a.selectors
