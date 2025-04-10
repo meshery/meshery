@@ -31,7 +31,7 @@ test.describe('Performance Section Tests', () => {
     await performanceNav.click();
   });
 
-  test('Common UI elements', { tag: '@unstable' }, async ({ page }) => {
+  test('Common UI elements', async ({ page }) => {
     for (const elementId of COMMON_UI_ELEMENTS) {
       await expect(
         page.getByTestId(elementId),
@@ -40,13 +40,13 @@ test.describe('Performance Section Tests', () => {
     }
   });
 
-  test.describe('Configure Metrics Navigation and Settings', { tag: '@unstable' }, () => {
+  test.describe('Configure Metrics Navigation and Settings', () => {
     test.beforeEach(async ({ page }) => {
       await page.getByTestId('configure-metrics-button').click();
       await expect(page).toHaveURL(/.*#metrics/);
     });
 
-    test('All settings tabs', { tag: '@unstable' }, async ({ page }) => {
+    test('All settings tabs', async ({ page }) => {
       for (const tabId of SETTINGS_TABS) {
         await expect(
           page.getByTestId(tabId),
@@ -55,7 +55,7 @@ test.describe('Performance Section Tests', () => {
       }
     });
 
-    test('Action buttons on adapters tab', { tag: '@unstable' }, async ({ page }) => {
+    test('Action buttons on adapters tab', async ({ page }) => {
       await page.getByTestId('settings-tab-adapters').click();
 
       for (const buttonId of ACTION_BUTTONS) {
@@ -66,10 +66,8 @@ test.describe('Performance Section Tests', () => {
       }
     });
 
-    test('Grafana elements on metrics tab', { tag: '@unstable' }, async ({ page }) => {
+    test('Grafana elements on metrics tab', async ({ page }) => {
       await page.getByTestId('settings-tab-metrics').click();
-      await page.waitForTimeout(500);
-
       for (const grafanaId of GRAFANA_ELEMENTS) {
         await expect(
           page.getByTestId(grafanaId),
@@ -78,7 +76,7 @@ test.describe('Performance Section Tests', () => {
       }
     });
 
-    test('Info icons on settings page', { tag: '@unstable' }, async ({ page }) => {
+    test('Info icons on settings page', async ({ page }) => {
       const infoIconCount = await page.getByTestId('InfoOutlinedIcon').count();
       expect(infoIconCount).toBeGreaterThan(0);
     });
