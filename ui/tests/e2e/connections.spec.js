@@ -160,7 +160,7 @@ test(
 );
 
 transitionTests.forEach((t) => {
-  test(t.name, { tag: '@unstable' }, async ({ page, provider }) => {
+  test(t.name, async ({ page, provider }) => {
     const stateTransitionReq = page.waitForRequest(
       (request) =>
         request.url() ===
@@ -238,7 +238,7 @@ transitionTests.forEach((t) => {
   });
 });
 
-test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
+test('Delete Kubernetes cluster connections', async ({ page }) => {
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
   // Find the row with the connection to be deleted
@@ -268,7 +268,7 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
       response.status() === 202,
   );
 
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByRole('button', { name: 'DELETE', exact: true }).click();
 
   await responsePromise;
 });
