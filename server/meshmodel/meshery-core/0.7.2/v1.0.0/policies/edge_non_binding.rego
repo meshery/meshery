@@ -20,6 +20,8 @@ import data.core_utils.truncate_set
 import data.core_utils.array_to_set
 
 import data.eval_rules
+import data.actions
+
 # Module:
 # Purpose:
 # Example:
@@ -55,7 +57,7 @@ matching_mutators(component_from , component_to , from_clause,to_clause,design_f
 
      mutatorCount := count(from_clause.patch.mutatorRef)
 
-     print("mutator count", mutatorCount)
+#     print("mutator count", mutatorCount)
 
      # any matching not null mutator makes the relationship valid ( which is kind of wierd as we dont have proper
      # control to specific which ones can be null or not)
@@ -66,7 +68,7 @@ matching_mutators(component_from , component_to , from_clause,to_clause,design_f
          mutatorValue := core_utils.configuration_for_component_at_path(mutatorPath, component_from, design_file)
          mutatedValue := core_utils.configuration_for_component_at_path(mutatedPath, component_to, design_file)
 
-         print("mutator value", mutatorValue, "mutated value", mutatedValue)
+#         print("mutator value", mutatorValue, "mutated value", mutatedValue)
          mutatorValue != null
          mutatedValue != null
 
@@ -81,9 +83,33 @@ matching_mutators(component_from , component_to , from_clause,to_clause,design_f
         "to": [to_clause],
     }
 
-
-
 }
+
+
+patch_mutators_action(relationship,design_file) := { action |
+#      print("patch mutators action", relationship.kind)
+      some selector in relationship.selectors
+      from := selector.allow.from[0]
+      to := selector.allow.to[0]
+      some i in numbers.range(0, count(from.patch.mutatorRef) - 1)
+      mutatorRef  := from.patch.mutatorRef[i]
+      mutatedRef :=  to.patch.mutatedRef[i]
+#      print("mutatorRef", mutatorRef, "mutatedRef", mutatedRef)
+      from_component := component_declaration_by_id(design_file, from.id)
+      mutatorValue :=  core_utils.configuration_for_component_at_path(mutatorRef, from_component, design_file)
+#      print("mutator value", mutatorValue)
+
+      action := {
+        "op": actions.update_component_op,
+        "value": {
+            "id": to.id,
+            "path": mutatedRef,
+            "value": mutatorValue,
+        }
+      }
+}
+
+#patch_mutators_action(relationship,design_file) := actions
 
 identify_edge_network_relationships(relationship,design_file) := { declaration |
 
@@ -103,13 +129,11 @@ identify_edge_network_relationships(relationship,design_file) := { declaration |
 
     matching_selectors := matching_mutators(component_from, component_to, from_selector, to_selector, design_file)
 
-
-
-    print("identfied rel", component_from.id, component_to.id,matching_selectors)
+#    print("identfied rel", component_from.id, component_to.id,matching_selectors)
 
     selector_patch_declaration:=  from_selector.patch
 
-#    print("selector patch declaration", selector_patch_declaration)
+#    print("selector patch declaration", matching_selectors)
     # create alias relationship declaration
     selector_declaration := {
         "allow": {
@@ -131,7 +155,6 @@ identify_edge_network_relationships(relationship,design_file) := { declaration |
         "deny": {},
     }
 
-    # print("selector dec", selector)
 
     declaration := json.patch(relationship, [
         {
@@ -147,7 +170,7 @@ identify_edge_network_relationships(relationship,design_file) := { declaration |
         {
             "op": "replace",
             "path": "/status",
-            "value": "pending",
+            "value": "identified",
         },
     ])
 }
@@ -164,50 +187,41 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 	   some relationship in implicable_relationships
 	   identified_relationships := identify_edge_network_relationships(relationship, design_file)
 
-       new_relationships := {rel |
+	   print("identified rels edge",count(identified_relationships))
+
+       new_relationships := {add_action |
             some rel in identified_relationships
             not eval_rules.relationship_already_exists(design_file, rel)
+
+            add_action := {
+               "op": actions.add_relationship_op,
+               "value":{"item":rel}
+            }
        }
 
+
+	   print("identified rels edge dedup",count(new_relationships))
+
 	})
+
+	print("eval results", eval_results)
 
 	print("Identifying relationships for policy identifier: ", relationship_policy_identifier,count(eval_results),count(implicable_relationships))
 
 }
 
-
-
-
 ## Validate
-#validate_relationship(relationship, design_file) := relationship if {
-#	is_<local>_relationship_valid(relationship, design_file)
-#}
-#
-#validate_relationship(relationship, design_file) := updated_relationship if {
-#
-#}
-#
 ## validate all relationships in the design file ( use partial rule so it doesnt conflict with other policies)
-validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
-	relationship_policy_identifier == edge_network_policy_identifier
-    result := {rel |
-       some rel in design_file.relationships
-       is_non_binding_edge_relationship(rel)
-    }
-}
+#validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
+#	relationship_policy_identifier == edge_network_policy_identifier
+#    result := {rel |
+#       some rel in design_file.relationships
+#       is_non_binding_edge_relationship(rel)
+#    }
+#}
 
 #
 ### Action Phase
-#
-#
-## action response {
-##   components_added :      list of components added
-##   components_deleted :    list of components deleted
-##   components_updated :    list of components updated
-##   relationships_added :   list of relationships added
-##   relationships_deleted : list of relationships deleted
-##   relationships_updated : list of relationships updated
-## }
 action_phase(design_file, relationship_policy_identifier) := result if {
 	relationship_policy_identifier == edge_network_policy_identifier
 	implicable_relationships := {
@@ -216,19 +230,15 @@ action_phase(design_file, relationship_policy_identifier) := result if {
         is_non_binding_edge_relationship(relationship)
     }
 
-	relationships_to_add := eval_rules.approve_pending_relationships_action(implicable_relationships, 100)
+	relationships_to_add := eval_rules.approve_identified_relationships_action(implicable_relationships, 100)
 
-    print("Action phase for policy identifier: ", relationship_policy_identifier,count(relationships_to_add),count(implicable_relationships))
-
-    components_to_add := array_to_set([])
-
-    components_to_delete := array_to_set([])
-
-    relationships_to_delete := {relationship |
+    components_to_update := union({actions |
         some relationship in implicable_relationships
-        relationship.status == "deleted"
-    }
+        actions := patch_mutators_action(relationship, design_file)
+    })
 
-	result := ((components_to_add | components_to_delete) | relationships_to_add) | relationships_to_delete
+#    print("Actions to be taken", components_to_update)
+
+	result := ( relationships_to_add | components_to_update)
 
 }

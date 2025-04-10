@@ -1,6 +1,8 @@
 package relationship_evaluation_policy
 
 import data.eval
+import data.actions
+
 import rego.v1
 
 # METADATA
@@ -199,7 +201,7 @@ evaluate := eval_results if {
 	]
 
 	# Update the design file with the final set of relationships.
-	final_design_file = json.patch(updated_design_file_with_new_comps, [{
+	final_design_file_old = json.patch(updated_design_file_with_new_comps, [{
 		"op": "add",
 		"path": "/relationships",
 		"value": final_rels_with_deletions,
@@ -207,79 +209,81 @@ evaluate := eval_results if {
 
 	# New Evaluation Flow
 
-	design_file_to_evaluate := json.patch(input, [
+	design_file_to_evaluate := json.patch(final_design_file_old, [
 		{
 			"op": "replace",
 			"path": "/relationships",
-			"value": {rel | some rel in input.relationships},
+			"value": {rel | some rel in final_design_file_old.relationships},
 		},
 		{
 			"op": "replace",
 			"path": "/components",
-			"value": {comp | some comp in input.components},
+			"value": {comp | some comp in final_design_file_old.components},
 		},
 	])
 
 
 	#1. Validate Relationships
-	validated_rels := union({rels |
+	validation_actions := union({rels |
 		some identifier in relationship_policy_identifiers
 		rels := eval.validate_relationships_phase(design_file_to_evaluate, identifier)
 	})
 
-	design_file_with_validated_rels := json.patch(design_file_to_evaluate, [{
-		"op": "replace",
-		"path": "/relationships",
-		"value": validated_rels,
-	}])
+	design_file_with_validated_rels := actions.apply_all_actions_to_design(
+        design_file_to_evaluate,
+        validation_actions,
+    )
+
+    print("After validation",design_file_with_validated_rels.relationships[0].status)
 
 	# 2. Identify relationships in the design file.
-	new_identified_rels := union({rels |
+	new_identified_rels_actions := union({rels |
 		some identifier in relationship_policy_identifiers
 		rels := eval.identify_relationships(design_file_with_validated_rels, relationships_to_evaluate_against, identifier)
 	})
 
-	print("New identified rels", count(new_identified_rels))
-	print("Validated rels", count(validated_rels))
+
+
+	print("New identified rels", count(new_identified_rels_actions))
+	print("Validated rels", validation_actions)
 
 	#3. Actions
 
-	design_file_to_apply_actions := json.patch(design_file_with_validated_rels, [{
-		"op": "replace",
-		"path": "/relationships",
-		"value": new_identified_rels | validated_rels,
-	}])
+	design_file_to_apply_actions := actions.apply_all_actions_to_design(
+        design_file_with_validated_rels,
+        new_identified_rels_actions,
+    )
 
 	print("All relationships", count(design_file_to_apply_actions.relationships))
 
-	actions := union({actions |
+	actions_to_apply := union({actions |
 		some identifier in relationship_policy_identifiers
 		actions := eval.action_phase(design_file_to_apply_actions, identifier)
-		# print("actions from",identifier,count(actions.relationships_to_add))
 	})
 
-	# print("actions",actions)
+	 print("all actions",actions_to_apply)
 
-	actions_response := trace_from_actions(actions)
+	actions_response := trace_from_actions(actions_to_apply)
 
 	# print("Actions trace",actions_response)
 
 	# Prepare the final design to return.
-	design_to_return := final_design_from_actions(
-		final_design_file,
-		actions_response,
-	)
+#	design_to_return := final_design_from_actions(
+#		final_design_file,
+#		actions_response,
+#	)
+    design_to_return := actions.apply_all_actions_to_design(design_file_to_apply_actions, actions_to_apply)
 
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
 		"design": design_to_return,
 		"trace": {
-			"componentsUpdated": updated_declarations,
+#			"componentsUpdated": updated_declarations,
 			"componentsAdded": array_to_set(components_added) | actions_response.components_to_add,
-			"componentsRemoved": actions_response.components_to_delete,
-			"relationshipsAdded": array_to_set(relationships_added) | actions_response.relationships_to_add,
-			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
-			"relationshipsUpdated": intermediate_rels,
+#			"componentsRemoved": actions_response.components_to_delete,
+#			"relationshipsAdded": array_to_set(relationships_added) | actions_response.relationships_to_add,
+#			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
+#			"relationshipsUpdated": intermediate_rels,
 		},
 	}
 
@@ -287,22 +291,22 @@ evaluate := eval_results if {
 }
 
 trace_from_actions(response) := {
-	"components_to_add": {action.value |
+	"components_to_add": {action.value.item |
 		some action in response
-		action.op == "add_component"
+		action.op == actions.add_component_op
 	},
-	"components_to_delete": {action.value |
-		some action in response
-		action.op == "delete_component"
-	},
-	"relationships_to_delete": {action.value |
-		some action in response
-		action.op == "delete_relationship"
-	},
-	"relationships_to_add": {action.value |
-		some action in response
-		action.op == "add_relationship"
-	},
+#	"components_to_delete": {action.value |
+#		some action in response
+#		action.op == "delete_component"
+#	},
+#	"relationships_to_delete": {action.value |
+#		some action in response
+#		action.op == "delete_relationship"
+#	},
+#	"relationships_to_add": {action.value |
+#		some action in response
+#		action.op == "add_relationship"
+#	},
 }
 
 # --- Post Processing Phase ---##

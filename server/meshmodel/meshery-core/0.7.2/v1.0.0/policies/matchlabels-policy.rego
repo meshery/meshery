@@ -18,6 +18,9 @@ import data.core_utils.truncate_set
 import data.feasibility_evaluation_utils.is_relationship_feasible_from
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
 
+import data.actions
+import data.eval_rules
+
 # Notes :
 # these policies take advantage of set comprehensions to weedout duplicates at any stage
 # so replacing them with array comprehensions will cause duplicacy issue
@@ -106,7 +109,7 @@ is_match_labels_policy_identifier(relationship_policy_identifier) if {
 identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
 	is_match_labels_policy_identifier(relationship_policy_identifier)
 
-	eval_results := {new_relationship |
+	eval_results := {new_relationship_action |
 		some relationship in relationships_in_scope
 		is_matchlabel_relationship(relationship)
 		
@@ -156,9 +159,14 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 			{
 				"op": "replace",
 				"path": "/status",
-				"value": "pending",
+				"value": "identified",
 			},
 		])
+
+		new_relationship_action := {
+            "op": actions.add_relationship_op,
+            "value": { "item" : new_relationship }
+        }
 
 	}
 
@@ -175,42 +183,31 @@ validate_relationships_phase(design_file, relationship_policy_identifier) := res
 	result := {validated |
 		some rel in design_file.relationships
 		is_matchlabel_relationship(rel)
-		validated := json.patch(rel, [{
-			"op": "replace",
-			"path": "/status",
-			"value": "deleted",
-		}])
+		validated :=  {
+		   "op": actions.update_relationship_op,
+		   "value": {
+		      "id": rel.id,
+		      "path": "/status",
+		      "value": "deleted"
+		   }
+		}
 	}
 }
 
 action_phase(design_file, relationship_policy_identifier) := result if {
 	is_match_labels_policy_identifier(relationship_policy_identifier)
 
-	relationships_to_add := {action |
-		some rel in design_file.relationships
-		is_matchlabel_relationship(rel)
-		rel.status == "pending"
-		rel_to_add := json.patch(rel, [{
-			"op": "replace",
-			"path": "/status",
-			"value": "approved",
-		}])
+	matchlabel_relationships := {rel |
+        some rel in design_file.relationships
+        is_matchlabel_relationship(rel)
+    }
 
-		action := {
-			"op": "add_relationship",
-			"value": rel_to_add,
-		}
-	}
+	relationships_to_add := eval_rules.approve_identified_relationships_action(
+        matchlabel_relationships,
+        MAX_MATCHLABELS,
+    )
 
-	relationships_to_delete := {action |
-		some rel in design_file.relationships
-		is_matchlabel_relationship(rel)
-		rel.status == "deleted"
-		action := {
-			"op": "delete_relationship",
-			"value": rel,
-		}
-	}
+	relationships_to_delete := eval_rules.cleanup_deleted_relationships_actions(matchlabel_relationships)
 
 	result := relationships_to_add | relationships_to_delete
 }

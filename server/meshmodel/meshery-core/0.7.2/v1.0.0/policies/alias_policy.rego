@@ -19,6 +19,7 @@ import data.feasibility_evaluation_utils.is_relationship_feasible_to
 import data.core_utils.truncate_set
 
 
+import data.actions
 import data.eval_rules
 
 # Module: Alias Relationship Evaluator
@@ -85,11 +86,11 @@ is_alias_policy_identifier(relationship_policy_identifier) if {
 	}
 }
 
-identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
+identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := identified_rels_actions if {
 
 	is_alias_policy_identifier(relationship_policy_identifier)
 
-	eval_results := union({new_relationships |
+	identified_rels_actions := union({new_actions |
 		some relationship in relationships_in_scope
 
 		is_alias_relationship(relationship)
@@ -101,12 +102,20 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 		# print("rel is feasible")
 
 		identified_relationships := identify_alias_relationships(component, relationship)
-		new_relationships := {rel |
-			some rel in identified_relationships
+
+		new_actions := {action |
+            some rel in identified_relationships
 			not alias_relationship_already_exists(design_file, rel)
-		}
+            action := {
+                "op": actions.add_relationship_op,
+                "value": {"item" : rel},
+            }
+        }
+
+
 	})
-	# print("Identify alias rels Eval results", count(eval_results))
+
+	 print("Identify alias rels Eval results", identified_rels_actions)
 
 }
 
@@ -181,7 +190,7 @@ identify_alias_relationships(component, relationship) := {rel |
 		{
 			"op": "replace",
 			"path": "/status",
-			"value": "pending",
+			"value": "identified",
 		},
 	])
 }
@@ -239,35 +248,38 @@ is_alias_relationship_valid(relationship, design_file) if {
 	relationship.status == "pending"
 }
 
-validate_relationship(relationship, design_file) := relationship if {
-	is_alias_relationship_valid(relationship, design_file)
-}
 
 validate_relationship(relationship, design_file) := updated_relationship if {
 	not is_alias_relationship_valid(relationship, design_file)
-	updated_relationship := json.patch(relationship, [{
-		"op": "replace",
-		"path": "/status",
-		"value": "deleted",
-	}])
+	updated_relationship :=  {
+	  "op": actions.update_relationship_op,
+	  "reason": "Alias relationship is not valid ,alias path is not present in the parent component",
+	  "value": {
+         "id": relationship.id,
+         "path": "/status",
+         "value": "deleted",
+	  }
+	}
 }
 
 # validate all relationships in the design file ( use partial rule so it doesnt conflict with other policies)
-validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
+validate_relationships_phase(design_file, relationship_policy_identifier) := actions if {
 	is_alias_policy_identifier(relationship_policy_identifier)
 
-	result := {validated |
+	actions := {validated |
 		some rel in design_file.relationships
 		is_alias_relationship(rel)
 		validated := validate_relationship(rel, design_file)
 	}
+
+	print("Validate alias rels", count(actions))
 }
 
 ## Action Phase
 
 alias_components_to_add(design_file, alias_relationships) := {action |
 	some relationship in alias_relationships
-	relationship.status == "pending"
+	relationship.status in {"identified","pending"}
 	some selector in relationship.selectors
 	some from in selector.allow.from
 
@@ -281,8 +293,8 @@ alias_components_to_add(design_file, alias_relationships) := {action |
 	}
 
 	action := {
-		"op": "add_component",
-		"value": component,
+		"op": actions.add_component_op,
+		"value": { "item" :component },
 	}
 }
 
@@ -292,48 +304,27 @@ alias_components_to_remove(design_file, alias_relationships) := {action |
 	some selector in relationship.selectors
 	some from in selector.allow.from
 
-	component := component_declaration_by_id(design_file, from.id)
-
 	action := {
-		"op": "delete_component",
-		"value": component,
+		"op": actions.delete_component_op,
+		"value": { "id": from.id}
 	}
 }
 
-# action response {
-#   components_added :      list of components added
-#   components_deleted :    list of components deleted
-#   components_updated :    list of components updated
-#   relationships_added :   list of relationships added
-#   relationships_deleted : list of relationships deleted
-#   relationships_updated : list of relationships updated
-# }
+
 action_phase(design_file, relationship_policy_identifier) := result if {
 	is_alias_policy_identifier(relationship_policy_identifier)
-
 	alias_relationships := {rel |
 		some rel in design_file.relationships
 		is_alias_relationship(rel)
 	}
 
 	components_to_add := truncate_set(alias_components_to_add(design_file, alias_relationships),MAX_ALIASES)
-	relationships_to_add :=  eval_rules.approve_pending_relationships_action(alias_relationships, MAX_ALIASES)
+	relationships_to_add :=  eval_rules.approve_identified_relationships_action(alias_relationships, MAX_ALIASES)
 
 	# Relationships that are deleted already at the validation phase
-	relationships_to_delete := {action |
-		some alias_rel in alias_relationships
-		alias_rel.status == "deleted"
+	relationships_to_delete :=  eval_rules.cleanup_deleted_relationships_actions(alias_relationships)
 
-		action := {
-			"op": "delete_relationship",
-			"value": alias_rel,
-		}
-	}
 	components_to_delete := alias_components_to_remove(design_file, alias_relationships)
-
-	# print("Relationships Deleted by alias policy", count(relationships_deleted))
-
-	# print("Components added", count(components_added))
 
 	result := ((components_to_add | components_to_delete) | relationships_to_add) | relationships_to_delete
 }
