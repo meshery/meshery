@@ -6,7 +6,7 @@ setup() {
 
     ENDPOINT_REGEX_MATCH='^[[:space:]]*endpoint:[[:space:]](http|https)://.*:[[:digit:]]+$'
     TOKEN_REGEX_MATCH='^[[:space:]]*token:[[:space:]][[:alnum:]]+$'
-    PLATFORM_REGEX_MATCH='^[[:space:]]*platform:[[:space:]][kubernetes|docker]+$'
+    PLATFORM_REGEX_MATCH='^[[:space:]]*platform:[[:space:]](kubernetes|docker)+$'
     PROVIDER_REGEX_MATCH='^[[:space:]]*provider:[[:space:]][a-zA-Z]+$'
     CONTEXT_REGEXP_MATCH='^Current[[:space:]]Context:[[:space:]][a-zA-Z]+$'
 }
