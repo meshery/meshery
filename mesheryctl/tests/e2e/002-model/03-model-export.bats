@@ -16,7 +16,7 @@ teardown() {
 
 @test "mesheryctl model export displays usage instructions when no model name provided" {
   run $MESHERYCTL_BIN model export
-  [ "$status" -ne 0 ]
+  assert_failure
   
   assert_output --partial "Please provide a model name."
   assert_output --partial "Usage: mesheryctl model export [model-name ]"
