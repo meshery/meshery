@@ -238,7 +238,7 @@ transitionTests.forEach((t) => {
   });
 });
 
-test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
+test('Delete Kubernetes cluster connections', async ({ page }) => {
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
   // Find the row with the connection to be deleted
