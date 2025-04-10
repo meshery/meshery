@@ -110,21 +110,21 @@ func FormatErrorReference() string {
 func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode,
 		errors.Alert,
-		[]string{"Health checks failed"},
+		[]string{"Unable to perform health checks"},
 		[]string{fmt.Sprintf("Failed to initialize healthchecker: %s", err.Error())},
 		[]string{"Health checks execution failed in starting Meshery server"},
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
 
 func ErrStopMeshery(err error) error {
-	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Error stopping Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
+	return errors.New(ErrStopMesheryCode, errors.Alert, []string{"Unable to stop Meshery"}, []string{err.Error()}, []string{"Meshery server is not stopped, some of the docker containers are still running"}, []string{"Verify all docker containers of Meshery server are stopped"})
 }
 
 func ErrResetMeshconfig(err error) error {
 	return errors.New(
 		ErrResetMeshconfigCode,
 		errors.Alert,
-		[]string{"Error resetting meshconfig to default settings"},
+		[]string{"Unable to reset meshconfig to default settings"},
 		[]string{err.Error()},
 		[]string{"Meshery server config file is not reset to default settings"},
 		[]string{fmt.Sprintf("Verify Meshery server config file is reset to default settings by executing `mesheryctl system context view`. %s", FormatErrorReference())})
@@ -345,7 +345,7 @@ func ErrProcessingLoginConfig(err error) error {
 	return errors.New(
 		ErrProcessingLoginConfigCode,
 		errors.Fatal,
-		[]string{"Error processing configuration for login"},
+		[]string{"Unable to process configuration for login"},
 		[]string{fmt.Sprintf("Failed to process Meshery configuration: %s", err.Error())},
 		[]string{"Configuration file might be corrupted or invalid"},
 		[]string{"Verify your configuration at ~/.meshery/config.yaml or run `mesheryctl system config` to reset it"})
@@ -355,7 +355,7 @@ func ErrMesheryServerNotRunning() error {
 	return errors.New(
 		ErrMesheryServerNotRunningCode,
 		errors.Alert,
-		[]string{"Meshery Server is not running"},
+		[]string{"Unable to run Meshery Server"},
 		[]string{"Cannot authenticate when Meshery Server is not running"},
 		[]string{"Meshery Server is not currently active on your system"},
 		[]string{"Run \"mesheryctl system start\" to start Meshery Server before attempting to login"})
@@ -365,7 +365,7 @@ func ErrAuthenticationFailed(url string) error {
 	return errors.New(
 		ErrAuthenticationFailedCode,
 		errors.Alert,
-		[]string{"Authentication failed with Meshery provider"},
+		[]string{"Unable to authenticate with Meshery provider"},
 		[]string{fmt.Sprintf("Failed to authenticate with Meshery server at %s. Could not establish a valid session.", url)},
 		[]string{"Meshery Server might be experiencing issues", "Network connectivity problems", "Invalid credentials or token"},
 		[]string{"Verify your provider settings",
@@ -377,8 +377,8 @@ func ErrWriteTokenToFile(err error) error {
 	return errors.New(
 		ErrWriteTokenToFileCode,
 		errors.Alert,
-		[]string{"Failed to write authentication token"},
-		[]string{fmt.Sprintf("Failed to write  the token to the filesystem: %s", err.Error())},
+		[]string{"Unable to write authentication token"},
+		[]string{fmt.Sprintf("Failed to write the token to the filesystem: %s", err.Error())},
 		[]string{"Insufficient permissions or disk space issues"},
 		[]string{"Ensure you have write permissions to the Meshery configuration directory"})
 }
@@ -387,7 +387,7 @@ func ErrGetTokenForContext(err error, contextName string) error {
 	return errors.New(
 		ErrGetTokenForContextCode,
 		errors.Alert,
-		[]string{"Failed to retrieve token for context"},
+		[]string{"Unable to retrieve token for context"},
 		[]string{fmt.Sprintf("Failed to retrieve token for context %s: %s", contextName, err.Error())},
 		[]string{"Token might not be configured for this context"},
 		[]string{"Log in again or check your Meshery configuration"})
@@ -397,7 +397,7 @@ func ErrAddTokenToConfig(err error) error {
 	return errors.New(
 		ErrAddTokenToConfigCode,
 		errors.Fatal,
-		[]string{"Failed to add token to configuration"},
+		[]string{"Unable to add token to configuration"},
 		[]string{fmt.Sprintf("Failed to find token path for the current context: %s", err.Error())},
 		[]string{"Configuration file may be inaccessible or corrupted"},
 		[]string{"Check permissions on your Meshery configuration directory"})
@@ -407,7 +407,7 @@ func ErrCheckServerStatus(err error) error {
 	return errors.New(
 		ErrCheckServerStatusCode,
 		errors.Alert,
-		[]string{"Failed to check Meshery Server status"},
+		[]string{"Unable to check Meshery Server status"},
 		[]string{fmt.Sprintf("Error occurred while checking Meshery Server status: %s", err.Error())},
 		[]string{"Network connectivity issues", "Docker or Kubernetes service not running"},
 		[]string{"Ensure your environment is properly configured",
@@ -418,7 +418,7 @@ func ErrInvalidFlag(err error) error {
 	return errors.New(
 		ErrInvalidFlagCode,
 		errors.Alert,
-		[]string{"Invalid command flag"},
+		[]string{"Unable to process command flag"},
 		[]string{fmt.Sprintf("Error parsing command flags: %s", err.Error())},
 		[]string{"Incorrect flag format or unsupported flag provided"},
 		[]string{"Check the command reference for supported flags and proper usage"})
