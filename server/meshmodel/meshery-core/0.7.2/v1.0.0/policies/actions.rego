@@ -34,7 +34,6 @@ get_component_update_op(path) := op if {
 
 # applies all of the updates for a single item like component or relationship
 apply_updates_to_item(original,updates,op) := updated if {
-    print("apply_object_update_action",original.id,op)
 
     valid_updates := {update |
         some update in updates
@@ -47,7 +46,6 @@ apply_updates_to_item(original,updates,op) := updated if {
     json_ops := [patch |
          some update in valid_updates
          path := core_utils.normalize_path(update.value.path)
-         print("path",path)
          patch := {
              "op":   "replace",
              "path": path,

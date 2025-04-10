@@ -235,8 +235,6 @@ evaluate := eval_results if {
         validation_actions,
     )
 
-    print("After validation",design_file_with_validated_rels.relationships[0].status)
-
 	# 2. Identify relationships in the design file.
 	new_identified_rels_actions := union({rels |
 		some identifier in relationship_policy_identifiers
@@ -246,7 +244,6 @@ evaluate := eval_results if {
 
 
 	print("New identified rels", count(new_identified_rels_actions))
-	print("Validated rels", validation_actions)
 
 	#3. Actions
 
@@ -262,17 +259,7 @@ evaluate := eval_results if {
 		actions := eval.action_phase(design_file_to_apply_actions, identifier)
 	})
 
-	print("all actions",actions_to_apply)
-
 	actions_response := trace_from_actions(actions_to_apply)
-
-	# print("Actions trace",actions_response)
-
-	# Prepare the final design to return.
-#	design_to_return := final_design_from_actions(
-#		final_design_file,
-#		actions_response,
-#	)
     design_to_return := actions.apply_all_actions_to_design(design_file_to_apply_actions, actions_to_apply)
 
 	# Prepare the evaluation results with updated design and trace information.
