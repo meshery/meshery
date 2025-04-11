@@ -11,7 +11,7 @@ language: en
 
 Meshery continuously tracks operations performed on your infrastructure and workloads. While running, Meshery Server generates a variety of events reflecting activities inside your Kubernetes and Cloud-Native clusters, as well as within Meshery itself.
 
-### Introduction
+### What is the Notification Center?
 The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
 
 ![Find Notification Center]({{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif)
