@@ -25,49 +25,42 @@ test.describe('Extensions Section Tests', () => {
     await extensionsNav.click();
   });
 
-  test('Verify Kanvas Snapshot using data-testid', { tag: '@unstable' }, async ({ page }) => {
+  test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
     await expect(page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
     await expect(page.getByTestId('kanvas-snapshot-description')).toBeVisible();
 
     const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
     await expect(enableButton).toBeVisible();
-    await expect(enableButton).toBeDisabled();
+    await expect(enableButton).toBeEnabled();
 
     await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
   });
 
-  test('Verify Performance Analysis Details', { tag: '@unstable' }, async ({ page }) => {
+  test('Verify Performance Analysis Details', async ({ page }) => {
     await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
     const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
     await expect(performanceEnableButton).toBeVisible();
-    await expect(performanceEnableButton).toBeDisabled();
+    await expect(performanceEnableButton).toBeEnabled();
   });
 
-  test('Verify Kanvas Details', { tag: '@unstable' }, async ({ page, context }) => {
+  test('Verify Kanvas Details', async ({ page }) => {
     await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
+    const kanvasDetailsButton = page.getByTestId('kanvas-signup-btn');
+    await expect(kanvasDetailsButton).toBeVisible();
+    await expect(kanvasDetailsButton).toBeDisabled();
+  });
+
+  test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
+    await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
-      page.getByTestId('kanvas-signup-btn').click(),
+      page.getByTestId('docker-extension-download-btn').click(),
     ]);
-    await expect(newPage).toHaveURL(URLS.KANVAS.DOCS);
+    await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
     await newPage.close();
   });
 
-  test(
-    'Verify Meshery Docker Extension Details',
-    { tag: '@unstable' },
-    async ({ page, context }) => {
-      await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
-      const [newPage] = await Promise.all([
-        context.waitForEvent('page'),
-        page.getByTestId('docker-extension-download-btn').click(),
-      ]);
-      await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
-      await newPage.close();
-    },
-  );
-
-  test('Verify Meshery Design Embed Details', { tag: '@unstable' }, async ({ page, context }) => {
+  test('Verify Meshery Design Embed Details', async ({ page, context }) => {
     await expect(page.getByTestId('design-embed-learn-more-btn')).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -77,31 +70,22 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  test(
-    'Verify Meshery Catalog Section Details',
-    { tag: '@unstable' },
-    async ({ page, context }) => {
-      await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
-      const toggleButton = page.getByTestId('catalog-toggle-switch');
-      await toggleButton.click();
-      const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
-      const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
-      await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
-      await newPage.close();
-    },
-  );
+  test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
+    await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
+    const toggleButton = page.getByTestId('catalog-toggle-switch');
+    await toggleButton.click();
+    const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
+    const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
+    await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
+    await newPage.close();
+  });
 
-  test(
-    'Verify Meshery Adapter for Istio Section',
-    { tag: '@unstable' },
-    async ({ page, context }) => {
-      // Test the "Open Adapter docs" link
-      const [docsPage] = await Promise.all([
-        context.waitForEvent('page'),
-        page.getByRole('link', { name: 'Open Adapter docs' }).click(),
-      ]);
-      await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
-      await docsPage.close();
-    },
-  );
+  test('Verify Meshery Adapter for Istio Section', async ({ page, context }) => {
+    const [docsPage] = await Promise.all([
+      context.waitForEvent('page'),
+      await page.getByTestId('adapter-docs-istio').click(),
+    ]);
+    await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
+    await docsPage.close();
+  });
 });
