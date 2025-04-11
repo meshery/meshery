@@ -1,8 +1,11 @@
 #!/usr/bin/env bats
 
-# Load required BATS libraries
-load '../helpers/bats-support/load'
-load '../helpers/bats-assert/load'
+# Setup function to load libraries
+setup() {
+  # Load libraries
+  load '../helpers/bats-support/load'
+  load '../helpers/bats-assert/load'
+}
 
 # Test 1: Verify basic design list command succeeds
 @test "mesheryctl design list is succeeded" {

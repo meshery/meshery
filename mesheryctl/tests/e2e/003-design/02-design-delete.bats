@@ -1,13 +1,16 @@
 #!/usr/bin/env bats
 
-# Load required BATS libraries
-load '../helpers/bats-support/load'
-load '../helpers/bats-assert/load'
+# Setup function to load libraries
+setup() {
+  # Load libraries
+  load '../helpers/bats-support/load'
+  load '../helpers/bats-assert/load'
+
+  DESIGN_ID_FILE="${TEMP_TEST_DATA_DIR}/design/id"
+}
 
 # Test 1: Verify successful deletion of a design
 @test "mesheryctl design delete is succeeded" {
-  # Check for design ID from previous test
-  DESIGN_ID_FILE="${TEMP_TEST_DATA_DIR}/design/id"
 
   if [ ! -f "$DESIGN_ID_FILE" ]; then
     skip "No design ID available to delete"

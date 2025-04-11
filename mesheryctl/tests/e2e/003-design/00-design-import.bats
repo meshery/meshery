@@ -1,17 +1,17 @@
 #!/usr/bin/env bats
 
-# Load required BATS libraries
-load '../helpers/bats-support/load'
-load '../helpers/bats-assert/load'
+# Setup function to load libraries and prepare test fixtures
+setup() {
+  # Load libraries
+  load '../helpers/bats-support/load'
+  load '../helpers/bats-assert/load'
+  cp "$(dirname "$BATS_TEST_FILENAME")/../testdata/design-import/nginx.yaml" "$TEMP_TEST_DATA_DIR/nginx.yaml"
+  local TESTDATA_PATH="$TEMP_TEST_DATA_DIR/nginx.yaml"
+}
 
 # Test 1: Verify successful import of a valid design
 @test "mesheryctl design import with nginx YAML is succeeded" {
-  # Copy the test fixture to TEMP_TEST_DATA_DIR
-  cp "$(dirname "$BATS_TEST_FILENAME")/../testdata/design-import/nginx.yaml" "$TEMP_TEST_DATA_DIR/nginx.yaml"
-  
-  # Define the path to the test fixture in TEMP_TEST_DATA_DIR
-  local TESTDATA_PATH="$TEMP_TEST_DATA_DIR/nginx.yaml"
-
+ 
   # Verify the test fixture exists
   if [ ! -f "$TESTDATA_PATH" ]; then
     skip "Test fixture $TESTDATA_PATH not found"
