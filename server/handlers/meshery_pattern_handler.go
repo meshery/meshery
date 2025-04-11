@@ -610,7 +610,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	var formatConverter converter.ConvertFormat
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
-	const HELM_CHART string = "Helm Chart"
 	exportFormat := r.URL.Query().Get("export")
 	h.log.Debug(fmt.Sprintf("Export format received: '%s'", exportFormat))
 
@@ -709,7 +708,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if exportFormat == HELM_CHART {
+		if exportFormat == modelsCore.IacFileTypes.HELM_CHART {
 			rw.Header().Set("Content-Type", "application/gzip")
 			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tgz", pattern.Name))
 		} else {
