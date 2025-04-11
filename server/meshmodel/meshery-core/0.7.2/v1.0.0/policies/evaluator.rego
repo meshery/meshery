@@ -58,6 +58,8 @@ identify_relationships_in_design(design_file, relationships_in_scope, policy_ide
             }
        }
 	})
+
+	print("identified for ",policy_identifier,count(policy_identifier))
 }
 
 ## Validate

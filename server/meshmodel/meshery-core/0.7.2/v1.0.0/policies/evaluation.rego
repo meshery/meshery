@@ -69,17 +69,10 @@ evaluate := eval_results if {
 
 	
 
+    # list of policies that will be used during evaluation
 	relationship_policy_identifiers := [
-		{
-			"kind": "hierarchical",
-			"type": "sibling",
-			"subtype": "matchlabels",
-		},
-		{
-			"kind": "hierarchical",
-			"type": "parent",
-			"subtype": "alias",
-		},
+        eval.match_labels_policy_identifier,
+		eval.alias_policy_identifier,
 		eval.edge_network_policy_identifier
 	]
 

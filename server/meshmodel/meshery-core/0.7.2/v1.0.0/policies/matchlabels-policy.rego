@@ -32,10 +32,33 @@ import data.eval_rules
 
 MAX_MATCHLABELS := 20
 
-is_matchlabel_relationship(relationship) if {
-	lower(relationship.kind) == "hierarchical"
-	lower(relationship.type) == "sibling"
+match_labels_policy_identifier := "sibling_match_labels_policy"
+
+
+relationship_is_implicated_by_policy(relationship,policy_identifier) := true if {
+    policy_identifier == match_labels_policy_identifier
+	relationship.type == "sibling"
 }
+
+
+relationship_already_exists(rel,design_file,policy_identifier) := false if {
+  policy_identifier == match_labels_policy_identifier
+}
+
+# these rels are stateless right now so just invalidate all then re identify
+# to bypass any expensive validation at this stage as we are eitherway going to do that at identication stage
+relationship_is_invalid(relationship,design_file,policy_identifier) := true if {
+	policy_identifier == match_labels_policy_identifier
+	relationship_is_implicated_by_policy(relationship,policy_identifier)
+}
+
+
+identify_relationship(rel_definition,design_file,policy_identifier) := identified_relationships if {
+	policy_identifier == match_labels_policy_identifier
+	identified_relationships := identify_matchlabel_relationships(rel_definition,design_file)
+}
+
+# Matchlabels specific logic
 
 # returns set {
 # 	{
@@ -46,7 +69,6 @@ is_matchlabel_relationship(relationship) if {
 # }
 identify_matchlabels(design_file, relationship) := all_match_labels if {
 	field_pairs := {pair |
-		is_matchlabel_relationship(relationship)
 
 		# identify against pair of components
 		some component in design_file.components
@@ -98,20 +120,11 @@ get_components_merged(field, value, field_pairs) := {component |
 	some component in pair.components
 }
 
-is_match_labels_policy_identifier(relationship_policy_identifier) if {
-	relationship_policy_identifier == {
-		"kind": "hierarchical",
-		"type": "sibling",
-		"subtype": "matchlabels",
-	}
-}
 
-identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
-	is_match_labels_policy_identifier(relationship_policy_identifier)
+identify_matchlabel_relationships(relationship,design_file) := identified_rels if {
+	
 
-	eval_results := {new_relationship_action |
-		some relationship in relationships_in_scope
-		is_matchlabel_relationship(relationship)
+	identified_rels := {new_relationship |
 		
 		# limit matchlabel relationships
 		identified_matchlabels := truncate_set(identify_matchlabels(design_file, relationship), MAX_MATCHLABELS)
@@ -154,7 +167,7 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 				"path": "/id",
 				# use relationship_policy_identifier instead of relationship as seed to prevent duplicate
 				# relationships being created (due to duplicate registered relationships)
-				"value": static_uuid({selector_declaration, relationship_policy_identifier}),
+				"value": static_uuid({selector_declaration, match_labels_policy_identifier}),
 			},
 			{
 				"op": "replace",
@@ -162,52 +175,5 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 				"value": "identified",
 			},
 		])
-
-		new_relationship_action := {
-            "op": actions.add_relationship_op,
-            "value": { "item" : new_relationship }
-        }
-
 	}
-
-	print("Identify match rels Eval results", count(eval_results))
-}
-
-# validate all relationships in the design file
-# as matchlabels are stateless and have no sideeffects on the design , we just delete
-# all the matchlabel relationships in validate phase and reidentify at next stage . this helps
-# to bypass any expensive validation at this stage as we are eitherway going to do that at identication stage
-validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
-	is_match_labels_policy_identifier(relationship_policy_identifier)
-
-	result := {validated |
-		some rel in design_file.relationships
-		is_matchlabel_relationship(rel)
-		validated :=  {
-		   "op": actions.update_relationship_op,
-		   "value": {
-		      "id": rel.id,
-		      "path": "/status",
-		      "value": "deleted"
-		   }
-		}
-	}
-}
-
-action_phase(design_file, relationship_policy_identifier) := result if {
-	is_match_labels_policy_identifier(relationship_policy_identifier)
-
-	matchlabel_relationships := {rel |
-        some rel in design_file.relationships
-        is_matchlabel_relationship(rel)
-    }
-
-	relationships_to_add := eval_rules.approve_identified_relationships_action(
-        matchlabel_relationships,
-        MAX_MATCHLABELS,
-    )
-
-	relationships_to_delete := eval_rules.cleanup_deleted_relationships_actions(matchlabel_relationships)
-
-	result := relationships_to_add | relationships_to_delete
 }
