@@ -16,7 +16,10 @@ The Notification Center is a dedicated panel in Meshery’s UI that helps you mo
 
 ![Find Notification Center]({{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif)
 
-### Event Descriptions
+### Types of Notifications
+
+Given the variety of activities that occur through the process of managing infrastructure, notifications have been grouped into categories so that you can readily understand what a notification means and what do to about any particular type you have received.
+
 
 Each notification in Meshery includes a clear summary of what occurred in your system. Notifications vary in format depending on the event type, but typically include:
 
