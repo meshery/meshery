@@ -34,6 +34,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
@@ -66,6 +67,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
       - name: Check out meshery-istio code
         uses: actions/checkout@v4
@@ -159,6 +161,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 1
       - name: Free disk space
         run: |
@@ -221,6 +224,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 1
       - name: Check if schema was modified
         uses: dorny/paths-filter@v3
