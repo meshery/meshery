@@ -19,7 +19,6 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -44,27 +43,25 @@ mesheryctl system login
 
 // Login with the Meshery Provider by specifying it via -p or --provider flag.
 mesheryctl system login -p Meshery
-	`,
+    `,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return errors.Wrap(err, "error processing config")
+			return ErrProcessingLoginConfig(err)
 		}
 
 		currCtx, err := mctlCfg.GetCurrentContext()
 		if err != nil {
-			return err
+			return ErrRetrievingCurrentContext(err)
 		}
 
 		isRunning, err := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if err != nil {
-			log.Error("failed to check Meshery Server status: ", err)
-			return nil
+			return ErrCheckServerStatus(err)
 		}
 
 		if !isRunning {
-			log.Error(`Meshery Server is not running. Run "mesheryctl system start" to start Meshery.`)
-			return nil
+			return ErrMesheryServerNotRunning()
 		}
 
 		var tokenData []byte
@@ -76,26 +73,21 @@ mesheryctl system login -p Meshery
 		}
 
 		if err != nil {
-			log.Printf("authentication failed: Unable to reach Meshery server at %s. Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`.", mctlCfg.GetBaseMesheryURL())
-			return nil
+			return ErrAuthenticationFailed(mctlCfg.GetBaseMesheryURL())
 		}
 
 		log.Println("authenticated")
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {
-			// Attempt to create token if it doesn't already exists
 			token.Location = utils.AuthConfigFile
-
-			// Write new entry in the config
 			if err := config.AddTokenToConfig(token, utils.DefaultConfigPath); err != nil {
-				log.Error("failed to find token path for the current context")
-				return nil
+				return ErrAddTokenToConfig(err)
 			}
 		}
 
 		if err := os.WriteFile(token.GetLocation(), tokenData, 0666); err != nil {
-			log.Error("failed to write the token to the filesystem: ", err)
+			return ErrWriteTokenToFile(err)
 		}
 
 		return nil
@@ -104,4 +96,8 @@ mesheryctl system login -p Meshery
 
 func init() {
 	loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
+	loginCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
+		// Don't show immediate help, just return the structured error
+		return ErrInvalidFlag(err)
+	})
 }
