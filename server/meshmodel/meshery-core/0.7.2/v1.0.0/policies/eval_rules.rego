@@ -194,3 +194,29 @@ identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship
         },
     ])
 }
+
+
+
+from_and_to_components_exist(relationship,design_file) := true if {
+
+	# check if the from component is still present
+	from_component := core_utils.component_declaration_by_id(design_file, core_utils.from_component_id(relationship))
+	from_component != null
+
+	# print("Is valid -> from_component", from_component)
+
+	# check if the to component is still present
+	to_component := core_utils.component_declaration_by_id(design_file, core_utils.to_component_id(relationship))
+	to_component != null
+}
+
+from_or_to_components_dont_exist(relationship,design_file) := true if {
+    not from_and_to_components_exist(relationship,design_file)
+}
+
+
+from_or_to_components_dont_exist(relationship,design_file) := false if {
+    from_and_to_components_exist(relationship,design_file)
+}
+
+

@@ -42,7 +42,6 @@ edge_network_implicable_relationships(relationships) :=  { relationship |
 
 identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
 	relationship_policy_identifier == edge_network_policy_identifier
-    print("coutn scope",count(relationships_in_scope))
 
 	implicable_relationships := edge_network_implicable_relationships(relationships_in_scope)
     
@@ -64,13 +63,24 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 
 ## Validate
 ## validate all relationships in the design file ( use partial rule so it doesnt conflict with other policies)
-#validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
-#	relationship_policy_identifier == edge_network_policy_identifier
-#    result := {rel |
-#       some rel in design_file.relationships
-#       is_non_binding_edge_relationship(rel)
-#    }
-#}
+validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
+	relationship_policy_identifier == edge_network_policy_identifier
+
+	implicable_relationships := edge_network_implicable_relationships(design_file.relationships)
+    result := {action |
+       some rel in implicable_relationships
+       eval_rules.from_or_to_components_dont_exist(rel,design_file)
+	   action := {
+		"op": actions.update_relationship_op,
+		"value": {
+			"id": rel.id,
+			"path": "/status",
+			"value": "deleted"
+		 }
+	   }
+    }
+
+}
 
 #
 ### Action Phase
@@ -80,10 +90,12 @@ action_phase(design_file, relationship_policy_identifier) := result if {
     
 	relationships_to_add := eval_rules.approve_identified_relationships_action(implicable_relationships, 100)
 
+	rels_to_delete := eval_rules.cleanup_deleted_relationships_actions(implicable_relationships)
+	
     components_to_update := union({actions |
         some relationship in implicable_relationships
         actions := eval_rules.patch_mutators_action(relationship, design_file)
     })
 
-	result := ( relationships_to_add | components_to_update)
+	result := ( relationships_to_add | components_to_update) | rels_to_delete
 }
