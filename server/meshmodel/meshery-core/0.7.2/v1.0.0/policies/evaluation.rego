@@ -276,8 +276,12 @@ evaluate := eval_results if {
 		"design": design_to_return,
 		"actions": actions_to_apply,
 		"trace": {
-#			"componentsUpdated": updated_declarations,
+			"componentsUpdated": [],
 			"componentsAdded": array_to_set(components_added) | actions_response.components_to_add,
+			"componentsRemoved":[],
+			"relationshipsRemoved":[],
+			"relationshipsAdded":[],
+			"relationshipsUpdated":[],
 #			"componentsRemoved": actions_response.components_to_delete,
 #			"relationshipsAdded": array_to_set(relationships_added) | actions_response.relationships_to_add,
 #			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
