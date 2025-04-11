@@ -6,7 +6,8 @@ setup() {
 
 @test "mesheryctl system help is succeeded and display help" {
     run $MESHERYCTL_BIN system --help
-    [ "$status" -eq 0 ]
+    assert_success
+    
     assert_line "Use \"mesheryctl system [command] --help\" for more information about a command."
 }
 

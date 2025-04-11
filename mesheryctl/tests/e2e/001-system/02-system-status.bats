@@ -8,7 +8,7 @@ setup() {
 
 @test "mesheryctl system status display mesehry operator running pods" {
     run $MESHERYCTL_BIN system status -y
-    [ "$status" -eq 0 ]
+    assert_success
 
     assert_line --regexp "meshery(|-(broker|meshsync|operator))"
     assert_line --regexp "Running"

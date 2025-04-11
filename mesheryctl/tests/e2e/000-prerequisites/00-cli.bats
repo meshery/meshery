@@ -1,5 +1,10 @@
 #!/usr/bin/env bats
 
+setup() {
+    load "$E2E_HELPERS_PATH/tests_helpers"
+	_tests_helper
+}
+
 # Basic tests to validate cli has been build and behave properly at root
 
 @test "cli is available" {
@@ -9,13 +14,12 @@
     fi
     
     run $MESHERYCTL_BIN
-    [ "$status" -eq 0 ]
+    assert_success
 }
 
 @test "mesheryctl version return Client and Server" {
     run $MESHERYCTL_BIN version
-
-    [[ "$status" -eq 0 ]] 
-    actual_output=$(echo "$output" | grep -E "Client|Server" | wc -l)
-    [[ "$actual_output" -eq 2 ]]
+    assert_success
+    
+    assert_line --regexp "(Client|Server)"
 }
