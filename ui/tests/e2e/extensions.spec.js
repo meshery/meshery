@@ -50,7 +50,7 @@ test.describe('Extensions Section Tests', () => {
     if (await kanvasDetailsButton.isEnabled()) {
       const [docsPage] = await Promise.all([
         context.waitForEvent('page'),
-        await kanvasDetailsButton.click(),
+        kanvasDetailsButton.click(),
       ]);
       await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
       await docsPage.close();
