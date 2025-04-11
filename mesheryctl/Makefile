@@ -77,7 +77,11 @@ e2e-libs:
 	fi && \
 	if [ ! -d "bats-support" ]; then \
 		git clone https://github.com/bats-core/bats-support.git; \
+	fi && \
+	if [ ! -d "bats-file" ]; then \
+		git clone https://github.com/bats-core/bats-file.git; \
 	fi
+
 
 .PHONY: e2e
 e2e: make e2e-libs

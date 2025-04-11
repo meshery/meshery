@@ -5,6 +5,7 @@ _tests_helper() {
     echo "Loading BATS libraries from $BATS_LIB_PATH"
     bats_load_library bats-support
     bats_load_library bats-assert
+    bats_load_library bats-file
 
     # Required due to difference between local setup and ci
     if [ -f "$BATS_LIB_PATH/bats-detik/lib/detik.bash" ]
