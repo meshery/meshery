@@ -267,3 +267,89 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
 
 ![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
 
+## Developement
+
+**End-to-End Tests:**
+
+* **Purpose:** Validate the complete flow of an application, from the user interface (in this case, the `mesheryctl` CLI) down to the underlying systems (Meshery server, Kubernetes, etc.).
+* **Scope:** Test multiple components working together to achieve a specific user scenario.
+* **Speed:** Generally slower to execute compared to unit and integration tests as they involve setting up and interacting with a real or near-real environment.
+* **Cost:** Can be more expensive to set up and maintain due to the complexity of the environment.
+* **Frequency:** Typically run less frequently than unit and integration tests, often as part of continuous integration pipelines or release processes.
+
+For `mesheryctl`, E2E tests will focus on verifying that CLI commands perform their intended actions against a running Meshery instance. This might involve deploying applications, managing connections, interacting with Meshery features, and verifying the expected outcomes.
+
+### Implementation
+
+We will exclusively use the Bats Core framework and its built-in functionalities for writing E2E tests. This ensures consistency and leverages a well-established testing tool for shell scripts.
+
+**Key Principles:**
+
+* **Pure Bats Core:** Avoid relying on external custom scripts or libraries beyond what Bats Core provides.
+* **Focus on `mesheryctl`:** The tests should primarily interact with the `mesheryctl` CLI.
+* **Clear Assertions:** Use Bats Core's assertion functions (`assert`, `assert_success`, `assert_failure`, `assert_output`, etc.) to verify expected outcomes.
+* **Setup and Teardown:** Utilize `setup()` and `teardown()` functions to prepare the testing environment and clean up afterwards.
+
+#### Writing E2E Tests with Bats Core
+
+1.  **Basic Test Structure:** A Bats test file consists of one or more test cases defined using the `@test` keyword.
+
+    ```bash
+    #!/usr/bin/env bats
+
+    @test "Ensure mesheryctl version command works" {
+      run mesheryctl version
+      assert_success
+      assert_output --partial "mesheryctl version"
+    }
+    ```
+
+2.  **Interacting with `mesheryctl`:** Execute `mesheryctl` commands within your test cases using the `run` command. Capture the output and exit status for assertions.
+
+    ```bash
+    @test "Deploy a sample application" {
+      run mesheryctl design apply -f samples/apps/nginx.yaml
+      assert_success
+      assert_output --partial "Successfully applied"
+    }
+    ```
+
+3.  **Assertions:** Use Bats Core's assertion functions to validate the results of your `mesheryctl` commands. Refer to the Bats Core documentation for a complete list of assertions.
+
+    * `assert_success`: Checks if the command exited with a status code of 0.
+    * `assert_failure`: Checks if the command exited with a non-zero status code.
+    * `assert_output`: Checks if the command's output matches a given string.
+    * `assert_output --partial`: Checks if the command's output contains a given substring.
+    * `assert_equal`: Checks if two strings are equal.
+    * `assert_not_equal`: Checks if two strings are not equal.
+    * `assert_file_exists`: Checks if a file exists.
+    * `assert_file_contains`: Checks if a file contains a given string.
+
+4.  **Setup and Teardown:**
+
+    * `setup()`: This function is executed before each test case within a file. Use it to set up the necessary environment for your tests (e.g., ensure Meshery is running, configure connections).
+
+    * `teardown()`: This function is executed after each test case within a file. Use it to clean up any resources created during the test (e.g., undeploy applications, reset configurations).
+
+5.  **Test Data:** If your tests require specific input files (e.g., Kubernetes manifests), store them in a relevant directory (e.g., `tests/e2e/fixtures`).
+
+6.  **Error Handling:** Consider how your tests will handle errors. Use appropriate assertions to check for expected failures and provide informative error messages.
+
+### Bug Reporting During Test Implementation
+
+While implementing new E2E tests, you might discover bugs in `mesheryctl`. It is crucial to report these findings properly:
+
+1.  **Create a New Issue:** Navigate to the [meshery/meshery](https://github.com/meshery/meshery/issues) repository on GitHub and click "New issue."
+
+2.  **Use the `mesheryctl Bug Report` Template:** Look for and select the "mesheryctl Bug Report" issue template. This template provides a structured format for reporting bugs related to the CLI.
+
+3.  **Provide Detailed Information:** Fill out the sections of the bug report template with as much detail as possible, including:
+
+    * **Steps to reproduce:** Clearly outline the exact `mesheryctl` commands and environment setup that led to the bug.
+    * **Expected behavior:** Describe what you anticipated `mesheryctl` to do.
+    * **Actual behavior:** Describe what `mesheryctl` actually did. Include any error messages or unexpected output.
+    * **Environment details:** Provide information about your operating system, `mesheryctl` version (obtained using `mesheryctl version`), and the Meshery environment (e.g., local Docker, remote Kubernetes).
+    * **Relevant logs:** Include any relevant logs from `mesheryctl` or the Meshery server that might help diagnose the issue.
+    * **Context:** Explain the context in which you encountered the bug (e.g., while testing a specific feature).
+
+4.  **Link to the Test:** If the bug was discovered while writing a specific test, mention the test file and test case in the issue.
