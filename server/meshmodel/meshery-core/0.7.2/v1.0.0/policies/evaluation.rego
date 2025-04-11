@@ -227,7 +227,8 @@ evaluate := eval_results if {
 	#1. Validate Relationships
 	validation_actions := union({rels |
 		some identifier in relationship_policy_identifiers
-		rels := eval.validate_relationships_phase(design_file_to_evaluate, identifier)
+		rels := eval.validate_relationships_in_design(design_file_to_evaluate, identifier)
+		print("Validated by ",identifier,rels)
 	})
 
 
@@ -237,12 +238,12 @@ evaluate := eval_results if {
     )
     
 	
-	print("Validation actions",count(validation_actions),count(design_file_to_evaluate.relationships),count(design_file_with_validated_rels.relationships))
+	print("Validation actions",count(design_file_to_evaluate.relationships),count(design_file_with_validated_rels.relationships))
 
 	# 2. Identify relationships in the design file.
 	new_identified_rels_actions := union({rels |
 		some identifier in relationship_policy_identifiers
-		rels := eval.identify_relationships(design_file_with_validated_rels, relationships_to_evaluate_against, identifier)
+		rels := eval.identify_relationships_in_design(design_file_with_validated_rels, relationships_to_evaluate_against, identifier)
 	})
 
 
@@ -267,8 +268,11 @@ evaluate := eval_results if {
 
 	actions_to_apply := union({actions |
 		some identifier in relationship_policy_identifiers
-		actions := eval.action_phase(design_file_to_apply_actions, identifier)
+		actions := eval.generate_actions_to_apply_on_design(design_file_to_apply_actions, identifier)
+		print("action for",identifier,count(actions))
 	})
+
+	print("All Actions",count(actions_to_apply))
 
 
 	actions_response := trace_from_actions(actions_to_apply)
@@ -366,6 +370,3 @@ filter_relationship(rel, relationships) := relationship if {
 	some relationship in relationships
 	relationship.id == rel.id
 } else := rel
-
-
-

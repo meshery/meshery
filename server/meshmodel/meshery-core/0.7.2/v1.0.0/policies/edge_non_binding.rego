@@ -4,98 +4,50 @@ import rego.v1
 
 import data.core_utils
 import data.feasibility_evaluation_utils
-
-import data.core_utils.component_alias
-import data.core_utils.component_declaration_by_id
-import data.core_utils.from_component_id
-import data.core_utils.get_array_aware_configuration_for_component_at_path
-import data.core_utils.get_component_configuration
-import data.core_utils.new_uuid
-import data.core_utils.object_get_nested
-import data.core_utils.pop_first
-import data.core_utils.to_component_id
-import data.feasibility_evaluation_utils.is_relationship_feasible_from
-import data.feasibility_evaluation_utils.is_relationship_feasible_to
-import data.core_utils.truncate_set
-import data.core_utils.array_to_set
-
 import data.eval_rules
 import data.actions
 
 
-edge_network_policy_identifier := {
-    "kind": "edge",
-    "type": "non-binding",
-    "subtype": "network",
+edge_network_policy_identifier := "generic-mutator-policy"
+
+
+relationship_is_implicated_by_policy(relationship,policy_identifier) := true if {
+    policy_identifier == edge_network_policy_identifier
+	relationship.kind == "edge"
 }
 
-is_non_binding_edge_relationship(relationship) if {
-    relationship.kind == edge_network_policy_identifier.kind
-    relationship.type == edge_network_policy_identifier.type
-    relationship.subType == edge_network_policy_identifier.subtype
+
+relationship_is_invalid(relationship,design_file,policy_identifier) := true if {
+	policy_identifier == edge_network_policy_identifier
+    eval_rules.from_or_to_components_dont_exist(relationship,design_file)
 }
 
-edge_network_implicable_relationships(relationships) :=  { relationship |
-    some relationship in relationships
-    is_non_binding_edge_relationship(relationship)
+
+identify_relationship(rel_definition,design_file,policy_identifier) := identified_relationships if {
+	policy_identifier == edge_network_policy_identifier
+	identified_relationships := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(rel_definition, design_file)
 }
 
-identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
-	relationship_policy_identifier == edge_network_policy_identifier
 
-	implicable_relationships := edge_network_implicable_relationships(relationships_in_scope)
-    
-	eval_results := union({ new_relationships |
-	   some relationship in implicable_relationships
-	   identified_relationships := eval_rules.identify_relationships_based_on_matching_mutator_and_mutated_fields(relationship, design_file)
-
-       new_relationships := {add_action |
-            some rel in identified_relationships
-            not eval_rules.relationship_already_exists(design_file, rel)
-
-            add_action := {
-               "op": actions.add_relationship_op,
-               "value":{"item":rel}
-            }
-       }
-	})
+relationship_side_effects(relationship,design_file,policy_identifier) := actions if {
+   policy_identifier == edge_network_policy_identifier
+   not relationship.status == "deleted"
+   actions := eval_rules.patch_mutators_action(relationship, design_file)
 }
 
-## Validate
-## validate all relationships in the design file ( use partial rule so it doesnt conflict with other policies)
-validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
-	relationship_policy_identifier == edge_network_policy_identifier
-
-	implicable_relationships := edge_network_implicable_relationships(design_file.relationships)
-    result := {action |
-       some rel in implicable_relationships
-       eval_rules.from_or_to_components_dont_exist(rel,design_file)
-	   action := {
-		"op": actions.update_relationship_op,
-		"value": {
-			"id": rel.id,
-			"path": "/status",
-			"value": "deleted"
-		 }
-	   }
-    }
-
-}
-
-#
 ### Action Phase
-action_phase(design_file, relationship_policy_identifier) := result if {
-	relationship_policy_identifier == edge_network_policy_identifier
-	implicable_relationships := edge_network_implicable_relationships(design_file.relationships)
+# action_phase(design_file, relationship_policy_identifier) := result if {
+# 	relationship_policy_identifier == edge_network_policy_identifier
+# 	implicable_relationships := edge_network_implicable_relationships(design_file.relationships)
     
-	relationships_to_add := eval_rules.approve_identified_relationships_action(implicable_relationships, 100)
+# 	relationships_to_add := eval_rules.approve_identified_relationships_action(implicable_relationships, 100)
 
-	rels_to_delete := eval_rules.cleanup_deleted_relationships_actions(implicable_relationships)
+# 	rels_to_delete := eval_rules.cleanup_deleted_relationships_actions(implicable_relationships)
 	
-    components_to_update := union({actions |
-        some relationship in implicable_relationships
-        actions := eval_rules.patch_mutators_action(relationship, design_file)
-    })
+#     components_to_update := union({actions |
+#         some relationship in implicable_relationships
+#         actions := eval_rules.patch_mutators_action(relationship, design_file)
+#     })
 
-	result := ( relationships_to_add | components_to_update) | rels_to_delete
-}
+# 	result := ( relationships_to_add | components_to_update) | rels_to_delete
+# }
