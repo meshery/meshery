@@ -613,8 +613,15 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	exportFormat := r.URL.Query().Get("export")
 	h.log.Debug(fmt.Sprintf("Export format received: '%s'", exportFormat))
 
+	h.log.Debug(fmt.Sprintf("Export format received: '%s'", exportFormat))
+
 	if exportFormat != "" {
 		var errConvert error
+
+		h.log.Debug(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+		//h.log.Debug(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
+		//	converter.K8sManifest, converter.HelmChart))
+
 
 		h.log.Debug(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
 		//h.log.Debug(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
@@ -623,11 +630,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
 			h.log.Warn(errConvert)
+			h.log.Warn(errConvert)
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
+		h.log.Debug(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
 		h.log.Debug(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
 	}
 
@@ -1117,6 +1126,13 @@ func (h *Handler) CloneMesheryPatternHandler(
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
+	_, err = fmt.Fprint(rw, string(resp))
+	if err != nil {
+		err = ErrWriteResponse(err)
+		h.log.Error(err)
+		http.Error(rw, _errors.Wrapf(err, "failed to clone design \"%s\"", pattern.Name).Error(), http.StatusInternalServerError)
+		return
+	}
 	_, err = fmt.Fprint(rw, string(resp))
 	if err != nil {
 		err = ErrWriteResponse(err)

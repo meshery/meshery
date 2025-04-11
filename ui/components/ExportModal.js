@@ -111,6 +111,7 @@ const ExportModal = (props) => {
     },
     {
       title: 'Helm Chart',
+      title: 'Helm Chart',
       icon: <HelmIcon width={'30'} height="30" />,
       onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=helm-chart'),
       disabled: false,
