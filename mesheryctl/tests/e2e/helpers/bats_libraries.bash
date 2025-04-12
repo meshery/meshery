@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
-_tests_helper() {
+
+# Descirption: Centralization of helper functions for BATS Core and libraries
+
+_load_bats_libraries() {
     export BATS_LIB_PATH=${BATS_LIB_PATH:-"/usr/lib"}
     
     # Loading BATS libraries

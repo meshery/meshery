@@ -88,6 +88,8 @@ e2e: make e2e-libs
 	cd tests/e2e; \
 	BATS_LIB_PATH="$(shell pwd)/tests/e2e/$(BATS_LIB_PATH)" \
 	E2E_HELPERS_PATH=$(shell pwd)/tests/e2e/helpers \
+	E2E_TESTDATA_PATH=$(shell pwd)/tests/e2e/testdata \
+	TEMP_DATA_DIR=$(shell mktemp -d) \
 	MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml" \
 	MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json" \
 	MESHERYCTL_BIN="../../mesheryctl" bats *-*/*.bats; \
