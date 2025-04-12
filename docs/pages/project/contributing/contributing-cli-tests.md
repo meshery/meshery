@@ -277,7 +277,8 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
 * **Cost:** Can be more expensive to set up and maintain due to the complexity of the environment.
 * **Frequency:** Typically run less frequently than unit and integration tests, often as part of continuous integration pipelines or release processes.
 
-For `mesheryctl`, E2E tests will focus on verifying that CLI commands perform their intended actions against a running Meshery instance. This might involve deploying applications, managing connections, interacting with Meshery features, and verifying the expected outcomes.
+For `mesheryctl`, E2E tests will focus on verifying that CLI commands perform their intended actions against a running Meshery instance **in context of how users experience the CLI**, this means we are focusing on UX. This might involve deploying applications, managing connections, interacting with Meshery features, and verifying the expected outcomes.
+
 
 ### Implementation
 
@@ -285,10 +286,12 @@ We will exclusively use the Bats Core framework and its built-in functionalities
 
 **Key Principles:**
 
-* **Pure Bats Core:** Avoid relying on external custom scripts or libraries beyond what Bats Core provides.
+* **Pure Bats Core:** Avoid relying on external custom scripts or libraries beyond what Bats Core provides, while there might be occasional need to deviate from the library. Take in consideration that doing so all increases the possibility for bugs as well as our sustaining costs.
 * **Focus on `mesheryctl`:** The tests should primarily interact with the `mesheryctl` CLI.
 * **Clear Assertions:** Use Bats Core's assertion functions (`assert`, `assert_success`, `assert_failure`, `assert_output`, etc.) to verify expected outcomes.
 * **Setup and Teardown:** Utilize `setup()` and `teardown()` functions to prepare the testing environment and clean up afterwards.
+* **Helper Scripts:** If a custom script or function is absolutely necessary to facilitate testing (and cannot be achieved with standard Bats Core), it **must** be created as a `.bash` file within the `helpers` folder. Each helper script/function should have a clear description of its purpose within the file itself. Avoid inline custom scripting within the test files.
+ 
 
 #### Writing E2E Tests with Bats Core
 
