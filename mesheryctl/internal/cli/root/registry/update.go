@@ -110,20 +110,19 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 		if csvDir != "" {
 			utils.Log.Info("Using local CSV directory: ", csvDir)
 			parser = &LocalCSVDirParser{dirPath: csvDir}
-		} else {
+		}
+		if csvDir == "" && spreadsheeetID != "" && spreadsheeetCred != "" {
 			utils.Log.Info("Using Google Sheet with ID: ", spreadsheeetID)
 			parser = &GoogleSheetParser{spreadsheeetID: spreadsheeetID, spreadsheeetCred: spreadsheeetCred}
 		}
 
 		parsedComponents, err := parser.parse()
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
 		err = InvokeComponentsUpdate(parsedComponents)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 		return nil
