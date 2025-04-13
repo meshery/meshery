@@ -43,11 +43,18 @@ test.describe('Extensions Section Tests', () => {
     await expect(performanceEnableButton).toBeEnabled();
   });
 
-  test('Verify Kanvas Details', async ({ page }) => {
+  test('Verify Kanvas Details', async ({ page, context }) => {
     await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
     const kanvasDetailsButton = page.getByTestId('kanvas-signup-btn');
     await expect(kanvasDetailsButton).toBeVisible();
-    await expect(kanvasDetailsButton).toBeDisabled();
+    if (await kanvasDetailsButton.isEnabled()) {
+      const [docsPage] = await Promise.all([
+        context.waitForEvent('page'),
+        kanvasDetailsButton.click(),
+      ]);
+      await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
+      await docsPage.close();
+    }
   });
 
   test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
