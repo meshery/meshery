@@ -43,6 +43,11 @@ var RegistryCmd = &cobra.Command{
 	Long:    `Manage the state and contents of Meshery’s internal registry of capabilities.`,
 	Example: `mesheryctl registry [subcommand]`,
 
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		setupRegistryLogger()
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -55,7 +60,6 @@ var RegistryCmd = &cobra.Command{
 }
 
 func init() {
-	cobra.OnInitialize(setupRegistryLogger)
 	RegistryCmd.AddCommand(availableSubcommands...)
 }
 

@@ -1,8 +1,6 @@
 - title: 🗺 Overview & Installation
   url: project/overview
   links:
-    - title: FAQs
-      url: project/faq
     - title: 🚀 Quick Start
       url: installation/quick-start
     - title: Installation ↆ
@@ -46,13 +44,15 @@
               url: installation/windows/scoop
         - title: Upgrading Meshery ↆ
           url: installation/upgrades
-          children:
+          grandchildren:
             - title: Meshery CLI
               url: installation/upgrades#upgrading-meshery-cli
         - title: Using Multiple Meshery Adapters
           url: installation/multiple-adapters
         - title: Meshery Playground
           url: installation/playground
+        - title: FAQs
+          url: project/faq
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -102,9 +102,17 @@
 - title: 📚 Guides & Tutorials
   url: guides
   links:
-    - title: ⚙️ Infrastructure Management ↆ
-      url: guides/infrastructure-management/overview
+    - title: Infrastructure Management ↆ
+      url: guides/infrastructure-management
       children:
+        - title: Overview
+          url: guides/infrastructure-management/overview
+        - title: GitOps with Meshery
+          url: guides/infrastructure-management/gitops-with-meshery
+        - title: Deploying Sample Apps
+          url: guides/infrastructure-management/sample-apps
+        - title: Managing Notifications
+          url: guides/infrastructure-management/notification-management
         - title: Managing Envoy Filters
           url: guides/infrastructure-management/filter-management
         - title: Managing Connections
@@ -112,49 +120,53 @@
           grandchildren:
             - title: Registering a Connection
               url: guides/infrastructure-management/registering-a-connection
-    - title: Configuring Kubernetes Infrastructure ↆ
+    - title: Configuration Management ↆ
       url: guides/configuration-management
       children:
-        - title: Creating a Meshery Design
-          url: guides/creating-a-meshery-design
-        - title: Working with Designs
+        - title: Overview
           url: guides/configuration-management/working-with-designs
+        - title: Creating a Meshery Design
+          url: guides/configuration-management/creating-a-meshery-design
         - title: Importing Designs
-          url: guides/configuration-management/importing-designs
-        - title: Working with design patterns
+          url: guides/configuration-management/importing-models
+        - title: Exporting Designs
+          url: guides/configuration-management/exporting-models
+        - title: Generating Designs
+          url: guides/configuration-management/generating-models
+        - title: Managing Model Images
+          url: guides/configuration-management/push-pull-model-image
+        - title: Cloud Native Design Patterns
           url: guides/configuration-management/pattern-management
-    - title: Managing Events with Notification Center
-      url: guides/events-management
-    - title: GitOps with Meshery
-      url: guides/infrastructure-management/gitops-with-meshery
     - title: Performance Management ↆ
       url: guides/performance-management
       children:
-        - title: Performance Management with Meshery
+        - title: Overview
           url: guides/performance-management/performance-management
         - title: Using Metrics in Meshery
           url: guides/performance-management/meshery-metrics
+        - title: Managing Performance
+          url: guides/performance-management/managing-performance
         - title: Interpreting Performance Test Results
           url: guides/performance-management/interpreting-performance-test-results
-        - title: Performance Profiles and Tests #should go under concepts
-          url: guides/performance-management/managing-performance
-    - title: Using Meshery CLI Guides ↆ
+    - title: Using Meshery CLI ↆ
       url: guides/mesheryctl
       children:
-        - title: Using mesheryctl
+        - title: Overview
           url: guides/mesheryctl/working-with-mesheryctl
-        - title: Configure autocompletion for mesheryctl
+        - title: Autocompletion Setup
           url: guides/mesheryctl/configuring-autocompletion-for-mesheryctl
-        - title: Authenticate via Meshery CLI
+        - title: CLI Authentication
           url: guides/mesheryctl/authenticate-with-meshery-via-cli
         - title: Running system checks using Meshery CLI
           url: guides/mesheryctl/running-system-checks-using-mesheryctl
+        - title: System Commands
+          url: guides/mesheryctl/system-commands
     - title: Troubleshooting Guides ↆ
       url: guides/troubleshooting
       children:
         - title: Installation
           url: guides/troubleshooting/installation
-        - title: Meshery Operator
+        - title: Operator & MeshSync
           url: guides/troubleshooting/meshery-operator-meshsync
         - title: Meshery Server
           url: guides/troubleshooting/meshery-server
@@ -163,112 +175,101 @@
       children:
         - title: Exploring Kubernetes CronJobs
           url: guides/tutorials/exploring-kubernetes-cronjobs
-        - title: Understanding Kubernetes ConfigMaps and Secrets with Meshery
+        - title: Using ConfigMaps & Secrets in Kubernetes
           url: guides/tutorials/kubernetes-configmaps-secrets
-        - title: Exploring Kubernetes Pods with Meshery
+        - title: Exploring Kubernetes Pods
           url: guides/tutorials/kubernetes-pods
-        - title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
+        - title: Deploying WordPress & MySQL with Persistent Volumes
           url: guides/tutorials/wordpress-mysql-persistentvolume
-        - title: Deploying PHP Guestbook application with Redis in Meshery
+        - title: Deploying PHP Guestbook with Redis
           url: guides/tutorials/deploy-php-redis
-        - title: Deploy an AWS EC2 Instance with Meshery
+        - title: Deploying AWS EC2 Instances
           url: guides/tutorials/deploy-aws-ec2-instances-with-meshery
+        - title: Exploring Kubernetes Deployments
+          url: guides/tutorials/kubernetes-deployments
+        - title: Deploying Apache Cassandra with StatefulSets
+          url: guides/tutorials/deploy-apache-cassandra-with-statefulset
+        - title: Embedding Meshery Designs in WordPress
+          url: guides/tutorials/embedding-meshery-design-in-wordpress
+        - title: Publishing Designs to ArtifactHub
+          url: guides/tutorials/publish-to-artifacthub
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
 - title: 🛠 Integrations & Extensions
-  url: extensibility
+  url: "#"
   links:
-    - title: "APIs"
-      url: extensibility/api
-    - title: "Adapters ↆ"
-      url: extensibility/adapters
-      children:
-        - title: Compatibility Matrix
-          url: installation/compatibility-matrix
-        - title: App Mesh
-          url: extensibility/adapters/app-mesh
-        - title: Cilium Service Mesh
-          url: extensibility/adapters/cilium
-        - title: Consul
-          url: extensibility/adapters/consul
-        - title: Istio
-          url: extensibility/adapters/istio
-        - title: Kuma
-          url: extensibility/adapters/kuma
-        - title: Linkerd
-          url: extensibility/adapters/linkerd
-        - title: Network Service Mesh
-          url: extensibility/adapters/nsm
-        - title: NGINX Service Mesh
-          url: extensibility/adapters/nginx-sm
-        - title: Nighthawk
-          url: extensibility/adapters/nighthawk
-        - title: Tanzu
-          url: extensibility/adapters/tanzu-sm
-        - title: Traefik Mesh
-          url: extensibility/adapters/traefik-mesh
-    - title: "Integrations"
-      url: extensibility/integrations
-    - title: "Load Generators"
-      url: extensibility/load-generators
-    - title: "Providers"
-      url: extensibility/providers
-    - title: "UI Plugins"
-      url: extensibility/ui
-    - title: "🦾 Extensions ↆ"
+    - title: Integrations
+      url: extensions/integrations
+    - title: Extensions ↆ
       url: extensions
       children:
-        - title: "Plugin: Kanvas"
+        - title: Helm Kanvas Snapshot
+          url: extensions/helm-kanvas-snapshot
+        - title: MeshSync Snapshot
+          url: extensions/kubectl-meshsync-snapshot
+        - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
-          # grandchildren:
-          # - title: "Sharing a Design"
-          #   url: extensions/sharing-a-design
-        - title: "GitOps: Snapshots"
-          url: extensions/snapshot
+          grandchildren:
+            - title: Component Shape Guide
+              url: extensions/component-shape-guide
+            - title: Edges Style Guide
+              url: extensions/edges-shape-guide
+            - title: Import & Export Designs
+              url: extensions/import-export-designs
+            - title: Merging Designs
+              url: extensions/merging-design
+            - title: Publishing Designs
+              url: extensions/publishing-a-design
+            - title: Sharing Designs
+              url: extensions/sharing-a-design
+            - title: Working with Tags
+              url: extensions/working-with-tags
+        - title: Kanvas Snapshot
+          url: extensions/kanvas-snapshot 
 
-      # children:
-      # - title: Building a Remote Provider
-      #   url: extensibility/providers/building-a-remote-provider
 - title: 🧑‍💻 Contributing & Community
   url: project
   links:
     - title: Community
       url: project/community
-    - title: Contributing ↆ
+    - title: Meshery Playground
+      url: installation/playground
+    - title: Contributing Guides ↆ
       url: project/contributing
       children:
-        - title: "Build & Release (CI) ↆ"
+        - title: Build & Release (CI) ↆ
           url: project/contributing/build-and-release
-          grandchildren:
-            - title: "End-to-End Testing"
-              url: project/contributing/contributing-ui-tests
         - title: Adapters
           url: project/contributing/contributing-adapters
         - title: CLI ↆ
           url: project/contributing/contributing-cli
           grandchildren:
-            - title: "Design Principles"
+            - title: Design Principles
               url: project/contributing/contributing-cli-guide
-            - title: "End-to-End Testing"
+            - title: End-to-End CLI Tests
               url: project/contributing/contributing-cli-tests
-        - title: Docs
+        - title: Docs ↆ
           url: project/contributing/contributing-docs
           grandchildren:
-            - title: "Docs Structure"
+            - title: Docs Structure
               url: project/contributing/contributing-docs-structure
         - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
-            - title: "Server Events"
+            - title: Server Events
               url: project/contributing/contributing-server-events
-            - title: "Server Errors"
+            - title: Server Errors
               url: project/contributing/contributing-error
-        - title: UI
+        - title: UI ↆ
           url: project/contributing/contributing-ui
           grandchildren:
             - title: Notification Center
               url: project/contributing/contributing-ui-notification-center
+            - title: Sistent Design System
+              url: project/contributing/contributing-ui-sistent
+            - title: UI End-to-End Tests
+              url: project/contributing/contributing-ui-tests
             - title: Dashboard Widgets
               url: project/contributing/contributing-ui-widgets
         - title: Docker Extension
@@ -278,31 +279,45 @@
         - title: Models ↆ
           url: project/contributing/contributing-models
           grandchildren:
-            - title: Components
+            - title: Model Components
               url: project/contributing/contributing-components
-            - title: Relationships
+            - title: Model Relationships
               url: project/contributing/contributing-relationships
-        - title: Schema
+        - title: Schemas
           url: project/contributing/contributing-schemas
-- title: 📖 Reference
+        - title: Dev Setup on Windows
+          url: project/contributing/meshery-windows
+
+- title: 📖 Extensibility & Reference
   url: reference
   links:
-    - title: Error Code Reference
+    - title: Extensibility ↆ
+      url: extensibility
+      children:
+        - title: Authorization
+          url: extensibility/authorization
+        - title: Load Generators
+          url: extensibility/load-generators
+        - title: Providers
+          url: extensibility/providers
+        - title: Compatibility Guide
+          url: extensibility/verify-compatibility
+        - title: UI Plugins
+          url: extensibility/ui
+    - title: Error Code
       url: reference/error-codes
-    - title: Permissions Keys Reference
+    - title: Permission Keys
       url: reference/permissions
-    - title: "REST & GraphQL APIs ↆ"
+    - title: Meshery Operator CRD
+      url: reference/meshery-operator-crds
+    - title: CLI Command
+      url: reference/mesheryctl
+    - title: REST & GraphQL API ↆ
       url: extensibility/api
       children:
-        - title: "GraphQL API Reference"
+        - title: GraphQL API
           url: reference/graphql-apis
-        - title: "REST API Reference"
+        - title: REST API
           url: reference/rest-apis
-    - title: "CLI Command Reference"
-      url: reference/mesheryctl
-    - title: "Meshery Operator CRDs"
-      url: reference/meshery-operator-crds
-    - title: Releases
-      url: project/releases
-    - title: Vulnerabilities
+    - title: Security Vulnerabilities
       url: project/security-vulnerabilities
