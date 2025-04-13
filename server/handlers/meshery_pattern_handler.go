@@ -621,7 +621,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
 			h.log.Warn(errConvert)
-			h.log.Warn(errConvert)
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
