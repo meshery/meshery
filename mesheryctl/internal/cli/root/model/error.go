@@ -12,6 +12,7 @@ const (
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
 	ErrModelInitCode                    = "mesheryctl-1148"
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
+	ErrModelBuildCode                   = "replace_me"
 )
 
 func ErrExportModel(err error, name string) error {
@@ -36,4 +37,12 @@ func ErrModelInitFromString(message string) error {
 
 func ErrModelInit(err error) error {
 	return ErrModelInitFromString(err.Error())
+}
+
+func ErrModelBuildFromStrings(messages ...string) error {
+	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, messages, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
+}
+
+func ErrModelBuild(err error) error {
+	return ErrModelBuildFromStrings(err.Error())
 }
