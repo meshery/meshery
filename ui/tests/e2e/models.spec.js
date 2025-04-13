@@ -36,7 +36,7 @@ test('Create a Model', async ({ page }) => {
 });
 
 test('Search a Model and Export it', async ({ page }) => {
-  await page.getByRole('button', { name: 'Search' }).click();
+  await page.getByTestId('search-icon').click();
   await page.getByRole('textbox', { name: 'Search' }).click();
   await page.getByRole('textbox', { name: 'Search' }).fill(MODEL_DISPLAY_NAME);
   await page.getByText(MODEL_DISPLAY_NAME).click();
