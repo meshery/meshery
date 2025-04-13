@@ -174,12 +174,12 @@ export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTr
   if (!trace) return null;
 
   const hasChanges =
-    trace.componentsAdded.length > 0 ||
-    trace.componentsRemoved.length > 0 ||
-    trace.componentsUpdated.length > 0 ||
-    trace.relationshipsAdded.length > 0 ||
-    trace.relationshipsUpdated.length > 0 ||
-    trace.relationshipsRemoved.length > 0;
+    trace.componentsAdded?.length > 0 ||
+    trace.componentsRemoved?.length > 0 ||
+    trace.componentsUpdated?.length > 0 ||
+    trace.relationshipsAdded?.length > 0 ||
+    trace.relationshipsUpdated?.length > 0 ||
+    trace.relationshipsRemoved?.length > 0;
 
   return (
     <Box mt={2}>
@@ -192,33 +192,33 @@ export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTr
         <Box flexDirection="column" display="flex">
           <ComponentsTrace
             title="Components Added"
-            components={trace.componentsAdded}
+            components={trace.componentsAdded || []}
             type="added"
           />
           <ComponentsTrace
             title="Components Updated"
-            components={trace.componentsUpdated}
+            components={trace.componentsUpdated || []}
             type="updated"
           />
           <ComponentsTrace
             title="Components Removed"
-            components={trace.componentsRemoved}
+            components={trace.componentsRemoved || []}
             type="deleted"
           />
           <RelationshipsTrace
             title="Relationships Added"
             type="added"
-            relationships={trace.relationshipsAdded}
+            relationships={trace.relationshipsAdded | []}
           />
           <RelationshipsTrace
             title="Relationships Updated"
             type="updated"
-            relationships={trace.relationshipsUpdated}
+            relationships={trace.relationshipsUpdated | []}
           />
           <RelationshipsTrace
             title="Relationships Removed"
             type="deleted"
-            relationships={trace.relationshipsRemoved}
+            relationships={trace.relationshipsRemoved || []}
           />
         </Box>
       )}
