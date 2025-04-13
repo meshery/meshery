@@ -16,7 +16,6 @@ test.beforeEach(async ({ page }) => {
 test('Create a Model', async ({ page }) => {
   await page.getByTestId('create-model-button').click();
 
-
   await page.getByRole('textbox', { name: 'Model Name' }).fill(MODEL_NAME);
   await page.getByRole('textbox', { name: 'Model Display Name' }).fill(MODEL_DISPLAY_NAME);
 
