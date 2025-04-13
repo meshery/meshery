@@ -8,7 +8,7 @@ identify_relationship(
 ) := evaluation_results if {
 	applicable_on_rels := [
 		{"kind": "hierarchical", "type": "parent"},
-		{"kind": "edge", "type": "non-binding"},
+#		{"kind": "edge", "type": "non-binding"},
 	]
 	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
 
@@ -82,7 +82,10 @@ evaluate_hierarchy(relationship, from, to, from_selectors, to_selectors, deny_se
 	result := object.union_n([relationship, cloned_selectors, {"status": "approved"}])
 }
 
+
+
 is_valid_hierarchy(from_declaration, to_declaration, from_selector, to_selector) if {
+#    print("validating hierarchy",from_selector,to_selector)
 	mutator_selector := identify_mutator(from_selector, to_selector, from_declaration, to_declaration)
 
 	mutated_selector := identify_mutated(from_selector, to_selector, from_declaration, to_declaration)

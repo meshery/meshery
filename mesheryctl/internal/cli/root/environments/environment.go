@@ -58,7 +58,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl environment --help' to display usage guide.'\n", args[0]), "environment")))
+			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl environment --help' to display usage guide", args[0]), "environment")))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
