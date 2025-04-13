@@ -1,0 +1,1 @@
+must provide exactly one argument: path to model definition. if you have more then one version in the model folder, you must provide path to particular version
