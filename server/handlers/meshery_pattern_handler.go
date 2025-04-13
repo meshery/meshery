@@ -613,20 +613,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	exportFormat := r.URL.Query().Get("export")
 	h.log.Debug(fmt.Sprintf("Export format received: '%s'", exportFormat))
 
-	h.log.Debug(fmt.Sprintf("Export format received: '%s'", exportFormat))
-
 	if exportFormat != "" {
 		var errConvert error
-
-		h.log.Debug(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+		//h.log.Debug(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
 		//h.log.Debug(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
 		//	converter.K8sManifest, converter.HelmChart))
-
-
-		h.log.Debug(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
-		//h.log.Debug(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
-		//	converter.K8sManifest, converter.HelmChart))
-
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
 			h.log.Warn(errConvert)
@@ -636,8 +627,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		h.log.Debug(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
-		h.log.Debug(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
+		h.log.Debug(fmt.Sprintf("Created converter for format: '%s'", exportFormat))
 	}
 
 	patternID := mux.Vars(r)["id"]

@@ -9,7 +9,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 // The following replaces are used for local development
 // replace github.com/meshery/schemas v0.8.10 => ../schemas
 
-// replace github.com/layer5io/meshkit v0.8.23 => ../meshkit
+replace github.com/layer5io/meshkit v0.8.24 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
@@ -287,10 +287,6 @@ require (
 	github.com/spf13/cast v1.7.1 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/theupdateframework/notary v0.7.0 // indirect
-	github.com/tidwall/gjson v1.14.2 // indirect
-	github.com/tidwall/match v1.1.1 // indirect
-	github.com/tidwall/pretty v1.2.0 // indirect
-	github.com/tidwall/sjson v1.2.5 // indirect
 	github.com/vbatts/tar-split v0.11.7 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
