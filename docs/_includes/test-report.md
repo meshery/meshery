@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 12th 2025, 1:08:03 am
+- Testing started at: April 13th 2025, 3:34:10 am
 
 **📦 Test Result Summary**
 
-- ✅ 34 passed
-- ❌ 3 failed
+- ✅ 35 passed
+- ❌ 2 failed
 - ⚠️ 18 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 9 minutes and 33 seconds_
+⌛ _Duration: 8 minutes and 53 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -36,19 +36,18 @@
 | 13 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 14 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
 | 15 | chromium-meshery-provider | View detailed result of a performance profile (Graph Visualiser) with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 16 | chromium-local-provider | Verify Kanvas Details |  | ❌ |
-| 17 | chromium-local-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
+| 16 | chromium-local-provider | Verify Configure Metrics Navigation and Settings | unstable | ⚠️ |
+| 17 | chromium-local-provider | Add performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 18 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 19 | chromium-meshery-provider | Edit the configuration of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 20 | chromium-local-provider | Add performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 21 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
-| 22 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 20 | chromium-local-provider | View detailed result of a performance profile (Graph Visualiser) with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 21 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 22 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
 | 23 | chromium-meshery-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 24 | chromium-local-provider | View detailed result of a performance profile (Graph Visualiser) with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 24 | chromium-local-provider | Edit the configuration of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 25 | chromium-meshery-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 26 | chromium-local-provider | Edit the configuration of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 27 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
-| 28 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 26 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
+| 27 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 
 </div>
 </details>
