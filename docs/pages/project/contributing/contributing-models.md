@@ -260,8 +260,8 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <h4>1. Access the Model Generation Interface</h4>
         <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
 
-        <a href="/assets/img/registry/generate-model-from-UI.png">
-          <img src="/assets/img/registry/generate-model-from-UI.png" alt="registry generate model" style="width: 50%; max-width: 400px;">
+        <a href="/assets/img/registry/generate-model-from-UI.gif">
+          <img src="/assets/img/registry/generate-model-from-UI.gif" alt="registry generate model" style="width: 50%; max-width: 400px;">
         </a>
 
         <h4>2. Provide Source Location</h4>
@@ -337,10 +337,6 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
 
         <h4>1. Access the Model Generation Interface</h4>
         <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
-
-        <a href="/assets/img/registry/generate-model-from-UI.png">
-          <img src="/assets/img/registry/generate-model-from-UI.png" alt="registry generate model" style="width: 50%; max-width: 400px;">
-        </a>
 
         <a href="/assets/img/registry/csv-import.png">
           <img src="/assets/img/registry/csv-import.png" alt="CSV Import Initial Screen" style="width: 50%; max-width: 400px;">
