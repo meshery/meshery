@@ -36,6 +36,7 @@ mesheryctl exp model build [path/to/model/version/folder]
 		// validation done above that args contains exactly one argument
 		path := args[0]
 		utils.Log.Infof("Building meshery model from path %s", path)
+		utils.Log.Info("Build command will be here soon . . .")
 
 		return nil
 	},
