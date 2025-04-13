@@ -8,7 +8,7 @@ setup() {
   load "$E2E_HELPERS_PATH/constants"
 }
 
-@test "mesheryctl design list is succeeded" {
+@test "mesheryctl design list returns total numbers of designs" {
   run $MESHERYCTL_BIN design list
   assert_success
   assert_line --partial "DESIGN ID" && \
@@ -19,14 +19,14 @@ setup() {
   assert_line --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"
 }
 
-@test "mesheryctl design list with page parameter is succeeded" {
+@test "mesheryctl design list --page 1 returns total numbers of designs" {
   run $MESHERYCTL_BIN design list --page 1
   assert_success
   # Fix: Match the exact output format with two spaces between "of" and "patterns"
   assert_line --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"
 }
 
-@test "mesheryctl design list with verbose flag is succeeded" {
+@test "mesheryctl design list -v returns total numbers of designs" {
   run $MESHERYCTL_BIN design list -v
   assert_success
   # Check for either designs or "No pattern(s) found" message

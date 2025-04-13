@@ -8,14 +8,14 @@ setup() {
 
 }
 
-@test "meshery model list --page 1 is succeeded and return total numbers of models" {
+@test "mesheryctl model list --page 1 return total numbers of models" {
   run $MESHERYCTL_BIN model list --page 1
   assert_success
 
   assert_line --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"
 }
 
-@test "mesheryctl model list --count is succeeded and return total numbers of models" {
+@test "mesheryctl model list --count return total numbers of models" {
   run $MESHERYCTL_BIN model list --count
   assert_success
 

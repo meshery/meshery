@@ -6,7 +6,7 @@ setup() {
 
 }
 
-@test "mesheryctl system status display mesehry operator running pods" {
+@test "mesheryctl system status display meshery operator running pods" {
     run $MESHERYCTL_BIN system status -y
     assert_success
 

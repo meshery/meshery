@@ -10,7 +10,7 @@ setup() {
   export TESTDATA_PATH="$TEMP_DATA_DIR/design/nginx.yaml"
 }
 
-@test "mesheryctl design import with nginx YAML is succeeded" {
+@test "mesheryctl design import -f nginx.yaml displays imported and output the design Id" {
   # Verify the test fixture exists
   if [ ! -f "$TESTDATA_PATH" ]; then
     skip "Test fixture $TESTDATA_PATH not found"
@@ -26,7 +26,7 @@ setup() {
   echo "$DESIGN_ID" > "${TEMP_DATA_DIR}/design/id"
 }
 
-@test "mesheryctl design import for invalid file fails" {
+@test "mesheryctl design import with an invalid path displays an error message" {
   # Use a non-existent file path
   run $MESHERYCTL_BIN design import -f "${TEMP_DATA_DIR}/design/nonexistent.yaml" --source-type "Kubernetes Manifest"
   # TODO: Update command to assert is failing

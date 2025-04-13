@@ -11,7 +11,7 @@ setup() {
 }
 
 # Test 1: Verify successful deletion of a design
-@test "mesheryctl design delete is succeeded" {
+@test "mesheryctl design delete removes the associate design" {
 
   if [ ! -f "$DESIGN_ID_FILE" ]; then
     skip "No design ID available to delete"
