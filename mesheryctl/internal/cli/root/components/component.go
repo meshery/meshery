@@ -79,7 +79,7 @@ mesheryctl component view [component-name]
 			}
 
 			baseUrl := mctlCfg.GetBaseMesheryURL()
-			url := fmt.Sprintf("%s/%s?page=1", baseUrl, componentApiPath)
+			url := fmt.Sprintf("%s/%s", baseUrl, componentApiPath)
 			return listComponents(cmd, url)
 		}
 
