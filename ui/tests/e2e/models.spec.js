@@ -14,8 +14,8 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('Create a Model', async ({ page }) => {
-  await page.getByText('Create').click();
-  await page.locator('div', { hasText: 'Create Model' }).nth(1).click();
+  await page.getByTestId('create-model-button').click();
+
 
   await page.getByRole('textbox', { name: 'Model Name' }).fill(MODEL_NAME);
   await page.getByRole('textbox', { name: 'Model Display Name' }).fill(MODEL_DISPLAY_NAME);
@@ -48,7 +48,7 @@ test('Search a Model and Export it', async ({ page }) => {
 });
 
 test('Import a Model', async ({ page }) => {
-  await page.getByText('Import').click();
+  await page.getByTestId('import-model-button').click();
   await page.getByRole('heading', { name: 'File Import' }).click();
 
   await page.setInputFiles('input[type="file"]', TAR_FILE_PATH);
