@@ -51,7 +51,6 @@ test('Import a Model', async ({ page }) => {
   await page.getByText('Import').click();
   await page.getByRole('heading', { name: 'File Import' }).click();
 
-  console.log('TAR_FILE_PATH', TAR_FILE_PATH);
   await page.setInputFiles('input[type="file"]', TAR_FILE_PATH);
 
   await page.getByRole('button', { name: 'Next' }).click();
