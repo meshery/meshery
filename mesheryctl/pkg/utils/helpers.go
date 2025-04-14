@@ -263,6 +263,10 @@ var (
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 	//global logger error variable
 	LogError logger.Handler
+	//path for fixtures directory
+	_, b, _, _  = runtime.Caller(0)
+	BaseDir     = filepath.Dir(b)
+	FixturesDir = filepath.Join(BaseDir, "fixtures")
 )
 
 var CfgFile string

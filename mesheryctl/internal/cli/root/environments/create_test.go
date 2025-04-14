@@ -78,12 +78,10 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			// Expected response
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			cmd := EnvironmentCmd
-			cmd.SetArgs(tt.Args)
-
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			cmd.SetOut(b)
-			err := cmd.Execute()
+			EnvironmentCmd.SetArgs(tt.Args)
+			EnvironmentCmd.SetOut(b)
+			err := EnvironmentCmd.Execute()
 
 			if err != nil {
 				if tt.ExpectedError {
