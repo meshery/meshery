@@ -17,6 +17,7 @@ package registry
 import (
 	// "bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -56,6 +57,15 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+
+		const errorMsg = "[ Spreadsheet ID and Spreadsheet Cred ] isn't specified\n\nUsage: \nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED\nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry update --help' to see detailed help message"
+		if spreadsheeetID == "" && spreadsheeetCred == "" {
+			return errors.New(utils.RegistryError(errorMsg, "update"))
+		}
+
+		if spreadsheeetID != "" && spreadsheeetCred == "" {
+			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED\nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry update --help' to see detailed help message", "update"))
+		}
 
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
