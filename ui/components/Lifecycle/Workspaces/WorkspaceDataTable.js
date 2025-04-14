@@ -139,7 +139,6 @@ const WorkspaceDataTable = ({
         sort: true,
         searchable: true,
         customBodyRender: (value, tableMeta) => {
-          console.log('amit vlaue', value);
           if (!value) {
             return <span>{getColumnValue(tableMeta.rowData, 'org_name', columns)}</span>;
           }
