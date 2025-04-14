@@ -153,6 +153,7 @@ const Adapters = ({ updateProgress }) => {
                     textDecoration: 'none',
                     color: theme.palette.text.brand,
                   }}
+                  data-testid={`adapter-docs-${String(adapter.name).toLowerCase()}`}
                 >
                   Open Adapter docs
                 </a>
