@@ -8,3 +8,9 @@ pushd $PWD/../.. > /dev/null
 make clean
 
 popd > /dev/null
+
+
+# Stop port forwarding
+echo "Stopping port forwarding"
+kill $MESHERY_SERVER_PORT_FORWARD_PID
+echo "done: Port forwarding"

@@ -137,7 +137,14 @@ const UrlStepper = React.memo(({ handleClose }) => {
       <Typography variant="textB2SemiBold" color="textSecondary">
         {label}
       </Typography>
-      <Typography mt={1} style={color ? { color: color } : {}}>
+      <Typography
+        mt={1}
+        style={{
+          color: color || undefined,
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+        }}
+      >
         {value}
       </Typography>
     </StyledSummaryItem>

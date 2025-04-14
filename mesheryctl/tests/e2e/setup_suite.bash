@@ -20,11 +20,21 @@ create_auth_file() {
     echo "done: authentication configuration"
 }
 
+port_forwarding() {
+    echo "start: Port forwarding"
+
+    nohup kubectl -n meshery port-forward svc/meshery 9081:$(kubectl -n meshery get svc/meshery -o jsonpath='{.spec.ports[0].port}') &
+    export MESHERY_SERVER_PORT_FORWARD_PID="$!"
+    
+    echo "done: Port forwarding"
+}
+
 main() {
     echo -e "### start: Test environment setup ###\n"
 
     install_mesheryctl "$MESHERY_PLATFORM"
     create_auth_file 
+    port_forwarding
     
     export MESHERYCTL_BIN="mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
