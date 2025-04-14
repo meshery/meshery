@@ -91,7 +91,13 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, selectedFilter }) => {
+const ConnectionTable = ({
+  meshsyncControllerState,
+  connectionMetadataState,
+  selectedFilter,
+  selectedConnectionId,
+  updateUrlWithConnectionId,
+}) => {
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -177,6 +183,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       skip: !organization?.id,
     },
   );
+
   let environments = environmentsResponse?.environments || [];
 
   useEffect(() => {
@@ -328,15 +335,6 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'DELETE') {
-        // let bulkConnections = {}
-        // selected.data.map(({ index }) => {
-        //   bulkConnections = {
-        //     ...bulkConnections,
-        //     [connections[index].id]: CONNECTION_STATES.DELETED
-        //   };
-        // })
-        // const requestBody = JSON.stringify(bulkConnections);
-        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
@@ -480,6 +478,35 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     setRowData(tableMeta);
   };
   const theme = useTheme();
+
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
+
+  // Update rowsExpanded when a specific connection ID is selected
+  useEffect(() => {
+    if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
+
+    if (connections && connections.length > 0) {
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedConnectionId;
+
+      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithConnectionId('');
+      }
+
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
+    }
+  }, [selectedConnectionId, connections]);
 
   const columns = [
     {
@@ -993,7 +1020,28 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      if (expansionFlags.current.isUrlExpansion) return;
+
+      expansionFlags.current.isHandlingExpansion = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && connections) {
+        const index = expandedRows[0].index;
+        const connection = connections[index];
+
+        if (
+          connection &&
+          updateUrlWithConnectionId &&
+          (!expansionFlags.current.isInitialLoad || connection.id !== selectedConnectionId)
+        ) {
+          updateUrlWithConnectionId(connection.id);
+        }
+      } else if (updateUrlWithConnectionId && !expansionFlags.current.isInitialLoad) {
+        updateUrlWithConnectionId('');
+      }
+
+      expansionFlags.current.isHandlingExpansion = false;
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;

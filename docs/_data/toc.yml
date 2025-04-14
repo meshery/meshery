@@ -292,18 +292,18 @@
   url: reference
   links:
     - title: Extensibility ↆ
-        url: extensibility
-        children:
-          - title: Authorization
-            url: extensibility/authorization
-          - title: Load Generators
-            url: extensibility/load-generators
-          - title: Providers
-            url: extensibility/providers
-          - title: Compatibility Guide
-            url: extensibility/verify-compatibility
-          - title: UI Plugins
-            url: extensibility/ui
+      url: extensibility
+      children:
+        - title: Authorization
+          url: extensibility/authorization
+        - title: Load Generators
+          url: extensibility/load-generators
+        - title: Providers
+          url: extensibility/providers
+        - title: Compatibility Guide
+          url: extensibility/verify-compatibility
+        - title: UI Plugins
+          url: extensibility/ui
     - title: Error Code
       url: reference/error-codes
     - title: Permission Keys
