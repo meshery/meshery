@@ -372,7 +372,9 @@ const Workspaces = () => {
         <>
           <div style={{ marginBottom: '1.5rem' }}>
             <Breadcrumbs
-              separator={<RightArrowIcon height={20} width={20} />}
+              separator={
+                <RightArrowIcon height={20} width={20} primaryFill={theme.palette.icon.default} />
+              }
               aria-label="breadcrumb"
             >
               <Link
@@ -380,7 +382,7 @@ const Workspaces = () => {
                   cursor: selectedWorkspace.id ? 'pointer' : 'default',
                   color: selectedWorkspace.id
                     ? theme.palette.background.brand.default
-                    : theme.palette.background.supplementary,
+                    : theme.palette.text.default,
                   textDecoration: 'none',
                 }}
                 href="#"
@@ -464,7 +466,7 @@ const Workspaces = () => {
                 handleWorkspaceModalOpen={handleWorkspaceModalOpen}
                 page={page}
                 setPage={setPage}
-                totalPages={Math.ceil(workspaces?.total_count / pageSize)}
+                totalPages={Math.ceil(workspacesData?.total_count / pageSize)}
                 workspacesData={workspaces}
                 key={`grid-view-${viewType}`}
               />
@@ -518,12 +520,12 @@ const Workspaces = () => {
             <WorkspaceTeamsTable
               workspaceId={teamsModal.workspaceId}
               isAssignTeamAllowed={CAN(
-                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
                 keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
               )}
-              isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.subject, keys.DELETE_TEAM.action)}
-              isEditTeamAllowed={CAN(keys.EDIT_TEAM.subject, keys.EDIT_TEAM.action)}
-              isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.subject, keys.LEAVE_TEAM.action)}
+              isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
+              isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
+              isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
               useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
               useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
               useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}

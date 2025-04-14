@@ -113,7 +113,7 @@ const WorkspaceDataTable = ({
         customBodyRender: (value) => {
           return (
             <Box display="flex" gap={'0.5rem'}>
-              <WorkspaceIcon {...iconSmall} />
+              <WorkspaceIcon {...iconSmall} fill={theme.palette.icon.default} />
               {value}
             </Box>
           );
@@ -139,6 +139,7 @@ const WorkspaceDataTable = ({
         sort: true,
         searchable: true,
         customBodyRender: (value, tableMeta) => {
+          console.log('amit vlaue', value);
           if (!value) {
             return <span>{getColumnValue(tableMeta.rowData, 'org_name', columns)}</span>;
           }
@@ -248,8 +249,8 @@ const WorkspaceDataTable = ({
                           <IconButton
                             disabled={
                               !CAN(
-                                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
                                 keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+                                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
                               )
                             }
                             onClick={(e) => handleTeamsModalOpen(e, workspaceId, workspaceName)}
@@ -273,22 +274,24 @@ const WorkspaceDataTable = ({
                       </div>
                     </CustomTooltip>
                     <CustomTooltip title="Edit Workspace">
-                      <IconButton
-                        disabled={!CAN(keys.EDIT_WORKSPACE.subject, keys.EDIT_WORKSPACE.action)}
-                        onClick={(e) =>
-                          handleWorkspaceModalOpen(
-                            e,
-                            WORKSPACE_ACTION_TYPES.EDIT,
-                            workspacesData[tableMeta.rowIndex],
-                          )
-                        }
-                      >
-                        <EditIcon />
-                      </IconButton>
+                      <div>
+                        <IconButton
+                          disabled={!CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
+                          onClick={(e) =>
+                            handleWorkspaceModalOpen(
+                              e,
+                              WORKSPACE_ACTION_TYPES.EDIT,
+                              workspacesData[tableMeta.rowIndex],
+                            )
+                          }
+                        >
+                          <EditIcon fill={theme.palette.icon.default} />
+                        </IconButton>
+                      </div>
                     </CustomTooltip>
                     <L5DeleteIcon
                       key={`delete_role-${tableMeta.rowIndex}`}
-                      disabled={!CAN(keys.DELETE_WORKSPACE.subject, keys.DELETE_WORKSPACE.action)}
+                      disabled={!CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
                       onClick={(e) =>
                         handleDeleteWorkspaceConfirm(e, workspacesData[tableMeta.rowIndex])
                       }

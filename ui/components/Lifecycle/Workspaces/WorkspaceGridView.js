@@ -21,6 +21,8 @@ import {
   DesignIcon,
   ViewIcon,
 } from '@layer5/sistent';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import {
   useAssignDesignToWorkspaceMutation,
   useAssignEnvironmentToWorkspaceMutation,
@@ -39,10 +41,9 @@ import {
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
-import LeftArrowIcon from '@/assets/icons/LeftArrowIcon';
-import RightArrowIcon from '@/assets/icons/RightArrowIcon';
 import { UserCommonBox } from './styles';
 import MesheryWorkspaceCard from './MesheryWorkspaceCard';
+import { debounce } from 'lodash';
 
 const WorkspaceGridView = ({
   workspacesData,
@@ -217,15 +218,13 @@ const WorkspaceGridView = ({
         <Pagination
           count={totalPages}
           page={page + 1}
-          sx={{
-            backgroundColor: 'white',
-            borderRadius: '1rem',
-            padding: '0.5rem',
-          }}
-          onChange={() => setPage(page - 1)}
+          onChange={debounce((_, page) => setPage(page - 1), 150)}
           boundaryCount={3}
           renderItem={(item) => (
-            <PaginationItem slots={{ previous: LeftArrowIcon, next: RightArrowIcon }} {...item} />
+            <PaginationItem
+              slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+              {...item}
+            />
           )}
         />
       </Grid>

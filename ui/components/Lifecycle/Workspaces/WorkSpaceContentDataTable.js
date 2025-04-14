@@ -6,7 +6,7 @@ import {
   useUnassignDesignFromWorkspaceMutation,
   useUnassignViewFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import { DesignTable, ErrorBoundary, Grid, WorkspaceViewsTable } from '@layer5/sistent';
+import { DesignTable, ErrorBoundary, Grid, useTheme, WorkspaceViewsTable } from '@layer5/sistent';
 import { useState } from 'react';
 import { useDeletePattern, usePublishPattern } from './hooks';
 import CAN from '@/utils/can';
@@ -49,6 +49,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
     meshModelModelsData,
     refetchPatternData,
   );
+  const theme = useTheme();
   return (
     <ErrorBoundary>
       <Grid
@@ -57,11 +58,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
         spacing={1}
         sx={{
           margin: 'auto',
-          backgroundColor: '#f3f1f1',
-          paddingLeft: '0.5rem',
-          borderRadius: '0.25rem',
           width: 'inherit',
           display: 'flex',
+          backgroundColor: theme.palette.background.elevatedComponents,
           flexDirection: 'column',
           gap: '1rem',
         }}
@@ -72,18 +71,18 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
           handleBulkWorkspaceDesignDeleteModal={handleBulkWorkspaceDesignDeleteModal}
           handleWorkspaceDesignDeleteModal={handleWorkspaceDesignDeleteModal}
           isAssignAllowed={CAN(
-            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
             keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
           )}
           isRemoveAllowed={CAN(
-            keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
             keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
+            keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
           )}
-          isDownloadAllowed={CAN(keys.DOWNLOAD_DESIGN.subject, keys.DOWNLOAD_DESIGN.action)}
-          isCopyLinkAllowed={CAN(keys.CLONE_DESIGN.subject, keys.CLONE_DESIGN.action)}
-          isDeleteAllowed={CAN(keys.DELETE_A_DESIGN.subject, keys.DELETE_A_DESIGN.action)}
-          isPublishAllowed={CAN(keys.PUBLISH_DESIGN.subject, keys.PUBLISH_DESIGN.action)}
-          isUnpublishAllowed={CAN(keys.UNPUBLISH_DESIGN.subject, keys.UNPUBLISH_DESIGN.action)}
+          isDownloadAllowed={CAN(keys.DOWNLOAD_DESIGN.action, keys.DOWNLOAD_DESIGN.subject)}
+          isCopyLinkAllowed={CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
+          isDeleteAllowed={CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+          isPublishAllowed={CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
+          isUnpublishAllowed={CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
           publishModalHandler={publishModalHandler}
           useAssignDesignToWorkspaceMutation={useAssignDesignToWorkspaceMutation}
           useUnassignDesignFromWorkspaceMutation={useUnassignDesignFromWorkspaceMutation}
@@ -102,8 +101,8 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
           )}
           isRemoveAllowed={CAN(
-            keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
             keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
+            keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
           )}
           handleShowDetails={() => {}}
           useAssignViewToWorkspaceMutation={useAssignViewToWorkspaceMutation}
