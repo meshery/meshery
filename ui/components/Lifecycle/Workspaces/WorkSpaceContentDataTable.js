@@ -17,6 +17,7 @@ import Modal from '@/components/Modal';
 import { useNotification } from '@/utils/hooks/useNotification';
 import ExportModal from '@/components/ExportModal';
 import { EVENT_TYPES } from '@/utils/Enum';
+import downloadContent from '@/utils/fileDownloader';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [designSearch, setDesignSearch] = useState('');
@@ -33,7 +34,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const handleCopyUrl = (type, designName, designId) => {
     notify({
       message: `Link to "${designName}" copied to clipboard`,
-      event_type: EVENT_TYPEs.INFO,
+      event_type: EVENT_TYPES.INFO,
     });
     navigator.clipboard.writeText(`${MESHERY_CLOUD_PROD}/catalog/content/${type}/${designId}`);
   };
