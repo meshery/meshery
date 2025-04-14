@@ -395,7 +395,6 @@ const WorkspaceDataTable = ({
           style={{
             marginTop: '1rem',
             backgroundColor: theme.palette.background.paper,
-            display: selectedWorkspace.id ? 'block' : 'none',
           }}
         >
           <WorkSpaceContentDataTable
@@ -407,7 +406,6 @@ const WorkspaceDataTable = ({
         <div
           style={{
             marginTop: '1rem',
-            display: !selectedWorkspace.id ? 'block' : 'none',
           }}
         >
           <ResponsiveDataTable
