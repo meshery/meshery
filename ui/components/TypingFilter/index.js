@@ -258,7 +258,6 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
               {...getTagProps({ index })}
               key={option.type}
               label={`${filterSchema[option.type].value}: ${option.value}`}
-              // onDelete={() => handleDeleteChip(option.type)}
               style={{ margin: '0.15rem', maxWidth: '80%', height: 'auto' }}
               size="small"
               sx={{
