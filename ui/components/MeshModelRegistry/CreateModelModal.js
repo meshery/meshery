@@ -9,6 +9,9 @@ const CreateModelModal = ({ isCreateModalOpen, setIsCreateModalOpen }) => {
       open={isCreateModalOpen}
       closeModal={() => setIsCreateModalOpen(false)}
       title="Create Model"
+      style={{
+        zIndex: 1500,
+      }}
     >
       <UrlStepper handleClose={() => setIsCreateModalOpen(false)} />
     </Modal>

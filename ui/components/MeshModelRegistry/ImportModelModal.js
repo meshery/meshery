@@ -202,7 +202,15 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
 
   return (
     <>
-      <Modal open={isImportModalOpen} closeModal={handleClose} maxWidth="sm" title="Import Model">
+      <Modal
+        open={isImportModalOpen}
+        closeModal={handleClose}
+        maxWidth="sm"
+        title="Import Model"
+        style={{
+          zIndex: 1500,
+        }}
+      >
         {activeStep === 0 ? (
           <RJSFModalWrapper
             schema={importModelSchema}
@@ -236,6 +244,9 @@ const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }
         closeModal={() => setIsCsvModalOpen(false)}
         maxWidth="sm"
         title="Import CSV"
+        style={{
+          zIndex: 1500,
+        }}
       >
         <CsvStepper handleClose={handleClose} />
       </Modal>
