@@ -94,7 +94,11 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
   description: 
-components-count: 21
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+components-count: 22
 relationships: 
 relationship-count: 0
 featureList: [
