@@ -1,9 +1,15 @@
 #!/usr/bin/env bats
 
-@test "mesheryctl model --count is succeeded and return total numbers of models" {
-  run $MESHERYCTL_BIN model --count
-  [ "$status" -eq 0 ]
+setup() {
+   load "$E2E_HELPERS_PATH/tests_helpers"
+	_tests_helper
 
-  run grep -E "^Total number of  models : [0-9]+$" <<< $(echo "$output" | head -n 1)
-  [ "$status" -eq 0 ]
+}
+
+
+@test "mesheryctl model --count return total numbers of models" {
+  run $MESHERYCTL_BIN model --count
+  assert_success
+
+  assert_output --regexp "^Total number of models: [0-9]+$"
 }
