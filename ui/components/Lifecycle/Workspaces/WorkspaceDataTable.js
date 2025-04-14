@@ -390,34 +390,36 @@ const WorkspaceDataTable = ({
 
   return (
     <div key={`list-view-${viewType}`}>
-      <div
-        style={{
-          marginTop: '1rem',
-          display: !selectedWorkspace.id ? 'block' : 'none',
-        }}
-      >
-        <ResponsiveDataTable
-          columns={columns}
-          data={workspacesData}
-          options={options}
-          columnVisibility={columnVisibility}
-          tableCols={tableCols}
-          updateCols={updateCols}
-        />
-      </div>
-
-      <div
-        style={{
-          marginTop: '1rem',
-          backgroundColor: theme.palette.background.paper,
-          display: selectedWorkspace.id ? 'block' : 'none',
-        }}
-      >
-        <WorkSpaceContentDataTable
-          workspaceId={selectedWorkspace?.id}
-          workspaceName={selectedWorkspace?.name}
-        />
-      </div>
+      {selectedWorkspace.id ? (
+        <div
+          style={{
+            marginTop: '1rem',
+            backgroundColor: theme.palette.background.paper,
+            display: selectedWorkspace.id ? 'block' : 'none',
+          }}
+        >
+          <WorkSpaceContentDataTable
+            workspaceId={selectedWorkspace?.id}
+            workspaceName={selectedWorkspace?.name}
+          />
+        </div>
+      ) : (
+        <div
+          style={{
+            marginTop: '1rem',
+            display: !selectedWorkspace.id ? 'block' : 'none',
+          }}
+        >
+          <ResponsiveDataTable
+            columns={columns}
+            data={workspacesData}
+            options={options}
+            columnVisibility={columnVisibility}
+            tableCols={tableCols}
+            updateCols={updateCols}
+          />
+        </div>
+      )}
     </div>
   );
 };
