@@ -193,12 +193,9 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
     handleFilter({});
   };
 
-
   const handleDeleteChip = (details) => {
     setSelectedFilters((prev) => prev.filter((filter) => filter !== details?.option));
-    handleFilter(
-      transformData(selectedFilters.filter((filter) => filter.type !== details?.option.type)),
-    );
+    handleFilter(transformData(selectedFilters.filter((filter) => filter !== details?.option)));
   };
 
   const theme = useTheme();
@@ -229,7 +226,6 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
         onChange={(_, __, reason, details) => {
           if (reason === 'removeOption' && details?.option) {
             handleDeleteChip(details);
-            // setSelectedFilters((prev) => prev.filter((filter) => filter !== details?.option));
           } else if (reason === 'selectOption' && details?.option) {
             handleSelect(details.option);
           }
