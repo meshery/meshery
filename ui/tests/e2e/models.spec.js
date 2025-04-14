@@ -31,6 +31,8 @@ test('Create a Model', async ({ page }) => {
   await page.getByRole('button', { name: 'Next' }).click();
 
   await page.getByRole('button', { name: 'Generate' }).click();
+  await expect(page.getByTestId('model-summary')).toBeVisible();
+  await expect(page.getByTestId('model-info')).toBeVisible();
   await page.getByRole('button', { name: 'Finish' }).click();
 });
 
@@ -53,5 +55,8 @@ test('Import a Model', async ({ page }) => {
   await page.setInputFiles('input[type="file"]', TAR_FILE_PATH);
 
   await page.getByRole('button', { name: 'Next' }).click();
+
+  await expect(page.getByTestId('model-summary')).toBeVisible();
+  await expect(page.getByTestId('model-info')).toBeVisible();
   await page.getByRole('button', { name: 'Finish' }).click();
 });
