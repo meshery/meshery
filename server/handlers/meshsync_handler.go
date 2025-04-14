@@ -295,7 +295,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	query = filterByKey(query, model.KindLabel, labels)
 
 	if apiVersion != "" {
-		query = query.Where(&model.KubernetesResource{APIVersion: apiVersion})
+		query = query.Where("kubernetes_resources.api_version = ?", apiVersion)
 	}
 
 	if isLabels {
