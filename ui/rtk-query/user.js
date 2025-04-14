@@ -101,7 +101,7 @@ export const userApi = api
         method: 'GET',
       }),
       getExtensionsByType: builder.query({
-        query: (type) => ({
+        query: () => ({
           url: 'provider/capabilities',
           method: 'GET',
           credentials: 'include',
@@ -111,7 +111,6 @@ export const userApi = api
             return [];
           }
 
-          // Apply the schema validator directly in the transform
           try {
             const ExtensionPointSchemaValidator =
               require('../utils/ExtensionPointSchemaValidator').default;
@@ -123,7 +122,6 @@ export const userApi = api
             return [];
           }
         },
-        // Make sure we have proper tag
         providesTags: ['provider_capabilities'],
       }),
       getFullPageExtensions: builder.query({
