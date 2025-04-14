@@ -6,8 +6,40 @@ location:
   path: ""
   type: local
 name: Untitled Design
-pattern_file: |
+pattern_file:
+  components:
+  - name: ""
+    namespace: ""
+    type: ""
   name: MesheryGeneratedPatternFile
+  relationships:
+  - kind: ""
+    status: ""
+    subType: ""
+  services:
+    Application-0.27908838824537985:
+      namespace: Application
+      traits:
+        meshmap:
+          position:
+            posX: 209
+            posY: 506
+      type: Application
 updated_at: "2021-07-30T14:14:10.672636Z"
 user_id: 990f779c-708d-4396-84b8-e2ba37c1adcc
 
+
+----- Design Summary -----
+Design Name: Untitled Design
+
+Note: Components and relationships may appear as null at the top level
+but are present inside the pattern_file structure.
+
+Components: 1
+Component details:
+  1. Unknown (Kind: Unknown)
+
+Relationships: 1
+Relationship details:
+  1.  relationship of type  (Status: )
+-------------------------

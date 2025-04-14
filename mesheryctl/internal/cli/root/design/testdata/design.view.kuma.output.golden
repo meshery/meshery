@@ -1,3 +1,5 @@
+No components found for this design.
+No relationships found for this design.
 created_at: "2023-07-31T16:22:41+01:00"
 id: 957fbc9b-708d-4396-84b8-e2ba37c1adcc
 location:
@@ -20,3 +22,12 @@ pattern_file: |
 updated_at: "2023-07-31T16:22:41+01:00"
 user_id: 990f779c-708d-4396-84b8-e2ba37c1adcc
 
+
+----- Design Summary -----
+Design Name: kumatest
+
+Note: Components and relationships may appear as null at the top level
+but are present inside the pattern_file structure.
+Components: None
+Relationships: None
+-------------------------
