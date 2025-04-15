@@ -179,7 +179,7 @@ const MeshAdapterConfigComponent = (props) => {
       if (result) {
         setMeshAdapters(result);
         setMeshLocationURL('');
-        notify({ message: 'Adapter was configured!', event_type: EVENT_TYPES.SUCCESS });
+        notify({ message: 'Adapter configured.', event_type: EVENT_TYPES.SUCCESS });
         props.updateAdaptersInfo({ meshAdapters: result });
       }
     } catch (error) {
@@ -200,7 +200,7 @@ const MeshAdapterConfigComponent = (props) => {
 
       if (result) {
         setMeshAdapters(result);
-        notify({ message: 'Adapter was removed!', event_type: EVENT_TYPES.SUCCESS });
+        notify({ message: 'Adapter removed.', event_type: EVENT_TYPES.SUCCESS });
         props.updateAdaptersInfo({ meshAdapters: result });
       }
     } catch (error) {
@@ -217,7 +217,7 @@ const MeshAdapterConfigComponent = (props) => {
       props.updateProgress({ showProgress: false });
 
       if (result) {
-        notify({ message: 'Adapter was pinged!', event_type: EVENT_TYPES.SUCCESS });
+        notify({ message: 'Adapter was pinged.', event_type: EVENT_TYPES.SUCCESS });
       }
     } catch (error) {
       handleError('Error pinging adapter')(error);
