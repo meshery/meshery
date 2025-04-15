@@ -35,6 +35,14 @@ func TestListWorkspaces(t *testing.T) {
 			ExpectedResponse: "list.workspace.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "List workspaces providing organization ID empty result",
+			Args:             []string{"list", "--orgId", testOrgId},
+			URL:              fmt.Sprintf("/%s?orgID=%s", workspacesApiPath, testOrgId),
+			Fixture:          "list.workspace.empty.api.response.golden",
+			ExpectedResponse: "list.workspace.empty.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, WorkSpaceCmd, tests, currentDirectory, "organization")
