@@ -52,7 +52,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 <div align="center" width="100%">
  <a href="https://youtu.be/Do7htKrRzDA"><img src=".github/assets/images/readme/thumbnail.png" width="800px" /></a>
  <p><i>Example extension. See other <a href="https://meshery.io/extensions">Meshery Extensions</a>.</i></p>
- <br />Try Meshery in the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
+ <br />Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
 </div>
 
 <br />
@@ -105,9 +105,15 @@ Assess your cloud native infrastructure configuration against deployment and ope
 
 Meshery uses [relationships](https://docs.meshery.io/concepts/logical/relationships) to define how and when components interrelate with one another. Meshery supports a variety of relationships between components.
 
+<!-- 
+
+RELATIONSHIP EXAMPLE SCREENSHOT / GIF NEEDED HERE
+
+-->
+
 <details><summary><img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="25px" align="left" /><h4>Context-Aware Policies For Applications</h4></summary>
 <img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
-<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Configure your infrastructure with confidence without needing to know or write Open Policy Agent's Rego query language.</p>
+<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Customize Configure your infrastructure with confidence without needing to know or write Open Policy Agent's Rego query language.</p>
 </details>
 
 ## Workspaces: Your team's Google Drive for cloud native projects
@@ -123,11 +129,12 @@ Workspaces let you organize your work and serve as the central point of collabor
 </details>
 
 <details><summary><h4>See changes to your infra before you merge</h4></summary>
+
 <!-- 
 
 SCREENSHOT / GIF NEEDED HERE
 
- -->
+-->
 
 Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </details>
@@ -180,7 +187,7 @@ Baseline and track your cloud native performance from release to release.
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;" />
 </picture>
 
-Meshery offers load generation and performance characterization to help you assess and optimize the performance of your applications and infrastructure. Here's how it works:
+Meshery offers load generation and performance characterization to help you assess and optimize the performance of your applications and infrastructure.
 
 - **Multiple Load Generators:** Meshery supports various load generators, including Fortio, Wrk2, and Nighthawk, allowing users to choose the tool that best suits your needs.
 - **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
@@ -190,16 +197,19 @@ Meshery offers load generation and performance characterization to help you asse
 <details>
 <summary><h3>Performance Characterization</h3></summary>
 
-- **Metrics Collection:** Meshery can connect to one or more Prometheus instances to gather telemetric data, including Kubernetes and application metrics. It also integrates with Grafana, allowing users to import existing dashboards and visualize performance data.
-- **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. This helps users understand the distribution of response times and identify potential bottlenecks.
+- **Metrics Collection:** Meshery can connect to one or more Prometheus servers to gather both cluster and application metrics. Meshery also integrates with Grafana, allowing you to import your existing dashboards and visualize performance data.
+- **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. Understand the distribution of response times and identify potential bottlenecks.
 - **Performance Test Profiles:** Meshery allows users to customize and save their load test configuration in the form of a Performance Test Profile. This enables users to easily return to Meshery to run the same set of customized tests again and again, tracking variations in performance over time.
 Comparison of Test Results: Meshery enables users to compare the difference in request performance (latency and throughput) between independent performance tests.
 - **Kubernetes Cluster and Workload Metrics:** Meshery provides performance test results alongside environment metrics, including control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their control plane and data plane in context of the overhead incurred on nodes within the cluster.
 
 <p>In an effort to produce infrastructure agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Cloud Native Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs. Meshery enables you to measure the value provided by Docker, Kubernetes, or other cloud native infrastructure in the context of the overhead incurred.</p>
 
-<a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="100%" align="center" /></a>
-<br /><br />
+<!-- 
+
+SCREENSHOT / GIF NEEDED HERE
+
+-->
 
 </details>
 
