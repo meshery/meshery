@@ -11,9 +11,6 @@ list: include
 ---
 
 <div style="display:flex;align-items:center;">
-    <div style="flex: 1; margin: 1rem;">
-        <img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg" />
-    </div>
     <div style="flex: 4;">
         <h1>MeshSync</h1>
         <p>
