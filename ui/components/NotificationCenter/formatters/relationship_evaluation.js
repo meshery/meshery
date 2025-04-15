@@ -211,12 +211,12 @@ export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTr
           <RelationshipsTrace
             title="Relationships Added"
             type="added"
-            relationships={trace.relationshipsAdded | []}
+            relationships={trace.relationshipsAdded || []}
           />
           <RelationshipsTrace
             title="Relationships Updated"
             type="updated"
-            relationships={trace.relationshipsUpdated | []}
+            relationships={trace.relationshipsUpdated || []}
           />
           <RelationshipsTrace
             title="Relationships Removed"

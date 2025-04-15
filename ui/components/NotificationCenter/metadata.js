@@ -59,7 +59,7 @@ export const PropertyFormatters = {
         label={value}
         clickable
         component="a"
-        href={`management/connections?searchText=${value}`}
+        href={`/management/connections?tab=connections&searchText=${value}`}
         target="_self"
       />
     );
