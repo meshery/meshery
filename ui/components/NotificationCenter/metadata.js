@@ -27,7 +27,6 @@ export const PropertyFormatters = {
   },
   designId: (value) => {
     const theme = useTheme();
-    // console.log('Here is the value', value);
     const parts = value.split('+');
     const designName = parts[0];
     const designId = parts[1];
@@ -46,13 +45,6 @@ export const PropertyFormatters = {
       </TitleLink>
     );
   },
-  // doclink: (value) => {
-  //   return (
-  //     <TitleLink href={value} style={{ textAlign: 'end', color: 'inherit' }}>
-  //       Doc
-  //     </TitleLink>
-  //   );
-  // },
   connectionName: (value) => {
     return (
       <ChipWrapper
@@ -123,7 +115,6 @@ export const FormattedMetadata = ({ event }) => {
         ? null
         : event.description,
   };
-  console.log(metadata);
   const order = [
     'doclink',
     'ShortDescription',
@@ -139,7 +130,6 @@ export const FormattedMetadata = ({ event }) => {
   const orderedMetadata = hasImportedModelName
     ? reorderObjectProperties({ ...metadata, ShortDescription: null }, order) // Exclude ShortDescription
     : reorderObjectProperties(metadata, order);
-  console.log(orderedMetadata);
   return (
     <FormatStructuredData
       propertyFormatters={PropertyFormatters}

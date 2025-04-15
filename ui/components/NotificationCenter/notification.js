@@ -53,6 +53,7 @@ import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
+import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -162,7 +163,7 @@ const BasicMenu = ({ event }) => {
             <OptionList>
               <ListButton
                 component="a"
-                href={`https://docs.meshery.io/reference/error-codes#${errorCodes[0]}`}
+                href={`${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
