@@ -122,9 +122,8 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
         </ClickAwayListener>
       ) : (
         <CustomTooltip title="Search">
-          <IconButton onClick={handleSearchIconClick}>
+          <IconButton onClick={handleSearchIconClick} data-testid="search-icon">
             <SearchIcon
-              data-testid="search-icon"
               fill={theme.palette.icon.secondary}
               height={'1.5rem'}
               width={'1.5rem'}
