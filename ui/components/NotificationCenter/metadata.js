@@ -9,10 +9,9 @@ import { ErrorMetadataFormatter } from './formatters/error';
 import { DryRunResponse } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
-import { useTheme } from '@layer5/sistent';
+import { useTheme, DownloadIcon, InfoIcon } from '@layer5/sistent';
 import _ from 'lodash';
-import Chip from '@mui/material/Chip';
-import { RegistrantSummaryFormatter } from './formatters/RegistrantSummaryFormatter';
+import { ChipWrapper } from '../connections/styles';
 
 export const PropertyFormatters = {
   //trace can be very large, so we need to convert it to a file
@@ -47,21 +46,20 @@ export const PropertyFormatters = {
       </TitleLink>
     );
   },
+  // doclink: (value) => {
+  //   return (
+  //     <TitleLink href={value} style={{ textAlign: 'end', color: 'inherit' }}>
+  //       Doc
+  //     </TitleLink>
+  //   );
+  // },
   connectionName: (value) => {
-    const theme = useTheme();
-
     return (
-      <Chip
+      <ChipWrapper
         label={value}
         clickable
         component="a"
-        href={`/management/connections?tab=connections&searchText=${value}`}
-        style={{
-          backgroundColor: theme.palette.primary.light,
-          color: theme.palette.primary.contrastText,
-          textDecoration: 'none',
-          fontWeight: 'bold',
-        }}
+        href={`management/connections?searchText=${value}`}
         target="_self"
       />
     );
@@ -72,6 +70,15 @@ export const PropertyFormatters = {
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
 };
 
+export const LinkFormatters = {
+  doclink: (value) => {
+    return (
+      <TitleLink href={value} style={{ textAlign: 'end', color: 'inherit' }}>
+        Doc
+      </TitleLink>
+    );
+  },
+};
 export const PropertyLinkFormatters = {
   doc: (value) => ({
     label: 'Doc',
@@ -80,20 +87,22 @@ export const PropertyLinkFormatters = {
   DownloadLink: (value) => ({
     label: 'Download File',
     href: '/api/system/fileDownload?file=' + encodeURIComponent(value),
+    icon: DownloadIcon,
   }),
   ViewLink: (value) => ({
-    label: 'View File',
+    label: 'Get Logs',
     href: '/api/system/fileView?file=' + encodeURIComponent(value),
+    icon: InfoIcon,
   }),
 };
 
-const linkOrder = [];
+const linkOrder = ['doclink'];
 
 const EventTypeFormatters = {
   [eventDetailFormatterKey(EVENT_TYPE.DEPLOY_DESIGN)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.UNDEPLOY_DESIGN)]: DeploymentSummaryFormatter,
   [eventDetailFormatterKey(EVENT_TYPE.EVALUATE_DESIGN)]: RelationshipEvaluationEventFormatter,
-  [eventDetailFormatterKey(EVENT_TYPE.REGISTRANT_SUMMARY)]: RegistrantSummaryFormatter,
+  // [eventDetailFormatterKey(EVENT_TYPE.REGISTRANT_SUMMARY)]: RegistrantSummaryFormatter,
 };
 
 export const FormattedMetadata = ({ event }) => {
@@ -108,7 +117,7 @@ export const FormattedMetadata = ({ event }) => {
   }
 
   const metadata = {
-    ..._.omit(event.metadata, [...linkOrder, 'kind', 'ViewLink']),
+    ..._.omit(event.metadata, [...linkOrder, 'kind', 'ViewLink', 'DownloadLink']),
     ShortDescription:
       event.metadata.error || !canTruncateDescription(event.description || '')
         ? null
@@ -116,6 +125,7 @@ export const FormattedMetadata = ({ event }) => {
   };
   console.log(metadata);
   const order = [
+    'doclink',
     'ShortDescription',
     'connectionName',
     'LongDescription',
@@ -146,7 +156,5 @@ export const FormattedMetadata = ({ event }) => {
 
 export const FormattedLinkMetadata = ({ event }) => {
   const filteredMetadata = _.pick(event.metadata, linkOrder);
-  return (
-    <FormatStructuredData propertyFormatters={PropertyLinkFormatters} data={filteredMetadata} />
-  );
+  return <FormatStructuredData propertyFormatters={LinkFormatters} data={filteredMetadata} />;
 };

@@ -191,6 +191,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
 			"kind": host.Kind,
+			"doclink": "https://docs.meshery.io/concepts/logical#logical-concepts",
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()

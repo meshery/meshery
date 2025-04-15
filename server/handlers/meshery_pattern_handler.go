@@ -172,6 +172,7 @@ func (h *Handler) handlePatternPOST(
 	}
 	metadata := map[string]interface{}{
 		"designId": fmt.Sprintf("%s+%s", requestPayload.DesignFile.Name, requestPayload.DesignFile.Id),
+		"doclink": "https://docs.meshery.io/concepts/logical/designs",
 	}
 	event := eventBuilder.
         WithMetadata(metadata).

@@ -337,7 +337,7 @@ const BulkActions = () => {
         padding: '0.15rem',
       }}
     >
-      <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
         <Typography variant="body2">
           {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}

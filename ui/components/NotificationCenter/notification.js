@@ -169,27 +169,33 @@ const BasicMenu = ({ event }) => {
               >
                 <ErrorIcon {...iconMedium} fill={theme.palette.icon.secondary} />
                 <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
-                  View Error Code Docs
+                  Error Docs
                 </Typography>
               </ListButton>
             </OptionList>
           )}
           <OptionList>
-            {links.map((link, index) => (
-              <OptionListItem key={index} sx={{ width: '100%' }}>
-                <ListButton
-                  component="a"
-                  href={link.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
-                    {link.label}
-                  </Typography>
-                </ListButton>
-              </OptionListItem>
-            ))}
+            {links.map((link, index) => {
+              const IconComponent = link.icon;
+              return (
+                <OptionListItem key={index} sx={{ width: '100%' }}>
+                  <ListButton
+                    component="a"
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {IconComponent && (
+                      <IconComponent {...iconMedium} fill={theme.palette.icon.secondary} />
+                    )}
+                    <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                      {link.label}
+                    </Typography>
+                  </ListButton>
+                </OptionListItem>
+              );
+            })}
           </OptionList>
           <DeleteEvent event={event} />
           <ChangeStatus event={event} />
