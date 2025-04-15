@@ -80,9 +80,9 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 # Functionality
 
-## Cloud Native Lifecycle Management
+## Infrastructure Lifecycle Management
 
-Meshery manages the provisioning, configuration and operation of your Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery also offers a <a href="https://meshery.io/catalog">catalog of curated design templates</a> filled with configuration best practices.
+Meshery manages the configuration, deployment, and operation of your Cloud services and Kubernetes clusters while supporting hundreds of different types of cloud native infrastructure integrations. Meshery supports [300+ integrations](https//meshery.io/integrations).
 
 <!--
 <a href="https://www.youtube.com/watch?v=034nVaQUyME"><img alt="Meshery cloud native management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/readme/meshmap.gif"  style="margin-left:10px; margin-bottom:10px;" width="100%" align="center" /></a>
@@ -91,25 +91,32 @@ Meshery manages the provisioning, configuration and operation of your Kubernetes
 
 <a href=".github/assets/images/readme/cloud-native-integrations.png"><img alt="Meshery Integrations" src=".github/assets/images/readme/cloud-native-integrations.png"  style="margin-right:10px;margin-bottom:10px;" width="100%" align="center"/></a>
 
-Meshery supports [300+ integrations](https//meshery.io/integrations).
+Find infrastructure configuration patterns in Meshery's <a href="https://meshery.io/catalog">catalog of curated design templates</a> filled with configuration best practices.
 
-Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices.
-
-## Multi-Cluster Kubernetes, Multi-Cloud, and Cloud Native Configuration Management
+## Multiple Kubernetes Clusters and Multiple Clouds
 
 <img src ="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" /><br />
 
-Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator. Manage your workloads with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls.
+Meshery provides a single pane of glass to manage multiple Kubernetes clusters across any infrastructure, including various cloud providers. Meshery enables consistent configuration, operation, and observability across your entire Kubernetes landscape.
+
+<details><summary><h4>Dry-run your deployments</h4></summary>
+Meshery leverages Kubernetes' built-in dry-run capabilities to allow you to simulate deployments without actually applying the changes to your cluster. This enables you to:
+
+- Validate configurations: Ensure your deployment specifications (e.g., YAML manifests, Helm charts, Meshery Designs) are syntactically correct and will be accepted by the Kubernetes API server.   
+- Identify potential issues: Detect errors in your configurations, such as invalid resource definitions, missing fields, or API version mismatches, before they impact your live environment.
+- Preview changes: Understand the objects that Kubernetes would create or modify during a real deployment.
+- Integrate with CI/CD: Incorporate dry-run as a step in your continuous integration and continuous delivery pipelines to automate pre-deployment checks and prevent faulty deployments.
+
+By providing this dry-run functionality, Meshery helps you increase the reliability and stability of your Kubernetes deployments by catching potential problems early in the development and deployment process.
+<!-- 
+Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator. Manage your workloads with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls. -->
+
+</details>
 
 ### Visually and collaboratively manage your infrastructure
 
-Meshery uses [relationships](https://docs.meshery.io/concepts/logical/relationships) to define how and when components interrelate with one another. Meshery supports a variety of relationships between components.
-
-<!-- 
-
-RELATIONSHIP EXAMPLE SCREENSHOT / GIF NEEDED HERE
-
--->
+Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Meshery intelligently infers the manner in which each resource [interrelates](https://docs.meshery.io/concepts/logical/relationships) with each other. Meshery supports a broad variety of built-in relationships between components, which you can use to create your own custom relationships.
+<img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Multi-cluster Kubernetes Manager" align="center" />
 
 <details><summary><img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="25px" align="left" /><h4>Context-Aware Policies For Applications</h4></summary>
 <img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
@@ -130,11 +137,7 @@ Workspaces let you organize your work and serve as the central point of collabor
 
 <details><summary><h4>See changes to your infra before you merge</h4></summary>
 
-<!-- 
-
-SCREENSHOT / GIF NEEDED HERE
-
--->
+<img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" />
 
 Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </details>
@@ -158,15 +161,20 @@ Extend Meshery as your self-service engineering platform by taking advantage of 
 <p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog">catalog</a>.
 </details>
 
+Meshery offers robust capabilities for managing multiple tenants within a shared Kubernetes infrastructure. Meshery provides the tools and integrations necessary to create a secure, isolated, and manageable multi-tenant environments, allowing multiple teams or organizations with granular control over their role-based access controls.
+
+Meshery's "multi-player" functionality refers to its collaborative features that enable multiple users to interact with and manage cloud native infrastructure simultaneously. This is primarily facilitated through Kanvas, a Meshery extension visual designer and management interface.
+
 ## Performance Management
 
-<details>
- <summary><h3>Manage infra performance with Performance Profiles</h3></summary>
-<br /><br /><img src=".github/assets/images/readme/performance-metrics.gif" class="screenshot"alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-<p>Create and reuse performance profiles for consistent characterization of the configuration of your infrastructure in context of how it performs.</p>
-<br /><br />
+Meshery offers load generation and performance characterization to help you assess and optimize the performance of your applications and infrastructure.
 
-### Manage the performance of your infrastructure and its workloads
+<img src=".github/assets/images/readme/performance-metrics.gif" alt="Multi-cluster Kubernetes Manager" width="50%" />
+
+<p>Create and reuse performance profiles for consistent characterization of the configuration of your infrastructure in context of how it performs.</p>
+
+<details>
+<summary><h4> Manage the performance of your infrastructure and its workloads</h4></summary>
 
 <img src = ".github/assets/images/readme/service-mesh-performance-example.gif">
 
@@ -180,28 +188,18 @@ Baseline and track your cloud native performance from release to release.
 </details>
 
 <details>
-<summary><h3>Load Generation and Microservice Performance Characteristization</h3></summary>
+<summary><h4>Load Generation and Microservice Performance Characteristization</h4></summary>
 
 <picture align="left">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;" />
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;" />
 </picture>
 
-Meshery offers load generation and performance characterization to help you assess and optimize the performance of your applications and infrastructure.
-
 - **Multiple Load Generators:** Meshery supports various load generators, including Fortio, Wrk2, and Nighthawk, allowing users to choose the tool that best suits your needs.
-- **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
-
-</details>
-
-<details>
-<summary><h3>Performance Characterization</h3></summary>
-
-- **Metrics Collection:** Meshery can connect to one or more Prometheus servers to gather both cluster and application metrics. Meshery also integrates with Grafana, allowing you to import your existing dashboards and visualize performance data.
+- **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. 
 - **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. Understand the distribution of response times and identify potential bottlenecks.
-- **Performance Test Profiles:** Meshery allows users to customize and save their load test configuration in the form of a Performance Test Profile. This enables users to easily return to Meshery to run the same set of customized tests again and again, tracking variations in performance over time.
-Comparison of Test Results: Meshery enables users to compare the difference in request performance (latency and throughput) between independent performance tests.
-- **Kubernetes Cluster and Workload Metrics:** Meshery provides performance test results alongside environment metrics, including control and data plane metrics as well as cluster node resource metrics, so that operators may easily understand the overhead of their control plane and data plane in context of the overhead incurred on nodes within the cluster.
+- **Comparison of Test Results:** Meshery enables you to compare the difference in request performance (latency and throughput) between independent performance tests. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
+- **Kubernetes Cluster and Workload Metrics:** - Meshery connects to one or more Prometheus servers to gather both cluster and application metrics. Meshery also integrates with Grafana, allowing you to import your existing dashboards and visualize performance data.
 
 <p>In an effort to produce infrastructure agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Cloud Native Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs. Meshery enables you to measure the value provided by Docker, Kubernetes, or other cloud native infrastructure in the context of the overhead incurred.</p>
 
@@ -238,12 +236,13 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/helm.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Helm](https://docs.meshery.io/installation/kubernetes/helm)                      |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/kind.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - kind](https://docs.meshery.io/installation/kubernetes/kind)                      |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/minikube.png" width="20" height="20" vertical-align="middle" /> [Kubernetes - Minikube](https://docs.meshery.io/installation/kubernetes/minikube)          |      ✔️      |
-| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> Kubernetes - OpenShift                                                                    | In Progress |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/openshift.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - OpenShift](https://docs.meshery.io/installation/kubernetes)                      |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/kubernetes.svg" width="20" height="20" vertical-align="middle" /> [Kubernetes - Rancher](https://docs.meshery.io/installation/kubernetes)                      |      ✔️      |
 | <img src="https://docs.meshery.io/assets/img/platforms/linux.svg" width="20" height="20" vertical-align="middle" /> [Linux](https://docs.meshery.io/installation#mac-or-linux)                                                       |      ✔️      |
 | <img src="https://docs.meshery.io/assets/img/platforms/apple.svg" width="20" height="20" vertical-align="middle" /> [Mac](https://docs.meshery.io/installation#mac-or-linux)                                                         |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/homebrew.png" width="20" height="20" vertical-align="middle" /> [Mac - Homebrew](https://docs.meshery.io/installation#mac-or-linux)                        |      ✔️      |
 | <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Windows](https://docs.meshery.io/installation#windows)                                                           |      ✔️      |
-| &nbsp;&nbsp;&nbsp; [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                             |      ✔️      |
+| &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [Scoop](https://docs.meshery.io/installation#windows)                                                                                                                                                             |      ✔️      |
 | &nbsp;&nbsp;&nbsp; <img src="https://docs.meshery.io/assets/img/platforms/wsl2.png" width="20" height="20" vertical-align="middle" /> [WSL2](https://docs.meshery.io/installation/platforms/windows#wsl2)                            |      ✔️      |
 | <img src="https://docs.meshery.io/assets/img/platforms/raspberry-pi.png" width="20" height="20" vertical-align="middle" /> Raspberry Pi                                                                                              | In Progress |
 
