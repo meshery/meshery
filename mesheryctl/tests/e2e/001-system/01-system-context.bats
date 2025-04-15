@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
 setup() {
-   load "$E2E_HELPERS_PATH/tests_helpers"
-	_tests_helper
+   load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
 
     ENDPOINT_REGEX_MATCH='^[[:space:]]*endpoint:[[:space:]](http|https)://.*:[[:digit:]]+$'
     TOKEN_REGEX_MATCH='^[[:space:]]*token:[[:space:]][[:alnum:]]+$'

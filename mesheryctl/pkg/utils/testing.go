@@ -368,11 +368,14 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
+			var buf bytes.Buffer
+
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
+
 			_ = SetupMeshkitLoggerTesting(t, false)
+
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(rescueStdout)
 			err := cmd.Execute()
@@ -392,10 +395,16 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			}
 
 			w.Close()
-			out, _ := io.ReadAll(r)
+
+			_, errCopy := io.Copy(&buf, r)
+
+			if errCopy != nil {
+				t.Fatal(errCopy)
+			}
+
 			os.Stdout = rescueStdout
 
-			actualResponse := string(out)
+			actualResponse := buf.String()
 
 			if *updateGoldenFile {
 				golden.Write(actualResponse)
@@ -406,9 +415,11 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+			cmd.ResetFlags()
 		})
 		t.Logf("List %s test", commadName)
 	}
 
 	StopMockery(t)
+
 }

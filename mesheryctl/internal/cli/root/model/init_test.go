@@ -97,7 +97,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to current directory path (same as above but path starts with a ./)",
+			Name:             "model init with custom relative to current directory path",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "./test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
@@ -109,7 +109,7 @@ func TestModelInit(t *testing.T) {
 			AfterTestRemoveDir: "./test_case_some_custom_dir",
 		},
 		{
-			Name:             "model init with custom relative to parent directory path (same as above but path starts with a ../)",
+			Name:             "model init with custom relative to parent directory path",
 			Args:             []string{"init", "test-case-aws-ec2-controller", "--path", "../test_case_some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-relative-parent-dir.aws-ec2-controller.output.golden",
