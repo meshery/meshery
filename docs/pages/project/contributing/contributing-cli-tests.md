@@ -289,9 +289,9 @@ In the following example, we must have create a model with the name `model-test`
 
 #### Writing E2E Tests with Bats Core
 
-Official documentation is available at https://bats-core.readthedocs.io/en/stable/
+Official documentation is available at [https://bats-core.readthedocs.io/en/stable/](https://bats-core.readthedocs.io/en/stable/)
 
-Github organization https://github.com/bats-core contains bats-core repository and also bats libraries repositoires  
+Github organization [https://github.com/bats-core](https://github.com/bats-core) contains bats-core repository and also bats libraries repositoires  
 
 1.  **Basic Test Structure:** A Bats test file consists of one or more test cases defined using the `@test` keyword.
 
