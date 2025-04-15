@@ -91,16 +91,6 @@ Meshery manages the provisioning, configuration and operation of your Kubernetes
 
 <a href=".github/assets/images/readme/cloud-native-integrations.png"><img alt="Meshery Integrations" src=".github/assets/images/readme/cloud-native-integrations.png"  style="margin-right:10px;margin-bottom:10px;" width="100%" align="center"/></a>
 
-
-Map test
-<img src=".github/assets/images/readme/cloud-native-integrations.png" alt="Workplace" usemap="#workmap">
-
-<map name="workmap">
-  <area shape="rect" coords="34,44,270,350" alt="Computer" href="https://meshery.io/catalog">
-  <area shape="rect" coords="290,172,333,250" alt="Phone" href="https://meshery.io/calendar">
-  <area shape="circle" coords="337,300,44" alt="Coffee" href="https://meshery.io/community">
-</map>
-
 Meshery supports [300+ integrations](https//meshery.io/integrations).
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices.
