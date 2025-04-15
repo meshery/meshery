@@ -101,35 +101,36 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 
 Assess your cloud native infrastructure configuration against deployment and operational best practices with Meshery's configuration validator. Manage your workloads with confidence. Check your Kubernetes configuration for anti-patterns and avoid common pitfalls.
 
-<details><summary><h3>Context-Aware Policies For Applications</h3></summary>
-<img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="10%" align="left" /><p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Configure your infrastructure with confidence without needing to know or write Open Policy Agent's Rego query language.</p>
-</details>
+### Visually and collaboratively manage your infrastructure
 
-<img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
-
-<!-- ### Visually and collaboratively manage your infrastructure
- -->
 Meshery uses [relationships](https://docs.meshery.io/concepts/logical/relationships) to define how and when components interrelate with one another. Meshery supports a variety of relationships between components.
 
-### Manage your connections with Environments
-
-<img src=".github/assets/images/readme/environments.gif" width="50%"
-                        alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-<p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
-
+<details><summary><img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="25px" align="left" /><h4>Context-Aware Policies For Applications</h4></summary>
+<img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
+<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Configure your infrastructure with confidence without needing to know or write Open Policy Agent's Rego query language.</p>
+</details>
 
 ## Workspaces: Your team's Google Drive for cloud native projects
-
 
 <img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
 
 Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.
 
+<details><summary><h4>Manage your connections with Environments</h4></summary>
 
-### See changes to your infra before you merge
+<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+<p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
+</details>
+
+<details><summary><h4>See changes to your infra before you merge</h4></summary>
+<!-- 
+
+SCREENSHOT / GIF NEEDED HERE
+
+ -->
 
 Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
-
+</details>
 
 <!-- <h3>Operate with configuration best practices</h3>
 <br /><br />
@@ -145,11 +146,10 @@ Get snapshots of your infrastructure directly in your PRs. Preview your deployme
 
 Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable Reactjs packages and Golang plugins, subscriptions on NATS topics, consumable _and_ extendable API interfaces via REST and GraphQL.The great number of extension points in Meshery make it ideal as the foundation of your internal developer platform.
 
-### Access the Cloud Native Patterns for Kubernetes
-
-<img src = ".github/assets/images/readme/smp-video-poster-play.png">
+<details><summary><h4>Access the Cloud Native Patterns for Kubernetes</h4></summary>
 
 <p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog">catalog</a>.
+</details>
 
 ## Performance Management
 
