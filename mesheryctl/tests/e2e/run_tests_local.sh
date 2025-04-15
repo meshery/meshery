@@ -66,7 +66,7 @@ main() {
    echo -e "\nCreate temp directory for test data"
    TEMP_DATA_DIR=`mktemp -d`
    # Expose the temp directory to the following tests
-   export TEMP_TEST_DATA_DIR=$TEMP_DATA_DIR
+   export TEMP_DATA_DIR=$TEMP_DATA_DIR
 
    echo -e "### done: Test environment setup ###\n"
 

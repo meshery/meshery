@@ -1305,7 +1305,11 @@ func FindInSlice(key string, items []string) (int, bool) {
 }
 
 func DisplayCount(component string, count int64) {
-	whiteBoardPrinter.Println("Total number of ", component, ":", count)
+	display := fmt.Sprintf("Total number of %ss: %d", strings.TrimSuffix(component, "s"), count)
+	if count == 0 {
+		display = fmt.Sprintf("No %s found", component)
+	}
+	whiteBoardPrinter.Fprintln(os.Stdout, display)
 }
 
 func GetPageQueryParameter(cmd *cobra.Command, page int) string {
