@@ -158,43 +158,6 @@ For consistency, we will keep the prefix *00-* for the command under test in the
 └── 01-model-list.bats
 ```
 
-### Test Implementation
-
-`mesheryctl` provides various commands and subcommands. To add tests effectively, it's important to understand any interactions or prerequisites required for implementing a test in the most efficient way.
-
-When creating a test we need to have in mind the following rules:
-
-#### Test Naming Convention
-
-It must follow this naming convention
-
-```
-<mesheryctl command> [subcommand] <execution context> <expected result>
-```
-
-**Example:**
-
-```bash
-@test "mesheryctl model view without model name should display an error" {
-  ... test implementation ...
-}
-```
-
-### Test Data
-
-If a command requries a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
-
-**Example:**
-
-In the following example, we must have create a model with the name `model-test` before creating or running the following test
-
-```bash
-@test "mesheryctl model view providing a model name should display model information" {
-  run MESHERYCTL_BIN model view model-test
-  ... ...
-}
-```
-
 ## Run End-to-End (locally)
 
 <!-- 
@@ -291,9 +254,44 @@ We will exclusively use the Bats Core framework and its built-in functionalities
 * **Clear Assertions:** Use Bats Core's assertion functions (`assert`, `assert_success`, `assert_failure`, `assert_output`, etc.) to verify expected outcomes.
 * **Setup and Teardown:** Utilize `setup()` and `teardown()` functions to prepare the testing environment and clean up afterwards.
 * **Helper Scripts:** If a custom script or function is absolutely necessary to facilitate testing (and cannot be achieved with standard Bats Core), it **must** be created as a `.bash` file within the `helpers` folder. Each helper script/function should have a clear description of its purpose within the file itself. Avoid inline custom scripting within the test files.
- 
+* **Consistency**: 
+
+#### Test Naming Convention
+
+It must follow this naming convention
+
+```
+<mesheryctl command> [subcommand] <execution context> <expected result>
+```
+
+**Example:**
+
+```bash
+@test "mesheryctl model view without model name should display an error" {
+  ... test implementation ...
+}
+```
+
+#### Test Data
+
+If a command requries a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
+
+**Example:**
+
+In the following example, we must have create a model with the name `model-test` before creating or running the following test
+
+```bash
+@test "mesheryctl model view providing a model name should display model information" {
+  run MESHERYCTL_BIN model view model-test
+  ... ...
+}
+```
 
 #### Writing E2E Tests with Bats Core
+
+Official documentation is available at https://bats-core.readthedocs.io/en/stable/
+
+Github organization https://github.com/bats-core contains bats-core repository and also bats libraries repositoires  
 
 1.  **Basic Test Structure:** A Bats test file consists of one or more test cases defined using the `@test` keyword.
 
