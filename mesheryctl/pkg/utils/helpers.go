@@ -1307,7 +1307,7 @@ func FindInSlice(key string, items []string) (int, bool) {
 func DisplayCount(component string, count int64) {
 	display := fmt.Sprintf("Total number of %ss: %d", strings.TrimSuffix(component, "s"), count)
 	if count == 0 {
-		display = fmt.Sprintf("No %s found", component)
+		display = fmt.Sprintf("No %ss found", strings.TrimSuffix(component, "s"))
 	}
 	whiteBoardPrinter.Fprintln(os.Stdout, display)
 }
