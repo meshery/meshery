@@ -42,7 +42,7 @@ This section walks you through the **Create** workflow — perfect for users who
       <li><strong>Display Name:</strong> This is the friendly name displayed in the UI. It can include spaces and uppercase letters. <br>Example: <code>Cert Manager</code></li>
     </ul>
 
-    <a href="/assets/img/registry/create-ui-name.png.png">
+    <a href="/assets/img/registry/create-ui-name.png">
       <img src="/assets/img/registry/create-ui-name.png" alt="registry generate model name" style="width: 50%; max-width: 400px;">
     </a>
 
@@ -95,10 +95,11 @@ This section walks you through the **Create** workflow — perfect for users who
     <li><strong>Visual Annotation Only:</strong> Mark this option if your model is intended solely for visual diagramming rather than infrastructure management.</li>
     </ul>
 
-    {% include alert.html type="light" title="Visual Annotation Models" content="When a model is marked for visual annotation only, it means the model will be used purely for visualization and diagramming purposes within Meshery's interface, rather than for actual infrastructure management." %}
     <a href="/assets/img/registry/create-ui-details.png">
       <img src="/assets/img/registry/create-ui-details.png" alt="registry generate model additional settings" style="width: 50%; max-width: 400px;">
     </a>
+
+     {% include alert.html type="light" title="Visual Annotation Models" content="When a model is marked for visual annotation only, it means the model will be used purely for visualization and diagramming purposes within Meshery's interface, rather than for actual infrastructure management." %}
 
     <h4>Step 7: Finalize and Create Your Model</h4>
     <p>Review your model details. If everything looks good, click "Generate" to create your model.</p>
@@ -110,19 +111,12 @@ This section walks you through the **Create** workflow — perfect for users who
     </a>
 
     <h4>Step 8: Check Model Generation Status</h4>
-    <p>After generation, a confirmation message will appear if your model is created successfully. You will be able to view all the components and their relationships.</p>
-    <p>If an error occurs, an error message will display with details on what went wrong. You can then return to previous steps to adjust your model details or update the source URL.</p>
-    <p>If model generation is successful, you will see a full model and component details in registry page. You can also view the created model in the Kanvas.</p>
+    <p>Once the model is successfully generated, a confirmation message will appear. You'll be able to view the model along with its components and relationships directly in the Registry page.</p>
+    <p>If any issues occur, Meshery will display an error message detailing what went wrong so you can correct it and try again.</p>
+    <p>A notification will also appear in the <a href="{{site.baseurl}}/guides/events-management">Notification Center</a> to confirm whether the operation succeeded or failed, providing additional context if needed.</p>
 
-    <a href="/assets/img/registry/create-ui-finish.png">
-      <img src="/assets/img/registry/create-ui-finish.png" alt="registry generate model success" style="width: 50%; max-width: 400px;">
-    </a>
-
-    <p>Meshery also displays a notification center to confirm the operation. If there are any issues, an error message will appear with details to help you resolve them:</p>
-
-    <a href="/assets/img/registry/create-ui-notification.png">
-      <img src="/assets/img/registry/create-ui-notification.png" alt="registry generate model success notification" style="width: 50%; max-width: 400px;">
-    </a>
+    {% include alert.html type="warning" title="Note on Deletion" content="Once a model is generated, it cannot be deleted from the Meshery UI. If you no longer wish to use it, you may mark it as ignored instead." %}
+    
     </section>
 
   <!-- Second Level Tab: mesheryctl -->
