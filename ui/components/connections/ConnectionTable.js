@@ -457,9 +457,13 @@ const ConnectionTable = ({
 
   const handleStatusChange = async (e, connectionId, connectionKind) => {
     e.stopPropagation();
+    let subtitle = `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`;
+    if (e.target.value.toUpperCase() === 'DISCONNECTED') {
+      subtitle = `Are you sure you want to disconnect this Kubernetes cluster? Disconnecting will uninstall the Meshery Operator from the cluster and may impact active Meshery workloads. This action will transition the connection status to ${e.target.value.toUpperCase()}.`;
+    }
     let response = await modalRef.current.show({
       title: `Connection Status Transition`,
-      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
+      subtitle,
       primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.WARNING,
