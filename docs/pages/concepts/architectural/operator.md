@@ -64,10 +64,6 @@ To verify that your Meshery Operator and related components are functioning prop
 - Confirm that your cluster has appropriate RBAC permissions set.
 - Validate that Meshery Server is able to communicate with Meshery Operator.
 
-If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync). This guide provides:
-
-- **Step-by-step instructions** for resolving common errors.
-- **Insights into Meshery's controllers** to help diagnose issues.
-- **Best practices** for a stable and efficient Meshery deployment.
+If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync).
 
 Whether you're facing installation issues, resource syncing failures, or Broker communication problems, the guide walks you through how to identify and fix them effectively.
