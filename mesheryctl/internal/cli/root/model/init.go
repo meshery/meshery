@@ -194,6 +194,7 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 				utils.Log.Infof("Removing %s", modelVersionFolder)
 				os.RemoveAll(modelVersionFolder)
 			}
+			return err
 		}
 
 		// TODO put a model name into generated model file
