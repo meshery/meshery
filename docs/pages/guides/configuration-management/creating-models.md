@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Create Models
-abstract: A comprehensive guide on generating models in Meshery, covering both CLI and UI methods.
+abstract: A comprehensive guide on creating models in Meshery, covering both CLI and UI methods.
 permalink: guides/configuration-management/creating-models
 redirect_from: guides/configuration-management/generating-models
 category: configuration

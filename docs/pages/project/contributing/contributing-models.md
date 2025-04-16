@@ -10,19 +10,22 @@ category: contributing
 list: include
 ---
 
-### Understanding the internals of Meshery's logical object model
+## Understanding the internals of Meshery's logical object model
 
 Meshery uses a logical object model to describe the infrastructure and capabilities it manages in a consistent and extensible way.
 
+**What Are Meshery Models?**
+
 At the core of this system are **Meshery Models** — packages that define a specific type of infrastructure, application, or capability. These models include:
 
-- **Components**: Individual parts of a system (e.g., services, databases).
-- **Relationships**: How those parts interact.
+- **[Components]({{site.baseurl}}/concepts/logical/components)**: Individual parts of a system (e.g., services, databases).
+- **[Relationships]({{site.baseurl}}/concepts/logical/relationships)**: How those parts interact.
 - **Metadata**: Visual and behavioral traits, such as icons or capabilities.
 
 Models can describe traditional technologies (like Kubernetes workloads), or more abstract entities (like annotations or diagrams).
 > Learn more: [What are Meshery Models?]({{site.baseurl}}/concepts/logical/models)
 
+**What Is the Model Schema?**
 Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using on the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml). 
 
 The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
@@ -90,11 +93,12 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 {% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
-<!-- ### Importing Generated Models Here -->
+### Importing and Creating Models
 
-### Importing Generated Models
+Models can be created from scratch or imported using either the Meshery UI or the Meshery CLI.  
+To learn more, see the detailed guides on [Importing Models]({{site.baseurl}}/guides/configuration-management/importing-models) and [Creating Models]({{site.baseurl}}/guides/configuration-management/creating-models).
 
-The generated model can be importing using both Mesheryctl and Meshery UI. Read [Importing Models]({{site.baseurl}}/guides/configuration-management/importing-models) for detailed instructions on how to import models.
+> Use **Create** if you're starting from scratch. Use **Import** if you already have model definitions (e.g., JSON, CSV, tar).
 
 ### Post Model Generation
 
@@ -147,6 +151,6 @@ The Meshery team is currently working on the following:
 - Improving the tooling for working with models
 - Defining relationships between components and embedding those policies within models
 
-We encourage you to get involved in the development of Meshery Models and to share your feedback.
+We encourage you to get involved in the development of Meshery Models and to share your feedback!
 
 {% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
