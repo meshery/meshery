@@ -10,7 +10,7 @@ category: contributing
 list: include
 ---
 
-### Understanding Meshery's Object Model
+### Understanding the internals of Meshery's logical object model
 
 Meshery uses a logical object model to describe the infrastructure and capabilities it manages in a consistent and extensible way.
 
@@ -90,7 +90,7 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 {% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
-<!-- ### Importing Generated Models -->
+<!-- ### Importing Generated Models Here -->
 
 ### Importing Generated Models
 
@@ -148,4 +148,5 @@ The Meshery team is currently working on the following:
 - Defining relationships between components and embedding those policies within models
 
 We encourage you to get involved in the development of Meshery Models and to share your feedback.
+
 {% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}

@@ -28,6 +28,6 @@ To get started quickly, check out the [Generating Models](/guides/configuration-
 
 ## Next Steps
 
-To learn more about how to contribute and customize your models, check out the full [Contributing to Models](/project/contributing/contributing-models/) documentation.
+To learn more about how to contribute and customize your models, check out the full [Contributing to Models](/project/contributing/contributing-models/) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
 
 {% include alert.html type="info" title="Meshery Models are Extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
