@@ -56,7 +56,7 @@ Meshery UI offers more granular control over the deployment of Meshery Operator 
 ### Does the Meshery Operator use an SDK or framework? 
 Yes, Meshery Operator used the Operator SDK.
 
-## Troubleshooting Meshery Operator and Related Components
+### Troubleshooting Meshery Operator and Related Components
 
 To verify that your Meshery Operator and related components are functioning properly, perform the following checks:
 
