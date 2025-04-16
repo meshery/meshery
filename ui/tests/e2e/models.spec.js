@@ -8,6 +8,8 @@ const model = {
   MODEL_DISPLAY_NAME: `Test Model ${Date.now()}`,
 };
 const TAR_FILE_PATH = path.resolve('tests/e2e/assets/test.tar');
+const IMPORT_MODEL_URL =
+  'https://raw.githubusercontent.com/vr-varad/meshery/refs/heads/feat/create_import_model_testing/ui/tests/e2e/assets/test.tar';
 
 test.describe('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -65,11 +67,25 @@ test.describe('Model Workflow Tests', () => {
     expect(download).toBeDefined();
   });
 
-  test('Import a Model', async ({ page }) => {
+  test('Import a Model via File Import', async ({ page }) => {
     await page.getByTestId('import-model-button').click();
     await page.getByRole('heading', { name: 'File Import' }).click();
 
     await page.setInputFiles('input[type="file"]', TAR_FILE_PATH);
+
+    await page.getByRole('button', { name: 'Next' }).click();
+
+    await expect(page.getByTestId('model-import-section')).toBeVisible();
+    await expect(page.getByTestId('model-import-messages')).toBeVisible();
+    await page.getByRole('button', { name: 'Finish' }).click();
+  });
+
+  test('Import a Model via Url Import', async ({ page }) => {
+    await page.getByTestId('import-model-button').click();
+    await page.getByRole('heading', { name: 'URL Import' }).click();
+
+    await page.getByRole('textbox', { name: 'URL' }).click();
+    await page.getByRole('textbox', { name: 'URL' }).fill(IMPORT_MODEL_URL);
 
     await page.getByRole('button', { name: 'Next' }).click();
 
