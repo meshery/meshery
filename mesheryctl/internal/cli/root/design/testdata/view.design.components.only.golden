@@ -1,0 +1,24 @@
+No relationships found for this design.
+id: test-id
+name: components-only
+pattern_file:
+  components:
+  - component:
+      kind: Service
+    displayName: Test Component
+  name: MesheryGeneratedPatternFile
+  relationships: []
+  services: {}
+
+
+----- Design Summary -----
+Design Name: components-only
+
+Note: Components and relationships may appear as null at the top level
+but are present inside the pattern_file structure.
+
+Components: 1
+Component details:
+  1. Test Component (Kind: Service)
+Relationships: None
+-------------------------

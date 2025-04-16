@@ -1,0 +1,31 @@
+No components found for this design.
+id: test-id
+name: relationships-only
+pattern_file:
+  components: []
+  name: MesheryGeneratedPatternFile
+  relationships:
+  - kind: Network
+    selectors:
+    - allow:
+        from:
+        - id: 2c968812-29c9-456c-b015-fe0272f95998
+        to:
+        - id: 16e420e3-b923-43db-b33b-ff28480ba6b6
+    status: Active
+    subType: Service
+
+
+----- Design Summary -----
+Design Name: relationships-only
+
+Note: Components and relationships may appear as null at the top level
+but are present inside the pattern_file structure.
+Components: None
+
+Relationships: 1
+Relationship details:
+  1. Network relationship of type Service (Status: Active)
+     From component ID: 2c968812-29c9-456c-b015-fe0272f95998
+     To component ID: 16e420e3-b923-43db-b33b-ff28480ba6b6
+-------------------------

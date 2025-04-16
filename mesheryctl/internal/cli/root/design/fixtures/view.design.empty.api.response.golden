@@ -1,0 +1,12 @@
+{
+  "patterns": [{
+    "id": "test-id",
+    "name": "empty-design",
+    "pattern_file": {
+      "name": "MesheryGeneratedPatternFile",
+      "services": {},
+      "components": [],
+      "relationships": []
+    }
+  }]
+}

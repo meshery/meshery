@@ -46,6 +46,42 @@ func TestDesignView(t *testing.T) {
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
+		{
+			Name:             "Design with components and relationships",
+			Args:             []string{"view", "design"},
+			ExpectedResponse: "view.design.with.components.relationships.golden",
+			Fixture:          "view.design.with.components.relationships.api.response.golden",
+			URL:              testContext.BaseURL + "/api/pattern",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "Design without components and relationships",
+			Args:             []string{"view", "empty-design"},
+			ExpectedResponse: "view.design.empty.golden",
+			Fixture:          "view.design.empty.api.response.golden",
+			URL:              testContext.BaseURL + "/api/pattern",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "Design with components but no relationships",
+			Args:             []string{"view", "components-only"},
+			ExpectedResponse: "view.design.components.only.golden",
+			Fixture:          "view.design.components.only.api.response.golden",
+			URL:              testContext.BaseURL + "/api/pattern",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
+		{
+			Name:             "Design with relationships but no components",
+			Args:             []string{"view", "relationships-only"},
+			ExpectedResponse: "view.design.relationships.only.golden",
+			Fixture:          "view.design.relationships.only.api.response.golden",
+			URL:              testContext.BaseURL + "/api/pattern",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      false,
+		},
 	}
 
 	// Run tests

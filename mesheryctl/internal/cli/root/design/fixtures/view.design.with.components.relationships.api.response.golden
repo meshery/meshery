@@ -1,0 +1,30 @@
+{
+  "patterns": [{
+    "id": "test-id",
+    "name": "design",
+    "pattern_file": {
+      "name": "MesheryGeneratedPatternFile",
+      "components": [
+        {
+          "displayName": "Test Component",
+          "component": {
+            "kind": "Service"
+          }
+        }
+      ],
+      "relationships": [
+        {
+          "kind": "Network",
+          "subType": "Service",
+          "status": "Active",
+          "selectors": [{
+            "allow": {
+              "from": [{"id": "2c968812-29c9-456c-b015-fe0272f95998"}],
+              "to": [{"id": "16e420e3-b923-43db-b33b-ff28480ba6b6"}]
+            }
+          }]
+        }
+      ]
+    }
+  }]
+}
