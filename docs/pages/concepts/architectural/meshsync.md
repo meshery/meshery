@@ -98,26 +98,25 @@ For efficient management of large Kubernetes clusters, MeshSync uses tiered disc
 
 Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker](./broker) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
 
-# MeshSync FAQs
+## Troubleshooting MeshSync and Related Components
 
-## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
+MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the `meshsync` CRD and updates the deployed MeshSync instance accordingly.
 
-MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the `meshsync` CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the `meshsync` CRD using kubectl:
+You can also customize MeshSync's discovery behavior to skip specific Kubernetes resources. To do so:
 
-- Download the CRD with `kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml`
-- Open the downloaded file and edit the field `informer_config` to blacklist all the types of resources that you don't want updates from.
-- Apply the new definition with `kubectl apply -f meshsync.yaml`
+1. Download the CRD:
+   ```bash
+   kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml
+   ```
 
-## Where can I find help troubleshooting Meshery Operator, MeshSync, and Broker?
+2. Edit the downloaded file and update the `informer_config` section to blacklist any resource types you don’t want MeshSync to track.
 
-If you're experiencing issues with **Meshery Operator, MeshSync, or Broker**, the best place to find solutions is the **[Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)**.  
+3. Apply your updated CRD:
+   ```bash
+   kubectl apply -f meshsync.yaml
+   ```
 
-This guide provides:  
-- **Step-by-step troubleshooting** for common errors.  
-- **Insights into Meshery's custom controllers** to help you diagnose issues.  
-- **Best practices** for maintaining a smooth and stable Meshery deployment.  
-
-Whether you're dealing with **installation problems, connectivity issues, or unexpected behavior**, this guide will walk you through resolving them efficiently.
+Still seeing issues? The **[Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)** covers common problems with the Broker, MeshSync, and Meshery Operator — and offers clear steps to help you diagnose and fix them efficiently.
 
 # Roadmap
 
