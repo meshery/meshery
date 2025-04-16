@@ -452,6 +452,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     value={source.toLowerCase()}
                     control={<Radio />}
                     label={<>{source}</>}
+                    data-testid={`source-${source.toLowerCase()}`}
                   />
                 ))}
               </RadioGroup>
@@ -517,6 +518,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     onChange={(e) => setIsAnnotation(e.target.checked)}
                     name="registerModel"
                     color="primary"
+                    data-testid="visual-annotation-checkbox"
                   />
                 }
               />
@@ -760,6 +762,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
           <ModalButtonPrimary
             disabled={!canGoNext}
             onClick={transitionConfig[urlStepper.activeStep].nextAction}
+            data-testid={`${nextButtonText.toLowerCase()}-button`}
           >
             {nextButtonText}
           </ModalButtonPrimary>

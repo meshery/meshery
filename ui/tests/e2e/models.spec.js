@@ -19,47 +19,48 @@ test.describe('Model Workflow Tests', () => {
   test('Create a Model', async ({ page }) => {
     await page.getByTestId('create-model-button').click();
 
-    await page.getByRole('textbox', { name: 'Model Name' }).fill(model.MODEL_NAME);
-    await page.getByRole('textbox', { name: 'Model Display Name' }).fill(model.MODEL_DISPLAY_NAME);
+    await page.locator('#model-name').fill(model.MODEL_NAME);
+    await page.locator('#model-display-name').fill(model.MODEL_DISPLAY_NAME);
 
-    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByTestId('next-button').click();
 
     await expect(page.getByTestId('category-select')).toBeVisible();
     await expect(page.getByTestId('subcategory-select')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByTestId('next-button').click();
 
     await expect(page.getByTestId('logo-dark-theme')).toBeVisible();
     await expect(page.getByTestId('logo-light-theme')).toBeVisible();
+
     await expect(page.getByTestId('primary-color')).toBeVisible();
     await expect(page.getByTestId('secondary-color')).toBeVisible();
     await expect(page.getByTestId('shape-select')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByTestId('next-button').click();
 
-    await page.getByRole('radio', { name: 'GitHub' }).check();
-    await page.getByRole('textbox', { name: 'Model URL' }).fill(model.MODEL_URL);
+    await page.getByTestId('source-github').check();
+    await page.locator('#model-url').fill(model.MODEL_URL);
 
-    await page.getByRole('button', { name: 'Next' }).click();
-    await page.getByRole('checkbox', { name: /components in this model/i }).check();
-    await page.getByRole('button', { name: 'Next' }).click();
+    await page.getByTestId('next-button').click();
+    await page.getByTestId('visual-annotation-checkbox').check();
+    await page.getByTestId('next-button').click();
 
-    await page.getByRole('button', { name: 'Generate' }).click();
+    await page.getByTestId('generate-button').click();
 
     await expect(page.getByTestId('model-import-section')).toBeVisible();
     await expect(page.getByTestId('model-import-messages')).toBeVisible();
 
-    await page.getByRole('button', { name: 'Finish' }).click();
+    await page.getByTestId('finish-button').click();
   });
 
   test('Search a Model and Export it', async ({ page }) => {
     await page.getByTestId('search-icon').click();
-    await page.getByRole('textbox', { name: 'Search' }).click();
-    await page.getByRole('textbox', { name: 'Search' }).fill(model.MODEL_DISPLAY_NAME);
+    await page.locator('#searchClick').click();
+    await page.locator('#searchClick').fill(model.MODEL_DISPLAY_NAME);
     await page.getByText(model.MODEL_DISPLAY_NAME).click();
 
     const downloadPromise = page.waitForEvent('download');
-    await page.getByRole('button', { name: 'Export Model' }).click();
+    await page.getByTestId('export-model-button').click();
     const download = await downloadPromise;
     expect(download).toBeDefined();
   });
