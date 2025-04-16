@@ -36,8 +36,8 @@ The Broker instance is deployed inside the kubernetes cluster as a `Statefulset`
 If you're experiencing issues with **Meshery Operator, MeshSync, or Broker**, the best place to find solutions is the **[Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)**.  
 
 This guide provides:  
-✅ **Step-by-step troubleshooting** for common errors.  
-✅ **Insights into Meshery's custom controllers** to help you diagnose issues.  
-✅ **Best practices** for maintaining a smooth and stable Meshery deployment.  
+- **Step-by-step troubleshooting** for common errors.  
+- **Insights into Meshery's custom controllers** to help you diagnose issues.  
+- **Best practices** for maintaining a smooth and stable Meshery deployment.  
 
 Whether you're dealing with **installation problems, connectivity issues, or unexpected behavior**, this guide will walk you through resolving them efficiently.
