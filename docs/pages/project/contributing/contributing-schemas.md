@@ -43,10 +43,10 @@ schemas/
     <schema-version>/               # e.g., v1beta1
       <construct>/                  # e.g., model, component
         <construct>.json            # Schema definition for the construct (noun)
-        subschemas/                 # Any subschemas used within the construct
-        openapi.yml                 # OpenAPI schema defining API operations (verbs like create, update, delete)
         <construct>_template.json   # json template generated from schema
         <construct>_template.yaml   # yaml template generated from schema
+        subschemas/                 # Any subschemas used within the construct
+        openapi.yml                 # OpenAPI schema defining API operations (verbs like create, update, delete)
 ```
 
 ### **Explanation**
