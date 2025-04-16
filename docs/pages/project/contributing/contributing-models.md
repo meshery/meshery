@@ -14,7 +14,7 @@ list: include
 
 Meshery uses a logical object model to describe the infrastructure and capabilities it manages in a consistent and extensible way.
 
-**What Are Meshery Models?**
+#### What Are Meshery Models?
 
 At the core of this system are **Meshery Models** — packages that define a specific type of infrastructure, application, or capability. These models include:
 
@@ -25,7 +25,8 @@ At the core of this system are **Meshery Models** — packages that define a spe
 Models can describe traditional technologies (like Kubernetes workloads), or more abstract entities (like annotations or diagrams).
 > Learn more: [What are Meshery Models?]({{site.baseurl}}/concepts/logical/models)
 
-**What Is the Model Schema?**
+#### What Is the Model Schema?
+
 Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using on the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml). 
 
 The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
