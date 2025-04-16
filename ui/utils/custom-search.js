@@ -123,11 +123,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
       ) : (
         <CustomTooltip title="Search">
           <IconButton onClick={handleSearchIconClick} data-testid="search-icon">
-            <SearchIcon
-              fill={theme.palette.icon.secondary}
-              height={'1.5rem'}
-              width={'1.5rem'}
-            />
+            <SearchIcon fill={theme.palette.icon.secondary} height={'1.5rem'} width={'1.5rem'} />
           </IconButton>
         </CustomTooltip>
       )}

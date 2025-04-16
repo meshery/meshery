@@ -12,7 +12,7 @@ const TAR_FILE_PATH = path.resolve('tests/e2e/assets/test.tar');
 test.describe('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ENV.MESHERY_SERVER_URL);
-    await page.getByTestId('settings-button').getByRole('button').click();
+    await page.getByTestId('settings-button').click();
     await page.getByTestId('settings-tab-registry').click();
   });
 
@@ -23,7 +23,18 @@ test.describe('Model Workflow Tests', () => {
     await page.getByRole('textbox', { name: 'Model Display Name' }).fill(model.MODEL_DISPLAY_NAME);
 
     await page.getByRole('button', { name: 'Next' }).click();
+
+    await expect(page.getByTestId('category-select')).toBeVisible();
+    await expect(page.getByTestId('subcategory-select')).toBeVisible();
+
     await page.getByRole('button', { name: 'Next' }).click();
+
+    await expect(page.getByTestId('logo-dark-theme')).toBeVisible();
+    await expect(page.getByTestId('logo-light-theme')).toBeVisible();
+    await expect(page.getByTestId('primary-color')).toBeVisible();
+    await expect(page.getByTestId('secondary-color')).toBeVisible();
+    await expect(page.getByTestId('shape-select')).toBeVisible();
+
     await page.getByRole('button', { name: 'Next' }).click();
 
     await page.getByRole('radio', { name: 'GitHub' }).check();
@@ -34,8 +45,10 @@ test.describe('Model Workflow Tests', () => {
     await page.getByRole('button', { name: 'Next' }).click();
 
     await page.getByRole('button', { name: 'Generate' }).click();
+
     await expect(page.getByTestId('model-import-section')).toBeVisible();
     await expect(page.getByTestId('model-import-messages')).toBeVisible();
+
     await page.getByRole('button', { name: 'Finish' }).click();
   });
 
