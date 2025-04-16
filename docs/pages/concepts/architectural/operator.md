@@ -56,12 +56,18 @@ Meshery UI offers more granular control over the deployment of Meshery Operator 
 ### Does the Meshery Operator use an SDK or framework? 
 Yes, Meshery Operator used the Operator SDK.
 
-If you're experiencing issues with **Meshery Operator, MeshSync, or Broker**, the best place to find solutions is the **[Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)**.  
+## Troubleshooting Meshery Operator and Related Components
 
+To verify that your Meshery Operator and related components are functioning properly, perform the following checks:
 
-This guide provides:  
-- **Step-by-step troubleshooting** for common errors.  
-- **Insights into Meshery's custom controllers** to help you diagnose issues.  
-- **Best practices** for maintaining a smooth and stable Meshery deployment.  
+- Ensure the Operator pods are running.
+- Confirm that your cluster has appropriate RBAC permissions set.
+- Validate that Meshery Server is able to communicate with Meshery Operator.
 
-Whether you're dealing with **installation problems, connectivity issues, or unexpected behavior**, this guide will walk you through resolving them efficiently.
+If you're seeing issues with **Meshery Operator**, **MeshSync**, or the **Broker**, refer to the [Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync). This guide provides:
+
+- **Step-by-step instructions** for resolving common errors.
+- **Insights into Meshery's controllers** to help diagnose issues.
+- **Best practices** for a stable and efficient Meshery deployment.
+
+Whether you're facing installation issues, resource syncing failures, or Broker communication problems, the guide walks you through how to identify and fix them effectively.
