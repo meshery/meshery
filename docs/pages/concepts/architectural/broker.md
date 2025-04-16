@@ -33,11 +33,3 @@ To check if your Broker instance is running smoothly (it's deployed as a Kuberne
 - Make sure the Meshery Server can reach the Broker service.
 
 Still seeing issues? The **[Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)** covers common problems with the Broker, MeshSync, and Operator — and offers clear steps to resolve them.
-
-
-This guide provides:  
-- **Step-by-step troubleshooting** for common errors.  
-- **Insights into Meshery's custom controllers** to help you diagnose issues.  
-- **Best practices** for maintaining a smooth and stable Meshery deployment.  
-
-Whether you're dealing with **installation problems, connectivity issues, or unexpected behavior**, this guide will walk you through resolving them efficiently.
