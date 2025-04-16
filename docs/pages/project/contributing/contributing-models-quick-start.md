@@ -16,7 +16,7 @@ list: include
 
 ### Creating your first Meshery Model
 
-To get started quickly, check out the [Generating Models](/guides/configuration-management/generating-models)  guide for step-by-step instructions.
+To get started quickly, check out the [Creating Models](/guides/configuration-management/creating-models)  guide for step-by-step instructions.
 
 ### Contributing a Model Definition
 
@@ -26,7 +26,7 @@ To get started quickly, check out the [Generating Models](/guides/configuration-
 1. Create a pull request to the meshery/meshery.io repository.
 1. Once your pull request is merged, your model will be available in the next Meshery release.
 
-## Next Steps
+### Next Steps
 
 To learn more about how to contribute and customize your models, check out the full [Contributing to Models](/project/contributing/contributing-models/) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
 
