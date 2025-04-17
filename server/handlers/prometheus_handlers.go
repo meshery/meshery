@@ -5,7 +5,6 @@ import (
 	"encoding/gob"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"io"
 	"net/http"
 	"net/url"
@@ -14,6 +13,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
@@ -376,10 +376,10 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	safeData := template.HTMLEscapeString(string(data))
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    h.log.Error(err)
+	}
 
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	_, _ = w.Write([]byte(safeData))
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
@@ -409,10 +409,9 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 
-	safeData := template.HTMLEscapeString(string(data))
-
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	_, _ = w.Write([]byte(safeData))
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/telemetry/metrics/static-board PrometheusAPI idGetPrometheusStaticBoard
