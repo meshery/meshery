@@ -9,6 +9,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	meshkitOci "github.com/layer5io/meshkit/models/oci"
 )
 
 var buildModelCmd = &cobra.Command{
@@ -64,7 +66,20 @@ mesheryctl exp model build [model-name]
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(path, modelName, version)
 		utils.Log.Infof("Building meshery model from path %s", folder)
-		utils.Log.Info("Build command will be here soon . . .")
+
+		img, err := meshkitOci.BuildImage(folder)
+		if err != nil {
+			return ErrModelBuild(err)
+		}
+
+		// modelFolder := buildModelCompileFolderName(path, modelName, "")
+
+		// Save OCI artifact into a tar file
+		tarfileName := filepath.Join(folder, "model.tar")
+		err = meshkitOci.SaveOCIArtifact(img, tarfileName, modelName)
+		if err != nil {
+			return ErrModelBuild(err)
+		}
 
 		return nil
 	},

@@ -1,6 +1,7 @@
 package model
 
 import (
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -19,22 +20,24 @@ func TestModelBuild(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 	tests := []struct {
-		Name               string
-		Args               []string
-		SetupHook          func()
-		ExpectError        bool
-		ExpectedResponse   string
-		ExpectedDirs       []string
-		ExpectedFiles      []string
-		AfterTestRemoveDir string
+		Name             string
+		Args             []string
+		SetupHook        func()
+		ExpectError      bool
+		ExpectedResponse string
+		ExpectedFiles    []string
+		CleanupHook      func()
 	}{
-		// TODO this test is passing because I have an aws-ec2-controller/v0.1.0 folder in my local
+		// TODO this test is passing because I have a test-case-aws-lambda-controller/v0.1.0 folder in my local
 		// create (or run model init) before testing build
 		{
 			Name:             "model build from model name and version",
-			Args:             []string{"build", "aws-ec2-controller", "--version", "v0.1.0"},
+			Args:             []string{"build", "test-case-aws-lambda-controller", "--version", "v0.1.0"},
 			ExpectError:      false,
-			ExpectedResponse: "model.build.encouraging-message.golden",
+			ExpectedResponse: "model.build.from-model-name-version.golden",
+			ExpectedFiles: []string{
+				"test-case-aws-lambda-controller/v0.1.0/model.tar",
+			},
 		},
 		{
 			Name:             "model build no params",
@@ -76,6 +79,16 @@ func TestModelBuild(t *testing.T) {
 
 			expectedResponse := golden.Load()
 			assert.Equal(t, expectedResponse, actualResponse)
+
+			if len(tc.ExpectedFiles) > 0 {
+				for _, file := range tc.ExpectedFiles {
+					info, err := os.Stat(file)
+					assert.NoError(t, err)
+					if err == nil {
+						assert.False(t, info.IsDir())
+					}
+				}
+			}
 		})
 	}
 }
