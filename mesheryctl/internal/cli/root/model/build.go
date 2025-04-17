@@ -1,6 +1,8 @@
 package model
 
 import (
+	"fmt"
+	"os"
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -24,26 +26,26 @@ mesheryctl exp model build [model-name]
 		if len(args) != 1 {
 			return ErrModelBuildFromStrings("must provide only one argument: model name")
 		}
-		// // do not validate model name, path and version,
-		// // as their purpose is to combine into the folder
-		// // only check if combined folder exists
-		// modelName := args[0]
-		// path, _ := cmd.Flags().GetString("path")
-		// version, _ := cmd.Flags().GetString("version")
+		// do not validate model name, path and version,
+		// as their purpose is to combine into the folder
+		// only check if combined folder exists
+		modelName := args[0]
+		path, _ := cmd.Flags().GetString("path")
+		version, _ := cmd.Flags().GetString("version")
 
-		// {
-		// 	folder := buildModelCompileFolderName(modelName, path, version)
-		// 	// if folder does not exist return with error
-		// 	_, err := os.Stat(folder)
-		// 	if !os.IsNotExist(err) {
-		// 		return ErrModelBuildFromStrings(
-		// 			fmt.Sprintf(
-		// 				"folder %s does not exist",
-		// 				folder,
-		// 			),
-		// 		)
-		// 	}
-		// }
+		{
+			folder := buildModelCompileFolderName(path, modelName, version)
+			// if folder does not exist return with error
+			_, err := os.Stat(folder)
+			if os.IsNotExist(err) {
+				return ErrModelBuildFromStrings(
+					fmt.Sprintf(
+						"folder %s does not exist",
+						folder,
+					),
+				)
+			}
+		}
 		// TODO should we validate if the directory has a valid meshery model structure?
 
 		return nil

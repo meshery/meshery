@@ -28,6 +28,8 @@ func TestModelBuild(t *testing.T) {
 		ExpectedFiles      []string
 		AfterTestRemoveDir string
 	}{
+		// TODO this test is passing because I have an aws-ec2-controller/v0.1.0 folder in my local
+		// create (or run model init) before testing build
 		{
 			Name:             "model build from model name and version",
 			Args:             []string{"build", "aws-ec2-controller", "--version", "v0.1.0"},
@@ -39,6 +41,12 @@ func TestModelBuild(t *testing.T) {
 			Args:             []string{"build"},
 			ExpectError:      true,
 			ExpectedResponse: "model.build.error.invalid-amount-of-args.golden",
+		},
+		{
+			Name:             "model build folder does not exist",
+			Args:             []string{"build", "aws-ec2-controller", "--version", "v0.1.0", "--path", "./not_existing_folder"},
+			ExpectError:      true,
+			ExpectedResponse: "model.build.error.folder-does-not-exist.golden",
 		},
 	}
 	for _, tc := range tests {
