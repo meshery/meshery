@@ -29,8 +29,8 @@ func TestModelBuild(t *testing.T) {
 		AfterTestRemoveDir string
 	}{
 		{
-			Name:             "model build encouraging message",
-			Args:             []string{"build", "./aws-ec2-controller/v0.1.0"},
+			Name:             "model build from model name and version",
+			Args:             []string{"build", "aws-ec2-controller", "--version", "v0.1.0"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.encouraging-message.golden",
 		},

@@ -42,7 +42,7 @@ var ModelExpCmd = &cobra.Command{
 mesheryctl exp model init [model-name]
 
 // Create an OCI-compliant package from the model files
-mesheryctl exp model build [path/to/model/version/folder]
+mesheryctl exp model build [model-name]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
