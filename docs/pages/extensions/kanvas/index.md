@@ -24,6 +24,7 @@ Kanvas is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes an
 - <a href="{{site.baseurl}}/extensions/importing-an-application">Import an application</a> - Importing an application of different types.
 - <a href="{{site.baseurl}}/extensions/component-shape-guide">Component Shapes</a> - Know what each component shape signify.
 - <a href="{{site.baseurl}}/extensions/edges-shape-guide">Edges Shapes</a> - Know what each Edge signifies.
+- <a href="{{site.baseurl}}/extensions/kanvas/troubleshooting-guide">Troubleshooting Guide</a> - Resolve common issues when working with Kanvas.
 
 ### Kanvas For GitOps
 
