@@ -1,0 +1,84 @@
+{
+  "page": 1,
+  "page_size": 1,
+  "total_count": 1,
+  "components": [
+    {
+      "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+      "schemaVersion": "components.meshery.io/v1beta1",
+      "version": "v1.0.0",
+      "displayName": "Test",
+      "description": "",
+      "format": "JSON",
+      "model": {
+        "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "component-test-0",
+        "displayName": "Component test",
+        "status": "enabled",
+        "registrant": {
+          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+          "name": "Artifact Hub",
+          "credential_id": "00000000-0000-0000-0000-000000000000",
+          "type": "registry",
+          "sub_type": "",
+          "kind": "artifacthub",
+          "status": "registered",
+          "user_id": "00000000-0000-0000-0000-000000000000",
+          "created_at": "2025-03-30T19:59:46.350667005Z",
+          "updated_at": "2025-03-30T19:59:46.350667005Z",
+          "deleted_at": "0001-01-01T00:00:00Z"
+        },
+        "connection_id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+        "category": {
+          "id": "fda1c4e7-14ae-4435-8236-adfb9cea0395",
+          "name": "category"
+        },
+        "subCategory": "sub-category",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#ff9900",
+          "secondaryColor": "#F4BC79",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/kubeform-provider-aws-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/kubeform-provider-aws-white.svg"
+        },
+        "model": {
+          "version": "2023.11.1"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "styles": {
+        "primaryColor": "#ff9900",
+        "secondaryColor": "#F4BC79",
+        "shape": "circle",
+        "svgColor": "ui/public/static/img/meshmodels/kubeform-provider-aws/color/acl-color.svg",
+        "svgComplete": "",
+        "svgWhite": "ui/public/static/img/meshmodels/kubeform-provider-aws/white/acl-white.svg"
+      },
+      "capabilities": [],
+      "status": "enabled",
+      "metadata": {
+        "configurationUISchema": "",
+        "genealogy": "",
+        "instanceDetails": null,
+        "isAnnotation": false,
+        "isNamespaced": false,
+        "published": false
+      },
+      "configuration": null,
+      "component": {
+        "version": "memorydb.aws.kubeform.com/v1alpha1",
+        "kind": "Test",
+        "schema": "{\"description\":\"ACL is the Schema for the ACLs API. Provides a MemoryDB ACL.\",\"properties\":{\"spec\":{\"description\":\"ACLSpec defines the desired state of ACL\",\"properties\":{\"deletionPolicy\":{\"default\":\"Delete\",\"description\":\"DeletionPolicy specifies what will happen to the underlying external when this managed resource is deleted - either \\\"Delete\\\" or \\\"Orphan\\\" the external resource. This field is planned to be deprecated in favor of the ManagementPolicy field in a future release. Currently, both could be set independently and non-default values would be honored if the feature flag is enabled. See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223\",\"enum\":[\"Orphan\",\"Delete\"],\"type\":\"string\"},\"forProvider\":{\"properties\":{\"region\":{\"description\":\"Region is the region you'd like your resource to be created in.\",\"type\":\"string\"},\"tags\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"A map of tags to assign to the resource. If configured with a provider default_tags configuration block present, tags with matching keys will overwrite those defined at the provider-level.\",\"type\":\"object\"},\"tagsAll\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"A map of tags assigned to the resource, including those inherited from the provider default_tags configuration block.\",\"type\":\"object\"},\"userNames\":{\"description\":\"Set of MemoryDB user names to be included in this ACL.\",\"items\":{\"type\":\"string\"},\"type\":\"array\"}},\"type\":\"object\"},\"managementPolicy\":{\"default\":\"FullControl\",\"description\":\"THIS IS AN ALPHA FIELD. Do not use it in production. It is not honored unless the relevant Crossplane feature flag is enabled, and may be changed or removed without notice. ManagementPolicy specifies the level of control Crossplane has over the managed external resource. This field is planned to replace the DeletionPolicy field in a future release. Currently, both could be set independently and non-default values would be honored if the feature flag is enabled. See the design doc for more information: https://github.com/crossplane/crossplane/blob/499895a25d1a1a0ba1604944ef98ac7a1a71f197/design/design-doc-observe-only-resources.md?plain=1#L223\",\"enum\":[\"FullControl\",\"ObserveOnly\",\"OrphanOnDelete\"],\"type\":\"string\"},\"providerConfigRef\":{\"default\":{\"name\":\"default\"},\"description\":\"ProviderConfigReference specifies how the provider that will be used to create, observe, update, and delete this managed resource should be configured.\",\"properties\":{\"name\":{\"description\":\"Name of the referenced object.\",\"type\":\"string\"},\"policy\":{\"description\":\"Policies for referencing.\",\"properties\":{\"resolution\":{\"default\":\"Required\",\"description\":\"Resolution specifies whether resolution of this reference is required. The default is 'Required', which means the reconcile will fail if the reference cannot be resolved. 'Optional' means this reference will be a no-op if it cannot be resolved.\",\"enum\":[\"Required\",\"Optional\"],\"type\":\"string\"},\"resolve\":{\"description\":\"Resolve specifies when this reference should be resolved. The default is 'IfNotPresent', which will attempt to resolve the reference only when the corresponding field is not present. Use 'Always' to resolve the reference on every reconcile.\",\"enum\":[\"Always\",\"IfNotPresent\"],\"type\":\"string\"}},\"type\":\"object\"}},\"required\":[\"name\"],\"type\":\"object\"},\"providerRef\":{\"description\":\"ProviderReference specifies the provider that will be used to create, observe, update, and delete this managed resource. Deprecated: Please use ProviderConfigReference, i.e. `providerConfigRef`\",\"properties\":{\"name\":{\"description\":\"Name of the referenced object.\",\"type\":\"string\"},\"policy\":{\"description\":\"Policies for referencing.\",\"properties\":{\"resolution\":{\"default\":\"Required\",\"description\":\"Resolution specifies whether resolution of this reference is required. The default is 'Required', which means the reconcile will fail if the reference cannot be resolved. 'Optional' means this reference will be a no-op if it cannot be resolved.\",\"enum\":[\"Required\",\"Optional\"],\"type\":\"string\"},\"resolve\":{\"description\":\"Resolve specifies when this reference should be resolved. The default is 'IfNotPresent', which will attempt to resolve the reference only when the corresponding field is not present. Use 'Always' to resolve the reference on every reconcile.\",\"enum\":[\"Always\",\"IfNotPresent\"],\"type\":\"string\"}},\"type\":\"object\"}},\"required\":[\"name\"],\"type\":\"object\"},\"publishConnectionDetailsTo\":{\"description\":\"PublishConnectionDetailsTo specifies the connection secret config which contains a name, metadata and a reference to secret store config to which any connection details for this managed resource should be written. Connection details frequently include the endpoint, username, and password required to connect to the managed resource.\",\"properties\":{\"configRef\":{\"default\":{\"name\":\"default\"},\"description\":\"SecretStoreConfigRef specifies which secret store config should be used for this ConnectionSecret.\",\"properties\":{\"name\":{\"description\":\"Name of the referenced object.\",\"type\":\"string\"},\"policy\":{\"description\":\"Policies for referencing.\",\"properties\":{\"resolution\":{\"default\":\"Required\",\"description\":\"Resolution specifies whether resolution of this reference is required. The default is 'Required', which means the reconcile will fail if the reference cannot be resolved. 'Optional' means this reference will be a no-op if it cannot be resolved.\",\"enum\":[\"Required\",\"Optional\"],\"type\":\"string\"},\"resolve\":{\"description\":\"Resolve specifies when this reference should be resolved. The default is 'IfNotPresent', which will attempt to resolve the reference only when the corresponding field is not present. Use 'Always' to resolve the reference on every reconcile.\",\"enum\":[\"Always\",\"IfNotPresent\"],\"type\":\"string\"}},\"type\":\"object\"}},\"required\":[\"name\"],\"type\":\"object\"},\"metadata\":{\"description\":\"Metadata is the metadata for connection secret.\",\"properties\":{\"annotations\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"Annotations are the annotations to be added to connection secret. - For Kubernetes secrets, this will be used as \\\"metadata.annotations\\\". - It is up to Secret Store implementation for others store types.\",\"type\":\"object\"},\"labels\":{\"additionalProperties\":{\"type\":\"string\"},\"description\":\"Labels are the labels/tags to be added to connection secret. - For Kubernetes secrets, this will be used as \\\"metadata.labels\\\". - It is up to Secret Store implementation for others store types.\",\"type\":\"object\"},\"type\":{\"description\":\"Type is the SecretType for the connection secret. - Only valid for Kubernetes Secret Stores.\",\"type\":\"string\"}},\"type\":\"object\"},\"name\":{\"description\":\"Name is the name of the connection secret.\",\"type\":\"string\"}},\"required\":[\"name\"],\"type\":\"object\"},\"writeConnectionSecretToRef\":{\"description\":\"WriteConnectionSecretToReference specifies the namespace and name of a Secret to which any connection details for this managed resource should be written. Connection details frequently include the endpoint, username, and password required to connect to the managed resource. This field is planned to be replaced in a future release in favor of PublishConnectionDetailsTo. Currently, both could be set independently and connection details would be published to both without affecting each other.\",\"properties\":{\"name\":{\"description\":\"Name of the secret.\",\"type\":\"string\"},\"namespace\":{\"description\":\"Namespace of the secret.\",\"type\":\"string\"}},\"required\":[\"name\",\"namespace\"],\"type\":\"object\"}},\"required\":[\"forProvider\"],\"type\":\"object\",\"x-kubernetes-validations\":[{\"message\":\"region is a required parameter\",\"rule\":\"self.managementPolicy == 'ObserveOnly' || has(self.forProvider.region)\"}]}},\"required\":[\"spec\"],\"title\":\"ACL\",\"type\":\"object\"}"
+      },
+      "duplicates": 0
+    }
+  ]
+}
