@@ -1,10 +1,10 @@
 #!/usr/bin/env bats
 setup() {
-    load "$E2E_HELPERS_PATH/tests_helpers"
-	_tests_helper
+    load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
 }
 
-@test "mesheryctl system help is succeeded and display help" {
+@test "mesheryctl system help display help" {
     run $MESHERYCTL_BIN system --help
     assert_success
     
