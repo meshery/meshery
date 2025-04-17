@@ -148,8 +148,8 @@ function K8sContextMenu({
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',
-    zIndex: showFullContextMenu ? '1' : '-1', // display the menu above the top bar upon click
-    bottom: showFullContextMenu ? '40%' : '-110%',
+    zIndex: '-1',
+    bottom: showFullContextMenu ? '-75%' : '-110%',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
