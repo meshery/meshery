@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -19,6 +20,36 @@ func TestModelBuild(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
+
+	setupHookModelInit := func(modelInitArgs ...string) func() {
+		return func() {
+			// TODO replace ModelExpCmd with  ModelCmd
+			cmd := ModelExpCmd
+			// cmd := ModelCmd
+			cmd.SetArgs(modelInitArgs)
+			buff := utils.SetupMeshkitLoggerTesting(t, false)
+			cmd.SetOut(buff)
+			if err := cmd.Execute(); err != nil {
+				t.Fatal(err)
+			}
+		}
+	}
+	cleanUpHookRemoveDirs := func(dirs ...string) func() {
+		return func() {
+			errs := make([]error, 0, 1)
+			for _, dir := range dirs {
+				if err := os.RemoveAll(dir); err != nil {
+					errs = append(errs, err)
+				}
+			}
+			if len(errs) > 0 {
+				t.Fatal(errors.Join(errs...))
+			}
+
+			t.Log("removed created folders")
+		}
+	}
+
 	tests := []struct {
 		Name             string
 		Args             []string
@@ -38,6 +69,8 @@ func TestModelBuild(t *testing.T) {
 			ExpectedFiles: []string{
 				"test-case-aws-lambda-controller/v0.1.0/model.tar",
 			},
+			SetupHook:   setupHookModelInit("init", "test-case-aws-lambda-controller", "--version", "v0.1.0"),
+			CleanupHook: cleanUpHookRemoveDirs("test-case-aws-lambda-controller"),
 		},
 		{
 			Name:             "model build no params",
@@ -54,6 +87,12 @@ func TestModelBuild(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
+			if tc.CleanupHook != nil {
+				defer tc.CleanupHook()
+			}
+			if tc.SetupHook != nil {
+				tc.SetupHook()
+			}
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
