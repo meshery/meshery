@@ -21,7 +21,7 @@ const ConnectionModal = ({
       maxWidth="xl"
       sx={{
         '& .MuiPaper-root': {
-          maxHeight: '90vh', 
+          maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'column',
         },
