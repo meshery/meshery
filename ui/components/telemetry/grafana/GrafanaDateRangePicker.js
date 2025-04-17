@@ -1,5 +1,4 @@
-import React from 'react';
-import { Component } from 'react';
+import React, { useState } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import {
   Button,
@@ -83,7 +82,6 @@ const Space = styled('span')(({ theme }) => ({
 }));
 
 const refreshIntervals = ['off', '5s', '10s', '30s', '1m', '5m', '15m', '30m', '1h', '2h', '1d'];
-
 const quickRanges = [
   [
     'Last 2 days',
@@ -125,31 +123,15 @@ const quickRanges = [
   ],
 ];
 
-class GrafanaDateRangePicker extends Component {
-  constructor(props) {
-    super(props);
+const GrafanaDateRangePicker = (props) => {
+  const [open, setOpen] = useState(false);
+  const { startDate, endDate, liveTail, refresh } = props;
 
-    this.state = {
-      // startDate: props.startDate,
-      // endDate: props.endDate,
-      // startGDate: props.from,
-      // endGDate: props.to,
-      // liveTail: true,
-      // refreshInterval: props.refresh,
-      open: false,
-    };
-  }
+  const handleClick = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  handleClick = () => {
-    this.setState({ open: true });
-  };
-
-  setRange = (range) => () => {
-    let startDate;
-    let endDate;
-    let liveTail;
-    let startGDate;
-    let endGDate;
+  const setRange = (range) => () => {
+    let startDate, endDate, liveTail, startGDate, endGDate;
     switch (range) {
       case 'Last 2 days':
         startDate = new Date();
@@ -508,247 +490,184 @@ class GrafanaDateRangePicker extends Component {
         endGDate = 'now';
         break;
     }
-    // this.setState({startDate, startendDate, liveTail})
-    this.props.updateDateRange(
-      startGDate,
-      startDate,
-      endGDate,
-      endDate,
-      liveTail,
-      this.props.refresh,
-    );
+    props.updateDateRange(startGDate, startDate, endGDate, endDate, liveTail, props.refresh);
   };
 
-  // handleToggle = () => {
-  //     this.setState(state => ({ open: !state.open }));
-  // };
-
-  handleClose = () => {
-    // if (this.anchorEl.contains(event.target)) {
-    //     return;
-    // }
-    this.setState({ open: false });
-    // this.setState({
-    //     anchorEl: null,
-    //   });
-  };
-
-  handleChange = (name) => (event) => {
+  const handleChange = (name) => (event) => {
     if (name === 'startDate' || name === 'endDate') {
-      const { startDate, endDate } = this.state;
       const dt = event.toDate();
       if (name === 'startDate') {
-        if (dt > endDate) {
-          // this.setState({ [name]: dt, endDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
-          this.props.updateDateRange(
+        if (dt > props.endDate) {
+          props.updateDateRange(
             dt.getTime().toString(),
             dt,
             dt.getTime().toString(),
             dt,
-            this.props.liveTail,
-            this.props.refresh,
+            props.liveTail,
+            props.refresh,
           );
           return;
         }
-        // this.setState({ [name]: dt,  startGDate: dt.getTime().toString()});
-        this.props.updateDateRange(
+        props.updateDateRange(
           dt.getTime().toString(),
           dt,
-          this.props.to,
-          this.props.endDate,
-          this.props.liveTail,
-          this.props.refresh,
+          props.to,
+          props.endDate,
+          props.liveTail,
+          props.refresh,
         );
       } else if (name === 'endDate') {
-        if (dt < startDate) {
-          // this.setState({ [name]: dt, startDate: dt, startGDate: dt.getTime().toString(), endGDate: dt.getTime().toString() });
-          this.props.updateDateRange(
+        if (dt < props.startDate) {
+          props.updateDateRange(
             dt.getTime().toString(),
             dt,
             dt.getTime().toString(),
             dt,
-            this.props.liveTail,
-            this.props.refresh,
+            props.liveTail,
+            props.refresh,
           );
           return;
         }
-        // this.setState({ [name]: dt, endGDate: dt.getTime().toString() });
-        // this.props.updateDateRange(dt.getTime().toString(), dt, dt.getTime().toString(), dt, this.props.liveTail, this.props.refresh);
-        this.props.updateDateRange(
-          this.props.from,
-          this.props.startDate,
+        props.updateDateRange(
+          props.from,
+          props.startDate,
           dt.getTime().toString(),
           dt,
-          this.props.liveTail,
-          this.props.refresh,
+          props.liveTail,
+          props.refresh,
         );
       }
       return;
     }
+
     if (name === 'liveTail') {
-      // this.setState({liveTail: event.target.checked});
       if (event.target.checked) {
-        this.props.updateDateRange(
-          this.props.from,
-          this.props.startDate,
+        props.updateDateRange(
+          props.from,
+          props.startDate,
           'now',
-          this.props.endDate,
+          props.endDate,
           event.target.checked,
-          this.props.refresh,
+          props.refresh,
         );
         return;
       }
-      this.props.updateDateRange(
-        this.props.startDate.getTime().toString(),
-        this.props.startDate,
-        this.props.endDate.getTime().toString(),
-        this.props.endDate,
+      props.updateDateRange(
+        props.startDate.getTime().toString(),
+        props.startDate,
+        props.endDate.getTime().toString(),
+        props.endDate,
         event.target.checked,
-        this.props.refresh,
+        props.refresh,
       );
       return;
     }
+
     if (name === 'refresh') {
-      this.props.updateDateRange(
-        this.props.from,
-        this.props.startDate,
-        this.props.to,
-        this.props.endDate,
-        this.props.liveTail,
+      props.updateDateRange(
+        props.from,
+        props.startDate,
+        props.to,
+        props.endDate,
+        props.liveTail,
         event.target.value,
       );
-      return;
     }
-    this.setState({ [name]: event.target.value });
   };
 
-  render() {
-    const { open } = this.state;
-    const { startDate, endDate, liveTail, refresh } = this.props;
-    return (
-      <NoSsr>
-        <React.Fragment>
-          <RangeButton variant="filled" onClick={this.handleClick}>
-            <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
-            <Moment format="LLLL">{startDate}</Moment>
-            <Space>-</Space>
-            {liveTail ? 'now' : <Moment format="LLLL">{endDate}</Moment>}
-            <Space>,{refresh}</Space>
-          </RangeButton>
-          {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
-            {({ TransitionProps, placement }) => (
-              <Grow
-                {...TransitionProps}
-                id="dateRange-list-grow"
-                style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
-              > */}
-          {/* <Popover
-                 id="daterange-popper"
-                 open={open}
-                 anchorEl={anchorEl}
-                 onClose={this.handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }} */}
-          {/* > */}
-          {/* <Paper> */}
+  return (
+    <NoSsr>
+      <RangeButton variant="filled" onClick={handleClick}>
+        <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
+        <Moment format="LLLL">{startDate}</Moment>
+        <Space>-</Space>
+        {liveTail ? 'now' : <Moment format="LLLL">{endDate}</Moment>}
+        <Space>,{refresh}</Space>
+      </RangeButton>
 
-          <StyledDialog
-            open={open}
-            onClose={this.handleClose}
-            scroll="paper"
-            aria-labelledby="daterange-dialog-title"
-            maxWidth="md"
-          >
-            <DialogTitleBar>
-              <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
-              <CloseIconButton aria-label="close" onClick={this.handleClose}>
-                <CloseIcon />
-              </CloseIconButton>
-            </DialogTitleBar>
-            <DialogContent>
-              <DialogContentText>
-                <Grid container>
-                  <Grid item xs={12}>
-                    Custom Range
-                    <RangeDialogRow>
-                      <DateTimePicker
-                        selectedDate={startDate}
-                        onChange={this.handleChange('startDate')}
-                        label="Start"
+      <StyledDialog
+        open={open}
+        onClose={handleClose}
+        scroll="paper"
+        aria-labelledby="daterange-dialog-title"
+        maxWidth="md"
+      >
+        <DialogTitleBar>
+          <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
+          <CloseIconButton aria-label="close" onClick={handleClose}>
+            <CloseIcon />
+          </CloseIconButton>
+        </DialogTitleBar>
+        <DialogContent>
+          <DialogContentText>
+            <Grid container>
+              <Grid item xs={12}>
+                Custom Range
+                <RangeDialogRow>
+                  <DateTimePicker
+                    selectedDate={startDate}
+                    onChange={handleChange('startDate')}
+                    label="Start"
+                  />
+                  <DateTimePicker
+                    disabled={liveTail}
+                    selectedDate={endDate}
+                    onChange={handleChange('endDate')}
+                    label="End"
+                  />
+                </RangeDialogRow>
+                <RangeDialogRow>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={liveTail}
+                        color="primary"
+                        onChange={handleChange('liveTail')}
                       />
-                      <DateTimePicker
-                        disabled={liveTail}
-                        selectedDate={endDate}
-                        onChange={this.handleChange('endDate')}
-                        label="End"
-                      />
-                    </RangeDialogRow>
-                    <RangeDialogRow>
-                      <FormControlLabel
-                        control={
-                          <Switch
-                            checked={liveTail}
-                            color="primary"
-                            onChange={this.handleChange('liveTail')}
-                          />
-                        }
-                        label="Live tail"
-                      />
-                      <TextField
-                        select
-                        id="refresh"
-                        name="refresh"
-                        label="Refresh Interval"
-                        fullWidth
-                        value={refresh}
-                        margin="normal"
-                        variant="outlined"
-                        onChange={this.handleChange('refresh')}
-                        // disabled={liveTail}
-                      >
-                        {refreshIntervals.map((ri) => (
-                          <MenuItem key={`ri_-_-_${ri}`} value={ri}>
-                            {ri}
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    </RangeDialogRow>
-                  </Grid>
-                  <InnerGrid item xs={12}>
-                    Quick Ranges
-                    <Grid container spacing={0}>
-                      {quickRanges.map((qr) => (
-                        <TimeList item key={qr.uniqueID} xs={12} sm={3}>
-                          {qr.map((q) => (
-                            <Button key={q.uniqueID} variant="text" onClick={this.setRange(q)}>
-                              {q}
-                            </Button>
-                          ))}
-                        </TimeList>
+                    }
+                    label="Live tail"
+                  />
+                  <TextField
+                    select
+                    id="refresh"
+                    name="refresh"
+                    label="Refresh Interval"
+                    fullWidth
+                    value={refresh}
+                    margin="normal"
+                    variant="outlined"
+                    onChange={handleChange('refresh')}
+                  >
+                    {refreshIntervals.map((ri) => (
+                      <MenuItem key={`ri_-_-_${ri}`} value={ri}>
+                        {ri}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </RangeDialogRow>
+              </Grid>
+              <InnerGrid item xs={12}>
+                Quick Ranges
+                <Grid container spacing={0}>
+                  {quickRanges.map((qr, index) => (
+                    <TimeList item key={`qr-${index}`} xs={12} sm={3}>
+                      {qr.map((q) => (
+                        <Button key={q} variant="text" onClick={setRange(q)}>
+                          {q}
+                        </Button>
                       ))}
-                    </Grid>
-                  </InnerGrid>
+                    </TimeList>
+                  ))}
                 </Grid>
-              </DialogContentText>
-            </DialogContent>
-            <Divider light variant="fullWidth" />
-          </StyledDialog>
-          {/* </Paper> */}
-          {/* </Popover> */}
-          {/* </Grow> */}
-          {/* )} */}
-          {/* </Popper> */}
-        </React.Fragment>
-      </NoSsr>
-    );
-  }
-}
+              </InnerGrid>
+            </Grid>
+          </DialogContentText>
+        </DialogContent>
+        <Divider light variant="fullWidth" />
+      </StyledDialog>
+    </NoSsr>
+  );
+};
 
 GrafanaDateRangePicker.propTypes = {
   updateDateRange: PropTypes.func.isRequired,
@@ -756,7 +675,7 @@ GrafanaDateRangePicker.propTypes = {
   startDate: PropTypes.object.isRequired,
   to: PropTypes.string.isRequired,
   endDate: PropTypes.object.isRequired,
-  // liveTail: PropTypes.bool.isRequired,
+  liveTail: PropTypes.bool.isRequired,
   refresh: PropTypes.string.isRequired,
 };
 

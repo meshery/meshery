@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Runtime"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "2.4.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "crd.projectcalico.org/v1",
     "kind": "KubeControllersConfiguration",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeControllersConfigurationSpec contains the values of the Kubernetes controllers configuration.\",\n   \"properties\": {\n    \"controllers\": {\n     \"description\": \"Controllers enables and configures individual Kubernetes controllers\",\n     \"properties\": {\n      \"namespace\": {\n       \"description\": \"Namespace enables and configures the namespace controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"node\": {\n       \"description\": \"Node enables and configures the node controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"hostEndpoint\": {\n         \"description\": \"HostEndpoint controls syncing nodes to host endpoints. Disabled by default, set to nil to disable.\",\n         \"properties\": {\n          \"autoCreate\": {\n           \"description\": \"AutoCreate enables automatic creation of host endpoints for every node. [Default: Disabled]\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"leakGracePeriod\": {\n         \"description\": \"LeakGracePeriod is the period used by the controller to determine if an IP address has been leaked. Set to 0 to disable IP garbage collection. [Default: 15m]\",\n         \"type\": \"string\"\n        },\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        },\n        \"syncLabels\": {\n         \"description\": \"SyncLabels controls whether to copy Kubernetes node labels to Calico nodes. [Default: Enabled]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"policy\": {\n       \"description\": \"Policy enables and configures the policy controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"serviceAccount\": {\n       \"description\": \"ServiceAccount enables and configures the service account controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"workloadEndpoint\": {\n       \"description\": \"WorkloadEndpoint enables and configures the workload endpoint controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"debugProfilePort\": {\n     \"description\": \"DebugProfilePort configures the port to serve memory and cpu profiles on. If not specified, profiling is disabled.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"etcdV3CompactionPeriod\": {\n     \"description\": \"EtcdV3CompactionPeriod is the period between etcdv3 compaction requests. Set to 0 to disable. [Default: 10m]\",\n     \"type\": \"string\"\n    },\n    \"healthChecks\": {\n     \"description\": \"HealthChecks enables or disables support for health checks [Default: Enabled]\",\n     \"type\": \"string\"\n    },\n    \"logSeverityScreen\": {\n     \"description\": \"LogSeverityScreen is the log severity above which logs are sent to the stdout. [Default: Info]\",\n     \"type\": \"string\"\n    },\n    \"prometheusMetricsPort\": {\n     \"description\": \"PrometheusMetricsPort is the TCP port that the Prometheus metrics server should bind to. Set to 0 to disable. [Default: 9094]\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"controllers\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kube Controllers Configuration\",\n \"type\": \"object\"\n}",
-    "version": "crd.projectcalico.org/v1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeControllersConfigurationSpec contains the values of the Kubernetes controllers configuration.\",\n   \"properties\": {\n    \"controllers\": {\n     \"description\": \"Controllers enables and configures individual Kubernetes controllers\",\n     \"properties\": {\n      \"namespace\": {\n       \"description\": \"Namespace enables and configures the namespace controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"node\": {\n       \"description\": \"Node enables and configures the node controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"hostEndpoint\": {\n         \"description\": \"HostEndpoint controls syncing nodes to host endpoints. Disabled by default, set to nil to disable.\",\n         \"properties\": {\n          \"autoCreate\": {\n           \"description\": \"AutoCreate enables automatic creation of host endpoints for every node. [Default: Disabled]\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"leakGracePeriod\": {\n         \"description\": \"LeakGracePeriod is the period used by the controller to determine if an IP address has been leaked. Set to 0 to disable IP garbage collection. [Default: 15m]\",\n         \"type\": \"string\"\n        },\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        },\n        \"syncLabels\": {\n         \"description\": \"SyncLabels controls whether to copy Kubernetes node labels to Calico nodes. [Default: Enabled]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"policy\": {\n       \"description\": \"Policy enables and configures the policy controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"serviceAccount\": {\n       \"description\": \"ServiceAccount enables and configures the service account controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"workloadEndpoint\": {\n       \"description\": \"WorkloadEndpoint enables and configures the workload endpoint controller. Enabled by default, set to nil to disable.\",\n       \"properties\": {\n        \"reconcilerPeriod\": {\n         \"description\": \"ReconcilerPeriod is the period to perform reconciliation with the Calico datastore. [Default: 5m]\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"debugProfilePort\": {\n     \"description\": \"DebugProfilePort configures the port to serve memory and cpu profiles on. If not specified, profiling is disabled.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"etcdV3CompactionPeriod\": {\n     \"description\": \"EtcdV3CompactionPeriod is the period between etcdv3 compaction requests. Set to 0 to disable. [Default: 10m]\",\n     \"type\": \"string\"\n    },\n    \"healthChecks\": {\n     \"description\": \"HealthChecks enables or disables support for health checks [Default: Enabled]\",\n     \"type\": \"string\"\n    },\n    \"logSeverityScreen\": {\n     \"description\": \"LogSeverityScreen is the log severity above which logs are sent to the stdout. [Default: Info]\",\n     \"type\": \"string\"\n    },\n    \"prometheusMetricsPort\": {\n     \"description\": \"PrometheusMetricsPort is the TCP port that the Prometheus metrics server should bind to. Set to 0 to disable. [Default: 9094]\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"controllers\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kube Controllers Configuration\",\n \"type\": \"object\"\n}"
   }
 }

@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +45,17 @@
     "model": {
       "version": "2022.6.14"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "ui.k8s.appscode.com/v1alpha1",
     "kind": "FeatureSet",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"chart\": {\n     \"description\": \"Chart specifies the chart that contains the respective resources for component features and the UI wizard.\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description specifies a short description of the services this feature set provides.\",\n     \"type\": \"string\"\n    },\n    \"icons\": {\n     \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type. These icons will be used in UI.\",\n     \"items\": {\n      \"description\": \"ImageSpec contains information about an image used as an icon.\",\n      \"properties\": {\n       \"size\": {\n        \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"required\": {\n     \"description\": \"Required specify whether this feature set is mandatory or not for using the UI.\",\n     \"type\": \"boolean\"\n    },\n    \"requiredFeatures\": {\n     \"description\": \"RequiredFeatures specifies list of features that are necessary to consider this feature set as enabled.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"title\": {\n     \"description\": \"Title specify the title of this feature set.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"chart\",\n    \"description\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Feature Set\",\n \"type\": \"object\"\n}",
-    "version": "ui.k8s.appscode.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"chart\": {\n     \"description\": \"Chart specifies the chart that contains the respective resources for component features and the UI wizard.\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description specifies a short description of the services this feature set provides.\",\n     \"type\": \"string\"\n    },\n    \"icons\": {\n     \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type. These icons will be used in UI.\",\n     \"items\": {\n      \"description\": \"ImageSpec contains information about an image used as an icon.\",\n      \"properties\": {\n       \"size\": {\n        \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"required\": {\n     \"description\": \"Required specify whether this feature set is mandatory or not for using the UI.\",\n     \"type\": \"boolean\"\n    },\n    \"requiredFeatures\": {\n     \"description\": \"RequiredFeatures specifies list of features that are necessary to consider this feature set as enabled.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"title\": {\n     \"description\": \"Title specify the title of this feature set.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"chart\",\n    \"description\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Feature Set\",\n \"type\": \"object\"\n}"
   }
 }

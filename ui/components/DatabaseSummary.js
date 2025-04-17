@@ -21,6 +21,7 @@ const DatabaseSummary = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
+  const [sortOrder, setSortOrder] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
@@ -36,6 +37,7 @@ const DatabaseSummary = (props) => {
     page: page,
     pagesize: rowsPerPage,
     search: searchText,
+    order: sortOrder,
   });
 
   const handleResetDatabase = () => {
@@ -69,9 +71,26 @@ const DatabaseSummary = (props) => {
     };
   };
 
+  const columns = [
+    {
+      name: 'name',
+      label: 'Name',
+      options: {
+        sort: true,
+      },
+    },
+    {
+      name: 'count',
+      label: 'Count',
+      options: {
+        sort: true,
+      },
+    },
+  ];
+
   const table_options = {
     filter: false,
-    sort: false,
+    sort: true,
     selectableRows: 'none',
     responsive: 'scrollMaxHeight',
     print: false,
@@ -89,18 +108,10 @@ const DatabaseSummary = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
+    onColumnSortChange: (_, direction) => {
+      setSortOrder(`name ${direction}`);
+    },
   };
-
-  const columns = [
-    {
-      name: 'name',
-      label: 'Name',
-    },
-    {
-      name: 'count',
-      label: 'Count',
-    },
-  ];
 
   const [tableCols, updateCols] = useState(columns);
 

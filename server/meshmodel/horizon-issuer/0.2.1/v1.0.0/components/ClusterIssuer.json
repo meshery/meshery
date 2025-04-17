@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -46,16 +47,17 @@
     "model": {
       "version": "0.2.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -67,7 +69,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -82,7 +83,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -97,7 +97,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -113,7 +112,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -129,7 +127,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -144,7 +141,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -159,7 +155,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -174,7 +169,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -184,15 +178,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "horizon.evertrust.io/v1alpha1",
     "kind": "ClusterIssuer",
-    "schema": "{\n \"description\": \"ClusterIssuer is the Schema for the clusterissuers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IssuerSpec defines the desired state of Issuer\",\n   \"properties\": {\n    \"authSecretName\": {\n     \"description\": \"A reference to a Secret in the same namespace as the referent. If the referent is a ClusterIssuer, the reference instead refers to the resource with the given name in the configured 'cluster resource namespace', which is set as a flag on the controller component (and defaults to the namespace that the controller runs in).\",\n     \"type\": \"string\"\n    },\n    \"caBundle\": {\n     \"description\": \"CaBundle contains the CA bundle required to trust the Horizon endpoint certificate\",\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels is a map of labels that will override labels set at the Certificate or Ingress levels.\",\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner will override the owner value set at the Certificate or Ingress levels.\",\n     \"type\": \"string\"\n    },\n    \"profile\": {\n     \"description\": \"The Horizon Profile that will be used to enroll certificates. Your authenticated principal should have rights over this Profile.\",\n     \"type\": \"string\"\n    },\n    \"revokeCertificates\": {\n     \"default\": false,\n     \"description\": \"RevokeCertificates controls whether this issuer should revoke certificates that have been issued through it when their Kubernetes object is deleted.\",\n     \"type\": \"boolean\"\n    },\n    \"skipTLSVerify\": {\n     \"default\": false,\n     \"description\": \"SkipTLSVerify indicates if untrusted certificates should be allowed when connecting to the Horizon instance.\",\n     \"type\": \"boolean\"\n    },\n    \"team\": {\n     \"description\": \"Team will override the team value set at the Certificate or Ingress levels.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"URL is the base URL of your Horizon instance, for instance: \\\"https://horizon.yourcompany.com\\\".\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authSecretName\",\n    \"profile\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Issuer\",\n \"type\": \"object\"\n}",
-    "version": "horizon.evertrust.io/v1alpha1"
+    "schema": "{\n \"description\": \"ClusterIssuer is the Schema for the clusterissuers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IssuerSpec defines the desired state of Issuer\",\n   \"properties\": {\n    \"authSecretName\": {\n     \"description\": \"A reference to a Secret in the same namespace as the referent. If the referent is a ClusterIssuer, the reference instead refers to the resource with the given name in the configured 'cluster resource namespace', which is set as a flag on the controller component (and defaults to the namespace that the controller runs in).\",\n     \"type\": \"string\"\n    },\n    \"caBundle\": {\n     \"description\": \"CaBundle contains the CA bundle required to trust the Horizon endpoint certificate\",\n     \"type\": \"string\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Labels is a map of labels that will override labels set at the Certificate or Ingress levels.\",\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner will override the owner value set at the Certificate or Ingress levels.\",\n     \"type\": \"string\"\n    },\n    \"profile\": {\n     \"description\": \"The Horizon Profile that will be used to enroll certificates. Your authenticated principal should have rights over this Profile.\",\n     \"type\": \"string\"\n    },\n    \"revokeCertificates\": {\n     \"default\": false,\n     \"description\": \"RevokeCertificates controls whether this issuer should revoke certificates that have been issued through it when their Kubernetes object is deleted.\",\n     \"type\": \"boolean\"\n    },\n    \"skipTLSVerify\": {\n     \"default\": false,\n     \"description\": \"SkipTLSVerify indicates if untrusted certificates should be allowed when connecting to the Horizon instance.\",\n     \"type\": \"boolean\"\n    },\n    \"team\": {\n     \"description\": \"Team will override the team value set at the Certificate or Ingress levels.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"URL is the base URL of your Horizon instance, for instance: \\\"https://horizon.yourcompany.com\\\".\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authSecretName\",\n    \"profile\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster Issuer\",\n \"type\": \"object\"\n}"
   }
 }

@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Platform"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://clastix.github.io/charts/kamaji-0.14.0.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "0.11.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "kamaji.clastix.io/v1alpha1",
     "kind": "DataStore",
-    "schema": "{\n \"description\": \"DataStore is the Schema for the datastores API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DataStoreSpec defines the desired state of DataStore.\",\n   \"properties\": {\n    \"basicAuth\": {\n     \"description\": \"In case of authentication enabled for the given data store, specifies the username and password pair. This value is optional.\",\n     \"properties\": {\n      \"password\": {\n       \"properties\": {\n        \"content\": {\n         \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"secretReference\": {\n         \"properties\": {\n          \"keyPath\": {\n           \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"keyPath\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"username\": {\n       \"properties\": {\n        \"content\": {\n         \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"secretReference\": {\n         \"properties\": {\n          \"keyPath\": {\n           \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"keyPath\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"password\",\n      \"username\"\n     ],\n     \"type\": \"object\"\n    },\n    \"driver\": {\n     \"description\": \"The driver to use to connect to the shared datastore.\",\n     \"enum\": [\n      \"etcd\",\n      \"MySQL\",\n      \"PostgreSQL\"\n     ],\n     \"type\": \"string\"\n    },\n    \"endpoints\": {\n     \"description\": \"List of the endpoints to connect to the shared datastore. No need for protocol, just bare IP/FQDN and port.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"tlsConfig\": {\n     \"description\": \"Defines the TLS/SSL configuration required to connect to the data store in a secure way.\",\n     \"properties\": {\n      \"certificateAuthority\": {\n       \"description\": \"Retrieve the Certificate Authority certificate and private key, such as bare content of the file, or a SecretReference. The key reference is required since etcd authentication is based on certificates, and Kamaji is responsible in creating this.\",\n       \"properties\": {\n        \"certificate\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"privateKey\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"certificate\"\n       ],\n       \"type\": \"object\"\n      },\n      \"clientCertificate\": {\n       \"description\": \"Specifies the SSL/TLS key and private key pair used to connect to the data store.\",\n       \"properties\": {\n        \"certificate\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"privateKey\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"certificate\",\n        \"privateKey\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"certificateAuthority\",\n      \"clientCertificate\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"driver\",\n    \"endpoints\",\n    \"tlsConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Data Store\",\n \"type\": \"object\"\n}",
-    "version": "kamaji.clastix.io/v1alpha1"
+    "schema": "{\n \"description\": \"DataStore is the Schema for the datastores API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DataStoreSpec defines the desired state of DataStore.\",\n   \"properties\": {\n    \"basicAuth\": {\n     \"description\": \"In case of authentication enabled for the given data store, specifies the username and password pair. This value is optional.\",\n     \"properties\": {\n      \"password\": {\n       \"properties\": {\n        \"content\": {\n         \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"secretReference\": {\n         \"properties\": {\n          \"keyPath\": {\n           \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"keyPath\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"username\": {\n       \"properties\": {\n        \"content\": {\n         \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"secretReference\": {\n         \"properties\": {\n          \"keyPath\": {\n           \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n           \"minLength\": 1,\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"name is unique within a namespace to reference a secret resource.\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"namespace defines the space within which the secret name must be unique.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"keyPath\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"password\",\n      \"username\"\n     ],\n     \"type\": \"object\"\n    },\n    \"driver\": {\n     \"description\": \"The driver to use to connect to the shared datastore.\",\n     \"enum\": [\n      \"etcd\",\n      \"MySQL\",\n      \"PostgreSQL\"\n     ],\n     \"type\": \"string\"\n    },\n    \"endpoints\": {\n     \"description\": \"List of the endpoints to connect to the shared datastore. No need for protocol, just bare IP/FQDN and port.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"tlsConfig\": {\n     \"description\": \"Defines the TLS/SSL configuration required to connect to the data store in a secure way.\",\n     \"properties\": {\n      \"certificateAuthority\": {\n       \"description\": \"Retrieve the Certificate Authority certificate and private key, such as bare content of the file, or a SecretReference. The key reference is required since etcd authentication is based on certificates, and Kamaji is responsible in creating this.\",\n       \"properties\": {\n        \"certificate\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"privateKey\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"certificate\"\n       ],\n       \"type\": \"object\"\n      },\n      \"clientCertificate\": {\n       \"description\": \"Specifies the SSL/TLS key and private key pair used to connect to the data store.\",\n       \"properties\": {\n        \"certificate\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"privateKey\": {\n         \"properties\": {\n          \"content\": {\n           \"description\": \"Bare content of the file, base64 encoded. It has precedence over the SecretReference value.\",\n           \"format\": \"byte\",\n           \"type\": \"string\"\n          },\n          \"secretReference\": {\n           \"properties\": {\n            \"keyPath\": {\n             \"description\": \"Name of the key for the given Secret reference where the content is stored. This value is mandatory.\",\n             \"minLength\": 1,\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"name is unique within a namespace to reference a secret resource.\",\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"description\": \"namespace defines the space within which the secret name must be unique.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"keyPath\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"certificate\",\n        \"privateKey\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"certificateAuthority\",\n      \"clientCertificate\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"driver\",\n    \"endpoints\",\n    \"tlsConfig\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Data Store\",\n \"type\": \"object\"\n}"
   }
 }

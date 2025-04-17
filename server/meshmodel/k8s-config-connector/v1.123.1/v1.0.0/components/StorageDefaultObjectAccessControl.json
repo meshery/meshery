@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.123.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#aecbfa;}.cls-2{fill:#669df6;}.cls-3{fill:#4285f4;}.cls-4{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"2\" y=\"4\" width=\"20\" height=\"7\"/\u003e\u003crect class=\"cls-2\" x=\"20\" y=\"4\" width=\"2\" height=\"7\"/\u003e\u003cpolygon class=\"cls-3\" points=\"22 4 20 4 20 11 22 4\"/\u003e\u003crect class=\"cls-2\" x=\"2\" y=\"4\" width=\"2\" height=\"7\"/\u003e\u003crect class=\"cls-4\" x=\"6\" y=\"7\" width=\"6\" height=\"1\"/\u003e\u003crect class=\"cls-4\" x=\"15\" y=\"6\" width=\"3\" height=\"3\" rx=\"1.5\"/\u003e\u003crect class=\"cls-1\" x=\"2\" y=\"13\" width=\"20\" height=\"7\"/\u003e\u003crect class=\"cls-2\" x=\"20\" y=\"13\" width=\"2\" height=\"7\"/\u003e\u003cpolygon class=\"cls-3\" points=\"22 13 20 13 20 20 22 13\"/\u003e\u003crect class=\"cls-2\" x=\"2\" y=\"13\" width=\"2\" height=\"7\"/\u003e\u003crect class=\"cls-4\" x=\"6\" y=\"16\" width=\"6\" height=\"1\"/\u003e\u003crect class=\"cls-4\" x=\"15\" y=\"15\" width=\"3\" height=\"3\" rx=\"1.5\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}.cls-4{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"2\" y=\"4\" width=\"20\" height=\"7\"/\u003e\u003crect class=\"cls-2\" x=\"20\" y=\"4\" width=\"2\" height=\"7\"/\u003e\u003cpolygon class=\"cls-3\" points=\"22 4 20 4 20 11 22 4\"/\u003e\u003crect class=\"cls-2\" x=\"2\" y=\"4\" width=\"2\" height=\"7\"/\u003e\u003crect class=\"cls-4\" x=\"6\" y=\"7\" width=\"6\" height=\"1\"/\u003e\u003crect class=\"cls-4\" x=\"15\" y=\"6\" width=\"3\" height=\"3\" rx=\"1.5\"/\u003e\u003crect class=\"cls-1\" x=\"2\" y=\"13\" width=\"20\" height=\"7\"/\u003e\u003crect class=\"cls-2\" x=\"20\" y=\"13\" width=\"2\" height=\"7\"/\u003e\u003cpolygon class=\"cls-3\" points=\"22 13 20 13 20 20 22 13\"/\u003e\u003crect class=\"cls-2\" x=\"2\" y=\"13\" width=\"2\" height=\"7\"/\u003e\u003crect class=\"cls-4\" x=\"6\" y=\"16\" width=\"6\" height=\"1\"/\u003e\u003crect class=\"cls-4\" x=\"15\" y=\"15\" width=\"3\" height=\"3\" rx=\"1.5\"/\u003e\u003c/g\u003e\u003c/svg\u003e"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "storage.cnrm.cloud.google.com/v1beta1",
     "kind": "StorageDefaultObjectAccessControl",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bucketRef\": {\n     \"description\": \"Reference to the bucket.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `StorageBucket` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"entity\": {\n     \"description\": \"The entity holding the permission, in one of the following forms:\\n  * user-{{userId}}\\n  * user-{{email}} (such as \\\"user-liz@example.com\\\")\\n  * group-{{groupId}}\\n  * group-{{email}} (such as \\\"group-example@googlegroups.com\\\")\\n  * domain-{{domain}} (such as \\\"domain-example.com\\\")\\n  * project-team-{{projectId}}\\n  * allUsers\\n  * allAuthenticatedUsers.\",\n     \"type\": \"string\"\n    },\n    \"object\": {\n     \"description\": \"The name of the object, if applied to an object.\",\n     \"type\": \"string\"\n    },\n    \"role\": {\n     \"description\": \"The access permission for the entity. Possible values: [\\\"OWNER\\\", \\\"READER\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"bucketRef\",\n    \"entity\",\n    \"role\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Storage Default Object Access Control\",\n \"type\": \"object\"\n}",
-    "version": "storage.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bucketRef\": {\n     \"description\": \"Reference to the bucket.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `StorageBucket` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"entity\": {\n     \"description\": \"The entity holding the permission, in one of the following forms:\\n  * user-{{userId}}\\n  * user-{{email}} (such as \\\"user-liz@example.com\\\")\\n  * group-{{groupId}}\\n  * group-{{email}} (such as \\\"group-example@googlegroups.com\\\")\\n  * domain-{{domain}} (such as \\\"domain-example.com\\\")\\n  * project-team-{{projectId}}\\n  * allUsers\\n  * allAuthenticatedUsers.\",\n     \"type\": \"string\"\n    },\n    \"object\": {\n     \"description\": \"The name of the object, if applied to an object.\",\n     \"type\": \"string\"\n    },\n    \"role\": {\n     \"description\": \"The access permission for the entity. Possible values: [\\\"OWNER\\\", \\\"READER\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"bucketRef\",\n    \"entity\",\n    \"role\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Storage Default Object Access Control\",\n \"type\": \"object\"\n}"
   }
 }

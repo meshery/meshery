@@ -18,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
@@ -322,4 +323,103 @@ func formatToTabs(data string) string {
 	s = re.ReplaceAllString(s, "\t")
 
 	return s
+}
+
+type MesheryListCommamdTest struct {
+	Name             string
+	Args             []string
+	URL              string
+	Fixture          string
+	ExpectedResponse string
+	ExpectError      bool
+}
+
+func GetToken(t *testing.T) string {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	return filepath.Join(currDir, "fixtures", "token.golden")
+}
+
+func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommamdTest, commandDir string, commadName string) {
+	// setup current context
+	SetupContextEnv(t)
+
+	//initialize mock server for handling requests
+	StartMockery(t)
+
+	// create a test helper
+	testContext := NewTestHelper(t)
+
+	fixturesDir := filepath.Join(commandDir, "fixtures")
+
+	// run tests
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+
+			TokenFlag = GetToken(t)
+
+			httpmock.RegisterResponder("GET", testContext.BaseURL+tt.URL,
+				httpmock.NewStringResponder(200, apiResponse))
+
+			testdataDir := filepath.Join(commandDir, "testdata")
+			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
+			var buf bytes.Buffer
+
+			rescueStdout := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			_ = SetupMeshkitLoggerTesting(t, false)
+
+			cmd.SetArgs(tt.Args)
+			cmd.SetOut(rescueStdout)
+			err := cmd.Execute()
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
+					if *updateGoldenFile {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Fatal(err)
+			}
+
+			w.Close()
+
+			_, errCopy := io.Copy(&buf, r)
+
+			if errCopy != nil {
+				t.Fatal(errCopy)
+			}
+
+			os.Stdout = rescueStdout
+
+			actualResponse := buf.String()
+
+			if *updateGoldenFile {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
+
+			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
+			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
+
+			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+			cmd.ResetFlags()
+		})
+		t.Logf("List %s test", commadName)
+	}
+
+	StopMockery(t)
+
 }

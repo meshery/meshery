@@ -64,7 +64,7 @@ const MyDesignsWidget = (props) => {
           <DesignIcon
             {...props.iconsProps}
             fill={theme.palette.icon.default}
-            primaryFill={theme.palette.background.brand.default}
+            primaryFill={theme.palette.icon.default}
             secondaryFill={theme.palette.icon.default}
           />
         }

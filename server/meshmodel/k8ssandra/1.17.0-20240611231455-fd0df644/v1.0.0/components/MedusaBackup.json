@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "App Definition and Development"
     },
     "subCategory": "Database",
@@ -46,14 +47,15 @@
     "model": {
       "version": "1.17.0-20240611231455-fd0df644"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "medusa.k8ssandra.io/v1alpha1",
     "kind": "MedusaBackup",
-    "schema": "{\n \"description\": \"MedusaBackup is the Schema for the medusabackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaBackupSpec defines the desired state of MedusaBackup\",\n   \"properties\": {\n    \"backupType\": {\n     \"default\": \"differential\",\n     \"description\": \"The type of the backup: \\\"full\\\" or \\\"differential\\\"\",\n     \"enum\": [\n      \"differential\",\n      \"full\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"The name of the CassandraDatacenter to back up\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Backup\",\n \"type\": \"object\"\n}",
-    "version": "medusa.k8ssandra.io/v1alpha1"
+    "schema": "{\n \"description\": \"MedusaBackup is the Schema for the medusabackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaBackupSpec defines the desired state of MedusaBackup\",\n   \"properties\": {\n    \"backupType\": {\n     \"default\": \"differential\",\n     \"description\": \"The type of the backup: \\\"full\\\" or \\\"differential\\\"\",\n     \"enum\": [\n      \"differential\",\n      \"full\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"The name of the CassandraDatacenter to back up\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Backup\",\n \"type\": \"object\"\n}"
   }
 }

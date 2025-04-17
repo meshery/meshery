@@ -12,11 +12,12 @@ subcommand: view
 
 # mesheryctl environment view
 
-view registered environmnents
+View registered environmnents
 
 ## Synopsis
 
-view a environments registered in Meshery Server
+View details of an environment registered in Meshery Server
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment view [flags]
@@ -29,7 +30,7 @@ mesheryctl environment view [flags]
 View details of a specific environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view --orgID [orgId]
+mesheryctl environment view --orgID [orgID]
 
 </div>
 </pre> 
@@ -39,6 +40,7 @@ mesheryctl environment view --orgID [orgId]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for view
+      --orgID string           Organization ID
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
   -s, --save                   (optional) save output as a JSON/YAML file
 

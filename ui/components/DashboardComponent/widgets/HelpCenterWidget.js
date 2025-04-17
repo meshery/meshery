@@ -46,7 +46,7 @@ const HelpCenterWidget = (props) => {
           <DocumentIcon
             {...props.iconsProps}
             fill={theme.palette.icon.default}
-            secondaryFill={theme.palette.background.brand.default}
+            secondaryFill={theme.palette.icon.disabled}
             {...iconMedium}
           />
         }

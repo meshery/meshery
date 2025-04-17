@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +45,17 @@
     "model": {
       "version": "0.10.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "core.kubefed.io/v1beta1",
     "kind": "KubeFedConfig",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeFedConfigSpec defines the desired state of KubeFedConfig\",\n   \"properties\": {\n    \"clusterHealthCheck\": {\n     \"properties\": {\n      \"failureThreshold\": {\n       \"description\": \"Minimum consecutive failures for the cluster health to be considered failed after having succeeded.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"period\": {\n       \"description\": \"How often to monitor the cluster health.\",\n       \"type\": \"string\"\n      },\n      \"successThreshold\": {\n       \"description\": \"Minimum consecutive successes for the cluster health to be considered successful after having failed.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"timeout\": {\n       \"description\": \"Duration after which the cluster health check times out.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"controllerDuration\": {\n     \"properties\": {\n      \"availableDelay\": {\n       \"description\": \"Time to wait before reconciling on a healthy cluster.\",\n       \"type\": \"string\"\n      },\n      \"cacheSyncTimeout\": {\n       \"description\": \"Time to wait for all caches to sync before exit.\",\n       \"type\": \"string\"\n      },\n      \"unavailableDelay\": {\n       \"description\": \"Time to wait before giving up on an unhealthy cluster.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"featureGates\": {\n     \"items\": {\n      \"properties\": {\n       \"configuration\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"configuration\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"leaderElect\": {\n     \"properties\": {\n      \"leaseDuration\": {\n       \"description\": \"The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped before it is replaced by another candidate. This is only applicable if leader election is enabled.\",\n       \"type\": \"string\"\n      },\n      \"renewDeadline\": {\n       \"description\": \"The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less than or equal to the lease duration. This is only applicable if leader election is enabled.\",\n       \"type\": \"string\"\n      },\n      \"resourceLock\": {\n       \"description\": \"The type of resource object that is used for locking during leader election. Supported options are `configmaps` (default) and `endpoints`.\",\n       \"type\": \"string\"\n      },\n      \"retryPeriod\": {\n       \"description\": \"The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable if leader election is enabled.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"scope\": {\n     \"description\": \"The scope of the KubeFed control plane should be either `Namespaced` or `Cluster`. `Namespaced` indicates that the KubeFed namespace will be the only target of the control plane.\",\n     \"type\": \"string\"\n    },\n    \"statusController\": {\n     \"properties\": {\n      \"maxConcurrentReconciles\": {\n       \"description\": \"The maximum number of concurrent Reconciles of status controller which can be run. Defaults to 1.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncController\": {\n     \"properties\": {\n      \"adoptResources\": {\n       \"description\": \"Whether to adopt pre-existing resources in member clusters. Defaults to \\\"Enabled\\\".\",\n       \"type\": \"string\"\n      },\n      \"maxConcurrentReconciles\": {\n       \"description\": \"The maximum number of concurrent Reconciles of sync controller which can be run. Defaults to 1.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"scope\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kube Fed Config\",\n \"type\": \"object\"\n}",
-    "version": "core.kubefed.io/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeFedConfigSpec defines the desired state of KubeFedConfig\",\n   \"properties\": {\n    \"clusterHealthCheck\": {\n     \"properties\": {\n      \"failureThreshold\": {\n       \"description\": \"Minimum consecutive failures for the cluster health to be considered failed after having succeeded.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"period\": {\n       \"description\": \"How often to monitor the cluster health.\",\n       \"type\": \"string\"\n      },\n      \"successThreshold\": {\n       \"description\": \"Minimum consecutive successes for the cluster health to be considered successful after having failed.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"timeout\": {\n       \"description\": \"Duration after which the cluster health check times out.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"controllerDuration\": {\n     \"properties\": {\n      \"availableDelay\": {\n       \"description\": \"Time to wait before reconciling on a healthy cluster.\",\n       \"type\": \"string\"\n      },\n      \"cacheSyncTimeout\": {\n       \"description\": \"Time to wait for all caches to sync before exit.\",\n       \"type\": \"string\"\n      },\n      \"unavailableDelay\": {\n       \"description\": \"Time to wait before giving up on an unhealthy cluster.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"featureGates\": {\n     \"items\": {\n      \"properties\": {\n       \"configuration\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"configuration\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"leaderElect\": {\n     \"properties\": {\n      \"leaseDuration\": {\n       \"description\": \"The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped before it is replaced by another candidate. This is only applicable if leader election is enabled.\",\n       \"type\": \"string\"\n      },\n      \"renewDeadline\": {\n       \"description\": \"The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less than or equal to the lease duration. This is only applicable if leader election is enabled.\",\n       \"type\": \"string\"\n      },\n      \"resourceLock\": {\n       \"description\": \"The type of resource object that is used for locking during leader election. Supported options are `configmaps` (default) and `endpoints`.\",\n       \"type\": \"string\"\n      },\n      \"retryPeriod\": {\n       \"description\": \"The duration the clients should wait between attempting acquisition and renewal of a leadership. This is only applicable if leader election is enabled.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"scope\": {\n     \"description\": \"The scope of the KubeFed control plane should be either `Namespaced` or `Cluster`. `Namespaced` indicates that the KubeFed namespace will be the only target of the control plane.\",\n     \"type\": \"string\"\n    },\n    \"statusController\": {\n     \"properties\": {\n      \"maxConcurrentReconciles\": {\n       \"description\": \"The maximum number of concurrent Reconciles of status controller which can be run. Defaults to 1.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncController\": {\n     \"properties\": {\n      \"adoptResources\": {\n       \"description\": \"Whether to adopt pre-existing resources in member clusters. Defaults to \\\"Enabled\\\".\",\n       \"type\": \"string\"\n      },\n      \"maxConcurrentReconciles\": {\n       \"description\": \"The maximum number of concurrent Reconciles of sync controller which can be run. Defaults to 1.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"scope\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Kube Fed Config\",\n \"type\": \"object\"\n}"
   }
 }

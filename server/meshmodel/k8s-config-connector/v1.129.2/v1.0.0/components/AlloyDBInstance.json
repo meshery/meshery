@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.129.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n    \u003cg stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n        \u003cpath d=\"M12.3008862,4.00003179 L18.9908678,7.90329279 L19,11.4442164 L14.973309,9.0680926 L14.973309,10.8562526 L16.9806355,12.0276231 L16.9918433,15.1064843 L14.973309,13.9136004 L14.973309,18.415105 L12.3008862,20 L12.3008862,4.00003179 Z M11.6991138,4 L11.6991138,19.9999682 L9.02669102,18.4150732 L9.02669102,9.06816678 L5,11.4441846 L5.00913223,7.903261 L11.6991138,4 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M12.3009 4.00003L18.9909 7.90329L19 11.4442L14.9733 9.06809V10.8563L16.9806 12.0276L16.9918 15.1065L14.9733 13.9136V18.4151L12.3009 20V4.00003ZM11.6991 4V20L9.02669 18.4151V9.06817L5 11.4442L5.00913 7.90326L11.6991 4Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "alloydb.cnrm.cloud.google.com/v1alpha1",
     "kind": "AlloyDBInstance",
-    "schema": "{\n \"description\": \"AlloyDBInstance is the Schema for the AlloyDBInstance API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AlloyDBInstanceSpec defines the desired state of AlloyDBInstance\",\n   \"properties\": {\n    \"annotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Annotations to allow client tools to store small amount of arbitrary data. This is distinct from labels.\",\n     \"type\": \"object\"\n    },\n    \"availabilityType\": {\n     \"description\": \"Availability type of an Instance. If empty, defaults to REGIONAL for primary instances.\\n\\nFor read pools, availabilityType is always UNSPECIFIED. Instances in the\\nread pools are evenly distributed across available zones within the region\\n(i.e. read pools with more than one node will have a node in at least two zones).\\nPossible values: [\\\"AVAILABILITY_TYPE_UNSPECIFIED\\\", \\\"ZONAL\\\", \\\"REGIONAL\\\"].\",\n     \"type\": \"string\"\n    },\n    \"clusterRef\": {\n     \"description\": \"The AlloyDBInstance cluster that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"If provided must be in the format `projects/[projectId]/locations/[location]/clusters/[clusterId]`.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `metadata.name` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `metadata.namespace` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"databaseFlags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Database flags. Set at instance level. * They are copied from primary instance on read instance creation. * Read instances can set new or override existing flags that are relevant for reads, e.g. for enabling columnar cache on a read instance. Flags set on read instance may or may not be present on primary.\",\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"User-settable and human-readable display name for the Instance.\",\n     \"type\": \"string\"\n    },\n    \"gceZone\": {\n     \"description\": \"The Compute Engine zone that the instance should serve from, per https://cloud.google.com/compute/docs/regions-zones This can ONLY be specified for ZONAL instances. If present for a REGIONAL instance, an error will be thrown. If this is absent for a ZONAL instance, instance is created in a random zone with available capacity.\",\n     \"type\": \"string\"\n    },\n    \"instanceType\": {\n     \"description\": \"Not recommended. We recommend that you use `instanceTypeRef` instead. The type of the instance. Possible values: [PRIMARY, READ_POOL, SECONDARY]\",\n     \"type\": \"string\"\n    },\n    \"instanceTypeRef\": {\n     \"description\": \"The type of instance.\\nPossible values: [\\\"PRIMARY\\\", \\\"READ_POOL\\\", \\\"SECONDARY\\\"]\\n\\nFor PRIMARY and SECONDARY instances, set the value to refer to the name of the associated cluster.\\nThis is recommended because the instance type of primary and secondary instances is tied to the cluster type of the associated cluster.\\nIf the secondary cluster is promoted to primary cluster, then the associated secondary instance also becomes primary instance.\\nExample:\\ninstanceTypeRef:\\n  name: clusterName\\nFor instances of type READ_POOL, set the value using external keyword.\\nExample:\\ninstanceTypeRef:\\n  external: READ_POOL\\nIf the instance type is SECONDARY, the delete instance operation does not delete the secondary instance but abandons it instead.\\nUse deletionPolicy = \\\"FORCE\\\" in the associated secondary cluster and delete the cluster forcefully to delete the secondary cluster as well its associated secondary instance.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The type of instance. Possible values: [\\\"PRIMARY\\\", \\\"READ_POOL\\\", \\\"SECONDARY\\\"]\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `metadata.name` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `metadata.namespace` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"machineConfig\": {\n     \"description\": \"Configurations for the machines that host the underlying database engine.\",\n     \"properties\": {\n      \"cpuCount\": {\n       \"description\": \"The number of CPU's in the VM instance.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"networkConfig\": {\n     \"description\": \"Instance level network configuration.\",\n     \"properties\": {\n      \"authorizedExternalNetworks\": {\n       \"description\": \"Optional. A list of external network authorized to access this instance. This field is only allowed to be set when 'enablePublicIp' is set to true.\",\n       \"items\": {\n        \"properties\": {\n         \"cidrRange\": {\n          \"description\": \"CIDR range for one authorzied network of the instance.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"enableOutboundPublicIp\": {\n       \"description\": \"Optional. Enabling an outbound public IP address to support a database server sending requests out into the internet.\",\n       \"type\": \"boolean\"\n      },\n      \"enablePublicIp\": {\n       \"description\": \"Optional. Enabling public ip for the instance. If a user wishes to disable this, please also clear the list of the authorized external networks set on the same instance.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"readPoolConfig\": {\n     \"description\": \"Read pool specific config. If the instance type is READ_POOL, this configuration must be provided.\",\n     \"properties\": {\n      \"nodeCount\": {\n       \"description\": \"Read capacity, i.e. number of nodes in a read pool instance.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Optional. The instanceId of the resource. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Alloy DB Instance\",\n \"type\": \"object\"\n}",
-    "version": "alloydb.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"description\": \"AlloyDBInstance is the Schema for the AlloyDBInstance API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AlloyDBInstanceSpec defines the desired state of AlloyDBInstance\",\n   \"properties\": {\n    \"annotations\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Annotations to allow client tools to store small amount of arbitrary data. This is distinct from labels.\",\n     \"type\": \"object\"\n    },\n    \"availabilityType\": {\n     \"description\": \"Availability type of an Instance. If empty, defaults to REGIONAL for primary instances.\\n\\nFor read pools, availabilityType is always UNSPECIFIED. Instances in the\\nread pools are evenly distributed across available zones within the region\\n(i.e. read pools with more than one node will have a node in at least two zones).\\nPossible values: [\\\"AVAILABILITY_TYPE_UNSPECIFIED\\\", \\\"ZONAL\\\", \\\"REGIONAL\\\"].\",\n     \"type\": \"string\"\n    },\n    \"clusterRef\": {\n     \"description\": \"The AlloyDBInstance cluster that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"If provided must be in the format `projects/[projectId]/locations/[location]/clusters/[clusterId]`.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `metadata.name` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `metadata.namespace` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"databaseFlags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Database flags. Set at instance level. * They are copied from primary instance on read instance creation. * Read instances can set new or override existing flags that are relevant for reads, e.g. for enabling columnar cache on a read instance. Flags set on read instance may or may not be present on primary.\",\n     \"type\": \"object\"\n    },\n    \"displayName\": {\n     \"description\": \"User-settable and human-readable display name for the Instance.\",\n     \"type\": \"string\"\n    },\n    \"gceZone\": {\n     \"description\": \"The Compute Engine zone that the instance should serve from, per https://cloud.google.com/compute/docs/regions-zones This can ONLY be specified for ZONAL instances. If present for a REGIONAL instance, an error will be thrown. If this is absent for a ZONAL instance, instance is created in a random zone with available capacity.\",\n     \"type\": \"string\"\n    },\n    \"instanceType\": {\n     \"description\": \"Not recommended. We recommend that you use `instanceTypeRef` instead. The type of the instance. Possible values: [PRIMARY, READ_POOL, SECONDARY]\",\n     \"type\": \"string\"\n    },\n    \"instanceTypeRef\": {\n     \"description\": \"The type of instance.\\nPossible values: [\\\"PRIMARY\\\", \\\"READ_POOL\\\", \\\"SECONDARY\\\"]\\n\\nFor PRIMARY and SECONDARY instances, set the value to refer to the name of the associated cluster.\\nThis is recommended because the instance type of primary and secondary instances is tied to the cluster type of the associated cluster.\\nIf the secondary cluster is promoted to primary cluster, then the associated secondary instance also becomes primary instance.\\nExample:\\ninstanceTypeRef:\\n  name: clusterName\\nFor instances of type READ_POOL, set the value using external keyword.\\nExample:\\ninstanceTypeRef:\\n  external: READ_POOL\\nIf the instance type is SECONDARY, the delete instance operation does not delete the secondary instance but abandons it instead.\\nUse deletionPolicy = \\\"FORCE\\\" in the associated secondary cluster and delete the cluster forcefully to delete the secondary cluster as well its associated secondary instance.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The type of instance. Possible values: [\\\"PRIMARY\\\", \\\"READ_POOL\\\", \\\"SECONDARY\\\"]\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The `metadata.name` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The `metadata.namespace` field of a `AlloyDBCluster` resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"machineConfig\": {\n     \"description\": \"Configurations for the machines that host the underlying database engine.\",\n     \"properties\": {\n      \"cpuCount\": {\n       \"description\": \"The number of CPU's in the VM instance.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"networkConfig\": {\n     \"description\": \"Instance level network configuration.\",\n     \"properties\": {\n      \"authorizedExternalNetworks\": {\n       \"description\": \"Optional. A list of external network authorized to access this instance. This field is only allowed to be set when 'enablePublicIp' is set to true.\",\n       \"items\": {\n        \"properties\": {\n         \"cidrRange\": {\n          \"description\": \"CIDR range for one authorzied network of the instance.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"enableOutboundPublicIp\": {\n       \"description\": \"Optional. Enabling an outbound public IP address to support a database server sending requests out into the internet.\",\n       \"type\": \"boolean\"\n      },\n      \"enablePublicIp\": {\n       \"description\": \"Optional. Enabling public ip for the instance. If a user wishes to disable this, please also clear the list of the authorized external networks set on the same instance.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"readPoolConfig\": {\n     \"description\": \"Read pool specific config. If the instance type is READ_POOL, this configuration must be provided.\",\n     \"properties\": {\n      \"nodeCount\": {\n       \"description\": \"Read capacity, i.e. number of nodes in a read pool instance.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Optional. The instanceId of the resource. If not given, the metadata.name will be used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"clusterRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Alloy DB Instance\",\n \"type\": \"object\"\n}"
   }
 }

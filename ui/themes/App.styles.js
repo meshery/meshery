@@ -102,6 +102,13 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
   };
 });
 
+const StyledCircularProgress = styled(CircularProgress)(({ theme }) => ({
+  color: theme.palette.text.info,
+  marginRight: '0.75rem',
+  height: '1.5rem !important',
+  width: '1.5rem !important',
+}));
+
 export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
   const { variant, message, action, key, theme } = props;
 
@@ -118,7 +125,7 @@ export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
       case 'info':
         return <Info {...iconProps} />;
       case 'loading':
-        return <CircularProgress size={24} style={{ marginRight: '0.75rem' }} />;
+        return <StyledCircularProgress />;
       default:
         return null;
     }

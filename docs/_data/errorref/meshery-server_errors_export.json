@@ -323,18 +323,18 @@
         "code": "1036",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "error getting k8s file",
-        "probable_cause": "The kubeconfig file does not exist in the location",
-        "suggested_remediation": "Make sure to upload the correct kubeconfig file"
+        "short_description": "error getting kubeconfig file",
+        "probable_cause": "The kubeconfig file does not exist in the location.",
+        "suggested_remediation": "Make sure to upload the correct kubeconfig file."
       },
       "1037": {
         "name": "ErrReadConfigCode",
         "code": "1037",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "error reading config",
-        "probable_cause": "The kubeconfig file is empty or not valid",
-        "suggested_remediation": "Make sure to upload the correct kubeconfig file"
+        "short_description": "error reading config.",
+        "probable_cause": "The kubeconfig file is empty or not valid.",
+        "suggested_remediation": "Make sure to upload the correct kubeconfig file."
       },
       "1038": {
         "name": "ErrLoadConfigCode",
@@ -350,18 +350,18 @@
         "code": "1039",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to open file: ",
-        "probable_cause": "The file does not exist in the location",
-        "suggested_remediation": "Make sure to upload the correct file"
+        "short_description": "Unable to open file: ",
+        "probable_cause": "The file does not exist in the location.",
+        "suggested_remediation": "Make sure to upload the correct file."
       },
       "1040": {
         "name": "ErrKubeVersionCode",
         "code": "1040",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to get Kubernetes version",
-        "probable_cause": "Kubernetes might not be reachable from Meshery",
-        "suggested_remediation": "Make sure Meshery has connectivity to Kubernetes"
+        "short_description": "Unable to get Kubernetes version.",
+        "probable_cause": "Kubernetes might not be reachable from Meshery.",
+        "suggested_remediation": "Make sure Meshery has connectivity to Kubernetes."
       },
       "1041": {
         "name": "ErrAddAdapterCode",
@@ -379,7 +379,7 @@
         "long_description": "",
         "short_description": "Unable to retrieve the requested data",
         "probable_cause": "Adapter operation invalid",
-        "suggested_remediation": "Make sure adapter is reachable and running"
+        "suggested_remediation": "Make sure adapter is running and reachable by Meshery Server."
       },
       "1043": {
         "name": "ErrValidAdapterCode",
@@ -422,9 +422,9 @@
         "code": "1047",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error getting operations for the mesh\nError getting component name",
-        "probable_cause": "unable to retrieve the requested data",
-        "suggested_remediation": "Make sure adapter is reachable and running"
+        "short_description": "Error getting operations for the adapter.\nError getting component name.",
+        "probable_cause": "Unable to retrieve the requested data.",
+        "suggested_remediation": "Make sure adapter is reachable and running."
       },
       "1048": {
         "name": "ErrApplicationFailureCode",
@@ -503,9 +503,9 @@
         "code": "1056",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Failed to Load Extensions from Package",
-        "probable_cause": "Plugin is not available in the location\nplugin does not match with Meshery version",
-        "suggested_remediation": "Make sure the plugin is compatible with Meshery server"
+        "short_description": "Failed to Load Extensions from Package.",
+        "probable_cause": "Plugin is not available in the location.\nPlugin does not match with Meshery version.",
+        "suggested_remediation": "Make sure the plugin is compatible with Meshery server."
       },
       "1057": {
         "name": "ErrConversionCode",
@@ -531,51 +531,51 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Load test error: ",
-        "probable_cause": "Load test endpoint could be not reachable",
-        "suggested_remediation": "Make sure load test endpoint is reachable"
+        "probable_cause": "Load test endpoint might be not reachable.",
+        "suggested_remediation": "Make sure load test endpoint is reachable by Meshery Server."
       },
       "1060": {
         "name": "ErrFetchKubernetesCode",
         "code": "1060",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to ping Kubernetes\nunable to scan",
-        "probable_cause": "Kubernetes might not be reachable from Meshery",
-        "suggested_remediation": "Make sure Meshery has connectivity to Kubernetes"
+        "short_description": "Unable to ping Kubernetes.\nUnable to run a discovery scan for Kubernetes cluster.",
+        "probable_cause": "Kubernetes might not be reachable from Meshery.",
+        "suggested_remediation": "Make sure Meshery has connectivity to Kubernetes."
       },
       "1061": {
         "name": "ErrPanicRecoveryCode",
         "code": "1061",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Recovered from panic",
-        "probable_cause": "Meshery crashes",
-        "suggested_remediation": "Restart Meshery"
+        "short_description": "Recovered from panic.",
+        "probable_cause": "Meshery crashed.",
+        "suggested_remediation": "Restart Meshery."
       },
       "1062": {
         "name": "ErrBlankNameCode",
         "code": "1062",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error: name field is blank",
-        "probable_cause": "Load test name empty or not valid",
-        "suggested_remediation": "Provide a name for the test"
+        "short_description": "Error: name field is blank.",
+        "probable_cause": "Load test name empty or not valid.",
+        "suggested_remediation": "Provide a name for the test."
       },
       "1063": {
         "name": "ErrInvalidLTURLCode",
         "code": "1063",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "invalid loadtest url: ",
-        "probable_cause": "URL for load test could be invalid",
-        "suggested_remediation": "please refer to: https://docs.meshery.io/tasks/performance-management"
+        "short_description": "invalid load test url: ",
+        "probable_cause": "URL for load test could be invalid.",
+        "suggested_remediation": "Please refer to: https://docs.meshery.io/tasks/performance-management"
       },
       "1064": {
         "name": "ErrVersionCompareCode",
         "code": "1064",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "failed to compare latest and current version of Meshery",
+        "short_description": "failed to compare latest and current version of Meshery.",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -584,9 +584,9 @@
         "code": "1065",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "unable to save session",
-        "probable_cause": "User session could be expired",
-        "suggested_remediation": "Re-initiate login"
+        "short_description": "unable to save session.",
+        "probable_cause": "User session could be expired.",
+        "suggested_remediation": "Re-initiate login."
       },
       "1066": {
         "name": "ErrKubeClientCode",
@@ -685,7 +685,7 @@
         "long_description": "",
         "short_description": "Error changing context",
         "probable_cause": "Context Name might be invalid or not present in the uploaded kubeconfig",
-        "suggested_remediation": "Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"
+        "suggested_remediation": "Check the context name, if the context name is correct and is present in the kubeconfig, then try uploading the kubeconfig again."
       },
       "1077": {
         "name": "ErrSavingUserPreferenceCode",
@@ -746,7 +746,7 @@
         "code": "1083",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to fetch filter",
+        "short_description": "Error failed to fetch filter.",
         "probable_cause": "Failed to retrieve the list of all the Filters",
         "suggested_remediation": ""
       },
@@ -755,7 +755,7 @@
         "code": "1084",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to delete filter",
+        "short_description": "Error failed to delete filter.",
         "probable_cause": "Failed to delete Filter with the given ID",
         "suggested_remediation": "Check if the Filter ID is correct"
       },
@@ -764,18 +764,18 @@
         "code": "1085",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to save design",
+        "short_description": "Error failed to save design.",
         "probable_cause": "Cannot save the design due to an invalid path or URL",
-        "suggested_remediation": "Confirm the correct path / URL to the design"
+        "suggested_remediation": "Verify that you have an active user session. Try logging and in again.\nConfirm that you have sufficient permissions to save the design.\nTry reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."
       },
       "1086": {
         "name": "ErrSaveApplicationCode",
         "code": "1086",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error failed to save application",
-        "probable_cause": "Cannot save the Application due to wrong path or URL",
-        "suggested_remediation": "Check if the given path or URL of the Application is correct"
+        "short_description": "Error failed to save application.",
+        "probable_cause": "Cannot save the Application due to wrong path or URL.",
+        "suggested_remediation": "Check if the given path or URL of the Application is correct."
       },
       "1087": {
         "name": "ErrGetPatternCode",
@@ -873,8 +873,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Invalid Kube Context",
-        "probable_cause": "Meshery handler failed to find a valid Kubernetes context for the deployment",
-        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"
+        "probable_cause": "Meshery handler failed to find a valid Kubernetes context for the deployment.",
+        "suggested_remediation": "Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server."
       },
       "1098": {
         "name": "ErrValidateCode",
@@ -980,7 +980,7 @@
         "code": "1109",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "failed to get latest version of Meshery",
+        "short_description": "failed to get latest version of Meshery.",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -1125,7 +1125,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "failed to \nthe design content",
-        "probable_cause": "Remote provider might be not reachable\nRemote provider doesn't support this capability",
+        "probable_cause": "Remote provider might be not reachable.\nRemote provider doesn't support this capability.",
         "suggested_remediation": "Ensure you have required permissions or retry after sometime."
       },
       "1126": {

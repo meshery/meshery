@@ -397,7 +397,6 @@ export const encodeDesignFile = (designJson) => {
  * @param {object} design - The design file of format design schema v1beta1
  */
 export const processDesign = (design) => {
-  console.log('Design to process', design);
   if (design.schemaVersion != 'designs.meshery.io/v1beta1') {
     console.error('Invalid design schema version', design);
     return {
@@ -483,7 +482,6 @@ export const useIsOperatorEnabled = () => {
 
 export const openViewScopedToDesignInOperator = (designName, designId, router) => {
   if (isExtensionOpen()) {
-    console.log('extension is open publsing');
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
       data: {

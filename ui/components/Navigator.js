@@ -8,7 +8,6 @@ import HelpIcon from '@mui/icons-material/Help';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
-import FilterIcon from '../public/static/img/drawer-icons/filter_svg';
 import PatternIcon from '../public/static/img/drawer-icons/pattern_svg';
 import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_svg';
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
@@ -51,7 +50,6 @@ import {
   CONFIGURATION,
   DASHBOARD,
   CATALOG,
-  FILTER,
   LIFECYCLE,
   SERVICE_MESH,
   PERFORMANCE,
@@ -202,19 +200,19 @@ const getNavigatorComponents = (
           subject: keys.VIEW_CATALOG.subject,
         },
       },
-      {
-        id: FILTER,
-        icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
-        href: '/configuration/filters',
-        title: 'Filters',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
-        link: true,
-        isBeta: true,
-        permission: {
-          action: keys.VIEW_FILTERS.action,
-          subject: keys.VIEW_FILTERS.subject,
-        },
-      },
+      // {
+      //   id: FILTER,
+      //   icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
+      //   href: '/configuration/filters',
+      //   title: 'Filters',
+      //   show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
+      //   link: true,
+      //   isBeta: true,
+      //   permission: {
+      //     action: keys.VIEW_FILTERS.action,
+      //     subject: keys.VIEW_FILTERS.subject,
+      //   },
+      // },
       {
         id: DESIGN,
         icon: <PatternIcon style={{ ...drawerIconsStyle }} />,
@@ -824,6 +822,9 @@ const Navigator_ = (props) => {
   };
 
   const linkContent = (iconc, titlec, hrefc, linkc, drawerCollapsed) => {
+    const updatedIcon = React.cloneElement(iconc, {
+      fill: state.path === hrefc ? theme.palette.icon.brand : theme.palette.common.white,
+    });
     let linkContent = (
       <>
         <LinkContainer>
@@ -834,7 +835,7 @@ const Navigator_ = (props) => {
             disableHoverListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
           >
-            <MainListIcon>{iconc}</MainListIcon>
+            <MainListIcon>{updatedIcon}</MainListIcon>
           </CustomTooltip>
           <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
         </LinkContainer>

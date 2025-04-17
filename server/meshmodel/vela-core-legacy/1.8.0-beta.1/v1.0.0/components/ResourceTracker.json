@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "App Definition and Development"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://kubevelacharts.oss-cn-hangzhou.aliyuncs.com/core/vela-core-legacy-1.9.0-beta.1.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "1.8.0-beta.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "core.oam.dev/v1beta1",
     "kind": "ResourceTracker",
-    "schema": "{\n \"description\": \"An ResourceTracker represents a tracker for track cross namespace resources\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceTrackerSpec define the spec of resourceTracker\",\n   \"properties\": {\n    \"applicationGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"compression\": {\n     \"description\": \"ResourceTrackerCompression represents the compressed components in ResourceTracker.\",\n     \"properties\": {\n      \"data\": {\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type the compression type\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"managedResources\": {\n     \"items\": {\n      \"description\": \"ManagedResource define the resource to be managed by ResourceTracker\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"API version of the referent.\",\n        \"type\": \"string\"\n       },\n       \"cluster\": {\n        \"type\": \"string\"\n       },\n       \"component\": {\n        \"type\": \"string\"\n       },\n       \"creator\": {\n        \"type\": \"string\"\n       },\n       \"deleted\": {\n        \"description\": \"Deleted marks the resource to be deleted\",\n        \"type\": \"boolean\"\n       },\n       \"env\": {\n        \"type\": \"string\"\n       },\n       \"fieldPath\": {\n        \"description\": \"If referring to a piece of an object instead of an entire object, this string should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2]. For example, if the object reference is to a container within a pod, this would take on a value like: \\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered the event) or if no container name is specified \\\"spec.containers[2]\\\" (container with index 2 in this pod). This syntax is chosen only to have some well-defined way of referencing a part of an object. TODO: this design is not final and this field is subject to change in the future.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       },\n       \"raw\": {\n        \"type\": \"object\"\n       },\n       \"resourceVersion\": {\n        \"description\": \"Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n        \"type\": \"string\"\n       },\n       \"skipGC\": {\n        \"description\": \"SkipGC marks the resource to skip gc\",\n        \"type\": \"boolean\"\n       },\n       \"trait\": {\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"description\": \"UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"type\": {\n     \"description\": \"ResourceTrackerType defines the type of resourceTracker\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applicationGeneration\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Tracker\",\n \"type\": \"object\"\n}",
-    "version": "core.oam.dev/v1beta1"
+    "schema": "{\n \"description\": \"An ResourceTracker represents a tracker for track cross namespace resources\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceTrackerSpec define the spec of resourceTracker\",\n   \"properties\": {\n    \"applicationGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"compression\": {\n     \"description\": \"ResourceTrackerCompression represents the compressed components in ResourceTracker.\",\n     \"properties\": {\n      \"data\": {\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type the compression type\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"managedResources\": {\n     \"items\": {\n      \"description\": \"ManagedResource define the resource to be managed by ResourceTracker\",\n      \"properties\": {\n       \"apiVersion\": {\n        \"description\": \"API version of the referent.\",\n        \"type\": \"string\"\n       },\n       \"cluster\": {\n        \"type\": \"string\"\n       },\n       \"component\": {\n        \"type\": \"string\"\n       },\n       \"creator\": {\n        \"type\": \"string\"\n       },\n       \"deleted\": {\n        \"description\": \"Deleted marks the resource to be deleted\",\n        \"type\": \"boolean\"\n       },\n       \"env\": {\n        \"type\": \"string\"\n       },\n       \"fieldPath\": {\n        \"description\": \"If referring to a piece of an object instead of an entire object, this string should contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2]. For example, if the object reference is to a container within a pod, this would take on a value like: \\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered the event) or if no container name is specified \\\"spec.containers[2]\\\" (container with index 2 in this pod). This syntax is chosen only to have some well-defined way of referencing a part of an object. TODO: this design is not final and this field is subject to change in the future.\",\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       },\n       \"raw\": {\n        \"type\": \"object\"\n       },\n       \"resourceVersion\": {\n        \"description\": \"Specific resourceVersion to which this reference is made, if any. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n        \"type\": \"string\"\n       },\n       \"skipGC\": {\n        \"description\": \"SkipGC marks the resource to skip gc\",\n        \"type\": \"boolean\"\n       },\n       \"trait\": {\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"description\": \"UID of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    },\n    \"type\": {\n     \"description\": \"ResourceTrackerType defines the type of resourceTracker\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applicationGeneration\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Tracker\",\n \"type\": \"object\"\n}"
   }
 }

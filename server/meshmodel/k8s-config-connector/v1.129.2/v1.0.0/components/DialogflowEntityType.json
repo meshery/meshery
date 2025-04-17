@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.129.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#4285f4;}.cls-2{fill:#669df6;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/dialogflow-enterprise\"\u003e\u003cg data-name=\"32px_Dialogflow-Favicon\"\u003e\u003cpath class=\"cls-1\" d=\"M12,12,4,8v6.76a.49.49,0,0,0,.19.39L8.83,17.9a.32.32,0,0,1,.17.29V21.7a.17.17,0,0,0,.26.14l10.51-6.69a.5.5,0,0,0,.23-.42V8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpath class=\"cls-2\" d=\"M12,10l8-4L12.12,2.06a.25.25,0,0,0-.24,0L4,6Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/dialogflow-enterprise\"\u003e\u003cg data-name=\"32px_Dialogflow-Favicon\"\u003e\u003cpath class=\"cls-1\" d=\"M12,12,4,8v6.76a.49.49,0,0,0,.19.39L8.83,17.9a.32.32,0,0,1,.17.29V21.7a.17.17,0,0,0,.26.14l10.51-6.69a.5.5,0,0,0,.23-.42V8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpath class=\"cls-2\" d=\"M12,10l8-4L12.12,2.06a.25.25,0,0,0-.24,0L4,6Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "dialogflow.cnrm.cloud.google.com/v1alpha1",
     "kind": "DialogflowEntityType",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"The name of this entity type to be displayed on the console.\",\n     \"type\": \"string\"\n    },\n    \"enableFuzzyExtraction\": {\n     \"description\": \"Enables fuzzy entity extraction during classification.\",\n     \"type\": \"boolean\"\n    },\n    \"entities\": {\n     \"description\": \"The collection of entity entries associated with the entity type.\",\n     \"items\": {\n      \"properties\": {\n       \"synonyms\": {\n        \"description\": \"A collection of value synonyms. For example, if the entity type is vegetable, and value is scallions, a synonym\\ncould be green onions.\\nFor KIND_LIST entity types:\\n* This collection must contain exactly one synonym equal to value.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"value\": {\n        \"description\": \"The primary value associated with this entity entry. For example, if the entity type is vegetable, the value\\ncould be scallions.\\nFor KIND_MAP entity types:\\n* A reference value to be used in place of synonyms.\\nFor KIND_LIST entity types:\\n* A string that can contain references to other entity types (with or without aliases).\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"synonyms\",\n       \"value\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"kind\": {\n     \"description\": \"Indicates the kind of entity type.\\n* KIND_MAP: Map entity types allow mapping of a group of synonyms to a reference value.\\n* KIND_LIST: List entity types contain a set of entries that do not map to reference values. However, list entity\\ntypes can contain references to other entity types (with or without aliases).\\n* KIND_REGEXP: Regexp entity types allow to specify regular expressions in entries values. Possible values: [\\\"KIND_MAP\\\", \\\"KIND_LIST\\\", \\\"KIND_REGEXP\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"kind\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Entity Type\",\n \"type\": \"object\"\n}",
-    "version": "dialogflow.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"The name of this entity type to be displayed on the console.\",\n     \"type\": \"string\"\n    },\n    \"enableFuzzyExtraction\": {\n     \"description\": \"Enables fuzzy entity extraction during classification.\",\n     \"type\": \"boolean\"\n    },\n    \"entities\": {\n     \"description\": \"The collection of entity entries associated with the entity type.\",\n     \"items\": {\n      \"properties\": {\n       \"synonyms\": {\n        \"description\": \"A collection of value synonyms. For example, if the entity type is vegetable, and value is scallions, a synonym\\ncould be green onions.\\nFor KIND_LIST entity types:\\n* This collection must contain exactly one synonym equal to value.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"value\": {\n        \"description\": \"The primary value associated with this entity entry. For example, if the entity type is vegetable, the value\\ncould be scallions.\\nFor KIND_MAP entity types:\\n* A reference value to be used in place of synonyms.\\nFor KIND_LIST entity types:\\n* A string that can contain references to other entity types (with or without aliases).\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"synonyms\",\n       \"value\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"kind\": {\n     \"description\": \"Indicates the kind of entity type.\\n* KIND_MAP: Map entity types allow mapping of a group of synonyms to a reference value.\\n* KIND_LIST: List entity types contain a set of entries that do not map to reference values. However, list entity\\ntypes can contain references to other entity types (with or without aliases).\\n* KIND_REGEXP: Regexp entity types allow to specify regular expressions in entries values. Possible values: [\\\"KIND_MAP\\\", \\\"KIND_LIST\\\", \\\"KIND_REGEXP\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"kind\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Entity Type\",\n \"type\": \"object\"\n}"
   }
 }

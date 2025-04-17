@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "isAnnotation": false,
       "source_uri": "https://github.com/truecharts/helm-staging/releases/download/spaceengineers-2.0.10/spaceengineers-2.0.10.tgz",
@@ -38,16 +40,17 @@
     "model": {
       "version": "2.0.10"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -59,7 +62,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -74,7 +76,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -89,7 +90,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -105,7 +105,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -121,7 +120,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -136,7 +134,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -151,7 +148,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -166,7 +162,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -176,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "postgresql.cnpg.io/v1",
     "kind": "ScheduledBackup",
-    "schema": "{\n \"description\": \"ScheduledBackup is the Schema for the scheduledbackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the desired behavior of the ScheduledBackup. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"backupOwnerReference\": {\n     \"default\": \"none\",\n     \"description\": \"Indicates which ownerReference should be put inside the created backup resources.\\u003cbr /\\u003e - none: no owner reference for created backup objects (same behavior as before the field was introduced)\\u003cbr /\\u003e - self: sets the Scheduled backup object as owner of the backup\\u003cbr /\\u003e - cluster: set the cluster as owner of the backup\\u003cbr /\\u003e\",\n     \"enum\": [\n      \"none\",\n      \"self\",\n      \"cluster\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cluster\": {\n     \"description\": \"The cluster to backup\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"immediate\": {\n     \"description\": \"If the first backup has to be immediately start after creation or not\",\n     \"type\": \"boolean\"\n    },\n    \"schedule\": {\n     \"description\": \"The schedule does not follow the same format used in Kubernetes CronJobs as it includes an additional seconds specifier, see https://pkg.go.dev/github.com/robfig/cron#hdr-CRON_Expression_Format\",\n     \"type\": \"string\"\n    },\n    \"suspend\": {\n     \"description\": \"If this backup is suspended or not\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"schedule\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Scheduled Backup\",\n \"type\": \"object\"\n}",
-    "version": "postgresql.cnpg.io/v1"
+    "schema": "{\n \"description\": \"ScheduledBackup is the Schema for the scheduledbackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Specification of the desired behavior of the ScheduledBackup. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\",\n   \"properties\": {\n    \"backupOwnerReference\": {\n     \"default\": \"none\",\n     \"description\": \"Indicates which ownerReference should be put inside the created backup resources.\\u003cbr /\\u003e - none: no owner reference for created backup objects (same behavior as before the field was introduced)\\u003cbr /\\u003e - self: sets the Scheduled backup object as owner of the backup\\u003cbr /\\u003e - cluster: set the cluster as owner of the backup\\u003cbr /\\u003e\",\n     \"enum\": [\n      \"none\",\n      \"self\",\n      \"cluster\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cluster\": {\n     \"description\": \"The cluster to backup\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"immediate\": {\n     \"description\": \"If the first backup has to be immediately start after creation or not\",\n     \"type\": \"boolean\"\n    },\n    \"schedule\": {\n     \"description\": \"The schedule does not follow the same format used in Kubernetes CronJobs as it includes an additional seconds specifier, see https://pkg.go.dev/github.com/robfig/cron#hdr-CRON_Expression_Format\",\n     \"type\": \"string\"\n    },\n    \"suspend\": {\n     \"description\": \"If this backup is suspended or not\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"schedule\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Scheduled Backup\",\n \"type\": \"object\"\n}"
   }
 }

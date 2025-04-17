@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "isAnnotation": false,
       "source_uri": "https://github.com/truecharts/helm-staging/releases/download/spaceengineers-2.0.10/spaceengineers-2.0.10.tgz",
@@ -38,16 +40,17 @@
     "model": {
       "version": "2.0.10"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -59,7 +62,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -74,7 +76,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -89,7 +90,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -105,7 +105,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -121,7 +120,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -136,7 +134,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -151,7 +148,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -166,7 +162,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -176,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "traefik.containo.us/v1alpha1",
     "kind": "TLSOption",
-    "schema": "{\n \"description\": \"TLSOption is the CRD implementation of a Traefik TLS Option, allowing to configure some parameters of the TLS connection. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#tls-options\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSOptionSpec defines the desired state of a TLSOption.\",\n   \"properties\": {\n    \"alpnProtocols\": {\n     \"description\": \"ALPNProtocols defines the list of supported application level protocols for the TLS handshake, in order of preference. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#alpn-protocols\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"cipherSuites\": {\n     \"description\": \"CipherSuites defines the list of supported cipher suites for TLS versions up to TLS 1.2. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#cipher-suites\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"clientAuth\": {\n     \"description\": \"ClientAuth defines the server's policy for TLS Client Authentication.\",\n     \"properties\": {\n      \"clientAuthType\": {\n       \"description\": \"ClientAuthType defines the client authentication type to apply.\",\n       \"enum\": [\n        \"NoClientCert\",\n        \"RequestClientCert\",\n        \"RequireAnyClientCert\",\n        \"VerifyClientCertIfGiven\",\n        \"RequireAndVerifyClientCert\"\n       ],\n       \"type\": \"string\"\n      },\n      \"secretNames\": {\n       \"description\": \"SecretNames defines the names of the referenced Kubernetes Secret storing certificate details.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"curvePreferences\": {\n     \"description\": \"CurvePreferences defines the preferred elliptic curves in a specific order. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#curve-preferences\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"maxVersion\": {\n     \"description\": \"MaxVersion defines the maximum TLS version that Traefik will accept. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13. Default: None.\",\n     \"type\": \"string\"\n    },\n    \"minVersion\": {\n     \"description\": \"MinVersion defines the minimum TLS version that Traefik will accept. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13. Default: VersionTLS10.\",\n     \"type\": \"string\"\n    },\n    \"preferServerCipherSuites\": {\n     \"description\": \"PreferServerCipherSuites defines whether the server chooses a cipher suite among his own instead of among the client's. It is enabled automatically when minVersion or maxVersion is set. Deprecated: https://github.com/golang/go/issues/45430\",\n     \"type\": \"boolean\"\n    },\n    \"sniStrict\": {\n     \"description\": \"SniStrict defines whether Traefik allows connections from clients connections that do not specify a server_name extension.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Option\",\n \"type\": \"object\"\n}",
-    "version": "traefik.containo.us/v1alpha1"
+    "schema": "{\n \"description\": \"TLSOption is the CRD implementation of a Traefik TLS Option, allowing to configure some parameters of the TLS connection. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#tls-options\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSOptionSpec defines the desired state of a TLSOption.\",\n   \"properties\": {\n    \"alpnProtocols\": {\n     \"description\": \"ALPNProtocols defines the list of supported application level protocols for the TLS handshake, in order of preference. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#alpn-protocols\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"cipherSuites\": {\n     \"description\": \"CipherSuites defines the list of supported cipher suites for TLS versions up to TLS 1.2. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#cipher-suites\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"clientAuth\": {\n     \"description\": \"ClientAuth defines the server's policy for TLS Client Authentication.\",\n     \"properties\": {\n      \"clientAuthType\": {\n       \"description\": \"ClientAuthType defines the client authentication type to apply.\",\n       \"enum\": [\n        \"NoClientCert\",\n        \"RequestClientCert\",\n        \"RequireAnyClientCert\",\n        \"VerifyClientCertIfGiven\",\n        \"RequireAndVerifyClientCert\"\n       ],\n       \"type\": \"string\"\n      },\n      \"secretNames\": {\n       \"description\": \"SecretNames defines the names of the referenced Kubernetes Secret storing certificate details.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"curvePreferences\": {\n     \"description\": \"CurvePreferences defines the preferred elliptic curves in a specific order. More info: https://doc.traefik.io/traefik/v2.9/https/tls/#curve-preferences\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"maxVersion\": {\n     \"description\": \"MaxVersion defines the maximum TLS version that Traefik will accept. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13. Default: None.\",\n     \"type\": \"string\"\n    },\n    \"minVersion\": {\n     \"description\": \"MinVersion defines the minimum TLS version that Traefik will accept. Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13. Default: VersionTLS10.\",\n     \"type\": \"string\"\n    },\n    \"preferServerCipherSuites\": {\n     \"description\": \"PreferServerCipherSuites defines whether the server chooses a cipher suite among his own instead of among the client's. It is enabled automatically when minVersion or maxVersion is set. Deprecated: https://github.com/golang/go/issues/45430\",\n     \"type\": \"boolean\"\n    },\n    \"sniStrict\": {\n     \"description\": \"SniStrict defines whether Traefik allows connections from clients connections that do not specify a server_name extension.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Option\",\n \"type\": \"object\"\n}"
   }
 }

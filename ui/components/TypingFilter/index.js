@@ -1,91 +1,38 @@
 import {
-  ClickAwayListener,
-  Divider,
-  IconButton,
+  Autocomplete,
+  Chip,
+  ContentFilterIcon,
+  CrossCircleIcon,
   InputAdornment,
-  List,
-  Popper,
   useTheme,
-  Fade,
+  Divider,
 } from '@layer5/sistent';
-import { Description, DropDown, InputField, Item, Label, Root } from './style';
-import ContentFilterIcon from '../../assets/icons/ContentFilterIcon';
-import { useEffect, useReducer, useRef, useState } from 'react';
-import CrossCircleIcon from '../../assets/icons/CrossCircleIcon';
+import { InputField, Root, DropDown } from './style';
+import React, { useState, useEffect } from 'react';
+import { iconSmall } from 'css/icons.styles';
 
-import { FILTERING_STATE, FILTER_EVENTS, filterReducer } from './state';
-import { getFilters, getCurrentFilterAndValue } from './utils';
-import { ExpandLess, ExpandMore } from '@mui/icons-material';
+function transformData(data) {
+  const result = {};
 
-const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
-  const selectFilter = (filter) => {
-    dispatchFilterMachine({
-      type: FILTER_EVENTS.SELECT,
-      payload: {
-        value: filter,
-      },
-    });
-  };
+  data.forEach(({ type, value }) => {
+    const key = type.toLowerCase();
 
-  const { filter: currentFilter } = getCurrentFilterAndValue(filterStateMachine);
-  const matchingFilters = currentFilter
-    ? Object.values(filterSchema).filter((filter) => filter.value.startsWith(currentFilter))
-    : Object.values(filterSchema);
-  return (
-    <List>
-      {matchingFilters.length == 0 && (
-        <Item>
-          <Label variant="body1">Sorry we dont currently support this filter</Label>
-        </Item>
-      )}
-      {matchingFilters.map((filter) => {
-        return (
-          <>
-            <Item key={filter.value} disableGutters onClick={() => selectFilter(filter.value)}>
-              <Label variant="body1">{filter.value}:</Label>
-              <Description variant="body1">{filter.description}</Description>
-            </Item>
-            <Divider light />
-          </>
-        );
-      })}
-    </List>
-  );
-};
+    if (result[key]) {
+      // If the key already exists and is an array, push the new value
+      if (Array.isArray(result[key])) {
+        result[key].push(value);
+      } else {
+        // If it's not an array (e.g., status: string), convert to array
+        result[key] = [result[key], value];
+      }
+    } else {
+      // For STATUS, store as string; for others, start with array
+      result[key] = key === 'status' ? value : [value];
+    }
+  });
 
-const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
-  const selectValue = (value) => {
-    dispatchFilterMachine({
-      type: FILTER_EVENTS.SELECT,
-      payload: {
-        value,
-      },
-    });
-  };
-  const { filter, value } = getCurrentFilterAndValue(filterStateMachine);
-  const currentFilter = Object.values(filterSchema).find((f) => f.value == filter);
-  const suggestions = currentFilter?.values?.filter((v) => v.startsWith(value)) || [];
-
-  return (
-    <List>
-      {suggestions.length == 0 && (
-        <Item>
-          <Label variant="body1">No results available</Label>
-        </Item>
-      )}
-      {suggestions.map((value) => {
-        return (
-          <>
-            <Item key={value.value} disableGutters onClick={() => selectValue(value)}>
-              <Description variant="body1">{value}</Description>
-            </Item>
-            <Divider light />
-          </>
-        );
-      })}
-    </List>
-  );
-};
+  return result;
+}
 
 /**
  * Filter Schema Object
@@ -133,178 +80,232 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  * @param {object} props - Component props.
  * @param {FilterSchema} filterSchema - The schema defining available filter options.
  * @param {function} handleFilter - A callback function to handle filter changes.
- * @param {boolean} autoFilter - A boolean to indicate if the filter should be applied automatically (on user input) .
+ * @param {string} placeholder - Placeholder text for the input field.
+ * @param {object[]} defaultFilters - An array of default filters to initialize the component.
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placeholder }) => {
-  const theme = useTheme();
-  const [anchorEl, setAnchorEl] = useState(null);
-  const isPopperOpen = Boolean(anchorEl);
-  const inputFieldRef = useRef(null);
-  const [filteringState, dispatch] = useReducer(filterReducer, {
-    context: {
-      value: '',
-      prevValue: [''],
-    },
-    state: FILTERING_STATE.IDLE,
-  });
+const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters }) => {
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [selectedFilters, setSelectedFilters] = useState(defaultFilters);
 
-  const handleFilterChange = (e) => {
-    if (!anchorEl) {
-      setAnchorEl(e.currentTarget);
+  useEffect(() => {
+    setSelectedFilters(defaultFilters);
+  }, [defaultFilters.length]);
+
+  const getOptions = () => {
+    if (inputValue.includes(':')) {
+      const [filterTypeInput, searchValue = ''] = inputValue.split(':');
+      const filterTypeInputLower = filterTypeInput.toLowerCase().trim();
+
+      // Find the matching schema key
+      const schemaKey = Object.keys(filterSchema).find(
+        (key) => filterSchema[key].value.toLowerCase() === filterTypeInputLower,
+      );
+
+      if (schemaKey) {
+        const schema = filterSchema[schemaKey];
+
+        // If the filter has predefined values, filter them by the search term
+        if (schema.values && schema.values.length > 0) {
+          return schema.values
+            .filter((value) => value.toLowerCase().includes(searchValue.toLowerCase().trim()))
+            .map((value) => ({
+              type: schemaKey,
+              value,
+              label: `${schema.value}: ${value}`,
+            }));
+        } else {
+          // For custom input filters like AUTHOR
+          const customValue = searchValue.trim();
+          if (customValue) {
+            return [
+              {
+                type: schemaKey,
+                value: customValue,
+                label: `${schema.value}: ${customValue}`,
+              },
+            ];
+          }
+        }
+      }
+      return [];
     }
 
-    if (e.target.value === '') {
-      return dispatch({
-        type: FILTER_EVENTS.CLEAR,
-      });
-    }
-
-    dispatch({
-      type: FILTER_EVENTS.INPUT_CHANGE,
-      payload: {
-        value: e.target.value,
-      },
-    });
+    // When no colon, show all filter types
+    return Object.entries(filterSchema).map(([key, data]) => ({
+      type: key,
+      value: data.value,
+      label: `${data.value}: ${data.description}`,
+    }));
   };
 
-  const handleClear = () => {
-    dispatch({
-      type: FILTER_EVENTS.EXIT,
-    });
+  const handleSelect = (option) => {
+    if (!option) return;
 
+    if (!inputValue.includes(':')) {
+      setInputValue(`${option.value}: `);
+    } else {
+      const newFilter = {
+        type: option.type,
+        value: option.value,
+        label: `${filterSchema[option.type].value}: ${option.value}`,
+      };
+
+      const existingFilterIndex = selectedFilters.findIndex(
+        (f) => f.type === option.type && f.value === option.value,
+      );
+
+      if (existingFilterIndex !== -1) {
+        return;
+      }
+
+      if (filterSchema[option.type].multiple === false) {
+        setSelectedFilters((prev) => [...prev.filter((f) => f.type !== option.type), newFilter]);
+      } else {
+        setSelectedFilters((prev) => [...prev, newFilter]);
+      }
+
+      handleFilter(transformData([...selectedFilters, newFilter]));
+      setInputValue('');
+    }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && inputValue.includes(':')) {
+      const [filterType, value] = inputValue.split(':');
+      const schemaKey = Object.keys(filterSchema).find(
+        (key) => filterSchema[key].value.toLowerCase() === filterType.toLowerCase(),
+      );
+      if (schemaKey && !filterSchema[schemaKey].values?.length && value.trim()) {
+        handleSelect({
+          type: schemaKey,
+          value: value.trim(),
+          label: `${filterSchema[schemaKey].value}: ${value.trim()}`,
+        });
+      }
+    }
+  };
+
+  const clearAllFilters = () => {
+    setSelectedFilters([]);
+    setInputValue('');
     handleFilter({});
   };
 
-  const handleFocus = (e) => {
-    setAnchorEl(e.currentTarget);
-    dispatch({ type: 'START' });
+  const handleDeleteChip = (details) => {
+    setSelectedFilters((prev) => prev.filter((filter) => filter !== details?.option));
+    handleFilter(transformData(selectedFilters.filter((filter) => filter !== details?.option)));
   };
 
-  const handleClickAway = (e) => {
-    if (inputFieldRef.current.contains(e.target)) {
-      return;
-    }
-
-    setAnchorEl(null);
-  };
-
-  //add enter event listener to the input fieldse
-  //add esc event listener to the input fields
-  useEffect(() => {
-    if (!inputFieldRef.current) {
-      return;
-    }
-
-    const handleKeyDown = (e) => {
-      if (e.key == 'Enter') {
-        handleFilter(getFilters(e.target.value, filterSchema));
-        setAnchorEl(null);
-      }
-      if (e.key == 'Escape') {
-        setAnchorEl(null);
-        //remove focus from the input field
-        setTimeout(() => {
-          document.activeElement.blur();
-        });
-      }
-    };
-
-    inputFieldRef?.current?.addEventListener('keydown', handleKeyDown);
-    return () => {
-      inputFieldRef?.current?.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [inputFieldRef.current]);
-
-  const toggleSuggestions = () => {
-    if (isPopperOpen) {
-      setAnchorEl(null);
-    } else {
-      setAnchorEl(inputFieldRef.current);
-    }
-  };
-
-  useEffect(() => {
-    if (autoFilter && filteringState.state == FILTERING_STATE.SELECTING_FILTER) {
-      handleFilter(getFilters(filteringState.context.value, filterSchema));
-    }
-  }, [filteringState.state]);
-
+  const theme = useTheme();
   return (
     <Root className="mui-fixed">
-      <InputField
-        ref={inputFieldRef}
-        variant="outlined"
-        placeholder={placeholder}
-        fullWidth
+      <Autocomplete
+        style={{ paddingLeft: '0px' }}
         size="small"
-        value={filteringState.context.value}
-        onChange={handleFilterChange}
-        onFocus={handleFocus}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              {' '}
-              <ContentFilterIcon fill={theme.palette.icon.default} />{' '}
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              {filteringState.state !== FILTERING_STATE.IDLE && (
-                <IconButton onClick={handleClear}>
-                  <CrossCircleIcon fill={theme.palette.icon.default} />
-                </IconButton>
-              )}
-              {filteringState.state !== FILTERING_STATE.IDLE && (
-                <IconButton onClick={toggleSuggestions}>
-                  {!anchorEl && <ExpandMore fill={theme.palette.icon.default} />}
-                  {anchorEl && <ExpandLess fill={theme.palette.icon.default} />}
-                </IconButton>
-              )}
-            </InputAdornment>
-          ),
+        multiple
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={(event, reason) => {
+          if (reason === 'escape' || reason === 'blur' || reason === 'toggleInput') {
+            setOpen(false);
+          }
         }}
-      />
-
-      <Popper
-        open={filteringState.state != FILTERING_STATE.IDLE && isPopperOpen}
-        anchorEl={inputFieldRef.current}
-        placement="bottom-start"
-        style={{ zIndex: 2000 }}
-        transition
-        className="mui-fixed"
-      >
-        {({ TransitionProps }) => {
+        PaperComponent={DropDown}
+        disableCloseOnSelect
+        freeSolo={inputValue.includes(':')}
+        inputValue={inputValue}
+        onInputChange={(_, newValue) => {
+          setInputValue(newValue);
+          if (newValue) setOpen(true);
+        }}
+        options={getOptions()}
+        value={selectedFilters}
+        noOptionsText="Sorry we dont currently support this filter"
+        onChange={(_, __, reason, details) => {
+          if (reason === 'removeOption' && details?.option) {
+            handleDeleteChip(details);
+          } else if (reason === 'selectOption' && details?.option) {
+            handleSelect(details.option);
+          }
+        }}
+        getOptionLabel={(option) => option.label}
+        isOptionEqualToValue={(option, value) =>
+          option.type === value.type && option.value === value.value
+        }
+        renderOption={(props, option, { index }) => {
+          const options = getOptions();
           return (
-            <Fade {...TransitionProps} timeout={100}>
-              <div>
-                <ClickAwayListener onKeydown onClickAway={handleClickAway}>
-                  <DropDown
-                    style={{
-                      width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
-                    }}
-                  >
-                    {filteringState.state == FILTERING_STATE.SELECTING_FILTER && (
-                      <Filters
-                        filterStateMachine={filteringState}
-                        dispatchFilterMachine={dispatch}
-                        filterSchema={filterSchema}
-                      />
-                    )}
-                    {filteringState.state == FILTERING_STATE.SELECTING_VALUE && (
-                      <FilterValueSuggestions
-                        filterStateMachine={filteringState}
-                        dispatchFilterMachine={dispatch}
-                        filterSchema={filterSchema}
-                      />
-                    )}
-                  </DropDown>
-                </ClickAwayListener>
-              </div>
-            </Fade>
+            <React.Fragment key={option.label}>
+              <li
+                {...props}
+                style={{
+                  padding: '0.25rem 2rem',
+                  margin: '0.25rem 0.5rem',
+                  borderRadius: '0.5rem',
+                }}
+              >
+                {option.label}
+              </li>
+              {index < options.length - 1 && <Divider />}
+            </React.Fragment>
           );
         }}
-      </Popper>
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
+            <Chip
+              {...getTagProps({ index })}
+              key={option.type}
+              label={`${filterSchema[option.type].value}: ${option.value}`}
+              style={{ margin: '0.15rem', maxWidth: '80%', height: 'auto' }}
+              size="small"
+              sx={{
+                height: 'auto',
+                '& .MuiChip-label': {
+                  display: 'block',
+                  whiteSpace: 'normal',
+                  lineHeight: '1.5rem',
+                  fontSize: '0.75rem',
+                  marginBlock: '0.1rem',
+                },
+              }}
+            />
+          ))
+        }
+        clearIcon={
+          <CrossCircleIcon
+            fill={theme.palette.icon.default}
+            {...iconSmall}
+            onClick={() => clearAllFilters()}
+          />
+        }
+        renderInput={(params) => {
+          const customInputProps = {
+            ...params.InputProps,
+            startAdornment: (
+              <>
+                <InputAdornment
+                  position="start"
+                  style={{ marginInline: '0.25rem', height: 'auto' }}
+                >
+                  <ContentFilterIcon fill={theme.palette.icon.default} />
+                </InputAdornment>
+                {params.InputProps.startAdornment}
+              </>
+            ),
+          };
+
+          return (
+            <InputField
+              {...params}
+              placeholder={placeholder}
+              onKeyDown={handleKeyDown}
+              InputProps={customInputProps}
+            />
+          );
+        }}
+      />
     </Root>
   );
 };

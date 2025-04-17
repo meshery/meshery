@@ -1,17 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
-import { getUnit8ArrayDecodedFile } from '../../utils/utils';
-import {
-  OVERVIEW,
-  MODELS,
-  COMPONENTS,
-  RELATIONSHIPS,
-  REGISTRANTS,
-  GRAFANA,
-  PROMETHEUS,
-  REGISTRY,
-} from '../../constants/navigator';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import {
   MeshModelToolbar,
   MainContainer,
@@ -32,84 +22,15 @@ import {
   useLazyGetComponentsQuery,
   useLazyGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
-  useImportMeshModelMutation,
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
-import {
-  Modal,
-  useModal,
-  FormControlLabel,
-  Button,
-  FormControl,
-  RadioGroup,
-  Radio,
-  NoSsr,
-  importModelUiSchema,
-  importModelSchema,
-  Typography,
-} from '@layer5/sistent';
-import { RJSFModalWrapper } from '../Modal';
-import { useRef } from 'react';
-import { updateProgress } from 'lib/store';
+import { Button, NoSsr } from '@layer5/sistent';
 import { iconSmall } from '../../css/icons.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
-import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
-import UrlStepper from './Stepper/UrlStepper';
-import { MESHERY_DOCS_URL } from '@/constants/endpoints';
-
-const useMeshModelComponentRouter = () => {
-  const router = useRouter();
-  const { query } = router;
-
-  if (query.settingsCategory === REGISTRY && !query.tab) {
-    router.push({
-      pathname: router.pathname,
-      query: {
-        ...query,
-        tab: MODELS,
-      },
-    });
-  }
-  const searchQuery = query.searchText || null;
-  const selectedTab = query.tab === GRAFANA || query.tab === PROMETHEUS ? OVERVIEW : query.tab;
-  const selectedPageSize = query.pagesize || 25;
-
-  return { searchQuery, selectedTab, selectedPageSize };
-};
-
-const useInfiniteScrollRef = (callback) => {
-  const observerRef = useRef(null);
-  const triggerRef = useRef(null);
-
-  useEffect(() => {
-    // setTimeout gives the browser time to finish rendering the DOM elements before executing the callback function.
-    const timeoutId = setTimeout(() => {
-      if (!triggerRef.current) {
-        return () => observerRef.current && observerRef.current.disconnect();
-      }
-
-      observerRef.current = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              callback();
-            }
-          });
-        },
-        { threshold: 0.01 },
-      );
-      observerRef.current.observe(triggerRef.current);
-    }, 0);
-
-    return () => {
-      observerRef.current && observerRef.current.disconnect();
-      clearTimeout(timeoutId);
-    };
-  }, [callback, triggerRef.current]);
-
-  return triggerRef;
-};
+import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
+import ImportModelModal from './ImportModelModal';
+import CreateModelModal from './CreateModelModal';
 
 const MeshModelComponent_ = ({
   modelsCount,
@@ -119,7 +40,7 @@ const MeshModelComponent_ = ({
   settingsRouter,
 }) => {
   const router = useRouter();
-  const { handleChangeSelectedTab } = settingsRouter(router);
+  const { handleChangeSelectedTab, selectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const { searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
@@ -130,146 +51,14 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [view, setView] = useState(MODELS);
-  const [importModal, setImportModal] = useState({
-    open: false,
-  });
+  const [view, setView] = useState(selectedTab ?? 'Models');
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
   });
   const [checked, setChecked] = useState(false);
-  const [importModelReq] = useImportMeshModelMutation();
-
-  const handleGenerateModal = async (data) => {
-    const { uploadType, url, model, component_csv, model_csv, relationship_csv, register } = data;
-    let requestBody = null;
-    switch (uploadType) {
-      case 'CSV Import': {
-        requestBody = {
-          importBody: {
-            model_csv: model_csv,
-            component_csv: component_csv,
-            relationship_csv: relationship_csv,
-          },
-          uploadType: 'csv',
-          register: register,
-        };
-        break;
-      }
-      case 'URL Import': {
-        if (url) {
-          requestBody = {
-            importBody: {
-              url: url,
-              model: model,
-            },
-            uploadType: 'url',
-            register: register,
-          };
-        } else {
-          console.error('Error: URL is empty');
-          return;
-        }
-        break;
-      }
-      default: {
-        console.error('Error: Invalid upload type');
-        return;
-      }
-    }
-    updateProgress({ showProgress: true });
-    await importModelReq({ importBody: requestBody });
-    updateProgress({ showProgress: false });
-  };
-
-  const urlModal = useModal({});
-
-  const csvModal = useModal({});
-
-  const handleUrlStepper = () => {
-    urlModal.openModal({
-      title: 'Create Model',
-      reactNode: (
-        <UrlStepper handleGenerateModal={handleGenerateModal} handleClose={urlModal.closeModal} />
-      ),
-    });
-  };
-  const handleCsvStepper = () => {
-    csvModal.openModal({
-      title: 'Import CSV ',
-      reactNode: (
-        <CsvStepper handleGenerateModal={handleGenerateModal} handleClose={csvModal.closeModal} />
-      ),
-    });
-  };
-
-  const handleUploadImport = () => {
-    setImportModal({
-      open: true,
-    });
-  };
-
-  const handleUploadImportClose = () => {
-    setImportModal({
-      open: false,
-    });
-  };
-  const handleImportModel = async (data) => {
-    const { uploadType, url, file } = data;
-    let requestBody = null;
-
-    const fileElement = document.getElementById('Import Model_file');
-
-    switch (uploadType) {
-      case 'File Import': {
-        const fileName = fileElement.files[0].name;
-        const fileData = getUnit8ArrayDecodedFile(file);
-        if (fileData) {
-          requestBody = {
-            importBody: {
-              model_file: fileData,
-              url: '',
-              filename: fileName,
-            },
-            uploadType: 'file',
-            register: true,
-          };
-        } else {
-          console.error('Error: File data is empty or invalid');
-          return;
-        }
-        break;
-      }
-      case 'URL Import': {
-        if (url) {
-          requestBody = {
-            importBody: {
-              url: url,
-            },
-            uploadType: 'urlImport',
-            register: true,
-          };
-        } else {
-          console.error('Error: URL is empty');
-          return;
-        }
-        break;
-      }
-      case 'CSV Import': {
-        handleCsvStepper();
-        return;
-      }
-      default: {
-        console.error('Error: Invalid upload type');
-        return;
-      }
-    }
-    updateProgress({ showProgress: true });
-    await importModelReq({ importBody: requestBody });
-    updateProgress({ showProgress: false });
-  };
-
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [modelFilters, setModelsFilters] = useState({ page: 0 });
   const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
   const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
@@ -521,14 +310,20 @@ const MeshModelComponent_ = ({
 
   return (
     <div data-test="workloads">
-      <TabBar handleUploadImport={handleUploadImport} handleUrlStepper={handleUrlStepper} />
-      {importModal.open && (
-        <ImportModal handleClose={handleUploadImportClose} handleImportModel={handleImportModel} />
-      )}
-      <>
-        <Modal maxWidth="sm" {...urlModal}></Modal>
-        <Modal maxWidth="sm" {...csvModal}></Modal>
-      </>
+      <TabBar
+        openImportModal={() => setIsImportModalOpen(true)}
+        openCreateModal={() => setIsCreateModalOpen(true)}
+      />
+
+      <ImportModelModal
+        isImportModalOpen={isImportModalOpen}
+        setIsImportModalOpen={setIsImportModalOpen}
+      />
+      <CreateModelModal
+        isCreateModalOpen={isCreateModalOpen}
+        setIsCreateModalOpen={setIsCreateModalOpen}
+      />
+
       <MainContainer>
         <InnerContainer>
           <TabCard
@@ -588,6 +383,12 @@ const MeshModelComponent_ = ({
                 [COMPONENTS]: componentsRes.isFetching,
                 [RELATIONSHIPS]: relationshipsRes.isFetching,
               }}
+              isLoading={{
+                [MODELS]: modelsRes.isLoading,
+                [REGISTRANTS]: registrantsRes.isLoading,
+                [COMPONENTS]: componentsRes.isLoading,
+                [RELATIONSHIPS]: relationshipsRes.isLoading,
+              }}
             />
           </DetailsContainer>
           <MeshModelDetails
@@ -601,82 +402,7 @@ const MeshModelComponent_ = ({
   );
 };
 
-const ImportModal = React.memo((props) => {
-  const [importModalDescription, setImportModalDescription] = useState('');
-
-  const CustomRadioWidget = (props) => {
-    const { options, value, onChange, label, schema } = props;
-    const { enumOptions } = options;
-
-    setImportModalDescription(schema.description);
-
-    return (
-      <FormControl component="fieldset">
-        <RadioGroup
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          style={{ marginTop: '-1.7rem', marginLeft: '-1rem' }}
-        >
-          <Typography fontWeight={'bold'} fontSize={'1rem'}>
-            {label}
-          </Typography>
-
-          {enumOptions.map((option, index) => (
-            <FormControlLabel
-              key={option.value}
-              value={option.value}
-              control={<Radio />}
-              label={
-                <div>
-                  <Typography variant="subtitle1">{option.label}</Typography>
-                  <Typography variant="body2" color="textSecondary" textTransform={'none'}>
-                    {schema.enumDescriptions[index]}
-                  </Typography>
-                </div>
-              }
-            />
-          ))}
-        </RadioGroup>
-      </FormControl>
-    );
-  };
-
-  const widgets = {
-    RadioWidget: CustomRadioWidget,
-  };
-  const { handleClose, handleImportModel } = props;
-
-  return (
-    <Modal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
-      <RJSFModalWrapper
-        schema={importModelSchema}
-        uiSchema={importModelUiSchema}
-        handleSubmit={handleImportModel}
-        submitBtnText="Import"
-        handleClose={handleClose}
-        widgets={widgets}
-        helpText={
-          <p>
-            {importModalDescription} <br />
-            Learn more about importing Models in our{' '}
-            <StyledDocsRedirectLink
-              href={`${MESHERY_DOCS_URL}/guides/configuration-management/importing-models`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </StyledDocsRedirectLink>
-            .
-          </p>
-        }
-      />
-    </Modal>
-  );
-});
-
-ImportModal.displayName = 'ImportModal';
-
-const TabBar = ({ handleUploadImport, handleUrlStepper }) => {
+const TabBar = ({ openImportModal, openCreateModal }) => {
   return (
     <MeshModelToolbar>
       <div
@@ -691,7 +417,7 @@ const TabBar = ({ handleUploadImport, handleUrlStepper }) => {
           aria-label="Add Pattern"
           variant="contained"
           color="primary"
-          onClick={handleUrlStepper}
+          onClick={openCreateModal}
           style={{ display: 'flex' }}
           disabled={false} //TODO: Need to make key for this component
           startIcon={<AddIcon style={iconSmall} />}
@@ -702,7 +428,7 @@ const TabBar = ({ handleUploadImport, handleUrlStepper }) => {
           aria-label="Add Pattern"
           variant="contained"
           color="primary"
-          onClick={handleUploadImport}
+          onClick={openImportModal}
           style={{ display: 'flex' }}
           disabled={false} //TODO: Need to make key for this component
           startIcon={<UploadIcon />}

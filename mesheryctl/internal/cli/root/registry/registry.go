@@ -20,6 +20,7 @@ import (
 	"errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	"github.com/spf13/cobra"
 )
 
@@ -42,6 +43,11 @@ var RegistryCmd = &cobra.Command{
 	Long:    `Manage the state and contents of Meshery’s internal registry of capabilities.`,
 	Example: `mesheryctl registry [subcommand]`,
 
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		setupRegistryLogger()
+		return nil
+	},
+
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			return cmd.Help()
@@ -55,5 +61,11 @@ var RegistryCmd = &cobra.Command{
 
 func init() {
 	RegistryCmd.AddCommand(availableSubcommands...)
+}
 
+func setupRegistryLogger() {
+	err := meshkitRegistryUtils.SetLogger(true)
+	if err != nil {
+		utils.Log.Info("Error setting logger: ", err)
+	}
 }

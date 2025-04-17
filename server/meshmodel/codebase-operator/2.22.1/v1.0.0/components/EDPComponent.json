@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -46,15 +47,16 @@
     "model": {
       "version": "2.22.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "v1.edp.epam.com/v1",
     "kind": "EDPComponent",
-    "schema": "{\n \"description\": \"EDPComponent is the Schema for the edpcomponents API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EDPComponentSpec defines the desired state of EDPComponent.\",\n   \"properties\": {\n    \"icon\": {\n     \"description\": \"base64 encoded SVG icon of a component\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"specifies a type of component, e.g. 'nexus', 'gerrit', etc.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"specifies a link to component\",\n     \"type\": \"string\"\n    },\n    \"visible\": {\n     \"description\": \"specifies whether a component is visible\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"icon\",\n    \"type\",\n    \"url\",\n    \"visible\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"EDP Component\",\n \"type\": \"object\"\n}",
-    "version": "v1.edp.epam.com/v1"
+    "schema": "{\n \"description\": \"EDPComponent is the Schema for the edpcomponents API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EDPComponentSpec defines the desired state of EDPComponent.\",\n   \"properties\": {\n    \"icon\": {\n     \"description\": \"base64 encoded SVG icon of a component\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"specifies a type of component, e.g. 'nexus', 'gerrit', etc.\",\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"description\": \"specifies a link to component\",\n     \"type\": \"string\"\n    },\n    \"visible\": {\n     \"description\": \"specifies whether a component is visible\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"icon\",\n    \"type\",\n    \"url\",\n    \"visible\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"EDP Component\",\n \"type\": \"object\"\n}"
   }
 }
