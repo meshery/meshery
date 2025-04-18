@@ -118,7 +118,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [value, setValue] = useState(() => {
     if (isDesignsVisible) return 0;
     if (isViewVisible) return 1;
-    return 0; 
+    return 0;
   });
 
   const handleChange = (event, newValue) => {
