@@ -45,16 +45,17 @@
     "model": {
       "version": "8.4.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "velero.io/v1",
     "kind": "DownloadRequest",
-    "schema": "{\n \"description\": \"DownloadRequest is a request to download an artifact from backup object storage, such as a backup\\nlog file.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DownloadRequestSpec is the specification for a download request.\",\n   \"properties\": {\n    \"target\": {\n     \"description\": \"Target is what to download (e.g. logs for a backup).\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind is the type of file to download.\",\n       \"enum\": [\n        \"BackupLog\",\n        \"BackupContents\",\n        \"BackupVolumeSnapshots\",\n        \"BackupItemOperations\",\n        \"BackupResourceList\",\n        \"BackupResults\",\n        \"RestoreLog\",\n        \"RestoreResults\",\n        \"RestoreResourceList\",\n        \"RestoreItemOperations\",\n        \"CSIBackupVolumeSnapshots\",\n        \"CSIBackupVolumeSnapshotContents\",\n        \"BackupVolumeInfos\",\n        \"RestoreVolumeInfo\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the Kubernetes resource with which the file is associated.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"target\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Download Request\",\n \"type\": \"object\"\n}",
-    "version": "velero.io/v1"
+    "schema": "{\n \"description\": \"DownloadRequest is a request to download an artifact from backup object storage, such as a backup\\nlog file.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DownloadRequestSpec is the specification for a download request.\",\n   \"properties\": {\n    \"target\": {\n     \"description\": \"Target is what to download (e.g. logs for a backup).\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind is the type of file to download.\",\n       \"enum\": [\n        \"BackupLog\",\n        \"BackupContents\",\n        \"BackupVolumeSnapshots\",\n        \"BackupItemOperations\",\n        \"BackupResourceList\",\n        \"BackupResults\",\n        \"RestoreLog\",\n        \"RestoreResults\",\n        \"RestoreResourceList\",\n        \"RestoreItemOperations\",\n        \"CSIBackupVolumeSnapshots\",\n        \"CSIBackupVolumeSnapshotContents\",\n        \"BackupVolumeInfos\",\n        \"RestoreVolumeInfo\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the Kubernetes resource with which the file is associated.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"target\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Download Request\",\n \"type\": \"object\"\n}"
   }
 }

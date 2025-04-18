@@ -45,16 +45,17 @@
     "model": {
       "version": "2025.2.10"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "stash.appscode.com/v1beta1",
     "kind": "BackupSession",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"invoker\": {\n     \"description\": \"Invoker refers to the BackupConfiguration or BackupBatch being used to invoke this backup session\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"APIGroup is the group for the resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the type of resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"retryLeft\": {\n     \"description\": \"RetryLeft specifies number of retry attempts left for the session. If this set to non-zero, Stash will create a new BackupSession if the current one fails.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Session\",\n \"type\": \"object\"\n}",
-    "version": "stash.appscode.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"invoker\": {\n     \"description\": \"Invoker refers to the BackupConfiguration or BackupBatch being used to invoke this backup session\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"APIGroup is the group for the resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the type of resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"retryLeft\": {\n     \"description\": \"RetryLeft specifies number of retry attempts left for the session. If this set to non-zero, Stash will create a new BackupSession if the current one fails.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Session\",\n \"type\": \"object\"\n}"
   }
 }

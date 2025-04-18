@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Runtime"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/vmware-tanzu/helm-charts/releases/download/velero-5.2.0/velero-5.2.0.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "3.1.4"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "velero.io/v1",
     "kind": "BackupRepository",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupRepositorySpec is the specification for a BackupRepository.\",\n   \"properties\": {\n    \"backupStorageLocation\": {\n     \"description\": \"BackupStorageLocation is the name of the BackupStorageLocation that should contain this repository.\",\n     \"type\": \"string\"\n    },\n    \"maintenanceFrequency\": {\n     \"description\": \"MaintenanceFrequency is how often maintenance should be run.\",\n     \"type\": \"string\"\n    },\n    \"repositoryType\": {\n     \"description\": \"RepositoryType indicates the type of the backend repository\",\n     \"enum\": [\n      \"kopia\",\n      \"restic\",\n      \"\"\n     ],\n     \"type\": \"string\"\n    },\n    \"resticIdentifier\": {\n     \"description\": \"ResticIdentifier is the full restic-compatible string for identifying this repository.\",\n     \"type\": \"string\"\n    },\n    \"volumeNamespace\": {\n     \"description\": \"VolumeNamespace is the namespace this backup repository contains pod volume backups for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupStorageLocation\",\n    \"maintenanceFrequency\",\n    \"resticIdentifier\",\n    \"volumeNamespace\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Repository\",\n \"type\": \"object\"\n}",
-    "version": "velero.io/v1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupRepositorySpec is the specification for a BackupRepository.\",\n   \"properties\": {\n    \"backupStorageLocation\": {\n     \"description\": \"BackupStorageLocation is the name of the BackupStorageLocation that should contain this repository.\",\n     \"type\": \"string\"\n    },\n    \"maintenanceFrequency\": {\n     \"description\": \"MaintenanceFrequency is how often maintenance should be run.\",\n     \"type\": \"string\"\n    },\n    \"repositoryType\": {\n     \"description\": \"RepositoryType indicates the type of the backend repository\",\n     \"enum\": [\n      \"kopia\",\n      \"restic\",\n      \"\"\n     ],\n     \"type\": \"string\"\n    },\n    \"resticIdentifier\": {\n     \"description\": \"ResticIdentifier is the full restic-compatible string for identifying this repository.\",\n     \"type\": \"string\"\n    },\n    \"volumeNamespace\": {\n     \"description\": \"VolumeNamespace is the namespace this backup repository contains pod volume backups for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupStorageLocation\",\n    \"maintenanceFrequency\",\n    \"resticIdentifier\",\n    \"volumeNamespace\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Repository\",\n \"type\": \"object\"\n}"
   }
 }

@@ -41,7 +41,7 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			Name:             "Missing Name Flag",
 			Args:             []string{"create", "--orgID", "1234", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
-			ExpectedResponse: "create.environment.missing.flag.golden",
+			ExpectedResponse: "create.environment.without.name.golden",
 			ExpectedError:    true,
 		},
 		{
@@ -50,16 +50,16 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			URL:              testContext.BaseURL + "/api/environments",
 			Fixture:          "create.environment.local.provider.invalid-orgid.response.golden",
 			Token:            filepath.Join(utils.FixturesDir, "token.golden"),
-			ExpectedResponse: "create.environment.output.golden",
+			ExpectedResponse: "create.environment.invalid.orgId.golden",
 			ExpectedError:    false,
 		},
 		{
 			Name:             "Create Environment Successfully",
-			Args:             []string{"create", "--orgID", "422595a1-bbe3-4355-ac80-5efa0b35c9da", "--name", "TestEnv", "--description", "This is a test environment"},
+			Args:             []string{"create", "--orgID", "3f8319e0-33a9-4736-b248-12nm3kiuh3yu", "--name", "test-environment", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
 			Fixture:          "create.environment.response.golden",
 			Token:            filepath.Join(utils.FixturesDir, "token.golden"),
-			ExpectedResponse: "create.environment.output.golden",
+			ExpectedResponse: "create.environment.success.golden",
 			ExpectedError:    false,
 		},
 	}

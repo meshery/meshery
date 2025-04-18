@@ -1,4 +1,4 @@
-import { styled } from '@layer5/sistent';
+import { styled, Box } from '@layer5/sistent';
 
 export const TableIconsContainer = styled('span')(({ disabled, theme }) => ({
   color: disabled ? theme.palette.icon.disabled : theme.palette.icon.default,
@@ -37,3 +37,13 @@ export const BulkActionWrapper = styled(`div`)({
   flexDirection: 'row',
   alignItems: 'center',
 });
+
+export const UserCommonBox = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.background.secondary,
+  borderRadius: '.25rem',
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+}));

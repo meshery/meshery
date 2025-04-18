@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://mesosphere.github.io/charts/staging/kubefed-0.5.2.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "0.5.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "multiclusterdns.kubefed.io/v1alpha1",
     "kind": "IngressDNSRecord",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressDNSRecordSpec defines the desired state of IngressDNSRecord\",\n   \"properties\": {\n    \"hosts\": {\n     \"description\": \"Host from the IngressRule in Cluster Ingress Spec\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"recordTTL\": {\n     \"description\": \"RecordTTL is the TTL in seconds for DNS records created for the Ingress, if omitted a default would be used\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ingress DNS Record\",\n \"type\": \"object\"\n}",
-    "version": "multiclusterdns.kubefed.io/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"IngressDNSRecordSpec defines the desired state of IngressDNSRecord\",\n   \"properties\": {\n    \"hosts\": {\n     \"description\": \"Host from the IngressRule in Cluster Ingress Spec\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"recordTTL\": {\n     \"description\": \"RecordTTL is the TTL in seconds for DNS records created for the Ingress, if omitted a default would be used\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Ingress DNS Record\",\n \"type\": \"object\"\n}"
   }
 }

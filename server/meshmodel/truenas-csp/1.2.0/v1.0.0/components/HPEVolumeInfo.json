@@ -45,16 +45,17 @@
     "model": {
       "version": "1.2.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "storage.hpe.com/v1",
     "kind": "HPEVolumeInfo",
-    "schema": "{\n \"properties\": {\n  \"hpeVolumes\": {\n   \"description\": \"List of HPE volumes configured for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume\",\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Volume Info\",\n \"type\": \"object\"\n}",
-    "version": "storage.hpe.com/v1"
+    "schema": "{\n \"properties\": {\n  \"hpeVolumes\": {\n   \"description\": \"List of HPE volumes configured for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume\",\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Volume Info\",\n \"type\": \"object\"\n}"
   }
 }

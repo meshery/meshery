@@ -45,10 +45,10 @@
     "model": {
       "version": "v1.32.0-alpha.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "background-image": "none",
@@ -180,7 +180,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "parent",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false,
@@ -188,8 +190,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "v1",
     "kind": "Namespace",
-    "schema": "{\"description\":\"Namespace provides a scope for Names. Use of multiple namespaces is optional.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"NamespaceSpec describes the attributes on a Namespace.\",\"properties\":{\"finalizers\":{\"description\":\"Finalizers is an opaque list of values that must be empty to permanently remove object from storage. More info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Spec defines the behavior of the Namespace. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"Namespace\",\"version\":\"v1\"}]}",
-    "version": "v1"
+    "schema": "{\"description\":\"Namespace provides a scope for Names. Use of multiple namespaces is optional.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"NamespaceSpec describes the attributes on a Namespace.\",\"properties\":{\"finalizers\":{\"description\":\"Finalizers is an opaque list of values that must be empty to permanently remove object from storage. More info: https://kubernetes.io/docs/tasks/administer-cluster/namespaces/\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"Spec defines the behavior of the Namespace. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"Namespace\",\"version\":\"v1\"}]}"
   }
 }

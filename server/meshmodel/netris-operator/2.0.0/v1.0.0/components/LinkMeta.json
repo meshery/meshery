@@ -45,16 +45,17 @@
     "model": {
       "version": "2.0.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "k8s.netris.ai/v1alpha1",
     "kind": "LinkMeta",
-    "schema": "{\n \"description\": \"LinkMeta is the Schema for the linkmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LinkMetaSpec defines the desired state of LinkMeta\",\n   \"properties\": {\n    \"id\": {\n     \"type\": \"string\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"linkGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"linkName\": {\n     \"type\": \"string\"\n    },\n    \"local\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"remote\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"imported\",\n    \"linkGeneration\",\n    \"linkName\",\n    \"local\",\n    \"reclaimPolicy\",\n    \"remote\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Link Meta\",\n \"type\": \"object\"\n}",
-    "version": "k8s.netris.ai/v1alpha1"
+    "schema": "{\n \"description\": \"LinkMeta is the Schema for the linkmeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LinkMetaSpec defines the desired state of LinkMeta\",\n   \"properties\": {\n    \"id\": {\n     \"type\": \"string\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"linkGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"linkName\": {\n     \"type\": \"string\"\n    },\n    \"local\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"remote\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"imported\",\n    \"linkGeneration\",\n    \"linkName\",\n    \"local\",\n    \"reclaimPolicy\",\n    \"remote\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Link Meta\",\n \"type\": \"object\"\n}"
   }
 }

@@ -19,6 +19,13 @@ const ConnectionModal = ({
       headerIcon={<ConnectionIcon height={24} width={24} />}
       title="Connections"
       maxWidth="xl"
+      sx={{
+        '& .MuiPaper-root': {
+          maxHeight: '90vh',
+          display: 'flex',
+          flexDirection: 'column',
+        },
+      }}
     >
       <ModalBody>
         <div style={{ marginBlock: '2rem', maxHeight: '65vh' }}>

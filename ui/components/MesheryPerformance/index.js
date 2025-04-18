@@ -7,7 +7,6 @@ import {
   IconButton,
   CircularProgress,
   FormControlLabel,
-  Divider,
   Link,
   Grid,
   CustomTooltip,
@@ -60,6 +59,7 @@ import {
   HelpIcon,
   RadioButton,
 } from './style';
+import { getMeshModels } from '@/api/meshmodel';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -177,6 +177,7 @@ const MesheryPerformanceComponent_ = (props) => {
   // Create individual state variables for each property
   const [testNameState, setTestName] = useState(testName);
   const [meshNameState, setMeshName] = useState(meshName);
+  const [meshModels, setMeshModels] = useState([]);
   const [urlState, setUrl] = useState(url);
   const [qpsState, setQps] = useState(qps);
   const [cState, setC] = useState(c);
@@ -211,7 +212,6 @@ const MesheryPerformanceComponent_ = (props) => {
     staticPrometheusBoardConfig,
   );
 
-  console.log('resultState', testResult);
   const { notify } = useNotification();
 
   const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
@@ -224,6 +224,15 @@ const MesheryPerformanceComponent_ = (props) => {
     isSuccess: isSMPMeshesFetched,
     isError: isSMPMeshError,
   } = useGetMeshQuery();
+
+  useEffect(() => {
+    const fetchMeshModels = async () => {
+      const { models } = await getMeshModels();
+      const modelNames = models.map((model) => model.displayName);
+      setMeshModels(modelNames);
+    };
+    fetchMeshModels();
+  }, []);
 
   const handleChange = (name) => (event) => {
     const { value } = event.target;
@@ -483,7 +492,6 @@ const MesheryPerformanceComponent_ = (props) => {
 
   function handleSuccess() {
     return (result) => {
-      console.log('sucess result', result);
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         const notify = props.notify;
         notify({
@@ -504,7 +512,7 @@ const MesheryPerformanceComponent_ = (props) => {
           },
         });
         setTestUUID(generateUUID());
-        console.log('set result', result);
+
         setTestResultsOpen(true);
         setTestResult(result);
       }
@@ -532,7 +540,7 @@ const MesheryPerformanceComponent_ = (props) => {
     let track = 0;
     return (e) => {
       const data = JSON.parse(e.data);
-      console.log('event', data);
+
       switch (data.status) {
         case 'info':
           notify({ message: data.message, event_type: EVENT_TYPES.INFO });
@@ -870,7 +878,7 @@ const MesheryPerformanceComponent_ = (props) => {
                     select
                     id="meshName"
                     name="meshName"
-                    label="Service Mesh"
+                    label="Technology"
                     fullWidth
                     value={
                       meshNameState === '' && selectedMeshState !== ''
@@ -881,18 +889,11 @@ const MesheryPerformanceComponent_ = (props) => {
                     variant="outlined"
                     onChange={handleChange('meshName')}
                   >
-                    {availableAdaptersState &&
-                      availableAdaptersState.map((mesh) => (
-                        <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
-                          {mesh}
-                        </MenuItem>
-                      ))}
-                    {availableAdaptersState && availableAdaptersState.length > 0 && <Divider />}
                     <MenuItem key="mh_-_none" value="None">
                       None
                     </MenuItem>
-                    {availableSMPMeshesState &&
-                      availableSMPMeshesState.map((mesh) => (
+                    {meshModels &&
+                      meshModels.map((mesh) => (
                         <MenuItem key={`mh_-_${mesh}`} value={mesh.toLowerCase()}>
                           {mesh}
                         </MenuItem>
