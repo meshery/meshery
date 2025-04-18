@@ -75,7 +75,7 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM alpine:3.19.6
+FROM alpine:3.19.7
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
 RUN set -ex && \
