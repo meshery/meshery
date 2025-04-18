@@ -200,7 +200,7 @@ transitionTests.forEach((t) => {
     await firstRow.locator('span', { hasText: 'connected' }).click();
 
     // click required option
-    await page.getByRole('option', { name: t.transitionOption }).locator('div').click();
+    await page.getByRole('option', { name: t.transitionOption }).click();
 
     // verify that Confirmation modal opened
     await expect(page.getByText('Connection Status Transition')).toBeVisible();
@@ -225,7 +225,7 @@ transitionTests.forEach((t) => {
     await firstRow.locator('span', { hasText: t.statusAfterTransition }).click();
 
     // click the option required to transition back to "connected" state
-    await page.getByRole('option', { name: t.restorationOption }).locator('div').click();
+    await page.getByRole('option', { name: t.restorationOption }).click();
 
     // verify that Confirmation modal opened again
     await expect(page.getByText('Connection Status Transition')).toBeVisible();
