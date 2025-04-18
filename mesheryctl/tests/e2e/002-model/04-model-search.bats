@@ -17,8 +17,7 @@ setup() {
 @test "mesheryctl model search succeeds with default options" {
   run $MESHERYCTL_BIN model search accurate
   assert_success
-
-  # should at least list the matching model name
+  
   assert_output --partial "accurate"
 }
 
