@@ -71,7 +71,7 @@ mesheryctl exp relationship view [model-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse]("api/meshmodels/relationships?page=1")
+			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse]("api/meshmodels/relationships")
 
 			if err != nil {
 				return err
