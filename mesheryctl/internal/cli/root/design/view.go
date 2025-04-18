@@ -45,10 +45,12 @@ var viewCmd = &cobra.Command{
 	Long:  `Display the content of a specific design based on name or id`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
-// view a design
-mesheryctl design view [design-name | ID]
-mesheryctl design view [design-name | ID] --verbose
-mesheryctl design view --all
+	// View a design
+	mesheryctl design view [design-name | ID]
+	// View a design with verbosity increased
+	mesheryctl design view [design-name | ID] --verbose
+	// View a design displaying all file content
+	mesheryctl design view --all
     `,
 	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -174,21 +176,6 @@ func init() {
 	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all designs available")
 	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewCmd.Flags().BoolVarP(&verboseFlag, "verbose", "v", false, "(optional) display detailed design information")
-}
-
-// logResourceCount logs the count of a resource type or a message if none are found
-func logResourceCount(resourceType string, count int, isManifest bool) {
-	if count > 0 {
-		utils.Log.Info(fmt.Sprintf("\n%s: %d", resourceType, count))
-		return
-	}
-
-	// No resources found
-	if resourceType == "Components" && isManifest {
-		utils.Log.Info(fmt.Sprintf("%s: None (Manifest imports may require additional processing)", resourceType))
-	} else {
-		utils.Log.Info(fmt.Sprintf("%s: None", resourceType))
-	}
 }
 
 // extractDesignDetails extracts design name, source type, components, and relationships
