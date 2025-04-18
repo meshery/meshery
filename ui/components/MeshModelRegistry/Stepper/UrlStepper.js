@@ -29,13 +29,22 @@ import { capitalize } from 'lodash';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import {
-  CategoryDefinitionV1Beta1Schema,
-  ModelDefinitionV1Beta1Schema,
-  SubCategoryDefinitionV1Beta1Schema,
+  CategoryDefinitionV1Beta1OpenApiSchema,
+  ModelDefinitionV1Beta1OpenApiSchema,
+  SubCategoryDefinitionV1Beta1OpenApiSchema,
 } from '@layer5/schemas';
 import FinishModelGenerateStep from './FinishModelGenerateStep';
 
 const UrlStepper = React.memo(({ handleClose }) => {
+  const ModelDefinitionV1Beta1Schema =
+    ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition;
+
+  const CategoryDefinitionV1Beta1Schema =
+    CategoryDefinitionV1Beta1OpenApiSchema.components.schemas.CategoryDefinition;
+
+  const SubCategoryDefinitionV1Beta1Schema =
+    SubCategoryDefinitionV1Beta1OpenApiSchema.components.schemas.SubCategoryDefinition;
+
   const [modelSource, setModelSource] = React.useState('');
   const [modelName, setModelName] = React.useState('');
   const [modelDisplayName, setModelDisplayName] = React.useState('');
@@ -45,6 +54,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
   const [modelSubcategory, setModelSubcategory] = React.useState(
     SubCategoryDefinitionV1Beta1Schema.default,
   );
+
   const [modelShape, setModelShape] = React.useState(
     ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.default,
   );
