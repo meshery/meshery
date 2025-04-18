@@ -9,17 +9,20 @@ category: infrastructure
 language: en
 ---
 
-Meshery continuously tracks operations performed on your infrastructure and workloads. While running, Meshery Server generates a variety of events reflecting activities inside your Kubernetes and Cloud-Native clusters, as well as within Meshery itself.
+Meshery continuously tracks activities affecting your infrastructure and workloads. Meshery generates a variety of events, reflecting activities affecting the design and operation of your infrastructure whether those activities are directly or indirectly performed through Meshery operations.
 
 ### What is the Notification Center?
 The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
 
 ![Find Notification Center]({{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif)
 
+<a href="{{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif" alt="Notification Position" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
+
 ### Types of Notifications
 
 Given the variety of activities that occur through the process of managing infrastructure, notifications have been grouped into categories so that you can readily understand what a notification means and what do to about any particular type you have received.
-
 
 Each notification in Meshery includes a clear summary of what occurred in your system. Notifications vary in format depending on the event type, but typically include:
 
@@ -35,7 +38,7 @@ You can mark notifications as read or unread to stay organized and focused. Mesh
   <img src="{{ site.baseurl }}/assets/img/notification-center/description.png" alt="Event Descriptions" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
-🔗 For more technical details, see the [Contributor Reference](#).
+> 🔗 For more technical details, see the [Contributor Reference](#).
 
 ### Notification Timestamps
 Each notification includes a timestamp showing when the event happened. The time is displayed based on your local device’s time zone, so it reflects your current time.
@@ -48,7 +51,9 @@ Each notification includes a timestamp showing when the event happened. The time
 Need to collaborate?
 You can share notifications with teammates or stakeholders in just a few clicks — making it easier to communicate and resolve issues.
 
-(???)
+<a href="{{ site.baseurl }}/assets/img/notification-center/notification-share.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/notification-share.png" alt="Notification Share" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
 ### Filtering and Searching
 
@@ -56,7 +61,9 @@ The Notification Center provides a powerful way to filter and search through eve
 
 > Note: Some filter options such as `action`, `category`, and `author` are dynamically generated based on the notifications your Meshery instance has received. These values are retrieved from the `/api/system/events/types` endpoint.
 
-(A GIF demonstrating the filter interaction will be added here after the UI update.)
+<a href="{{ site.baseurl }}/assets/img/notification-center/notification-filter.gif">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/notification-filter.gif" alt="Notification Filter" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
 #### Severity  
 
