@@ -10,7 +10,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas"
@@ -194,6 +193,7 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 				utils.Log.Infof("Removing %s", modelVersionFolder)
 				os.RemoveAll(modelVersionFolder)
 			}
+			return err
 		}
 
 		// TODO put a model name into generated model file
@@ -215,10 +215,10 @@ func initModelGetValidOutputFormat() []string {
 
 const initModelDirPerm = 0755
 const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
-const initModelTemplatePathModelJSON = "json_models/constructs/v1beta1/model.json"
-const initModelTemplatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
-const initModelTemplatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
-const initModelTemplatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
+const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
+const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
+const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection_template"
+const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
 
 // TODO
 // if csv output is not directory based
@@ -252,7 +252,7 @@ var initModelData = []struct {
 		folderPath: "",
 		// map file name to template key
 		files: map[string]string{
-			"model": initModelTemplatePathModelJSON,
+			"model": initModelTemplatePathModel,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Generating model definition...")
@@ -262,7 +262,7 @@ var initModelData = []struct {
 		folderPath: "components",
 		// map file name to template key
 		files: map[string]string{
-			"component": initModelTemplatePathComponentJSON,
+			"component": initModelTemplatePathComponent,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Adding sample components...")
@@ -272,7 +272,7 @@ var initModelData = []struct {
 		folderPath: "relationships",
 		// map file name to template key
 		files: map[string]string{
-			"relationship": initModelTemplatePathRelathionshipJSON,
+			"relationship": initModelTemplatePathRelathionship,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Creating sample relationships...")
@@ -282,7 +282,7 @@ var initModelData = []struct {
 		folderPath: "connections",
 		// map file name to template key
 		files: map[string]string{
-			"connection": initModelTemplatePathConnectionJSON,
+			"connection": initModelTemplatePathConnection,
 		},
 		beforeHook: func() {
 			utils.Log.Info("Adding sample connections...")
@@ -304,25 +304,13 @@ func initModelReadTemplate(templatePath string) ([]byte, error) {
 
 func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte, error) {
 	// outputFormat was already validated, it is one of the initModelGetValidOutputFormat()
-	content, err := initModelReadTemplate(templatePath)
-	if err != nil {
-		return nil, err
-	}
-
-	if outputFormat == "json" {
-		return content, err
-	}
-
-	if outputFormat == "yaml" {
-		// TODO
-		// this does not prevent the order of the fields
-		// making fields to be ordered in alphabetical order;
-		// need to generate yaml from schema instead
-		yamlContent, err := yaml.JSONToYAML(content)
-		if err != nil {
-			return nil, utils.ErrJSONToYAML(err)
-		}
-		return yamlContent, nil
+	if outputFormat == "json" || outputFormat == "yaml" {
+		return initModelReadTemplate(
+			strings.Join(
+				[]string{templatePath, outputFormat},
+				".",
+			),
+		)
 	}
 
 	if outputFormat == "csv" {

@@ -25,6 +25,7 @@ import {
   useWindowDimensions,
   WorkspaceEnvironmentSelection,
   WorkspaceIcon,
+  Slide,
 } from '@layer5/sistent';
 import { GroupAdd } from '@mui/icons-material';
 import HistoryIcon from '@mui/icons-material/History';
@@ -389,34 +390,41 @@ const WorkspaceDataTable = ({
 
   return (
     <div key={`list-view-${viewType}`}>
-      {selectedWorkspace.id ? (
+      <Slide direction="left" in={selectedWorkspace.id ? true : false}>
+        {
+          <div
+            style={{
+              marginTop: '1rem',
+              backgroundColor: theme.palette.background.paper,
+            }}
+          >
+            {selectedWorkspace?.id && (
+              <WorkSpaceContentDataTable
+                workspaceId={selectedWorkspace?.id}
+                workspaceName={selectedWorkspace?.name}
+              />
+            )}
+          </div>
+        }
+      </Slide>
+      <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
         <div
           style={{
             marginTop: '1rem',
-            backgroundColor: theme.palette.background.paper,
           }}
         >
-          <WorkSpaceContentDataTable
-            workspaceId={selectedWorkspace?.id}
-            workspaceName={selectedWorkspace?.name}
-          />
+          {!selectedWorkspace?.id && (
+            <ResponsiveDataTable
+              columns={columns}
+              data={workspacesData}
+              options={options}
+              columnVisibility={columnVisibility}
+              tableCols={tableCols}
+              updateCols={updateCols}
+            />
+          )}
         </div>
-      ) : (
-        <div
-          style={{
-            marginTop: '1rem',
-          }}
-        >
-          <ResponsiveDataTable
-            columns={columns}
-            data={workspacesData}
-            options={options}
-            columnVisibility={columnVisibility}
-            tableCols={tableCols}
-            updateCols={updateCols}
-          />
-        </div>
-      )}
+      </Slide>
     </div>
   );
 };
