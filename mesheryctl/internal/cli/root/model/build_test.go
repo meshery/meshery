@@ -59,8 +59,6 @@ func TestModelBuild(t *testing.T) {
 		ExpectedFiles    []string
 		CleanupHook      func()
 	}{
-		// TODO this test is passing because I have a test-case-aws-lambda-controller/v0.1.0 folder in my local
-		// create (or run model init) before testing build
 		{
 			Name:             "model build from model name and version",
 			Args:             []string{"build", "test-case-aws-lambda-controller", "--version", "v0.1.0"},
