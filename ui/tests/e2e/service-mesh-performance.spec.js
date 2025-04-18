@@ -31,14 +31,13 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
 
       await expect(successNofications.filter({ hasText: /submitted/i })).toHaveCount(1);
       await expect(infoNofications.filter({ hasText: /completed/i })).toHaveCount(1);
-
     });
 
     test(`View detailed result of a performance profile (Graph Visualiser) with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
     }) => {
       await page.goto('/performance/profiles');
-      await expect(await page.getByText(`${profileWithUUID}`)).toBeVisible();
+      await expect(page.getByText(`${profileWithUUID}`)).toBeVisible();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('TableChartIcon').first().click();
       await expect(page.getByText(`${url}`, { exact: true })).toBeTruthy();
@@ -56,12 +55,12 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
       await page.getByLabel('Concurrent requests').fill('3');
       await page.getByLabel(loadGenerator).check();
 
-     await page.getByTestId('run-performance-test').click();
-     const successNofications = page.getByTestId('SnackbarContent-success');
-     const infoNofications = page.getByTestId('SnackbarContent-info');
+      await page.getByTestId('run-performance-test').click();
+      const successNofications = page.getByTestId('SnackbarContent-success');
+      const infoNofications = page.getByTestId('SnackbarContent-info');
 
-     await expect(successNofications.filter({ hasText: /submitted/i })).toHaveCount(1);
-     await expect(infoNofications.filter({ hasText: /completed/i })).toHaveCount(1);
+      await expect(successNofications.filter({ hasText: /submitted/i })).toHaveCount(1);
+      await expect(infoNofications.filter({ hasText: /completed/i })).toHaveCount(1);
     });
 
     test(`Compare test of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
