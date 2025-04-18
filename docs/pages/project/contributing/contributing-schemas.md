@@ -14,7 +14,7 @@ Meshery follows schema-driven development. As a project, Meshery has different t
 
 The schemas follow a versioned approach to maintain backward compatibility while allowing for the evolution of the definitions.
 
-{% include alert.html type="info" title="Meshery Documentation Core Concepts" content="To better understand how schemas fit into Meshery's architecture, read about Meshery's core concepts in the <a href='https://docs.meshery.io/concepts/logical'>Meshery documentation</a>.`" %}
+{% include alert.html type="info" title="Meshery Documentation Core Concepts" content="To better understand how schemas fit into Meshery's architecture, read about Meshery's core concepts in the <a href='https://docs.meshery.io/concepts/logical'>Meshery documentation</a>." %}
 
 ### Prerequisites
 - **oapi-codegen**: This tool is essential for generating Go code from OpenAPI specifications. Install it using:
