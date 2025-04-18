@@ -50,7 +50,14 @@ export const useDeletePattern = () => {
     unassignDesignFromWorkspace({
       workspaceId,
       designId: designId,
-    });
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message: 'Design removed from workspace',
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      });
   };
 
   const handleBulkDeleteModal = async (patterns, modalRef) => {
