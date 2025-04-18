@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -1343,4 +1344,38 @@ func SafeCastToString(val interface{}) string {
 		return s
 	}
 	return fmt.Sprintf("%v", val)
+}
+
+// ExtractArray extracts an array from a map if it exists and is non-empty listed in view.go
+func ExtractArray(data map[string]interface{}, key string) []interface{} {
+	if val, exists := data[key]; exists && val != nil {
+		if arr, ok := val.([]interface{}); ok && len(arr) > 0 {
+			return arr
+		}
+	}
+	return nil
+}
+
+// ExtractNestedData extracts nested data from a map based on a key listed in view.go
+func ExtractNestedData(design map[string]interface{}, key string) []interface{} {
+	if designFileVal, exists := design["pattern_file"]; exists && designFileVal != nil {
+		if designFile, ok := designFileVal.(map[string]interface{}); ok {
+			return ExtractArray(designFile, key)
+		} else if dfStr, ok := designFileVal.(string); ok && dfStr != "" {
+			var dfObj map[string]interface{}
+			if err := json.Unmarshal([]byte(dfStr), &dfObj); err == nil {
+				return ExtractArray(dfObj, key)
+			}
+		}
+	}
+	return nil
+}
+
+// ExtractDesignElements extracts components or relationships from a design object.
+func ExtractDesignElements(design map[string]interface{}, key string) []interface{} {
+	elements := ExtractArray(design, key)
+	if len(elements) == 0 {
+		elements = ExtractNestedData(design, key)
+	}
+	return elements
 }

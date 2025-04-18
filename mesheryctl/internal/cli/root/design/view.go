@@ -31,6 +31,7 @@ import (
 var (
 	viewAllFlag   bool
 	outFormatFlag string
+	verboseFlag   bool
 )
 
 var linkDocPatternView = map[string]string{
@@ -39,13 +40,15 @@ var linkDocPatternView = map[string]string{
 }
 
 var viewCmd = &cobra.Command{
-	Use:   "view design name",
-	Short: "Display a design content",
+	Use:   "view design-name",
+	Short: "Display design content",
 	Long:  `Display the content of a specific design based on name or id`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
 // view a design
 mesheryctl design view [design-name | ID]
+mesheryctl design view [design-name | ID] --verbose
+mesheryctl design view --all
     `,
 	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -66,11 +69,13 @@ mesheryctl design view [design-name | ID]
 			}
 		}
 		url := mctlCfg.GetBaseMesheryURL()
+		// TODO: Currently using "pattern" in API endpoints and responses for backward compatibility.
+		// Future versions will align these with "design" terminology
 		if len(pattern) == 0 {
 			if viewAllFlag {
 				url += "/api/pattern?populate=pattern_file&pagesize=10000"
 			} else {
-				return errors.New(utils.DesignViewError("Design name or ID is not specified. Use `-a` to view all designs"))
+				return errors.New(utils.DesignViewError("Please specify a design name or ID. Alternatively, use the `-a` flag to view all available designs."))
 			}
 		} else if isID {
 			// if pattern is a valid uuid, then directly fetch the pattern
@@ -108,24 +113,7 @@ mesheryctl design view [design-name | ID]
 		sourceType := ""
 
 		if isID {
-			// Extract design info and find components/relationships
-			designName, sourceType = extractDesignInfo(dat)
-			components, relationships = findComponentsAndRelationships(dat)
-
-			hasComponents := len(components) > 0
-			hasRelationships := len(relationships) > 0
-
-			if !hasComponents {
-				utils.Log.Info("No components found for this design.")
-			}
-
-			if !hasRelationships {
-				utils.Log.Info("No relationships found for this design.")
-			}
-
-			if body, err = json.MarshalIndent(dat, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
-			}
+			designName, sourceType, components, relationships = extractDesignDetails(dat)
 		} else if viewAllFlag {
 			// only keep the pattern key from the response when viewing all the patterns
 			if body, err = json.MarshalIndent(map[string]interface{}{"patterns": dat["patterns"]}, "", "  "); err != nil {
@@ -149,24 +137,7 @@ mesheryctl design view [design-name | ID]
 				return ErrDesignNotFound()
 			}
 
-			// Extract design info and find components/relationships
-			designName, sourceType = extractDesignInfo(firstMatch)
-			components, relationships = findComponentsAndRelationships(firstMatch)
-
-			hasComponents := len(components) > 0
-			hasRelationships := len(relationships) > 0
-
-			if !hasComponents {
-				utils.Log.Info("No components found for this design.")
-			}
-
-			if !hasRelationships {
-				utils.Log.Info("No relationships found for this design.")
-			}
-
-			if body, err = json.MarshalIndent(firstMatch, "", "  "); err != nil {
-				return utils.ErrMarshalIndent(err)
-			}
+			designName, sourceType, components, relationships = extractDesignDetails(firstMatch)
 		}
 
 		// user may pass flag in lower or upper case but we have to keep it lower
@@ -183,39 +154,16 @@ mesheryctl design view [design-name | ID]
 		// Display the design content
 		utils.Log.Info(string(body))
 
-		// Display summary after the full design output if we're looking at a specific design
-		if isID || (!viewAllFlag && len(pattern) > 0) {
-			utils.Log.Info("\n----- Design Summary -----")
-			if designName != "" {
-				utils.Log.Info("Design Name: " + designName)
-			}
+		// Show summary only with verbose flag
+		if verboseFlag && (isID || (!viewAllFlag && len(pattern) > 0)) {
+			displayDesignSummary(designName, sourceType, components, relationships)
 
-			if sourceType != "" {
-				utils.Log.Info("Source Type: " + sourceType)
-			}
-
-			// Explain the structure issue with components/relationships
-			utils.Log.Info("\nNote: Components and relationships may appear as null at the top level")
-			utils.Log.Info("but are present inside the pattern_file structure.")
-
-			// Components and Relationships details sections
-			logResourceCount("Components", len(components), sourceType == "manifest")
-			if len(components) > 0 {
-				displayComponentDetails(components)
-			}
-			logResourceCount("Relationships", len(relationships), false)
-			if len(relationships) > 0 {
-				displayRelationshipDetails(relationships)
-			}
-
-			// Provide guidance for manifest imports
 			if sourceType == "manifest" {
-				utils.Log.Info("\nNote: Manifests are imported as raw Kubernetes resources and may not display")
-				utils.Log.Info("visual components or relationships. To create a complete design from this manifest,")
-				utils.Log.Info("you can use the Meshery UI Design section to add and connect components.")
+				utils.Log.Info("\nTip: Manifest imports require processing in Meshery UI or Kanvas to display visual components")
 			}
-
-			utils.Log.Info("-------------------------")
+		} else if !verboseFlag && (isID || (!viewAllFlag && len(pattern) > 0)) {
+			// Add helpful note about verbose flag
+			utils.Log.Info("\nTip: Use '--verbose' or '-v' flag to view detailed design summary")
 		}
 
 		return nil
@@ -225,6 +173,7 @@ mesheryctl design view [design-name | ID]
 func init() {
 	viewCmd.Flags().BoolVarP(&viewAllFlag, "all", "a", false, "(optional) view all designs available")
 	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewCmd.Flags().BoolVarP(&verboseFlag, "verbose", "v", false, "(optional) display detailed design information")
 }
 
 // logResourceCount logs the count of a resource type or a message if none are found
@@ -242,201 +191,101 @@ func logResourceCount(resourceType string, count int, isManifest bool) {
 	}
 }
 
-// extractDesignInfo extracts design name and source type from a design map
-func extractDesignInfo(design map[string]interface{}) (string, string) {
-	designName := ""
+// extractDesignDetails extracts design name, source type, components, and relationships
+func extractDesignDetails(design map[string]interface{}) (string, string, []interface{}, []interface{}) {
+	if design == nil {
+		return "", "", nil, nil
+	}
+
+	// Extract design name
+	designName := utils.SafeCastToString(design["name"])
+
+	// Extract source type from design structure
 	sourceType := ""
-
-	if design == nil {
-		return designName, sourceType
-	}
-
-	// Extract design name if exists
-	if nameVal, exists := design["name"]; exists && nameVal != nil {
-		designName = utils.SafeCastToString(nameVal)
-	}
-
-	// Extract source type from pattern_file if exists
-	if patternFileVal, exists := design["pattern_file"]; exists && patternFileVal != nil {
-		// Check if pattern_file is a map
-		if patternFile, ok := patternFileVal.(map[string]interface{}); ok && patternFile != nil {
-			if sourceTypeVal, exists := patternFile["source_type"]; exists && sourceTypeVal != nil {
-				sourceType = utils.SafeCastToString(sourceTypeVal)
-			}
+	if designFileVal, exists := design["pattern_file"]; exists && designFileVal != nil {
+		if designFile, ok := designFileVal.(map[string]interface{}); ok {
+			sourceType = utils.SafeCastToString(designFile["source_type"])
 		}
 	}
 
-	return designName, sourceType
+	// Extract components and relationships using the helper function
+	components := utils.ExtractDesignElements(design, "components")
+	relationships := utils.ExtractDesignElements(design, "relationships")
+
+	return designName, sourceType, components, relationships
 }
 
-// findComponentsAndRelationships extracts components and relationships from a design map
-func findComponentsAndRelationships(design map[string]interface{}) ([]interface{}, []interface{}) {
-	var components []interface{}
-	var relationships []interface{}
-
-	if design == nil {
-		return components, relationships
-	}
-
-	// Helper function to extract array data from a map if it exists and is non-empty
-	extractArray := func(data map[string]interface{}, key string) []interface{} {
-		if val, exists := data[key]; exists && val != nil {
-			if arr, ok := val.([]interface{}); ok && len(arr) > 0 {
-				return arr
-			}
-		}
-		return nil
-	}
-
-	// Check top-level components and relationships
-	if arr := extractArray(design, "components"); arr != nil {
-		components = arr
-	}
-
-	if arr := extractArray(design, "relationships"); arr != nil {
-		relationships = arr
-	}
-
-	// Check for components and relationships within pattern_file
-	if patternFileVal, exists := design["pattern_file"]; exists && patternFileVal != nil {
-		// Try pattern_file as map
-		if patternFile, ok := patternFileVal.(map[string]interface{}); ok && patternFile != nil {
-			// Only overwrite components if we haven't found any yet
-			if len(components) == 0 {
-				if arr := extractArray(patternFile, "components"); arr != nil {
-					components = arr
-				}
-			}
-
-			// Only overwrite relationships if we haven't found any yet
-			if len(relationships) == 0 {
-				if arr := extractArray(patternFile, "relationships"); arr != nil {
-					relationships = arr
-				}
-			}
-		}
-
-		// Try pattern_file as string and parse JSON if we're still missing data
-		if len(components) == 0 || len(relationships) == 0 {
-			if pfStr, ok := patternFileVal.(string); ok && pfStr != "" {
-				var pfObj map[string]interface{}
-				if err := json.Unmarshal([]byte(pfStr), &pfObj); err == nil && pfObj != nil {
-					// Only extract components if we haven't found any yet
-					if len(components) == 0 {
-						if arr := extractArray(pfObj, "components"); arr != nil {
-							components = arr
-						}
-					}
-
-					// Only extract relationships if we haven't found any yet
-					if len(relationships) == 0 {
-						if arr := extractArray(pfObj, "relationships"); arr != nil {
-							relationships = arr
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return components, relationships
-}
-
-// displayComponentDetails formats and logs component details
-func displayComponentDetails(components []interface{}) {
-	if len(components) == 0 {
+// Update displayDesignSummary to handle all logging in one place
+func displayDesignSummary(designName, sourceType string, components, relationships []interface{}) {
+	if !verboseFlag {
 		return
 	}
 
-	utils.Log.Info("Component details:")
-	for i, compVal := range components {
-		comp, ok := compVal.(map[string]interface{})
-		if !ok || comp == nil {
-			utils.Log.Info(fmt.Sprintf("  %d. Unknown component (invalid format)", i+1))
-			continue
-		}
-
-		displayName := "Unknown"
-		kind := "Unknown"
-
-		if nameVal, exists := comp["displayName"]; exists && nameVal != nil {
-			displayName = utils.SafeCastToString(nameVal)
-		}
-
-		if compDataVal, exists := comp["component"]; exists && compDataVal != nil {
-			if compData, ok := compDataVal.(map[string]interface{}); ok && compData != nil {
-				if kindVal, exists := compData["kind"]; exists && kindVal != nil {
-					kind = utils.SafeCastToString(kindVal)
-				}
-			}
-		}
-
-		utils.Log.Info(fmt.Sprintf("  %d. %s (Kind: %s)", i+1, displayName, kind))
-	}
-}
-
-// displayRelationshipDetails formats and logs relationship details
-func displayRelationshipDetails(relationships []interface{}) {
-	if len(relationships) == 0 {
-		return
+	// Build complete summary
+	summaryLines := []string{
+		"\n=== Design Summary ===",
+		fmt.Sprintf("Name: %s", designName),
 	}
 
-	utils.Log.Info("Relationship details:")
-
-	// Helper function to safely get strings from map with fallback
-	getStringFromMap := func(r map[string]interface{}, key string) string {
-		val, exists := r[key]
-		if !exists || val == nil {
-			return "Unknown"
-		}
-		return utils.SafeCastToString(val)
+	if sourceType != "" {
+		summaryLines = append(summaryLines, fmt.Sprintf("Type: %s", sourceType))
 	}
 
-	// Helper to log component IDs
-	logComponentIDs := func(components []interface{}, prefix string) {
-		for _, item := range components {
-			component, ok := item.(map[string]interface{})
-			if !ok || component == nil {
+	summaryLines = append(summaryLines, "", "Components:")
+	if len(components) > 0 {
+		for i, comp := range components {
+			compMap, ok := comp.(map[string]interface{})
+			if !ok {
 				continue
 			}
 
-			if id := utils.SafeCastToString(component["id"]); id != "" {
-				utils.Log.Info(fmt.Sprintf("     %s component ID: %s", prefix, id))
+			name := utils.SafeCastToString(compMap["displayName"])
+			if name == "" {
+				name = "Unnamed"
 			}
+
+			kind := "Unknown"
+			if compData, ok := compMap["component"].(map[string]interface{}); ok {
+				kind = utils.SafeCastToString(compData["kind"])
+			}
+
+			summaryLines = append(summaryLines, fmt.Sprintf("  %d. %s (%s)", i+1, name, kind))
 		}
+	} else {
+		summaryLines = append(summaryLines, "  No components found in this design")
 	}
 
-	for i, relVal := range relationships {
-		r, ok := relVal.(map[string]interface{})
-		if !ok || r == nil {
-			utils.Log.Info(fmt.Sprintf("  %d. Unknown relationship (invalid format)", i+1))
-			continue
-		}
-
-		kind := getStringFromMap(r, "kind")
-		subType := getStringFromMap(r, "subType")
-		status := getStringFromMap(r, "status")
-
-		utils.Log.Info(fmt.Sprintf("  %d. %s relationship of type %s (Status: %s)",
-			i+1, kind, subType, status))
-
-		// Process selectors
-		if selectors, ok := r["selectors"].([]interface{}); ok && len(selectors) > 0 {
-			for _, selectorVal := range selectors {
-				selector, _ := selectorVal.(map[string]interface{})
-				if allow, ok := selector["allow"].(map[string]interface{}); ok {
-
-					// Process from components
-					if from, ok := allow["from"].([]interface{}); ok {
-						logComponentIDs(from, "From")
-					}
-
-					// Process to components
-					if to, ok := allow["to"].([]interface{}); ok {
-						logComponentIDs(to, "To")
-					}
-				}
+	// Relationships section
+	summaryLines = append(summaryLines, "", "Relationships:")
+	if len(relationships) > 0 {
+		for i, rel := range relationships {
+			relMap, ok := rel.(map[string]interface{})
+			if !ok {
+				continue
 			}
+
+			kind := utils.SafeCastToString(relMap["kind"])
+			subType := utils.SafeCastToString(relMap["subType"])
+			status := utils.SafeCastToString(relMap["status"])
+
+			summaryLines = append(summaryLines, fmt.Sprintf("  %d. %s %s (%s)",
+				i+1, kind, subType, status))
 		}
+	} else {
+		summaryLines = append(summaryLines, "  No relationships found in this design")
 	}
+
+	// Add notes section if needed
+	if sourceType == "manifest" {
+		summaryLines = append(summaryLines, "", "Note: Manifest imports require processing in Meshery UI or Kanvas to display visual components")
+	}
+
+	if len(components) > 0 || len(relationships) > 0 {
+		summaryLines = append(summaryLines, "", "Note: Design elements are nested in the structure")
+	}
+
+	summaryLines = append(summaryLines, "\n===========================")
+
+	// Display entire summary at once
+	utils.Log.Info(strings.Join(summaryLines, "\n"))
 }

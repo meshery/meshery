@@ -1,19 +1,21 @@
-No components found for this design.
-No relationships found for this design.
-id: test-id
-name: empty-design
-pattern_file:
-  components: []
-  name: MesheryGeneratedPatternFile
-  relationships: []
-  services: {}
+patterns:
+- id: test-id
+  name: empty-design
+  pattern_file:
+    components: []
+    name: MesheryGeneratedPatternFile
+    relationships: []
+    services: {}
 
 
------ Design Summary -----
-Design Name: empty-design
+=== Design Summary ===
+Name: empty-design
+Type: <nil>
 
-Note: Components and relationships may appear as null at the top level
-but are present inside the pattern_file structure.
-Components: None
-Relationships: None
--------------------------
+Components:
+  No components found in this design
+
+Relationships:
+  No relationships found in this design
+
+===========================
