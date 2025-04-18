@@ -14,8 +14,6 @@ Meshery continuously tracks activities affecting your infrastructure and workloa
 ### What is the Notification Center?
 The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
 
-![Find Notification Center]({{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif)
-
 <a href="{{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif">
   <img src="{{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif" alt="Notification Position" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
@@ -131,9 +129,11 @@ These icons are generated dynamically using the event’s metadata:
 
 ### Notification Retention and Visibility
 **How long are notifications stored?**
+
 The duration for which notifications are retained is determined by the provider you are using (e.g., Meshery Cloud, local Meshery Server).
 
 **What happens when retention ends?** 
+
 In Meshery Cloud, notifications are removed once the provider is updated, helping ensure the event stream reflects the most recent and relevant information.
 
 {% include related-discussions.html tag="meshery" %}
