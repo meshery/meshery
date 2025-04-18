@@ -1122,17 +1122,64 @@ exp:
           org:
             name: -o, -orgId
             description: organization id 
-  org:
-    name: org
-    description: show existing organizations with their name,id, date of creation
-    usage: mesheryctl exp org 
+  organization:
+    name: organization
+    description: Interact with existing organizations
+    usage: mesheryctl exp organization
     flags:
-      description: 
-        pageNo:
-          name: -p --pagenumber
-          description: page number to fetch
-        pagesize:
-          name: -s --size
-          description: page size
-      
-
+      count:
+        name: --count
+        description: (optional) Get the total of registrered organizations
+      help:
+        name: --help, -h
+        description: help for organization command
+        usage: mesheryctl exp organization --help
+        example: mesheryctl exp organization --help
+    subcommands:
+      list:
+        name: list
+        description: List all organizations registered in Meshery Server
+        usage: mesheryctl exp organization list [flags]
+        flags:
+          page:
+            name: --page, -p
+            description: list organizations by specific page number (25 models per page)  
+          count:
+            name: --count
+            description: (optional) Get the total of registrered organizations
+  model:
+    name: model
+    description: Manages models
+    usage: mesheryctl exp model
+    flags:
+      help:
+        name: --help, -h
+        description: help for model command
+        usage: mesheryctl exp model --help
+        example: mesheryctl exp model --help
+    subcommands:
+      init:
+        name: init
+        description: Scaffold a folder structure for model creation
+        usage: mesheryctl exp model init [model-name] [flags]
+        flags:
+          output-format:
+            name: --output-format, -o
+            description: (optional) format to scaffold files to, supports json or yaml, planned to support csv, defaults to json.
+            usage: mesheryctl exp model init [model-name] --output-format [format]
+            example:
+              mesheryctl exp model init aws-ec2-controller --output-format json
+              mesheryctl exp model init aws-ec2-controller --output-format yaml
+          path:
+            name: --path, -p
+            description: (optional) generates a folder structure under specified path, defaults to current dir.
+            usage: mesheryctl exp model init [model-name] --path [path]
+            example:
+              mesheryctl exp model init aws-ec2-controller --path .
+              mesheryctl exp model init aws-ec2-controller --path ./some/folder/where/to/put/files
+          count:
+            name: --version
+            description: (optional) model version, defaults to v0.1.0   
+            usage: mesheryctl exp model init [model-name] --path [path]
+            example:
+              mesheryctl exp model init aws-ec2-controller --version v1.2.3

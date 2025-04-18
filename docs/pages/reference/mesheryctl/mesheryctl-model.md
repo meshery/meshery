@@ -17,6 +17,7 @@ Manage models
 ## Synopsis
 
 Export, generate, import, list, search and view model(s) and detailed informations
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model [flags]

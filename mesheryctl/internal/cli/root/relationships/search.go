@@ -19,6 +19,8 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -61,7 +63,7 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := buildSearchUrl(baseUrl)
-		relationshipResponse, err := fetchRelationships(url)
+		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
 
 		if err != nil {
 			return err
@@ -78,13 +80,16 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 			}
 		}
 
-		data := relationshipsData{
-			Headers:          []string{"kind", "apiVersion", "model-name", "subType", "regoQuery"},
+		dataToDisplay := display.DisplayedData{
+			DataType:         "relationship",
+			Header:           []string{"kind", "apiVersion", "model-name", "subType", "regoQuery"},
 			Rows:             rows,
 			Count:            relationshipResponse.Count,
 			DisplayCountOnly: false,
+			IsPage:           cmd.Flags().Changed("page"),
 		}
-		return listRelationships(cmd, data)
+
+		return display.List(dataToDisplay)
 	},
 }
 

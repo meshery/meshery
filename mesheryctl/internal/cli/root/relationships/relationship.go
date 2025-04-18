@@ -15,11 +15,9 @@
 package relationships
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
@@ -39,13 +37,6 @@ type MeshmodelRelationshipsAPIResponse struct {
 	PageSize      int                                   `json:"page_size"`
 	Count         int64                                 `json:"total_count"`
 	Relationships []relationship.RelationshipDefinition `json:"relationships"`
-}
-
-type relationshipsData struct {
-	Headers          []string
-	Rows             [][]string
-	Count            int64
-	DisplayCountOnly bool
 }
 
 var RelationshipCmd = &cobra.Command{
@@ -88,7 +79,7 @@ mesheryctl exp relationship view [model-name]
 
 			baseUrl := mctlCfg.GetBaseMesheryURL()
 			url := fmt.Sprintf("%s/api/meshmodels/relationships?page=1", baseUrl)
-			models, err := fetchRelationships(url)
+			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
 
 			if err != nil {
 				return err
@@ -118,59 +109,4 @@ mesheryctl exp relationship view [model-name]
 func init() {
 	RelationshipCmd.AddCommand(availableSubcommands...)
 	RelationshipCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of relationship(s) in total")
-}
-
-func fetchRelationships(url string) (*MeshmodelRelationshipsAPIResponse, error) {
-	req, err := utils.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := utils.MakeRequest(req)
-	if err != nil {
-		return nil, err
-	}
-
-	// defers the closing of the response body after its use, ensuring that the resources are properly released.
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	modelsResponse := &MeshmodelRelationshipsAPIResponse{}
-	err = json.Unmarshal(data, modelsResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	return modelsResponse, nil
-}
-
-func listRelationships(cmd *cobra.Command, data relationshipsData) error {
-
-	if len(data.Rows) == 0 {
-		// if no component is found
-		fmt.Println("No relationship(s) found")
-		return nil
-	}
-
-	utils.DisplayCount("models", data.Count)
-
-	if data.DisplayCountOnly {
-		return nil
-	}
-
-	if cmd.Flags().Changed("page") {
-		utils.PrintToTable(data.Headers, data.Rows)
-	} else {
-		maxRowsPerPage := 25
-		err := utils.HandlePagination(maxRowsPerPage, "relationships", data.Rows, data.Headers)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-	}
-	return nil
 }

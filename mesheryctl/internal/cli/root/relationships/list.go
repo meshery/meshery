@@ -17,6 +17,8 @@ package relationships
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
@@ -59,7 +61,7 @@ mesheryctl relationship list --count
 		page, _ := cmd.Flags().GetInt("page")
 		url := fmt.Sprintf("%s/api/meshmodels/relationships?%s", baseUrl, utils.GetPageQueryParameter(cmd, page))
 
-		relationships, err := fetchRelationships(url)
+		relationships, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
 
 		if err != nil {
 			return err
@@ -78,14 +80,16 @@ mesheryctl relationship list --count
 			}
 		}
 
-		data := relationshipsData{
-			Headers:          []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
+		dataToDisplay := display.DisplayedData{
+			DataType:         "relationship",
+			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
 			Rows:             rows,
 			Count:            relationships.Count,
 			DisplayCountOnly: count,
+			IsPage:           cmd.Flags().Changed("page"),
 		}
 
-		return listRelationships(cmd, data)
+		return display.List(dataToDisplay)
 	},
 }
 

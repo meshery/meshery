@@ -21,6 +21,9 @@ import (
 	"github.com/layer5io/meshery/server/models"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
+
+	// "github.com/layer5io/meshkit/errors"
+	// "github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
 
 	meshkitOci "github.com/layer5io/meshkit/models/oci"
@@ -1477,11 +1480,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	case "url":
 
 		model := &meshkitRegistryUtils.ModelCSV{
-			Model:            importRequest.ImportBody.Model.Model,
-			ModelDisplayName: importRequest.ImportBody.Model.ModelDisplayName,
-			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
-			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
-			Category:         importRequest.ImportBody.Model.Category,
+			Model:             importRequest.ImportBody.Model.Model,
+			ModelDisplayName:  importRequest.ImportBody.Model.ModelDisplayName,
+			PrimaryColor:      importRequest.ImportBody.Model.PrimaryColor,
+			SecondaryColor:    importRequest.ImportBody.Model.SecondaryColor,
+			Category:          importRequest.ImportBody.Model.Category,
 			Registrant:        importRequest.ImportBody.Model.Registrant,
 			Shape:             importRequest.ImportBody.Model.Shape,
 			SubCategory:       importRequest.ImportBody.Model.SubCategory,
@@ -1672,10 +1675,31 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// No entities found for the given filter
+	// This can happen if the model is not found or if the model is not registered
+	// or if the model is not in the registry
+	// In this case, we return a 404 error
 	if len(e) == 0 {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		message := "model with "
+		if modelId != "" {
+			message += fmt.Sprintf("id %s ", modelId)
+		}
+		if name != "" {
+			message += fmt.Sprintf("name %s ", name)
+		}
+		if version != "" {
+			message += fmt.Sprintf("version %s ", version)
+		}
+		message += "has not been found"
+		// h.log.Error(ErrGetMeshModels(err))
+		// http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusNotFound)
+		rw.WriteHeader(http.StatusNotFound)
+		// rw.Write([]byte(message))
+		fmt.Fprintln(rw, message)
+		return
 	}
+
 	model := e[0].(*_model.ModelDefinition)
 	//This path is used to so that the function can be aware of where the svg file is
 	//This is for relative path as we are inside meshery/server/cmd/main.go
@@ -1708,8 +1732,17 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	}
 	defer os.RemoveAll(modelDir)
 
-	components := model.Components.([]component.ComponentDefinition)
-	rels := model.Relationships.([]relationship.RelationshipDefinition)
+	components := []component.ComponentDefinition{}
+	// Components can be nil if hasComponents is false
+	if model.Components != nil {
+		components = model.Components.([]component.ComponentDefinition)
+	}
+
+	relationships := []relationship.RelationshipDefinition{}
+	// Relationships can be nil if hasRelationships is false
+	if model.Relationships != nil {
+		relationships = model.Relationships.([]relationship.RelationshipDefinition)
+	}
 
 	model.Relationships = nil
 	model.Components = nil
@@ -1732,7 +1765,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-	for _, rel := range rels {
+	for _, rel := range relationships {
 		rel.Model = *model
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {
