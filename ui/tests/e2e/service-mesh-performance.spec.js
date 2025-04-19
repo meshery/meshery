@@ -67,7 +67,6 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
       page,
     }) => {
       await page.goto('/performance/profiles');
-      await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('MUIDataTableBodyRow-0').locator('input[type="checkbox"]').check();
 
