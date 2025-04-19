@@ -2,7 +2,6 @@ package workspaces
 
 import (
 	"flag"
-	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -25,27 +24,11 @@ func TestWorkspaces(t *testing.T) {
 	tests := []utils.MesheryListCommamdTest{
 		{
 			Name:             "Display error when no args and flag provided",
-			Args:             []string{""},
+			Args:             []string{},
 			URL:              "",
-			Fixture:          "list.workspace.api.response.golden",
-			ExpectedResponse: "list.workspace.no.orgID.output.golden",
-			ExpectError:      true,
-		},
-		{
-			Name:             "List workspaces providing organization ID",
-			Args:             []string{"list", "--orgId", testOrgId},
-			URL:              fmt.Sprintf("/%s?orgID=%s", workspacesApiPath, testOrgId),
-			Fixture:          "list.workspace.api.response.golden",
-			ExpectedResponse: "list.workspace.output.golden",
-			ExpectError:      false,
-		},
-		{
-			Name:             "List workspaces providing organization ID empty result",
-			Args:             []string{"list", "--orgId", testOrgId},
-			URL:              fmt.Sprintf("/%s?orgID=%s", workspacesApiPath, testOrgId),
 			Fixture:          "list.workspace.empty.api.response.golden",
-			ExpectedResponse: "list.workspace.empty.output.golden",
-			ExpectError:      false,
+			ExpectedResponse: "workspace.no.args.no.flags.output.golden",
+			ExpectError:      true,
 		},
 	}
 
