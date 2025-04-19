@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.120.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#aecbfa;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#669df6;}.cls-3{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpath class=\"cls-1\" d=\"M6.73,10.83v2.63A4.91,4.91,0,0,0,8.44,15.2V10.83Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M9.89,8.41v7.53A7.62,7.62,0,0,0,11,16,8,8,0,0,0,12,16V8.41Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M13.64,11.86v3.29a5,5,0,0,0,1.7-1.82V11.86Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M17.74,16.32l-1.42,1.42a.42.42,0,0,0,0,.6l3.54,3.54a.42.42,0,0,0,.59,0l1.43-1.43a.42.42,0,0,0,0-.59l-3.54-3.54a.42.42,0,0,0-.6,0\"/\u003e\u003cpath class=\"cls-2\" d=\"M11,2a9,9,0,1,0,9,9,9,9,0,0,0-9-9m0,15.69A6.68,6.68,0,1,1,17.69,11,6.68,6.68,0,0,1,11,17.69\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpath class=\"cls-1\" d=\"M6.73,10.83v2.63A4.91,4.91,0,0,0,8.44,15.2V10.83Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M9.89,8.41v7.53A7.62,7.62,0,0,0,11,16,8,8,0,0,0,12,16V8.41Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M13.64,11.86v3.29a5,5,0,0,0,1.7-1.82V11.86Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M17.74,16.32l-1.42,1.42a.42.42,0,0,0,0,.6l3.54,3.54a.42.42,0,0,0,.59,0l1.43-1.43a.42.42,0,0,0,0-.59l-3.54-3.54a.42.42,0,0,0-.6,0\"/\u003e\u003cpath class=\"cls-2\" d=\"M11,2a9,9,0,1,0,9,9,9,9,0,0,0-9-9m0,15.69A6.68,6.68,0,1,1,17.69,11,6.68,6.68,0,0,1,11,17.69\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "beyondcorp.cnrm.cloud.google.com/v1alpha1",
     "kind": "BeyondCorpAppGateway",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"Immutable. An arbitrary user-provided name for the AppGateway.\",\n     \"type\": \"string\"\n    },\n    \"hostType\": {\n     \"description\": \"Immutable. The type of hosting used by the AppGateway. Default value: \\\"HOST_TYPE_UNSPECIFIED\\\" Possible values: [\\\"HOST_TYPE_UNSPECIFIED\\\", \\\"GCP_REGIONAL_MIG\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the AppGateway.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type of network connectivity used by the AppGateway. Default value: \\\"TYPE_UNSPECIFIED\\\" Possible values: [\\\"TYPE_UNSPECIFIED\\\", \\\"TCP_PROXY\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"projectRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Beyond Corp App Gateway\",\n \"type\": \"object\"\n}",
-    "version": "beyondcorp.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"displayName\": {\n     \"description\": \"Immutable. An arbitrary user-provided name for the AppGateway.\",\n     \"type\": \"string\"\n    },\n    \"hostType\": {\n     \"description\": \"Immutable. The type of hosting used by the AppGateway. Default value: \\\"HOST_TYPE_UNSPECIFIED\\\" Possible values: [\\\"HOST_TYPE_UNSPECIFIED\\\", \\\"GCP_REGIONAL_MIG\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the AppGateway.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type of network connectivity used by the AppGateway. Default value: \\\"TYPE_UNSPECIFIED\\\" Possible values: [\\\"TYPE_UNSPECIFIED\\\", \\\"TCP_PROXY\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"projectRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Beyond Corp App Gateway\",\n \"type\": \"object\"\n}"
   }
 }

@@ -39,10 +39,13 @@ export const AddWidgetsToLayoutPanel = ({ widgetsToAdd, editMode, onAddWidget })
       bgcolor={theme.palette.background.card}
       boxShadow="0px 2px 10px rgba(0, 0, 0, 0.2)"
       marginBlock={'1rem'}
+      minHeight={'17rem'}
     >
       <Typography variant="h5"> Widgets</Typography>
       {widgetsToAdd.length == 0 && (
-        <Typography variant="h6"> All widgets added to the layout </Typography>
+        <Box marginInline={'auto'} marginTop={'5%'}>
+          <Typography variant="h6"> All widgets added to the layout </Typography>
+        </Box>
       )}
 
       <Box display="flex" flexWrap="wrap" gap="1rem">
@@ -52,7 +55,7 @@ export const AddWidgetsToLayoutPanel = ({ widgetsToAdd, editMode, onAddWidget })
             sx={{
               height: '18rem',
               width: '100%',
-              minWidth: '16rem',
+              maxWidth: '16rem',
             }}
           >
             <Stack direction="row" alignItems="center" justifyContent="space-between">

@@ -1577,6 +1577,69 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "11304": {
+        "name": "ErrFileReadCode",
+        "code": "11304",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "File read error",
+        "probable_cause": "The provided file is not present or has an invalid path.",
+        "suggested_remediation": "To proceed, provide a valid file path with a valid file."
+      },
+      "11305": {
+        "name": "ErrGeneratesModelCode",
+        "code": "11305",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Registrant used for the model is not supported\nVerify the model's source URL.\nFailed to create a local directory in the filesystem for this model.",
+        "suggested_remediation": "Ensure that each kind of registrant used is a supported kind.\nEnsure correct model source URL is provided and properly formatted.\nEnsure sufficient permissions to allow creation of model directory."
+      },
+      "11306": {
+        "name": "ErrReadCSVRowCode",
+        "code": "11306",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading csv ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11307": {
+        "name": "ErrCSVFileNotFoundCode",
+        "code": "11307",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading csv file",
+        "probable_cause": "Either or both model csv or component csv are absent, the csv is not of correct template",
+        "suggested_remediation": "verify the csv template"
+      },
+      "11308": {
+        "name": "ErrUpdateComponentsCode",
+        "code": "11308",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Component does not exist\nComponent definition is corrupted",
+        "suggested_remediation": "Ensure existence of component, check for typo in component name\nRegenerate corrupted component"
+      },
+      "11309": {
+        "name": "ErrGeneratesComponentCode",
+        "code": "11309",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error generating comp %s of model %s",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11310": {
+        "name": "ErrUpdateRelationshipFileCode",
+        "code": "11310",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error while comparing files",
+        "probable_cause": "Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet",
+        "suggested_remediation": "Ensure that the new file is in the correct format and has the correct data"
       }
     }
   }

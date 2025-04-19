@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Observability and Analysis"
     },
     "subCategory": "Monitoring",
@@ -46,15 +47,16 @@
     "model": {
       "version": "4.4.13"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "grafana.integreatly.org/v1beta1",
     "kind": "GrafanaContactPoint",
-    "schema": "{\n \"description\": \"GrafanaContactPoint is the Schema for the grafanacontactpoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GrafanaContactPointSpec defines the desired state of GrafanaContactPoint\",\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"disableResolveMessage\": {\n     \"type\": \"boolean\"\n    },\n    \"instanceSelector\": {\n     \"description\": \"selects Grafanas for import\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"settings\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"alertmanager\",\n      \"prometheus-alertmanager\",\n      \"dingding\",\n      \"discord\",\n      \"email\",\n      \"googlechat\",\n      \"kafka\",\n      \"line\",\n      \"opsgenie\",\n      \"pagerduty\",\n      \"pushover\",\n      \"sensugo\",\n      \"sensu\",\n      \"slack\",\n      \"teams\",\n      \"telegram\",\n      \"threema\",\n      \"victorops\",\n      \"webhook\",\n      \"wecom\",\n      \"hipchat\",\n      \"oncall\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"name\",\n    \"settings\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Contact Point\",\n \"type\": \"object\"\n}",
-    "version": "grafana.integreatly.org/v1beta1"
+    "schema": "{\n \"description\": \"GrafanaContactPoint is the Schema for the grafanacontactpoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GrafanaContactPointSpec defines the desired state of GrafanaContactPoint\",\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"disableResolveMessage\": {\n     \"type\": \"boolean\"\n    },\n    \"instanceSelector\": {\n     \"description\": \"selects Grafanas for import\",\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"settings\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"alertmanager\",\n      \"prometheus-alertmanager\",\n      \"dingding\",\n      \"discord\",\n      \"email\",\n      \"googlechat\",\n      \"kafka\",\n      \"line\",\n      \"opsgenie\",\n      \"pagerduty\",\n      \"pushover\",\n      \"sensugo\",\n      \"sensu\",\n      \"slack\",\n      \"teams\",\n      \"telegram\",\n      \"threema\",\n      \"victorops\",\n      \"webhook\",\n      \"wecom\",\n      \"hipchat\",\n      \"oncall\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"name\",\n    \"settings\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Contact Point\",\n \"type\": \"object\"\n}"
   }
 }

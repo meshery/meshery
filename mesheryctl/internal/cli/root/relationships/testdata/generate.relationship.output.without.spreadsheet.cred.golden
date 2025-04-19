@@ -1,0 +1,5 @@
+[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified
+
+Usage: mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
+Run 'mesheryctl exp relationship generate --help' to see detailed help message
+See https://docs.meshery.io/reference/mesheryctl/relationships/generate for usage details

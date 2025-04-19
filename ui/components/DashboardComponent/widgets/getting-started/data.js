@@ -1,5 +1,5 @@
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
-import Link from '@layer5/sistent';
+import { Link } from '@layer5/sistent';
 
 export const ActionName = {
   NEXT: 'Next',
@@ -103,7 +103,7 @@ export const stepsData = [
             {
               'Invite your teammates to collaborate on a design. Designs set to public visibility by default, so sharing is easy. If you prefer to share your designs privately be sure to signup for either the Team or Enterprise '
             }
-            {<Link href="/account/plans">plan</Link>}
+            <Link href="/account/plans">plan</Link>
             {'.'}
           </p>
         ),

@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +45,17 @@
     "model": {
       "version": "0.1.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "k8s.nginx.org/v1",
     "kind": "Policy",
-    "schema": "{\n \"description\": \"Policy defines a Policy for VirtualServer and VirtualServerRoute resources.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PolicySpec is the spec of the Policy resource. The spec includes multiple fields, where each field represents a different policy. Only one policy (field) is allowed.\",\n   \"properties\": {\n    \"accessControl\": {\n     \"description\": \"AccessControl defines an access policy based on the source IP of a request. policy status: production-ready\",\n     \"properties\": {\n      \"allow\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"deny\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"egressMTLS\": {\n     \"description\": \"EgressMTLS defines an Egress MTLS policy. policy status: preview\",\n     \"properties\": {\n      \"ciphers\": {\n       \"type\": \"string\"\n      },\n      \"protocols\": {\n       \"type\": \"string\"\n      },\n      \"serverName\": {\n       \"type\": \"boolean\"\n      },\n      \"sessionReuse\": {\n       \"type\": \"boolean\"\n      },\n      \"sslName\": {\n       \"type\": \"string\"\n      },\n      \"tlsSecret\": {\n       \"type\": \"string\"\n      },\n      \"trustedCertSecret\": {\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"type\": \"integer\"\n      },\n      \"verifyServer\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ingressMTLS\": {\n     \"description\": \"IngressMTLS defines an Ingress MTLS policy. policy status: preview\",\n     \"properties\": {\n      \"clientCertSecret\": {\n       \"type\": \"string\"\n      },\n      \"verifyClient\": {\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"jwt\": {\n     \"description\": \"JWTAuth holds JWT authentication configuration. policy status: preview\",\n     \"properties\": {\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      },\n      \"token\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidc\": {\n     \"description\": \"OIDC defines an Open ID Connect policy.\",\n     \"properties\": {\n      \"authEndpoint\": {\n       \"type\": \"string\"\n      },\n      \"clientID\": {\n       \"type\": \"string\"\n      },\n      \"clientSecret\": {\n       \"type\": \"string\"\n      },\n      \"jwksURI\": {\n       \"type\": \"string\"\n      },\n      \"redirectURI\": {\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"type\": \"string\"\n      },\n      \"tokenEndpoint\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rateLimit\": {\n     \"description\": \"RateLimit defines a rate limit policy. policy status: preview\",\n     \"properties\": {\n      \"burst\": {\n       \"type\": \"integer\"\n      },\n      \"delay\": {\n       \"type\": \"integer\"\n      },\n      \"dryRun\": {\n       \"type\": \"boolean\"\n      },\n      \"key\": {\n       \"type\": \"string\"\n      },\n      \"logLevel\": {\n       \"type\": \"string\"\n      },\n      \"noDelay\": {\n       \"type\": \"boolean\"\n      },\n      \"rate\": {\n       \"type\": \"string\"\n      },\n      \"rejectCode\": {\n       \"type\": \"integer\"\n      },\n      \"zoneSize\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"waf\": {\n     \"description\": \"WAF defines an WAF policy. policy status: preview\",\n     \"properties\": {\n      \"apPolicy\": {\n       \"type\": \"string\"\n      },\n      \"enable\": {\n       \"type\": \"boolean\"\n      },\n      \"securityLog\": {\n       \"description\": \"SecurityLog defines the security log of a WAF policy.\",\n       \"properties\": {\n        \"apLogConf\": {\n         \"type\": \"string\"\n        },\n        \"enable\": {\n         \"type\": \"boolean\"\n        },\n        \"logDest\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Policy\",\n \"type\": \"object\"\n}",
-    "version": "k8s.nginx.org/v1"
+    "schema": "{\n \"description\": \"Policy defines a Policy for VirtualServer and VirtualServerRoute resources.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PolicySpec is the spec of the Policy resource. The spec includes multiple fields, where each field represents a different policy. Only one policy (field) is allowed.\",\n   \"properties\": {\n    \"accessControl\": {\n     \"description\": \"AccessControl defines an access policy based on the source IP of a request. policy status: production-ready\",\n     \"properties\": {\n      \"allow\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"deny\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"egressMTLS\": {\n     \"description\": \"EgressMTLS defines an Egress MTLS policy. policy status: preview\",\n     \"properties\": {\n      \"ciphers\": {\n       \"type\": \"string\"\n      },\n      \"protocols\": {\n       \"type\": \"string\"\n      },\n      \"serverName\": {\n       \"type\": \"boolean\"\n      },\n      \"sessionReuse\": {\n       \"type\": \"boolean\"\n      },\n      \"sslName\": {\n       \"type\": \"string\"\n      },\n      \"tlsSecret\": {\n       \"type\": \"string\"\n      },\n      \"trustedCertSecret\": {\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"type\": \"integer\"\n      },\n      \"verifyServer\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ingressMTLS\": {\n     \"description\": \"IngressMTLS defines an Ingress MTLS policy. policy status: preview\",\n     \"properties\": {\n      \"clientCertSecret\": {\n       \"type\": \"string\"\n      },\n      \"verifyClient\": {\n       \"type\": \"string\"\n      },\n      \"verifyDepth\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"jwt\": {\n     \"description\": \"JWTAuth holds JWT authentication configuration. policy status: preview\",\n     \"properties\": {\n      \"realm\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      },\n      \"token\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"oidc\": {\n     \"description\": \"OIDC defines an Open ID Connect policy.\",\n     \"properties\": {\n      \"authEndpoint\": {\n       \"type\": \"string\"\n      },\n      \"clientID\": {\n       \"type\": \"string\"\n      },\n      \"clientSecret\": {\n       \"type\": \"string\"\n      },\n      \"jwksURI\": {\n       \"type\": \"string\"\n      },\n      \"redirectURI\": {\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"type\": \"string\"\n      },\n      \"tokenEndpoint\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rateLimit\": {\n     \"description\": \"RateLimit defines a rate limit policy. policy status: preview\",\n     \"properties\": {\n      \"burst\": {\n       \"type\": \"integer\"\n      },\n      \"delay\": {\n       \"type\": \"integer\"\n      },\n      \"dryRun\": {\n       \"type\": \"boolean\"\n      },\n      \"key\": {\n       \"type\": \"string\"\n      },\n      \"logLevel\": {\n       \"type\": \"string\"\n      },\n      \"noDelay\": {\n       \"type\": \"boolean\"\n      },\n      \"rate\": {\n       \"type\": \"string\"\n      },\n      \"rejectCode\": {\n       \"type\": \"integer\"\n      },\n      \"zoneSize\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"waf\": {\n     \"description\": \"WAF defines an WAF policy. policy status: preview\",\n     \"properties\": {\n      \"apPolicy\": {\n       \"type\": \"string\"\n      },\n      \"enable\": {\n       \"type\": \"boolean\"\n      },\n      \"securityLog\": {\n       \"description\": \"SecurityLog defines the security log of a WAF policy.\",\n       \"properties\": {\n        \"apLogConf\": {\n         \"type\": \"string\"\n        },\n        \"enable\": {\n         \"type\": \"boolean\"\n        },\n        \"logDest\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Policy\",\n \"type\": \"object\"\n}"
   }
 }

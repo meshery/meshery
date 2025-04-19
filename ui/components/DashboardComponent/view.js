@@ -32,6 +32,7 @@ const Header = styled('div')({
   justifyItems: 'center',
   textTransform: 'uppercase',
   fontSize: '.9rem',
+  flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'space-between',
 });
@@ -94,6 +95,7 @@ const View = (props) => {
               width="100%"
               handlePing={() => ping(context.name, context.server, context.connection_id)}
               status={CONNECTION_STATES.CONNECTED}
+              iconSrc={'/static/img/kubernetes.svg'}
             />
           </Header>
           <ErrorBoundary>

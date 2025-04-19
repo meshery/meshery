@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.128.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg id=\"Artwork\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cpath d=\"M14.86,11.62h2v.06c0,5.91-3.44,8-4.58,8.54v1.53l.25-.08c.23-.08,5.77-2.08,5.77-10V10.2H14.13Z\" style=\"fill:#669df6\"/\u003e\u003cpath d=\"M14.13,10.2l.7-1.27V2.25l-1.12.87c-2.44,1.79-5,5.08-4.84,8.94a8,8,0,0,0,3.4,6.39l.1.07.75-1.22-.1-.06a6.24,6.24,0,0,1-.82-.71L14.86,15V11.62Zm-.7,1.42v2.56L11.3,15.41a6.49,6.49,0,0,1-1-3.42c-.13-3.33,2.13-5.85,3.11-6.78V8.53l-1.68,3.09h1.72\" style=\"fill:#4285f4\"/\u003e\u003cpath d=\"M12.24,20.22a9.28,9.28,0,0,1-5.06-8.76V10.15H5.75v1.31c0,7.52,5.6,10,6.24,10.2l.24.09\" style=\"fill:#aecbfa\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M14.86 11.6202H16.86V11.6802C16.86 17.5902 13.42 19.6802 12.28 20.2202V21.7502L12.53 21.6702C12.76 21.5902 18.3 19.5902 18.3 11.6702V10.2002H14.13L14.86 11.6202Z\" fill=\"#DDDDDD\"/\u003e\n\u003cpath d=\"M14.1299 10.2L14.8299 8.93V2.25L13.7099 3.12C11.2699 4.91 8.70993 8.2 8.86993 12.06C8.8945 13.3174 9.21516 14.5513 9.80591 15.6615C10.3967 16.7718 11.2408 17.7271 12.2699 18.45L12.3699 18.52L13.1199 17.3L13.0199 17.24C12.7265 17.0276 12.4521 16.79 12.1999 16.53L14.8599 15V11.62L14.1299 10.2ZM13.4299 11.62V14.18L11.2999 15.41C10.654 14.3856 10.3077 13.201 10.2999 11.99C10.1699 8.66 12.4299 6.14 13.4099 5.21V8.53L11.7299 11.62H13.4499\" fill=\"white\"/\u003e\n\u003cpath d=\"M12.24 20.2204C10.6395 19.4063 9.30952 18.1454 8.41138 16.5905C7.51323 15.0356 7.08548 13.2535 7.18 11.4604V10.1504H5.75V11.4604C5.75 18.9804 11.35 21.4604 11.99 21.6604L12.23 21.7504\" fill=\"white\"/\u003e\n\u003c/svg\u003e"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "binaryauthorization.cnrm.cloud.google.com/v1beta1",
     "kind": "BinaryAuthorizationAttestor",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Optional. A descriptive comment. This field may be updated. The field may be displayed in chooser dialogs.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"userOwnedDrydockNote\": {\n     \"description\": \"This specifies how an attestation will be read, and how it will be used during policy enforcement.\",\n     \"properties\": {\n      \"noteRef\": {\n       \"description\": \"Immutable.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Required. The Drydock resource name of a Attestation. Authority Note, created by the user, in the format: `projects/*/notes/*`. This field may not be updated. An attestation by this attestor is stored as a Grafeas Attestation. Authority Occurrence that names a container image and that links to this Note. Grafeas is an external dependency.\\n\\nAllowed value: The Google Cloud resource name of a `ContainerAnalysisNote` resource (format: `projects/{{project}}/notes/{{name}}`).\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"publicKeys\": {\n       \"description\": \"Optional. Public keys that verify attestations signed by this attestor. This field may be updated. If this field is non-empty, one of the specified public keys must verify that an attestation was signed by this attestor for the image specified in the admission request. If this field is empty, this attestor always returns that no valid attestations exist.\",\n       \"items\": {\n        \"properties\": {\n         \"asciiArmoredPgpPublicKey\": {\n          \"description\": \"ASCII-armored representation of a PGP public key, as the entire output by the command `gpg --export --armor foo@example.com` (either LF or CRLF line endings). When using this field, `id` should be left blank. The BinAuthz API handlers will calculate the ID and fill it in automatically. BinAuthz computes this ID as the OpenPGP RFC4880 V4 fingerprint, represented as upper-case hex. If `id` is provided by the caller, it will be overwritten by the API-calculated ID.\",\n          \"type\": \"string\"\n         },\n         \"comment\": {\n          \"description\": \"Optional. A descriptive comment. This field may be updated.\",\n          \"type\": \"string\"\n         },\n         \"id\": {\n          \"description\": \"The ID of this public key. Signatures verified by BinAuthz must include the ID of the public key that can be used to verify them, and that ID must match the contents of this field exactly. Additional restrictions on this field can be imposed based on which public key type is encapsulated. See the documentation on `public_key` cases below for details.\",\n          \"type\": \"string\"\n         },\n         \"pkixPublicKey\": {\n          \"description\": \"A raw PKIX SubjectPublicKeyInfo format public key. NOTE: `id` may be explicitly provided by the caller when using this type of public key, but it MUST be a valid RFC3986 URI. If `id` is left blank, a default one will be computed based on the digest of the DER encoding of the public key.\",\n          \"properties\": {\n           \"publicKeyPem\": {\n            \"description\": \"A PEM-encoded public key, as described in https://tools.ietf.org/html/rfc7468#section-13\",\n            \"type\": \"string\"\n           },\n           \"signatureAlgorithm\": {\n            \"description\": \"The signature algorithm used to verify a message against a signature using this key. These signature algorithm must match the structure and any object identifiers encoded in `public_key_pem` (i.e. this algorithm must match that of the public key). Possible values: SIGNATURE_ALGORITHM_UNSPECIFIED, RSA_PSS_2048_SHA256, RSA_PSS_3072_SHA256, RSA_PSS_4096_SHA256, RSA_PSS_4096_SHA512, RSA_SIGN_PKCS1_2048_SHA256, RSA_SIGN_PKCS1_3072_SHA256, RSA_SIGN_PKCS1_4096_SHA256, RSA_SIGN_PKCS1_4096_SHA512, ECDSA_P256_SHA256, EC_SIGN_P256_SHA256, ECDSA_P384_SHA384, EC_SIGN_P384_SHA384, ECDSA_P521_SHA512, EC_SIGN_P521_SHA512\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"noteRef\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Binary Authorization Attestor\",\n \"type\": \"object\"\n}",
-    "version": "binaryauthorization.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Optional. A descriptive comment. This field may be updated. The field may be displayed in chooser dialogs.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"Immutable. The Project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"The project for the resource\\n\\nAllowed value: The Google Cloud resource name of a `Project` resource (format: `projects/{{name}}`).\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"userOwnedDrydockNote\": {\n     \"description\": \"This specifies how an attestation will be read, and how it will be used during policy enforcement.\",\n     \"properties\": {\n      \"noteRef\": {\n       \"description\": \"Immutable.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Required. The Drydock resource name of a Attestation. Authority Note, created by the user, in the format: `projects/*/notes/*`. This field may not be updated. An attestation by this attestor is stored as a Grafeas Attestation. Authority Occurrence that names a container image and that links to this Note. Grafeas is an external dependency.\\n\\nAllowed value: The Google Cloud resource name of a `ContainerAnalysisNote` resource (format: `projects/{{project}}/notes/{{name}}`).\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"publicKeys\": {\n       \"description\": \"Optional. Public keys that verify attestations signed by this attestor. This field may be updated. If this field is non-empty, one of the specified public keys must verify that an attestation was signed by this attestor for the image specified in the admission request. If this field is empty, this attestor always returns that no valid attestations exist.\",\n       \"items\": {\n        \"properties\": {\n         \"asciiArmoredPgpPublicKey\": {\n          \"description\": \"ASCII-armored representation of a PGP public key, as the entire output by the command `gpg --export --armor foo@example.com` (either LF or CRLF line endings). When using this field, `id` should be left blank. The BinAuthz API handlers will calculate the ID and fill it in automatically. BinAuthz computes this ID as the OpenPGP RFC4880 V4 fingerprint, represented as upper-case hex. If `id` is provided by the caller, it will be overwritten by the API-calculated ID.\",\n          \"type\": \"string\"\n         },\n         \"comment\": {\n          \"description\": \"Optional. A descriptive comment. This field may be updated.\",\n          \"type\": \"string\"\n         },\n         \"id\": {\n          \"description\": \"The ID of this public key. Signatures verified by BinAuthz must include the ID of the public key that can be used to verify them, and that ID must match the contents of this field exactly. Additional restrictions on this field can be imposed based on which public key type is encapsulated. See the documentation on `public_key` cases below for details.\",\n          \"type\": \"string\"\n         },\n         \"pkixPublicKey\": {\n          \"description\": \"A raw PKIX SubjectPublicKeyInfo format public key. NOTE: `id` may be explicitly provided by the caller when using this type of public key, but it MUST be a valid RFC3986 URI. If `id` is left blank, a default one will be computed based on the digest of the DER encoding of the public key.\",\n          \"properties\": {\n           \"publicKeyPem\": {\n            \"description\": \"A PEM-encoded public key, as described in https://tools.ietf.org/html/rfc7468#section-13\",\n            \"type\": \"string\"\n           },\n           \"signatureAlgorithm\": {\n            \"description\": \"The signature algorithm used to verify a message against a signature using this key. These signature algorithm must match the structure and any object identifiers encoded in `public_key_pem` (i.e. this algorithm must match that of the public key). Possible values: SIGNATURE_ALGORITHM_UNSPECIFIED, RSA_PSS_2048_SHA256, RSA_PSS_3072_SHA256, RSA_PSS_4096_SHA256, RSA_PSS_4096_SHA512, RSA_SIGN_PKCS1_2048_SHA256, RSA_SIGN_PKCS1_3072_SHA256, RSA_SIGN_PKCS1_4096_SHA256, RSA_SIGN_PKCS1_4096_SHA512, ECDSA_P256_SHA256, EC_SIGN_P256_SHA256, ECDSA_P384_SHA384, EC_SIGN_P384_SHA384, ECDSA_P521_SHA512, EC_SIGN_P521_SHA512\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"noteRef\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Binary Authorization Attestor\",\n \"type\": \"object\"\n}"
   }
 }

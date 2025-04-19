@@ -1,16 +1,14 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { NoSsr } from '@layer5/sistent';
+import { CustomTooltip, NoSsr } from '@layer5/sistent';
 import {
   Divider,
   ClickAwayListener,
   Typography,
-  Chip,
   Button,
   CircularProgress,
   Box,
   useTheme,
-  Tooltip,
   Checkbox,
   Collapse,
   IconButton,
@@ -39,7 +37,6 @@ import {
   StyledNotificationDrawer,
   Title,
   TitleBellIcon,
-  StyledSubtitle,
 } from './notificationCenter.style';
 import {
   closeNotificationCenter,
@@ -58,7 +55,6 @@ import {
   useLazyGetEventsQuery,
   useUpdateEventsMutation,
 } from '../../rtk-query/notificationCenter';
-import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
 import { hasClass } from '../../utils/Elements';
 import ReadIcon from '../../assets/icons/ReadIcon';
@@ -71,7 +67,6 @@ import { useSelectorRtk } from '@/store/hooks';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
-import { UsesSistent } from '../SistentWrapper';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -177,23 +172,25 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
   };
   count = Number(count).toLocaleString('en', { useGrouping: true });
   return (
-    <Tooltip title={type} placement="bottom">
-      <Button
-        style={{
-          backgroundColor: alpha(chipStyles.fill, 0.2),
-          border:
-            selectedSeverity === severity
-              ? `solid 2px ${chipStyles.fill}`
-              : 'solid 2px transparent',
-        }}
-        onClick={handleClick}
-      >
-        <SeverityChip>
-          {<notificationStyle.icon {...chipStyles} />}
-          <span>{count}</span>
-        </SeverityChip>
-      </Button>
-    </Tooltip>
+    <CustomTooltip title={type} placement="bottom">
+      <div>
+        <Button
+          style={{
+            backgroundColor: alpha(chipStyles.fill, 0.2),
+            border:
+              selectedSeverity === severity
+                ? `solid 2px ${chipStyles.fill}`
+                : 'solid 2px transparent',
+          }}
+          onClick={handleClick}
+        >
+          <SeverityChip>
+            {<notificationStyle.icon {...chipStyles} />}
+            <span>{count}</span>
+          </SeverityChip>
+        </Button>
+      </div>
+    </CustomTooltip>
   );
 };
 
@@ -227,35 +224,33 @@ const Header = ({ handleFilter, handleClose }) => {
   };
 
   return (
-    <UsesSistent>
-      <NotificationContainer>
-        <Title>
-          <TitleBellIcon onClick={handleClose}>
-            <BellIcon height="30" width="30" fill="#fff" />
-          </TitleBellIcon>
-          <Typography variant="h6"> Notifications</Typography>
-        </Title>
-        <SeverityChips>
-          {Object.values(SEVERITY).map((severity) => (
-            <NotificationCountChip
-              key={severity}
-              severity={severity}
-              handleClick={() => onClickSeverity(severity)}
-              notificationStyle={SEVERITY_STYLE[severity]}
-              type={`Unread ${severity}(s)`}
-              count={getSeverityCount(count_by_severity_level, severity)}
-            />
-          ))}
+    <NotificationContainer>
+      <Title>
+        <TitleBellIcon onClick={handleClose}>
+          <BellIcon height="30" width="30" fill="#fff" />
+        </TitleBellIcon>
+        <Typography variant="h6"> Notifications</Typography>
+      </Title>
+      <SeverityChips>
+        {Object.values(SEVERITY).map((severity) => (
           <NotificationCountChip
-            notificationStyle={STATUS_STYLE[STATUS.READ]}
-            handleClick={() => onClickStatus(STATUS.READ)}
-            type={STATUS.READ}
-            severity={STATUS.READ}
-            count={read_count}
+            key={severity}
+            severity={severity}
+            handleClick={() => onClickSeverity(severity)}
+            notificationStyle={SEVERITY_STYLE[severity]}
+            type={`Unread ${severity}(s)`}
+            count={getSeverityCount(count_by_severity_level, severity)}
           />
-        </SeverityChips>
-      </NotificationContainer>
-    </UsesSistent>
+        ))}
+        <NotificationCountChip
+          notificationStyle={STATUS_STYLE[STATUS.READ]}
+          handleClick={() => onClickStatus(STATUS.READ)}
+          type={STATUS.READ}
+          severity={STATUS.READ}
+          count={read_count}
+        />
+      </SeverityChips>
+    </NotificationContainer>
   );
 };
 
@@ -313,17 +308,19 @@ const BulkActions = () => {
       );
     }
     return (
-      <Tooltip title={tooltip} placement="top">
-        <IconButton onClick={onClick} disabled={disabled}>
-          <Icon
-            {...iconMedium}
-            style={{
-              opacity: disabled ? 0.5 : 1,
-            }}
-            fill="currentColor"
-          />
-        </IconButton>
-      </Tooltip>
+      <CustomTooltip title={tooltip} placement="top">
+        <div>
+          <IconButton onClick={onClick} disabled={disabled}>
+            <Icon
+              {...iconMedium}
+              style={{
+                opacity: disabled ? 0.5 : 1,
+              }}
+              fill="currentColor"
+            />
+          </IconButton>
+        </div>
+      </CustomTooltip>
     );
   };
 
@@ -404,7 +401,7 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
     <>
       {events.map((event, idx) => (
         <div key={event.id + idx}>
-          <Notification event_id={event.id} />
+          <Notification eventData={event} event_id={event.id} />
         </div>
       ))}
 
@@ -413,67 +410,6 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
       <div ref={lastEventRef}></div>
       {isFetching && hasMore && <Loading />}
     </>
-  );
-};
-
-const CurrentFilterView = ({ handleFilter }) => {
-  const currentFilters = useSelector((state) => state.events.current_view.filters);
-  const onDelete = (key, value) => {
-    const newFilters = {
-      ...currentFilters,
-      [key]:
-        typeof currentFilters[key] === 'string'
-          ? null
-          : currentFilters[key].filter((item) => item !== value),
-    };
-    handleFilter(newFilters);
-  };
-
-  const Chips = ({ type, value }) => {
-    if (typeof value === 'string') {
-      return (
-        <Chip label={value} sx={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
-      );
-    }
-
-    if (_.isArray(value) && value.length > 0) {
-      return (
-        <div sx={{ display: 'flex', gap: '0.2rem' }}>
-          {value.map((item) => (
-            <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />
-          ))}
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  return (
-    <div>
-      {Object.entries(currentFilters).map(([key, value]) => {
-        if (value && value?.length > 0) {
-          return (
-            <div
-              key={key}
-              sx={{
-                display: 'flex',
-                gap: '0.3rem',
-                alignItems: 'center',
-                marginLeft: '1rem',
-                paddingTop: '.35rem',
-              }}
-            >
-              <StyledSubtitle variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
-                {' '}
-                {key}:
-              </StyledSubtitle>
-              <Chips value={value} type={key} />
-            </div>
-          );
-        }
-      })}
-    </div>
   );
 };
 
@@ -552,7 +488,6 @@ const NotificationCenterDrawer = () => {
                 <Divider light />
                 <Container>
                   <Filter handleFilter={handleFilter}></Filter>
-                  <CurrentFilterView handleFilter={handleFilter} />
                   <BulkActions />
 
                   {isLoadingFilters ? (
@@ -618,13 +553,11 @@ const NotificationCenter = (props) => {
 
   return (
     <NoSsr>
-      <UsesSistent>
-        <ErrorBoundary customFallback={CustomErrorFallback}>
-          <Provider store={store}>
-            <NotificationCenterDrawer {...props} />
-          </Provider>
-        </ErrorBoundary>
-      </UsesSistent>
+      <ErrorBoundary customFallback={CustomErrorFallback}>
+        <Provider store={store}>
+          <NotificationCenterDrawer {...props} />
+        </Provider>
+      </ErrorBoundary>
     </NoSsr>
   );
 };

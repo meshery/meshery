@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.118.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{filter:url(#luminosity-noclip);}.cls-2{fill:#669df6;}.cls-3{mask:url(#mask);}.cls-4{fill:#4285f4;}.cls-5{fill:#aecbfa;}\u003c/style\u003e\u003cfilter id=\"luminosity-noclip\" x=\"4.64\" y=\"4.19\" width=\"14.73\" height=\"12.76\" filterUnits=\"userSpaceOnUse\" color-interpolation-filters=\"sRGB\"\u003e\u003cfeFlood flood-color=\"#fff\" result=\"bg\"/\u003e\u003cfeBlend in=\"SourceGraphic\" in2=\"bg\"/\u003e\u003c/filter\u003e\u003cmask id=\"mask\" x=\"4.64\" y=\"4.19\" width=\"14.73\" height=\"12.76\" maskUnits=\"userSpaceOnUse\"\u003e\u003ccircle class=\"cls-1\" cx=\"12\" cy=\"12.23\" r=\"3.58\"/\u003e\u003c/mask\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003ccircle class=\"cls-2\" cx=\"18.97\" cy=\"8.21\" r=\"1.72\"/\u003e\u003ccircle class=\"cls-2\" cx=\"5.03\" cy=\"8.21\" r=\"1.72\"/\u003e\u003ccircle class=\"cls-2\" cx=\"12\" cy=\"20.28\" r=\"1.72\"/\u003e\u003cg class=\"cls-3\"\u003e\u003crect class=\"cls-4\" x=\"14.69\" y=\"10.22\" width=\"1.59\" height=\"8.04\" transform=\"matrix(0.5, -0.87, 0.87, 0.5, -4.59, 20.53)\"/\u003e\u003crect class=\"cls-4\" x=\"4.49\" y=\"13.45\" width=\"8.04\" height=\"1.59\" transform=\"translate(-5.98 6.17) rotate(-30)\"/\u003e\u003crect class=\"cls-4\" x=\"11.2\" y=\"4.19\" width=\"1.59\" height=\"8.04\"/\u003e\u003c/g\u003e\u003ccircle class=\"cls-5\" cx=\"12\" cy=\"12.23\" r=\"2.78\"/\u003e\u003ccircle class=\"cls-5\" cx=\"5.03\" cy=\"16.25\" r=\"2.19\"/\u003e\u003ccircle class=\"cls-5\" cx=\"18.97\" cy=\"16.25\" r=\"2.19\"/\u003e\u003ccircle class=\"cls-5\" cx=\"12\" cy=\"4.19\" r=\"2.19\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{filter:url(#luminosity-noclip);}.cls-2{fill:#fff;}.cls-3{mask:url(#mask);}.cls-4{fill:#fff;}.cls-5{fill:#fff;}\u003c/style\u003e\u003cfilter id=\"luminosity-noclip\" x=\"4.64\" y=\"4.19\" width=\"14.73\" height=\"12.76\" filterUnits=\"userSpaceOnUse\" color-interpolation-filters=\"sRGB\"\u003e\u003cfeFlood flood-color=\"#fff\" result=\"bg\"/\u003e\u003cfeBlend in=\"SourceGraphic\" in2=\"bg\"/\u003e\u003c/filter\u003e\u003cmask id=\"mask\" x=\"4.64\" y=\"4.19\" width=\"14.73\" height=\"12.76\" maskUnits=\"userSpaceOnUse\"\u003e\u003ccircle class=\"cls-1\" cx=\"12\" cy=\"12.23\" r=\"3.58\"/\u003e\u003c/mask\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003ccircle class=\"cls-2\" cx=\"18.97\" cy=\"8.21\" r=\"1.72\"/\u003e\u003ccircle class=\"cls-2\" cx=\"5.03\" cy=\"8.21\" r=\"1.72\"/\u003e\u003ccircle class=\"cls-2\" cx=\"12\" cy=\"20.28\" r=\"1.72\"/\u003e\u003cg class=\"cls-3\"\u003e\u003crect class=\"cls-4\" x=\"14.69\" y=\"10.22\" width=\"1.59\" height=\"8.04\" transform=\"matrix(0.5, -0.87, 0.87, 0.5, -4.59, 20.53)\"/\u003e\u003crect class=\"cls-4\" x=\"4.49\" y=\"13.45\" width=\"8.04\" height=\"1.59\" transform=\"translate(-5.98 6.17) rotate(-30)\"/\u003e\u003crect class=\"cls-4\" x=\"11.2\" y=\"4.19\" width=\"1.59\" height=\"8.04\"/\u003e\u003c/g\u003e\u003ccircle class=\"cls-5\" cx=\"12\" cy=\"12.23\" r=\"2.78\"/\u003e\u003ccircle class=\"cls-5\" cx=\"5.03\" cy=\"16.25\" r=\"2.19\"/\u003e\u003ccircle class=\"cls-5\" cx=\"18.97\" cy=\"16.25\" r=\"2.19\"/\u003e\u003ccircle class=\"cls-5\" cx=\"12\" cy=\"4.19\" r=\"2.19\"/\u003e\u003c/g\u003e\u003c/svg\u003e"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "pubsub.cnrm.cloud.google.com/v1beta1",
     "kind": "PubSubTopic",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"kmsKeyRef\": {\n     \"description\": \"The KMSCryptoKey to be used to protect access to messages published\\non this topic. Your project's Pub/Sub service account\\n('service-{{PROJECT_NUMBER}}@gcp-sa-pubsub.iam.gserviceaccount.com')\\nmust have 'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this\\nfeature.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"messageRetentionDuration\": {\n     \"description\": \"Indicates the minimum duration to retain a message after it is published\\nto the topic. If this field is set, messages published to the topic in\\nthe last messageRetentionDuration are always available to subscribers.\\nFor instance, it allows any attached subscription to seek to a timestamp\\nthat is up to messageRetentionDuration in the past. If this field is not\\nset, message retention is controlled by settings on individual subscriptions.\\nCannot be more than 31 days or less than 10 minutes.\",\n     \"type\": \"string\"\n    },\n    \"messageStoragePolicy\": {\n     \"description\": \"Policy constraining the set of Google Cloud Platform regions where\\nmessages published to the topic may be stored. If not present, then no\\nconstraints are in effect.\",\n     \"properties\": {\n      \"allowedPersistenceRegions\": {\n       \"description\": \"A list of IDs of GCP regions where messages that are published to\\nthe topic may be persisted in storage. Messages published by\\npublishers running in non-allowed GCP regions (or running outside\\nof GCP altogether) will be routed for storage in one of the\\nallowed regions. An empty list means that no regions are allowed,\\nand is not a valid configuration.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"allowedPersistenceRegions\"\n     ],\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"schemaSettings\": {\n     \"description\": \"Settings for validating messages published against a schema.\",\n     \"properties\": {\n      \"encoding\": {\n       \"description\": \"The encoding of messages validated against schema. Default value: \\\"ENCODING_UNSPECIFIED\\\" Possible values: [\\\"ENCODING_UNSPECIFIED\\\", \\\"JSON\\\", \\\"BINARY\\\"].\",\n       \"type\": \"string\"\n      },\n      \"schemaRef\": {\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{project}}/schemas/{{value}}`, where {{value}} is the `name` field of a `PubSubSchema` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"schemaRef\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pub Sub Topic\",\n \"type\": \"object\"\n}",
-    "version": "pubsub.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"kmsKeyRef\": {\n     \"description\": \"The KMSCryptoKey to be used to protect access to messages published\\non this topic. Your project's Pub/Sub service account\\n('service-{{PROJECT_NUMBER}}@gcp-sa-pubsub.iam.gserviceaccount.com')\\nmust have 'roles/cloudkms.cryptoKeyEncrypterDecrypter' to use this\\nfeature.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `KMSCryptoKey` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"messageRetentionDuration\": {\n     \"description\": \"Indicates the minimum duration to retain a message after it is published\\nto the topic. If this field is set, messages published to the topic in\\nthe last messageRetentionDuration are always available to subscribers.\\nFor instance, it allows any attached subscription to seek to a timestamp\\nthat is up to messageRetentionDuration in the past. If this field is not\\nset, message retention is controlled by settings on individual subscriptions.\\nCannot be more than 31 days or less than 10 minutes.\",\n     \"type\": \"string\"\n    },\n    \"messageStoragePolicy\": {\n     \"description\": \"Policy constraining the set of Google Cloud Platform regions where\\nmessages published to the topic may be stored. If not present, then no\\nconstraints are in effect.\",\n     \"properties\": {\n      \"allowedPersistenceRegions\": {\n       \"description\": \"A list of IDs of GCP regions where messages that are published to\\nthe topic may be persisted in storage. Messages published by\\npublishers running in non-allowed GCP regions (or running outside\\nof GCP altogether) will be routed for storage in one of the\\nallowed regions. An empty list means that no regions are allowed,\\nand is not a valid configuration.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"allowedPersistenceRegions\"\n     ],\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"schemaSettings\": {\n     \"description\": \"Settings for validating messages published against a schema.\",\n     \"properties\": {\n      \"encoding\": {\n       \"description\": \"The encoding of messages validated against schema. Default value: \\\"ENCODING_UNSPECIFIED\\\" Possible values: [\\\"ENCODING_UNSPECIFIED\\\", \\\"JSON\\\", \\\"BINARY\\\"].\",\n       \"type\": \"string\"\n      },\n      \"schemaRef\": {\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"external\"\n          ]\n         },\n         \"required\": [\n          \"name\"\n         ]\n        },\n        {\n         \"not\": {\n          \"anyOf\": [\n           {\n            \"required\": [\n             \"name\"\n            ]\n           },\n           {\n            \"required\": [\n             \"namespace\"\n            ]\n           }\n          ]\n         },\n         \"required\": [\n          \"external\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"external\": {\n         \"description\": \"Allowed value: string of the format `projects/{{project}}/schemas/{{value}}`, where {{value}} is the `name` field of a `PubSubSchema` resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"schemaRef\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pub Sub Topic\",\n \"type\": \"object\"\n}"
   }
 }

@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Provisioning"
     },
     "subCategory": "Security \u0026 Compliance",
@@ -40,10 +41,10 @@
     "model": {
       "version": "v1.3.5"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#0C2A79",
@@ -62,7 +63,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -77,7 +77,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -92,7 +91,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -108,7 +106,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -124,7 +121,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -139,7 +135,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -154,7 +149,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -169,7 +163,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -179,15 +172,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "operator.kubearmor.com/v1",
     "kind": "KubeArmorConfig",
-    "schema": "{\n \"description\": \"KubeArmorConfig is the Schema for the KubeArmorConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeArmorConfigSpec defines the desired state of KubeArmorConfig\",\n   \"properties\": {\n    \"defaultCapabilitiesPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultFilePosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultNetworkPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultVisibility\": {\n     \"type\": \"string\"\n    },\n    \"enableStdOutAlerts\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutLogs\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutMsgs\": {\n     \"type\": \"boolean\"\n    },\n    \"kubeRbacProxyImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorControllerImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorInitImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorRelayImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"seccompEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"tls\": {\n     \"properties\": {\n      \"enable\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"extraDnsNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"extraIpAddresses\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kube Armor Config\",\n \"type\": \"object\"\n}",
-    "version": "operator.kubearmor.com/v1"
+    "schema": "{\n \"description\": \"KubeArmorConfig is the Schema for the KubeArmorConfigs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"KubeArmorConfigSpec defines the desired state of KubeArmorConfig\",\n   \"properties\": {\n    \"defaultCapabilitiesPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultFilePosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultNetworkPosture\": {\n     \"enum\": [\n      \"audit\",\n      \"block\"\n     ],\n     \"type\": \"string\"\n    },\n    \"defaultVisibility\": {\n     \"type\": \"string\"\n    },\n    \"enableStdOutAlerts\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutLogs\": {\n     \"type\": \"boolean\"\n    },\n    \"enableStdOutMsgs\": {\n     \"type\": \"boolean\"\n    },\n    \"kubeRbacProxyImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorControllerImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorInitImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubearmorRelayImage\": {\n     \"description\": \"ImageSpec defines the image specifications\",\n     \"properties\": {\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imagePullPolicy\": {\n       \"default\": \"Always\",\n       \"enum\": [\n        \"Always\",\n        \"IfNotPresent\",\n        \"Never\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"seccompEnabled\": {\n     \"type\": \"boolean\"\n    },\n    \"tls\": {\n     \"properties\": {\n      \"enable\": {\n       \"default\": false,\n       \"type\": \"boolean\"\n      },\n      \"extraDnsNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"extraIpAddresses\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kube Armor Config\",\n \"type\": \"object\"\n}"
   }
 }

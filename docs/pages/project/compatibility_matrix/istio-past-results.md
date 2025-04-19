@@ -8,7 +8,7 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-istio"
-subheading: "Meshery-Istio"
+subheading: "meshery-istio"
 ---
 
 

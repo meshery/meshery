@@ -6,7 +6,6 @@ import { useCancelConnectionRegisterMutation } from '@/rtk-query/connection.js';
 import { useDeleteMeshsyncResourceMutation } from '@/rtk-query/meshsync.js';
 import { useNotification } from '@/utils/hooks/useNotification.js';
 import { EVENT_TYPES } from 'lib/event-types.js';
-import { UsesSistent } from '@/components/SistentWrapper.js';
 
 const RegisterConnectionModal = ({
   openRegistrationModal,
@@ -51,27 +50,25 @@ const RegisterConnectionModal = ({
   };
 
   return (
-    <UsesSistent>
-      <div style={{ marginBottom: '1rem' }}>
-        <Modal
-          open={openRegistrationModal}
-          closeModal={handleClose}
-          aria-labelledby="form-dialog-title"
-          maxWidth="md"
-        >
-          <ModalBody>
-            <CustomizedSteppers
-              formConnectionIdRef
-              onClose={handleClose}
-              connectionData={connectionData}
-              sharedData={sharedData}
-              setSharedData={setSharedData}
-              handleRegistrationComplete={handleRegistrationComplete}
-            />
-          </ModalBody>
-        </Modal>
-      </div>
-    </UsesSistent>
+    <div style={{ marginBottom: '1rem' }}>
+      <Modal
+        open={openRegistrationModal}
+        closeModal={handleClose}
+        aria-labelledby="form-dialog-title"
+        maxWidth="md"
+      >
+        <ModalBody>
+          <CustomizedSteppers
+            formConnectionIdRef
+            onClose={handleClose}
+            connectionData={connectionData}
+            sharedData={sharedData}
+            setSharedData={setSharedData}
+            handleRegistrationComplete={handleRegistrationComplete}
+          />
+        </ModalBody>
+      </Modal>
+    </div>
   );
 };
 

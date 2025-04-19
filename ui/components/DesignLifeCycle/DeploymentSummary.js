@@ -3,19 +3,21 @@ import { Box, Stack, Typography, styled, useTheme } from '@layer5/sistent';
 
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
-import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
 import { ComponentIcon } from './common';
 import { Button } from '@layer5/sistent';
 import { ExternalLinkIcon, componentIcon } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+import { ErrorMetadataFormatter } from '../NotificationCenter/formatters/error';
+
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
+import { capitalize } from 'lodash';
 
 const StyledDetailBox = styled(Box)(() => ({
   display: 'flex',
 }));
 
-const DeployementComponentFormatter = ({ componentDetail }) => {
+// deployment_type is deploy/undeploy
+const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
   return (
     <StyledDetailBox
       severityColor={
@@ -37,8 +39,8 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
         />
         <Typography variant="textB1Regular">
           {componentDetail.Success
-            ? `Deployed ${componentDetail.Kind} "${componentDetail.CompName}"`
-            : `Failed to deploy ${componentDetail.Kind} "${componentDetail.CompName}"`}
+            ? `${capitalize(deploymentType)}ed ${componentDetail.Kind} "${componentDetail.CompName}"`
+            : `Failed to ${deploymentType} ${componentDetail.Kind} "${componentDetail.CompName}"`}
         </Typography>
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
@@ -51,6 +53,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
+  const errorAction = event?.action;
   const router = useRouter();
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
@@ -82,7 +85,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             fontWeight: 'bold',
           }}
         />
-        {is_operator_enabled && (
+        {is_operator_enabled && errorAction != 'register' && (
           <Button
             variant="contained"
             color="primary"
@@ -106,8 +109,9 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       )}
 
       {componentsDetails.map((componentDetail) => (
-        <DeployementComponentFormatter
+        <DeploymentComponentFormatter
           componentDetail={componentDetail}
+          deploymentType={event.action}
           key={componentDetail.CompName + componentDetail.Location}
         />
       ))}
@@ -116,7 +120,5 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
 };
 
 export const DeploymentSummaryFormatter = ({ event }) => (
-  <UsesSistent>
-    <DeploymentSummaryFormatter_ event={event} />
-  </UsesSistent>
+  <DeploymentSummaryFormatter_ event={event} />
 );

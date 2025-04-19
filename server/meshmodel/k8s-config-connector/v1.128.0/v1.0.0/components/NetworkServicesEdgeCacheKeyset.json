@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.128.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#669df6;fill-rule:evenodd;}.cls-2{fill:#4285f4;}.cls-3{fill:#aecbfa;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon class=\"cls-1\" points=\"4.94 13.7 11.53 20.22 12.62 19.07 6.3 12.93 4.94 13.7\"/\u003e\u003cpolygon class=\"cls-1\" points=\"12.57 4.06 11.48 5.22 17.69 11.44 19.47 11.06 12.57 4.06\"/\u003e\u003crect class=\"cls-2\" x=\"11.38\" y=\"5.13\" width=\"1.25\" height=\"5\"/\u003e\u003crect class=\"cls-2\" x=\"11.38\" y=\"14.5\" width=\"1.25\" height=\"5\"/\u003e\u003ccircle id=\"Oval\" class=\"cls-3\" cx=\"12\" cy=\"4.5\" r=\"1.88\"/\u003e\u003ccircle class=\"cls-3\" cx=\"12\" cy=\"19.5\" r=\"1.88\"/\u003e\u003cpolygon class=\"cls-1\" points=\"2.66 11.38 17.73 11.38 21.37 13.25 6.3 13.25 2.66 11.38\"/\u003e\u003ccircle class=\"cls-3\" cx=\"4.5\" cy=\"12.31\" r=\"2.5\"/\u003e\u003ccircle class=\"cls-3\" cx=\"19.5\" cy=\"12.31\" r=\"2.5\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon class=\"cls-1\" points=\"4.94 13.7 11.53 20.22 12.62 19.07 6.3 12.93 4.94 13.7\"/\u003e\u003cpolygon class=\"cls-1\" points=\"12.57 4.06 11.48 5.22 17.69 11.44 19.47 11.06 12.57 4.06\"/\u003e\u003crect class=\"cls-2\" x=\"11.38\" y=\"5.13\" width=\"1.25\" height=\"5\"/\u003e\u003crect class=\"cls-2\" x=\"11.38\" y=\"14.5\" width=\"1.25\" height=\"5\"/\u003e\u003ccircle id=\"Oval\" class=\"cls-3\" cx=\"12\" cy=\"4.5\" r=\"1.88\"/\u003e\u003ccircle class=\"cls-3\" cx=\"12\" cy=\"19.5\" r=\"1.88\"/\u003e\u003cpolygon class=\"cls-1\" points=\"2.66 11.38 17.73 11.38 21.37 13.25 6.3 13.25 2.66 11.38\"/\u003e\u003ccircle class=\"cls-3\" cx=\"4.5\" cy=\"12.31\" r=\"2.5\"/\u003e\u003ccircle class=\"cls-3\" cx=\"19.5\" cy=\"12.31\" r=\"2.5\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "networkservices.cnrm.cloud.google.com/v1alpha1",
     "kind": "NetworkServicesEdgeCacheKeyset",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A human-readable description of the resource.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"publicKey\": {\n     \"description\": \"An ordered list of Ed25519 public keys to use for validating signed requests.\\nYou must specify 'public_keys' or 'validation_shared_keys' (or both). The keys in 'public_keys' are checked first.\\nYou may specify no more than one Google-managed public key.\\nIf you specify 'public_keys', you must specify at least one (1) key and may specify up to three (3) keys.\\n\\nEd25519 public keys are not secret, and only allow Google to validate a request was signed by your corresponding private key.\\nEnsure that the private key is kept secret, and that only authorized users can add public keys to a keyset.\",\n     \"items\": {\n      \"properties\": {\n       \"id\": {\n        \"description\": \"The ID of the public key. The ID must be 1-63 characters long, and comply with RFC1035.\\nThe name must be 1-64 characters long, and match the regular expression [a-zA-Z][a-zA-Z0-9_-]*\\nwhich means the first character must be a letter, and all following characters must be a dash, underscore, letter or digit.\",\n        \"type\": \"string\"\n       },\n       \"managed\": {\n        \"description\": \"Set to true to have the CDN automatically manage this public key value.\",\n        \"type\": \"boolean\"\n       },\n       \"value\": {\n        \"description\": \"The base64-encoded value of the Ed25519 public key. The base64 encoding can be padded (44 bytes) or unpadded (43 bytes).\\nRepresentations or encodings of the public key other than this will be rejected with an error.\",\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"valueFrom\"\n           ]\n          },\n          \"required\": [\n           \"value\"\n          ]\n         },\n         {\n          \"not\": {\n           \"required\": [\n            \"value\"\n           ]\n          },\n          \"required\": [\n           \"valueFrom\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"value\": {\n          \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n          \"type\": \"string\"\n         },\n         \"valueFrom\": {\n          \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n          \"properties\": {\n           \"secretKeyRef\": {\n            \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n            \"properties\": {\n             \"key\": {\n              \"description\": \"Key that identifies the value to be extracted.\",\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"description\": \"Name of the Secret to extract a value from.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"key\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"id\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"validationSharedKeys\": {\n     \"description\": \"An ordered list of shared keys to use for validating signed requests.\\nShared keys are secret.  Ensure that only authorized users can add 'validation_shared_keys' to a keyset.\\nYou can rotate keys by appending (pushing) a new key to the list of 'validation_shared_keys' and removing any superseded keys.\\nYou must specify 'public_keys' or 'validation_shared_keys' (or both). The keys in 'public_keys' are checked first.\",\n     \"items\": {\n      \"properties\": {\n       \"secretVersion\": {\n        \"description\": \"The name of the secret version in Secret Manager.\\n\\nThe resource name of the secret version must be in the format 'projects/*/secrets/*/versions/*' where the '*' values are replaced by the secrets themselves.\\nThe secrets must be at least 16 bytes large.  The recommended secret size depends on the signature algorithm you are using.\\n* If you are using HMAC-SHA1, we suggest 20-byte secrets.\\n* If you are using HMAC-SHA256, we suggest 32-byte secrets.\\nSee RFC 2104, Section 3 for more details on these recommendations.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"secretVersion\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Services Edge Cache Keyset\",\n \"type\": \"object\"\n}",
-    "version": "networkservices.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A human-readable description of the resource.\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"publicKey\": {\n     \"description\": \"An ordered list of Ed25519 public keys to use for validating signed requests.\\nYou must specify 'public_keys' or 'validation_shared_keys' (or both). The keys in 'public_keys' are checked first.\\nYou may specify no more than one Google-managed public key.\\nIf you specify 'public_keys', you must specify at least one (1) key and may specify up to three (3) keys.\\n\\nEd25519 public keys are not secret, and only allow Google to validate a request was signed by your corresponding private key.\\nEnsure that the private key is kept secret, and that only authorized users can add public keys to a keyset.\",\n     \"items\": {\n      \"properties\": {\n       \"id\": {\n        \"description\": \"The ID of the public key. The ID must be 1-63 characters long, and comply with RFC1035.\\nThe name must be 1-64 characters long, and match the regular expression [a-zA-Z][a-zA-Z0-9_-]*\\nwhich means the first character must be a letter, and all following characters must be a dash, underscore, letter or digit.\",\n        \"type\": \"string\"\n       },\n       \"managed\": {\n        \"description\": \"Set to true to have the CDN automatically manage this public key value.\",\n        \"type\": \"boolean\"\n       },\n       \"value\": {\n        \"description\": \"The base64-encoded value of the Ed25519 public key. The base64 encoding can be padded (44 bytes) or unpadded (43 bytes).\\nRepresentations or encodings of the public key other than this will be rejected with an error.\",\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"required\": [\n            \"valueFrom\"\n           ]\n          },\n          \"required\": [\n           \"value\"\n          ]\n         },\n         {\n          \"not\": {\n           \"required\": [\n            \"value\"\n           ]\n          },\n          \"required\": [\n           \"valueFrom\"\n          ]\n         }\n        ],\n        \"properties\": {\n         \"value\": {\n          \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n          \"type\": \"string\"\n         },\n         \"valueFrom\": {\n          \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n          \"properties\": {\n           \"secretKeyRef\": {\n            \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n            \"properties\": {\n             \"key\": {\n              \"description\": \"Key that identifies the value to be extracted.\",\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"description\": \"Name of the Secret to extract a value from.\",\n              \"type\": \"string\"\n             }\n            },\n            \"required\": [\n             \"name\",\n             \"key\"\n            ],\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"id\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"validationSharedKeys\": {\n     \"description\": \"An ordered list of shared keys to use for validating signed requests.\\nShared keys are secret.  Ensure that only authorized users can add 'validation_shared_keys' to a keyset.\\nYou can rotate keys by appending (pushing) a new key to the list of 'validation_shared_keys' and removing any superseded keys.\\nYou must specify 'public_keys' or 'validation_shared_keys' (or both). The keys in 'public_keys' are checked first.\",\n     \"items\": {\n      \"properties\": {\n       \"secretVersion\": {\n        \"description\": \"The name of the secret version in Secret Manager.\\n\\nThe resource name of the secret version must be in the format 'projects/*/secrets/*/versions/*' where the '*' values are replaced by the secrets themselves.\\nThe secrets must be at least 16 bytes large.  The recommended secret size depends on the signature algorithm you are using.\\n* If you are using HMAC-SHA1, we suggest 20-byte secrets.\\n* If you are using HMAC-SHA256, we suggest 32-byte secrets.\\nSee RFC 2104, Section 3 for more details on these recommendations.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"secretVersion\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Network Services Edge Cache Keyset\",\n \"type\": \"object\"\n}"
   }
 }

@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "1.126.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cg fill=\"none\" transform=\"translate(4.3125 1.96875)\"\u003e\u003cpath d=\"m8.33766234.18539339 6.25324676 3.66013799c.4239663.23213419.6894862.67369674.6948052 1.15546889v8.03293043c-.0067685.4813633-.2718851.9222554-.6948052 1.1554689l-9.9635065 5.8257773c-.16123927.0950315-.36928394.042465-.46551948-.1176226-.02979567-.0504763-.04650994-.1075426-.04863637-.1660554v-3.5355964l-3.41844155-2.0065029c-.42292007-.2332135-.68803673-.6741056-.6948052-1.1554689v-8.03293043c.00531897-.48177215.27083885-.9233347.6948052-1.15546889l6.25324675-3.66013799c.42994695-.24719119.95966344-.24719119 1.38961039 0z\" fill=\"#aecbfa\"/\u003e\u003cpath d=\"m3.87952254 7.51077575c-.2071433 0-.37578754.16482432-.38195666.37047106l-.00017484.01168315.00011686 3.93313724.00124729.0411117c.0140403.2399191.14560781.4583134.35248257.5826405l.01455478.0085205 1.92367175 1.0977922v1.5408207l.00104816.0285198c.01458814.1977321.17963628.3536231.38109469.3536231.06207295 0 .12313137-.0151197.17792842-.0439496l.01356578-.0074923 5.10386006-2.9554178.0351461-.0213652c.2017676-.130565.326808-.3527605.3328712-.5940438l.0002294-.0168637v-3.94632717c0-.06676271-.0174908-.13236049-.0507304-.19026028-.1030175-.17944512-.3295288-.24370564-.5108491-.14713947l-.0108236.00598733-3.39415899 1.94855204-.02908133.01638412c-.11419685.05793708-.25049762.05492736-.36239795-.00902915l-.0123306-.00735497-3.39502649-1.94926068c-.05790682-.03324727-.12351449-.05073932-.1902871-.05073932z\" fill=\"#669df6\"/\u003e\u003cpath d=\"m7.9324653 3.09452966c-.14161657-.08119491-.31452707-.0842875-.45859885-.00907959l-.01385039.00752263-3.74223763 2.11293671c-.05972906.03372413-.10928008.08290297-.14345358.14237607-.103087.17940521-.04445328.40743784.1303244.51539532l.01062567.00633201 3.74158771 2.14993223c.14370794.08257519.31956752.0845859.46476665.00624096l.01395371-.00783261 3.68412381-2.14962493c.0577621-.0337032.1056682-.08197465.1389315-.13999111.1029168-.1795029.0440668-.40747982-.1308132-.51527148l-.0106316-.00632193z\" fill=\"#185abc\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M12.6502 2.15414L18.9034 5.81428C19.3274 6.04642 19.5929 6.48798 19.5982 6.96975V15.0027C19.5914 15.484 19.3263 15.9249 18.9034 16.1581L8.9399 21.9839C8.77866 22.079 8.57062 22.0264 8.47438 21.8663C8.44459 21.8158 8.42787 21.7588 8.42575 21.7002V18.1647L5.00731 16.1581C4.58439 15.9249 4.31927 15.484 4.3125 15.0027V6.96975C4.31782 6.48798 4.58334 6.04642 5.00731 5.81428L11.2606 2.15414C11.6905 1.90695 12.2202 1.90695 12.6502 2.15414Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M8.19195 9.47949C7.9848 9.47949 7.81616 9.64432 7.80999 9.84996L7.80981 9.86165L7.80993 13.7948L7.81118 13.8359C7.82522 14.0758 7.95679 14.2942 8.16366 14.4185L8.17822 14.4271L10.1019 15.5248V17.0657L10.1029 17.0942C10.1175 17.2919 10.2826 17.4478 10.484 17.4478C10.5461 17.4478 10.6072 17.4327 10.662 17.4039L10.6755 17.3964L15.7794 14.441L15.8145 14.4196C16.0163 14.289 16.1413 14.0668 16.1474 13.8255L16.1476 13.8087V9.86235C16.1476 9.79559 16.1301 9.72999 16.0969 9.67209C15.9939 9.49265 15.7674 9.42839 15.5861 9.52495L15.5752 9.53094L12.1811 11.4795L12.152 11.4959C12.0378 11.5538 11.9015 11.5508 11.7896 11.4868L11.7773 11.4795L8.38223 9.53023C8.32433 9.49698 8.25872 9.47949 8.19195 9.47949Z\" fill=\"#669DF6\"/\u003e\n\u003cpath d=\"M12.2449 5.06328C12.1033 4.98208 11.9304 4.97899 11.7863 5.0542L11.7725 5.06172L8.03026 7.17466C7.97053 7.20838 7.92098 7.25756 7.88681 7.31704C7.78372 7.49644 7.84235 7.72447 8.01713 7.83243L8.02776 7.83876L11.7693 9.9887C11.9131 10.0713 12.0889 10.0733 12.2341 9.99494L12.2481 9.9871L15.9322 7.83748C15.99 7.80378 16.0379 7.7555 16.0711 7.69749C16.174 7.51798 16.1152 7.29001 15.9403 7.18222L15.9297 7.17589L12.2449 5.06328Z\" fill=\"#185ABC\"/\u003e\n\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "dialogflow.cnrm.cloud.google.com/v1alpha1",
     "kind": "DialogflowIntent",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"action\": {\n     \"description\": \"The name of the action associated with the intent.\\nNote: The action name must not contain whitespaces.\",\n     \"type\": \"string\"\n    },\n    \"defaultResponsePlatforms\": {\n     \"description\": \"The list of platforms for which the first responses will be copied from the messages in PLATFORM_UNSPECIFIED\\n(i.e. default platform). Possible values: [\\\"FACEBOOK\\\", \\\"SLACK\\\", \\\"TELEGRAM\\\", \\\"KIK\\\", \\\"SKYPE\\\", \\\"LINE\\\", \\\"VIBER\\\", \\\"ACTIONS_ON_GOOGLE\\\", \\\"GOOGLE_HANGOUTS\\\"].\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"displayName\": {\n     \"description\": \"The name of this intent to be displayed on the console.\",\n     \"type\": \"string\"\n    },\n    \"events\": {\n     \"description\": \"The collection of event names that trigger the intent. If the collection of input contexts is not empty, all of\\nthe contexts must be present in the active user session for an event to trigger this intent. See the\\n[events reference](https://cloud.google.com/dialogflow/docs/events-overview) for more details.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"inputContextNames\": {\n     \"description\": \"The list of context names required for this intent to be triggered.\\nFormat: projects/\\u003cProject ID\\u003e/agent/sessions/-/contexts/\\u003cContext ID\\u003e.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"isFallback\": {\n     \"description\": \"Indicates whether this is a fallback intent.\",\n     \"type\": \"boolean\"\n    },\n    \"mlDisabled\": {\n     \"description\": \"Indicates whether Machine Learning is disabled for the intent.\\nNote: If mlDisabled setting is set to true, then this intent is not taken into account during inference in ML\\nONLY match mode. Also, auto-markup in the UI is turned off.\",\n     \"type\": \"boolean\"\n    },\n    \"parentFollowupIntentName\": {\n     \"description\": \"Immutable. The unique identifier of the parent intent in the chain of followup intents.\\nFormat: projects/\\u003cProject ID\\u003e/agent/intents/\\u003cIntent ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"priority\": {\n     \"description\": \"The priority of this intent. Higher numbers represent higher priorities.\\n  - If the supplied value is unspecified or 0, the service translates the value to 500,000, which corresponds\\n  to the Normal priority in the console.\\n  - If the supplied value is negative, the intent is ignored in runtime detect intent requests.\",\n     \"type\": \"integer\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resetContexts\": {\n     \"description\": \"Indicates whether to delete all contexts in the current session when this intent is matched.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"webhookState\": {\n     \"description\": \"Indicates whether webhooks are enabled for the intent.\\n* WEBHOOK_STATE_ENABLED: Webhook is enabled in the agent and in the intent.\\n* WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING: Webhook is enabled in the agent and in the intent. Also, each slot\\nfilling prompt is forwarded to the webhook. Possible values: [\\\"WEBHOOK_STATE_ENABLED\\\", \\\"WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Intent\",\n \"type\": \"object\"\n}",
-    "version": "dialogflow.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"action\": {\n     \"description\": \"The name of the action associated with the intent.\\nNote: The action name must not contain whitespaces.\",\n     \"type\": \"string\"\n    },\n    \"defaultResponsePlatforms\": {\n     \"description\": \"The list of platforms for which the first responses will be copied from the messages in PLATFORM_UNSPECIFIED\\n(i.e. default platform). Possible values: [\\\"FACEBOOK\\\", \\\"SLACK\\\", \\\"TELEGRAM\\\", \\\"KIK\\\", \\\"SKYPE\\\", \\\"LINE\\\", \\\"VIBER\\\", \\\"ACTIONS_ON_GOOGLE\\\", \\\"GOOGLE_HANGOUTS\\\"].\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"displayName\": {\n     \"description\": \"The name of this intent to be displayed on the console.\",\n     \"type\": \"string\"\n    },\n    \"events\": {\n     \"description\": \"The collection of event names that trigger the intent. If the collection of input contexts is not empty, all of\\nthe contexts must be present in the active user session for an event to trigger this intent. See the\\n[events reference](https://cloud.google.com/dialogflow/docs/events-overview) for more details.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"inputContextNames\": {\n     \"description\": \"The list of context names required for this intent to be triggered.\\nFormat: projects/\\u003cProject ID\\u003e/agent/sessions/-/contexts/\\u003cContext ID\\u003e.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"isFallback\": {\n     \"description\": \"Indicates whether this is a fallback intent.\",\n     \"type\": \"boolean\"\n    },\n    \"mlDisabled\": {\n     \"description\": \"Indicates whether Machine Learning is disabled for the intent.\\nNote: If mlDisabled setting is set to true, then this intent is not taken into account during inference in ML\\nONLY match mode. Also, auto-markup in the UI is turned off.\",\n     \"type\": \"boolean\"\n    },\n    \"parentFollowupIntentName\": {\n     \"description\": \"Immutable. The unique identifier of the parent intent in the chain of followup intents.\\nFormat: projects/\\u003cProject ID\\u003e/agent/intents/\\u003cIntent ID\\u003e.\",\n     \"type\": \"string\"\n    },\n    \"priority\": {\n     \"description\": \"The priority of this intent. Higher numbers represent higher priorities.\\n  - If the supplied value is unspecified or 0, the service translates the value to 500,000, which corresponds\\n  to the Normal priority in the console.\\n  - If the supplied value is negative, the intent is ignored in runtime detect intent requests.\",\n     \"type\": \"integer\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resetContexts\": {\n     \"description\": \"Indicates whether to delete all contexts in the current session when this intent is matched.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"webhookState\": {\n     \"description\": \"Indicates whether webhooks are enabled for the intent.\\n* WEBHOOK_STATE_ENABLED: Webhook is enabled in the agent and in the intent.\\n* WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING: Webhook is enabled in the agent and in the intent. Also, each slot\\nfilling prompt is forwarded to the webhook. Possible values: [\\\"WEBHOOK_STATE_ENABLED\\\", \\\"WEBHOOK_STATE_ENABLED_FOR_SLOT_FILLING\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Intent\",\n \"type\": \"object\"\n}"
   }
 }

@@ -16,7 +16,7 @@ import {
   useTheme,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
+import { setKeys, setOrganization } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { store } from '../../store';
@@ -25,7 +25,7 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-import { UsesSistent } from '../SistentWrapper';
+
 import _ from 'lodash';
 
 export const SlideInMenu = styled('div')(() => ({
@@ -66,15 +66,13 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInput-underline:after': {
     borderBottomColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.text.default, // change the color here
   },
-  '& .MuiInput': {
-    fontFamily: 'Qanelas Soft, sans-serif',
-  },
 }));
 
 export const StyledHeader = styled(Typography)(({ theme }) => ({
   paddingLeft: theme.spacing(2),
   fontSize: '1.25rem',
   [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
+  color: theme.palette.common.white,
 }));
 export const StyledBetaHeader = styled('sup')(() => ({
   color: '#EEEEEE',
@@ -82,7 +80,7 @@ export const StyledBetaHeader = styled('sup')(() => ({
   fontSize: '0.8125rem',
 }));
 
-const StyledSwitcher = styled('div')(() => ({
+const StyledSwitcher = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
@@ -90,6 +88,7 @@ const StyledSwitcher = styled('div')(() => ({
   fontSize: '1.5rem',
   userSelect: 'none',
   transition: 'width 2s ease-in',
+  color: theme.palette.common.white,
 }));
 
 function OrgMenu(props) {
@@ -101,10 +100,10 @@ function OrgMenu(props) {
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
-  const { organization, setOrganization, open } = props;
-  const [skip, setSkip] = React.useState(true);
+
+  const { organization, setOrganization, open, setKeys } = props;
   const { notify } = useNotification();
-  useGetCurrentAbilities(organization, props.setKeys, skip);
+  useGetCurrentAbilities(organization, setKeys);
   useEffect(() => {
     if (isOrgsError) {
       notify({
@@ -118,7 +117,6 @@ function OrgMenu(props) {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
-    setSkip(false);
   };
   const theme = useTheme();
   return (
@@ -184,110 +182,9 @@ function OrgMenu(props) {
   );
 }
 
-// export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
-//   const [orgId, setOrgId] = useState('');
-//   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
-//     {
-//       page: 0,
-//       pagesize: 10,
-//       search: '',
-//       order: '',
-//       orgId: orgId,
-//     },
-//     {
-//       skip: !orgId ? true : false,
-//     },
-//   );
-
-//   const handleWorkspaceSelect = (e) => {
-//     const id = e.target.value;
-//     const selected = workspacesData.workspaces.find((org) => org.id === id);
-//     setWorkspace({ workspace: selected });
-//   };
-
-//   useEffect(() => {
-//     setOrgId(organization?.id);
-//   }, [organization]);
-
-//   if (!organization || !workspace) {
-//     return null;
-//   }
-
-//   return (
-//     <NoSsr>
-//       {!isWorkspacesError && workspace && (
-//         <div
-//           style={{
-//             width: open ? 'auto' : 0,
-//             overflow: open ? '' : 'hidden',
-//             transition: 'all 1s',
-//           }}
-//         >
-//           <FormControl component="fieldset">
-//             <FormGroup>
-//               <FormControlLabel
-//                 key="SpacesPreferences"
-//                 control={
-//                   <Grid container spacing={1} alignItems="flex-end">
-//                     <Grid item xs={12} data-cy="mesh-adapter-url">
-//                       <StyledSelect
-//                         value={workspace.id}
-//                         onChange={handleWorkspaceSelect}
-//                         SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
-//                         MenuProps={{
-//                           anchorOrigin: {
-//                             vertical: 'bottom',
-//                             horizontal: 'left',
-//                           },
-//                           transformOrigin: {
-//                             vertical: 'top',
-//                             horizontal: 'left',
-//                           },
-//                           getContentAnchorEl: null,
-//                         }}
-//                       >
-//                         {workspacesData?.workspaces?.map((works) => (
-//                           <MenuItem key={works.id} value={works.id}>
-//                             <span>{works.name}</span>
-//                           </MenuItem>
-//                         ))}
-//                       </StyledSelect>
-//                     </Grid>
-//                   </Grid>
-//                 }
-//               />
-//             </FormGroup>
-//           </FormControl>
-//         </div>
-//       )}
-//     </NoSsr>
-//   );
-// }
-
-// export const FileNameInput = ({
-//   fileName,
-//   handleFileNameChange,
-//   handleFocus,
-//   activateWalkthrough,
-// }) => {
-//   return (
-//     <StyledTextField
-//       id="design-name-textfield"
-//       onChange={handleFileNameChange}
-//       label="Name"
-//       value={fileName || ''}
-//       autoComplete="off"
-//       size="small"
-//       variant="standard"
-//       onFocus={handleFocus}
-//       onMouseEnter={() => activateWalkthrough && activateWalkthrough()}
-//     />
-//   );
-// };
-
 function DefaultHeader({ title, isBeta }) {
   return (
-    <StyledHeader color="inherit" variant="h5" data-cy="headerPageTitle">
+    <StyledHeader variant="h5" data-cy="headerPageTitle">
       {title}
       {isBeta ? <StyledBetaHeader>BETA</StyledBetaHeader> : ''}
     </StyledHeader>
@@ -296,35 +193,21 @@ function DefaultHeader({ title, isBeta }) {
 
 function SpaceSwitcher(props) {
   const [orgOpen, setOrgOpen] = useState(false);
-  // const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
   return (
     <NoSsr>
       <Provider store={store}>
-        <UsesSistent>
-          <StyledSwitcher>
-            <Button
-              onClick={() => setOrgOpen(!orgOpen)}
-              style={{ marginRight: orgOpen ? '1rem' : '0' }}
-            >
-              <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
-            </Button>
-            <OrgMenu {...props} open={orgOpen} />/
-            {/* /
+        <StyledSwitcher>
           <Button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+            onClick={() => setOrgOpen(!orgOpen)}
+            style={{ marginRight: orgOpen ? '1rem' : '0' }}
           >
-            <WorkspaceOutlinedIcon {...iconXLarge} />
+            <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
           </Button>
-          <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
-            <div
-              id="meshery-dynamic-header"
-              style={{ marginLeft: DynamicComponent ? '1rem' : '' }}
-            />
-            {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
-          </StyledSwitcher>
-        </UsesSistent>
+          <OrgMenu {...props} open={orgOpen} />/
+          <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+          {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
+        </StyledSwitcher>
       </Provider>
     </NoSsr>
   );
@@ -332,16 +215,13 @@ function SpaceSwitcher(props) {
 
 const mapStateToProps = (state) => {
   const organization = state.get('organization');
-  const workspace = state.get('workspace');
   return {
     organization,
-    workspace,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   setOrganization: bindActionCreators(setOrganization, dispatch),
-  setWorkspace: bindActionCreators(setWorkspace, dispatch),
   setKeys: bindActionCreators(setKeys, dispatch),
 });
 

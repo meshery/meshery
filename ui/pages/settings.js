@@ -6,7 +6,6 @@ import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { getPath } from '../lib/path';
 import React, { useEffect } from 'react';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 function Settings(props) {
   useEffect(() => {
@@ -15,15 +14,13 @@ function Settings(props) {
   }, []);
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        <Head>
-          <title>Settings | Meshery</title>
-        </Head>
+    <NoSsr>
+      <Head>
+        <title>Settings | Meshery</title>
+      </Head>
 
-        <MesherySettings />
-      </NoSsr>
-    </UsesSistent>
+      <MesherySettings />
+    </NoSsr>
   );
 }
 

@@ -17,6 +17,8 @@ View list of environments and detail of environments
 ## Synopsis
 
 View list of environments and detailed information of a specific environments
+Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment [flags]
@@ -29,7 +31,15 @@ mesheryctl environment [flags]
 To view a list environments
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgID [orgId]
+mesheryctl environment list --orgID [orgID]
+
+</div>
+</pre> 
+
+To view a particular environment
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl environment view --orgID [orgID]
 
 </div>
 </pre> 
@@ -37,15 +47,7 @@ mesheryctl environment list --orgID [orgId]
 To create a environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment create --orgID [orgId] --name [name] --description [description]
-
-</div>
-</pre> 
-
-Documentation for environment can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.meshery.io/concepts/logical/environments
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 
 </div>
 </pre> 

@@ -237,14 +237,6 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
         "endpoint": "/result"
     },
     {
-        "feature": "persist-smi-results",
-        "endpoint": "/smi/results"
-    },
-    {
-        "feature": "persist-smi-result",
-        "endpoint": "/smi/result"
-    },
-    {
         "feature": "persist-metrics",
         "endpoint": "/result/metrics"
     },

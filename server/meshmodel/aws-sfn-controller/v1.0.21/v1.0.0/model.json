@@ -20,6 +20,7 @@
   },
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
     "name": "Serverless"
   },
   "subCategory": "Serverless",
@@ -36,8 +37,8 @@
   "model": {
     "version": "v1.0.21"
   },
-  "components": null,
-  "relationships": null,
   "components_count": 0,
-  "relationships_count": 0
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
 }

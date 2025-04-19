@@ -36,22 +36,20 @@ var (
 	ErrParseGithubFileCode        = "mesheryctl-1112"
 	ErrReadTokenCode              = "mesheryctl-1113"
 	ErrRequestResponseCode        = "mesheryctl-1114"
-	ErrMarshalStructToCSVCode     = "mesheryctl-1115"
-	ErrAppendToSheetCode          = "mesheryctl-1116"
 	ErrBadRequestCode             = "mesheryctl-1117"
 	ErrInvalidArgumentCode        = "mesheryctl-1118"
 	ErrGeneratingIconsCode        = "mesheryctl-1119"
 	ErrClearLineCode              = "mesheryctl-1120"
-	ErrUpdateToSheetCode          = "mesheryctl-1129"
-	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
 	ErrGeneratesModelCode         = "mesheryctl-1132"
-	ErrGeneratesComponentCode     = "mesheryctl-1133"
 	ErrUpdateComponentsCode       = "mesheryctl-1134"
-	ErrCSVFileNotFoundCode        = "mesheryctl-1135"
-	ErrReadCSVRowCode             = "mesheryctl-1136"
 	ErrMissingCommandsCode        = "mesheryctl-1137"
 	ErrKubernetesConnectivityCode = "mesheryctl-1138"
 	ErrKubernetesQueryCode        = "mesheryctl-1139"
+	ErrCreateManifestsFolderCode  = "mesheryctl-1141"
+	ErrDownloadFileCode           = "mesheryctl-1142"
+	ErrNoManifestFilesFoundCode   = "mesheryctl-1143"
+	ErrWalkManifestsCode          = "mesheryctl-1144"
+	ErrGetChannelVersionCode      = "mesheryctl-1145"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -498,6 +496,9 @@ func ErrAttachAuthToken(err error) error {
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
+func ErrCreateManifestsFolder(err error) error {
+	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
+}
 
 func ErrFailReqStatus(statusCode int, obj string) error {
 	return errors.New(ErrFailReqStatusCode, errors.Alert,
@@ -508,6 +509,42 @@ func ErrFailReqStatus(statusCode int, obj string) error {
 }
 func ErrGenerateModel(err error, modelName string) error {
 	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+}
+
+func ErrDownloadFile(err error, obj string) error {
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded"})
+}
+
+func ErrWalkManifests(err error) error {
+	return errors.New(
+		ErrWalkManifestsCode,
+		errors.Alert,
+		[]string{"Error walking through manifests"},
+		[]string{err.Error()},
+		[]string{"Unable to traverse git repository or manifests due to filesystem or permission issues."},
+		[]string{"Ensure the repository and manifests directory are accessible and have proper permissions."},
+	)
+}
+
+func ErrNoManifestFilesFound(path string) error {
+	return errors.New(
+		ErrNoManifestFilesFoundCode,
+		errors.Alert,
+		[]string{"No manifest files found in the specified path"},
+		[]string{fmt.Sprintf("No manifest files present in path: %s", path)},
+		[]string{"The provided directory may be empty, incorrect, or manifests were not properly downloaded."},
+		[]string{"Verify the specified path contains valid manifest files."},
+	)
+}
+func ErrGetChannelVersion(err error) error {
+	return errors.New(
+		ErrGetChannelVersionCode,
+		errors.Alert,
+		[]string{"Unable to retrieve release channel and version information."},
+		[]string{err.Error()},
+		[]string{"Failed to determine version from context or GitHub releases, possibly due to network or configuration issues."},
+		[]string{"Check your network connection and context configuration; ensure GitHub is accessible."},
+	)
 }
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
@@ -597,34 +634,6 @@ func ErrRequestResponse(err error) error {
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 
-func ErrMarshalStructToCSV(err error) error {
-	return errors.New(ErrMarshalStructToCSVCode, errors.Alert,
-		[]string{"Failed to marshal struct to csv"},
-		[]string{err.Error()},
-		[]string{"The column names in your spreadsheet do not match the names in the struct.", " For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."},
-		[]string{"The column names in the spreadsheet do not match the names in the struct. Please make sure they are spelled exactly the same and use the same case (uppercase/lowercase).", "The value you are trying to convert is not of the expected type for the column. Please ensure it is a [number, string, date, etc.].", "The column names in your spreadsheet do not match the names in the struct. For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."})
-}
-
-func ErrAppendToSheet(err error, id string) error {
-	return errors.New(ErrAppendToSheetCode, errors.Alert,
-		[]string{fmt.Sprintf("Failed to append data into sheet %s", id)},
-		[]string{err.Error()},
-		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
-		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
-}
-func ErrUpdateToSheet(err error, id string) error {
-	return errors.New(ErrUpdateToSheetCode, errors.Alert,
-		[]string{fmt.Sprintf("Failed to update data into sheet %s", id)},
-		[]string{err.Error()},
-		[]string{"Error occurred while updating to the spreadsheet", "The credential might be incorrect/expired"},
-		[]string{"Ensure correct update range (A1 notation) is used", "Ensure correct credential is used"})
-}
-func ErrUpdateRelationshipFile(err error) error {
-	return errors.New(ErrUpdateRelationshipFileCode, errors.Alert, []string{"error while comparing files"},
-		[]string{err.Error()},
-		[]string{"Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet"},
-		[]string{"Ensure that the new file is in the correct format and has the correct data"})
-}
 func ErrBadRequest(err error) error {
 	return errors.New(ErrBadRequestCode, errors.Alert,
 		[]string{"Failed to delete the connection"},
@@ -655,17 +664,9 @@ func ErrClearLine(err error) error {
 		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
-func ErrGenerateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrGeneratesComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
-}
+
 func ErrUpdateComponent(err error, modelName, compName string) error {
 	return errors.New(ErrUpdateComponentsCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
-}
-func ErrCSVFileNotFound(path string) error {
-	return errors.New(ErrCSVFileNotFoundCode, errors.Alert, []string{"error reading csv file", path}, []string{fmt.Sprintf("inside the directory %s either the model csv or component csv is missing or they are not of write format", path)}, []string{"Either or both model csv or component csv are absent, the csv is not of correct template"}, []string{fmt.Sprintf("verify both the csv are present in the directory:%s", path), "verify the csv template"})
-}
-func ErrReadCSVRow(err error, obj string) error {
-	return errors.New(ErrReadCSVRowCode, errors.Alert, []string{"error reading csv ", obj}, []string{err.Error()}, []string{fmt.Sprintf("the %s of the csv is broken", obj)}, []string{fmt.Sprintf("verify the csv %s", obj)})
 }
 
 func ErrMissingCommands(err error) error {

@@ -18,15 +18,13 @@ class MyReporter {
 
   onBegin(_config, suite) {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
-    this.totalTests = `- Total tests cases: ${suite.allTests().length}`;
+    this.totalTests = `- Total test cases: ${suite.allTests().length}`;
   }
-
   // eslint-disable-next-line no-unused-vars
   onStdOut(chunk, _test, _result) {
     const text = chunk.toString('utf-8');
     process.stdout.write(text);
   }
-
   // eslint-disable-next-line no-unused-vars
   onStdErr(chunk, _test, _result) {
     const text = chunk.toString('utf-8');
@@ -35,7 +33,7 @@ class MyReporter {
 
   onTestEnd(test, result) {
     const status = test.outcome();
-    const project = test.parent.project().name;
+    const project = test.parent?.project()?.name;
 
     this.displayLogs(project, test.title, test.tags, status, result);
     this.addTestTable(project, test.title, test.tags, status, result.retry, test.retries);
@@ -106,15 +104,19 @@ class MyReporter {
 
     if (status === 'expected') {
       this.passed++;
+      return;
     }
     if (isFlaky || (isUnstableTest && isFail)) {
       this.flaky++;
+      return;
     }
     if (isFail && lastRetriesRun && !isUnstableTest) {
       this.failed++;
+      return;
     }
     if (isSkipped && lastRetriesRun && !isUnstableTest) {
       this.skipped++;
+      return;
     }
   }
 

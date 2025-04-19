@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Certified Kubernetes - Distribution",
@@ -44,16 +45,17 @@
     "model": {
       "version": "8.2.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -190,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "velero.io/v1",
     "kind": "BackupStorageLocation",
-    "schema": "{\n \"description\": \"BackupStorageLocation is a location where Velero stores backup objects\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupStorageLocationSpec defines the desired state of a Velero BackupStorageLocation\",\n   \"properties\": {\n    \"accessMode\": {\n     \"description\": \"AccessMode defines the permissions for the backup storage location.\",\n     \"enum\": [\n      \"ReadOnly\",\n      \"ReadWrite\"\n     ],\n     \"type\": \"string\"\n    },\n    \"backupSyncPeriod\": {\n     \"description\": \"BackupSyncPeriod defines how frequently to sync backup API objects from object storage. A value of 0 disables sync.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Config is for provider-specific configuration fields.\",\n     \"type\": \"object\"\n    },\n    \"credential\": {\n     \"description\": \"Credential contains the credential information intended to be used with this location\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"default\": {\n     \"description\": \"Default indicates this location is the default backup storage location.\",\n     \"type\": \"boolean\"\n    },\n    \"objectStorage\": {\n     \"description\": \"ObjectStorageLocation specifies the settings necessary to connect to a provider's object storage.\",\n     \"properties\": {\n      \"bucket\": {\n       \"description\": \"Bucket is the bucket to use for object storage.\",\n       \"type\": \"string\"\n      },\n      \"caCert\": {\n       \"description\": \"CACert defines a CA bundle to use when verifying TLS connections to the provider.\",\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      },\n      \"prefix\": {\n       \"description\": \"Prefix is the path inside a bucket to use for Velero storage. Optional.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"bucket\"\n     ],\n     \"type\": \"object\"\n    },\n    \"provider\": {\n     \"description\": \"Provider is the provider of the backup storage.\",\n     \"type\": \"string\"\n    },\n    \"validationFrequency\": {\n     \"description\": \"ValidationFrequency defines how frequently to validate the corresponding object storage. A value of 0 disables validation.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"objectStorage\",\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Storage Location\",\n \"type\": \"object\"\n}",
-    "version": "velero.io/v1"
+    "schema": "{\n \"description\": \"BackupStorageLocation is a location where Velero stores backup objects\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupStorageLocationSpec defines the desired state of a Velero BackupStorageLocation\",\n   \"properties\": {\n    \"accessMode\": {\n     \"description\": \"AccessMode defines the permissions for the backup storage location.\",\n     \"enum\": [\n      \"ReadOnly\",\n      \"ReadWrite\"\n     ],\n     \"type\": \"string\"\n    },\n    \"backupSyncPeriod\": {\n     \"description\": \"BackupSyncPeriod defines how frequently to sync backup API objects from object storage. A value of 0 disables sync.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Config is for provider-specific configuration fields.\",\n     \"type\": \"object\"\n    },\n    \"credential\": {\n     \"description\": \"Credential contains the credential information intended to be used with this location\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"default\": {\n     \"description\": \"Default indicates this location is the default backup storage location.\",\n     \"type\": \"boolean\"\n    },\n    \"objectStorage\": {\n     \"description\": \"ObjectStorageLocation specifies the settings necessary to connect to a provider's object storage.\",\n     \"properties\": {\n      \"bucket\": {\n       \"description\": \"Bucket is the bucket to use for object storage.\",\n       \"type\": \"string\"\n      },\n      \"caCert\": {\n       \"description\": \"CACert defines a CA bundle to use when verifying TLS connections to the provider.\",\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      },\n      \"prefix\": {\n       \"description\": \"Prefix is the path inside a bucket to use for Velero storage. Optional.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"bucket\"\n     ],\n     \"type\": \"object\"\n    },\n    \"provider\": {\n     \"description\": \"Provider is the provider of the backup storage.\",\n     \"type\": \"string\"\n    },\n    \"validationFrequency\": {\n     \"description\": \"ValidationFrequency defines how frequently to validate the corresponding object storage. A value of 0 disables validation.\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"objectStorage\",\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup Storage Location\",\n \"type\": \"object\"\n}"
   }
 }

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	"github.com/layer5io/meshkit/utils"
 )
 
@@ -46,7 +47,7 @@ func GetIndexForRegisterCol(cols []string, shouldRegister string) int {
 	return shouldRegisterColIndex
 }
 
-func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, imgPath string) error {
+func GenerateMDXStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshkitRegistryUtils.ComponentCSV, modelPath, imgPath string) error {
 	// ../layer5/src/collections/integrations ../layer5/src/collections/integrations
 	modelName := utils.FormatName(model.Model)
 	// create dir for model
@@ -90,7 +91,7 @@ func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, 
 
 	// generate components metadata and create svg files
 	compIconsSubDir := filepath.Join("icons", "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDXStyle(model, components, modelDir, compIconsSubDir)
+	componentMetadata, err := meshkitRegistryUtils.CreateComponentsMetadataAndCreateSVGsForMDXStyle(model, components, modelDir, compIconsSubDir)
 	if err != nil {
 		return err
 	}
@@ -105,7 +106,7 @@ func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, 
 	return nil
 }
 
-func GenerateJSStyleDocs(model ModelCSV, docsJSON string, components []ComponentCSV, relationships []RelationshipCSV, modelPath, imgPath string) (string, error) {
+func GenerateJSStyleDocs(model meshkitRegistryUtils.ModelCSV, docsJSON string, components []meshkitRegistryUtils.ComponentCSV, relationships []meshkitRegistryUtils.RelationshipCSV, modelPath, imgPath string) (string, error) {
 	// ../../meshery.io/integrations ../meshery.io/assets/images/integration
 	modelName := utils.FormatName(model.Model)
 	componentsCount := len(components)
@@ -157,11 +158,11 @@ func GenerateJSStyleDocs(model ModelCSV, docsJSON string, components []Component
 
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
 	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "meshery.io/")[1:]...), modelName, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
+	componentMetadata, err := meshkitRegistryUtils.CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
 		return "", err
 	}
-	relationshipMetadata, err := CreateRelationshipsMetadata(model, relationships)
+	relationshipMetadata, err := meshkitRegistryUtils.CreateRelationshipsMetadata(model, relationships)
 	if err != nil {
 		return "", err
 	}
@@ -182,7 +183,7 @@ func GenerateJSStyleDocs(model ModelCSV, docsJSON string, components []Component
 	return docsJSON, nil
 }
 
-func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, relationships []RelationshipCSV, modelPath, imgPath string) error {
+func GenerateMDStyleDocs(model meshkitRegistryUtils.ModelCSV, components []meshkitRegistryUtils.ComponentCSV, relationships []meshkitRegistryUtils.RelationshipCSV, modelPath, imgPath string) error {
 
 	modelName := utils.FormatName(model.Model)
 	componentsCount := len(components)
@@ -230,11 +231,11 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, relationship
 	// generate components metadata and create svg files
 	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components") // "assets", "img", "integrations"
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
-	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
+	componentMetadata, err := meshkitRegistryUtils.CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
 		return err
 	}
-	relationshipMetadata, err := CreateRelationshipsMetadata(model, relationships)
+	relationshipMetadata, err := meshkitRegistryUtils.CreateRelationshipsMetadata(model, relationships)
 	if err != nil {
 		return err
 	}
@@ -255,7 +256,7 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, relationship
 	return nil
 }
 
-func GenerateIcons(model ModelCSV, components []ComponentCSV, imgPath string) error {
+func GenerateIcons(model meshkitRegistryUtils.ModelCSV, components []meshkitRegistryUtils.ComponentCSV, imgPath string) error {
 	modelName := utils.FormatName(model.Model)
 
 	// Dir for icons
@@ -293,7 +294,7 @@ func GenerateIcons(model ModelCSV, components []ComponentCSV, imgPath string) er
 	// Generate components metadata and create SVG files
 	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName, "components")
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
-	_, err = CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
+	_, err = meshkitRegistryUtils.CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
 	if err != nil {
 		return err
 	}

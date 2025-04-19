@@ -263,3 +263,61 @@ export const LOCAL_PROVIDER_LAYOUT = {
     },
   ],
 };
+
+export const OVERVIEW_LAYOUT = {
+  lg: [
+    {
+      h: 2.565,
+      i: 'OVERVIEW',
+      moved: false,
+      static: false,
+      w: 16,
+      x: 0,
+      y: 0,
+    },
+  ],
+  md: [
+    {
+      h: 2.565,
+      i: 'OVERVIEW',
+      moved: false,
+      static: false,
+      w: 16,
+      x: 0,
+      y: 0,
+    },
+  ],
+  sm: [
+    {
+      h: 2.565,
+      i: 'OVERVIEW',
+      moved: false,
+      static: false,
+      w: 12,
+      x: 0,
+      y: 0,
+    },
+  ],
+  xs: [
+    {
+      h: 2.565,
+      i: 'OVERVIEW',
+      moved: false,
+      static: false,
+      w: 12,
+      x: 0,
+      y: 0,
+    },
+  ],
+  xxs: [
+    {
+      h: 2.565,
+      i: 'OVERVIEW',
+      moved: false,
+      static: false,
+      w: 12,
+      x: 0,
+      y: 0,
+    },
+  ],
+};

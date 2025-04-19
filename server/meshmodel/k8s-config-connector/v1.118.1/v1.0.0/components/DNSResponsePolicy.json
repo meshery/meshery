@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.118.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#4285f4;}.cls-2{fill:#669df6;}.cls-3{fill:#aecbfa;}.cls-4{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/dns\"\u003e\u003cg \u003e\u003cpolygon id=\"Fill-1\" class=\"cls-1\" points=\"13 18 11 18 11 8 13 8 13 18\"/\u003e\u003cpolygon id=\"Fill-2\" class=\"cls-2\" points=\"2 21 22 21 22 19 2 19 2 21\"/\u003e\u003cpolygon id=\"Fill-3\" class=\"cls-3\" points=\"10 22 14 22 14 18 10 18 10 22\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003crect class=\"cls-3\" x=\"2\" y=\"2\" width=\"20\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"12\" y=\"2\" width=\"10\" height=\"6\"/\u003e\u003crect class=\"cls-4\" x=\"4\" y=\"4\" width=\"2\" height=\"2\"/\u003e\u003crect class=\"cls-3\" x=\"2\" y=\"10\" width=\"20\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"12\" y=\"10\" width=\"10\" height=\"6\"/\u003e\u003crect class=\"cls-4\" x=\"4\" y=\"12\" width=\"2\" height=\"2\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}.cls-4{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/dns\"\u003e\u003cg \u003e\u003cpolygon id=\"Fill-1\" class=\"cls-1\" points=\"13 18 11 18 11 8 13 8 13 18\"/\u003e\u003cpolygon id=\"Fill-2\" class=\"cls-2\" points=\"2 21 22 21 22 19 2 19 2 21\"/\u003e\u003cpolygon id=\"Fill-3\" class=\"cls-3\" points=\"10 22 14 22 14 18 10 18 10 22\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003crect class=\"cls-3\" x=\"2\" y=\"2\" width=\"20\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"12\" y=\"2\" width=\"10\" height=\"6\"/\u003e\u003crect class=\"cls-4\" x=\"4\" y=\"4\" width=\"2\" height=\"2\"/\u003e\u003crect class=\"cls-3\" x=\"2\" y=\"10\" width=\"20\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"12\" y=\"10\" width=\"10\" height=\"6\"/\u003e\u003crect class=\"cls-4\" x=\"4\" y=\"12\" width=\"2\" height=\"2\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "dns.cnrm.cloud.google.com/v1alpha1",
     "kind": "DNSResponsePolicy",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"The description of the response policy, such as 'My new response policy'.\",\n     \"type\": \"string\"\n    },\n    \"gkeClusters\": {\n     \"description\": \"The list of Google Kubernetes Engine clusters that can see this zone.\",\n     \"items\": {\n      \"properties\": {\n       \"gkeClusterName\": {\n        \"description\": \"The resource name of the cluster to bind this ManagedZone to.\\nThis should be specified in the format like\\n'projects/*/locations/*/clusters/*'.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"gkeClusterName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"networks\": {\n     \"description\": \"The list of network names specifying networks to which this policy is applied.\",\n     \"items\": {\n      \"properties\": {\n       \"networkUrl\": {\n        \"description\": \"The fully qualified URL of the VPC network to bind to.\\nThis should be formatted like\\n'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"networkUrl\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The responsePolicyName of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"DNS Response Policy\",\n \"type\": \"object\"\n}",
-    "version": "dns.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"The description of the response policy, such as 'My new response policy'.\",\n     \"type\": \"string\"\n    },\n    \"gkeClusters\": {\n     \"description\": \"The list of Google Kubernetes Engine clusters that can see this zone.\",\n     \"items\": {\n      \"properties\": {\n       \"gkeClusterName\": {\n        \"description\": \"The resource name of the cluster to bind this ManagedZone to.\\nThis should be specified in the format like\\n'projects/*/locations/*/clusters/*'.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"gkeClusterName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"networks\": {\n     \"description\": \"The list of network names specifying networks to which this policy is applied.\",\n     \"items\": {\n      \"properties\": {\n       \"networkUrl\": {\n        \"description\": \"The fully qualified URL of the VPC network to bind to.\\nThis should be formatted like\\n'https://www.googleapis.com/compute/v1/projects/{project}/global/networks/{network}'.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"networkUrl\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The responsePolicyName of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"DNS Response Policy\",\n \"type\": \"object\"\n}"
   }
 }

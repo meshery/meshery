@@ -9,7 +9,6 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { clearResultsSelection } from '../lib/store';
-import { UsesSistent } from './SistentWrapper';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   marginRight: theme.spacing(3),
@@ -91,7 +90,7 @@ function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsS
   });
 
   return (
-    <UsesSistent>
+    <>
       <NoSsr>
         <div className="custom-toolbar-select">
           <Tooltip title="Deselect ALL">
@@ -134,7 +133,7 @@ function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsS
           }
         />
       </NoSsr>
-    </UsesSistent>
+    </>
   );
 }
 

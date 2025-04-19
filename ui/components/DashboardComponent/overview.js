@@ -78,18 +78,12 @@ const Overview = ({ selectedK8sContexts, k8scontext, isEditMode }) => {
   return (
     <NoSsr>
       <Provider store={store}>
-        <div
-          style={{
-            background: theme.palette.background.default,
-          }}
-        >
-          <HoneycombComponent
-            kinds={clusterSummary?.kinds}
-            isClusterLoading={isClusterLoading}
-            isClusterIdsEmpty={isClusterIdsEmpty}
-            isEditMode={isEditMode}
-          />
-        </div>
+        <HoneycombComponent
+          kinds={clusterSummary?.kinds}
+          isClusterLoading={isClusterLoading}
+          isClusterIdsEmpty={isClusterIdsEmpty}
+          isEditMode={isEditMode}
+        />
       </Provider>
     </NoSsr>
   );

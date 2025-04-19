@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Platform"
     },
     "subCategory": "Certified Kubernetes - Distribution",
@@ -44,16 +45,17 @@
     "model": {
       "version": "v3.4.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#26A678\"/\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n    \u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\"\n        d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\"\n        fill=\"#fff\" /\u003e\n\u003c/svg\u003e"
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -190,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "iam.kubesphere.io/v1alpha2",
     "kind": "FederatedUser",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"placement\": {\n     \"properties\": {\n      \"clusterSelector\": {\n       \"properties\": {\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"clusters\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"template\": {\n     \"properties\": {\n      \"metadata\": {\n       \"type\": \"object\"\n      },\n      \"spec\": {\n       \"description\": \"UserSpec defines the desired state of User\",\n       \"properties\": {\n        \"description\": {\n         \"description\": \"Description of the user.\",\n         \"type\": \"string\"\n        },\n        \"displayName\": {\n         \"type\": \"string\"\n        },\n        \"email\": {\n         \"description\": \"Unique email address(https://www.ietf.org/rfc/rfc5322.txt).\",\n         \"type\": \"string\"\n        },\n        \"groups\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"lang\": {\n         \"description\": \"The preferred written or spoken language for the user.\",\n         \"type\": \"string\"\n        },\n        \"password\": {\n         \"description\": \"password will be encrypted by mutating admission webhook Password pattern is tricky here. The rule is simple: length between [6,64], at least one uppercase letter, one lowercase letter, one digit. The regexp in console(javascript) is quite straightforward: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)[^]{6,64}$ But in Go, we don't have ?= (back tracking) capability in regexp (also in CRD validation pattern) So we adopted an alternative scheme to achieve. Use 6 different regexp to combine to achieve the same effect. These six schemes enumerate the arrangement of numbers, uppercase letters, and lowercase letters that appear for the first time. - ^(.*[a-z].*[A-Z].*[0-9].*)$ stands for lowercase letter comes first, then followed by an uppercase letter, then a digit. - ^(.*[a-z].*[0-9].*[A-Z].*)$ stands for lowercase letter comes first, then followed by a digit, then an uppercase leeter. - ^(.*[A-Z].*[a-z].*[0-9].*)$ ... - ^(.*[A-Z].*[0-9].*[a-z].*)$ ... - ^(.*[0-9].*[a-z].*[A-Z].*)$ ... - ^(.*[0-9].*[A-Z].*[a-z].*)$ ... Last but not least, the bcrypt string is also included to match the encrypted password. ^(\\\\$2[ayb]\\\\$.{56})$\",\n         \"maxLength\": 64,\n         \"minLength\": 8,\n         \"pattern\": \"^(.*[a-z].*[A-Z].*[0-9].*)$|^(.*[a-z].*[0-9].*[A-Z].*)$|^(.*[A-Z].*[a-z].*[0-9].*)$|^(.*[A-Z].*[0-9].*[a-z].*)$|^(.*[0-9].*[a-z].*[A-Z].*)$|^(.*[0-9].*[A-Z].*[a-z].*)$|^(\\\\$2[ayb]\\\\$.{56})$\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"email\"\n       ],\n       \"type\": \"object\"\n      },\n      \"status\": {\n       \"description\": \"UserStatus defines the observed state of User\",\n       \"properties\": {\n        \"lastLoginTime\": {\n         \"description\": \"Last login attempt timestamp\",\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        },\n        \"lastTransitionTime\": {\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        },\n        \"reason\": {\n         \"type\": \"string\"\n        },\n        \"state\": {\n         \"description\": \"The user status\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"spec\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"placement\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Federated User\",\n \"type\": \"object\"\n}",
-    "version": "iam.kubesphere.io/v1alpha2"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"placement\": {\n     \"properties\": {\n      \"clusterSelector\": {\n       \"properties\": {\n        \"matchLabels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"clusters\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"template\": {\n     \"properties\": {\n      \"metadata\": {\n       \"type\": \"object\"\n      },\n      \"spec\": {\n       \"description\": \"UserSpec defines the desired state of User\",\n       \"properties\": {\n        \"description\": {\n         \"description\": \"Description of the user.\",\n         \"type\": \"string\"\n        },\n        \"displayName\": {\n         \"type\": \"string\"\n        },\n        \"email\": {\n         \"description\": \"Unique email address(https://www.ietf.org/rfc/rfc5322.txt).\",\n         \"type\": \"string\"\n        },\n        \"groups\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"lang\": {\n         \"description\": \"The preferred written or spoken language for the user.\",\n         \"type\": \"string\"\n        },\n        \"password\": {\n         \"description\": \"password will be encrypted by mutating admission webhook Password pattern is tricky here. The rule is simple: length between [6,64], at least one uppercase letter, one lowercase letter, one digit. The regexp in console(javascript) is quite straightforward: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\\\\d)[^]{6,64}$ But in Go, we don't have ?= (back tracking) capability in regexp (also in CRD validation pattern) So we adopted an alternative scheme to achieve. Use 6 different regexp to combine to achieve the same effect. These six schemes enumerate the arrangement of numbers, uppercase letters, and lowercase letters that appear for the first time. - ^(.*[a-z].*[A-Z].*[0-9].*)$ stands for lowercase letter comes first, then followed by an uppercase letter, then a digit. - ^(.*[a-z].*[0-9].*[A-Z].*)$ stands for lowercase letter comes first, then followed by a digit, then an uppercase leeter. - ^(.*[A-Z].*[a-z].*[0-9].*)$ ... - ^(.*[A-Z].*[0-9].*[a-z].*)$ ... - ^(.*[0-9].*[a-z].*[A-Z].*)$ ... - ^(.*[0-9].*[A-Z].*[a-z].*)$ ... Last but not least, the bcrypt string is also included to match the encrypted password. ^(\\\\$2[ayb]\\\\$.{56})$\",\n         \"maxLength\": 64,\n         \"minLength\": 8,\n         \"pattern\": \"^(.*[a-z].*[A-Z].*[0-9].*)$|^(.*[a-z].*[0-9].*[A-Z].*)$|^(.*[A-Z].*[a-z].*[0-9].*)$|^(.*[A-Z].*[0-9].*[a-z].*)$|^(.*[0-9].*[a-z].*[A-Z].*)$|^(.*[0-9].*[A-Z].*[a-z].*)$|^(\\\\$2[ayb]\\\\$.{56})$\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"email\"\n       ],\n       \"type\": \"object\"\n      },\n      \"status\": {\n       \"description\": \"UserStatus defines the observed state of User\",\n       \"properties\": {\n        \"lastLoginTime\": {\n         \"description\": \"Last login attempt timestamp\",\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        },\n        \"lastTransitionTime\": {\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        },\n        \"reason\": {\n         \"type\": \"string\"\n        },\n        \"state\": {\n         \"description\": \"The user status\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"spec\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"placement\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Federated User\",\n \"type\": \"object\"\n}"
   }
 }

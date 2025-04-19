@@ -34,7 +34,7 @@ const LatestBlogs = (props) => {
     };
 
     fetchBlogFeed();
-  }, [resources]);
+  }, []);
 
   return (
     <PlainCard

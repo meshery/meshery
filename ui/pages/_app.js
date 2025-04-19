@@ -653,6 +653,7 @@ class MesheryApp extends App {
   render() {
     const { Component, pageProps, isDrawerCollapsed, relayEnvironment } = this.props;
     const setAppState = this.setAppState.bind(this);
+    const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
 
     return (
       <LoadingScreen message={randomLoadingMessage} isLoading={this.state.isLoading}>
@@ -669,10 +670,10 @@ class MesheryApp extends App {
                         mobileOpen={this.state.mobileOpen}
                         handleDrawerToggle={this.handleDrawerToggle}
                         handleCollapseDrawer={this.handleCollapseDrawer}
-                        isFullScreenMode={this.state.isFullScreenMode}
                         updateExtensionType={this.updateExtensionType}
+                        canShowNav={canShowNav}
                       />
-                      <StyledAppContent>
+                      <StyledAppContent canShowNav={canShowNav}>
                         <SnackbarProvider
                           anchorOrigin={{
                             vertical: 'bottom',
@@ -808,11 +809,9 @@ const NavigationBar = ({
   mobileOpen,
   handleDrawerToggle,
   handleCollapseDrawer,
-  isFullScreenMode,
   updateExtensionType,
+  canShowNav,
 }) => {
-  const canShowNav = !isFullScreenMode && uiConfig?.components?.navigator !== false;
-
   if (!canShowNav) {
     return null;
   }

@@ -29,7 +29,7 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: 'module',
   },
-  plugins: ['react', 'prettier'],
+  plugins: ['react', 'prettier', 'unused-imports'],
   rules: {
     '@next/next/no-img-element': 'off',
     'react-hooks/rules-of-hooks': 'warn',
@@ -45,6 +45,7 @@ module.exports = {
     'react/jsx-no-undef': 'error',
     'no-console': 0,
     'no-unused-vars': 'error',
+    'unused-imports/no-unused-imports': 'error',
     'react/jsx-key': 'warn',
     'no-dupe-keys': 'error',
     'react/jsx-filename-extension': [

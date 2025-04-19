@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import { styled, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, WarningIcon } from "@layer5/sistent"
 
 const SessionExpired = styled(DialogContentText)(() => ({
-  minWidth : 400,
-  overflowWrap : "anywhere",
-  textAlign : "center",
-  padding : 5,
-  margin : 2,
-  display : "flex",
-  flexDirection : "column",
-  height : "7rem",
-  justifyContent : "space-evenly",
+  minWidth: 400,
+  overflowWrap: "anywhere",
+  textAlign: "center",
+  padding: 5,
+  margin: 2,
+  display: "flex",
+  flexDirection: "column",
+  height: "7rem",
+  justifyContent: "space-evenly",
 }));
 const IconContainer = styled("div")(() => ({
-  width : "24px",
-  height : "24px",
-  marginRight : "1px",
+  width: "24px",
+  height: "24px",
+  marginRight: "1px",
 }));
 
 function AlertUnauthenticatedSession() {
@@ -53,14 +53,14 @@ function AlertUnauthenticatedSession() {
       <DialogTitle
         id="alert-dialog-title"
         sx={{
-          display : "flex",
-          justifyContent : "center",
-          alignItems : "center",
-          textAlign : "center",
-          minWidth : 400,
-          padding : "10px",
-          color : "#ebf1f5",
-          backgroundColor : "#F0A303",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          textAlign: "center",
+          minWidth: 400,
+          padding: "10px",
+          color: "#ebf1f5",
+          backgroundColor: "#F0A303",
         }}
       >
         <IconContainer>

@@ -3,15 +3,15 @@ import {
   Avatar,
   Box,
   Collapse,
-  Grid,
-  IconButton,
   Slide,
-  Tooltip,
+  IconButton,
   Typography,
   useTheme,
   Checkbox,
   Popover,
   alpha,
+  FormattedTime,
+  CustomTooltip,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -27,7 +27,7 @@ import {
   Root,
   Summary,
 } from './notificationCenter.style';
-import { UsesSistent } from '../SistentWrapper';
+
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -36,7 +36,6 @@ import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
 import ShareIcon from '../../assets/icons/ShareIcon';
 import DeleteIcon from '../../assets/icons/DeleteIcon';
-import moment from 'moment';
 import {
   useUpdateStatusMutation,
   useDeleteEventMutation,
@@ -51,8 +50,7 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { FormattedMetadata } from './metadata';
-
+import { FormattedLinkMetadata, FormattedMetadata } from './metadata';
 import { truncate } from 'lodash';
 
 export const eventPreventDefault = (e) => {
@@ -63,7 +61,7 @@ export const eventstopPropagation = (e) => {
   e.stopPropagation();
 };
 
-export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 45;
+export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 62;
 
 export const canTruncateDescription = (description) => {
   return description.length > MAX_NOTIFICATION_DESCRIPTION_LENGTH;
@@ -71,38 +69,25 @@ export const canTruncateDescription = (description) => {
 
 const AvatarStack = ({ avatars, direction }) => {
   return (
-    <UsesSistent>
-      <StyledAvatarStack
-        sx={{
-          flexDirection: direction,
-        }}
-      >
-        {avatars.map((avatar, index) => (
-          <Tooltip title={avatar.name} placement="top" key={index}>
-            <Box
-              sx={{
-                zIndex: avatars.length - index,
-                mt: '-0.4rem',
-              }}
-            >
-              <Avatar alt={avatar.name} src={avatar.avatar_url} />
-            </Box>
-          </Tooltip>
-        ))}
-      </StyledAvatarStack>
-    </UsesSistent>
+    <StyledAvatarStack
+      sx={{
+        flexDirection: direction,
+      }}
+    >
+      {avatars.map((avatar, index) => (
+        <CustomTooltip title={avatar.name} placement="top" key={index}>
+          <Box
+            sx={{
+              zIndex: avatars.length - index,
+              ml: '-0.4rem',
+            }}
+          >
+            <Avatar alt={avatar.name} src={avatar.avatar_url} />
+          </Box>
+        </CustomTooltip>
+      ))}
+    </StyledAvatarStack>
   );
-};
-
-const formatTimestamp = (utcTimestamp) => {
-  const currentUtcTimestamp = moment.utc().valueOf();
-
-  const timediff = currentUtcTimestamp - moment(utcTimestamp).valueOf();
-
-  if (timediff >= 24 * 60 * 60 * 1000) {
-    return moment(utcTimestamp).local().format('MMM DD, YYYY');
-  }
-  return moment(utcTimestamp).fromNow();
 };
 
 const BasicMenu = ({ event }) => {
@@ -125,57 +110,55 @@ const BasicMenu = ({ event }) => {
   };
   const theme = useTheme();
   return (
-    <UsesSistent>
-      <div className="mui-fixed" onClick={(e) => e.stopPropagation()}>
-        <IconButton
-          id="basic-button"
-          aria-controls={open ? 'basic-menu' : undefined}
-          aria-haspopup="true"
-          aria-expanded={open ? 'true' : undefined}
-          onClick={handleClick}
-        >
-          <MoreVertIcon />
-        </IconButton>
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        >
-          <MenuPaper>
-            <OptionList>
-              <OptionListItem sx={{ width: '100%' }}>
-                <ListButton onClick={toggleSocialShare}>
-                  <ShareIcon {...iconMedium} fill={theme.palette.icon.secondary} />
-                  <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
-                    Share
-                  </Typography>
-                </ListButton>
-              </OptionListItem>
-              <Collapse in={isSocialShareOpen}>
-                <SocialListItem>
-                  <FacebookShareButton url={'https://meshery.io'} quote={event.description || ''}>
-                    <FacebookIcon {...iconMedium} fill={theme.palette.icon.secondary} />
-                  </FacebookShareButton>
-                  <LinkedinShareButton url={'https://meshery.io'} summary={event.description || ''}>
-                    <LinkedInIcon {...iconMedium} fill={theme.palette.icon.secondary} />
-                  </LinkedinShareButton>
-                  <TwitterShareButton url={'https://meshery.io'} title={event.description || ''}>
-                    <TwitterIcon {...iconMedium} fill={theme.palette.icon.secondary} />
-                  </TwitterShareButton>
-                </SocialListItem>
-              </Collapse>
-            </OptionList>
+    <div className="mui-fixed" onClick={(e) => e.stopPropagation()}>
+      <IconButton
+        id="basic-button"
+        aria-controls={open ? 'basic-menu' : undefined}
+        aria-haspopup="true"
+        aria-expanded={open ? 'true' : undefined}
+        onClick={handleClick}
+      >
+        <MoreVertIcon />
+      </IconButton>
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <MenuPaper>
+          <OptionList>
+            <OptionListItem sx={{ width: '100%' }}>
+              <ListButton onClick={toggleSocialShare}>
+                <ShareIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+                <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                  Share
+                </Typography>
+              </ListButton>
+            </OptionListItem>
+            <Collapse in={isSocialShareOpen}>
+              <SocialListItem>
+                <FacebookShareButton url={'https://meshery.io'} quote={event.description || ''}>
+                  <FacebookIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+                </FacebookShareButton>
+                <LinkedinShareButton url={'https://meshery.io'} summary={event.description || ''}>
+                  <LinkedInIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+                </LinkedinShareButton>
+                <TwitterShareButton url={'https://meshery.io'} title={event.description || ''}>
+                  <TwitterIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+                </TwitterShareButton>
+              </SocialListItem>
+            </Collapse>
+          </OptionList>
 
-            <DeleteEvent event={event} />
-            <ChangeStatus event={event} />
-          </MenuPaper>
-        </Popover>
-      </div>
-    </UsesSistent>
+          <DeleteEvent event={event} />
+          <ChangeStatus event={event} />
+        </MenuPaper>
+      </Popover>
+    </div>
   );
 };
 
@@ -188,17 +171,15 @@ export const DeleteEvent = ({ event }) => {
     deleteEventMutation({ id: event.id });
   };
   return (
-    <UsesSistent>
-      <OptionList>
-        <ListButton onClick={handleDelete}>
-          <DeleteIcon {...iconMedium} fill={theme.palette.icon.secondary} />
-          <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
-            {' '}
-            Delete{' '}
-          </Typography>
-        </ListButton>
-      </OptionList>
-    </UsesSistent>
+    <OptionList>
+      <ListButton onClick={handleDelete}>
+        <DeleteIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+        <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+          {' '}
+          Delete{' '}
+        </Typography>
+      </ListButton>
+    </OptionList>
   );
 };
 
@@ -211,24 +192,49 @@ export const ChangeStatus = ({ event }) => {
     updateStatusMutation({ id: event.id, status: newStatus });
   };
   return (
-    <UsesSistent>
-      <OptionList>
-        <ListButton onClick={updateStatus}>
-          {newStatus === STATUS.READ ? (
-            <ReadIcon {...iconMedium} fill={theme.palette.icon.secondary} />
-          ) : (
-            <UnreadIcon {...iconMedium} fill={theme.palette.icon.secondary} />
-          )}
-          <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
-            {' '}
-            Mark as {newStatus}{' '}
-          </Typography>
-        </ListButton>
-      </OptionList>
-    </UsesSistent>
+    <OptionList>
+      <ListButton onClick={updateStatus}>
+        {newStatus === STATUS.READ ? (
+          <ReadIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+        ) : (
+          <UnreadIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+        )}
+        <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+          {' '}
+          Mark as {newStatus}{' '}
+        </Typography>
+      </ListButton>
+    </OptionList>
   );
 };
+export const getErrorCodesFromEvent = (event) => {
+  if (!event || !event.metadata) return null;
 
+  let errorCodes = new Set();
+  if (event.metadata.error) {
+    if (Array.isArray(event.metadata.error)) {
+      event.metadata.error.forEach((err) => {
+        if (err.Code) errorCodes.add(err.Code);
+      });
+    } else if (event.metadata.error.Code) {
+      errorCodes.add(event.metadata.error.Code);
+    }
+  }
+
+  if (event.metadata.ModelDetails) {
+    Object.values(event.metadata.ModelDetails).forEach((detail) => {
+      if (Array.isArray(detail.Errors)) {
+        detail.Errors.forEach((error) => {
+          if (error.error?.Code) {
+            errorCodes.add(error.error.Code);
+          }
+        });
+      }
+    });
+  }
+
+  return [...errorCodes];
+};
 export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
@@ -274,71 +280,97 @@ export const Notification = ({ event_id }) => {
   ];
 
   const Detail = () => (
-    <Expanded container>
-      <Grid
-        item
-        xs={12}
+    <Expanded
+      container
+      style={{
+        backgroundColor: alpha(eventStyle?.color || SEVERITY_STYLE['informational'].color, 0.1),
+        color: theme.palette.text.default,
+        borderTop: `1px solid ${notificationColor}`,
+      }}
+    >
+      <Box
         sx={{
-          color: theme.palette.text.default,
-          borderTop: `1px solid ${notificationColor}`,
           padding: '1rem',
-          backgroundColor: alpha(eventStyle.color, 0.1),
+          width: '100%',
         }}
       >
-        <ActorAvatar item sm={1}>
-          <AvatarStack
-            avatars={eventActors}
-            direction={{
-              xs: 'row',
-              md: 'row',
-            }}
-          />
-        </ActorAvatar>
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <ActorAvatar item style={{ marginBottom: '0.5rem' }}>
+            <AvatarStack
+              avatars={eventActors}
+              direction={{
+                xs: 'row',
+                md: 'row',
+              }}
+            />
+          </ActorAvatar>
+          <FormattedLinkMetadata event={event} />
+        </Box>
         <FormattedMetadata event={event} />
-      </Grid>
+      </Box>
     </Expanded>
   );
   return (
-    <UsesSistent>
-      <Slide
-        in={isVisible}
-        timeout={250}
-        direction="left"
-        appear={false}
-        enter={false}
-        mountOnEnter
-        unmountOnExit
-      >
-        <Root notificationcolor={notificationColor} status={event?.status}>
-          <Summary container notificationcolor={notificationColor} onClick={handleExpandClick}>
-            <GridItem item xs="auto" sm={2}>
-              <Checkbox
-                onClick={eventstopPropagation}
-                checked={Boolean(event.checked)}
-                onChange={handleSelectEvent}
-                sx={{ margin: '0rem', padding: '0rem' }}
-              />
+    <Slide
+      in={isVisible}
+      timeout={250}
+      direction="left"
+      appear={false}
+      enter={false}
+      mountOnEnter
+      unmountOnExit
+    >
+      <Root notificationcolor={notificationColor} status={event?.status}>
+        <Summary
+          container
+          notificationcolor={notificationColor}
+          onClick={handleExpandClick}
+          spacing={0}
+          style={{ flexWrap: 'nowrap' }}
+        >
+          <GridItem item xs="auto">
+            <Checkbox
+              onClick={eventstopPropagation}
+              checked={Boolean(event.checked)}
+              onChange={handleSelectEvent}
+              sx={{
+                margin: '0rem',
+                padding: '0rem',
+                paddingLeft: '0.5rem',
+                paddingRight: '0.25rem',
+              }}
+            />
 
-              <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
-            </GridItem>
-            <GridItem item xs={8} sm={6}>
-              <Message variant="body1">
-                {truncate(event.description, {
-                  length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
-                })}
-              </Message>
-            </GridItem>
-            <GridItem item xs={1} sm={4} sx={{ justifyContent: 'space-around' }}>
-              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                <Typography variant="body1">{formatTimestamp(event.created_at)}</Typography>
-              </Box>
-              <BasicMenu event={event} />
-            </GridItem>
-          </Summary>
-          <Collapse in={expanded}>{expanded && <Detail />}</Collapse>
-        </Root>
-      </Slide>
-    </UsesSistent>
+            <severityStyles.icon
+              {...iconLarge}
+              fill={severityStyles?.color}
+              style={{ paddingRight: '0.25rem' }}
+            />
+          </GridItem>
+          <GridItem item xs={8} sm>
+            <Message variant="body1">
+              {truncate(event.description, {
+                length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
+              })}
+            </Message>
+          </GridItem>
+          <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <FormattedTime date={event.created_at} />
+            </Box>
+            <BasicMenu event={event} />
+          </GridItem>
+        </Summary>
+        <Collapse in={expanded}>{expanded && <Detail />}</Collapse>
+      </Root>
+    </Slide>
   );
 };
 

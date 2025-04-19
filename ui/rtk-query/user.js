@@ -1,5 +1,6 @@
 import { ctxUrl } from '@/utils/multi-ctx';
 import { api } from './index';
+import { initiateQuery } from './utils';
 
 const Tags = {
   USER_PREF: 'userPref',
@@ -77,6 +78,10 @@ export const userApi = api
         query: () => 'provider/capabilities',
         method: 'GET',
       }),
+      getSystemVersion: builder.query({
+        query: () => 'system/version',
+        method: 'GET',
+      }),
       handleFeedbackFormSubmission: builder.mutation({
         query: (queryArg) => ({
           url: `extensions/api/identity/users/notify/feedback`,
@@ -145,4 +150,15 @@ export const {
   useRemoveUserFromTeamMutation,
   useGetTeamsQuery,
   useLazyGetTeamsQuery,
+  useGetSystemVersionQuery,
 } = userApi;
+
+export const getProviderCapabilities = async () => {
+  const res = await initiateQuery(userApi.endpoints.getProviderCapabilities);
+  return res;
+};
+
+export const getSystemVersion = async () => {
+  const res = await initiateQuery(userApi.endpoints.getSystemVersion);
+  return res;
+};

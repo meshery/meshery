@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "App Definition and Development"
     },
     "subCategory": "Database",
@@ -44,14 +45,15 @@
     "model": {
       "version": "1.22.0-20250203220239-0e895e91"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "medusa.k8ssandra.io/v1alpha1",
     "kind": "MedusaTask",
-    "schema": "{\n \"description\": \"MedusaTask is the Schema for the MedusaTasks API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaTaskSpec defines the desired state of MedusaTask\",\n   \"properties\": {\n    \"backupName\": {\n     \"description\": \"Name of the backup.\\nWill be necessary for operations such as verify or status.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"The name of the CassandraDatacenter to run the task on\",\n     \"type\": \"string\"\n    },\n    \"operation\": {\n     \"description\": \"Requested operation to perform.\",\n     \"enum\": [\n      \"sync\",\n      \"purge\",\n      \"prepare_restore\"\n     ],\n     \"type\": \"string\"\n    },\n    \"restoreKey\": {\n     \"description\": \"Restore key to use for the prepare_restore operation.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Task\",\n \"type\": \"object\"\n}",
-    "version": "medusa.k8ssandra.io/v1alpha1"
+    "schema": "{\n \"description\": \"MedusaTask is the Schema for the MedusaTasks API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaTaskSpec defines the desired state of MedusaTask\",\n   \"properties\": {\n    \"backupName\": {\n     \"description\": \"Name of the backup.\\nWill be necessary for operations such as verify or status.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"The name of the CassandraDatacenter to run the task on\",\n     \"type\": \"string\"\n    },\n    \"operation\": {\n     \"description\": \"Requested operation to perform.\",\n     \"enum\": [\n      \"sync\",\n      \"purge\",\n      \"prepare_restore\"\n     ],\n     \"type\": \"string\"\n    },\n    \"restoreKey\": {\n     \"description\": \"Restore key to use for the prepare_restore operation.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Task\",\n \"type\": \"object\"\n}"
   }
 }

@@ -60,7 +60,7 @@ import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 
@@ -91,13 +91,19 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, selectedFilter }) => {
+const ConnectionTable = ({
+  meshsyncControllerState,
+  connectionMetadataState,
+  selectedFilter,
+  selectedConnectionId,
+  updateUrlWithConnectionId,
+}) => {
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState();
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('name asc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -177,23 +183,22 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       skip: !organization?.id,
     },
   );
+
   let environments = environmentsResponse?.environments || [];
 
   useEffect(() => {
     updateCols(columns);
     if (isEnvironmentsError) {
       notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError.error}`,
         event_type: EVENT_TYPES.ERROR,
-        details: environmentsError.toString(),
       });
     }
 
     if (isConnectionError) {
       notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError}`,
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError.error}`,
         event_type: EVENT_TYPES.ERROR,
-        details: connectionError.toString(),
       });
     }
   }, [environmentsError, connectionError, isEnvironmentsSuccess]);
@@ -229,9 +234,8 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
-    ['ConnectionID', 'xs'],
+    ['ConnectionID', 'na'],
   ];
-
   const addConnectionToEnvironment = async (
     environmentId,
     environmentName,
@@ -331,15 +335,6 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'DELETE') {
-        // let bulkConnections = {}
-        // selected.data.map(({ index }) => {
-        //   bulkConnections = {
-        //     ...bulkConnections,
-        //     [connections[index].id]: CONNECTION_STATES.DELETED
-        //   };
-        // })
-        // const requestBody = JSON.stringify(bulkConnections);
-        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
@@ -484,6 +479,35 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   };
   const theme = useTheme();
 
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
+
+  // Update rowsExpanded when a specific connection ID is selected
+  useEffect(() => {
+    if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
+
+    if (connections && connections.length > 0) {
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedConnectionId;
+
+      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithConnectionId('');
+      }
+
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
+    }
+  }, [selectedConnectionId, connections]);
+
   const columns = [
     {
       name: 'id',
@@ -531,7 +555,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           return (
             <>
               <TooltipWrappedConnectionChip
-                tooltip={'Server: ' + server}
+                tooltip={server && 'Server: ' + server}
                 title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
                 status={getColumnValue(tableMeta.rowData, 'status', columns)}
                 onDelete={() =>
@@ -557,19 +581,22 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
                 width="12rem"
               />
               {kind == 'kubernetes' && (
-                <UsesSistent>
-                  <CustomTextTooltip
-                    placement="top"
-                    interactive={true}
-                    title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
-                  >
-                    <div style={{ display: 'inline-block' }}>
-                      <IconButton color="default">
-                        <InfoOutlinedIcon height={20} width={20} />
-                      </IconButton>
-                    </div>
-                  </CustomTextTooltip>
-                </UsesSistent>
+                <CustomTextTooltip
+                  placement="top"
+                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+                >
+                  <div style={{ display: 'inline-block' }}>
+                    <IconButton
+                      color="default"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                      }}
+                    >
+                      <InfoOutlinedIcon height={20} width={20} />
+                    </IconButton>
+                  </div>
+                </CustomTextTooltip>
               )}
             </>
           );
@@ -612,37 +639,35 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           let updatingEnvs = updatingConnection.current;
           return (
             isEnvironmentsSuccess && (
-              <UsesSistent>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                    <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                      <MultiSelectWrapper
-                        updating={updatingEnvs}
-                        onChange={(selected, unselected) =>
-                          handleEnvironmentSelect(
-                            getColumnValue(tableMeta.rowData, 'id', columns),
-                            getColumnValue(tableMeta.rowData, 'name', columns),
-                            cleanedEnvs,
-                            selected,
-                            unselected,
-                          )
-                        }
-                        options={getOptions()}
-                        value={cleanedEnvs}
-                        placeholder={`Assigned Environments`}
-                        isSelectAll={true}
-                        menuPlacement={'bottom'}
-                        disabled={
-                          !CAN(
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                          )
-                        }
-                      />
-                    </Grid>
+              <div onClick={(e) => e.stopPropagation()}>
+                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                    <MultiSelectWrapper
+                      updating={updatingEnvs}
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          getColumnValue(tableMeta.rowData, 'id', columns),
+                          getColumnValue(tableMeta.rowData, 'name', columns),
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={getOptions()}
+                      value={cleanedEnvs}
+                      placeholder={`Assigned Environments`}
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                      disabled={
+                        !CAN(
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                        )
+                      }
+                    />
                   </Grid>
-                </div>
-              </UsesSistent>
+                </Grid>
+              </div>
             )
           );
         },
@@ -740,11 +765,9 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         customBodyRender: function CustomBody(value) {
           const renderValue = formatDate(value);
           return (
-            <UsesSistent>
-              <CustomTooltip title={renderValue} placement="top" arrow interactive>
-                {renderValue}
-              </CustomTooltip>
-            </UsesSistent>
+            <CustomTooltip title={renderValue} placement="top" arrow interactive>
+              {renderValue}
+            </CustomTooltip>
           );
         },
       },
@@ -817,55 +840,53 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
               ? true
               : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
           return (
-            <UsesSistent>
-              <FormControl>
-                <ConnectionStyledSelect
-                  labelId="connection-status-select-label"
-                  id="connection-status-select"
-                  disabled={disabled}
-                  value={value}
-                  defaultValue={value}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) =>
-                    handleStatusChange(
-                      e,
-                      getColumnValue(tableMeta.rowData, 'id', columns),
-                      getColumnValue(tableMeta.rowData, 'kind', columns),
-                    )
-                  }
-                  disableUnderline
-                  MenuProps={{
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                    MenuListProps: { disablePadding: true },
-                    PaperProps: { square: true },
-                  }}
-                >
-                  {nextStatus &&
-                    nextStatus.map((status) => (
-                      <MenuItem
-                        disabled={status === value ? true : false}
-                        style={{
-                          padding: 0,
-                          display: status === value ? 'none' : 'flex',
-                          justifyContent: 'center',
-                        }}
-                        value={status}
-                        key={status}
-                      >
-                        <ConnectionStateChip status={status} />
-                      </MenuItem>
-                    ))}
-                </ConnectionStyledSelect>
-              </FormControl>
-            </UsesSistent>
+            <FormControl>
+              <ConnectionStyledSelect
+                labelId="connection-status-select-label"
+                id="connection-status-select"
+                disabled={disabled}
+                value={value}
+                defaultValue={value}
+                onClick={(e) => e.stopPropagation()}
+                onChange={(e) =>
+                  handleStatusChange(
+                    e,
+                    getColumnValue(tableMeta.rowData, 'id', columns),
+                    getColumnValue(tableMeta.rowData, 'kind', columns),
+                  )
+                }
+                disableUnderline
+                MenuProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  getContentAnchorEl: null,
+                  MenuListProps: { disablePadding: true },
+                  PaperProps: { square: true },
+                }}
+              >
+                {nextStatus &&
+                  nextStatus.map((status) => (
+                    <MenuItem
+                      disabled={status === value ? true : false}
+                      style={{
+                        padding: 0,
+                        display: status === value ? 'none' : 'flex',
+                        justifyContent: 'center',
+                      }}
+                      value={status}
+                      key={status}
+                    >
+                      <ConnectionStateChip status={status} />
+                    </MenuItem>
+                  ))}
+              </ConnectionStyledSelect>
+            </FormControl>
           );
         },
       },
@@ -889,16 +910,14 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
             <Box display={'flex'} justifyContent={'center'}>
               {getColumnValue(tableMeta.rowData, 'kind', columns) ===
               CONNECTION_KINDS.KUBERNETES ? (
-                <UsesSistent>
-                  <IconButton
-                    aria-label="more"
-                    id="long-button"
-                    aria-haspopup="true"
-                    onClick={(e) => handleActionMenuOpen(e, tableMeta)}
-                  >
-                    <MoreVertIcon style={iconMedium} />
-                  </IconButton>
-                </UsesSistent>
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-haspopup="true"
+                  onClick={(e) => handleActionMenuOpen(e, tableMeta)}
+                >
+                  <MoreVertIcon style={iconMedium} />
+                </IconButton>
               ) : (
                 '-'
               )}
@@ -949,19 +968,19 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       },
     },
     sortOrder: {
-      name: 'name',
-      direction: 'asc',
+      name: sortOrder.split(' ')[0],
+      direction: sortOrder.split(' ')[1],
     },
     customToolbarSelect: (selected) => (
       <Button
+        color="error"
         variant="contained"
-        color="primary"
         size="large"
         onClick={() => handleDeleteConnections(selected)}
-        style={{ background: theme.palette.secondary.danger, marginRight: '10px' }}
+        sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
         disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
       >
-        <DeleteIcon style={iconMedium} />
+        <DeleteIcon style={iconMedium} fill={theme.palette.common.white} />
         Delete
       </Button>
     ),
@@ -1001,28 +1020,45 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      if (expansionFlags.current.isUrlExpansion) return;
+
+      expansionFlags.current.isHandlingExpansion = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && connections) {
+        const index = expandedRows[0].index;
+        const connection = connections[index];
+
+        if (
+          connection &&
+          updateUrlWithConnectionId &&
+          (!expansionFlags.current.isInitialLoad || connection.id !== selectedConnectionId)
+        ) {
+          updateUrlWithConnectionId(connection.id);
+        }
+      } else if (updateUrlWithConnectionId && !expansionFlags.current.isInitialLoad) {
+        updateUrlWithConnectionId('');
+      }
+
+      expansionFlags.current.isHandlingExpansion = false;
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;
       const connection = connections && connections[tableMeta.rowIndex];
       return (
-        <UsesSistent>
+        <>
           <TableCell colSpan={colSpan}>
             <InnerTableContainer>
               <Table>
                 <TableRow style={{ padding: 0 }}>
-                  <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
-                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
+                  <TableCell style={{ overflowX: 'hidden', padding: 0 }}>
+                    <Grid container style={{ textTransform: 'lowercase' }}>
                       <ContentContainer item xs={12} md={12}>
-                        <Grid container spacing={1}>
-                          <ContentContainer item xs={12} md={12}>
-                            <FormatConnectionMetadata
-                              connection={connection}
-                              meshsyncControllerState={meshsyncControllerState}
-                            />
-                          </ContentContainer>
-                        </Grid>
+                        <FormatConnectionMetadata
+                          connection={connection}
+                          meshsyncControllerState={meshsyncControllerState}
+                        />
                       </ContentContainer>
                     </Grid>
                   </TableCell>
@@ -1030,7 +1066,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
               </Table>
             </InnerTableContainer>
           </TableCell>
-        </UsesSistent>
+        </>
       );
     },
   };
@@ -1047,26 +1083,8 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     return initialVisibility;
   });
 
-  useEffect(() => {
-    updateCols(columns);
-    if (isEnvironmentsError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
-        event_type: EVENT_TYPES.ERROR,
-        details: environmentsError.toString(),
-      });
-    }
-
-    if (isConnectionError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError}`,
-        event_type: EVENT_TYPES.ERROR,
-        details: connectionError.toString(),
-      });
-    }
-  }, [environmentsError, connectionError, isEnvironmentsSuccess]);
   return (
-    <UsesSistent>
+    <>
       <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <CreateButton>
           <MesherySettingsEnvButtons />
@@ -1113,33 +1131,32 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         updateCols={updateCols}
         columnVisibility={columnVisibility}
       />
+
       <_PromptComponent ref={modalRef} />
-      <UsesSistent>
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleActionMenuClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        >
-          <ActionListItem>
-            <Button
-              type="submit"
-              onClick={handleFlushMeshSync()}
-              data-cy="btnResetDatabase"
-              disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
-            >
-              <SyncIcon {...iconMedium} />
-              <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-                Flush MeshSync
-              </Typography>
-            </Button>
-          </ActionListItem>
-        </Popover>
-      </UsesSistent>
-    </UsesSistent>
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleActionMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <ActionListItem>
+          <Button
+            type="submit"
+            onClick={handleFlushMeshSync()}
+            data-cy="btnResetDatabase"
+            disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
+          >
+            <SyncIcon {...iconMedium} />
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              Flush MeshSync
+            </Typography>
+          </Button>
+        </ActionListItem>
+      </Popover>
+    </>
   );
 };
 

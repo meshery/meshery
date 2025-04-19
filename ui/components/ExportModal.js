@@ -5,7 +5,6 @@ import { useModal } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { ListItem } from '@layer5/sistent';
 import { ListItemIcon } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import { ModalBody } from '@layer5/sistent';
 import { Colors } from '@/themes/app';
 import { InfoTooltip } from '@layer5/sistent';
@@ -76,34 +75,56 @@ const ExportModal = (props) => {
 
   const ExportOptions = [
     {
-      title: 'Design File',
+      title: 'Meshery Design (yaml)',
       icon: <PatternIcon width={'30'} height="30" fill={Colors.caribbeanGreen} />,
       onClick: (e) => handleDesignDownload(e, downloadModal.content),
       description:
-        'Download the design as a Meshery Design file , that can be imported later without any loss.',
+        'Export your design as a complete, self-contained Meshery Design file (YAML). This file includes embedded images and all configuration details. It&apos;s the perfect format for creating backups, sharing with colleagues using Meshery, or transferring designs between Meshery environments without losing any information (lossless transfer).',
     },
     {
-      title: 'Kubernetes Manifest',
-      icon: <KubernetesIcon width={'30'} height="30" />,
-      onClick: (e) =>
-        handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
-      description:
-        'Download the design as a Kubernetes Manifest file, that can be applied to a Kubernetes cluster. This is a lossy export as some meshery specific  metadata gets stripped off.',
-    },
-    {
-      title: 'OCI Image',
+      title: 'Meshery Design (OCI image)',
       icon: <OCIImageIcon width={'30'} height="30" />,
       onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true'),
       description:
-        'Download the design as an OCI Image, that can be pushed to a container registry. This is a lossless export.',
+        'Download your design as an OCI compatible container image, which can be pushed to and pulled from container registries like Docker Hub, AWS ECR, and so on.',
     },
     {
-      title: 'Helm Chart (Coming Soon)',
+      title: 'Kubernetes Manifest (yaml)',
+      icon: <KubernetesIcon width={'30'} height="30" />,
+      onClick: (e) =>
+        handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
+      description: (
+        <div>
+          <p>
+            Download your design as a standard Kubernetes Manifest file. This file contains the
+            Kubernetes resource definitions from your design and can be directly applied to a
+            cluster using tools `kubectl`.
+          </p>
+          <p>
+            <strong>Lossy Export:</strong> This process strips out Meshery-specific information
+            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
+            the core Kubernetes resource definitions, not the extra context that might be present in
+            your Meshery design.
+          </p>
+        </div>
+      ),
+    },
+    {
+      title: 'Helm Chart (tar.gz) (Coming Soon)',
       icon: <HelmIcon width={'30'} height="30" />,
       onClick: () => {},
       disabled: true,
-      description:
-        'Download the design as a Helm Chart. This is a lossy export as some meshery specific metadata gets stripped off.',
+      description: (
+        <div>
+          <p>Download your design as a Helm Chart.</p>
+          <p>
+            <strong>Lossy Export:</strong> This process strips out Meshery-specific information
+            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
+            the core Kubernetes resource definitions, not the extra context that might be present in
+            your Meshery design.
+          </p>
+        </div>
+      ),
     },
     ...extensionExportOptions,
   ];
@@ -112,13 +133,13 @@ const ExportModal = (props) => {
     headerIcon: <PatternIcon fill={'#fff'} height={'2rem'} width="2rem" />,
   });
   return (
-    <UsesSistent>
+    <>
       <Modal
         {...exportModal}
         open={downloadModal.open}
         onClose={handleDownloadDialogClose}
         closeModal={handleDownloadDialogClose}
-        title="Export Design"
+        title="Export Design as..."
       >
         <ModalBody>
           {ExportOptions.map((option) => (
@@ -134,7 +155,7 @@ const ExportModal = (props) => {
           ))}
         </ModalBody>
       </Modal>
-    </UsesSistent>
+    </>
   );
 };
 

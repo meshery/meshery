@@ -33,15 +33,18 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": ""
     },
+    "subCategory": "",
+    "metadata": null,
     "model": {
       "version": "1.13.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -74,15 +77,18 @@
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": {
               "patchStrategy": "replace",
@@ -121,15 +127,18 @@
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": {
               "patchStrategy": "replace",
@@ -168,15 +177,18 @@
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": {
               "patchStrategy": "replace",
@@ -214,15 +226,18 @@
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": {
               "patchStrategy": "replace",
@@ -268,15 +283,18 @@
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": {
               "patchStrategy": "replace",

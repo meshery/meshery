@@ -25,10 +25,8 @@ export const CreateButton = styled(Grid)({
 
 export const InnerTableContainer = styled(TableContainer)(({ theme }) => ({
   background: theme.palette.background.card,
-  margin: '10px 10px 10px 13px',
   borderLeft: `9px solid ${theme.palette.background.default} !important`,
   borderRadius: '10px 0 0 10px',
-  width: 'calc(100% - 23px)',
   border: 'none',
   overflowX: 'hidden',
 }));
@@ -90,9 +88,7 @@ export const ConnectionIconText = styled('div')({
 });
 
 export const ChipWrapper = styled(Chip)(({ theme }) => ({
-  width: '13rem',
-  maxWidth: '13rem',
-  minWidth: '9rem',
+  width: 'clamp(6rem, 10vw, 13rem)',
   textAlign: 'left',
   cursor: 'pointer',
   '& .MuiChip-label': {
@@ -226,6 +222,9 @@ export const OperationButton = styled(Grid)(({ theme }) => ({
   },
 }));
 
+export const FormatterWrapper = styled(Box)({
+  marginBlock: '0.4rem',
+});
 export const ContentContainer = styled(Grid)(({ theme }) => ({
   [theme?.breakpoints?.down(1050)]: {
     flexDirection: 'column',
