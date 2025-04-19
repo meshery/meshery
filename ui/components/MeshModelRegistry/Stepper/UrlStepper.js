@@ -262,7 +262,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
 
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl fullWidth variant="outlined" data-testid="category-select">
                   <InputLabel id="category-label">Category</InputLabel>
                   <Select
                     labelId="category-label"
@@ -283,7 +283,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl fullWidth variant="outlined" data-testid="subcategory-select">
                   <InputLabel id="subcategory-label">Subcategory</InputLabel>
                   <Select
                     labelId="subcategory-label"
@@ -334,7 +334,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
 
             <Grid container spacing={1}>
               <Grid item xs={6}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl fullWidth variant="outlined" data-testid="logo-dark-theme">
                   <Typography>Logo (Dark Theme)</Typography>
                   <input
                     id="logo-dark-theme"
@@ -348,7 +348,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth data-testid="logo-light-theme">
                   <Typography>Logo (Light Theme)</Typography>
                   <input
                     id="logo-light-theme"
@@ -361,7 +361,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={6} style={{ marginTop: '2rem' }}>
-                <FormControl fullWidth>
+                <FormControl fullWidth data-testid="primary-color">
                   <Typography>Primary Color</Typography>
                   <input
                     id="primary-color"
@@ -374,7 +374,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={6} style={{ marginTop: '2rem' }}>
-                <FormControl fullWidth>
+                <FormControl fullWidth data-testid="secondary-color">
                   <Typography>Secondary Color</Typography>
                   <input
                     id="secondary-color"
@@ -387,7 +387,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={12} style={{ marginTop: '1rem' }}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl fullWidth variant="outlined" data-testid="shape-select">
                   <InputLabel id="shape-label">Shape</InputLabel>
                   <Select
                     labelId="shape-label"
@@ -459,6 +459,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     value={source.toLowerCase()}
                     control={<Radio />}
                     label={<>{source}</>}
+                    data-testid={`source-${source.toLowerCase()}`}
                   />
                 ))}
               </RadioGroup>
@@ -524,6 +525,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     onChange={(e) => setIsAnnotation(e.target.checked)}
                     name="registerModel"
                     color="primary"
+                    data-testid="visual-annotation-checkbox"
                   />
                 }
               />
@@ -767,6 +769,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
           <ModalButtonPrimary
             disabled={!canGoNext}
             onClick={transitionConfig[urlStepper.activeStep].nextAction}
+            data-testid={`${nextButtonText.toLowerCase()}-button`}
           >
             {nextButtonText}
           </ModalButtonPrimary>

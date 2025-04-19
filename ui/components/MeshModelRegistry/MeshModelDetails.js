@@ -193,6 +193,7 @@ const ModelContents = ({ modelDef }) => {
               alt="Export Model to OCI Image"
               onClick={handleExport}
               size="small"
+              data-testid="export-model-button"
             >
               <DownloadIcon style={iconSmall} />
               Export

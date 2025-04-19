@@ -421,6 +421,7 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
           style={{ display: 'flex' }}
           disabled={false} //TODO: Need to make key for this component
           startIcon={<AddIcon style={iconSmall} />}
+          data-testid="create-model-button"
         >
           Create
         </Button>
@@ -432,6 +433,7 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
           style={{ display: 'flex' }}
           disabled={false} //TODO: Need to make key for this component
           startIcon={<UploadIcon />}
+          data-testid="import-model-button"
         >
           Import
         </Button>
