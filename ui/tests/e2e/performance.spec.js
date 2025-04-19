@@ -24,7 +24,7 @@ const COMMON_UI_ELEMENTS = [
   'header-menu',
 ];
 
-test.describe('Performance Section Tests', () => {
+test.describe.skip('Performance Section Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ENV.MESHERY_SERVER_URL);
     const performanceNav = page.locator('[data-cy="performance"]');

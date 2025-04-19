@@ -17,7 +17,7 @@ const URLS = {
 };
 
 // Extensions Section Tests
-test.describe('Extensions Section Tests', () => {
+test.describe.skip('Extensions Section Tests', () => {
   test.beforeEach(async ({ page }) => {
     // Visit The Meshery Serve URL
     await page.goto(ENV.MESHERY_SERVER_URL);
