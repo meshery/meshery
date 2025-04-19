@@ -1,3 +1,4 @@
+//@ts-check
 import React from 'react';
 import {
   ModalFooter,
@@ -23,9 +24,8 @@ import { TooltipIconButton } from '@/utils/TooltipButton';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import {
-  ModelDefinitionV1Beta1Schema,
-  ComponentDefinitionV1Beta1Schema,
-  RelationshipDefinitionV1Alpha3Schema,
+  ComponentDefinitionV1Beta1OpenApiSchema,
+  ModelDefinitionV1Beta1OpenApiSchema,
 } from '@layer5/schemas';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import FinishModelGenerateStep from './FinishModelGenerateStep';
@@ -180,7 +180,7 @@ const CsvStepper = React.memo(({ handleClose }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . {ModelDefinitionV1Beta1Schema.description}
+            . {ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition.description}
           </>
         ),
       },
@@ -237,7 +237,11 @@ const CsvStepper = React.memo(({ handleClose }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . {ComponentDefinitionV1Beta1Schema.description}
+            .{' '}
+            {
+              ComponentDefinitionV1Beta1OpenApiSchema.components.schemas.ComponentDefinition
+                .description
+            }
           </>
         ),
       },
@@ -295,7 +299,11 @@ const CsvStepper = React.memo(({ handleClose }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . {RelationshipDefinitionV1Alpha3Schema.description}
+            . Relationships define the nature of interaction between interconnected components in
+            Meshery. The combination of relationship properties kind, type, and subtype characterize
+            various genealogical relations among and between components. Relationships have
+            selectors, selector sets, metadata, and optional parameters. Learn more at
+            https://docs.meshery.io/concepts/logical/relationships.
           </>
         ),
       },
