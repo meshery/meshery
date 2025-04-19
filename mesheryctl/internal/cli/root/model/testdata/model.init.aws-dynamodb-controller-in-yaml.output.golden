@@ -1,0 +1,25 @@
+Creating new Meshery model: test-case-aws-dynamodb-controller
+Creating directory structure...
+Generating model definition...
+Adding sample components...
+Creating sample relationships...
+Adding sample connections...
+Creating sample credentials...
+Created test-case-aws-dynamodb-controller model at test-case-aws-dynamodb-controller
+
+Next steps:
+1. cd test-case-aws-dynamodb-controller
+2. Edit model.yaml to customize your model configuration
+3. Add your components in the components/ directory
+4. Define relationships in relationships/ directory
+5. Add your connections in the connections/ directory
+6. Define credentials in credentials/ directory
+7. Use 'mesheryctl model build' to package your model
+
+To import this model into Meshery:
+$ mesheryctl model import test-case-aws-dynamodb-controller
+
+To export this model as OCI image:
+$ mesheryctl model build test-case-aws-dynamodb-controller/v0.1.0 -t myregistry/test-case-aws-dynamodb-controller:v0.1.0
+
+Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl

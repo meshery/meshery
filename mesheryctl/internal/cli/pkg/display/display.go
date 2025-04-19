@@ -1,8 +1,6 @@
 package display
 
 import (
-	"fmt"
-
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
@@ -20,14 +18,10 @@ type DisplayedData struct {
 }
 
 func List(data DisplayedData) error {
-	if len(data.Rows) == 0 {
-		fmt.Printf("No %s(s) found", data.DataType)
-		return nil
-	}
-
 	utils.DisplayCount(data.DataType, data.Count)
 
-	if data.DisplayCountOnly {
+	// flag --count is set or no data available
+	if data.DisplayCountOnly || data.Count == 0 {
 		return nil
 	}
 

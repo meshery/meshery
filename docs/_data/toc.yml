@@ -1,8 +1,6 @@
 - title: 🗺 Overview & Installation
   url: project/overview
   links:
-    - title: FAQs
-      url: project/faq
     - title: 🚀 Quick Start
       url: installation/quick-start
     - title: Installation ↆ
@@ -53,6 +51,8 @@
           url: installation/multiple-adapters
         - title: Meshery Playground
           url: installation/playground
+        - title: FAQs
+          url: project/faq
 - title: 🧠 Concepts
   url: concepts
   links:
@@ -127,12 +127,12 @@
           url: guides/configuration-management/working-with-designs
         - title: Creating a Meshery Design
           url: guides/configuration-management/creating-a-meshery-design
-        - title: Importing Designs
+        - title: Importing Models
           url: guides/configuration-management/importing-models
-        - title: Exporting Designs
+        - title: Exporting Models
           url: guides/configuration-management/exporting-models
-        - title: Generating Designs
-          url: guides/configuration-management/generating-models
+        - title: Creating Models
+          url: guides/configuration-management/creating-models
         - title: Managing Model Images
           url: guides/configuration-management/push-pull-model-image
         - title: Cloud Native Design Patterns
@@ -231,7 +231,7 @@
 - title: 🧑‍💻 Contributing & Community
   url: project
   links:
-    - title: Meshery Community
+    - title: Community
       url: project/community
     - title: Meshery Playground
       url: installation/playground
@@ -279,6 +279,8 @@
         - title: Models ↆ
           url: project/contributing/contributing-models
           grandchildren:
+            - title: Quick Start
+              url: project/contributing/contributing-models-quick-start
             - title: Model Components
               url: project/contributing/contributing-components
             - title: Model Relationships
@@ -288,9 +290,22 @@
         - title: Dev Setup on Windows
           url: project/contributing/meshery-windows
 
-- title: 📖 Reference & Extensibility
+- title: 📖 Extensibility & Reference
   url: reference
   links:
+    - title: Extensibility ↆ
+      url: extensibility
+      children:
+        - title: Authorization
+          url: extensibility/authorization
+        - title: Load Generators
+          url: extensibility/load-generators
+        - title: Providers
+          url: extensibility/providers
+        - title: Compatibility Guide
+          url: extensibility/verify-compatibility
+        - title: UI Plugins
+          url: extensibility/ui
     - title: Error Code
       url: reference/error-codes
     - title: Permission Keys
@@ -306,18 +321,5 @@
           url: reference/graphql-apis
         - title: REST API
           url: reference/rest-apis
-    - title: Extensibility ↆ
-      url: extensibility
-      children:
-        - title: Authorization
-          url: extensibility/authorization
-        - title: Load Generators
-          url: extensibility/load-generators
-        - title: Providers
-          url: extensibility/providers
-        - title: Compatibility Guide
-          url: extensibility/verify-compatibility
-        - title: UI Plugins
-          url: extensibility/ui
     - title: Security Vulnerabilities
       url: project/security-vulnerabilities
