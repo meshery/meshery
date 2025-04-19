@@ -7,71 +7,75 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateEnvironment(t *testing.T) {
-	// Setup current context
+func TestCreateEnvironmentCmd(t *testing.T) {
+
 	utils.SetupContextEnv(t)
 
-	// Initialize mock server for handling requests
+	// Set up the mock server for handling requests
 	utils.StartMockery(t)
+	defer utils.StopMockery(t)
 
-	// Create a test helper
 	testContext := utils.NewTestHelper(t)
 
-	// Get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
+	testdataDir := filepath.Join(currDir, "testdata")
 
-	// Test scenarios for environment creation
 	tests := []struct {
 		Name             string
 		Args             []string
-		URL              string
-		Method           string
-		Fixture          string
-		RequestBody      string
-		ExpectedResponse string
 		Token            string
-		ExpectError      bool
+		URL              string
+		Fixture          string
+		ExpectedResponse string
+		ExpectedError    bool
 	}{
 		{
-			Name:             "Create environment without arguments",
-			Args:             []string{"create"},
+			Name:             "Missing Name Flag",
+			Args:             []string{"create", "--orgID", "1234", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
-			Method:           "POST",
-			Fixture:          "",
 			ExpectedResponse: "create.environment.without.name.golden",
-			ExpectError:      true,
+			ExpectedError:    true,
 		},
 		{
-			Name:             "Create environment successfully",
-			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test", "--orgID", testConstants["orgID"]},
+			Name:             "Invalid OrgId as Non-UUID",
+			Args:             []string{"create", "--orgID", "invalid-org-id", "--name", "TestEnv", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
-			Method:           "POST",
+			Fixture:          "create.environment.local.provider.invalid-orgid.response.golden",
+			Token:            filepath.Join(utils.FixturesDir, "token.golden"),
+			ExpectedResponse: "create.environment.invalid.orgId.golden",
+			ExpectedError:    false,
+		},
+		{
+			Name:             "Create Environment Successfully",
+			Args:             []string{"create", "--orgID", "3f8319e0-33a9-4736-b248-12nm3kiuh3yu", "--name", "test-environment", "--description", "This is a test environment"},
+			URL:              testContext.BaseURL + "/api/environments",
 			Fixture:          "create.environment.response.golden",
+			Token:            filepath.Join(utils.FixturesDir, "token.golden"),
 			ExpectedResponse: "create.environment.success.golden",
-			ExpectError:      false,
+			ExpectedError:    false,
 		},
 	}
 
-	// Run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			if tt.Fixture != "" {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+				utils.TokenFlag = tt.Token
 
-				utils.TokenFlag = utils.GetToken(t)
-
-				httpmock.RegisterResponder(tt.Method, tt.URL,
+				// mock response
+				httpmock.RegisterResponder("POST", tt.URL,
 					httpmock.NewStringResponder(200, apiResponse))
-			}
 
-			testdataDir := filepath.Join(currDir, "testdata")
+			}
+			// Expected response
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
@@ -80,35 +84,20 @@ func TestCreateEnvironment(t *testing.T) {
 			err := EnvironmentCmd.Execute()
 
 			if err != nil {
-
-				if tt.ExpectError {
-
-					if *update {
-						golden.Write(err.Error())
-					}
+				if tt.ExpectedError {
 					expectedResponse := golden.Load()
-
 					utils.Equals(t, expectedResponse, err.Error())
 					return
 				}
-				t.Error(err)
+				t.Fatal(err)
 			}
 
-			actualResponse := b.String()
-
-			if *update {
-				golden.Write(actualResponse)
-			}
-
+			output := b.String()
+			actualResponse := output
 			expectedResponse := golden.Load()
+			assert.Equal(t, expectedResponse, actualResponse)
 
-			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
-			cleanedExpectedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
-
-			utils.Equals(t, cleanedExpectedResponse, cleanedActualResponse)
 		})
-		t.Logf("Create environment test '%s' passed", tt.Name)
 	}
-
-	utils.StopMockery(t)
+	t.Log("Create test passed")
 }
