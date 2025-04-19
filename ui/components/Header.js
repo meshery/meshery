@@ -149,7 +149,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '40%' : '-110%',
+    bottom: showFullContextMenu ? '-75%' : '-110%',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
