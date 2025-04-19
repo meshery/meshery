@@ -251,4 +251,16 @@ patterns:
 total_count: 318
 
 
-Tip: Use '--verbose' or '-v' flag to view detailed design summary
+=== Design Summary ===
+Name: Untitled Design
+Type: <nil>
+
+Components:
+  1. <nil> (Unknown)
+
+Relationships:
+  1.   ()
+
+Note: Design elements are nested in the structure
+
+===========================

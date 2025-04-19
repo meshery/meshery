@@ -1,0 +1,21 @@
+patterns:
+- id: test-id
+  name: empty-design
+  pattern_file:
+    components: []
+    name: MesheryGeneratedPatternFile
+    relationships: []
+    services: {}
+
+
+=== Design Summary ===
+Name: empty-design
+Type: <nil>
+
+Components:
+  No components found in this design
+
+Relationships:
+  No relationships found in this design
+
+===========================

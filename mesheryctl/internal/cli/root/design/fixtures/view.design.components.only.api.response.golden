@@ -1,0 +1,19 @@
+{
+  "patterns": [{
+    "id": "test-id",
+    "name": "components-only",
+    "pattern_file": {
+      "name": "MesheryGeneratedPatternFile",
+      "services": {},
+      "components": [
+        {
+          "displayName": "Test Component",
+          "component": {
+            "kind": "Service"
+          }
+        }
+      ],
+      "relationships": []
+    }
+  }]
+}

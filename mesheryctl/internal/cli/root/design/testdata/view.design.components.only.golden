@@ -1,0 +1,26 @@
+patterns:
+- id: test-id
+  name: components-only
+  pattern_file:
+    components:
+    - component:
+        kind: Service
+      displayName: Test Component
+    name: MesheryGeneratedPatternFile
+    relationships: []
+    services: {}
+
+
+=== Design Summary ===
+Name: components-only
+Type: <nil>
+
+Components:
+  1. Test Component (Service)
+
+Relationships:
+  No relationships found in this design
+
+Note: Design elements are nested in the structure
+
+===========================
