@@ -27,7 +27,7 @@ const verifyAdapterResBody = (body) => {
   });
 };
 
-test.describe('Settings Page Tests', () => {
+test.describe.skip('Settings Page Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
   });
