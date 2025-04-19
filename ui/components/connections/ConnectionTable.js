@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
   CustomTooltip,
   CustomColumnVisibilityControl,
@@ -98,6 +99,7 @@ const ConnectionTable = ({
   selectedConnectionId,
   updateUrlWithConnectionId,
 }) => {
+  const router = useRouter();
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -122,6 +124,11 @@ const ConnectionTable = ({
   const open = Boolean(anchorEl);
   const modalRef = useRef(null);
 
+  useEffect(() => {
+    if (router.query.searchText) {
+      setSearch(router.query.searchText);
+    }
+  }, [router.query.searchText]);
   const filters = {
     status: {
       name: 'Status',
