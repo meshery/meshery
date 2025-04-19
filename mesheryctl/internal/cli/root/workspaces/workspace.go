@@ -15,6 +15,8 @@
 package workspaces
 
 import (
+	"fmt"
+
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/spf13/cobra"
@@ -40,7 +42,8 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 || len(args) > 1 {
-			return cmd.Help()
+			errMsg := "Usage: mesheryctl exp workspace [subcommand]\nRun 'mesheryctl exp workspace --help' to see detailed help message"
+			return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
 		}
 		return nil
 	},
