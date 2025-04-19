@@ -103,3 +103,8 @@ export const CatalogCardButtons = styled('div')(() => ({
   height: '100%',
   gap: '.5rem',
 }));
+
+export const getButtonStyles = (isDisabled) => ({
+  opacity: isDisabled ? 0.5 : 1,
+  cursor: isDisabled ? 'not-allowed' : 'pointer',
+});
