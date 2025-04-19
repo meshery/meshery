@@ -1,7 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import { expect, test } from './fixtures/project';
 
-
 const peformanceProfiles = [
   {
     profileWithUUID: `Sample-Perf-Test-${uuidv4()}`,
@@ -12,12 +11,10 @@ const peformanceProfiles = [
 ];
 
 test.describe.serial('Service Mesh Performance Management Tests', () => {
-
   test.beforeEach(async ({ page }) => {
     await page.goto('http://localhost:9081');
     await expect(page.getByTestId('navigation')).toBeVisible();
   });
-
 
   peformanceProfiles.forEach(({ profileWithUUID, serviceMesh, url, loadGenerator }) => {
     test(`Add performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
