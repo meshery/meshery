@@ -1,133 +1,198 @@
 ---
 layout: default
 title: How Meshery Manages Deployments
-abstract: Understand how Meshery modifies infrastructure during deployment and undeployment
+abstract: Learn how Meshery manages and modifies infrastructure components during deployment and teardown processes.
 permalink: guides/infrastructure-management/how-meshery-manages-deployments
 category: infrastructure
 type: guides
 language: en
 ---
 
-Meshery streamlines deployment and undeployment with model tracking, real-time sync, and automated workflows, ensuring efficient infrastructure management. 
+This guide helps you understand how Meshery deploys and undeploys infrastructure components in cloud-native environments, and what roles the Meshery [Registry]({{ site.baseurl }}/concepts/logical/registry), [MeshSync]({{ site.baseurl }}/concepts/architecture/meshsync), and model generation play in the process.
 
----
+By the end of this guide, you'll be able to:
+
+- Understand the difference between static and dynamic model generation
+- Know how Meshery handles deployments, dependencies, and undeployments
+- Avoid common pitfalls when undeploying Git-based models
 
 ## 1. Deployment Architecture
 
+To deploy infrastructure using Meshery, the first thing you need is a **[model]({{ site.baseurl }}/concepts/logical/models)** — a structured description of the resources you want to manage.
+
+Meshery generates models in two ways: **from your own definitions**, or **from what's already running in your Kubernetes cluster**. These two modes are known as:
+
+- **Static Model Generation** – You define the model
+- **Dynamic Model Generation** – Meshery discovers the model for you
+
 ### 1.1 Meshery Registry: Single Source of Truth
 
-The **[Meshery Registry](https://docs.meshery.io/concepts/logical/registry)** is the central repository for tracking **[models](https://docs.meshery.io/concepts/logical/models), [components](https://docs.meshery.io/concepts/logical/components), and [relationships](https://docs.meshery.io/concepts/logical/relationships)** within your infrastructure. Meshery Registry orchestrates deployment/undeployment by enforcing dependency order, ensuring efficient management of resources across cloud-native environments. To explain its structure, we use a university curriculum analogy.
+The **[Meshery Registry](https://docs.meshery.io/concepts/logical/registry)** is the central hub that stores all models, components, and their relationships. It helps Meshery know:
+
+- What needs to be deployed
+- In what order
+- How everything is connected
+
+Think of it like your infrastructure's course catalog — all deployments go through it.
 
 [![Meshery Registry Analogy]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-architecture-registry.svg)]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-architecture-registry.svg)
 
-### 1.2 Model Generation
-Meshery provides two primary ways to generate infrastructure models, **Static Model Generation** and **Dynamic Model Generation**.
-The key differences between these approaches are:
+### 1.2 How to Provide a Model
 
-<table>
-  <tr>
-    <th>Feature</th>
-    <th>Static Model Generation</th>
-    <th>Dynamic Model Generation</th>
-  </tr>
-  <tr>
-    <td><b>Data Source</b></td>
-    <td>Helm, Git, Google Sheets</td>
-    <td>Kubernetes API, User Uploads</td>
-  </tr>
-  <tr>
-    <td><b>Processing Method</b></td>
-    <td>Batch Processing (Predefined)</td>
-    <td>Real-Time (Runtime)</td>
-  </tr>
-  <tr>
-    <td><b>Update Frequency</b></td>
-    <td>Periodic (Scheduled Jobs)</td>
-    <td>On-Demand (Trigger-Based)</td>
-  </tr>
-  <tr>
-    <td><b>Supported Inputs</b></td>
-    <td>Helm Charts, Git Repositories, Google Sheet</td>
-    <td>CRDs, Manifests, OCI files</td>
-  </tr>
-  <tr>
-    <td><b>Primary Use Case</b></td>
-    <td>Model Definitions & Updates</td>
-    <td>Live Cluster State Syncing</td>
-  </tr>
-</table>
+Depending on what you already have, choose one of the following approaches:
 
-For CLI commands and UI steps, refer to:[Generating Models](https://docs.meshery.io/guides/configuration-management/generating-models)
+#### Option 1: **Static Model Generation**
 
-<br>
+Use this if you already have a model or want to build one from scratch.
 
-#### **Static Generation (Predefined)**
+There are two ways to do this:
+- **[Create Model]({{ site.baseurl }}/guides/configuration-management/creating-models)** : Recommended for first-time users. Define your model step by step in the UI.
+- **[Import Model]({{ site.baseurl }}/guides/configuration-management/importing-models)**: Upload a model file (.json, .csv, or .tar.gz) you’ve prepared elsewhere (e.g., Git, Google Sheets, Helm).
 
-The Static Generation of Models in Meshery allows users to **predefine infrastructure models** using external sources like Helm charts, Git repositories, and Google Sheets.
+These models are versioned and saved in the Meshery Registry.
 
-[![Dynamic Model Generation Flow]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-static-generation-models.svg)]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-static-generation-models.svg)
+| Item | Static Model Generation |
+|------|--------------------------|
+| **Best for** | Defining infrastructure before deployment |
+| **Data sources** | Helm charts, Git repositories, spreadsheets |
+| **Processing** | Batch-based (scheduled or on command) |
 
-#### Understanding Static Model Generation
+<details>
+<summary>Step-by-Step: How Static Generation Works</summary>
 
-- **Batch Processing**: Runs on a **scheduled workflow** to generate models.
-- **Input Sources**:
-  - **Helm Charts**: Extracts metadata automatically.
-  - **Git Repositories**: Defines model structures.
-  - **Google Sheets**: Manually curated component lists.
-- **Data Flow**:
-  - Meshery **downloads a Google Sheet** → **Reads CSV data** → **Generates models**.
-  - Converts data into **versioned model packages** stored in **Meshery Registry**.
-  - Models are stored in a **versioned format** within the Meshery Registry, making them available for future deployments.
-- **Version Control & Updates**:
-  - New components are **added incrementally**, avoiding duplication.
-  - Models can be **updated and re-synced** using `mesheryctl` commands.
+<p>Static generation is like preparing a blueprint before building. You define the structure, and Meshery follows that to manage your infrastructure.</p>
 
-#### **Dynamic Generation (Runtime)**
+<ul>
+  <li><strong>Batch Processing:</strong> Runs on a schedule or via command, ideal for repeatable deployments.</li>
+  <li><strong>Input Sources:</strong>
+    <ul>
+      <li><strong>Helm Charts:</strong> Meshery automatically extracts component metadata.</li>
+      <li><strong>Git Repositories:</strong> Model structure is defined as code.</li>
+      <li><strong>Google Sheets:</strong> Useful for manually curated lists.</li>
+    </ul>
+  </li>
+  <li><strong>Data Flow:</strong>
+    <ul>
+      <li>Meshery downloads a Google Sheet → reads CSV data → generates models.</li>
+      <li>Models are packaged as versioned bundles and stored in the Meshery Registry.</li>
+    </ul>
+  </li>
+  <li><strong>Version Control & Updates:</strong>
+    <ul>
+      <li>New components are added incrementally to avoid duplication.</li>
+      <li>You can re-sync models using <code>mesheryctl</code> commands.</li>
+    </ul>
+  </li>
+</ul>
 
-Meshery supports **runtime model generation**, enabling dynamic discovery and registration of models from **Kubernetes clusters, predefined sources, and user-imported manifests**.
+</details>
+
+
+[![Static Model Generation Flow]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-static-generation-models.svg)]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-static-generation-models.svg)
+
+#### Option 2: **Dynamic Model Generation**
+
+Use this if your infrastructure is already running and you want Meshery to generate a model from it.
+
+You can:
+- Connect Meshery to your Kubernetes cluster to auto-discover CRDs and resources
+- Upload a manifest (YAML file) that Meshery analyzes and registers
+- Let a Meshery Adapter dynamically create models based on what it manages
+
+| Item | Dynamic Model Generation |
+|------|---------------------------|
+| **Best for** | Working with existing Kubernetes environments |
+| **Data sources** | Cluster APIs, uploaded YAMLs, Adapters |
+| **Processing** | Real-time (on demand) |
+
+<details>
+<summary>Step-by-Step: How Dynamic Generation Works</summary>
+
+<p>
+Dynamic model generation enables Meshery to discover and register models from your existing infrastructure — no need to define anything manually.
+</p>
+
+<h4>Key Capabilities of Dynamic Generation</h4>
+
+<ul>
+  <li><strong>Auto-Discovery:</strong> Connects to Kubernetes clusters and automatically identifies CRDs.</li>
+  <li><strong>User-Defined Models:</strong> Upload manifests and Meshery will attempt to register them.</li>
+  <li><strong>Predefined Model Imports:</strong> Accepts OCI images, <code>.tar.gz</code>, or file-based models for offline deployments.</li>
+  <li><strong>Automatic Validation:</strong> All models are checked before being stored.</li>
+</ul>
+
+<h4>Understanding Dynamic Model Generation</h4>
+
+<p>Dynamic generation is like Meshery walking into your cluster and documenting everything it sees.</p>
+
+<ul>
+  <li><strong>Server Discovery:</strong> Connects to a live Kubernetes cluster and detects CRDs.</li>
+  <li><strong>User Uploads:</strong>
+    <ul>
+      <li>Upload unknown manifests → Meshery registers them as models.</li>
+      <li>Upload <code>.tar.gz</code> or OCI-formatted files → Meshery imports the model directly.</li>
+      <li>For air-gapped environments, use <code>mesheryctl model import</code>.</li>
+    </ul>
+  </li>
+  <li><strong>Adapter-Driven Generation:</strong> Some Meshery Adapters (e.g., for Istio, Linkerd) generate models automatically as part of their operation.</li>
+  <li><strong>Validation & Registration:</strong>
+    <ul>
+      <li>All models are validated before being saved in the Meshery Registry.</li>
+      <li>Future support will include cloud-based multi-tenant storage.</li>
+    </ul>
+  </li>
+</ul>
+
+</details>
 
 [![Dynamic Model Generation Flow]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-dynamic-generation-models.svg)]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-dynamic-generation-models.svg)
 
-#### Key Capabilities of Dynamic Generation
+> Example: You already deployed an app in Kubernetes. Meshery connects to the cluster and generates models based on what it finds.
 
-- **Auto-Discovery**: Connects to Kubernetes clusters and extracts CRDs.
-- **User-Defined Models**: Supports uploading **unknown models** (e.g., manifests) for registration.
-- **Predefined Model Imports**: Accepts OCI, tar.gz, and file-based models for offline deployments.
-- **Automatic Validation**: Ensures model consistency before persisting in the registry.
+### 1.3 Create or Import? What’s the Difference?
 
-#### Understanding Dynamic Model Generation
-
-- **Server Discovery**: Meshery connects to Kubernetes and detects available CRDs.
-- **User Imports Unknown Model**:  
-  - Meshery processes an **uploaded manifest** and attempts to register the model.
-- **User Imports Predefined Model**:  
-  - If a valid format (**OCI, tar.gz, file**) is provided, the model is imported.
-  - UI does not retrieve these models for air-gapped environments, but  
-    `mesheryctl model import` can be used.
-- **Adapter-Driven Model Generation**:  
-  - Meshery Adapters generate **components, relationships, and policies** dynamically.
-- **Validation & Registration**:  
-  - Model is **validated and stored** in **Meshery Registry**.
-  - **Future**: Cloud storage support for **multi-tenancy**.
-
----
+- Use **Create Model** when you want to build a model step by step with help from the UI (ideal for beginners).
+- Use **Import Model** if you already have model files ready to go (ideal for advanced users or automation).
+- Use **Dynamic Generation** when you don’t want to define anything manually — just let Meshery observe and build models from your cluster or files.
 
 ## 2. Deployment Validation & State Management
 
+Once infrastructure is deployed, Meshery continuously monitors its state to ensure everything remains consistent and healthy. It does this through two core mechanisms:
+
+- **MeshSync** – keeps Meshery’s internal model in sync with the actual cluster state
+- **Versioned Entities** – ensures all changes are tracked in a structured way
+
 ### 2.1 MeshSync: Real-Time Synchronization
 
-[MeshSync](https://docs.meshery.io/concepts/architecture/meshsync) is a Kubernetes-native synchronization mechanism, ensuring Meshery maintains an **accurate and up-to-date** understanding of the infrastructure it manages. It continuously tracks state changes, whether resources are created by Meshery itself (**greenfield**) or pre-existing (**brownfield**).
+[MeshSync](https://docs.meshery.io/concepts/architecture/meshsync) is Meshery’s way of **watching your cluster in real time**.
 
-**Key Features:**
--  **GVK Metadata Tracking** – Identifies Kubernetes resources uniquely based on Group, Version, and Kind (GVK).
--  **Prometheus Health Checks** – Monitors and validates the state of infrastructure components.
--  **State Mapping (`REGISTERED` vs `CONNECTED`)** – Differentiates between known and actively monitored resources.
+It keeps Meshery updated with the actual status of Kubernetes resources, whether:
+- They were deployed through Meshery (**greenfield**)
+- Or already existed before Meshery connected to the cluster (**brownfield**)
 
-MeshSync operates on an **event-driven architecture**, leveraging NATS messaging for **high-speed and scalable** data synchronization. It can **detect infrastructure changes in real time**, making it a core component of Meshery’s **multi-cloud and cloud-native** management capabilities.
+#### Why it matters:
+- You always see the **current state** in Meshery UI
+- Meshery can **react to changes** made outside its own workflows
+- You can track what’s registered vs what’s actively running
+
+#### What MeshSync does:
+- **GVK Tracking**  
+  Meshery uses GVK (Group-Version-Kind) to uniquely identify Kubernetes objects across the cluster.
+- **Prometheus Integration**  
+  MeshSync can pull health signals from Prometheus to understand if components are behaving as expected.
+- **State Awareness (`REGISTERED` vs `CONNECTED`)**  
+  Meshery tracks both what it knows (registered models) and what it currently sees running (connected resources).
+
+MeshSync is built on an **event-driven architecture**, using **NATS** for scalable, high-speed communication between components. This enables it to detect infrastructure changes almost instantly — a key capability for multi-cloud or dynamic environments.
 
 ### 2.2 Versioned Entity Lifecycle
 
-Meshery employs a structured versioning model to ensure that infrastructure components are well-defined, traceable, and adaptable to changes over time. The diagram above illustrates the different stages of versioning, helping users understand how Meshery manages and evolves its entities.
+In Meshery, every component — from a service to a CRD — follows a **versioned lifecycle**.  
+This helps ensure changes are:
+
+- Traceable
+- Repeatable
+- Compatible across environments
 
 [![Meshery Entities]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-entities.svg)]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-entities.svg)
 
@@ -140,21 +205,28 @@ Each Meshery entity follows a structured versioning lifecycle, ensuring consiste
 - **Declaration**: Provides a human-readable YAML-based configuration that Meshery uses for deployment.  
 - **Instance**: Represents the actual deployed resource, tracking runtime changes and operational metadata.  
 
----
-
 ## 3. Core Operation Logic
+
+Once a model is ready, Meshery takes care of deploying it into your Kubernetes cluster and tracking its lifecycle.
+
+This section breaks down what happens during a **Deploy** or **Undeploy** action — how Meshery applies changes, handles dependencies, and updates its internal state.
 
 ### 3.1 Deploy Action Breakdown
 
-Meshery follows a structured process when deploying infrastructure components, ensuring that dependencies are validated and operations are executed efficiently.
+Meshery follows a consistent workflow when you trigger a deployment. The goal is to ensure the process is safe, dependency-aware, and fully observable.
 
 [![Deploy Action Flow]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-deploy-action.svg)]({{ site.baseurl }}/assets/img/infrastructure-management/meshery-deploy-action.svg)
 
-#### Deployment Flow
-- **Parse Design File** → Meshery reads and interprets the provided `meshery-design.yaml` file.
-- **Validate Dependencies** → Ensures that required CRDs, operators, and other components are available.
-- **Deploy via Adapter** → Delegates to Meshery Adapters (e.g., Istio, Linkerd) via gRPC, enabling interaction with the target platform (e.g., Kubernetes).
-- **Sync Status with MeshSync** → Meshery tracks deployment status through **MeshSync**, ensuring real-time updates.
+#### What happens during deployment:
+
+1. **Parse Design File**  
+   Meshery reads the `meshery-design.yaml` file, which describes what should be deployed and how it’s structured.
+2. **Validate Dependencies**  
+   Meshery checks for required CRDs, operators, and supporting components before starting. If something’s missing, it may install it or alert you.
+3. **Deploy via Adapter**  
+   Each deployment request is passed to the appropriate Meshery Adapter (e.g., Istio, Linkerd) via gRPC. The Adapter translates the model into actual Kubernetes resources.
+4. **Sync with MeshSync**  
+   Meshery continuously tracks the deployed resources via **MeshSync** to monitor their status in real time.
 
 #### Error Handling and Recovery
 - If a dependency is missing, Meshery will either attempt to install it or notify the user.
@@ -162,70 +234,42 @@ Meshery follows a structured process when deploying infrastructure components, e
 
 ### 3.2 Undeploy Action Breakdown & Dependency Cleanup
 
-Meshery **relies on Adapters** to execute `undeploy`. Different adapters may use **Helm** or **direct Kubernetes resource deletion** to perform the undeployment process.
+Just like deployment, Meshery handles undeployment in a structured way — but with some **differences depending on how the resources were originally deployed**.
 
-#### Undeploy Process
-- **Remove Workloads** → Deletes `Pods`, `Deployments`, `StatefulSets`, etc.
-- **Remove Services** → Deletes `Services`, `Ingress`, and `VirtualService`.
-- **Remove CRDs & Operators (Optional)**:
-  - If the deployment **was done via Helm**, Meshery will call Helm’s built-in undeploy mechanisms, ensuring that all dependencies (including CRDs) are removed.
-  - If the deployment **was done via Git**, **Meshery does not track Helm charts** inside the repository, which can lead to **orphaned CRDs**.
+#### What happens during undeployment:
 
-#### Helm vs Git Handling
-<table>
-  <thead>
-    <tr>
-      <th>Source</th>
-      <th>Dependency Tracking</th>
-      <th>Undeploy Behavior</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Helm</strong></td>
-      <td> <strong>Automatic</strong></td>
-      <td> Dependencies are removed properly</td>
-    </tr>
-    <tr>
-      <td><strong>Git</strong></td>
-      <td> <strong>Partial / Manual</strong></td>
-      <td> Dependencies may not be fully removed</td>
-    </tr>
-  </tbody>
-</table>
+1. **Remove Workloads**  
+   Deletes core resources like `Pods`, `Deployments`, `StatefulSets`, etc.
+2. **Remove Services**  
+   Removes network-facing resources like `Services`, `Ingress`, `VirtualService`.
+3. **Remove CRDs & Operators (optional)**  
+   - If deployed using **Helm**, Meshery calls Helm’s uninstall mechanism, which usually cleans up all dependencies.
+   - If deployed from **Git**, Meshery cannot track Helm charts embedded in Git repos, which can leave **CRDs orphaned**.
 
-#### Limitations of Git-based Dependencies
-Meshery **does not track the original Git source reference** in its registry, which leads to the following limitations:
-- **CRDs may persist** even after undeployment.
-- **Manual cleanup is required** to avoid conflicts or inconsistencies in the cluster.
+#### Helm vs Git: Undeploy Behavior
 
-> ⚠️ **Note:**  
-> If your model was deployed using **Git**, Meshery does **not** automatically remove CRDs.  
-> To ensure a clean undeployment, manually delete any remaining CRDs and namespaces:
+The behavior of undeployment in Meshery depends on **how the resources were originally deployed**:
+
+| Source | Dependency Tracking | What Happens During Undeploy |
+|--------|----------------------|-------------------------------|
+| **Helm** | Automatic | Meshery calls Helm's uninstall process. All related resources, including CRDs, are typically cleaned up. |
+| **Git** | Partial / Manual | Meshery cannot track Helm charts stored in Git. Some resources (especially CRDs) may be left behind. |
+
+#### ⚠️ Limitation: Git-based Deployments
+
+When you deploy using Git repositories, Meshery does **not** record the original Helm chart metadata. As a result:
+
+- CRDs and other dependencies may **not be automatically deleted**
+- You may end up with **orphaned resources** in your cluster
+- This can cause **conflicts** in future deployments
+
+> Tip: Use Git-based deployments when you want to version your design files, but be aware that Meshery doesn’t track internal Helm structure from those files.
+
+#### How to Clean Up Manually
+
+If you deployed using Git and want to ensure a clean undeployment, remove leftover CRDs and namespaces manually:
 
 ```bash
 kubectl delete crd <your-crd>
 kubectl delete namespace <your-namespace>
 ```
-
-#### Recommended Workaround
-To prevent issues with orphaned dependencies:
-- **Track dependencies manually** when deploying from Git.
-- **Ensure proper cleanup** of CRDs and operators after undeployment.
-- Refer to [Helm Dependency Management](https://helm.sh/docs/helm/helm_dependency/){:target="_blank"} for best practices.
-
----
-
-### 3.3 Sample Application Deployment 
-
-Meshery provides a set of [Sample Applications](https://docs.meshery.io/guides/infrastructure-management/sample-apps), designed for testing and learning cloud-native infrastructure.
-
-#### Available Sample Applications
-- **BookInfo** → A sample application originally built by Istio to test service meshes.
-- **Emojivoto** → A microservices demo app from Linkerd that allows users to vote for their favorite emoji.
-- **ImageHub** → A WebAssembly-based sample application for experimenting with Envoy filters.
-- **HTTPBin** → A simple HTTP request and response service for testing API calls.
-- **Online Boutique** → A cloud-native e-commerce demo application originally built by Google.
-
----
-

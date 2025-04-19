@@ -115,6 +115,8 @@
           url: guides/infrastructure-management/notification-management
         - title: Managing Envoy Filters
           url: guides/infrastructure-management/filter-management
+        - title: Managing Deployments
+          url: guides/infrastructure-management/how-meshery-manages-deployments
         - title: Managing Connections
           url: guides/infrastructure-management/lifecycle-management
           grandchildren:
