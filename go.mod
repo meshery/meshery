@@ -8,7 +8,8 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // The following replaces are used for local development
 // replace github.com/meshery/schemas v0.8.10 => ../schemas
-// replace github.com/layer5io/meshkit v0.8.22 => ../meshkit
+
+// replace github.com/layer5io/meshkit v0.8.23 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
@@ -39,13 +40,13 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
-	github.com/layer5io/meshkit v0.8.23
+	github.com/layer5io/meshkit v0.8.24
 	github.com/layer5io/meshsync v0.8.6
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/schemas v0.8.10
+	github.com/meshery/schemas v0.8.13
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -286,6 +287,10 @@ require (
 	github.com/spf13/cast v1.7.1 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/theupdateframework/notary v0.7.0 // indirect
+	github.com/tidwall/gjson v1.14.2 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
+	github.com/tidwall/sjson v1.2.5 // indirect
 	github.com/vbatts/tar-split v0.11.7 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
@@ -311,7 +316,7 @@ require (
 	golang.org/x/crypto v0.36.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect
 	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
-	golang.org/x/net v0.37.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
 	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/term v0.30.0 // indirect
@@ -324,13 +329,13 @@ require (
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gorm.io/driver/postgres v1.5.11 // indirect
 	gorm.io/driver/sqlite v1.5.7 // indirect
-	helm.sh/helm/v3 v3.17.0 // indirect
+	helm.sh/helm/v3 v3.17.3 // indirect
 	k8s.io/apiserver v0.32.3 // indirect
-	k8s.io/cli-runtime v0.32.1 // indirect
+	k8s.io/cli-runtime v0.32.2 // indirect
 	k8s.io/component-base v0.32.3 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241212222426-2c72e554b1e7 // indirect
-	k8s.io/kubectl v0.32.1 // indirect
+	k8s.io/kubectl v0.32.2 // indirect
 	k8s.io/utils v0.0.0-20241210054802-24370beab758 // indirect
 	oras.land/oras-go v1.2.6 // indirect
 	oras.land/oras-go/v2 v2.5.0 // indirect

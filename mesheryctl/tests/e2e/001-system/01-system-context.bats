@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
 setup() {
-   load "$E2E_HELPERS_PATH/tests_helpers"
-	_tests_helper
+   load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
 
     ENDPOINT_REGEX_MATCH='^[[:space:]]*endpoint:[[:space:]](http|https)://.*:[[:digit:]]+$'
     TOKEN_REGEX_MATCH='^[[:space:]]*token:[[:space:]][[:alnum:]]+$'
@@ -14,7 +14,8 @@ setup() {
 # bats test_tags=system:context
 @test "mesheryctl system context view --all display valid content" {
    run $MESHERYCTL_BIN system context view --all
-   [ "$status" -eq 0 ]
+   assert_success
+
    assert_line --regexp "$ENDPOINT_REGEX_MATCH"
    assert_line --regexp "$TOKEN_REGEX_MATCH"
    assert_line --regexp "$PLATFORM_REGEX_MATCH"
@@ -24,7 +25,8 @@ setup() {
 # bats test_tags=system:context
 @test "mesheryctl system context view display valid content" {
    run $MESHERYCTL_BIN system context view
-   [ "$status" -eq 0 ]
+   assert_success
+   
    assert_line --regexp "$CONTEXT_REGEXP_MATCH"
    assert_line --regexp "$ENDPOINT_REGEX_MATCH"
    assert_line --regexp "$TOKEN_REGEX_MATCH"
