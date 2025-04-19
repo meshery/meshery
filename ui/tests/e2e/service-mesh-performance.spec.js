@@ -11,6 +11,11 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
     },
   ];
 
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+  });
+
+
   peformanceProfiles.forEach(({ profileWithUUID, serviceMesh, url, loadGenerator }) => {
     test(`Add performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
