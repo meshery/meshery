@@ -1,18 +1,21 @@
 import { v4 as uuidv4 } from 'uuid';
 import { expect, test } from './fixtures/project';
 
+
+const peformanceProfiles = [
+  {
+    profileWithUUID: `Sample-Perf-Test-${uuidv4()}`,
+    serviceMesh: 'None',
+    url: 'https://layer5.io/',
+    loadGenerator: 'fortio',
+  },
+];
+
 test.describe.serial('Service Mesh Performance Management Tests', () => {
-  const peformanceProfiles = [
-    {
-      profileWithUUID: `Sample-Perf-Test-${uuidv4()}`,
-      serviceMesh: 'None',
-      url: 'https://layer5.io/',
-      loadGenerator: 'fortio',
-    },
-  ];
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
+    await page.goto('http://localhost:9081');
+    await expect(page.getByTestId('navigation')).toBeVisible();
   });
 
 
@@ -20,7 +23,7 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
     test(`Add performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
     }) => {
-      await page.goto('/performance/profiles');
+      await page.goto('http://localhost:9081/performance/profiles');
       await page.getByLabel('Add Performance Profile').click();
       await page.getByLabel('Profile Name').fill(profileWithUUID);
       await page.getByLabel('Technology').click();
@@ -41,7 +44,7 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
     test(`View detailed result of a performance profile (Graph Visualiser) with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
     }) => {
-      await page.goto('/performance/profiles');
+      await page.goto('http://localhost:9081/performance/profiles');
       await expect(page.getByText(`${profileWithUUID}`)).toBeVisible();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('TableChartIcon').first().click();
@@ -51,7 +54,7 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
     test(`Edit the configuration of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
     }) => {
-      await page.goto('/performance/profiles');
+      await page.goto('http://localhost:9081/performance/profiles');
       await page.getByText(profileWithUUID, { exact: true }).first().click();
 
       await page.getByTestId('performanceProfileCard-edit').click();
@@ -71,7 +74,7 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
     test(`Compare test of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
     }) => {
-      await page.goto('/performance/profiles');
+      await page.goto('http://localhost:9081/performance/profiles');
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('MUIDataTableBodyRow-0').locator('input[type="checkbox"]').check();
 
@@ -83,7 +86,7 @@ test.describe.serial('Service Mesh Performance Management Tests', () => {
     test(`Delete a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
     }) => {
-      await page.goto('performance/profiles');
+      await page.goto('http://localhost:9081/performance/profiles');
       await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByTestId('performanceProfileCard-delete').first().click();
 
