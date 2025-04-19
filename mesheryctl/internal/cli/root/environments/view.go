@@ -21,13 +21,11 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
@@ -55,16 +53,7 @@ mesheryctl environment view --orgID [orgID]
 		outFormat, _ := cmd.Flags().GetString("output-format")
 		save, _ := cmd.Flags().GetBool("save")
 
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-
-		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgID)
-
-		environmentResponse, err := api.Fetch[environments.EnvironmentPage](url)
+		environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
 
 		if err != nil {
 			return err

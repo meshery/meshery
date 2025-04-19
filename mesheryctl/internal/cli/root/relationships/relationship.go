@@ -21,7 +21,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -72,14 +71,7 @@ mesheryctl exp relationship view [model-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-			if err != nil {
-				log.Fatalln(err, "error processing config")
-			}
-
-			baseUrl := mctlCfg.GetBaseMesheryURL()
-			url := fmt.Sprintf("%s/api/meshmodels/relationships?page=1", baseUrl)
-			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
+			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse]("api/meshmodels/relationships")
 
 			if err != nil {
 				return err

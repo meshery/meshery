@@ -8,14 +8,11 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
@@ -46,18 +43,9 @@ mesheryctl model view [model-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelDefinition := args[0]
 
-		url := fmt.Sprintf("%s/%s/%s?pagesize=all", baseUrl, modelsApiPath, modelDefinition)
-
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
+		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s/%s?pagesize=all", modelsApiPath, modelDefinition))
 
 		if err != nil {
 			return err

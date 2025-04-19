@@ -31,14 +31,12 @@ import (
 
 var createWorkspaceCmd = &cobra.Command{
 	Use:   "create",
-	Short: "Create a new workspace",
-	Long:  `Create a new workspace by providing the name, description, and organization ID.`,
+	Short: "Create a new workspace under an organization",
+	Long: `Create a new workspace by providing the name, description, and organization ID
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/create`,
 	Example: `
-// Create a new workspace
+// Create a new workspace in an organization
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
-
-// Documentation for workspace can be found at:
-https://docs.layer5.io/cloud/spaces/workspaces/
 `,
 
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -47,11 +45,11 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
+		const errorMsg = "[ Organization ID | Workspace name | Workspace description ] aren't specified\n\nUsage: \nmesheryctl  exp workspace --orgId [Organization ID] --name [name] --description [description]\nmesheryctl  exp workspace --help' to see detailed help message"
+
 		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId, --name, and --description flag"))
+
+			return utils.ErrInvalidArgument(errors.New(errorMsg))
 		}
 
 		return nil
@@ -64,7 +62,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/workspaces", baseUrl)
+		url := fmt.Sprintf("%s/%s", baseUrl, workspacesApiPath)
 
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
@@ -101,4 +99,10 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		utils.Log.Info("Failed to create ", nameFlag, " workspace")
 		return nil
 	},
+}
+
+func init() {
+	createWorkspaceCmd.Flags().StringP("orgId", "o", "", "Organization ID")
+	createWorkspaceCmd.Flags().StringP("name", "n", "", "Name of the workspace")
+	createWorkspaceCmd.Flags().StringP("description", "d", "", "Description of the workspace")
 }
