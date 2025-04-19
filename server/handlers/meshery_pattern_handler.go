@@ -610,17 +610,23 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	var formatConverter converter.ConvertFormat
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
-
 	exportFormat := r.URL.Query().Get("export")
+	h.log.Debug(fmt.Sprintf("Export format received: '%s'", exportFormat))
+
 	if exportFormat != "" {
 		var errConvert error
+		//h.log.Debug(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+		//h.log.Debug(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
+		//	converter.K8sManifest, converter.HelmChart))
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
+			h.log.Warn(errConvert)
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
+		h.log.Debug(fmt.Sprintf("Created converter for format: '%s'", exportFormat))
 	}
 
 	patternID := mux.Vars(r)["id"]
@@ -700,8 +706,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
-		rw.Header().Set("Content-Type", "application/yaml")
+		if exportFormat == modelsCore.IacFileTypes.HELM_CHART {
+			rw.Header().Set("Content-Type", "application/gzip")
+			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tgz", pattern.Name))
+		} else {
+			rw.Header().Set("Content-Type", "application/yaml")
+			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
+		}
 		_, err = fmt.Fprint(rw, patternFile)
 		if err != nil {
 			err = ErrWriteResponse(err)
@@ -1104,7 +1115,20 @@ func (h *Handler) CloneMesheryPatternHandler(
 	}
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(rw, string(resp))
+	_, err = fmt.Fprint(rw, string(resp))
+	if err != nil {
+		err = ErrWriteResponse(err)
+		h.log.Error(err)
+		http.Error(rw, _errors.Wrapf(err, "failed to clone design \"%s\"", pattern.Name).Error(), http.StatusInternalServerError)
+		return
+	}
+	_, err = fmt.Fprint(rw, string(resp))
+	if err != nil {
+		err = ErrWriteResponse(err)
+		h.log.Error(err)
+		http.Error(rw, _errors.Wrapf(err, "failed to clone design \"%s\"", pattern.Name).Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 // swagger:route POST /api/pattern/catalog/publish PatternsAPI idPublishCatalogPatternHandler
