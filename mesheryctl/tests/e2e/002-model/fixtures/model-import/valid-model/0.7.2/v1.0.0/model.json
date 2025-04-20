@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "kccna24",
-  "displayName": "KubeCon NA 2024",
+  "name": "model-import_cli-e2e-test",
+  "displayName": "model import cli e2e test",
   "description": "Meshery ContribFest",
   "status": "enabled",
   "registrant": {
