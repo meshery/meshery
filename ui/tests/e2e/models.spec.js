@@ -19,9 +19,9 @@ const model_import = {
   },
 };
 
-test.describe('Model Workflow Tests', () => {
+test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(ENV.MESHERY_SERVER_URL);
+    await page.goto('/');
     await page.getByTestId('settings-button').click();
     await page.getByTestId('settings-tab-registry').click();
   });
@@ -73,6 +73,9 @@ test.describe('Model Workflow Tests', () => {
     await page.getByTestId('export-model-button').click();
     const download = await downloadPromise;
     expect(download).toBeDefined();
+    await page.getByRole('combobox', { name: 'enabled' }).click();
+    await page.getByRole('option', { name: 'ignored' }).click();
+    expect(page.getByRole('option', { name: 'ignored' }).isVisible()).toBeTruthy();
   });
 
   test('Import a Model via File Import', async ({ page }) => {
