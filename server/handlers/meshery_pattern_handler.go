@@ -615,9 +615,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 	if exportFormat != "" {
 		var errConvert error
-		//h.log.Debug(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
-		//h.log.Debug(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
-		//	converter.K8sManifest, converter.HelmChart))
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
 			h.log.Warn(errConvert)
