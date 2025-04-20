@@ -17,7 +17,14 @@ setup() {
 @test "mesheryctl model search succeeds with default options" {
   run $MESHERYCTL_BIN model search accurate
   assert_success
-  
+
   assert_output --partial "accurate"
+}
+
+@test "mesheryctl model search for non-existing model" {
+  run $MESHERYCTL_BIN model search random-model
+  assert_success
+
+  assert_output --partial "No models found"
 }
 
