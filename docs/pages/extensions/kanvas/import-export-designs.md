@@ -101,7 +101,7 @@ mesheryctl design export --type oci -o ./exports
 
 1. Go to **Designs > My Designs** and select the design you want to export.
 2. Click the **Export** action button.
-3. Choose an export format (e.g., `current`, `original`, `oci`,`helm`).
+3. Choose an export format (e.g., `current`, `original`, `oci`, `helm`).
 4. Specify the download location for your exported file.
 
 ### Supported Export Formats
