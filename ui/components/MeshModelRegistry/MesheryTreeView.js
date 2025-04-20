@@ -216,7 +216,7 @@ const MesheryTreeView = React.memo(
                 <span>
                   <IconButton
                     onClick={() => setExpanded([])}
-                    style={{ marginRight: '4px' }}
+                    style={{ paddingLeft: '0rem' }}
                     size="large"
                     disableRipple
                     disabled={disabledExpand()}
@@ -237,8 +237,8 @@ const MesheryTreeView = React.memo(
                         size="small"
                       />
                     }
-                    label="Show Duplicates"
-                    style={{ margin: 0 }}
+                    label="Duplicates"
+                    sx={{marginLeft: '2rem' }}
                   />
                   <CustomTextTooltip
                     placement="right"
@@ -246,6 +246,7 @@ const MesheryTreeView = React.memo(
                     title={`View all duplicate entries of ${_.toLower(
                       view,
                     )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
+                    sx={{ margin: '0rem', padding: '0rem'}}
                   >
                     <IconButton>
                       <InfoOutlinedIcon height={20} width={20} />
