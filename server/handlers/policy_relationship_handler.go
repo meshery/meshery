@@ -139,6 +139,20 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.Resolved
 
 }
 
+func doesntNeedReeval(response pattern.EvaluationResponse) bool {
+
+	for _, action := range response.Actions {
+		if action.Op == "delete_component" || action.Op == "add_component" || action.Op == "update_component_configuration" {
+			return false
+		}
+	}
+
+	return true
+}
+
+// max number of time to keep revaluating the design till there are no reval triggering actions in the response
+const MAX_RE_EVALUATION_DEPTH = 5
+
 // Helper method to make design evaluation based on the relationship policies.
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
@@ -146,33 +160,52 @@ func (h *Handler) EvaluateDesign(
 
 	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
 
-	// evaluate specified relationship policies
-	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
-		RelationshipPolicyPackageName,
-	)
+	var lastEvaluationResponse pattern.EvaluationResponse
+	lastEvaluationResponse.Design = relationshipPolicyEvalPayload.Design
 
-	if err != nil {
-		h.log.Debug(err)
-		// log an event
-		return pattern.EvaluationResponse{}, err
+	for i := range MAX_RE_EVALUATION_DEPTH {
+
+		// evaluate specified relationship policies
+		// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
+		evaluationResponse, err := h.Rego.RegoPolicyHandler(lastEvaluationResponse.Design,
+			RelationshipPolicyPackageName,
+		)
+
+		if err != nil {
+			h.log.Debug(err)
+			// log an event
+			return pattern.EvaluationResponse{}, err
+		}
+
+		// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+		now := time.Now()
+		_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+
+		evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
+		if evaluationResponse.Design.Metadata == nil {
+			evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
+		}
+		evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
+
+		mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
+
+		lastEvaluationResponse.Design = evaluationResponse.Design
+		lastEvaluationResponse.Actions = append(lastEvaluationResponse.Actions, evaluationResponse.Actions...)
+
+		if doesntNeedReeval(evaluationResponse) {
+			h.log.Info("Evaluation completed in iteration ", i+1)
+			break
+		}
+		if i == (MAX_RE_EVALUATION_DEPTH - 1) {
+			h.log.Info("Evaluation depth exceeded")
+			return lastEvaluationResponse, fmt.Errorf("Evaluation depth exceeded")
+		}
+
 	}
 
 	currentTime := time.Now()
-	evaluationResponse.Timestamp = &currentTime
-
-	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-	now := time.Now()
-	_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
-
-	evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
-	if evaluationResponse.Design.Metadata == nil {
-		evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
-	}
-	evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
-
-	mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
-	return evaluationResponse, nil
+	lastEvaluationResponse.Timestamp = &currentTime
+	return lastEvaluationResponse, nil
 }
 
 func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
