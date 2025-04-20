@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 import path from 'path';
-import { ENV } from './env';
 
 const model = {
   MODEL_URL: 'git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm',
