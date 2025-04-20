@@ -193,25 +193,9 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
     handleFilter({});
   };
 
-  const groupedFilters = selectedFilters.reduce((acc, filter) => {
-    if (!acc[filter.type]) {
-      acc[filter.type] = [];
-    }
-    acc[filter.type].push(filter);
-    return acc;
-  }, {});
-
-  // Convert grouped filters to chips
-  const filterChips = Object.entries(groupedFilters).map(([type, filters]) => ({
-    type: type,
-    value: filters.map((f) => f.value).join('; '),
-    label: `${filterSchema[type].value}: ${filters.map((f) => f.value).join('; ')}`,
-    filters: filters, // Keep original filters for comparison
-  }));
-
-  const handleDeleteChip = (typeToDelete) => {
-    setSelectedFilters((prev) => prev.filter((filter) => filter.type !== typeToDelete));
-    handleFilter(transformData(selectedFilters.filter((filter) => filter.type !== typeToDelete)));
+  const handleDeleteChip = (details) => {
+    setSelectedFilters((prev) => prev.filter((filter) => filter !== details?.option));
+    handleFilter(transformData(selectedFilters.filter((filter) => filter !== details?.option)));
   };
 
   const theme = useTheme();
@@ -241,7 +225,7 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
         noOptionsText="Sorry we dont currently support this filter"
         onChange={(_, __, reason, details) => {
           if (reason === 'removeOption' && details?.option) {
-            handleDeleteChip(details.option.type);
+            handleDeleteChip(details);
           } else if (reason === 'selectOption' && details?.option) {
             handleSelect(details.option);
           }
@@ -268,12 +252,12 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
             </React.Fragment>
           );
         }}
-        renderTags={() =>
-          filterChips.map((chip) => (
+        renderTags={(value, getTagProps) =>
+          value.map((option, index) => (
             <Chip
-              key={chip.type}
-              label={chip.label}
-              onDelete={() => handleDeleteChip(chip.type)}
+              {...getTagProps({ index })}
+              key={`${option.type}-${option.value}-${index}`}
+              label={`${filterSchema[option.type].value}: ${option.value}`}
               style={{ margin: '0.15rem', maxWidth: '80%', height: 'auto' }}
               size="small"
               sx={{

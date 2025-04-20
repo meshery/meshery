@@ -127,12 +127,12 @@
           url: guides/configuration-management/working-with-designs
         - title: Creating a Meshery Design
           url: guides/configuration-management/creating-a-meshery-design
-        - title: Importing Designs
+        - title: Importing Models
           url: guides/configuration-management/importing-models
-        - title: Exporting Designs
+        - title: Exporting Models
           url: guides/configuration-management/exporting-models
-        - title: Generating Designs
-          url: guides/configuration-management/generating-models
+        - title: Creating Models
+          url: guides/configuration-management/creating-models
         - title: Managing Model Images
           url: guides/configuration-management/push-pull-model-image
         - title: Cloud Native Design Patterns
@@ -279,6 +279,8 @@
         - title: Models ↆ
           url: project/contributing/contributing-models
           grandchildren:
+            - title: Quick Start
+              url: project/contributing/contributing-models-quick-start
             - title: Model Components
               url: project/contributing/contributing-components
             - title: Model Relationships
