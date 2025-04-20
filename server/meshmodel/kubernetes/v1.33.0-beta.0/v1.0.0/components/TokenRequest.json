@@ -45,16 +45,17 @@
     "model": {
       "version": "v1.33.0-beta.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#326CE5",
     "secondaryColor": "#7aa1f0",
     "shape": "circle",
     "svgColor": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M45 85C67.0914 85 85 67.0914 85 45C85 22.9086 67.0914 5 45 5C22.9086 5 5 22.9086 5 45C5 67.0914 22.9086 85 45 85ZM48.6477 47.9933C53.7139 46.3145 57.3686 41.5387 57.3686 35.9094C57.3686 28.8803 51.6704 23.1821 44.6413 23.1821C37.6123 23.1821 31.9141 28.8803 31.9141 35.9094C31.9141 41.8093 35.9286 46.7716 41.375 48.2136V66.2732C41.375 67.3777 42.2704 68.2732 43.375 68.2732H46.6477C47.7523 68.2732 48.6477 67.3777 48.6477 66.2732V62.4551H55.3643C56.4689 62.4551 57.3643 61.5596 57.3643 60.4551V57.1824C57.3643 56.0778 56.4689 55.1824 55.3643 55.1824H48.6477V47.9933Z\" fill=\"#326CE5\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M45 85C67.0914 85 85 67.0914 85 45C85 22.9086 67.0914 5 45 5C22.9086 5 5 22.9086 5 45C5 67.0914 22.9086 85 45 85ZM48.6477 47.9933C53.7139 46.3145 57.3686 41.5387 57.3686 35.9094C57.3686 28.8803 51.6704 23.1821 44.6413 23.1821C37.6123 23.1821 31.9141 28.8803 31.9141 35.9094C31.9141 41.8093 35.9286 46.7716 41.375 48.2136V66.2732C41.375 67.3777 42.2704 68.2732 43.375 68.2732H46.6477C47.7523 68.2732 48.6477 67.3777 48.6477 66.2732V62.4551H55.3643C56.4689 62.4551 57.3643 61.5596 57.3643 60.4551V57.1824C57.3643 56.0778 56.4689 55.1824 55.3643 55.1824H48.6477V47.9933Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "authentication.k8s.io/v1",
     "kind": "TokenRequest",
-    "schema": "{\"description\":\"TokenRequest requests a token for a given service account.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"TokenRequestSpec contains client provided parameters of a token request.\",\"properties\":{\"audiences\":{\"description\":\"Audiences are the intendend audiences of the token. A recipient of a token must identify themself with an identifier in the list of audiences of the token, and otherwise should reject the token. A token issued for multiple audiences may be used to authenticate against any of the audiences listed but implies a high degree of trust between the target audiences.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"boundObjectRef\":{\"allOf\":[{\"description\":\"BoundObjectReference is a reference to an object that a token is bound to.\",\"properties\":{\"apiVersion\":{\"description\":\"API version of the referent.\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind of the referent. Valid kinds are 'Pod' and 'Secret'.\",\"type\":\"string\"},\"name\":{\"description\":\"Name of the referent.\",\"type\":\"string\"},\"uid\":{\"description\":\"UID of the referent.\",\"type\":\"string\"}},\"type\":\"object\"}],\"description\":\"BoundObjectRef is a reference to an object that the token will be bound to. The token will only be valid for as long as the bound object exists. NOTE: The API server's TokenReview endpoint will validate the BoundObjectRef, but other audiences may not. Keep ExpirationSeconds small if you want prompt revocation.\"},\"expirationSeconds\":{\"description\":\"ExpirationSeconds is the requested duration of validity of the request. The token issuer may return a token with a different validity duration so a client needs to check the 'expiration' field in a response.\",\"format\":\"int64\",\"type\":\"integer\"}},\"required\":[\"audiences\"],\"type\":\"object\"}],\"default\":{},\"description\":\"Spec holds information about the request being evaluated\"}},\"required\":[\"spec\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"authentication.k8s.io\",\"kind\":\"TokenRequest\",\"version\":\"v1\"}]}",
-    "version": "authentication.k8s.io/v1"
+    "schema": "{\"description\":\"TokenRequest requests a token for a given service account.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"TokenRequestSpec contains client provided parameters of a token request.\",\"properties\":{\"audiences\":{\"description\":\"Audiences are the intendend audiences of the token. A recipient of a token must identify themself with an identifier in the list of audiences of the token, and otherwise should reject the token. A token issued for multiple audiences may be used to authenticate against any of the audiences listed but implies a high degree of trust between the target audiences.\",\"items\":{\"default\":\"\",\"type\":\"string\"},\"type\":\"array\",\"x-kubernetes-list-type\":\"atomic\"},\"boundObjectRef\":{\"allOf\":[{\"description\":\"BoundObjectReference is a reference to an object that a token is bound to.\",\"properties\":{\"apiVersion\":{\"description\":\"API version of the referent.\",\"type\":\"string\"},\"kind\":{\"description\":\"Kind of the referent. Valid kinds are 'Pod' and 'Secret'.\",\"type\":\"string\"},\"name\":{\"description\":\"Name of the referent.\",\"type\":\"string\"},\"uid\":{\"description\":\"UID of the referent.\",\"type\":\"string\"}},\"type\":\"object\"}],\"description\":\"BoundObjectRef is a reference to an object that the token will be bound to. The token will only be valid for as long as the bound object exists. NOTE: The API server's TokenReview endpoint will validate the BoundObjectRef, but other audiences may not. Keep ExpirationSeconds small if you want prompt revocation.\"},\"expirationSeconds\":{\"description\":\"ExpirationSeconds is the requested duration of validity of the request. The token issuer may return a token with a different validity duration so a client needs to check the 'expiration' field in a response.\",\"format\":\"int64\",\"type\":\"integer\"}},\"required\":[\"audiences\"],\"type\":\"object\"}],\"default\":{},\"description\":\"Spec holds information about the request being evaluated\"}},\"required\":[\"spec\"],\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"authentication.k8s.io\",\"kind\":\"TokenRequest\",\"version\":\"v1\"}]}"
   }
 }

@@ -45,16 +45,17 @@
     "model": {
       "version": "0.3.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "\u003csvg width=\"45\" height=\"51\" viewBox=\"0 0 45 51\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"#3ABC9B\"/\u003e\n\u003cpath d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"#3ABC9B\"/\u003e\n\u003cpath d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"#3ABC9B\"/\u003e\n\u003c/svg\u003e\r",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"45\" height=\"51\" viewBox=\"0 0 45 51\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M0 0H45V7.5C45 11.6421 41.6421 15 37.5 15H0V0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M0 18H37V25.5C37 29.6421 33.6421 33 29.5 33H0V18Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M0 36H14V44C14 47.866 10.866 51 7 51H0V36Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\r"
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "traefik.containo.us/v1alpha1",
     "kind": "MiddlewareTCP",
-    "schema": "{\n \"description\": \"MiddlewareTCP is a specification for a MiddlewareTCP resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec holds the MiddlewareTCP configuration.\",\n   \"properties\": {\n    \"ipWhiteList\": {\n     \"description\": \"TCPIPWhiteList holds the TCP ip white list configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}",
-    "version": "traefik.containo.us/v1alpha1"
+    "schema": "{\n \"description\": \"MiddlewareTCP is a specification for a MiddlewareTCP resource.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec holds the MiddlewareTCP configuration.\",\n   \"properties\": {\n    \"ipWhiteList\": {\n     \"description\": \"TCPIPWhiteList holds the TCP ip white list configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}"
   }
 }

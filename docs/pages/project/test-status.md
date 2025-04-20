@@ -13,7 +13,7 @@ This page contains results of tests performed in the development of Meshery.
 
 **Resources:**
 
-- See [Contributing to Meshery UI's End-to-End Tests](/project/contributing/contributing-ui-tests)
+- See [Contributing to Meshery's End-to-End Tests](/project/contributing/contributing-ui-tests)
 - See the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=0#gid=0) for a list of test cases.
 - See the [Compatibility Matrix](/installation/compatibility-matrix)
 
@@ -39,9 +39,9 @@ th, td {
     cursor: pointer;
     background-color: #444;
     color: white;
-    font-weight: bold;
+    font-weight: normal;
     text-align: center;
-    font-size: 18px;
+    font-size: 1rem;
 }
 
 .accordion-header:hover {
@@ -117,6 +117,14 @@ th, td {
         {% endfor %}
     </tbody>
 </table>
+
+## Latest E2E Test Report
+
+[🔗 View Build UI and Server Workflow](https://github.com/meshery/meshery/actions/workflows/build-ui-and-server.yml?query=branch%3Amaster)
+
+
+{% include test-report.md %}
+
 
 <script>
 // JavaScript for toggling the accordion content

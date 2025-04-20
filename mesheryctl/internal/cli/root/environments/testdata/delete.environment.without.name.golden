@@ -1,0 +1,4 @@
+[ Environment ID ] isn't specified
+
+Usage: mesheryctl environment delete [environmentId]
+Run 'mesheryctl environment delete --help' to see detailed help message

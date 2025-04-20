@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "0.1.13"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "scripting.sitewhere.io/v1alpha4",
     "kind": "SiteWhereScriptVersion",
-    "schema": "{\n \"description\": \"SiteWhereScriptVersion is the Schema for the scriptversions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteWhereScriptVersionSpec defines the desired state of SiteWhereScriptVersion\",\n   \"properties\": {\n    \"comment\": {\n     \"description\": \"Comment is the comment on this version\",\n     \"type\": \"string\"\n    },\n    \"content\": {\n     \"description\": \"Content is the comment on this version\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Where Script Version\",\n \"type\": \"object\"\n}",
-    "version": "scripting.sitewhere.io/v1alpha4"
+    "schema": "{\n \"description\": \"SiteWhereScriptVersion is the Schema for the scriptversions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteWhereScriptVersionSpec defines the desired state of SiteWhereScriptVersion\",\n   \"properties\": {\n    \"comment\": {\n     \"description\": \"Comment is the comment on this version\",\n     \"type\": \"string\"\n    },\n    \"content\": {\n     \"description\": \"Content is the comment on this version\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Where Script Version\",\n \"type\": \"object\"\n}"
   }
 }

@@ -47,15 +47,16 @@
     "model": {
       "version": "12.2.10"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -176,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "configuration.konghq.com/v1alpha1",
     "kind": "KongLicense",
-    "schema": "{\n \"description\": \"KongLicense stores a Kong enterprise license to apply to managed Kong gateway instances.\",\n \"properties\": {\n  \"enabled\": {\n   \"default\": true,\n   \"description\": \"Enabled is set to true to let controllers (like KIC or KGO) to reconcile it.\\nDefault value is true to apply the license by default.\",\n   \"type\": \"boolean\"\n  },\n  \"rawLicenseString\": {\n   \"description\": \"RawLicenseString is a string with the raw content of the license.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"enabled\",\n  \"rawLicenseString\"\n ],\n \"title\": \"Kong License\",\n \"type\": \"object\"\n}",
-    "version": "configuration.konghq.com/v1alpha1"
+    "schema": "{\n \"description\": \"KongLicense stores a Kong enterprise license to apply to managed Kong gateway instances.\",\n \"properties\": {\n  \"enabled\": {\n   \"default\": true,\n   \"description\": \"Enabled is set to true to let controllers (like KIC or KGO) to reconcile it.\\nDefault value is true to apply the license by default.\",\n   \"type\": \"boolean\"\n  },\n  \"rawLicenseString\": {\n   \"description\": \"RawLicenseString is a string with the raw content of the license.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"enabled\",\n  \"rawLicenseString\"\n ],\n \"title\": \"Kong License\",\n \"type\": \"object\"\n}"
   }
 }

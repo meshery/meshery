@@ -45,16 +45,17 @@
     "model": {
       "version": "v3.4.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#26A678\"/\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n    \u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\"\n        d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\"\n        fill=\"#fff\" /\u003e\n\u003c/svg\u003e"
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "application.kubesphere.io/v1alpha1",
     "kind": "HelmCategory",
-    "schema": "{\n \"description\": \"HelmCategory is the Schema for the helmcategories API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HelmCategorySpec defines the desired state of HelmRepo\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"info from frontend\",\n     \"type\": \"string\"\n    },\n    \"locale\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"name of the category\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Helm Category\",\n \"type\": \"object\"\n}",
-    "version": "application.kubesphere.io/v1alpha1"
+    "schema": "{\n \"description\": \"HelmCategory is the Schema for the helmcategories API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HelmCategorySpec defines the desired state of HelmRepo\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"info from frontend\",\n     \"type\": \"string\"\n    },\n    \"locale\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"name of the category\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Helm Category\",\n \"type\": \"object\"\n}"
   }
 }

@@ -41,15 +41,16 @@
     "model": {
       "version": "6.0.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -170,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "ml.arangodb.com/v1alpha1",
     "kind": "ArangoMLBatchJob",
-    "schema": "{\n \"title\": \"Arango ML Batch Job\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}",
-    "version": "ml.arangodb.com/v1alpha1"
+    "schema": "{\n \"title\": \"Arango ML Batch Job\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"
   }
 }

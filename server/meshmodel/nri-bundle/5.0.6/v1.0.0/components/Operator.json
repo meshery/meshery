@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/newrelic/helm-charts/releases/download/nri-bundle-5.0.58/nri-bundle-5.0.58.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "5.0.6"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "operators.coreos.com/v1",
     "kind": "Operator",
-    "schema": "{\n \"description\": \"Operator represents a cluster operator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OperatorSpec defines the desired state of Operator\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Operator\",\n \"type\": \"object\"\n}",
-    "version": "operators.coreos.com/v1"
+    "schema": "{\n \"description\": \"Operator represents a cluster operator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OperatorSpec defines the desired state of Operator\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Operator\",\n \"type\": \"object\"\n}"
   }
 }

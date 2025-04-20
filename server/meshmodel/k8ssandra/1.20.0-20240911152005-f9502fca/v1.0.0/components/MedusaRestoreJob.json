@@ -45,14 +45,15 @@
     "model": {
       "version": "1.20.0-20240911152005-f9502fca"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -181,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "medusa.k8ssandra.io/v1alpha1",
     "kind": "MedusaRestoreJob",
-    "schema": "{\n \"description\": \"MedusaRestoreJob is the Schema for the medusarestorejobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaRestoreJobSpec defines the desired state of MedusaRestoreJob\",\n   \"properties\": {\n    \"backup\": {\n     \"description\": \"The name of the MedusaBackup to restore.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"Name of the Cassandra datacenter to perform the restore on.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backup\",\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Restore Job\",\n \"type\": \"object\"\n}",
-    "version": "medusa.k8ssandra.io/v1alpha1"
+    "schema": "{\n \"description\": \"MedusaRestoreJob is the Schema for the medusarestorejobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaRestoreJobSpec defines the desired state of MedusaRestoreJob\",\n   \"properties\": {\n    \"backup\": {\n     \"description\": \"The name of the MedusaBackup to restore.\",\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"Name of the Cassandra datacenter to perform the restore on.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backup\",\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Restore Job\",\n \"type\": \"object\"\n}"
   }
 }
