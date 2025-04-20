@@ -74,7 +74,7 @@ jobs:
       - name: Check out meshery-istio code
         uses: actions/checkout@v4
         with:
-          repository: layer5io/meshery-istio
+          repository: meshery-extensions/meshery-istio
           path: ./meshery-istio
       # - name: Check out meshery-consul code
       #   uses: actions/checkout@v4
@@ -93,7 +93,7 @@ jobs:
         run: |
           mkdir -p /home/runner/.meshery/bin
           cd ./meshery-istio
-          go run main.go &
+          make run &
           sleep 60
       # - name: Run meshery-consul
       #   run: |
