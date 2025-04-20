@@ -25,15 +25,13 @@ export const PropertyFormatters = {
       />
     );
   },
-  designId: (value) => {
+  design: (value) => {
     const theme = useTheme();
-    const parts = value.split('+');
-    const designName = parts[0];
-    const designId = parts[1];
+    const { name, id } = value;
 
     return (
       <TitleLink
-        href={'/extension/meshmap?mode=design&design=' + encodeURIComponent(designId)}
+        href={'/extension/meshmap?mode=design&design=' + encodeURIComponent(id)}
         style={{
           color: theme.palette.text.default,
           fontWeight: 'normal',
@@ -41,7 +39,7 @@ export const PropertyFormatters = {
         }}
         target="_self"
       >
-        Saved design {designName}
+        Saved design {name}
       </TitleLink>
     );
   },
