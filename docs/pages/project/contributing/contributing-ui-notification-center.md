@@ -48,7 +48,7 @@ The `NotificationCenter` component of Meshery UI Switching to Graphql subscripti
 - Network Request are cached and are invalidated when new events come or events are deleted/updated.
 - Due to need for infinite scroll and optimistic update the events are stored globally in Redux.
 
-## Bulk Operations
+### Bulk Operations
 
 Bulk operations in the Notification Center allow users to perform actions like deleting multiple notifications or changing the status of multiple notifications in a batch. This documentation outlines the key features and functionality of bulk operations, including the restriction of performing only one bulk operation at a time, the disabling of buttons during ongoing operations, and the display of a loading icon to indicate ongoing activity.
 
