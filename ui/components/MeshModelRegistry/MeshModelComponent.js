@@ -414,7 +414,7 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
         }}
       >
         <Button
-          aria-label="Add Pattern"
+          aria-label="Create Model"
           variant="contained"
           color="primary"
           onClick={openCreateModal}
@@ -425,7 +425,7 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
           Create
         </Button>
         <Button
-          aria-label="Add Pattern"
+          aria-label="Import Model"
           variant="contained"
           color="primary"
           onClick={openImportModal}
@@ -436,9 +436,11 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
           Import
         </Button>
       </div>
+      {/* 
+      This builk operation is not yet supported
       <DisableButton disabled variant="contained" startIcon={<DoNotDisturbOnIcon />}>
         Ignore
-      </DisableButton>
+      </DisableButton> */}
     </MeshModelToolbar>
   );
 };
