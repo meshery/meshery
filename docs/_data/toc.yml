@@ -278,6 +278,8 @@
         - title: Models ↆ
           url: project/contributing/contributing-models
           grandchildren:
+            - title: Quick Start
+              url: project/contributing/contributing-models-quick-start
             - title: Components
               url: project/contributing/contributing-components
             - title: Relationships
