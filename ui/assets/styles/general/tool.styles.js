@@ -1,4 +1,4 @@
-import { styled, Box, tabMenu, accentGrey, slateGray } from '@layer5/sistent';
+import { styled, Box, accentGrey } from '@layer5/sistent';
 
 export const ToolWrapper = styled(Box)(({ theme }) => ({
   marginBottom: '2rem',
@@ -65,7 +65,7 @@ export const CardStyle = styled(Box, {
 })(({ theme, isSelected }) => ({
   background: isSelected
     ? accentGrey[30] // color when tab is selected
-    : theme.palette.mode === 'dark' 
+    : theme.palette.mode === 'dark'
       ? accentGrey[10] // color for inactive tabs
       : accentGrey[20],
   color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
