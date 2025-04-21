@@ -19,7 +19,6 @@ import {
   RadioGroup,
   MenuItem,
   Radio,
-  Link,
 } from '@layer5/sistent';
 import {
   StyledSummaryBox,

@@ -32,8 +32,4 @@ export const StyledColorBox = styled(Box)(({ color }) => ({
 
 export const StyledLinkRedirect = styled(Link)(({ theme }) => ({
   color: theme.palette.background.brand.default,
-  textDecoration: 'none',
-  '&:hover': {
-    textDecoration: 'underline',
-  },
 }));
