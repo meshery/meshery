@@ -1,0 +1,142 @@
+import React, { useEffect, useState } from 'react';
+import {
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  styled,
+  MenuItem,
+  Modal,
+  WorkspaceIcon,
+  ModalBody,
+} from '@layer5/sistent';
+import { WorkspacesComponent } from '../../components/Lifecycle';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { NoSsr } from '@layer5/sistent';
+import { useLegacySelector } from '../../lib/store';
+import { StyledSelect } from './SpaceSwitcher';
+
+import _ from 'lodash';
+import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
+import { iconMedium } from 'css/icons.styles';
+
+export const HoverMenuItem = styled(MenuItem)(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: '1rem',
+  '& .setting-icon': {
+    visibility: 'hidden',
+  },
+  '&:hover .setting-icon': {
+    visibility: 'visible',
+  },
+}));
+
+function WorkspaceSwitcher({ open }) {
+  const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
+  const [workspaceModal, setWorkspaceModal] = useState(false);
+  const orgId = useLegacySelector((state) => state.get('organization'))?.id;
+  const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
+    {
+      page: 0,
+      pagesize: 'all',
+      search: '',
+      order: '',
+      orgId: orgId,
+    },
+    {
+      skip: !orgId ? true : false,
+    },
+  );
+  useEffect(() => {
+    if (workspacesData && workspacesData.workspaces.length > 0) {
+      const defaultWorkspace = workspacesData.workspaces[0];
+      setDefaultWorkspace(defaultWorkspace);
+    }
+  }, [workspacesData]);
+
+  const handleChangeWorkspace = (e) => {
+    if (!workspacesData || !workspacesData.workspaces) return;
+
+    const selectedWorkspace = workspacesData.workspaces.find(
+      (workspace) => workspace.id === e.target.value,
+    );
+    setDefaultWorkspace(selectedWorkspace);
+    setWorkspaceModal(true);
+  };
+  return (
+    <NoSsr>
+      {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
+        <div
+          style={{
+            width: open ? 'auto' : 0,
+            overflow: open ? '' : 'hidden',
+            transition: 'all 1s',
+          }}
+        >
+          <FormControl component="fieldset">
+            <FormGroup>
+              <FormControlLabel
+                key="SpacesPreferences"
+                control={
+                  <Grid container spacing={1} alignItems="flex-end">
+                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                      <StyledSelect
+                        size="small"
+                        value={_defaultWorkspace?.id || ''}
+                        onChange={handleChangeWorkspace}
+                        renderValue={(selected) => {
+                          if (!selected || !workspacesData?.workspaces) return '';
+
+                          const workspace = workspacesData.workspaces.find(
+                            (w) => w.id === selected,
+                          );
+                          return workspace ? <span>{workspace.name}</span> : '';
+                        }}
+                        SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
+                        MenuProps={{
+                          anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'left',
+                          },
+                          transformOrigin: {
+                            vertical: 'top',
+                            horizontal: 'left',
+                          },
+                          getContentAnchorEl: null,
+                        }}
+                      >
+                        {workspacesData?.workspaces?.map((works) => (
+                          <HoverMenuItem key={works.id} value={works.id}>
+                            <span>{works.name}</span>
+                            <span className="setting-icon">
+                              <SettingsIcon {...iconMedium} />
+                            </span>
+                          </HoverMenuItem>
+                        ))}
+                      </StyledSelect>
+                    </Grid>
+                  </Grid>
+                }
+              />
+            </FormGroup>
+          </FormControl>
+        </div>
+      )}
+      <Modal
+        closeModal={() => setWorkspaceModal(false)}
+        open={workspaceModal}
+        maxWidth="xl"
+        headerIcon={<WorkspaceIcon {...iconMedium} />}
+        title="Workspaces"
+      >
+        <ModalBody>
+          <WorkspacesComponent />
+        </ModalBody>
+      </Modal>
+    </NoSsr>
+  );
+}
+
+export default WorkspaceSwitcher;
