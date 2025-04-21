@@ -26,7 +26,9 @@ list: include
 ### What is the Notification Center?
 
 The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
-> Want to understand how users interact with the Notification Center? [Learn more here]({{ site.baseurl }}/guides/infrastructure-management/notification-management/user-intent).
+
+> Want to understand how users interact with the Notification Center? [Learn more here](https://docs.meshery.io/guides/infrastructure-management/notification-management).
+
 ---
 
 The `NotificationCenter` component of Meshery UI Switching to Graphql subscriptions and implementing robust filtering. Events are persisted in Meshery Server and state management on client is done using Redux Toolkit and RTK.
