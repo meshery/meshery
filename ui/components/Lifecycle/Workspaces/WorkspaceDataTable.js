@@ -25,9 +25,10 @@ import {
   useWindowDimensions,
   WorkspaceEnvironmentSelection,
   WorkspaceIcon,
+  Slide,
 } from '@layer5/sistent';
 import { GroupAdd } from '@mui/icons-material';
-import HistoryIcon from '@mui/icons-material/History';
+import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import { useLegacySelector } from 'lib/store';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -45,6 +46,7 @@ const WorkspaceDataTable = ({
   selectedWorkspace,
   handleRowClick,
   setColumnVisibility,
+  search,
 }) => {
   let colViews = [
     ['id', 'na'],
@@ -61,7 +63,6 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const [search, setSearch] = useState('');
   const org_id = useLegacySelector((state) => state.get('organization'))?.id;
   const router = useRouter();
   const viewType = router.query.view === 'table' ? 'table' : 'grid';
@@ -266,7 +267,7 @@ const WorkspaceDataTable = ({
                         <IconButton
                           onClick={(e) => handleActivityModalOpen(e, workspaceId, workspaceName)}
                         >
-                          <HistoryIcon
+                          <AccessTimeFilledIcon
                             style={{ color: theme.palette.icon.default, ...iconMedium }}
                           />
                         </IconButton>
@@ -359,9 +360,7 @@ const WorkspaceDataTable = ({
         case 'changeRowsPerPage':
           setPageSize(tableState.rowsPerPage);
           break;
-        case 'search':
-          setSearch(tableState.searchText !== null ? tableState.searchText : '');
-          break;
+
         case 'sort':
           if (sortInfo.length == 2) {
             if (sortInfo[1] === 'ascending') {
@@ -389,34 +388,41 @@ const WorkspaceDataTable = ({
 
   return (
     <div key={`list-view-${viewType}`}>
-      {selectedWorkspace.id ? (
+      <Slide direction="left" in={selectedWorkspace.id ? true : false}>
+        {
+          <div
+            style={{
+              marginTop: '1rem',
+              backgroundColor: theme.palette.background.paper,
+            }}
+          >
+            {selectedWorkspace?.id && (
+              <WorkSpaceContentDataTable
+                workspaceId={selectedWorkspace?.id}
+                workspaceName={selectedWorkspace?.name}
+              />
+            )}
+          </div>
+        }
+      </Slide>
+      <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
         <div
           style={{
             marginTop: '1rem',
-            backgroundColor: theme.palette.background.paper,
           }}
         >
-          <WorkSpaceContentDataTable
-            workspaceId={selectedWorkspace?.id}
-            workspaceName={selectedWorkspace?.name}
-          />
+          {!selectedWorkspace?.id && (
+            <ResponsiveDataTable
+              columns={columns}
+              data={workspacesData}
+              options={options}
+              columnVisibility={columnVisibility}
+              tableCols={tableCols}
+              updateCols={updateCols}
+            />
+          )}
         </div>
-      ) : (
-        <div
-          style={{
-            marginTop: '1rem',
-          }}
-        >
-          <ResponsiveDataTable
-            columns={columns}
-            data={workspacesData}
-            options={options}
-            columnVisibility={columnVisibility}
-            tableCols={tableCols}
-            updateCols={updateCols}
-          />
-        </div>
-      )}
+      </Slide>
     </div>
   );
 };
