@@ -1590,8 +1590,8 @@ github.com/layer5io/gowrk2 v0.6.1/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg
 github.com/layer5io/meshery-operator v0.8.3 h1:HCXFif715iHdUpmTSInAqpsd+gaSFazn8M93Z1aDc+I=
 github.com/layer5io/meshery-operator v0.8.3/go.mod h1:Wi9ODHppoq8ODtzdfiplWYJXYpqsHOJfkJyTMQeNXk4=
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
-github.com/layer5io/meshkit v0.8.24 h1:1GKIFO3wxhmMs60v/gioXE7qu9npalqTtRjSjhRCVQg=
-github.com/layer5io/meshkit v0.8.24/go.mod h1:+YvXy5w9MFMz8y9+D+qHX4oFqLY0PEFDrJp5AaV94zo=
+github.com/layer5io/meshkit v0.8.25 h1:/ysa84l/5zxLX6mZK/j5fZNYta4P+NhU1H0bfwMn47g=
+github.com/layer5io/meshkit v0.8.25/go.mod h1:9Hi0Wo48lm2PRgdqDvTmUJ16m16GEPpRk82BwHvjQcE=
 github.com/layer5io/meshsync v0.8.6 h1:rioO1LH2Ue/ZsYmszSe9DOOr2BDr6vnDraX4QIPDPLA=
 github.com/layer5io/meshsync v0.8.6/go.mod h1:FsAfvQ+9HOjbOeAutrzoHDzAohmmnWpcaDEE0ygfGyg=
 github.com/layer5io/nighthawk-go v1.0.3 h1:AGhip7TM8FjaDJ58jU/7BoPx+O45S7UNImfw7vC2Z0U=
@@ -1660,8 +1660,8 @@ github.com/mattn/go-sqlite3 v1.14.24/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxU
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX48g9wI=
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
-github.com/meshery/schemas v0.8.13 h1:MRb4nLe0ZM/BLKLm7Im+Kps0UXcya6vsQOiWD7lIuQo=
-github.com/meshery/schemas v0.8.13/go.mod h1:qEpf8LaRSsj6/C8iOnvFWfIwhP/H7J4V08Q0tmsB6XQ=
+github.com/meshery/schemas v0.8.14 h1:4f7NGVQcpZEK6e5JvKvbo5WkDchVh+MFsNyf3LvbtzQ=
+github.com/meshery/schemas v0.8.14/go.mod h1:oJnVQASN/0K2y7wJ2rc1odcDb/g3AGRyGzfKqsPHuqg=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
