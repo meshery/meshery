@@ -51,7 +51,7 @@ See [Importing Designs]({{site.baseurl}}/extensions/import-export-designs) for m
 <p>Deployment Mechanism by Source:</p>
 
 <ul>
-  <li><b>ArtifactHub:</b> Uses Helm Go client for CRD/operator deployment via <code>ApplyHelmChart()</code>.</li>
+  <li><b>Artifact Hub:</b> Uses Helm Go client for Kubernetes Operator and CRD deployment via <code>ApplyHelmChart()</code>.</li>
   <li><b>Kubernetes YAML:</b> Direct application with Kubernetes Go client (no auto-dependency handling).</li>
 </ul>
 
