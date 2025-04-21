@@ -39,9 +39,9 @@ th, td {
     cursor: pointer;
     background-color: #444;
     color: white;
-    font-weight: bold;
+    font-weight: normal;
     text-align: center;
-    font-size: 18px;
+    font-size: 1rem;
 }
 
 .accordion-header:hover {
