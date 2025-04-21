@@ -6,7 +6,17 @@ import {
   useUnassignDesignFromWorkspaceMutation,
   useUnassignViewFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import { DesignTable, ErrorBoundary, Grid, useTheme, WorkspaceViewsTable } from '@layer5/sistent';
+import {
+  Box,
+  DesignIcon,
+  DesignTable,
+  ErrorBoundary,
+  Tab,
+  Tabs,
+  useTheme,
+  ViewIcon,
+  WorkspaceViewsTable,
+} from '@layer5/sistent';
 import { useState } from 'react';
 import { useDeletePattern, usePublishPattern } from './hooks';
 import CAN from '@/utils/can';
@@ -18,18 +28,24 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import ExportModal from '@/components/ExportModal';
 import { EVENT_TYPES } from '@/utils/Enum';
 import downloadContent from '@/utils/fileDownloader';
+import { iconMedium } from 'css/icons.styles';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [designSearch, setDesignSearch] = useState('');
   const { notify } = useNotification();
 
-  const { data: designsOfWorkspace, refetch: refetchPatternData } = useGetDesignsOfWorkspaceQuery({
-    workspaceId: workspaceId,
-    page: 0,
-    pageSize: 10,
-    expandUser: true,
-    search: designSearch,
-  });
+  const { data: designsOfWorkspace, refetch: refetchPatternData } = useGetDesignsOfWorkspaceQuery(
+    {
+      workspaceId: workspaceId,
+      page: 0,
+      pageSize: 10,
+      expandUser: true,
+      search: designSearch,
+    },
+    {
+      skip: !workspaceId,
+    },
+  );
 
   const handleCopyUrl = (type, designName, designId) => {
     notify({
@@ -84,25 +100,61 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
       console.error(e);
     }
   };
+
   const theme = useTheme();
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
+
+  function CustomTabPanel(props) {
+    const { children, value, index, ...other } = props;
+
+    return (
+      <div hidden={value !== index} {...other}>
+        {value === index && <>{children}</>}
+      </div>
+    );
+  }
+
+  const [value, setValue] = useState(() => {
+    if (isDesignsVisible) return 0;
+    if (isViewVisible) return 1;
+    return 0;
+  });
+
+  const handleChange = (event, newValue) => {
+    event.stopPropagation();
+    setValue(newValue);
+  };
+
+  const shouldRenderTabs = isDesignsVisible && isViewVisible;
+
   return (
     <ErrorBoundary>
-      <Grid
-        container
-        xs={12}
-        spacing={1}
-        sx={{
-          margin: 'auto',
-          width: 'inherit',
-          display: 'flex',
-          backgroundColor: theme.palette.background.elevatedComponents,
-          flexDirection: 'column',
-          gap: '1rem',
-        }}
-      >
-        {isDesignsVisible && (
+      {shouldRenderTabs && (
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Tabs value={value} onChange={handleChange}>
+            {isDesignsVisible && (
+              <Tab
+                label="Design"
+                style={{ width: '50%', maxWidth: '50%', gap: '0.5rem' }}
+                icon={<DesignIcon />}
+                iconPosition="start"
+              />
+            )}
+            {isViewVisible && (
+              <Tab
+                label="Views"
+                style={{ width: '50%', maxWidth: '50%', gap: '0.5rem' }}
+                icon={<ViewIcon {...iconMedium} fill={theme.palette.icon.brand} />}
+                iconPosition="start"
+              />
+            )}
+          </Tabs>
+        </Box>
+      )}
+
+      {isDesignsVisible && (
+        <CustomTabPanel value={value} index={0}>
           <DesignTable
             GenericRJSFModal={Modal}
             designsOfWorkspace={designsOfWorkspace}
@@ -134,8 +186,11 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             handlePublish={handlePublish}
             setDesignSearch={setDesignSearch}
           />
-        )}
-        {isViewVisible && (
+        </CustomTabPanel>
+      )}
+
+      {isViewVisible && (
+        <CustomTabPanel value={value} index={1}>
           <WorkspaceViewsTable
             isAssignAllowed={CAN(
               keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
@@ -152,8 +207,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             workspaceId={workspaceId}
             workspaceName={workspaceName}
           />
-        )}
-      </Grid>
+        </CustomTabPanel>
+      )}
+
       <ExportModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadDialogClose}

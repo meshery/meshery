@@ -256,7 +256,7 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
           value.map((option, index) => (
             <Chip
               {...getTagProps({ index })}
-              key={option.type}
+              key={`${option.type}-${option.value}-${index}`}
               label={`${filterSchema[option.type].value}: ${option.value}`}
               style={{ margin: '0.15rem', maxWidth: '80%', height: 'auto' }}
               size="small"
