@@ -45,14 +45,15 @@
     "model": {
       "version": "0.0.5"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,15 +174,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "flagger.app/v1beta1",
     "kind": "AlertProvider",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"oneOf\": [\n    {\n     \"required\": [\n      \"type\",\n      \"address\"\n     ]\n    },\n    {\n     \"required\": [\n      \"type\",\n      \"secretRef\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"address\": {\n     \"description\": \"Hook URL address of this provider\",\n     \"type\": \"string\"\n    },\n    \"secretRef\": {\n     \"description\": \"Kubernetes secret reference containing the provider address\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the Kubernetes secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"Type of this provider\",\n     \"enum\": [\n      \"slack\",\n      \"msteams\",\n      \"discord\",\n      \"rocket\"\n     ],\n     \"type\": \"string\"\n    }\n   }\n  }\n },\n \"title\": \"Alert Provider\"\n}",
-    "version": "flagger.app/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"oneOf\": [\n    {\n     \"required\": [\n      \"type\",\n      \"address\"\n     ]\n    },\n    {\n     \"required\": [\n      \"type\",\n      \"secretRef\"\n     ]\n    }\n   ],\n   \"properties\": {\n    \"address\": {\n     \"description\": \"Hook URL address of this provider\",\n     \"type\": \"string\"\n    },\n    \"secretRef\": {\n     \"description\": \"Kubernetes secret reference containing the provider address\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the Kubernetes secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"Type of this provider\",\n     \"enum\": [\n      \"slack\",\n      \"msteams\",\n      \"discord\",\n      \"rocket\"\n     ],\n     \"type\": \"string\"\n    }\n   }\n  }\n },\n \"title\": \"Alert Provider\"\n}"
   }
 }

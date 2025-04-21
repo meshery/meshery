@@ -45,14 +45,15 @@
     "model": {
       "version": "1.1.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false,
@@ -181,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "cluster.kubesphere.io/v1alpha1",
     "kind": "Label",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"backgroundColor\": {\n     \"type\": \"string\"\n    },\n    \"clusters\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"key\": {\n     \"type\": \"string\"\n    },\n    \"value\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"key\",\n    \"value\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Label\",\n \"type\": \"object\"\n}",
-    "version": "cluster.kubesphere.io/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"backgroundColor\": {\n     \"type\": \"string\"\n    },\n    \"clusters\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"key\": {\n     \"type\": \"string\"\n    },\n    \"value\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"key\",\n    \"value\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Label\",\n \"type\": \"object\"\n}"
   }
 }

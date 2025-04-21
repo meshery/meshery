@@ -36,13 +36,15 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": ""
     },
+    "subCategory": "",
+    "metadata": null,
     "model": {
       "version": "v1.32.0-alpha.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -78,13 +80,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": {
               "patchStrategy": "replace",
@@ -98,14 +102,14 @@
                   "configuration",
                   "spec",
                   "ports",
-                  "_",
+                  "0",
                   "port"
                 ],
                 [
                   "configuration",
                   "spec",
                   "ports",
-                  "_",
+                  "0",
                   "protocol"
                 ]
               ]
@@ -142,13 +146,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": {
               "patchStrategy": "replace",
@@ -164,7 +170,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "0",
                   "containerPort"
@@ -175,7 +181,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "0",
                   "protocol"
@@ -216,13 +222,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": null
           }
@@ -257,13 +265,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": null
           },
@@ -296,13 +306,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": null
           }

@@ -47,14 +47,15 @@
     "model": {
       "version": "12.2.7"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "configuration.konghq.com/v1beta1",
     "kind": "KongConsumerGroup",
-    "schema": "{\n \"description\": \"KongConsumerGroup is the Schema for the kongconsumergroups API.\",\n \"properties\": {},\n \"title\": \"Kong Consumer Group\",\n \"type\": \"object\"\n}",
-    "version": "configuration.konghq.com/v1beta1"
+    "schema": "{\n \"description\": \"KongConsumerGroup is the Schema for the kongconsumergroups API.\",\n \"properties\": {},\n \"title\": \"Kong Consumer Group\",\n \"type\": \"object\"\n}"
   }
 }

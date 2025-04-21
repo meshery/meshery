@@ -45,16 +45,17 @@
     "model": {
       "version": "1.0.11"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "traefik.containo.us/v1alpha1",
     "kind": "MiddlewareTCP",
-    "schema": "{\n \"description\": \"MiddlewareTCP is the CRD implementation of a Traefik TCP middleware. More info: https://doc.traefik.io/traefik/v2.10/middlewares/overview/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec defines the desired state of a MiddlewareTCP.\",\n   \"properties\": {\n    \"inFlightConn\": {\n     \"description\": \"InFlightConn defines the InFlightConn middleware configuration.\",\n     \"properties\": {\n      \"amount\": {\n       \"description\": \"Amount defines the maximum amount of allowed simultaneous connections. The middleware closes the connection if there are already amount connections opened.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ipWhiteList\": {\n     \"description\": \"IPWhiteList defines the IPWhiteList middleware configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"description\": \"SourceRange defines the allowed IPs (or ranges of allowed IPs by using CIDR notation).\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}",
-    "version": "traefik.containo.us/v1alpha1"
+    "schema": "{\n \"description\": \"MiddlewareTCP is the CRD implementation of a Traefik TCP middleware. More info: https://doc.traefik.io/traefik/v2.10/middlewares/overview/\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MiddlewareTCPSpec defines the desired state of a MiddlewareTCP.\",\n   \"properties\": {\n    \"inFlightConn\": {\n     \"description\": \"InFlightConn defines the InFlightConn middleware configuration.\",\n     \"properties\": {\n      \"amount\": {\n       \"description\": \"Amount defines the maximum amount of allowed simultaneous connections. The middleware closes the connection if there are already amount connections opened.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ipWhiteList\": {\n     \"description\": \"IPWhiteList defines the IPWhiteList middleware configuration.\",\n     \"properties\": {\n      \"sourceRange\": {\n       \"description\": \"SourceRange defines the allowed IPs (or ranges of allowed IPs by using CIDR notation).\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Middleware TCP\",\n \"type\": \"object\"\n}"
   }
 }

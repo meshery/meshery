@@ -45,16 +45,17 @@
     "model": {
       "version": "7.2.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "velero.io/v1",
     "kind": "DeleteBackupRequest",
-    "schema": "{\n \"description\": \"DeleteBackupRequest is a request to delete one or more backups.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DeleteBackupRequestSpec is the specification for which backups to delete.\",\n   \"properties\": {\n    \"backupName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Delete Backup Request\",\n \"type\": \"object\"\n}",
-    "version": "velero.io/v1"
+    "schema": "{\n \"description\": \"DeleteBackupRequest is a request to delete one or more backups.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DeleteBackupRequestSpec is the specification for which backups to delete.\",\n   \"properties\": {\n    \"backupName\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backupName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Delete Backup Request\",\n \"type\": \"object\"\n}"
   }
 }

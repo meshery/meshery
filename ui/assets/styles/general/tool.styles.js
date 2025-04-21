@@ -1,4 +1,4 @@
-import { styled, Box, tabMenu } from '@layer5/sistent';
+import { styled, Box, accentGrey } from '@layer5/sistent';
 
 export const ToolWrapper = styled(Box)(({ theme }) => ({
   marginBottom: '2rem',
@@ -28,8 +28,8 @@ export const MeshModelToolbar = styled(Box)(({ theme }) => ({
 }));
 
 export const MainContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.card,
-  borderRadius: '0.5rem',
+  backgroundColor: 'inherit',
+  borderRadius: '0.25rem',
   height: '68vh',
   display: 'flex',
   position: 'relative',
@@ -41,19 +41,17 @@ export const MainContainer = styled(Box)(({ theme }) => ({
 export const InnerContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
-  position: 'absolute',
-  gap: '1rem',
-  alignItems: 'center',
+  gap: '0rem',
+  alignItems: 'flex-start',
   justifyContent: 'center',
   width: '100%',
   top: '0%',
   paddingX: '2rem',
   transform: 'translate(0%, 0%)',
   left: '0%',
-  borderTopLeftRadius: '0.5rem',
-  borderTopRightRadius: '0.5rem',
+  borderRadius: '0.25rem',
   overflow: 'scroll',
-  backgroundColor: theme.palette.background.tabs,
+  backgroundColor: 'inherit',
   [theme.breakpoints.down('sm')]: {
     flexDirection: 'row',
     paddingLeft: '1rem',
@@ -65,7 +63,11 @@ export const InnerContainer = styled(Box)(({ theme }) => ({
 export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isSelected',
 })(({ theme, isSelected }) => ({
-  background: isSelected ? tabMenu.hover : theme.palette.background.card,
+  background: isSelected
+    ? accentGrey[30] // color when tab is selected
+    : theme.palette.mode === 'dark'
+      ? accentGrey[10] // color for inactive tabs
+      : accentGrey[20],
   color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
   height: '3rem',
   width: '15rem',
@@ -78,6 +80,14 @@ export const CardStyle = styled(Box, {
   cursor: 'pointer',
   borderRadius: '8px 8px 0px 0px',
   marginTop: '0.7rem',
+  transition: 'background-color 0.2s ease-in-out',
+  '&:hover': {
+    background: isSelected
+      ? accentGrey[30]
+      : theme.palette.mode === 'dark'
+        ? theme.palette.background.hover
+        : theme.palette.background.inverseHover,
+  },
   [theme.breakpoints.down('md')]: {
     width: '8.5rem',
   },
@@ -127,7 +137,7 @@ export const TreeContainer = styled(Box)(({ theme }) => ({
 }));
 
 export const TreeWrapper = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.card,
+  backgroundColor: accentGrey[30],
   display: 'flex',
   gap: '1rem',
   padding: '1rem',

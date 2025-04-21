@@ -1,0 +1,20 @@
+{
+    "page": 0,
+    "page_size": 1,
+    "total_count": 1,
+    "environments": [
+        {
+            "id": "303ed294-1e3a-4d7f-acf8-dbc8ba4b765e",
+            "name": "test-environment",
+            "description": "integration test",
+            "owner": "test",
+            "organization_id": "3f8319e0-33a9-4736-b248-12nm3kiuh3yu",
+            "created_at":"2025-03-23T02:34:18.001826Z",
+            "updated_at":"2025-03-23T02:34:18.001828Z",
+            "deleted_at": {
+                "Time":"0001-01-01T00:00:00Z",
+                "Valid":false
+            }
+        }
+    ]
+}

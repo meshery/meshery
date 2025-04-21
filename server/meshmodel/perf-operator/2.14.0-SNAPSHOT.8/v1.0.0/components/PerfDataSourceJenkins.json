@@ -47,16 +47,17 @@
     "model": {
       "version": "2.14.0-SNAPSHOT.8"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -177,15 +178,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "v2.edp.epam.com/v1",
     "kind": "PerfDataSourceJenkins",
-    "schema": "{\n \"description\": \"PerfDataSourceJenkins is the Schema for the PerfDataSourceJenkinses API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PerfDataSourceJenkinsSpec defines the desired state of PerfDataSource.\",\n   \"properties\": {\n    \"codebaseName\": {\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"properties\": {\n      \"jobNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"jobNames\",\n      \"url\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"perfServerName\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"codebaseName\",\n    \"config\",\n    \"name\",\n    \"perfServerName\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Perf Data Source Jenkins\",\n \"type\": \"object\"\n}",
-    "version": "v2.edp.epam.com/v1"
+    "schema": "{\n \"description\": \"PerfDataSourceJenkins is the Schema for the PerfDataSourceJenkinses API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PerfDataSourceJenkinsSpec defines the desired state of PerfDataSource.\",\n   \"properties\": {\n    \"codebaseName\": {\n     \"type\": \"string\"\n    },\n    \"config\": {\n     \"properties\": {\n      \"jobNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"url\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"jobNames\",\n      \"url\"\n     ],\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"perfServerName\": {\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"codebaseName\",\n    \"config\",\n    \"name\",\n    \"perfServerName\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Perf Data Source Jenkins\",\n \"type\": \"object\"\n}"
   }
 }

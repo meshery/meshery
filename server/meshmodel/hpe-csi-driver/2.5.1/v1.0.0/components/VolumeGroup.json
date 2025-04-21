@@ -45,16 +45,17 @@
     "model": {
       "version": "2.5.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "storage.hpe.com/v1",
     "kind": "VolumeGroup",
-    "schema": "{\n \"description\": \"VolumeGroup is a user's request for creating a volumegroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a volumeGroup requested by a user. Required.\",\n   \"properties\": {\n    \"persistentVolumeClaimNames\": {\n     \"description\": \"persistentVolumeClaimNames are the name of the PVC associated with this volumeGroup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"volumeGroupClassName\": {\n     \"description\": \"name of the volumeGroupClassName to create volumeGroups\",\n     \"type\": \"string\"\n    },\n    \"volumeGroupContentName\": {\n     \"description\": \"volumeGroupContentName is the name of the volumeGroupContent to which the volumeGroup is bound.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"volumeGroupClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Volume Group\",\n \"type\": \"object\"\n}",
-    "version": "storage.hpe.com/v1"
+    "schema": "{\n \"description\": \"VolumeGroup is a user's request for creating a volumegroup\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"spec defines the desired characteristics of a volumeGroup requested by a user. Required.\",\n   \"properties\": {\n    \"persistentVolumeClaimNames\": {\n     \"description\": \"persistentVolumeClaimNames are the name of the PVC associated with this volumeGroup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"volumeGroupClassName\": {\n     \"description\": \"name of the volumeGroupClassName to create volumeGroups\",\n     \"type\": \"string\"\n    },\n    \"volumeGroupContentName\": {\n     \"description\": \"volumeGroupContentName is the name of the volumeGroupContent to which the volumeGroup is bound.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"volumeGroupClassName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Volume Group\",\n \"type\": \"object\"\n}"
   }
 }

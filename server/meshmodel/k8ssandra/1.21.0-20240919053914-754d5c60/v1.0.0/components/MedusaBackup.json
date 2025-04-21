@@ -45,14 +45,15 @@
     "model": {
       "version": "1.21.0-20240919053914-754d5c60"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -181,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "medusa.k8ssandra.io/v1alpha1",
     "kind": "MedusaBackup",
-    "schema": "{\n \"description\": \"MedusaBackup is the Schema for the medusabackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaBackupSpec defines the desired state of MedusaBackup\",\n   \"properties\": {\n    \"backupType\": {\n     \"default\": \"differential\",\n     \"description\": \"The type of the backup: \\\"full\\\" or \\\"differential\\\"\",\n     \"enum\": [\n      \"differential\",\n      \"full\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"The name of the CassandraDatacenter to back up\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Backup\",\n \"type\": \"object\"\n}",
-    "version": "medusa.k8ssandra.io/v1alpha1"
+    "schema": "{\n \"description\": \"MedusaBackup is the Schema for the medusabackups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaBackupSpec defines the desired state of MedusaBackup\",\n   \"properties\": {\n    \"backupType\": {\n     \"default\": \"differential\",\n     \"description\": \"The type of the backup: \\\"full\\\" or \\\"differential\\\"\",\n     \"enum\": [\n      \"differential\",\n      \"full\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cassandraDatacenter\": {\n     \"description\": \"The name of the CassandraDatacenter to back up\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cassandraDatacenter\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Backup\",\n \"type\": \"object\"\n}"
   }
 }

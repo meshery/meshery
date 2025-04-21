@@ -35,9 +35,9 @@ import (
 	"github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/catalog"
-	modelsCore "github.com/meshery/schemas/models/core"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -188,7 +188,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 	provider models.Provider,
 ) error {
 	// Only proceed if we need to convert a non-design pattern that doesn't have a pattern file yet
-	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != modelsCore.IacFileTypes.MESHERY_DESIGN && mesheryPattern.PatternFile == "" {
+	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != string(coreV1.MesheryDesign) && mesheryPattern.PatternFile == "" {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 		sourceContent := mesheryPattern.SourceContent

@@ -44,10 +44,10 @@
     "model": {
       "version": "1.0.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "background-opacity": 0,
@@ -117,15 +117,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": true,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "core.meshery.io/v1alpha1",
     "kind": "AWS Managed Services",
-    "schema": "",
-    "version": "core.meshery.io/v1alpha1"
+    "schema": ""
   }
 }

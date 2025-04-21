@@ -45,16 +45,17 @@
     "model": {
       "version": "2024.12.18"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "openviz.dev/v1alpha1",
     "kind": "GrafanaDashboard",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"folderID\": {\n     \"description\": \"FolderID defines the Grafana folderID\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"grafanaRef\": {\n     \"description\": \"GrafanaRef defines the grafana app binding name for the GrafanaDashboard\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"model\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"overwrite\": {\n     \"description\": \"Overwrite defines the existing grafanadashboard with the same name(if any) should be overwritten or not\",\n     \"type\": \"boolean\"\n    },\n    \"templatize\": {\n     \"description\": \"Templatize defines the fields which supports templating in GrafanaDashboard Model json\",\n     \"properties\": {\n      \"datasource\": {\n       \"type\": \"boolean\"\n      },\n      \"title\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}",
-    "version": "openviz.dev/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"folderID\": {\n     \"description\": \"FolderID defines the Grafana folderID\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"grafanaRef\": {\n     \"description\": \"GrafanaRef defines the grafana app binding name for the GrafanaDashboard\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"model\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"overwrite\": {\n     \"description\": \"Overwrite defines the existing grafanadashboard with the same name(if any) should be overwritten or not\",\n     \"type\": \"boolean\"\n    },\n    \"templatize\": {\n     \"description\": \"Templatize defines the fields which supports templating in GrafanaDashboard Model json\",\n     \"properties\": {\n      \"datasource\": {\n       \"type\": \"boolean\"\n      },\n      \"title\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Grafana Dashboard\",\n \"type\": \"object\"\n}"
   }
 }
