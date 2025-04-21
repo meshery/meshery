@@ -19,6 +19,10 @@ setup() {
   assert_success
 
   assert_output --partial "accurate"
+  assert_output --partial "MODEL"
+  assert_output --partial "CATEGORY"
+  assert_output --partial "VERSION"
+  
 }
 
 @test "mesheryctl model search for non-existing model" {
