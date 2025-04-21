@@ -395,4 +395,3 @@ Use **PropertyFormatters** and **PropertyLinkFormatters** in the following scena
 
 ---
 
-### How to Add a New EventType Formatter(?)
