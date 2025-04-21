@@ -455,11 +455,34 @@ const ConnectionTable = ({
       });
   };
 
+  const getSubtitle = (status) => {
+    switch (status) {
+      case 'DISCONNECTED':
+        return 'Are you sure you want to disconnect this Kubernetes cluster? Disconnecting will uninstall the Meshery Operator from the cluster and may impact active Meshery workloads.';
+      case 'IGNORED':
+        return 'Are you sure you want to mark this connection as IGNORED? This action will exclude the connection from Meshery’s management. It will not be re-discovered or managed again, even after the current user session expires.';
+      case 'NOT FOUND':
+        return 'Are you sure you want to mark this connection as NOT FOUND? This indicates that Meshery couldn’t establish a connection—either during manual registration or because the connection is currently unavailable. You may consider deleting or re-registering the connectionUser tried registering the connection manually but Meshery could not connect to it or if the connection is unavailable now. User can delete the connection or try re-registering.';
+      case 'DELETED':
+        return 'Are you sure you want to delete this connection? This will permanently remove the connection from Meshery’s management view. All associated and previously collected data will also be deleted and cannot be recovered.';
+      case 'REGISTERED':
+        return 'Are you sure you want to mark this connection as Registered? This means the connection has been verified for reachability but is not yet in active use. It will now await further administrative action, such as being connected, put under maintenance, or marked as not found.';
+      case 'DISCOVERED':
+        return 'Are you sure you want to mark this connection as Discovered? This indicates that the connection was identified by MeshSync’s discovery process or configuration input, but its usability and reachability haven’t been verified yet. It will now appear in the Meshery UI for further action like registration or ignoring.';
+      case 'CONNECTED':
+        return 'Are you sure you want to mark this connection as Connected? Meshery will begin actively managing this connection. It may auto-transition to Disconnected if communication is lost.';
+      default:
+        return `Are you sure that you want to transition the connection status to ${status}?`;
+    }
+  };
+
   const handleStatusChange = async (e, connectionId, connectionKind) => {
     e.stopPropagation();
+    const status = e.target.value.toUpperCase();
+    let subtitle = getSubtitle(status);
     let response = await modalRef.current.show({
       title: `Connection Status Transition`,
-      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
+      subtitle,
       primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.WARNING,
