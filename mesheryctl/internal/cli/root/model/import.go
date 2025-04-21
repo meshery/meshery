@@ -34,12 +34,12 @@ var importModelCmd = &cobra.Command{
 	Short: "Import models from mesheryctl command",
 	Long:  "Import models by specifying the directory, file, URL or CSVs. You can also provide a template JSON file and registrant name.",
 	Example: `
-	mesehryctl model import -f [ URI ]
+	mesheryctl model import -f [ URI ]
  
-	mesehryctl model import -f URL 
-	mesehryctl model import -f OCI 
-	mesehryctl model import -f model.tar.gz 
-	mesehryctl model import -f /path/to/models
+	mesheryctl model import -f URL 
+	mesheryctl model import -f OCI 
+	mesheryctl model import -f model.tar.gz 
+	mesheryctl model import -f /path/to/models
 	mesheryctl model import -f /path/to/csv-directory
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
@@ -156,7 +156,7 @@ func hasCSVs(path string) (bool, error) {
 	}
 
 	for _, f := range files {
-		if !f.IsDir() && filepath.Ext(f.Name()) == ".csv" {
+		if !f.IsDir() && strings.EqualFold(filepath.Ext(f.Name()), ".csv") {
 			return true, nil
 		}
 	}
