@@ -470,7 +470,7 @@ const ConnectionTable = ({
       case 'DISCOVERED':
         return 'Are you sure you want to mark this connection as Discovered? This indicates that the connection was identified by MeshSync’s discovery process or configuration input, but its usability and reachability haven’t been verified yet. It will now appear in the Meshery UI for further action like registration or ignoring.';
       case 'CONNECTED':
-        return 'Are you sure you want to mark this connection as Connected? Meshery will begin actively managing this connection. It may auto-transition to Disconnected if communication is lost.';
+        return 'Meshery will begin actively managing this connection. It may auto-transition to Disconnected if communication is lost.';
       default:
         return `Are you sure that you want to transition the connection status to ${status}?`;
     }
@@ -481,7 +481,7 @@ const ConnectionTable = ({
     const status = e.target.value.toUpperCase();
     let subtitle = getSubtitle(status);
     let response = await modalRef.current.show({
-      title: `Connection Status Transition`,
+      title: `Transition connection to ${status}?`,
       subtitle,
       primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
