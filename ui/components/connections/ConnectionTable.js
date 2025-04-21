@@ -462,13 +462,13 @@ const ConnectionTable = ({
       case 'IGNORED':
         return 'Are you sure you want to mark this connection as IGNORED? This action will exclude the connection from Meshery’s management. It will not be re-discovered or managed again, even after the current user session expires.';
       case 'NOT FOUND':
-        return 'Are you sure you want to mark this connection as NOT FOUND? This indicates that Meshery couldn’t establish a connection—either during manual registration or because the connection is currently unavailable. You may consider deleting or re-registering the connectionUser tried registering the connection manually but Meshery could not connect to it or if the connection is unavailable now. User can delete the connection or try re-registering.';
+        return 'Are you sure you want to mark this connection as NOT FOUND? This will indicate that Meshery couldn’t establish a connection during registration or the connection is unavailable. As a result, the connection will no longer be managed by Meshery. You can either delete the connection or attempt to re-register it.';
       case 'DELETED':
         return 'Are you sure you want to delete this connection? This will permanently remove the connection from Meshery’s management view. All associated and previously collected data will also be deleted and cannot be recovered.';
       case 'REGISTERED':
         return 'Are you sure you want to mark this connection as Registered? This means the connection has been verified for reachability but is not yet in active use. It will now await further administrative action, such as being connected, put under maintenance, or marked as not found.';
       case 'DISCOVERED':
-        return 'Are you sure you want to mark this connection as Discovered? This indicates that the connection was identified by MeshSync’s discovery process or configuration input, but its usability and reachability haven’t been verified yet. It will now appear in the Meshery UI for further action like registration or ignoring.';
+        return `Connections with "discovered" status have been identified through MeshSync’s discovery process. Meshery's ability to reach (connectivity) and manage (authenticate and authorization) have yet to be verified`;
       case 'CONNECTED':
         return 'Meshery will begin actively managing this connection. It may auto-transition to Disconnected if communication is lost.';
       default:
