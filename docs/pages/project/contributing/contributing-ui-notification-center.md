@@ -62,7 +62,11 @@ Bulk operations in the Notification Center allow users to perform actions like d
 
 ## Metadata Formatter
 
-When an event is received from the server, it adheres to a fixed schema containing information that is valuable for presentation to the user. This information typically includes details such as the description, date, user_id, system_id, action, and acted-upon resources. Additionally, sometimes there may be a detailed traceback, a summary, or a comprehensive error log, all of which are dynamically generated data encapsulated within the metadata of the event. Presenting this structured data in a user-friendly manner is a crucial task because it contains valuable insights into ongoing operations.
+When the server sends an event, it follows a consistent schema that contains metadata intended for user presentation. This metadata typically includes fields such as `description`, `date`, `user_id`, `system_id`, `action`, and the resources involved.  
+
+In some cases, the metadata may also contain more detailed information—such as a traceback, a summary, or a complete error log—which is dynamically generated at runtime and encapsulated within the event.  
+
+Presenting this structured information in a clear and accessible way is essential, as it provides valuable insights into system behavior and ongoing operations.
 
 To accomplish this task, we employ metadata formatters that transform structured data into visually appealing formats. There are currently two types of formatters in use:
 
