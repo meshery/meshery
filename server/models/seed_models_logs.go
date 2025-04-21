@@ -161,25 +161,6 @@ func writeLogsToFiles(regLog *RegistrationFailureLog) error {
 	return nil
 }
 
-func formatWithCommas(value int64) string {
-    if value < 1000 {
-        return fmt.Sprintf("%d", value)
-    }
-
-    numStr := fmt.Sprintf("%d", value)
-    n := len(numStr)
-
-    var result strings.Builder
-    for i, digit := range numStr {
-        if (n-i)%3 == 0 && i != 0 {
-            result.WriteRune(',')
-        }
-        result.WriteRune(digit)
-    }
-
-    return result.String()
-}
-
 func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *meshmodel.RegistryManager, regErrorStore *RegistrationFailureLog) {
 	provider := handlerConfig.Providers["None"]
 
@@ -196,7 +177,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {
-				successMessage += fmt.Sprintf(" %s %s,", formatWithCommas(value), label)
+				successMessage += fmt.Sprintf(" %d %s,", value, label)
 			}
 		}
 		appendIfNonZero(host.Summary.Models, "models")
