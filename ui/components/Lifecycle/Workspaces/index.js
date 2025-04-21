@@ -480,6 +480,7 @@ const Workspaces = () => {
                 handleRowClick={handleRowClick}
                 selectedWorkspace={selectedWorkspace}
                 setColumnVisibility={setColumnVisibility}
+                search={search}
               />
             )}
           </>
