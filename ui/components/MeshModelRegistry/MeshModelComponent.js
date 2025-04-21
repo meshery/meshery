@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
-import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import {
   MeshModelToolbar,
@@ -13,7 +12,6 @@ import {
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
-import { DisableButton } from './MeshModel.style';
 import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
@@ -414,7 +412,7 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
         }}
       >
         <Button
-          aria-label="Add Pattern"
+          aria-label="Create Model"
           variant="contained"
           color="primary"
           onClick={openCreateModal}
@@ -426,7 +424,7 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
           Create
         </Button>
         <Button
-          aria-label="Add Pattern"
+          aria-label="Import Model"
           variant="contained"
           color="primary"
           onClick={openImportModal}
@@ -438,9 +436,11 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
           Import
         </Button>
       </div>
+      {/*
+      This builk operation is not yet supported
       <DisableButton disabled variant="contained" startIcon={<DoNotDisturbOnIcon />}>
         Ignore
-      </DisableButton>
+      </DisableButton> */}
     </MeshModelToolbar>
   );
 };
