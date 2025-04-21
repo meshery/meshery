@@ -52,7 +52,6 @@ The `NotificationCenter` component of Meshery UI Switching to Graphql subscripti
 
 Bulk operations in the Notification Center allow users to perform actions like deleting multiple notifications or changing the status of multiple notifications in a batch. This documentation outlines the key features and functionality of bulk operations, including the restriction of performing only one bulk operation at a time, the disabling of buttons during ongoing operations, and the display of a loading icon to indicate ongoing activity.
 
-**How It Works**
 
 ### Initiating a Bulk Operation
 
