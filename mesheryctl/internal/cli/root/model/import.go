@@ -32,17 +32,20 @@ Documentation for models import can be found at https://docs.meshery.io/referenc
 // Import model
 mesheryctl model import -f [URI]
  
-// Import model from a URL
+// Import model from a URL to a meshery model
 mesheryctl model import -f [URL]
 
-// Import model from a OCI
+// Import model from an OCI artifact
 mesheryctl model import -f [OCI]
 
 // Import model from a tar.gz file
 mesheryctl model import -f [path-to-model.tar.gz]
 
-// Import model(s) from a path
-mesheryctl model import -f [path-to-models]
+// Import model from a path
+mesheryctl model import -f [path-to-model]
+
+// Import model using CSV files
+mesheryctl model import -f [path-to-csv-directory]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
