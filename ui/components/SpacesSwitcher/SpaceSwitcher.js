@@ -16,9 +16,8 @@ import {
   useTheme,
   WorkspaceIcon,
 } from '@layer5/sistent';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
-import { setKeys, setOrganization, useLegacySelector } from '../../lib/store';
+import { setKeys, setOrganization } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { store } from '../../store';
@@ -29,7 +28,6 @@ import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 
 import _ from 'lodash';
-import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 export const SlideInMenu = styled('div')(() => ({
@@ -94,6 +92,8 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
   userSelect: 'none',
   transition: 'width 2s ease-in',
   color: theme.palette.common.white,
+  flexWrap: 'wrap',
+  gap: '0.5rem 0rem',
 }));
 
 function OrgMenu(props) {
@@ -200,6 +200,7 @@ function SpaceSwitcher(props) {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
+  const theme = useTheme();
   return (
     <NoSsr>
       <Provider store={store}>
@@ -215,7 +216,7 @@ function SpaceSwitcher(props) {
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
           >
-            <WorkspaceIcon {...iconLarge} />
+            <WorkspaceIcon {...iconLarge} secondaryFill={theme.palette.icon.disabled} />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/
           <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />

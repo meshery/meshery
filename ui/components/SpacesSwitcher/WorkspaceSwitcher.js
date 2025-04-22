@@ -16,7 +16,6 @@ import { NoSsr } from '@layer5/sistent';
 import { useLegacySelector } from '../../lib/store';
 import { StyledSelect } from './SpaceSwitcher';
 
-import _ from 'lodash';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
 import { useRouter } from 'next/router';
@@ -28,6 +27,7 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
   gap: '1rem',
   '& .setting-icon': {
     visibility: 'hidden',
+    display: 'flex',
   },
   '&:hover .setting-icon': {
     visibility: 'visible',
@@ -141,14 +141,16 @@ function WorkspaceSwitcher({ open }) {
       <Modal
         closeModal={() => {
           setWorkspaceModal(false);
-          router.back();
+          if (router.query.id) {
+            router.back();
+          }
         }}
         open={workspaceModal}
         maxWidth="xl"
         headerIcon={<WorkspaceIcon {...iconMedium} />}
         title="Workspaces"
       >
-        <ModalBody>
+        <ModalBody style={{ maxHeight: '80vh', overflowY: 'auto' }}>
           <WorkspacesComponent />
         </ModalBody>
       </Modal>

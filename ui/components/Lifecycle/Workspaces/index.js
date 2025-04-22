@@ -1,6 +1,5 @@
 import {
   Breadcrumbs,
-  Link,
   NoSsr,
   WorkspaceRecentActivityModal,
   WorkspaceTeamsTable,
@@ -388,7 +387,7 @@ const Workspaces = () => {
               }
               aria-label="breadcrumb"
             >
-              <Link
+              <div
                 style={{
                   cursor: selectedWorkspace.id ? 'pointer' : 'default',
                   color: selectedWorkspace.id
@@ -396,16 +395,14 @@ const Workspaces = () => {
                     : theme.palette.text.default,
                   textDecoration: 'none',
                 }}
-                href="#"
                 onClick={() => {
                   if (selectedWorkspace.id) {
-                    router.back();
                     setSelectedWorkspace({ id: '', name: '' });
                   }
                 }}
               >
-                Workspace
-              </Link>
+                All Workspace
+              </div>
               {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
             </Breadcrumbs>
           </div>
