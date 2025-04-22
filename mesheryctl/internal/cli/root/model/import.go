@@ -16,6 +16,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/errors"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
@@ -74,13 +75,10 @@ mesheryctl model import -f [path-to-csv-directory]
 			return nil
 		}
 
-		hasCSVs, err := hasCSVs(path)
-		if err != nil {
-			utils.Log.Error(err)
-		}
+		hasCSVs := hasCSVs(path)
 
 		if hasCSVs {
-			modelcsvpath, componentcsvpath, relationshipcsvpath, err := utils.GetCsv(path)
+			modelcsvpath, componentcsvpath, relationshipcsvpath, err := meshkitRegistryUtils.GetCsv(path)
 			if err != nil {
 				utils.Log.Infof("%s: %s", utils.BoldString("ERROR"), "Error importing model using CSV files")
 				if meshkitErr, ok := err.(*errors.Error); ok {
@@ -94,7 +92,8 @@ mesheryctl model import -f [path-to-csv-directory]
 					utils.Log.Error(err)
 				}
 
-				return nil
+				return err
+
 			} else {
 				modelData, err := os.ReadFile(modelcsvpath)
 				if err != nil {
@@ -108,10 +107,9 @@ mesheryctl model import -f [path-to-csv-directory]
 				if err != nil {
 					return utils.ErrFileRead(err)
 				}
-				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !register)
+				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", true)
 				if err != nil {
-					utils.Log.Error(err)
-					return nil
+					return err
 				}
 				locationForModel := utils.MesheryFolder + "/models"
 				utils.Log.Info("Model can be accessed from ", locationForModel)
@@ -149,25 +147,24 @@ mesheryctl model import -f [path-to-csv-directory]
 
 		err = registerModel(tarData, nil, nil, fileName, "file", "", true)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 		return nil
 	},
 }
 
-func hasCSVs(path string) (bool, error) {
+func hasCSVs(path string) bool {
 	files, err := os.ReadDir(path)
 	if err != nil {
-		return false, err
+		return false
 	}
 
 	for _, f := range files {
 		if !f.IsDir() && strings.EqualFold(filepath.Ext(f.Name()), ".csv") {
-			return true, nil
+			return true
 		}
 	}
-	return false, nil
+	return false
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
@@ -230,7 +227,13 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 		err = models.ErrUnmarshal(err, "response body")
 		return err
 	}
+
 	displayEntities(&response)
+
+	if len(response.EntityTypeSummary.SuccessfulModels) == 0 {
+		return utils.ErrInvalidModel()
+	}
+
 	return nil
 }
 
