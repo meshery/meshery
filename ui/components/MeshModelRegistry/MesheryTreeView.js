@@ -9,7 +9,6 @@ import {
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
-
 import { useWindowDimensions } from '../../utils/dimension';
 import { getFilteredDataForDetailsComponent } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
@@ -238,7 +237,7 @@ const MesheryTreeView = React.memo(
                       />
                     }
                     label="Duplicates"
-                    sx={{marginLeft: '2rem' }}
+                    sx={{ marginLeft: '2rem' }}
                   />
                   <CustomTextTooltip
                     placement="right"
@@ -246,7 +245,7 @@ const MesheryTreeView = React.memo(
                     title={`View all duplicate entries of ${_.toLower(
                       view,
                     )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
-                    sx={{ margin: '0rem', padding: '0rem'}}
+                    sx={{ margin: '0rem', padding: '0rem' }}
                   >
                     <IconButton>
                       <InfoOutlinedIcon height={20} width={20} />

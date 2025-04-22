@@ -1640,6 +1640,42 @@
         "short_description": "error while comparing files",
         "probable_cause": "Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet",
         "suggested_remediation": "Ensure that the new file is in the correct format and has the correct data"
+      },
+      "11315": {
+        "name": "ErrLoadPatternCode",
+        "code": "11315",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Failed to load pattern file",
+        "probable_cause": "The pattern file might be invalid or inaccessible",
+        "suggested_remediation": "Verify the pattern file exists and has correct format"
+      },
+      "11316": {
+        "name": "ErrConvertK8sCode",
+        "code": "11316",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Failed to convert to Kubernetes manifest",
+        "probable_cause": "The pattern might contain incompatible elements",
+        "suggested_remediation": "Verify the pattern content is valid for Kubernetes"
+      },
+      "11317": {
+        "name": "ErrCreateChartCode",
+        "code": "11317",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Failed to create Helm chart",
+        "probable_cause": "File system permissions or disk space issues",
+        "suggested_remediation": "Check permissions and available disk space"
+      },
+      "11318": {
+        "name": "ErrHelmPackageCode",
+        "code": "11318",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Helm packaging failed",
+        "probable_cause": "Issues with the Helm chart structure or configuration",
+        "suggested_remediation": "Verify the chart structure is valid for Helm"
       }
     }
   }

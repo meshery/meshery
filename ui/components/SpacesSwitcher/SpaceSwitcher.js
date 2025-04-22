@@ -14,6 +14,7 @@ import {
   Typography,
   Select,
   useTheme,
+  WorkspaceIcon,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
 import { setKeys, setOrganization } from '../../lib/store';
@@ -22,11 +23,12 @@ import { bindActionCreators } from 'redux';
 import { store } from '../../store';
 import { withRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
-import { iconXLarge } from 'css/icons.styles';
+import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 
 import _ from 'lodash';
+import WorkspaceSwitcher from './WorkspaceSwitcher';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -47,6 +49,7 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   textAlign: 'center',
   fill: theme.palette.text.default,
 }));
+
 export const StyledSelect = styled(Select)(() => ({
   backgroundColor: 'transparent',
   '& .OrgClass': {
@@ -89,6 +92,8 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
   userSelect: 'none',
   transition: 'width 2s ease-in',
   color: theme.palette.common.white,
+  flexWrap: 'wrap',
+  gap: '0.5rem 0rem',
 }));
 
 function OrgMenu(props) {
@@ -193,7 +198,9 @@ function DefaultHeader({ title, isBeta }) {
 
 function SpaceSwitcher(props) {
   const [orgOpen, setOrgOpen] = useState(false);
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
+  const theme = useTheme();
   return (
     <NoSsr>
       <Provider store={store}>
@@ -205,6 +212,13 @@ function SpaceSwitcher(props) {
             <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
+          <Button
+            onClick={() => setWorkspaceOpen(!workspaceOpen)}
+            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+          >
+            <WorkspaceIcon {...iconLarge} secondaryFill={theme.palette.icon.disabled} />
+          </Button>
+          <WorkspaceSwitcher {...props} open={workspaceOpen} />/
           <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
           {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
         </StyledSwitcher>
