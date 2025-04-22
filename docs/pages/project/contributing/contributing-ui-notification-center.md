@@ -202,7 +202,7 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 
 The `ErrorMetadataFormatter` is used when dealing with structured error events that follow a pattern (description, cause, remediation). A new formatter should be created only if the error metadata deviates significantly from the `ErrorMetadataFormatter` metadata structure.
 
-## Model Registration Formatter
+### Model Registration Formatter
 
 The `Model Registration Formatter` formats and displays model registration details, including components and relationships, in Meshery UI's Notification Center. It ensures structured representation of imported models and error handling during the import process.
 
