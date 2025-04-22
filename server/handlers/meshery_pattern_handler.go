@@ -170,8 +170,16 @@ func (h *Handler) handlePatternPOST(
 	} else {
 		eventBuilder = eventBuilder.WithAction(models.Create)
 	}
-
-	event := eventBuilder.WithDescription(fmt.Sprintf("Saved design '%s'", requestPayload.DesignFile.Name)).Build()
+	metadata := map[string]interface{}{
+		"design": map[string]interface{}{
+            "name": requestPayload.DesignFile.Name,
+            "id":   requestPayload.DesignFile.Id.String(),
+        },
+		"doclink": "https://docs.meshery.io/concepts/logical/designs",
+	}
+	event := eventBuilder.
+        WithMetadata(metadata).
+        Build()
 	_ = provider.PersistEvent(event)
 
 	_, _ = rw.Write(savedDesignByt)
