@@ -66,18 +66,16 @@ mesheryctl exp model build [model-name]
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(path, modelName, version)
 		utils.Log.Infof("Building meshery model from path %s", folder)
-
-		img, err := meshkitOci.BuildImage(folder)
-		if err != nil {
-			return ErrModelBuild(err)
+		img, errBuildImage := meshkitOci.BuildImage(folder)
+		if errBuildImage != nil {
+			return ErrModelBuild(errBuildImage)
 		}
 
 		// modelFolder := buildModelCompileFolderName(path, modelName, "")
 
 		// Save OCI artifact into a tar file
 		tarfileName := filepath.Join(folder, "model.tar")
-		err = meshkitOci.SaveOCIArtifact(img, tarfileName, modelName)
-		if err != nil {
+		if err := meshkitOci.SaveOCIArtifact(img, tarfileName, modelName); err != nil {
 			return ErrModelBuild(err)
 		}
 
