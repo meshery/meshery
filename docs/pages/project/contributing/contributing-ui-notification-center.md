@@ -357,7 +357,7 @@ The **Deployment Summary Formatter** should be used in the following scenarios:
    When the `event.action` is either `deploy` or `undeploy` and the `event.metadata` includes `design_name`.
 2. When a notification involves the deployment or undeployment of a design.
 
-## PropertyFormatters and PropertyLinkFormatters
+### PropertyFormatters and PropertyLinkFormatters
 
 **Purpose:**  
 When an event does not match an event in `EventTypeFormatters`, **PropertyFormatters** and **PropertyLinkFormatters** are used to format and render specific metadata fields in a structured and visually appealing way.
