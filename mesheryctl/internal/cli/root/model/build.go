@@ -1,16 +1,20 @@
 package model
 
 import (
+	"embed"
+	"errors"
 	"fmt"
+	"io/fs"
 	"os"
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitOci "github.com/layer5io/meshkit/models/oci"
+	"github.com/meshery/schemas"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	meshkitOci "github.com/layer5io/meshkit/models/oci"
+	"github.com/xeipuuv/gojsonschema"
 )
 
 var buildModelCmd = &cobra.Command{
@@ -65,6 +69,9 @@ mesheryctl exp model build [model-name]
 
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(path, modelName, version)
+
+		buildModelValidateModelOverSchema(folder)
+
 		utils.Log.Infof("Building meshery model from path %s", folder)
 		img, errBuildImage := meshkitOci.BuildImage(folder)
 		if errBuildImage != nil {
@@ -98,4 +105,125 @@ func buildModelCompileFolderName(path string, modelName string, version string) 
 		dirParts = append(dirParts, version)
 	}
 	return filepath.Join(dirParts...)
+}
+
+func buildModelValidateModelOverSchema(folder string) error {
+	utils.Log.Infof("Validating meshery model over schema from path %s", folder)
+	// TODO determine format (json, yaml, csv)
+	modelFile := filepath.Join(folder, "model.json")
+
+	utils.Log.Infof("modelFile is %s", modelFile)
+
+	utils.Log.Debug("Creating temp folder")
+	tempFolder, err := createTempFolder()
+	if err != nil {
+		return ErrModelBuild(
+			errors.Join(
+				fmt.Errorf("failed to create temp folder"),
+				err,
+			),
+		)
+	}
+	utils.Log.Debugf("Created temp folder %s", tempFolder)
+	defer func() {
+		utils.Log.Debug("Removing temp folder")
+		if err := os.RemoveAll(tempFolder); err != nil {
+			utils.Log.Warnf("failed to remove temp folder %s", tempFolder)
+		} else {
+			utils.Log.Debugf("Removed temp folder %s", tempFolder)
+		}
+	}()
+
+	if err := copyEmbeddedDirToLocalFolder("schemas", schemas.Schemas, tempFolder); err != nil {
+		return ErrModelBuild(
+			errors.Join(
+				fmt.Errorf("error copying files from embedded schemas to temp folder"),
+				err,
+			),
+		)
+	}
+
+	modelConstruct := "constructs/v1beta1/model/model.json"
+	modelSchema := filepath.Join(tempFolder, modelConstruct)
+
+	schemaLoader := gojsonschema.NewReferenceLoader(modelSchema)
+
+	documentLoader := gojsonschema.NewReferenceLoader(modelFile)
+
+	// Validate
+
+	utils.Log.Debugf(
+		"Validating file %s over schema %s",
+		modelFile,
+		modelConstruct,
+	)
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		return ErrModelBuild(
+			errors.Join(
+				fmt.Errorf("error validating %s over schema %s", modelFile, modelConstruct),
+				err,
+			),
+		)
+	}
+
+	if result.Valid() {
+		utils.Log.Debug("✅ JSON is valid!")
+	} else {
+		utils.Log.Info("❌ JSON is invalid:")
+		for _, err := range result.Errors() {
+			utils.Log.Infof("- %s\n", err)
+		}
+	}
+
+	return nil
+}
+
+// returns temp dir path
+func createTempFolder() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	// Define the base directory
+	baseDir := filepath.Join(homeDir, ".meshery")
+
+	// Create the base directory if it doesn't exist
+	if err := os.MkdirAll(baseDir, 0755); err != nil {
+		return "", err
+	}
+
+	// Create a temp directory inside .meshery
+	tmpDir, err := os.MkdirTemp(baseDir, "tmp-*")
+	if err != nil {
+		return "", err
+	}
+
+	return tmpDir, nil
+}
+
+func copyEmbeddedDirToLocalFolder(embeddedPath string, efs embed.FS, targetPath string) error {
+	return fs.WalkDir(efs, embeddedPath, func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+
+		relPath, err := filepath.Rel(embeddedPath, path)
+		if err != nil {
+			return err
+		}
+		target := filepath.Join(targetPath, relPath)
+
+		if d.IsDir() {
+			return os.MkdirAll(target, 0755)
+		}
+
+		data, err := efs.ReadFile(path)
+		if err != nil {
+			return err
+		}
+
+		return os.WriteFile(target, data, 0644)
+	})
 }
