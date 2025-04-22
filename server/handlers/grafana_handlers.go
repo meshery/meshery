@@ -12,6 +12,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
@@ -256,7 +257,10 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+	
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    h.log.Error(err)
+	}
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
@@ -290,7 +294,10 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+	
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idPostGrafanaBoards
