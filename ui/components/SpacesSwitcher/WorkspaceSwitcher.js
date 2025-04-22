@@ -35,7 +35,7 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
 }));
 
 function WorkspaceSwitcher({ open }) {
-  const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
+  const [defaultWorkspace, setDefaultWorkspace] = useState(null);
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const orgId = useLegacySelector((state) => state.get('organization'))?.id;
   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
@@ -98,17 +98,18 @@ function WorkspaceSwitcher({ open }) {
                     <Grid item xs={12} data-cy="mesh-adapter-url">
                       <StyledSelect
                         size="small"
-                        value={_defaultWorkspace?.id || ''}
-                        onChange={handleChangeWorkspace}
+                        value={defaultWorkspace?.id || ''}
+                        onChange={(e) => {
+                          if (e.target.value !== defaultWorkspace?.id) {
+                            handleChangeWorkspace(e); // only call for new selection
+                          }
+                        }}
                         renderValue={(selected) => {
-                          if (!selected || !workspacesData?.workspaces) return '';
-
-                          const workspace = workspacesData.workspaces.find(
+                          const workspace = workspacesData?.workspaces?.find(
                             (w) => w.id === selected,
                           );
                           return workspace ? <span>{workspace.name}</span> : '';
                         }}
-                        SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
                         MenuProps={{
                           anchorOrigin: {
                             vertical: 'bottom',
@@ -122,7 +123,15 @@ function WorkspaceSwitcher({ open }) {
                         }}
                       >
                         {workspacesData?.workspaces?.map((works) => (
-                          <HoverMenuItem key={works.id} value={works.id}>
+                          <HoverMenuItem
+                            key={works.id}
+                            value={works.id}
+                            onClick={() => {
+                              if (works.id === defaultWorkspace?.id) {
+                                handleChangeWorkspace({ target: { value: works.id } });
+                              }
+                            }}
+                          >
                             <span>{works.name}</span>
                             <span className="setting-icon">
                               <SettingsIcon {...iconMedium} />
