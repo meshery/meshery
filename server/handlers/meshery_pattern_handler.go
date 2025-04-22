@@ -172,14 +172,14 @@ func (h *Handler) handlePatternPOST(
 	}
 	metadata := map[string]interface{}{
 		"design": map[string]interface{}{
-            "name": requestPayload.DesignFile.Name,
-            "id":   requestPayload.DesignFile.Id.String(),
-        },
+			"name": requestPayload.DesignFile.Name,
+			"id":   requestPayload.DesignFile.Id.String(),
+		},
 		"doclink": "https://docs.meshery.io/concepts/logical/designs",
 	}
 	event := eventBuilder.
-        WithMetadata(metadata).
-        Build()
+		WithMetadata(metadata).
+		Build()
 	_ = provider.PersistEvent(event)
 
 	_, _ = rw.Write(savedDesignByt)
@@ -717,7 +717,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if exportFormat == "Helm Chart" {
+		fmt.Println("Exporting pattern in format: ", exportFormat)
+		if exportFormat == string(coreV1.HelmChart) {
+			fmt.Println("downloading helm")
 			rw.Header().Set("Content-Type", "application/x-gzip")
 			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tgz", pattern.Name))
 		} else {
