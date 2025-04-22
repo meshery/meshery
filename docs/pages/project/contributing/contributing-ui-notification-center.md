@@ -291,7 +291,7 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
    - **Source and Target**: The components involved in the relationship (e.g., `Pod` to `Pod`).
    - **Model and Version**: The model and version associated with the relationship.
 
-## Dry Run Formatter
+### Dry Run Formatter
 
 The **Dry Run Formatter** is responsible for rendering notifications related to the dry run validation of a design. A dry run simulates the deployment or undeployment of a design to identify potential errors without actually applying the changes.
 
