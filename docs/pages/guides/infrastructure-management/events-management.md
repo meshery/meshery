@@ -36,7 +36,7 @@ You can mark notifications as read or unread to stay organized and focused. Mesh
   <img src="{{ site.baseurl }}/assets/img/notification-center/description.png" alt="Event Descriptions" style="width: 600px; height: auto; margin-top: 10px;" />
 </a>
 
-> 🔗 For more technical details, see the [Contributor Reference](#).
+> 🔗 For more technical details, see the [Contributor Reference](https://docs.meshery.io/project/contributing/contributing-ui-notification-center).
 
 ### Notification Timestamps
 Each notification includes a timestamp showing when the event happened. The time is displayed based on your local device’s time zone, so it reflects your current time.
