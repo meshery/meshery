@@ -143,7 +143,7 @@ This directory houses reusable formatter components dedicated to specific types 
 - **pattern_dryrun.js**: Defines `DryRunResponseFormatter` which utilizes components from `DesignLifeCycle`.
 - **relationship_evaluation.js**: Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
 
-### Types of Event Specific Notification Formatters
+## Types of Event Specific Notification Formatters
 
 ## Common Formatter
 
