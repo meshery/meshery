@@ -19,6 +19,7 @@ import { StyledSelect } from './SpaceSwitcher';
 import _ from 'lodash';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
+import { useRouter } from 'next/router';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -55,7 +56,7 @@ function WorkspaceSwitcher({ open }) {
       setDefaultWorkspace(defaultWorkspace);
     }
   }, [workspacesData]);
-
+  const router = useRouter();
   const handleChangeWorkspace = (e) => {
     if (!workspacesData || !workspacesData.workspaces) return;
 
@@ -64,6 +65,19 @@ function WorkspaceSwitcher({ open }) {
     );
     setDefaultWorkspace(selectedWorkspace);
     setWorkspaceModal(true);
+    router.push(
+      {
+        pathname: router.pathname,
+        query: {
+          ...router.query,
+          view: 'table',
+          id: selectedWorkspace.id,
+          name: selectedWorkspace.name,
+        },
+      },
+      undefined,
+      { shallow: true },
+    );
   };
   return (
     <NoSsr>
@@ -125,7 +139,10 @@ function WorkspaceSwitcher({ open }) {
         </div>
       )}
       <Modal
-        closeModal={() => setWorkspaceModal(false)}
+        closeModal={() => {
+          setWorkspaceModal(false);
+          router.back();
+        }}
         open={workspaceModal}
         maxWidth="xl"
         headerIcon={<WorkspaceIcon {...iconMedium} />}

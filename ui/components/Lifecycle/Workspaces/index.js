@@ -22,7 +22,7 @@ import {
 } from '@layer5/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -124,6 +124,16 @@ const Workspaces = () => {
     id: router.query.id || '',
     name: router.query.name || '',
   });
+
+  useEffect(() => {
+    if (router.query.id) {
+      setSelectedWorkspace({
+        id: router.query.id,
+        name: router.query.name,
+      });
+    }
+  }, [router.query.id, router.query.name]);
+
   const [teamsModal, setTeamsModal] = useState({
     open: false,
     workspaceId: '',
@@ -134,6 +144,7 @@ const Workspaces = () => {
     workspaceId: '',
     workspaceName: '',
   });
+
   const handleRowClick = (rowData) => {
     const workspaceId = rowData[0];
     const workspaceName = rowData[4].props.children.at(-1); // Get the last child of the name cell

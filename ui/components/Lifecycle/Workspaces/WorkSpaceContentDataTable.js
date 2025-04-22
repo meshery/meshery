@@ -184,6 +184,14 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             handleShowDetails={() => {}}
             handleDownload={handleDesignDownloadModal}
             handlePublish={handlePublish}
+            isOpenInPlaygroundAllowed={
+              !CAN(keys.OPEN_IN_PLAYGROUND.action, keys.OPEN_IN_PLAYGROUND.subject)
+            }
+            handleOpenInPlayground={(designId, designName) => {
+              window.open(
+                `/extension/meshmap?mode=design&type=design&id=${designId}&name=${designName})}`,
+              );
+            }}
             setDesignSearch={setDesignSearch}
           />
         </CustomTabPanel>
