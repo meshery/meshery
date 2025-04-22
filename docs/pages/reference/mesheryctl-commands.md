@@ -915,7 +915,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </table>
 
 ## Frequently Asked Questions for Meshery CLI 
-Refer the following <a href='/guides/mesheryctl/working-with-mesheryctl/meshery-cli-faq'>Frequently asked questions</a> related to Meshery CLI.
+Refer the following <a href='/guides/mesheryctl/working-with-mesheryctl'>Frequently asked questions</a> related to Meshery CLI.
 
 {% include related-discussions.html tag="mesheryctl" %}
 
