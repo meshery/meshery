@@ -35,9 +35,9 @@ import (
 	"github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/catalog"
-	modelsCore "github.com/meshery/schemas/models/core"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -170,8 +170,16 @@ func (h *Handler) handlePatternPOST(
 	} else {
 		eventBuilder = eventBuilder.WithAction(models.Create)
 	}
-
-	event := eventBuilder.WithDescription(fmt.Sprintf("Saved design '%s'", requestPayload.DesignFile.Name)).Build()
+	metadata := map[string]interface{}{
+		"design": map[string]interface{}{
+			"name": requestPayload.DesignFile.Name,
+			"id":   requestPayload.DesignFile.Id.String(),
+		},
+		"doclink": "https://docs.meshery.io/concepts/logical/designs",
+	}
+	event := eventBuilder.
+		WithMetadata(metadata).
+		Build()
 	_ = provider.PersistEvent(event)
 
 	_, _ = rw.Write(savedDesignByt)
@@ -188,7 +196,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 	provider models.Provider,
 ) error {
 	// Only proceed if we need to convert a non-design pattern that doesn't have a pattern file yet
-	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != modelsCore.IacFileTypes.MESHERY_DESIGN && mesheryPattern.PatternFile == "" {
+	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != string(coreV1.MesheryDesign) && mesheryPattern.PatternFile == "" {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 		sourceContent := mesheryPattern.SourceContent
@@ -612,15 +620,24 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
 
 	exportFormat := r.URL.Query().Get("export")
+	h.log.Info(fmt.Sprintf("Export format received: '%s'", exportFormat))
+
 	if exportFormat != "" {
 		var errConvert error
+		h.log.Info(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+
+		h.log.Info(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
+			converter.K8sManifest, converter.HelmChart))
+
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
+			h.log.Info(fmt.Sprintf("Failed to create converter: %v", errConvert))
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
+		h.log.Info(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
 	}
 
 	patternID := mux.Vars(r)["id"]
@@ -700,8 +717,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
-		rw.Header().Set("Content-Type", "application/yaml")
+		if exportFormat == string(coreV1.HelmChart) {
+			rw.Header().Set("Content-Type", "application/x-gzip")
+			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tgz", pattern.Name))
+		} else {
+			rw.Header().Set("Content-Type", "application/yaml")
+			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
+		}
 		_, err = fmt.Fprint(rw, patternFile)
 		if err != nil {
 			err = ErrWriteResponse(err)

@@ -27,7 +27,8 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )
@@ -4745,7 +4746,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -4833,11 +4834,11 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
+		return &environment.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -4872,7 +4873,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.Envir
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var environment v1beta1.Environment
+		var environment environment.Environment
 		if err = json.Unmarshal(bdr, &environment); err != nil {
 			return nil, err
 		}
@@ -5178,7 +5179,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	return nil, ErrFetch(fmt.Errorf("failed to get workspace by ID"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -5266,11 +5267,11 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
+		return &workspace.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5305,7 +5306,7 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.Workspa
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var workspace v1beta1.Workspace
+		var workspace workspace.Workspace
 		if err = json.Unmarshal(bdr, &workspace); err != nil {
 			return nil, err
 		}
