@@ -128,6 +128,12 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
 
   const shouldRenderTabs = isDesignsVisible && isViewVisible;
 
+  const handleOpenDesignInPlayground = (designId, designName) => {
+    window.open(`/extension/meshmap?mode=design&type=design&id=${designId}&name=${designName}`);
+  };
+  const handleOpenViewInPlayground = (designId, designName) => {
+    window.open(`/extension/meshmap?mode=operator&type=view&id=${designId}&name=${designName}`);
+  };
   return (
     <ErrorBoundary>
       {shouldRenderTabs && (
@@ -181,17 +187,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             useGetWorkspaceDesignsQuery={useGetDesignsOfWorkspaceQuery}
             meshModelModelsData={meshModelModelsData}
             handleCopyUrl={handleCopyUrl}
-            handleShowDetails={() => {}}
+            handleShowDetails={handleOpenDesignInPlayground}
             handleDownload={handleDesignDownloadModal}
             handlePublish={handlePublish}
-            isOpenInPlaygroundAllowed={
-              !CAN(keys.OPEN_IN_PLAYGROUND.action, keys.OPEN_IN_PLAYGROUND.subject)
-            }
-            handleOpenInPlayground={(designId, designName) => {
-              window.open(
-                `/extension/meshmap?mode=design&type=design&id=${designId}&name=${designName})}`,
-              );
-            }}
             setDesignSearch={setDesignSearch}
           />
         </CustomTabPanel>
@@ -208,7 +206,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
               keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
               keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
             )}
-            handleShowDetails={() => {}}
+            handleShowDetails={handleOpenViewInPlayground}
             useAssignViewToWorkspaceMutation={useAssignViewToWorkspaceMutation}
             useGetViewsOfWorkspaceQuery={useGetViewsOfWorkspaceQuery}
             useUnassignViewFromWorkspaceMutation={useUnassignViewFromWorkspaceMutation}
