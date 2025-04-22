@@ -9,7 +9,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 // The following replaces are used for local development
 
 // replace github.com/meshery/schemas v0.8.5 => ../schemas
-replace github.com/layer5io/meshkit v0.8.25 => ../meshkit
+// replace github.com/layer5io/meshkit v0.8.25 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
@@ -40,7 +40,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
-	github.com/layer5io/meshkit v0.8.25
+	github.com/layer5io/meshkit v0.8.26
 	github.com/layer5io/meshsync v0.8.6
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
