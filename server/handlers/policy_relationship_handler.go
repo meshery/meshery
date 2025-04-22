@@ -393,7 +393,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 			WithMetadata(map[string]interface{}{
 				"trace":        evaluationResponse.Trace,
 				"evaluated_at": *evaluationResponse.Timestamp,
-				"modelName": evaluationResponse.Trace.ComponentsUpdated[0].Model.DisplayName,
 			}).WithSeverity(events.Informational).Build()
 		_ = provider.PersistEvent(event)
 
