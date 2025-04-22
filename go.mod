@@ -9,7 +9,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 // The following replaces are used for local development
 
 // replace github.com/meshery/schemas v0.8.5 => ../schemas
-//replace github.com/layer5io/meshkit v0.8.22 => ../meshkit
+replace github.com/layer5io/meshkit v0.8.25 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
@@ -152,10 +152,6 @@ require (
 	github.com/distribution/reference v0.6.0 // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.8.2 // indirect
-<<<<<<< HEAD
-=======
-	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c // indirect
->>>>>>> 3a28b80cace (Commented out local meshkit replace link)
 	github.com/docker/go-metrics v0.0.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.1 // indirect
@@ -326,13 +322,8 @@ require (
 	golang.org/x/term v0.30.0 // indirect
 	golang.org/x/time v0.11.0 // indirect
 	golang.org/x/tools v0.29.0 // indirect
-<<<<<<< HEAD
 	google.golang.org/genproto/googleapis/api v0.0.0-20250106144421-5f5ef82da422 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250313205543-e70fdf4c4cb4 // indirect
-=======
-	google.golang.org/genproto/googleapis/api v0.0.0-20241209162323-e6fa225c2576 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20250124145028-65684f501c47 // indirect
->>>>>>> 3a28b80cace (Commented out local meshkit replace link)
 	gopkg.in/evanphx/json-patch.v4 v4.12.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
