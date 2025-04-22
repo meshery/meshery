@@ -56,7 +56,9 @@ function WorkspaceSwitcher({ open }) {
       setDefaultWorkspace(defaultWorkspace);
     }
   }, [workspacesData]);
+
   const router = useRouter();
+
   const handleChangeWorkspace = (e) => {
     if (!workspacesData || !workspacesData.workspaces) return;
 
@@ -160,7 +162,7 @@ function WorkspaceSwitcher({ open }) {
         title="Workspaces"
       >
         <ModalBody style={{ maxHeight: '80vh', overflowY: 'auto' }}>
-          <WorkspacesComponent />
+          {workspaceModal && <WorkspacesComponent />}
         </ModalBody>
       </Modal>
     </NoSsr>
