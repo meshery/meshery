@@ -225,7 +225,7 @@ The `Model Registration Formatter` formats and displays model registration detai
 
 <a href="{{ site.baseurl }}/assets/img/notification-center/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/notification-center/model-register-formatter.png" /></a>
 
-## Relationship Evaluation Formatter
+### Relationship Evaluation Formatter
 
 The **Relationship Evaluation Formatter** is responsible for rendering notifications related to the evaluation of relationships between components in a design. It provides a detailed breakdown of changes in components and relationships, such as additions, updates, and removals, during the evaluation process.
 
