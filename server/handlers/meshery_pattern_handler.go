@@ -717,9 +717,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		fmt.Println("Exporting pattern in format: ", exportFormat)
 		if exportFormat == string(coreV1.HelmChart) {
-			fmt.Println("downloading helm")
 			rw.Header().Set("Content-Type", "application/x-gzip")
 			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tgz", pattern.Name))
 		} else {
