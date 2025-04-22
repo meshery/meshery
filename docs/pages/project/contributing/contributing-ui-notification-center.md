@@ -145,7 +145,7 @@ This directory houses reusable formatter components dedicated to specific types 
 
 ## Types of Event Specific Notification Formatters
 
-## Common Formatter
+### Common Formatter
 
 The following reusable components standardize how notification links, empty states, and downloadable traces are displayed:
 
