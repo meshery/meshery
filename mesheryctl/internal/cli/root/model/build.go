@@ -70,7 +70,9 @@ mesheryctl exp model build [model-name]
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(path, modelName, version)
 
-		buildModelValidateModelOverSchema(folder)
+		if err := buildModelValidateModelOverSchema(folder); err != nil {
+			return err
+		}
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
 		img, errBuildImage := meshkitOci.BuildImage(folder)
@@ -145,8 +147,20 @@ func buildModelValidateModelOverSchema(folder string) error {
 
 	modelConstruct := "constructs/v1beta1/model/model.json"
 	modelSchema := filepath.Join(tempFolder, modelConstruct)
+	// abs path is necessary to be able to resolve relative refs in schema
+	modelSchemaAbsPath, errAbs := filepath.Abs(modelSchema)
+	if errAbs != nil {
+		return ErrModelBuild(
+			errors.Join(
+				fmt.Errorf("error determining abs path to schema"),
+				errAbs,
+			),
+		)
+	}
 
-	schemaLoader := gojsonschema.NewReferenceLoader(modelSchema)
+	schemaLoader := gojsonschema.NewReferenceLoader(
+		fmt.Sprintf("file://%s", modelSchemaAbsPath),
+	)
 
 	documentLoader := gojsonschema.NewReferenceLoader(modelFile)
 
