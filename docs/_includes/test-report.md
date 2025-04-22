@@ -2,14 +2,17 @@
 
 - Testing started at: April 22nd 2025, 1:08:35 pm
 
+
 **📦 Test Result Summary**
 
-- ✅ 45 passed
-- ❌ 2 failed
-- ⚠️ 16 flaked
+- ✅ 24 passed
+- ❌ 21 failed
+- ⚠️ 17 flaked
 - ⏩ 0 skipped
 
+
 ⌛ _Duration: 9 minutes and 25 seconds_
+
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,6 +24,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
+
 | 1 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
 | 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
