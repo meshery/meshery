@@ -164,7 +164,7 @@ The following reusable components standardize how notification links, empty stat
    Props:
    - `data` (required): Can be a string or JSON object.
 
-## Error Formatter
+### Error Formatter
 
 The `ErrorMetadataFormatter` is used for formatting error-related notifications in the Meshery UI Notification Center. It structures error details, probable causes, and suggested remediations in a readable format.
 
