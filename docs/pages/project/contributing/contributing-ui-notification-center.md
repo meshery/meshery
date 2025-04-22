@@ -14,16 +14,26 @@ list: include
   <ol><li><a href="contributing-ui">Contributing to Meshery UI</a></li></ol>
 </div>
 
-## <a name="contributing-ui-notification-center">Contributing to Meshery UI - Notification Center</a>
+## Table of Contents
+
+- [What is the Notification Center?](#what-is-the-notification-center)
+- [Metadata Formatter](#metadata-formatter)
+- [How Notification Metadata is Rendered](#how-notification-metadata-is-rendered)
+- [Types of Event Specific Notification Formatters](#types-of-event-specific-notification-formatters)
+  - [Common Formatter](#common-formatter)
+  - [Error Formatter](#error-formatter)
+  - [Model Registration Formatter](#model-registration-formatter)
+  - [Relationship Evaluation Formatter](#relationship-evaluation-formatter)
+  - [Dry Run Formatter](#dry-run-formatter)
+  - [Deployment Summary Formatter](#deployment-summary-formatter)
+  - [PropertyFormatters and PropertyLinkFormatters](#propertyformatters-and-propertylinkformatters)
 
 <video style="width:min(100%,750px)" height="auto" autoplay muted loop>
   <source src="https://github.com/meshery/meshery/assets/65964225/345672de-3f61-4be0-b3c8-0e7480cc496c" type="video/mp4">
  Your browser does not support the video tag
 </video>
 
----
-
-### What is the Notification Center?
+## What is the Notification Center?
 
 The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
 
@@ -33,7 +43,7 @@ The Notification Center is a dedicated panel in Meshery’s UI that helps you mo
 
 The `NotificationCenter` component of Meshery UI Switching to Graphql subscriptions and implementing robust filtering. Events are persisted in Meshery Server and state management on client is done using Redux Toolkit and RTK.
 
-#### User-facing Features
+### User-facing Features
 
 - Robust filtering support inspired by GitHub's notification filtering style.
   - Search is also included.
@@ -43,7 +53,7 @@ The `NotificationCenter` component of Meshery UI Switching to Graphql subscripti
 - Event-based notification via Graphql subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
 - Infinite scroll for pagination.
 
-#### State Management and Internal Details
+### State Management and Internal Details
 
 - The State on client is managed using `Redux Tooltik` and `Rtk-query`
 - Update and Delete operations are optimistically handled.
@@ -54,7 +64,6 @@ The `NotificationCenter` component of Meshery UI Switching to Graphql subscripti
 
 Bulk operations in the Notification Center allow users to perform actions like deleting multiple notifications or changing the status of multiple notifications in a batch. This documentation outlines the key features and functionality of bulk operations, including the restriction of performing only one bulk operation at a time, the disabling of buttons during ongoing operations, and the display of a loading icon to indicate ongoing activity.
 
-
 ### Initiating a Bulk Operation
 
 - Users select the notifications they want to include in the bulk operation. This is typically done by checking checkboxes next to each notification.
@@ -63,9 +72,9 @@ Bulk operations in the Notification Center allow users to perform actions like d
 
 ## Metadata Formatter
 
-When the server sends an event, it follows a consistent schema that contains metadata intended for user presentation. This metadata typically includes fields such as `description`, `date`, `user_id`, `system_id`, `action`, and the resources involved.  
+When the server sends an event, it follows a consistent schema that contains metadata intended for user presentation. This metadata typically includes fields such as `description`, `date`, `user_id`, `system_id`, `action`, and the resources involved.
 
-In some cases, the metadata may also contain more detailed information—such as a traceback, a summary, or a complete error log—which is dynamically generated at runtime and encapsulated within the event.  
+In some cases, the metadata may also contain more detailed information—such as a traceback, a summary, or a complete error log—which is dynamically generated at runtime and encapsulated within the event.
 
 Presenting this structured information in a clear and accessible way is essential, as it provides valuable insights into system behavior and ongoing operations.
 
@@ -98,9 +107,7 @@ Certain metadata, such as Kubernetes responses and Errors, hold high importance 
 
 While this system was initially developed for our events and notification center, the components it comprises are highly reusable and can be employed in other contexts where dynamic formatting of structured data is required.
 
----
-
-### How Notification Metadata is Rendered
+## How Notification Metadata is Rendered
 
 When a notification event is received from the server, it includes a `metadata` field containing structured, event-specific information. The purpose of formatters is to present this data in a clean, readable, and user-friendly format inside the expanded view of each notification.
 
@@ -115,8 +122,6 @@ The core logic for rendering metadata is handled by the `FormattedMetadata` comp
    - This function renders each key-value pair from the `metadata` using the mappings defined in:
      - `PropertyFormatters` – for structured or specialized visual formats.
      - `PropertyLinkFormatters` – for rendering clickable links (e.g., file paths, URLs).
-
----
 
 ### Key Files and Directories
 
@@ -138,11 +143,9 @@ This directory houses reusable formatter components dedicated to specific types 
 - **pattern_dryrun.js**: Defines `DryRunResponseFormatter` which utilizes components from `DesignLifeCycle`.
 - **relationship_evaluation.js**: Defines `RelationshipEvaluationEventFormatter` responsible for rendering notifications related to the evaluation of relationships between components in a design.
 
----
-
 ### Types of Event Specific Notification Formatters
 
-### Common Formatter
+## Common Formatter
 
 The following reusable components standardize how notification links, empty states, and downloadable traces are displayed:
 
@@ -161,9 +164,7 @@ The following reusable components standardize how notification links, empty stat
    Props:
    - `data` (required): Can be a string or JSON object.
 
----
-
-### Error Formatter
+## Error Formatter
 
 The `ErrorMetadataFormatter` is used for formatting error-related notifications in the Meshery UI Notification Center. It structures error details, probable causes, and suggested remediations in a readable format.
 
@@ -195,13 +196,13 @@ The `ErrorMetadataFormatter` is used for formatting error-related notifications 
 />
 ```
 
+<a href="{{ site.baseurl }}/assets/img/notification-center/error-formatter.png"><img alt="Error Formatter" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/notification-center/error-formatter.png" /></a>
+
 **When to Use:**
 
 The `ErrorMetadataFormatter` is used when dealing with structured error events that follow a pattern (description, cause, remediation). A new formatter should be created only if the error metadata deviates significantly from the `ErrorMetadataFormatter` metadata structure.
 
----
-
-### Model Registration Formatter
+## Model Registration Formatter
 
 The `Model Registration Formatter` formats and displays model registration details, including components and relationships, in Meshery UI's Notification Center. It ensures structured representation of imported models and error handling during the import process.
 
@@ -222,15 +223,13 @@ The `Model Registration Formatter` formats and displays model registration detai
 
    - `modelDetails` (object) – Contains model import data.
 
----
+<a href="{{ site.baseurl }}/assets/img/notification-center/model-register-formatter.png"><img alt="Model Register Formatter" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/notification-center/model-register-formatter.png" /></a>
 
-### Relationship Evaluation Formatter
+## Relationship Evaluation Formatter
 
 The **Relationship Evaluation Formatter** is responsible for rendering notifications related to the evaluation of relationships between components in a design. It provides a detailed breakdown of changes in components and relationships, such as additions, updates, and removals, during the evaluation process.
 
 **Path:** `ui/components/NotificationCenter/formatters/relationship_evaluation.js`
-
----
 
 #### Key Components
 
@@ -249,7 +248,7 @@ The **Relationship Evaluation Formatter** is responsible for rendering notificat
     - `relationshipsUpdated` (Array)
     - `relationshipsRemoved` (Array)
 
----
+<a href="{{ site.baseurl }}/assets/img/notification-center/relationship-evaluation-formatter.png"><img alt="Relationship Evaluation Formatter" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/notification-center/relationship-evaluation-formatter.png" /></a>
 
 #### When to Use
 
@@ -258,8 +257,6 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
 1. When a notification involves the evaluation of relationships between components in a design.
 2. When you need to display categorized changes in components and relationships.
 3. When the event metadata includes a `trace` object containing detailed information about the changes in components and relationships.
-
----
 
 #### User Experience: Relationship Evaluation Notification
 
@@ -294,15 +291,11 @@ The **Relationship Evaluation Formatter** is specifically designed to handle not
    - **Source and Target**: The components involved in the relationship (e.g., `Pod` to `Pod`).
    - **Model and Version**: The model and version associated with the relationship.
 
----
-
-### Dry Run Formatter
+## Dry Run Formatter
 
 The **Dry Run Formatter** is responsible for rendering notifications related to the dry run validation of a design. A dry run simulates the deployment or undeployment of a design to identify potential errors without actually applying the changes.
 
 **Path:** `ui/components/DesignLifeCycle/DryRun.js`
-
----
 
 #### Key Components
 
@@ -320,7 +313,7 @@ The **Dry Run Formatter** is responsible for rendering notifications related to 
 - **validationMachine** (object): The state machine handling the dry run validation process.
 - **currentComponentName** (string): The name of the component currently being validated.
 
----
+<a href="{{ site.baseurl }}/assets/img/notification-center/dry-run-formatter.png"><img alt="Dry Run Formatter" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/notification-center/dry-run-formatter.png" /></a>
 
 #### When to Use
 
@@ -330,15 +323,11 @@ The **Dry Run Formatter** is used in the following scenarios:
 2. When you need to display errors detected during the dry run.
 3. When the event metadata includes details about configurable and annotation components.
 
----
-
-### Deployment Summary Formatter
+## Deployment Summary Formatter
 
 The **Deployment Summary Formatter** is responsible for rendering notifications related to the deployment or undeployment of components in a design.
 
 **Path:** `ui/components/DesignLifeCycle/DeploymentSummary.js`
-
----
 
 #### Key Components
 
@@ -360,8 +349,6 @@ The **Deployment Summary Formatter** is responsible for rendering notifications 
     - **design_name**: The name of the design being deployed.
     - **design_id**: The ID of the design being deployed.
 
----
-
 #### When to Use
 
 The **Deployment Summary Formatter** should be used in the following scenarios:
@@ -370,22 +357,16 @@ The **Deployment Summary Formatter** should be used in the following scenarios:
    When the `event.action` is either `deploy` or `undeploy` and the `event.metadata` includes `design_name`.
 2. When a notification involves the deployment or undeployment of a design.
 
----
-
-### PropertyFormatters and PropertyLinkFormatters
+## PropertyFormatters and PropertyLinkFormatters
 
 **Purpose:**  
 When an event does not match an event in `EventTypeFormatters`, **PropertyFormatters** and **PropertyLinkFormatters** are used to format and render specific metadata fields in a structured and visually appealing way.
-
----
 
 #### Examples of Property Formatters
 
 1. **trace**: Converts large trace data into a downloadable file link.
 2. **ShortDescription**: Displays a short description of the event.
 3. **Error**: Uses the `ErrorMetadataFormatter` to display structured error details.
-
----
 
 #### When to Use
 
@@ -396,4 +377,3 @@ Use **PropertyFormatters** and **PropertyLinkFormatters** in the following scena
 3. When metadata includes fields like trace data, short descriptions, or error details that require specialized formatting.
 
 ---
-
