@@ -57,7 +57,6 @@ const WorkspaceDataTable = ({
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
   const org_id = useLegacySelector((state) => state.get('organization'))?.id;
   const router = useRouter();
