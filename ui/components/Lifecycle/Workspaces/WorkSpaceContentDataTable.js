@@ -29,6 +29,15 @@ import ExportModal from '@/components/ExportModal';
 import { EVENT_TYPES } from '@/utils/Enum';
 import downloadContent from '@/utils/fileDownloader';
 import { iconMedium } from 'css/icons.styles';
+import {
+  openDesignInKanvas,
+  openViewInKanvas,
+  useIsKanvasDesignerEnabled,
+  useIsOperatorEnabled,
+} from '@/utils/utils';
+import Router from 'next/router';
+import { useContext } from 'react';
+import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [designSearch, setDesignSearch] = useState('');
@@ -104,6 +113,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const theme = useTheme();
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
+  const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
+  const isKanvasOperatorAvailable = useIsOperatorEnabled();
+  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
 
   function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -128,12 +140,34 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
 
   const shouldRenderTabs = isDesignsVisible && isViewVisible;
 
-  const handleOpenDesignInPlayground = (designId, designName) => {
-    window.location.href = `/extension/meshmap?mode=design&type=design&id=${designId}&name=${designName}`;
+  const handleOpenDesignInDesigner = (designId, designName) => {
+    if (!isKanvasDesignerAvailable) {
+      notify({
+        message: 'Kanvas Designer is not available',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (workspaceSwitcherContext?.closeModal) {
+      workspaceSwitcherContext.closeModal();
+    }
+
+    openDesignInKanvas(designId, designName, Router);
   };
 
-  const handleOpenViewInPlayground = (designId, designName) => {
-    window.location.href = `/extension/meshmap?mode=operator&type=view&id=${designId}&name=${designName}`;
+  const handleOpenViewInOperator = (viewId, viewName) => {
+    if (!isKanvasOperatorAvailable) {
+      notify({
+        message: 'Kanvas Operator is not available',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (workspaceSwitcherContext?.closeModal) {
+      workspaceSwitcherContext.closeModal();
+    }
+
+    openViewInKanvas(viewId, viewName, Router);
   };
 
   return (
@@ -164,6 +198,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
       {isDesignsVisible && (
         <CustomTabPanel value={value} index={0}>
           <DesignTable
+            handleOpenInDesigner={isKanvasDesignerAvailable && handleOpenDesignInDesigner}
+            showPlaygroundActions={false}
+            showOpenInPlayground={false}
             GenericRJSFModal={Modal}
             designsOfWorkspace={designsOfWorkspace}
             handleBulkWorkspaceDesignDeleteModal={handleBulkWorkspaceDesignDeleteModal}
@@ -189,7 +226,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             useGetWorkspaceDesignsQuery={useGetDesignsOfWorkspaceQuery}
             meshModelModelsData={meshModelModelsData}
             handleCopyUrl={handleCopyUrl}
-            handleShowDetails={handleOpenDesignInPlayground}
+            handleShowDetails={handleOpenDesignInDesigner}
             handleDownload={handleDesignDownloadModal}
             handlePublish={handlePublish}
             setDesignSearch={setDesignSearch}
@@ -208,7 +245,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
               keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
               keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
             )}
-            handleShowDetails={handleOpenViewInPlayground}
+            handleShowDetails={handleOpenViewInOperator}
             useAssignViewToWorkspaceMutation={useAssignViewToWorkspaceMutation}
             useGetViewsOfWorkspaceQuery={useGetViewsOfWorkspaceQuery}
             useUnassignViewFromWorkspaceMutation={useUnassignViewFromWorkspaceMutation}
