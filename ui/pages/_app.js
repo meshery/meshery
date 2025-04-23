@@ -1,4 +1,3 @@
-//@ts-check
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -679,7 +678,6 @@ const MesheryApp = ({
                       isDrawerCollapsed={isDrawerCollapsed}
                       mobileOpen={state.mobileOpen}
                       handleDrawerToggle={handleDrawerToggle}
-                      handleCollapseDrawer={undefined /* This prop needs to be provided */}
                       updateExtensionType={updateExtensionType}
                       canShowNav={canShowNav}
                     />
@@ -700,6 +698,7 @@ const MesheryApp = ({
                           success: ThemeResponsiveSnackbar,
                           error: ThemeResponsiveSnackbar,
                           warning: ThemeResponsiveSnackbar,
+                          loading: ThemeResponsiveSnackbar,
                         }}
                         maxSnack={10}
                       >
@@ -821,7 +820,7 @@ const NavigationBar = ({
   isDrawerCollapsed,
   mobileOpen,
   handleDrawerToggle,
-  handleCollapseDrawer,
+
   updateExtensionType,
   canShowNav,
 }) => {
@@ -840,14 +839,12 @@ const NavigationBar = ({
           variant="temporary"
           open={mobileOpen}
           onClose={handleDrawerToggle}
-          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
           isDrawerCollapsed={isDrawerCollapsed}
           updateExtensionType={updateExtensionType}
         />
       </Hidden>
       <Hidden xsDown implementation="css">
         <Navigator
-          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
           isDrawerCollapsed={isDrawerCollapsed}
           updateExtensionType={updateExtensionType}
         />
