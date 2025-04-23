@@ -161,7 +161,7 @@ function WorkspaceSwitcher({ open }) {
         headerIcon={
           <WorkspaceIcon
             {...iconMedium}
-            secondaryFill={(theme) => theme.palette.icon.neutral.default}
+            secondaryFill={theme.palette.icon.neutral.default}
           />
         }
         title="Workspaces"
