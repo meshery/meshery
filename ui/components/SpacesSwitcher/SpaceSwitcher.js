@@ -209,14 +209,18 @@ function SpaceSwitcher(props) {
             onClick={() => setOrgOpen(!orgOpen)}
             style={{ marginRight: orgOpen ? '1rem' : '0' }}
           >
-            <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
+            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.icon.secondary} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
           >
-            <WorkspaceIcon {...iconLarge} secondaryFill={theme.palette.icon.disabled} />
+            <WorkspaceIcon
+              {...iconLarge}
+              secondaryFill={theme.palette.icon.secondary}
+              fill={theme.palette.icon.secondary}
+            />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/
           <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />

@@ -9,13 +9,13 @@ import {
   Modal,
   WorkspaceIcon,
   ModalBody,
+  useTheme,
 } from '@layer5/sistent';
 import { WorkspacesComponent } from '../../components/Lifecycle';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
 import { useLegacySelector } from '../../lib/store';
 import { StyledSelect } from './SpaceSwitcher';
-
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
 import { useRouter } from 'next/router';
@@ -31,6 +31,15 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
   },
   '&:hover .setting-icon': {
     visibility: 'visible',
+  },
+}));
+
+const SettingsIconWrapper = styled('div')(({ theme }) => ({
+  '& svg': {
+    color: theme.palette.icon.secondary,
+  },
+  '& svg:hover': {
+    fill: theme.palette.icon.secondary + ' !important',
   },
 }));
 
@@ -81,6 +90,7 @@ function WorkspaceSwitcher({ open }) {
       { shallow: true },
     );
   };
+  const theme = useTheme();
   return (
     <NoSsr>
       {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
@@ -135,9 +145,9 @@ function WorkspaceSwitcher({ open }) {
                             }}
                           >
                             <span>{works.name}</span>
-                            <span className="setting-icon">
+                            <SettingsIconWrapper className="setting-icon">
                               <SettingsIcon {...iconMedium} />
-                            </span>
+                            </SettingsIconWrapper>
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>
@@ -159,10 +169,7 @@ function WorkspaceSwitcher({ open }) {
         open={workspaceModal}
         maxWidth="xl"
         headerIcon={
-          <WorkspaceIcon
-            {...iconMedium}
-            secondaryFill={theme.palette.icon.neutral.default}
-          />
+          <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
         }
         title="Workspaces"
       >
