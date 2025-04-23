@@ -78,7 +78,6 @@
     "react-codemirror2": "^8.0.1",
     "react-countdown-clock": "^2.11.0",
     "react-dom": "^17.0.2",
-    "react-error-boundary": "^4.0.11",
     "react-grid-layout": "^1.5.0",
     "react-json-view": "^1.21.3",
     "react-lazyload": "^3.2.0",
