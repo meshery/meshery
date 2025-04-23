@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 22nd 2025, 11:41:30 pm
+- Testing started at: April 23rd 2025, 1:07:04 am
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 17 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 12 minutes and 35 seconds_
+⌛ _Duration: 12 minutes and 38 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,11 +21,11 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 5 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 | 6 | chromium-meshery-provider | Add performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; | unstable | ⚠️ |
 | 7 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
 | 8 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
