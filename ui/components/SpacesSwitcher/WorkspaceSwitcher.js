@@ -168,7 +168,12 @@ function WorkspaceSwitcher({ open }) {
         }}
         open={workspaceModal}
         maxWidth="xl"
-        headerIcon={<WorkspaceIcon {...iconMedium} />}
+        headerIcon={
+          <WorkspaceIcon
+            {...iconMedium}
+            secondaryFill={theme.palette.icon.neutral.default}
+          />
+        }
         title="Workspaces"
       >
         <ModalBody style={{ maxHeight: '80vh', overflowY: 'auto' }}>
