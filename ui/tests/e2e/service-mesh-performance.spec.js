@@ -12,7 +12,7 @@ const peformanceProfiles = [
 
 test.describe.serial('Service Mesh Performance Management Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:9081');
+    await page.goto('/');
     await expect(page.getByTestId('navigation')).toBeVisible();
     await page.getByRole('button', { name: 'meshery-button-2 Performance' }).click();
     await page.getByTestId('navigation').getByRole('button', { name: 'Profiles' }).click();
