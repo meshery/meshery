@@ -161,7 +161,7 @@ const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
   );
 };
 
-const KubernetesSubscription = ({ store, setActiveContexts, setAppState }) => {
+const KubernetesSubscription = ({ store, setAppState }) => {
   const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
     // Don't fetch k8s contexts if user doesn't have permission
     if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
@@ -704,11 +704,7 @@ const MesheryApp = ({
                       >
                         <NotificationCenterProvider>
                           <MesheryProgressBar />
-                          <KubernetesSubscription
-                            store={store}
-                            setActiveContexts={setActiveContexts}
-                            setAppState={setAppState}
-                          />
+                          <KubernetesSubscription store={store} setAppState={setAppState} />
                           {!state.isFullScreenMode && (
                             <Header
                               onDrawerToggle={handleDrawerToggle}
