@@ -9,6 +9,7 @@ import {
   Modal,
   WorkspaceIcon,
   ModalBody,
+  useTheme,
 } from '@layer5/sistent';
 import { WorkspacesComponent } from '../../components/Lifecycle';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -31,6 +32,15 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
   },
   '&:hover .setting-icon': {
     visibility: 'visible',
+  },
+}));
+
+const SettingsIconWrapper = styled('div')(({ theme }) => ({
+  '& svg': {
+    color: theme.palette.icon.secondary,
+  },
+  '& svg:hover': {
+    fill: theme.palette.icon.secondary + ' !important',
   },
 }));
 
@@ -135,9 +145,9 @@ function WorkspaceSwitcher({ open }) {
                             }}
                           >
                             <span>{works.name}</span>
-                            <span className="setting-icon">
+                            <SettingsIconWrapper className="setting-icon">
                               <SettingsIcon {...iconMedium} />
-                            </span>
+                            </SettingsIconWrapper>
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>
