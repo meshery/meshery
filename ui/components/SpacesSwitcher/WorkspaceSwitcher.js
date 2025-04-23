@@ -16,7 +16,6 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
 import { useLegacySelector } from '../../lib/store';
 import { StyledSelect } from './SpaceSwitcher';
-
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
 import { useRouter } from 'next/router';
@@ -91,6 +90,7 @@ function WorkspaceSwitcher({ open }) {
       { shallow: true },
     );
   };
+  const theme = useTheme();
   return (
     <NoSsr>
       {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
@@ -169,10 +169,7 @@ function WorkspaceSwitcher({ open }) {
         open={workspaceModal}
         maxWidth="xl"
         headerIcon={
-          <WorkspaceIcon
-            {...iconMedium}
-            secondaryFill={theme.palette.icon.neutral.default}
-          />
+          <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
         }
         title="Workspaces"
       >

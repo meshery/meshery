@@ -65,7 +65,7 @@ const WorkspaceActionList = ({
       label: 'Edit Workspace',
       icon: <EditIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />,
       onClick: (e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.EDIT, selectedWorkspace),
-      disabled: !CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject),
+      disabled: !CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject),
     },
     {
       key: 'delete-workspace',
