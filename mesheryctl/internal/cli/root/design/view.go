@@ -45,12 +45,14 @@ var viewCmd = &cobra.Command{
 	Long:  `Display the content of a specific design based on name or id`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
-	// View a design
-	mesheryctl design view [design-name | ID]
-	// View a design with verbosity increased
-	mesheryctl design view [design-name | ID] --verbose
-	// View a design displaying all file content
-	mesheryctl design view --all
+// View a design
+mesheryctl design view [design-name | ID]
+
+// View a design with verbosity increased
+mesheryctl design view [design-name | ID] --verbose
+
+// View a design displaying all file content
+mesheryctl design view --all
     `,
 	Annotations: linkDocPatternView,
 	RunE: func(cmd *cobra.Command, args []string) error {
