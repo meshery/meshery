@@ -319,59 +319,6 @@ const Layer5CloudExtension = () => {
   );
 };
 
-const HelmPluginLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/extensions/helm-icon.svg"
-      data-testid="helm-plugin-image"
-    />
-  );
-};
-
-const HelmPluginExtension = () => {
-  const handleLearnMore = (e) => {
-    window.open('https://meshery.io/extensions/helm-kanvas-snapshot', '_blank');
-    e.stopPropagation();
-  };
-
-  return (
-    <>
-      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-        <CardContainer>
-          <Typography data-testid="helm-plugin-heading" variant="h5" component="div">
-            Helm Plugin for Kanvas Snapshot
-          </Typography>
-
-          <FrontSideDescription variant="body">
-            <HelmPluginLogo />
-            Generate visual snapshots of your Helm charts directly from the command line. Helm
-            charts into Kanvas Snapshots with support for both packaged and unpackaged charts.
-            Receive snapshots via email or terminal URL display.
-          </FrontSideDescription>
-
-          <div style={{ textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              data-testid="helm-plugin-learn-more-btn"
-              onClick={(e) => handleLearnMore(e)}
-            >
-              Learn More
-            </Button>
-          </div>
-        </CardContainer>
-      </Grid>
-    </>
-  );
-};
-
 const KubectlPluginLogo = () => {
   return (
     <img
