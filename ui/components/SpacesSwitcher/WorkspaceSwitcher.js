@@ -51,7 +51,7 @@ function WorkspaceSwitcher({ open }) {
     },
   );
   useEffect(() => {
-    if (workspacesData && workspacesData.workspaces.length > 0) {
+    if (workspacesData && workspacesData.workspaces?.length > 0) {
       const defaultWorkspace = workspacesData.workspaces[0];
       setDefaultWorkspace(defaultWorkspace);
     }
