@@ -45,14 +45,15 @@
     "model": {
       "version": "4.2.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,15 +174,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "configuration.konghq.com/v1",
     "kind": "KongClusterPlugin",
-    "schema": "{\n \"description\": \"KongClusterPlugin is the Schema for the kongclusterplugins API\",\n \"properties\": {\n  \"config\": {\n   \"description\": \"Config contains the plugin configuration.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  },\n  \"configFrom\": {\n   \"description\": \"ConfigFrom references a secret containing the plugin configuration.\",\n   \"properties\": {\n    \"secretKeyRef\": {\n     \"description\": \"NamespacedSecretValueFromSource represents the source of a secret value specifying the secret namespace\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"the key containing the value\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"the secret containing the key\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace containing the secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"consumerRef\": {\n   \"description\": \"ConsumerRef is a reference to a particular consumer\",\n   \"type\": \"string\"\n  },\n  \"disabled\": {\n   \"description\": \"Disabled set if the plugin is disabled or not\",\n   \"type\": \"boolean\"\n  },\n  \"plugin\": {\n   \"description\": \"PluginName is the name of the plugin to which to apply the config\",\n   \"type\": \"string\"\n  },\n  \"protocols\": {\n   \"description\": \"Protocols configures plugin to run on requests received on specific protocols.\",\n   \"items\": {\n    \"enum\": [\n     \"http\",\n     \"https\",\n     \"grpc\",\n     \"grpcs\",\n     \"tcp\",\n     \"tls\",\n     \"udp\"\n    ],\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"run_on\": {\n   \"description\": \"RunOn configures the plugin to run on the first or the second or both nodes in case of a service mesh deployment.\",\n   \"enum\": [\n    \"first\",\n    \"second\",\n    \"all\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"plugin\"\n ],\n \"title\": \"Kong Cluster Plugin\",\n \"type\": \"object\"\n}",
-    "version": "configuration.konghq.com/v1"
+    "schema": "{\n \"description\": \"KongClusterPlugin is the Schema for the kongclusterplugins API\",\n \"properties\": {\n  \"config\": {\n   \"description\": \"Config contains the plugin configuration.\",\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  },\n  \"configFrom\": {\n   \"description\": \"ConfigFrom references a secret containing the plugin configuration.\",\n   \"properties\": {\n    \"secretKeyRef\": {\n     \"description\": \"NamespacedSecretValueFromSource represents the source of a secret value specifying the secret namespace\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"the key containing the value\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"the secret containing the key\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The namespace containing the secret\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\",\n      \"namespace\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"consumerRef\": {\n   \"description\": \"ConsumerRef is a reference to a particular consumer\",\n   \"type\": \"string\"\n  },\n  \"disabled\": {\n   \"description\": \"Disabled set if the plugin is disabled or not\",\n   \"type\": \"boolean\"\n  },\n  \"plugin\": {\n   \"description\": \"PluginName is the name of the plugin to which to apply the config\",\n   \"type\": \"string\"\n  },\n  \"protocols\": {\n   \"description\": \"Protocols configures plugin to run on requests received on specific protocols.\",\n   \"items\": {\n    \"enum\": [\n     \"http\",\n     \"https\",\n     \"grpc\",\n     \"grpcs\",\n     \"tcp\",\n     \"tls\",\n     \"udp\"\n    ],\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"run_on\": {\n   \"description\": \"RunOn configures the plugin to run on the first or the second or both nodes in case of a service mesh deployment.\",\n   \"enum\": [\n    \"first\",\n    \"second\",\n    \"all\"\n   ],\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"plugin\"\n ],\n \"title\": \"Kong Cluster Plugin\",\n \"type\": \"object\"\n}"
   }
 }

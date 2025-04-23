@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Runtime"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "2.4.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "crd.projectcalico.org/v1",
     "kind": "GlobalNetworkSet",
-    "schema": "{\n \"description\": \"GlobalNetworkSet contains a set of arbitrary IP sub-networks/CIDRs that share labels to allow rules to refer to them via selectors.  The labels of GlobalNetworkSet are not namespaced.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalNetworkSetSpec contains the specification for a NetworkSet resource.\",\n   \"properties\": {\n    \"nets\": {\n     \"description\": \"The list of IP networks that belong to this set.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Network Set\",\n \"type\": \"object\"\n}",
-    "version": "crd.projectcalico.org/v1"
+    "schema": "{\n \"description\": \"GlobalNetworkSet contains a set of arbitrary IP sub-networks/CIDRs that share labels to allow rules to refer to them via selectors.  The labels of GlobalNetworkSet are not namespaced.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalNetworkSetSpec contains the specification for a NetworkSet resource.\",\n   \"properties\": {\n    \"nets\": {\n     \"description\": \"The list of IP networks that belong to this set.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Network Set\",\n \"type\": \"object\"\n}"
   }
 }

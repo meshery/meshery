@@ -45,14 +45,15 @@
     "model": {
       "version": "1.0.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,15 +174,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "application.kubesphere.io/v2",
     "kind": "Repo",
-    "schema": "{\n \"description\": \"Repo is the Schema for the repoes API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RepoSpec defines the desired state of Repo\",\n   \"properties\": {\n    \"credential\": {\n     \"properties\": {\n      \"caFile\": {\n       \"description\": \"verify certificates of HTTPS-enabled servers using this CA bundle\",\n       \"type\": \"string\"\n      },\n      \"certFile\": {\n       \"description\": \"identify HTTPS client using this SSL certificate file\",\n       \"type\": \"string\"\n      },\n      \"insecureSkipTLSVerify\": {\n       \"description\": \"skip tls certificate checks for the repository, default is ture\",\n       \"type\": \"boolean\"\n      },\n      \"keyFile\": {\n       \"description\": \"identify HTTPS client using this SSL key file\",\n       \"type\": \"string\"\n      },\n      \"password\": {\n       \"description\": \"chart repository password\",\n       \"type\": \"string\"\n      },\n      \"username\": {\n       \"description\": \"chart repository username\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"syncPeriod\": {\n     \"type\": \"integer\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Repo\",\n \"type\": \"object\"\n}",
-    "version": "application.kubesphere.io/v2"
+    "schema": "{\n \"description\": \"Repo is the Schema for the repoes API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RepoSpec defines the desired state of Repo\",\n   \"properties\": {\n    \"credential\": {\n     \"properties\": {\n      \"caFile\": {\n       \"description\": \"verify certificates of HTTPS-enabled servers using this CA bundle\",\n       \"type\": \"string\"\n      },\n      \"certFile\": {\n       \"description\": \"identify HTTPS client using this SSL certificate file\",\n       \"type\": \"string\"\n      },\n      \"insecureSkipTLSVerify\": {\n       \"description\": \"skip tls certificate checks for the repository, default is ture\",\n       \"type\": \"boolean\"\n      },\n      \"keyFile\": {\n       \"description\": \"identify HTTPS client using this SSL key file\",\n       \"type\": \"string\"\n      },\n      \"password\": {\n       \"description\": \"chart repository password\",\n       \"type\": \"string\"\n      },\n      \"username\": {\n       \"description\": \"chart repository username\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"syncPeriod\": {\n     \"type\": \"integer\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Repo\",\n \"type\": \"object\"\n}"
   }
 }

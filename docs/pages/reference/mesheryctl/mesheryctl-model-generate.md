@@ -12,11 +12,12 @@ subcommand: generate
 
 # mesheryctl model generate
 
-Generate models from mesheryctl command
+Generate models from a file
 
 ## Synopsis
 
-Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.
+Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name
+Documentation for models generate can be found at https://docs.meshery.io/reference/mesheryctl/model/generate
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model generate [flags]
@@ -26,44 +27,26 @@ mesheryctl model generate [flags]
 
 ## Examples
 
+Generate a model from a CSV file(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl model generate -f [ URI ]
+mesheryctl model generate --f [path-to-csv-drectory]
 
 </div>
 </pre> 
 
+Generate a model from a Uri baesd on a JSON template
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl model generate -f [ URI ] -t [ path to template file ] ( only required in case of URL )
+mesheryctl model generate --f [URL] -t [path-to-template.json]
 
 </div>
 </pre> 
 
+Generate a model from a Uri baesd on a JSON template skipping registration
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl model generate -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	mesheryctl model generate --f /path/to/csv-drectory
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-        mesheryctl model generate --f http://example.com/model -t /path/to/template.json 
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	mesheryctl model generate --f http://example.com/model -t /path/to/template.json -r
+mesheryctl model generate --f [URL] -t [path-to-template.json] -r
 
 </div>
 </pre> 

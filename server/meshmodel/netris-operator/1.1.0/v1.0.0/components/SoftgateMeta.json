@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-1.1.2/netris-operator-1.1.2.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "1.1.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "k8s.netris.ai/v1alpha1",
     "kind": "SoftgateMeta",
-    "schema": "{\n \"description\": \"SoftgateMeta is the Schema for the softgatemeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SoftgateMetaSpec defines the desired state of SoftgateMeta\",\n   \"properties\": {\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"type\": \"boolean\"\n    },\n    \"mainIp\": {\n     \"type\": \"string\"\n    },\n    \"mgmtIp\": {\n     \"type\": \"string\"\n    },\n    \"profileid\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"siteid\": {\n     \"type\": \"integer\"\n    },\n    \"softgateGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"softgateName\": {\n     \"type\": \"string\"\n    },\n    \"tenantid\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"imported\",\n    \"reclaimPolicy\",\n    \"softgateGeneration\",\n    \"softgateName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Softgate Meta\",\n \"type\": \"object\"\n}",
-    "version": "k8s.netris.ai/v1alpha1"
+    "schema": "{\n \"description\": \"SoftgateMeta is the Schema for the softgatemeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SoftgateMetaSpec defines the desired state of SoftgateMeta\",\n   \"properties\": {\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"type\": \"boolean\"\n    },\n    \"mainIp\": {\n     \"type\": \"string\"\n    },\n    \"mgmtIp\": {\n     \"type\": \"string\"\n    },\n    \"profileid\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"siteid\": {\n     \"type\": \"integer\"\n    },\n    \"softgateGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"softgateName\": {\n     \"type\": \"string\"\n    },\n    \"tenantid\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"id\",\n    \"imported\",\n    \"reclaimPolicy\",\n    \"softgateGeneration\",\n    \"softgateName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Softgate Meta\",\n \"type\": \"object\"\n}"
   }
 }

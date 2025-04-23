@@ -12,11 +12,12 @@ subcommand: view
 
 # mesheryctl model view
 
-view model
+View model
 
 ## Synopsis
 
-view a model queried by its name
+View a model queried by its name
+Documentation for models view can be found at https://docs.meshery.io/reference/mesheryctl/model/view
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [flags]
@@ -26,7 +27,7 @@ mesheryctl model view [flags]
 
 ## Examples
 
-View current provider
+View a specific model from current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [model-name]

@@ -45,13 +45,16 @@
     "model": {
       "version": "0.7.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "background-opacity": 0,
+    "data": {
+      "label": ""
+    },
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
@@ -119,15 +122,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": true,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "",
     "kind": "aptana",
-    "schema": "",
-    "version": ""
+    "schema": ""
   }
 }

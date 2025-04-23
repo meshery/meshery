@@ -38,8 +38,8 @@
   "model": {
     "version": "3.4.0-SNAPSHOT.12"
   },
-  "components": null,
-  "relationships": null,
   "components_count": 0,
-  "relationships_count": 0
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
 }

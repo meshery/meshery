@@ -228,6 +228,59 @@ const MesheryDesignEmbedLogo = () => {
   );
 };
 
+const MesheryHelmKanvasLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/helm_chart.svg"
+    />
+  );
+};
+
+const MesheryHelmKanvasExtension = () => {
+  const handleLearnMore = (e) => {
+    window.open('https://docs.meshery.io/extensions/helm-kanvas-snapshot', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography variant="h5" component="div">
+            Kanvas Snapshot Helm Plugin
+          </Typography>
+
+          <FrontSideDescription variant="body">
+            <MesheryHelmKanvasLogo />
+            The Kanvas Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm
+            charts directly from the command line. It simplifies the process of creating Meshery
+            Snapshots, providing a visual representation of packaged Helm charts.
+          </FrontSideDescription>
+          {
+            <div style={{ textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                data-testid="helm-kanvas-learn-more-btn"
+                onClick={(e) => handleLearnMore(e)}
+              >
+                Learn More
+              </Button>
+            </div>
+          }
+        </CardContainer>
+      </Grid>
+    </>
+  );
+};
+
 const MesheryDesignEmbedExtension = () => {
   const handleLearnMore = (e) => {
     window.open('https://docs.layer5.io/kanvas/designer/embedding-designs/', '_blank');
@@ -433,6 +486,7 @@ export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
 export const WrappedLayer5CloudExtension = Layer5CloudExtension;
 export const WrappedKubectlPluginExtension = KubectlPluginExtension;
 export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
+export const WrappedMesheryHelmKanvasExtension = MesheryHelmKanvasExtension;
 const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
@@ -502,6 +556,7 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
             <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
             <WrappedMesheryPerformanceAction githubActionEnabled={false} />
             <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
+            <WrappedMesheryHelmKanvasExtension />
             <WrappedMesheryDockerExtension />
             <WrappedMesheryEmbedDesignExtension />
             <WrappedLayer5CloudExtension />

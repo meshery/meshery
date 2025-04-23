@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/FRINXio/helm-charts/releases/download/frinx-machine-0.4.87/frinx-machine-0.4.87.tgz",
       "svgColor": "",
@@ -38,17 +39,18 @@
     "model": {
       "version": "0.4.54"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "svgColor": "",
-    "svgWhite": ""
+    "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\r\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\r\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\r\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\r\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\r\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\r\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\r\u003c/svg\u003e"
   },
   "capabilities": [
     {
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "database.arangodb.com/v1",
     "kind": "ArangoClusterSynchronization",
-    "schema": "{\n \"title\": \"Arango Cluster Synchronization\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}",
-    "version": "database.arangodb.com/v1"
+    "schema": "{\n \"title\": \"Arango Cluster Synchronization\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"
   }
 }

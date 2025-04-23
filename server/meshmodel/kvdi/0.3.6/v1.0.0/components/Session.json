@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://kvdi.github.io/helm-charts/charts/kvdi-v0.3.6.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "0.3.6"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "desktops.kvdi.io/v1",
     "kind": "Session",
-    "schema": "{\n \"description\": \"Session is the Schema for the sessions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SessionSpec defines the desired state of Session\",\n   \"properties\": {\n    \"serviceAccount\": {\n     \"description\": \"A service account to tie to the pod for this instance.\",\n     \"type\": \"string\"\n    },\n    \"template\": {\n     \"description\": \"The DesktopTemplate for booting this instance.\",\n     \"type\": \"string\"\n    },\n    \"user\": {\n     \"description\": \"The username to use inside the instance, defaults to `anonymous`.\",\n     \"type\": \"string\"\n    },\n    \"vdiCluster\": {\n     \"description\": \"The VDICluster this Desktop belongs to. This helps to determine which app instance certificates need to be created for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"template\",\n    \"vdiCluster\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Session\",\n \"type\": \"object\"\n}",
-    "version": "desktops.kvdi.io/v1"
+    "schema": "{\n \"description\": \"Session is the Schema for the sessions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SessionSpec defines the desired state of Session\",\n   \"properties\": {\n    \"serviceAccount\": {\n     \"description\": \"A service account to tie to the pod for this instance.\",\n     \"type\": \"string\"\n    },\n    \"template\": {\n     \"description\": \"The DesktopTemplate for booting this instance.\",\n     \"type\": \"string\"\n    },\n    \"user\": {\n     \"description\": \"The username to use inside the instance, defaults to `anonymous`.\",\n     \"type\": \"string\"\n    },\n    \"vdiCluster\": {\n     \"description\": \"The VDICluster this Desktop belongs to. This helps to determine which app instance certificates need to be created for.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"template\",\n    \"vdiCluster\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Session\",\n \"type\": \"object\"\n}"
   }
 }

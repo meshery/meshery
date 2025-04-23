@@ -12,11 +12,11 @@ subcommand: nil
 
 # mesheryctl components
 
-View list of components and detail of components
+Manage components
 
 ## Synopsis
 
-View list of components and detailed information of a specific component
+List, search and view component(s) and detailed informations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components [flags]
@@ -26,15 +26,15 @@ mesheryctl components [flags]
 
 ## Examples
 
-To view total of available components
+Display number of available components in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model --count
+mesheryctl components --count
 
 </div>
 </pre> 
 
-To view list of components
+List available component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components list
@@ -42,18 +42,18 @@ mesheryctl components list
 </div>
 </pre> 
 
-To view a specific component
+Search for component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components view [component-name]
+mesheryctl component search [component-name]
 
 </div>
 </pre> 
 
-To search for a specific component
+View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components search [component-name]
+mesheryctl component view [component-name]
 
 </div>
 </pre> 

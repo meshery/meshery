@@ -45,14 +45,15 @@
     "model": {
       "version": "0.1.6"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,15 +174,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "install.istio.io/v1alpha1",
     "kind": "IstioOperator",
-    "schema": "{\n \"title\": \"Istio Operator\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}",
-    "version": "install.istio.io/v1alpha1"
+    "schema": "{\n \"title\": \"Istio Operator\",\n \"type\": \"object\",\n \"x-kubernetes-preserve-unknown-fields\": true\n}"
   }
 }

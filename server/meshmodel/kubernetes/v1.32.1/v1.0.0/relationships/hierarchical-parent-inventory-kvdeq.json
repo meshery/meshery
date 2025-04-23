@@ -36,13 +36,15 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": ""
     },
+    "subCategory": "",
+    "metadata": null,
     "model": {
       "version": "v1.32.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -78,13 +80,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": null
           }
@@ -119,13 +123,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": null
           }
@@ -162,13 +168,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": null
           }
@@ -203,13 +211,15 @@
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": ""
               },
+              "subCategory": "",
+              "metadata": null,
               "model": {
                 "version": ""
               },
-              "components": null,
-              "relationships": null,
               "components_count": 0,
-              "relationships_count": 0
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
             },
             "patch": null
           }

@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Runtime"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "2.4.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "crd.projectcalico.org/v1",
     "kind": "BlockAffinity",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BlockAffinitySpec contains the specification for a BlockAffinity resource.\",\n   \"properties\": {\n    \"cidr\": {\n     \"type\": \"string\"\n    },\n    \"deleted\": {\n     \"description\": \"Deleted indicates that this block affinity is being deleted. This field is a string for compatibility with older releases that mistakenly treat this field as a string.\",\n     \"type\": \"string\"\n    },\n    \"node\": {\n     \"type\": \"string\"\n    },\n    \"state\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cidr\",\n    \"deleted\",\n    \"node\",\n    \"state\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Block Affinity\",\n \"type\": \"object\"\n}",
-    "version": "crd.projectcalico.org/v1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BlockAffinitySpec contains the specification for a BlockAffinity resource.\",\n   \"properties\": {\n    \"cidr\": {\n     \"type\": \"string\"\n    },\n    \"deleted\": {\n     \"description\": \"Deleted indicates that this block affinity is being deleted. This field is a string for compatibility with older releases that mistakenly treat this field as a string.\",\n     \"type\": \"string\"\n    },\n    \"node\": {\n     \"type\": \"string\"\n    },\n    \"state\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"cidr\",\n    \"deleted\",\n    \"node\",\n    \"state\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Block Affinity\",\n \"type\": \"object\"\n}"
   }
 }

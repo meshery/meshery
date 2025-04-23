@@ -15,16 +15,19 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
+
+	// "github.com/layer5io/meshkit/errors"
+	// "github.com/layer5io/meshkit/errors"
 	"github.com/layer5io/meshkit/models/events"
 
 	meshkitOci "github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/models/registration"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
@@ -230,6 +233,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	if search != "" {
 		filter.DisplayName = search
+		filter.Name = search
 		filter.Greedy = true
 	}
 
@@ -1236,7 +1240,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	var dir registration.Dir
 	switch importRequest.UploadType {
 	case "csv":
-		err := mesheryctlUtils.SetLogger(false)
+		err := meshkitRegistryUtils.SetLogger(false)
 		if err != nil {
 			h.handleError(rw, err, "Error setting logger")
 			h.sendErrorEvent(userID, provider, "Error setting logger", err)
@@ -1332,7 +1336,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		defer os.RemoveAll(tempDir)
 
-		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
@@ -1367,13 +1371,12 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	//Case when it is URL and them the model is generated from the URL
 	case "url":
 
-		model := &mesheryctlUtils.ModelCSV{
-			Model:            importRequest.ImportBody.Model.Model,
-			ModelDisplayName: importRequest.ImportBody.Model.ModelDisplayName,
-			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
-			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
-			Category:         importRequest.ImportBody.Model.Category,
-
+		model := &meshkitRegistryUtils.ModelCSV{
+			Model:             importRequest.ImportBody.Model.Model,
+			ModelDisplayName:  importRequest.ImportBody.Model.ModelDisplayName,
+			PrimaryColor:      importRequest.ImportBody.Model.PrimaryColor,
+			SecondaryColor:    importRequest.ImportBody.Model.SecondaryColor,
+			Category:          importRequest.ImportBody.Model.Category,
 			Registrant:        importRequest.ImportBody.Model.Registrant,
 			Shape:             importRequest.ImportBody.Model.Shape,
 			SubCategory:       importRequest.ImportBody.Model.SubCategory,
@@ -1387,7 +1390,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		//Model generation strats from here
 		model.Model = strings.ToLower(model.Model)
 
-		pkg, version, err := mesheryctlUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
+		pkg, version, err := meshkitRegistryUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
 		if err != nil {
 			h.handleError(rw, err, "Error generating model")
 			h.sendErrorEvent(userID, provider, "Error generating model", err)
@@ -1409,7 +1412,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		//Component generation starts here
-		lengthofComps, _, err := mesheryctlUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
+		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
 		if err != nil {
 			h.handleError(rw, err, "Error generating components")
 			h.sendErrorEvent(userID, provider, "Error generating components", err)
@@ -1564,10 +1567,31 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// No entities found for the given filter
+	// This can happen if the model is not found or if the model is not registered
+	// or if the model is not in the registry
+	// In this case, we return a 404 error
 	if len(e) == 0 {
-		h.log.Error(ErrGetMeshModels(err))
-		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		message := "model with "
+		if modelId != "" {
+			message += fmt.Sprintf("id %s ", modelId)
+		}
+		if name != "" {
+			message += fmt.Sprintf("name %s ", name)
+		}
+		if version != "" {
+			message += fmt.Sprintf("version %s ", version)
+		}
+		message += "has not been found"
+		// h.log.Error(ErrGetMeshModels(err))
+		// http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusNotFound)
+		rw.WriteHeader(http.StatusNotFound)
+		// rw.Write([]byte(message))
+		fmt.Fprintln(rw, message)
+		return
 	}
+
 	model := e[0].(*_model.ModelDefinition)
 	//This path is used to so that the function can be aware of where the svg file is
 	//This is for relative path as we are inside meshery/server/cmd/main.go
@@ -1600,8 +1624,17 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	}
 	defer os.RemoveAll(modelDir)
 
-	components := model.Components.([]component.ComponentDefinition)
-	rels := model.Relationships.([]relationship.RelationshipDefinition)
+	components := []component.ComponentDefinition{}
+	// Components can be nil if hasComponents is false
+	if model.Components != nil {
+		components = model.Components.([]component.ComponentDefinition)
+	}
+
+	relationships := []relationship.RelationshipDefinition{}
+	// Relationships can be nil if hasRelationships is false
+	if model.Relationships != nil {
+		relationships = model.Relationships.([]relationship.RelationshipDefinition)
+	}
 
 	model.Relationships = nil
 	model.Components = nil
@@ -1624,7 +1657,7 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 		}
 
 	}
-	for _, rel := range rels {
+	for _, rel := range relationships {
 		rel.Model = *model
 		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
 		if err != nil {

@@ -23,7 +23,7 @@ Meshery CLI commands are categorized by function, which are:
 - [`mesheryctl design`](#cloud-native-design-configuration-and-management) - Design Patterns: Cloud native patterns and best practices
 - [`mesheryctl filter`](#data-plane-intelligence) - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
 - [`mesheryctl model`](#meshery-models) - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
-- [`mesheryctl components`](#meshery-components) - Fundamental building block used to represent and define the infrastructure under management
+- [`mesheryctl component`](#meshery-components) - Fundamental building block used to represent and define the infrastructure under management
 - [`mesheryctl registry`](#meshery-registry-management) - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 
@@ -791,7 +791,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Flag</th>
     <th>Function</th>
   </tr>
-  {% assign command13 = site.data.mesheryctlcommands.cmds.components %}
+  {% assign command13 = site.data.mesheryctlcommands.cmds.component %}
     <tr>
       <td rowspan=9><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command13.name }}">{{ command13.name }}</a></td>
       <td></td>
@@ -913,6 +913,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   {% endfor %}
 </thead>
 </table>
+
+## Frequently Asked Questions for Meshery CLI 
+Refer the following <a href='/guides/mesheryctl/working-with-mesheryctl'>Frequently asked questions</a> related to Meshery CLI.
 
 {% include related-discussions.html tag="mesheryctl" %}
 

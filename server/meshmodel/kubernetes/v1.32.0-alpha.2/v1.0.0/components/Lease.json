@@ -45,16 +45,17 @@
     "model": {
       "version": "v1.32.0-alpha.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#326CE5",
     "secondaryColor": "#7aa1f0",
     "shape": "round-hexagon",
     "svgColor": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M5.5 6.5H13.4V8V9.5H6.5V15.8H5H3.5V8.5C3.5 7.39543 4.39543 6.5 5.5 6.5ZM3.5 81.5V81.5003C3.5 82.6048 4.39543 83.5003 5.5 83.5003H54.3464C55.451 83.5003 56.3464 82.6048 56.3464 81.5003V36.4438C56.3464 35.3392 55.451 34.4438 54.3464 34.4438H5.5C4.39543 34.4438 3.5 35.3392 3.5 36.4438V37.7V52.3V55.95V70.55V74.2V81.5ZM5 34.05H3.5V19.45H5H6.5V34.05H5ZM17.35 8V6.5H33.15V8V9.5H17.35V8ZM37.1 8V6.5H52.9V8V9.5H37.1V8ZM56.85 8V6.5H72.65V8V9.5H56.85V8ZM76.6 8V6.5H84.5C85.6046 6.5 86.5 7.39543 86.5 8.5V15.8H85H83.5V9.5H76.6V8ZM85 19.45H86.5V34.05H85H83.5V19.45H85ZM85 37.7H86.5V52.3H85H83.5V37.7H85ZM85 55.95H86.5V70.55H85H83.5V55.95H85ZM85 74.2H86.5V81.5C86.5 82.6046 85.6046 83.5 84.5 83.5H76.6V82V80.5H83.5V74.2H85ZM72.65 82V83.5H56.85V82V80.5H72.65V82Z\" fill=\"#326CE5\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"90\" height=\"90\" viewBox=\"0 0 90 90\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M5.5 6.5H13.4V8V9.5H6.5V15.8H5H3.5V8.5C3.5 7.39543 4.39543 6.5 5.5 6.5ZM3.5 81.5V81.5003C3.5 82.6048 4.39543 83.5003 5.5 83.5003H54.3464C55.451 83.5003 56.3464 82.6048 56.3464 81.5003V36.4438C56.3464 35.3392 55.451 34.4438 54.3464 34.4438H5.5C4.39543 34.4438 3.5 35.3392 3.5 36.4438V37.7V52.3V55.95V70.55V74.2V81.5ZM5 34.05H3.5V19.45H5H6.5V34.05H5ZM17.35 8V6.5H33.15V8V9.5H17.35V8ZM37.1 8V6.5H52.9V8V9.5H37.1V8ZM56.85 8V6.5H72.65V8V9.5H56.85V8ZM76.6 8V6.5H84.5C85.6046 6.5 86.5 7.39543 86.5 8.5V15.8H85H83.5V9.5H76.6V8ZM85 19.45H86.5V34.05H85H83.5V19.45H85ZM85 37.7H86.5V52.3H85H83.5V37.7H85ZM85 55.95H86.5V70.55H85H83.5V55.95H85ZM85 74.2H86.5V81.5C86.5 82.6046 85.6046 83.5 84.5 83.5H76.6V82V80.5H83.5V74.2H85ZM72.65 82V83.5H56.85V82V80.5H72.65V82Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "coordination.k8s.io/v1",
     "kind": "Lease",
-    "schema": "{\"description\":\"Lease defines a lease concept.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"LeaseSpec is a specification of a Lease.\",\"properties\":{\"acquireTime\":{\"allOf\":[{\"description\":\"MicroTime is version of Time with microsecond level precision.\",\"format\":\"date-time\",\"type\":\"string\"}],\"description\":\"acquireTime is a time when the current lease was acquired.\"},\"holderIdentity\":{\"description\":\"holderIdentity contains the identity of the holder of a current lease. If Coordinated Leader Election is used, the holder identity must be equal to the elected LeaseCandidate.metadata.name field.\",\"type\":\"string\"},\"leaseDurationSeconds\":{\"description\":\"leaseDurationSeconds is a duration that candidates for a lease need to wait to force acquire it. This is measured against the time of last observed renewTime.\",\"format\":\"int32\",\"type\":\"integer\"},\"leaseTransitions\":{\"description\":\"leaseTransitions is the number of transitions of a lease between holders.\",\"format\":\"int32\",\"type\":\"integer\"},\"preferredHolder\":{\"description\":\"PreferredHolder signals to a lease holder that the lease has a more optimal holder and should be given up. This field can only be set if Strategy is also set.\",\"type\":\"string\"},\"renewTime\":{\"allOf\":[{\"description\":\"MicroTime is version of Time with microsecond level precision.\",\"format\":\"date-time\",\"type\":\"string\"}],\"description\":\"renewTime is a time when the current holder of a lease has last updated the lease.\"},\"strategy\":{\"description\":\"Strategy indicates the strategy for picking the leader for coordinated leader election. If the field is not specified, there is no active coordination for this lease. (Alpha) Using this field requires the CoordinatedLeaderElection feature gate to be enabled.\",\"type\":\"string\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"spec contains the specification of the Lease. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"coordination.k8s.io\",\"kind\":\"Lease\",\"version\":\"v1\"}]}",
-    "version": "coordination.k8s.io/v1"
+    "schema": "{\"description\":\"Lease defines a lease concept.\",\"properties\":{\"spec\":{\"allOf\":[{\"description\":\"LeaseSpec is a specification of a Lease.\",\"properties\":{\"acquireTime\":{\"allOf\":[{\"description\":\"MicroTime is version of Time with microsecond level precision.\",\"format\":\"date-time\",\"type\":\"string\"}],\"description\":\"acquireTime is a time when the current lease was acquired.\"},\"holderIdentity\":{\"description\":\"holderIdentity contains the identity of the holder of a current lease. If Coordinated Leader Election is used, the holder identity must be equal to the elected LeaseCandidate.metadata.name field.\",\"type\":\"string\"},\"leaseDurationSeconds\":{\"description\":\"leaseDurationSeconds is a duration that candidates for a lease need to wait to force acquire it. This is measured against the time of last observed renewTime.\",\"format\":\"int32\",\"type\":\"integer\"},\"leaseTransitions\":{\"description\":\"leaseTransitions is the number of transitions of a lease between holders.\",\"format\":\"int32\",\"type\":\"integer\"},\"preferredHolder\":{\"description\":\"PreferredHolder signals to a lease holder that the lease has a more optimal holder and should be given up. This field can only be set if Strategy is also set.\",\"type\":\"string\"},\"renewTime\":{\"allOf\":[{\"description\":\"MicroTime is version of Time with microsecond level precision.\",\"format\":\"date-time\",\"type\":\"string\"}],\"description\":\"renewTime is a time when the current holder of a lease has last updated the lease.\"},\"strategy\":{\"description\":\"Strategy indicates the strategy for picking the leader for coordinated leader election. If the field is not specified, there is no active coordination for this lease. (Alpha) Using this field requires the CoordinatedLeaderElection feature gate to be enabled.\",\"type\":\"string\"}},\"type\":\"object\"}],\"default\":{},\"description\":\"spec contains the specification of the Lease. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#spec-and-status\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"coordination.k8s.io\",\"kind\":\"Lease\",\"version\":\"v1\"}]}"
   }
 }
