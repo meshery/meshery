@@ -134,6 +134,7 @@ export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
   return (
     <StyledSnackbarContent ref={forwardedRef} variant={variant} theme={theme}>
       <div
+        data-testid={`SnackbarContent-${variant}`}
         style={{
           display: 'flex',
           alignItems: 'center',
