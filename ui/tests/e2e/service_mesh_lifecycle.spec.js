@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
-test.describe.skip('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
+test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
   const mesheryAdapters = [{ adapterName: 'Istio', adapterPort: '10000', deploy: false }];
 
   mesheryAdapters.forEach(({ adapterName, adapterPort }) => {

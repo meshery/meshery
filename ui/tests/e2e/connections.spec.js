@@ -95,7 +95,7 @@ test.beforeEach(async ({ page, provider }) => {
 
   connectionCount = body.total_count;
 });
-test.skip('Verify that UI components are displayed', async ({ page }) => {
+test('Verify that UI components are displayed', async ({ page }) => {
   // Verify that connections table is displayed (by checking for table headings)
   for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
     await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
@@ -109,7 +109,7 @@ test.skip('Verify that UI components are displayed', async ({ page }) => {
   expect(totalCount).toEqual(connectionCount);
 });
 
-test.skip(
+test(
   'Add a cluster connection by uploading kubeconfig file',
   { tag: '@unstable' },
   async ({ page }) => {
@@ -160,7 +160,7 @@ test.skip(
 );
 
 transitionTests.forEach((t) => {
-  test.skip(t.name, { tag: '@unstable' }, async ({ page, provider }) => {
+  test(t.name, { tag: '@unstable' }, async ({ page, provider }) => {
     const stateTransitionReq = page.waitForRequest(
       (request) =>
         request.url() ===
@@ -238,7 +238,7 @@ transitionTests.forEach((t) => {
   });
 });
 
-test.skip('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
+test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
   // Find the row with the connection to be deleted

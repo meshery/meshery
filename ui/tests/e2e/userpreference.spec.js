@@ -25,7 +25,7 @@ const userPreferenceTests = [
   },
 ];
 
-test.describe.skip(
+test.describe(
   'User Preferences Page Tests',
   {
     tag: '@unstable',
