@@ -431,7 +431,6 @@ export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
 export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
 export const WrappedLayer5CloudExtension = Layer5CloudExtension;
-export const WrappedHelmPluginExtension = HelmPluginExtension;
 export const WrappedKubectlPluginExtension = KubectlPluginExtension;
 export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
 const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
@@ -506,7 +505,6 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
             <WrappedMesheryDockerExtension />
             <WrappedMesheryEmbedDesignExtension />
             <WrappedLayer5CloudExtension />
-            <WrappedHelmPluginExtension />
             <WrappedKubectlPluginExtension />
             <WrappedKubectlMeshSyncExtension />
             <Grid item {...INITIAL_GRID_SIZE}>
