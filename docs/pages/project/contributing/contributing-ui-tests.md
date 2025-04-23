@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Contributing to Meshery's End-to-End Tests
+title: Contributing to Meshery UI End-to-End Tests
 permalink: project/contributing/contributing-ui-tests
-abstract: How to contribute to End-to-End Tests using Playwright.
+abstract: How to contribute to end-to-end testing in Meshery UI using Playwright.
 language: en
 type: project
 category: contributing
@@ -184,7 +184,9 @@ test('Random test', async ({ provider }) => {
 
 ## Testing Policy
 
-To maintain consistency across test cases, every new test will be tagged with `@unstable`. This will ensure that it appears with a warning icon rather than a failing icon in the test reporter comments on pull requests. For example:
+After merging a pull request, ensuring test stability across CI/CD runs is crucial. A test may pass locally but fail in the CI/CD environment due to differences in execution conditions. While one approach is to mark all new tests as @unstable by default, a more effective strategy is to apply the @unstable tag only if a test exhibits intermittent failures or flaky behavior.
+
+After merging into the master branch, monitor the GitHub workflow that executes the new test case and assess its stability. If the test fails, raise another PR to mark it as @unstable and communicate this to the team. For example:
 
 ```javascript
 import { expect, test } from './fixtures/project';
@@ -213,3 +215,13 @@ End-to-end test results are stored as artifacts on every PR in Github Actions. I
 Watch the training session on Playwright testing and trace debugging.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/x-W60mvDYuo?si=coN7RpRjkI4a_ndk&amp;start=1524" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+### Find Tests here
+Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
+
+To filter and view only UI-related tests using the Sheet Views feature:
+1. In the top menu bar, click Data → Change view
+2. Choose the pre-defined view labeled "UI"
+
+![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
+

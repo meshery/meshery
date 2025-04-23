@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "0.1.13"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "kafka.strimzi.io/v1beta1",
     "kind": "KafkaTopic",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the topic.\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"The topic configuration.\",\n     \"type\": \"object\"\n    },\n    \"partitions\": {\n     \"description\": \"The number of partitions the topic should have. This cannot be decreased after topic creation. It can be increased after topic creation, but it is important to understand the consequences that has, especially for topics with semantic partitioning.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"replicas\": {\n     \"description\": \"The number of replicas the topic should have.\",\n     \"maximum\": 32767,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"topicName\": {\n     \"description\": \"The name of the topic. When absent this will default to the metadata.name of the topic. It is recommended to not set this unless the topic name is not a valid Kubernetes resource name.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"partitions\",\n    \"replicas\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Topic\"\n}",
-    "version": "kafka.strimzi.io/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the topic.\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"The topic configuration.\",\n     \"type\": \"object\"\n    },\n    \"partitions\": {\n     \"description\": \"The number of partitions the topic should have. This cannot be decreased after topic creation. It can be increased after topic creation, but it is important to understand the consequences that has, especially for topics with semantic partitioning.\",\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"replicas\": {\n     \"description\": \"The number of replicas the topic should have.\",\n     \"maximum\": 32767,\n     \"minimum\": 1,\n     \"type\": \"integer\"\n    },\n    \"topicName\": {\n     \"description\": \"The name of the topic. When absent this will default to the metadata.name of the topic. It is recommended to not set this unless the topic name is not a valid Kubernetes resource name.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"partitions\",\n    \"replicas\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Topic\"\n}"
   }
 }

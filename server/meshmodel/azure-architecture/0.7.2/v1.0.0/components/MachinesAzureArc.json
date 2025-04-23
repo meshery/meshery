@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Application Definition \u0026 Image Build",
@@ -43,13 +44,16 @@
     "model": {
       "version": "0.7.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "background-opacity": 0,
+    "data": {
+      "label": ""
+    },
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A25",
     "shape": "polygon",
@@ -57,18 +61,77 @@
     "svgComplete": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"fa1955a2-9167-4a48-9f06-e30210fc6ef7\" x1=\"9.23\" x2=\"9.23\" y2=\"18\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\u003cstop offset=\"0.999\" stop-color=\"#773adc\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cg id=\"e09ece90-33de-4b2f-a5a3-49ac04dc41bb\"\u003e\u003cpath d=\"M15.074,17.39A.645.645,0,0,1,14.4,18H4.062a.645.645,0,0,1-.675-.61V.61A.645.645,0,0,1,4.062,0H14.4a.645.645,0,0,1,.675.61Z\" fill=\"url(#fa1955a2-9167-4a48-9f06-e30210fc6ef7)\" /\u003e\u003cpath d=\"M13.461,7.7a1.34,1.34,0,0,0-1.27-1.4H6.375a1.34,1.34,0,0,0-1.27,1.4h0a1.34,1.34,0,0,0,1.27,1.4h5.816a1.34,1.34,0,0,0,1.27-1.4Z\" fill=\"#552f99\" /\u003e\u003cpath d=\"M13.461,3.537a1.34,1.34,0,0,0-1.27-1.4H6.375a1.34,1.34,0,0,0-1.27,1.4h0a1.34,1.34,0,0,0,1.27,1.4h5.816a1.34,1.34,0,0,0,1.27-1.4Z\" fill=\"#552f99\" /\u003e\u003ccircle cx=\"11.826\" cy=\"3.537\" r=\"0.939\" fill=\"#50e6ff\" /\u003e\u003ccircle cx=\"11.826\" cy=\"7.695\" r=\"0.939\" fill=\"#50e6ff\" /\u003e\u003c/g\u003e\u003c/svg\u003e",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"fa1955a2-9167-4a48-9f06-e30210fc6ef7\" x1=\"9.23\" x2=\"9.23\" y2=\"18\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\u003cstop offset=\"0.999\" stop-color=\"#773adc\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cg id=\"e09ece90-33de-4b2f-a5a3-49ac04dc41bb\"\u003e\u003cpath d=\"M15.074,17.39A.645.645,0,0,1,14.4,18H4.062a.645.645,0,0,1-.675-.61V.61A.645.645,0,0,1,4.062,0H14.4a.645.645,0,0,1,.675.61Z\" fill=\"url(#fa1955a2-9167-4a48-9f06-e30210fc6ef7)\" /\u003e\u003cpath d=\"M13.461,7.7a1.34,1.34,0,0,0-1.27-1.4H6.375a1.34,1.34,0,0,0-1.27,1.4h0a1.34,1.34,0,0,0,1.27,1.4h5.816a1.34,1.34,0,0,0,1.27-1.4Z\" fill=\"#552f99\" /\u003e\u003cpath d=\"M13.461,3.537a1.34,1.34,0,0,0-1.27-1.4H6.375a1.34,1.34,0,0,0-1.27,1.4h0a1.34,1.34,0,0,0,1.27,1.4h5.816a1.34,1.34,0,0,0,1.27-1.4Z\" fill=\"#552f99\" /\u003e\u003ccircle cx=\"11.826\" cy=\"3.537\" r=\"0.939\" fill=\"#50e6ff\" /\u003e\u003ccircle cx=\"11.826\" cy=\"7.695\" r=\"0.939\" fill=\"#50e6ff\" /\u003e\u003c/g\u003e\u003c/svg\u003e"
   },
-  "capabilities": null,
+  "capabilities": [
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Add text to nodes body",
+      "displayName": "Body Text",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "body-text",
+      "type": "style",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": true,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "",
     "kind": "MachinesAzureArc",
-    "schema": "",
-    "version": ""
+    "schema": ""
   }
 }

@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Platform"
     },
     "subCategory": "Certified Kubernetes - Distribution",
@@ -44,16 +45,17 @@
     "model": {
       "version": "v3.4.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\" fill=\"#26A678\"/\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"32\" height=\"38\" viewBox=\"0 0 32 38\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n    \u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\"\n        d=\"M27.901 30.192L19.814 25.479V34.905L27.901 30.192ZM27.901 7.241L19.814 2.528V11.954L27.901 7.241ZM15.823 0.25L0 9.472V27.962L15.823 37.183V23.154L8.21 18.716L15.823 14.279V0.25ZM15.878 18.717L31.678 27.924V9.509L15.878 18.717Z\"\n        fill=\"#fff\" /\u003e\n\u003c/svg\u003e"
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -190,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "alerting.kubesphere.io/v2beta1",
     "kind": "RuleGroup",
-    "schema": "{\n \"description\": \"RuleGroup is the Schema for the RuleGroup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RuleGroupSpec defines the desired state of RuleGroup\",\n   \"properties\": {\n    \"interval\": {\n     \"type\": \"string\"\n    },\n    \"partial_response_strategy\": {\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"properties\": {\n       \"alert\": {\n        \"type\": \"string\"\n       },\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"disable\": {\n        \"type\": \"boolean\"\n       },\n       \"expr\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"exprBuilder\": {\n        \"description\": \"If ExprBuilder is not nil, the configured Expr will be ignored\",\n        \"properties\": {\n         \"workload\": {\n          \"properties\": {\n           \"comparator\": {\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"type\": \"string\"\n           },\n           \"metricThreshold\": {\n            \"description\": \"Only one of its members may be specified.\",\n            \"properties\": {\n             \"cpu\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"usage\": {\n                \"description\": \"The unit is core\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"memory\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"usage\": {\n                \"description\": \"The memory usage contains cache The unit is bytes\",\n                \"type\": \"number\"\n               },\n               \"usageWoCache\": {\n                \"description\": \"The memory usage contains no cache The unit is bytes\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"network\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"receivedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               },\n               \"transmittedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"replica\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"unavailableRatio\": {\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"names\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"comparator\",\n           \"kind\",\n           \"names\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"for\": {\n        \"description\": \"Duration is a valid time unit Supported units: y, w, d, h, m, s, ms Examples: `30s`, `1m`, `1h20m15s`\",\n        \"pattern\": \"^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"severity\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"alert\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rule Group\",\n \"type\": \"object\"\n}",
-    "version": "alerting.kubesphere.io/v2beta1"
+    "schema": "{\n \"description\": \"RuleGroup is the Schema for the RuleGroup API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RuleGroupSpec defines the desired state of RuleGroup\",\n   \"properties\": {\n    \"interval\": {\n     \"type\": \"string\"\n    },\n    \"partial_response_strategy\": {\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"properties\": {\n       \"alert\": {\n        \"type\": \"string\"\n       },\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"disable\": {\n        \"type\": \"boolean\"\n       },\n       \"expr\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"exprBuilder\": {\n        \"description\": \"If ExprBuilder is not nil, the configured Expr will be ignored\",\n        \"properties\": {\n         \"workload\": {\n          \"properties\": {\n           \"comparator\": {\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"type\": \"string\"\n           },\n           \"metricThreshold\": {\n            \"description\": \"Only one of its members may be specified.\",\n            \"properties\": {\n             \"cpu\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"usage\": {\n                \"description\": \"The unit is core\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"memory\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"usage\": {\n                \"description\": \"The memory usage contains cache The unit is bytes\",\n                \"type\": \"number\"\n               },\n               \"usageWoCache\": {\n                \"description\": \"The memory usage contains no cache The unit is bytes\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"network\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"receivedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               },\n               \"transmittedRate\": {\n                \"description\": \"The unit is bit/s\",\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"replica\": {\n              \"description\": \"Only one of its members may be specified.\",\n              \"properties\": {\n               \"unavailableRatio\": {\n                \"type\": \"number\"\n               }\n              },\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"names\": {\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"comparator\",\n           \"kind\",\n           \"names\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"for\": {\n        \"description\": \"Duration is a valid time unit Supported units: y, w, d, h, m, s, ms Examples: `30s`, `1m`, `1h20m15s`\",\n        \"pattern\": \"^(0|(([0-9]+)y)?(([0-9]+)w)?(([0-9]+)d)?(([0-9]+)h)?(([0-9]+)m)?(([0-9]+)s)?(([0-9]+)ms)?)$\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"severity\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"alert\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Rule Group\",\n \"type\": \"object\"\n}"
   }
 }

@@ -61,7 +61,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('updated_at desc');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [testProfiles, setTestProfiles] = useState([]);
@@ -275,7 +275,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
     },
     {
       name: 'updated_at',
-      label: 'Updated On',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,

@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Provisioning",
@@ -43,15 +44,16 @@
     "model": {
       "version": "v1.127.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#669df6;}.cls-2{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"10.83\" y=\"15.84\" width=\"2.33\" height=\"2.64\"/\u003e\u003cpath class=\"cls-2\" d=\"M18.48,13.87a.56.56,0,0,1-.4-.17L14,9.47l-2.74,2.89a.57.57,0,0,1-.76.05L8.42,10.73l-2.2,2.92a.56.56,0,0,1-.45.22H2v1.71a.75.75,0,0,0,.74.75H21.26a.75.75,0,0,0,.74-.75V13.87Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M5.5,12.76,7.88,9.6a.55.55,0,0,1,.37-.22.63.63,0,0,1,.42.12l2.12,1.72,2.8-2.94a.54.54,0,0,1,.4-.17h0a.54.54,0,0,1,.4.17l4.33,4.48H22V6a.74.74,0,0,0-.74-.74H2.74A.74.74,0,0,0,2,6v6.81Z\"/\u003e\u003crect class=\"cls-2\" x=\"8.67\" y=\"18.18\" width=\"6.67\" height=\"0.61\" rx=\"0.3\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"10.83\" y=\"15.84\" width=\"2.33\" height=\"2.64\"/\u003e\u003cpath class=\"cls-2\" d=\"M18.48,13.87a.56.56,0,0,1-.4-.17L14,9.47l-2.74,2.89a.57.57,0,0,1-.76.05L8.42,10.73l-2.2,2.92a.56.56,0,0,1-.45.22H2v1.71a.75.75,0,0,0,.74.75H21.26a.75.75,0,0,0,.74-.75V13.87Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M5.5,12.76,7.88,9.6a.55.55,0,0,1,.37-.22.63.63,0,0,1,.42.12l2.12,1.72,2.8-2.94a.54.54,0,0,1,.4-.17h0a.54.54,0,0,1,.4.17l4.33,4.48H22V6a.74.74,0,0,0-.74-.74H2.74A.74.74,0,0,0,2,6v6.81Z\"/\u003e\u003crect class=\"cls-2\" x=\"8.67\" y=\"18.18\" width=\"6.67\" height=\"0.61\" rx=\"0.3\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -63,7 +65,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -78,7 +79,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -93,7 +93,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -109,7 +108,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -125,7 +123,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -140,7 +137,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -155,7 +151,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -170,7 +165,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -180,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -188,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "monitoring.cnrm.cloud.google.com/v1beta1",
     "kind": "MonitoringNotificationChannel",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"An optional human-readable description of this notification channel. This description may provide additional details, beyond the display name, for the channel. This may not exceed 1024 Unicode characters.\",\n     \"type\": \"string\"\n    },\n    \"enabled\": {\n     \"description\": \"Whether notifications are forwarded to the described channel. This makes it possible to disable delivery of notifications to a particular channel without removing the channel from all alerting policies that reference the channel. This is a more convenient approach when the change is temporary and you want to receive notifications from the same set of alerting policies on the channel at some point in the future.\",\n     \"type\": \"boolean\"\n    },\n    \"forceDelete\": {\n     \"description\": \"If true, the notification channel will be deleted regardless\\nof its use in alert policies (the policies will be updated\\nto remove the channel). If false, channels that are still\\nreferenced by an existing alerting policy will fail to be\\ndeleted in a delete operation.\",\n     \"type\": \"boolean\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"sensitiveLabels\": {\n     \"description\": \"Different notification type behaviors are configured primarily using the 'labels' field on this\\nresource. This block contains the labels which contain secrets or passwords so that they can be marked\\nsensitive and hidden from plan output. The name of the field, eg: password, will be the key\\nin the 'labels' map in the api request.\\n\\nCredentials may not be specified in both locations and will cause an error. Changing from one location\\nto a different credential configuration in the config will require an apply to update state.\",\n     \"properties\": {\n      \"authToken\": {\n       \"description\": \"An authorization token for a notification channel. Channel types that support this field include: slack.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"password\": {\n       \"description\": \"An password for a notification channel. Channel types that support this field include: webhook_basicauth.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"serviceKey\": {\n       \"description\": \"An servicekey token for a notification channel. Channel types that support this field include: pagerduty.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"The type of the notification channel. This field matches the value of the NotificationChannelDescriptor.type field. See https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.notificationChannelDescriptors/list to get the list of valid values such as \\\"email\\\", \\\"slack\\\", etc...\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Monitoring Notification Channel\",\n \"type\": \"object\"\n}",
-    "version": "monitoring.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"An optional human-readable description of this notification channel. This description may provide additional details, beyond the display name, for the channel. This may not exceed 1024 Unicode characters.\",\n     \"type\": \"string\"\n    },\n    \"enabled\": {\n     \"description\": \"Whether notifications are forwarded to the described channel. This makes it possible to disable delivery of notifications to a particular channel without removing the channel from all alerting policies that reference the channel. This is a more convenient approach when the change is temporary and you want to receive notifications from the same set of alerting policies on the channel at some point in the future.\",\n     \"type\": \"boolean\"\n    },\n    \"forceDelete\": {\n     \"description\": \"If true, the notification channel will be deleted regardless\\nof its use in alert policies (the policies will be updated\\nto remove the channel). If false, channels that are still\\nreferenced by an existing alerting policy will fail to be\\ndeleted in a delete operation.\",\n     \"type\": \"boolean\"\n    },\n    \"labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated name of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    },\n    \"sensitiveLabels\": {\n     \"description\": \"Different notification type behaviors are configured primarily using the 'labels' field on this\\nresource. This block contains the labels which contain secrets or passwords so that they can be marked\\nsensitive and hidden from plan output. The name of the field, eg: password, will be the key\\nin the 'labels' map in the api request.\\n\\nCredentials may not be specified in both locations and will cause an error. Changing from one location\\nto a different credential configuration in the config will require an apply to update state.\",\n     \"properties\": {\n      \"authToken\": {\n       \"description\": \"An authorization token for a notification channel. Channel types that support this field include: slack.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"password\": {\n       \"description\": \"An password for a notification channel. Channel types that support this field include: webhook_basicauth.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"serviceKey\": {\n       \"description\": \"An servicekey token for a notification channel. Channel types that support this field include: pagerduty.\",\n       \"oneOf\": [\n        {\n         \"not\": {\n          \"required\": [\n           \"valueFrom\"\n          ]\n         },\n         \"required\": [\n          \"value\"\n         ]\n        },\n        {\n         \"not\": {\n          \"required\": [\n           \"value\"\n          ]\n         },\n         \"required\": [\n          \"valueFrom\"\n         ]\n        }\n       ],\n       \"properties\": {\n        \"value\": {\n         \"description\": \"Value of the field. Cannot be used if 'valueFrom' is specified.\",\n         \"type\": \"string\"\n        },\n        \"valueFrom\": {\n         \"description\": \"Source for the field's value. Cannot be used if 'value' is specified.\",\n         \"properties\": {\n          \"secretKeyRef\": {\n           \"description\": \"Reference to a value with the given key in the given Secret in the resource's namespace.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"Key that identifies the value to be extracted.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the Secret to extract a value from.\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"key\"\n           ],\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"type\": {\n     \"description\": \"The type of the notification channel. This field matches the value of the NotificationChannelDescriptor.type field. See https://cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.notificationChannelDescriptors/list to get the list of valid values such as \\\"email\\\", \\\"slack\\\", etc...\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Monitoring Notification Channel\",\n \"type\": \"object\"\n}"
   }
 }

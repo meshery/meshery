@@ -16,19 +16,19 @@
         "name": "ErrConnectCode",
         "code": "11118",
         "severity": "Alert",
-        "long_description": "Meshery Server is unable to communicate with Meshery Broker. See https://docs.meshery.io/concepts/architecture/Broker for deployment tips and a troublshooting guide.",
-        "short_description": "Connection to Meshery Broker failed.",
-        "probable_cause": "Meshery Broker's endpoint might not be reachable.",
-        "suggested_remediation": "Ensure that Meshery Broker's endpoint (typically on port 4222/tcp is reachable by Meshery Server. If your Meshery Server is deployed outside of Kubernetes, ensure the Meshery Broker service is exposed external to your Kubernetes cluster."
+        "long_description": "",
+        "short_description": "Connection to broker failed",
+        "probable_cause": "Endpoint might not be reachable",
+        "suggested_remediation": "Make sure the NATS endpoint is reachable"
       },
       "11119": {
         "name": "ErrEncodedConnCode",
         "code": "11119",
         "severity": "Alert",
-        "long_description": "Meshery Server is having difficulty communicating with Meshery Broker. See https://docs.meshery.io/concepts/architecture/Broker for deployment tips and a troublshooting guide",
-        "short_description": "Encoding connection failed with Meshery Broker",
-        "probable_cause": "Meshery Broker's endpoint might not be reachable.",
-        "suggested_remediation": "Ensure that Meshery Broker's endpoint (typically on port 4222/tcp is reachable by Meshery Server. If your Meshery Server is deployed outside of Kubernetes, ensure the Meshery Broker service is exposed external to your Kubernetes cluster."
+        "long_description": "",
+        "short_description": "Encoding connection failed with broker",
+        "probable_cause": "Endpoint might not be reachable",
+        "suggested_remediation": "Make sure the NATS endpoint is reachable"
       },
       "11120": {
         "name": "ErrPublishCode",
@@ -224,7 +224,7 @@
         "code": "11141",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error getting the status of the Meshery controller",
+        "short_description": "Error getting the status of the meshery controller",
         "probable_cause": "Controller may not be healthy or not deployed",
         "suggested_remediation": "Make sure the controller is deployed and healthy"
       },
@@ -234,7 +234,7 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "Error deploying Meshery Operator",
-        "probable_cause": "Meshery Server could not connect to the Kubernetes cluster. Meshery Operator was not deployed.\nInsufficient file permission to read kubeconfig",
+        "probable_cause": "Meshery Server could not connect to the Kubernetes cluster. Meshery Operator  was not deployed\nInsufficient file permission to read kubeconfig",
         "suggested_remediation": "Verify that the available kubeconfig is accessible by Meshery Server - verify sufficient file permissions (only needs read permission)"
       },
       "11143": {
@@ -989,8 +989,8 @@
         "code": "11229",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Error converting the docker compose file into Kubernetes manifests",
-        "probable_cause": "Could not convert docker-compose file into Kubernetes manifests",
+        "short_description": "Error converting the docker compose file into kubernetes manifests",
+        "probable_cause": "Could not convert docker-compose file into kubernetes manifests",
         "suggested_remediation": "Make sure the docker-compose file is valid\n"
       },
       "11230": {
@@ -1269,8 +1269,8 @@
         "severity": "Alert",
         "long_description": "",
         "short_description": "invalid/incompatible semver version",
-        "probable_cause": "version history for the content has been tampered outside Meshery",
-        "suggested_remediation": "Rolllback to one of the previous version"
+        "probable_cause": "version history for the content has been tampered outside meshery",
+        "suggested_remediation": "rolllback to one of the previous version"
       },
       "11267": {
         "name": "ErrDirPkgUnitParseFailCode",
@@ -1306,7 +1306,7 @@
         "long_description": "",
         "short_description": "",
         "probable_cause": "Entity definition might not be in accordance with schema\nEntity version might not be supported by Meshery",
-        "suggested_remediation": "See the registration logs (found at $HOME/.Meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
+        "suggested_remediation": "See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
       },
       "11271": {
         "name": "ErrMissingRegistrantCode",
@@ -1322,7 +1322,7 @@
         "code": "11272",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Failed to register the given models into Meshery's registry",
+        "short_description": "Failed to register the given models into meshery's registry",
         "probable_cause": "Given models may not be in accordance with Meshery's schema\nInternal(OS level) error while reading files",
         "suggested_remediation": "Make sure the models being seeded are valid in accordance with Meshery's schema\nIf it is an internal error, please try again after some time"
       },
@@ -1577,6 +1577,105 @@
         "short_description": "",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "11304": {
+        "name": "ErrFileReadCode",
+        "code": "11304",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "File read error",
+        "probable_cause": "The provided file is not present or has an invalid path.",
+        "suggested_remediation": "To proceed, provide a valid file path with a valid file."
+      },
+      "11305": {
+        "name": "ErrGeneratesModelCode",
+        "code": "11305",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Registrant used for the model is not supported\nVerify the model's source URL.\nFailed to create a local directory in the filesystem for this model.",
+        "suggested_remediation": "Ensure that each kind of registrant used is a supported kind.\nEnsure correct model source URL is provided and properly formatted.\nEnsure sufficient permissions to allow creation of model directory."
+      },
+      "11306": {
+        "name": "ErrReadCSVRowCode",
+        "code": "11306",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading csv ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11307": {
+        "name": "ErrCSVFileNotFoundCode",
+        "code": "11307",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading csv file",
+        "probable_cause": "Either or both model csv or component csv are absent, the csv is not of correct template",
+        "suggested_remediation": "verify the csv template"
+      },
+      "11308": {
+        "name": "ErrUpdateComponentsCode",
+        "code": "11308",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Component does not exist\nComponent definition is corrupted",
+        "suggested_remediation": "Ensure existence of component, check for typo in component name\nRegenerate corrupted component"
+      },
+      "11309": {
+        "name": "ErrGeneratesComponentCode",
+        "code": "11309",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error generating comp %s of model %s",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11310": {
+        "name": "ErrUpdateRelationshipFileCode",
+        "code": "11310",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error while comparing files",
+        "probable_cause": "Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet",
+        "suggested_remediation": "Ensure that the new file is in the correct format and has the correct data"
+      },
+      "11315": {
+        "name": "ErrLoadPatternCode",
+        "code": "11315",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Failed to load pattern file",
+        "probable_cause": "The pattern file might be invalid or inaccessible",
+        "suggested_remediation": "Verify the pattern file exists and has correct format"
+      },
+      "11316": {
+        "name": "ErrConvertK8sCode",
+        "code": "11316",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Failed to convert to Kubernetes manifest",
+        "probable_cause": "The pattern might contain incompatible elements",
+        "suggested_remediation": "Verify the pattern content is valid for Kubernetes"
+      },
+      "11317": {
+        "name": "ErrCreateChartCode",
+        "code": "11317",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Failed to create Helm chart",
+        "probable_cause": "File system permissions or disk space issues",
+        "suggested_remediation": "Check permissions and available disk space"
+      },
+      "11318": {
+        "name": "ErrHelmPackageCode",
+        "code": "11318",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Helm packaging failed",
+        "probable_cause": "Issues with the Helm chart structure or configuration",
+        "suggested_remediation": "Verify the chart structure is valid for Helm"
       }
     }
   }

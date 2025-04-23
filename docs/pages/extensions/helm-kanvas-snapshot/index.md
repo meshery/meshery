@@ -31,7 +31,7 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 ### Prerequisites
 
-- `helm` must be [installed]( helm plugin install https://github.com/meshery/helm-kanvas-snapshot) on your system.
+- `helm` must be installed on your system.
 - (Optional) A free [Layer5 Cloud](https://cloud.layer5.io) user account.
 
 **Plugin Installation**

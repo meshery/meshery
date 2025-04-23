@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.119.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#4285f4;}.cls-2{fill:#669df6;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/dialogflow-enterprise\"\u003e\u003cg data-name=\"32px_Dialogflow-Favicon\"\u003e\u003cpath class=\"cls-1\" d=\"M12,12,4,8v6.76a.49.49,0,0,0,.19.39L8.83,17.9a.32.32,0,0,1,.17.29V21.7a.17.17,0,0,0,.26.14l10.51-6.69a.5.5,0,0,0,.23-.42V8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpath class=\"cls-2\" d=\"M12,10l8-4L12.12,2.06a.25.25,0,0,0-.24,0L4,6Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg data-name=\"colored-32/dialogflow-enterprise\"\u003e\u003cg data-name=\"32px_Dialogflow-Favicon\"\u003e\u003cpath class=\"cls-1\" d=\"M12,12,4,8v6.76a.49.49,0,0,0,.19.39L8.83,17.9a.32.32,0,0,1,.17.29V21.7a.17.17,0,0,0,.26.14l10.51-6.69a.5.5,0,0,0,.23-.42V8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpath class=\"cls-2\" d=\"M12,10l8-4L12.12,2.06a.25.25,0,0,0-.24,0L4,6Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "dialogflow.cnrm.cloud.google.com/v1alpha1",
     "kind": "DialogflowAgent",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"apiVersion\": {\n     \"description\": \"API version displayed in Dialogflow console. If not specified, V2 API is assumed. Clients are free to query\\ndifferent service endpoints for different API versions. However, bots connectors and webhook calls will follow\\nthe specified API version.\\n* API_VERSION_V1: Legacy V1 API.\\n* API_VERSION_V2: V2 API.\\n* API_VERSION_V2_BETA_1: V2beta1 API. Possible values: [\\\"API_VERSION_V1\\\", \\\"API_VERSION_V2\\\", \\\"API_VERSION_V2_BETA_1\\\"].\",\n     \"type\": \"string\"\n    },\n    \"avatarUri\": {\n     \"description\": \"The URI of the agent's avatar, which are used throughout the Dialogflow console. When an image URL is entered\\ninto this field, the Dialogflow will save the image in the backend. The address of the backend image returned\\nfrom the API will be shown in the [avatarUriBackend] field.\",\n     \"type\": \"string\"\n    },\n    \"classificationThreshold\": {\n     \"description\": \"To filter out false positive results and still get variety in matched natural language inputs for your agent,\\nyou can tune the machine learning classification threshold. If the returned score value is less than the threshold\\nvalue, then a fallback intent will be triggered or, if there are no fallback intents defined, no intent will be\\ntriggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the\\ndefault of 0.3 is used.\",\n     \"type\": \"number\"\n    },\n    \"defaultLanguageCode\": {\n     \"description\": \"Immutable. The default language of the agent as a language tag. [See Language Support](https://cloud.google.com/dialogflow/docs/reference/language)\\nfor a list of the currently supported language codes. This field cannot be updated after creation.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"The description of this agent. The maximum length is 500 characters. If exceeded, the request is rejected.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The name of this agent.\",\n     \"type\": \"string\"\n    },\n    \"enableLogging\": {\n     \"description\": \"Determines whether this agent should log conversation queries.\",\n     \"type\": \"boolean\"\n    },\n    \"matchMode\": {\n     \"description\": \"Determines how intents are detected from user queries.\\n* MATCH_MODE_HYBRID: Best for agents with a small number of examples in intents and/or wide use of templates\\nsyntax and composite entities.\\n* MATCH_MODE_ML_ONLY: Can be used for agents with a large number of examples in intents, especially the ones\\nusing @sys.any or very large developer entities. Possible values: [\\\"MATCH_MODE_HYBRID\\\", \\\"MATCH_MODE_ML_ONLY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The project of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"supportedLanguageCodes\": {\n     \"description\": \"The list of all languages supported by this agent (except for the defaultLanguageCode).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tier\": {\n     \"type\": \"string\"\n    },\n    \"timeZone\": {\n     \"description\": \"The time zone of this agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York,\\nEurope/Paris.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"defaultLanguageCode\",\n    \"displayName\",\n    \"timeZone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Agent\",\n \"type\": \"object\"\n}",
-    "version": "dialogflow.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"apiVersion\": {\n     \"description\": \"API version displayed in Dialogflow console. If not specified, V2 API is assumed. Clients are free to query\\ndifferent service endpoints for different API versions. However, bots connectors and webhook calls will follow\\nthe specified API version.\\n* API_VERSION_V1: Legacy V1 API.\\n* API_VERSION_V2: V2 API.\\n* API_VERSION_V2_BETA_1: V2beta1 API. Possible values: [\\\"API_VERSION_V1\\\", \\\"API_VERSION_V2\\\", \\\"API_VERSION_V2_BETA_1\\\"].\",\n     \"type\": \"string\"\n    },\n    \"avatarUri\": {\n     \"description\": \"The URI of the agent's avatar, which are used throughout the Dialogflow console. When an image URL is entered\\ninto this field, the Dialogflow will save the image in the backend. The address of the backend image returned\\nfrom the API will be shown in the [avatarUriBackend] field.\",\n     \"type\": \"string\"\n    },\n    \"classificationThreshold\": {\n     \"description\": \"To filter out false positive results and still get variety in matched natural language inputs for your agent,\\nyou can tune the machine learning classification threshold. If the returned score value is less than the threshold\\nvalue, then a fallback intent will be triggered or, if there are no fallback intents defined, no intent will be\\ntriggered. The score values range from 0.0 (completely uncertain) to 1.0 (completely certain). If set to 0.0, the\\ndefault of 0.3 is used.\",\n     \"type\": \"number\"\n    },\n    \"defaultLanguageCode\": {\n     \"description\": \"Immutable. The default language of the agent as a language tag. [See Language Support](https://cloud.google.com/dialogflow/docs/reference/language)\\nfor a list of the currently supported language codes. This field cannot be updated after creation.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"The description of this agent. The maximum length is 500 characters. If exceeded, the request is rejected.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"The name of this agent.\",\n     \"type\": \"string\"\n    },\n    \"enableLogging\": {\n     \"description\": \"Determines whether this agent should log conversation queries.\",\n     \"type\": \"boolean\"\n    },\n    \"matchMode\": {\n     \"description\": \"Determines how intents are detected from user queries.\\n* MATCH_MODE_HYBRID: Best for agents with a small number of examples in intents and/or wide use of templates\\nsyntax and composite entities.\\n* MATCH_MODE_ML_ONLY: Can be used for agents with a large number of examples in intents, especially the ones\\nusing @sys.any or very large developer entities. Possible values: [\\\"MATCH_MODE_HYBRID\\\", \\\"MATCH_MODE_ML_ONLY\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The project of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"supportedLanguageCodes\": {\n     \"description\": \"The list of all languages supported by this agent (except for the defaultLanguageCode).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tier\": {\n     \"type\": \"string\"\n    },\n    \"timeZone\": {\n     \"description\": \"The time zone of this agent from the [time zone database](https://www.iana.org/time-zones), e.g., America/New_York,\\nEurope/Paris.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"defaultLanguageCode\",\n    \"displayName\",\n    \"timeZone\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Dialogflow Agent\",\n \"type\": \"object\"\n}"
   }
 }

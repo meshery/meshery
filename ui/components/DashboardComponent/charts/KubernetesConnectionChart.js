@@ -3,7 +3,7 @@ import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
 import Link from 'next/link';
-import { iconMedium, iconSmall } from '../../../css/icons.styles';
+import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { InfoOutlined } from '@mui/icons-material';
@@ -12,7 +12,7 @@ import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, Typography, useTheme } from '@layer5/sistent';
+import { Box, KubernetesIcon, Typography, useTheme } from '@layer5/sistent';
 
 export default function KubernetesConnectionStatsChart() {
   const { data: connectionData } = useGetConnectionsQuery({
@@ -81,7 +81,13 @@ export default function KubernetesConnectionStatsChart() {
       <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <img style={iconMedium} src="/static/img/kubernetes.svg" />
+            <KubernetesIcon
+              fill={
+                theme.palette.mode == 'light'
+                  ? theme.palette.icon.default
+                  : theme.palette.icon.disabled
+              }
+            />
 
             <Typography variant="h6" fontWeight="700">
               KUBERNETES CLUSTER STATUS

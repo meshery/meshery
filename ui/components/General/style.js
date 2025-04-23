@@ -11,9 +11,9 @@ import {
   styled,
   Drawer,
   charcoal,
+  CaretDownIcon,
 } from '@layer5/sistent';
 import { disabledStyleWithOutOpacity } from '../../css/disableComponent.styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const FallbackWrapper = styled(Box)(() => ({
   margin: '2rem',
@@ -108,6 +108,42 @@ export const MainLogoText = styled('img')(({ theme }) => ({
   width: 170,
   borderRadius: 'unset',
 }));
+
+export const ExpandMoreIcon = styled('svg', {
+  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
+})(({ isCollapsed, hasChildren, theme }) => ({
+  opacity: 0, // Initially hidden
+  visibility: 'hidden',
+  cursor: 'pointer',
+  display: hasChildren ? 'inline-block' : 'none',
+  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transition:
+    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
+
+  // Show icon when the parent element is hovered
+  '&:hover, *:hover > &': {
+    opacity: 1,
+    visibility: 'visible',
+  },
+
+  '&:hover': {
+    fill: theme?.palette?.background?.brand?.default || 'black',
+  },
+}));
+
+export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
+  <ExpandMoreIcon
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    isCollapsed={isCollapsed}
+    hasChildren={hasChildren}
+    {...props}
+  >
+    <CaretDownIcon fill={theme.palette.icon.brand} />
+  </ExpandMoreIcon>
+);
 
 export const NavigatorList = styled(List)({
   padding: 0,
@@ -209,21 +245,6 @@ export const SideBarListItem = styled(ListItem, {
   fontSize: '14px',
 }));
 
-export const ExpandMoreIcon = styled(FontAwesomeIcon, {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
-  opacity: 0,
-  visibility: 'hidden',
-  cursor: 'pointer',
-  display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
-  transition:
-    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
-  '&:hover': {
-    color: theme.palette.background.brand.default,
-  },
-}));
-
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
@@ -264,14 +285,6 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   marginTop: theme.spacing(1),
   marginBottom: theme.spacing(1),
   borderColor: '#404854',
-}));
-
-export const ChevronIcon = styled(FontAwesomeIcon)(({ theme }) => ({
-  color: theme.palette.icon.default,
-  cursor: 'pointer',
-  margin: '0.75rem 0.2rem',
-  width: '0.8rem',
-  verticalAlign: 'middle',
 }));
 
 export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({

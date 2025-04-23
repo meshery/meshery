@@ -113,7 +113,7 @@ func TestDeployMesh(t *testing.T) {
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd := AdapterCmd
 			cmd.SetArgs(tc.Args)
-			cmd.SetOutput(buff)
+			cmd.SetOut(buff)
 			err := cmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error

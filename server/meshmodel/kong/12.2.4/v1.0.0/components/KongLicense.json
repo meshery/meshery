@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Cloud Native Network"
     },
     "subCategory": "API Gateway",
@@ -46,15 +47,16 @@
     "model": {
       "version": "12.2.4"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "configuration.konghq.com/v1alpha1",
     "kind": "KongLicense",
-    "schema": "{\n \"description\": \"KongLicense stores a Kong enterprise license to apply to managed Kong gateway instances.\",\n \"properties\": {\n  \"enabled\": {\n   \"default\": true,\n   \"description\": \"Enabled is set to true to let controllers (like KIC or KGO) to reconcile it.\\nDefault value is true to apply the license by default.\",\n   \"type\": \"boolean\"\n  },\n  \"rawLicenseString\": {\n   \"description\": \"RawLicenseString is a string with the raw content of the license.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"enabled\",\n  \"rawLicenseString\"\n ],\n \"title\": \"Kong License\",\n \"type\": \"object\"\n}",
-    "version": "configuration.konghq.com/v1alpha1"
+    "schema": "{\n \"description\": \"KongLicense stores a Kong enterprise license to apply to managed Kong gateway instances.\",\n \"properties\": {\n  \"enabled\": {\n   \"default\": true,\n   \"description\": \"Enabled is set to true to let controllers (like KIC or KGO) to reconcile it.\\nDefault value is true to apply the license by default.\",\n   \"type\": \"boolean\"\n  },\n  \"rawLicenseString\": {\n   \"description\": \"RawLicenseString is a string with the raw content of the license.\",\n   \"type\": \"string\"\n  }\n },\n \"required\": [\n  \"enabled\",\n  \"rawLicenseString\"\n ],\n \"title\": \"Kong License\",\n \"type\": \"object\"\n}"
   }
 }

@@ -8,5 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-kuma"
-subheading: Meshery-Kuma
+subheading: meshery-kuma
 ---

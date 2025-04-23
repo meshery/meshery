@@ -14,15 +14,69 @@ on:
       patternfile_name:
         description: "name of the pattern file"
         required: false
+      bats_test: 
+        description: "run only bats suite test"
+        required: false
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
     - cron: '43 */24 * * *'
 
 jobs:
+  manual-bats:
+    name: Manual BATS Test
+    runs-on: ubuntu-24.04
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }} 
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.23']
+        k8s_version: ['v1.31.4', 'v1.32.0']
+        platform: ['kubernetes']
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4.2.2
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3.9.0
+      - name: Setup BATS and BATS libs
+        id: setup-bats
+        uses: bats-core/bats-action@3.0.0
+      - uses: actions/setup-go@v5.3.0
+        with:
+          go-version: ${{ matrix.go }}
+      - run: |
+          mkdir -p $HOME/.kube
+          mkdir -p $HOME/.minikube
+          sudo chown -R $USER $HOME/.kube
+          sudo chown -R $USER $HOME/.minikube
+      - name: Setup Kubernetes
+        uses: manusa/actions-setup-minikube@v2.13.0
+        with:
+          minikube version: 'v1.33.0'
+          kubernetes version: ${{ matrix.k8s_version }}
+          driver: docker
+      - name: Run minikube tunnel
+        run: |
+          echo 'Running minikube tunnel'
+          minikube tunnel &> /dev/null &
+        shell: bash
+      - name: Get Date
+        id: date
+        run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
+      - name: Run mesheryctl end2end tests
+        run: |
+          bash run_tests.bash
+        shell: bash
+        working-directory: ./mesheryctl/tests/e2e
+        env:
+          MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          MESHERY_PLATFORM: ${{ matrix.platform }}
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+          E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
+
   manual-test:
     name: Manual e2e Test
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch'  && inputs.bats_test != 'true' }}
     strategy:
       fail-fast: false
       matrix:
