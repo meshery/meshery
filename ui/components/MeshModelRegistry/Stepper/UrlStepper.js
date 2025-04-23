@@ -20,7 +20,13 @@ import {
   MenuItem,
   Radio,
 } from '@layer5/sistent';
-import { StyledSummaryBox, StyledSummaryItem, SectionHeading, StyledColorBox } from './style';
+import {
+  StyledSummaryBox,
+  StyledSummaryItem,
+  SectionHeading,
+  StyledColorBox,
+  StyledLinkRedirect,
+} from './style';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
@@ -137,7 +143,14 @@ const UrlStepper = React.memo(({ handleClose }) => {
       <Typography variant="textB2SemiBold" color="textSecondary">
         {label}
       </Typography>
-      <Typography mt={1} style={color ? { color: color } : {}}>
+      <Typography
+        mt={1}
+        style={{
+          color: color || undefined,
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+        }}
+      >
         {value}
       </Typography>
     </StyledSummaryItem>
@@ -222,9 +235,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
               <li>
                 <strong>Model Name:</strong> {modelProperties.name.helperText} For example,{' '}
                 <em>{modelProperties.name.examples[0]}</em>. {modelProperties.name.description} (
-                <a href="https://docs.meshery.io/concepts/logical/registry">
+                <StyledLinkRedirect href="https://docs.meshery.io/concepts/logical/registry">
                   learn more about registry
-                </a>
+                </StyledLinkRedirect>
                 ).
               </li>
               <br />
@@ -495,9 +508,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
             </ul>
             <p>
               Learn more about the process of{' '}
-              <a href="https://docs.meshery.io/guides/configuration-management/generating-models">
+              <StyledLinkRedirect href="https://docs.meshery.io/guides/configuration-management/generating-models">
                 creating and importing models
-              </a>
+              </StyledLinkRedirect>
               .
             </p>
           </>
@@ -658,9 +671,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
             </p>
             <p>
               Learn more about{' '}
-              <a href="https://docs.meshery.io/guides/configuration-management/generating-models">
+              <StyledLinkRedirect href="https://docs.meshery.io/guides/configuration-management/generating-models">
                 Model Generation
-              </a>
+              </StyledLinkRedirect>
               .
             </p>
           </>

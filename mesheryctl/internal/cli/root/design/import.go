@@ -25,7 +25,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/meshery/schemas/models/core"
+
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -85,13 +86,13 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 		switch sourceType {
 		case "Helm Chart":
-			sourceType = core.IacFileTypes.HELM_CHART
+			sourceType = string(coreV1.HelmChart)
 		case "Kubernetes Manifest":
-			sourceType = core.IacFileTypes.KUBERNETES_MANIFEST
+			sourceType = string(coreV1.K8sManifest)
 		case "Meshery Design":
-			sourceType = core.IacFileTypes.MESHERY_DESIGN
+			sourceType = string(coreV1.MesheryDesign)
 		case "Docker Compose":
-			sourceType = core.IacFileTypes.DOCKER_COMPOSE
+			sourceType = string(coreV1.DockerCompose)
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
