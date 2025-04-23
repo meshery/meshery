@@ -13,7 +13,7 @@ import _ from 'lodash';
 import withRedux from 'next-redux-wrapper';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
 import { connect, Provider, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
@@ -211,9 +211,9 @@ const MesheryApp = ({
   capabilitiesRegistry,
   extensionType,
 }) => {
-  const pageContext = React.useMemo(() => getPageContext(), []);
+  const pageContext = useMemo(() => getPageContext(), []);
 
-  const [state, setState] = React.useState({
+  const [state, setState] = useState({
     mobileOpen: false,
     isDrawerCollapsed: false,
     isFullScreenMode: false,
@@ -232,7 +232,7 @@ const MesheryApp = ({
     abilityUpdated: false,
   });
 
-  const setAppState = React.useCallback((partialState, callback) => {
+  const setAppState = useCallback((partialState, callback) => {
     setState((prevState) => {
       const newState = { ...prevState, ...partialState };
       if (callback) {
@@ -242,7 +242,7 @@ const MesheryApp = ({
     });
   }, []);
 
-  const loadPromGrafanaConnection = React.useCallback(() => {
+  const loadPromGrafanaConnection = useCallback(() => {
     dataFetch(
       `/api/integrations/connections?page=0&pagesize=2&status=${encodeURIComponent(
         JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
@@ -285,13 +285,13 @@ const MesheryApp = ({
     );
   }, [store]);
 
-  const fullScreenChanged = React.useCallback(() => {
+  const fullScreenChanged = useCallback(() => {
     setState((prevState) => {
       return { ...prevState, isFullScreenMode: !prevState.isFullScreenMode };
     });
   }, []);
 
-  const loadMeshModelComponent = React.useCallback(() => {
+  const loadMeshModelComponent = useCallback(() => {
     const connectionDef = {};
     CONNECTION_KINDS_DEF.map(async (kind) => {
       const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
@@ -308,7 +308,7 @@ const MesheryApp = ({
     });
   }, [setConnectionMetadata]);
 
-  const initSubscriptions = React.useCallback(
+  const initSubscriptions = useCallback(
     (contexts) => {
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
 
@@ -334,11 +334,11 @@ const MesheryApp = ({
     [k8sConfig, store],
   );
 
-  const handleDrawerToggle = React.useCallback(() => {
+  const handleDrawerToggle = useCallback(() => {
     setState((prevState) => ({ ...prevState, mobileOpen: !prevState.mobileOpen }));
   }, []);
 
-  const handleL5CommunityClick = React.useCallback(() => {
+  const handleL5CommunityClick = useCallback(() => {
     setState((prevState) => ({ ...prevState, isOpen: !prevState.isOpen }));
   }, []);
 
@@ -346,7 +346,7 @@ const MesheryApp = ({
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  const activeContextChangeCallback = React.useCallback(
+  const activeContextChangeCallback = useCallback(
     (activeK8sContexts) => {
       if (activeK8sContexts.includes('all')) {
         activeK8sContexts = ['all'];
@@ -356,7 +356,7 @@ const MesheryApp = ({
     [store],
   );
 
-  const setActiveContexts = React.useCallback(
+  const setActiveContexts = useCallback(
     (id) => {
       if (state.k8sContexts?.contexts) {
         if (id === 'all') {
@@ -402,7 +402,7 @@ const MesheryApp = ({
     [state.k8sContexts, state.activeK8sContexts, activeContextChangeCallback],
   );
 
-  const searchContexts = React.useCallback(
+  const searchContexts = useCallback(
     (search = '') => {
       fetchContexts(10, search)
         .then((ctx) => {
@@ -418,14 +418,14 @@ const MesheryApp = ({
     [activeContextChangeCallback],
   );
 
-  const updateExtensionType = React.useCallback(
+  const updateExtensionType = useCallback(
     (type) => {
       store.dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType: type });
     },
     [store],
   );
 
-  const setOrganization = React.useCallback(
+  const setOrganization = useCallback(
     (org) => {
       store.dispatch({
         type: actionTypes.SET_ORGANIZATION,
@@ -435,7 +435,7 @@ const MesheryApp = ({
     [store],
   );
 
-  const setWorkspace = React.useCallback(
+  const setWorkspace = useCallback(
     (workspace) => {
       store.dispatch({
         type: actionTypes.SET_WORKSPACE,
@@ -445,14 +445,14 @@ const MesheryApp = ({
     [store],
   );
 
-  const updateAbility = React.useCallback(() => {
+  const updateAbility = useCallback(() => {
     ability.update(
       state.keys?.map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
     );
     setState((prevState) => ({ ...prevState, abilityUpdated: true }));
   }, [state.keys]);
 
-  const loadAbility = React.useCallback(
+  const loadAbility = useCallback(
     async (orgID, reFetchKeys) => {
       const storedKeys = sessionStorage.getItem('keys');
       if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
@@ -485,7 +485,7 @@ const MesheryApp = ({
     [store, updateAbility],
   );
 
-  const loadWorkspace = React.useCallback(
+  const loadWorkspace = useCallback(
     async (orgId) => {
       const currentWorkspace = sessionStorage.getItem('currentWorkspace');
       if (currentWorkspace && currentWorkspace !== 'undefined') {
@@ -508,7 +508,7 @@ const MesheryApp = ({
     [setWorkspace],
   );
 
-  const loadOrg = React.useCallback(async () => {
+  const loadOrg = useCallback(async () => {
     const currentOrg = sessionStorage.getItem('currentOrg');
     let reFetchKeys = false;
 
@@ -550,7 +550,7 @@ const MesheryApp = ({
     );
   }, [loadAbility, loadWorkspace, setOrganization]);
 
-  const loadConfigFromServer = React.useCallback(async () => {
+  const loadConfigFromServer = useCallback(async () => {
     dataFetch(
       '/api/system/sync',
       {
@@ -601,8 +601,7 @@ const MesheryApp = ({
     );
   }, [store]);
 
-  // Mount effect (componentDidMount replacement)
-  React.useEffect(() => {
+  useEffect(() => {
     loadConfigFromServer();
     loadPromGrafanaConnection();
     loadOrg();
@@ -628,7 +627,7 @@ const MesheryApp = ({
     loadMeshModelComponent();
     setState((prevState) => ({ ...prevState, isLoading: false }));
 
-    // Cleanup (componentWillUnmount replacement)
+    // Cleanup
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
       if (state.disposeK8sContextSubscription) {
@@ -638,8 +637,8 @@ const MesheryApp = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Update effect (componentDidUpdate replacement for k8sConfig)
-  React.useEffect(() => {
+  // Update effect for k8sConfig
+  useEffect(() => {
     // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
     if (
       typeof window !== 'undefined' &&
@@ -695,7 +694,6 @@ const MesheryApp = ({
                           success: ThemeResponsiveSnackbar,
                           error: ThemeResponsiveSnackbar,
                           warning: ThemeResponsiveSnackbar,
-                          loading: ThemeResponsiveSnackbar,
                         }}
                         maxSnack={10}
                       >
