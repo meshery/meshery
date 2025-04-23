@@ -2,8 +2,8 @@
 
 setup() {
   
- load "$E2E_HELPERS_PATH/tests_helpers"
-	_tests_helper
+ load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/"
 

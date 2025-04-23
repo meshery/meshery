@@ -1,4 +1,5 @@
 import { styled, Box, Typography } from '@layer5/sistent';
+import { Link } from '@mui/material';
 export const StyledSummaryBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.blur?.heavy,
   padding: '1rem',
@@ -27,4 +28,8 @@ export const StyledColorBox = styled(Box)(({ color }) => ({
   marginRight: '0.5rem',
   display: 'inline-block',
   verticalAlign: 'middle',
+}));
+
+export const StyledLinkRedirect = styled(Link)(({ theme }) => ({
+  color: theme.palette.background.brand.default,
 }));

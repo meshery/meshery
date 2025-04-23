@@ -129,7 +129,6 @@ const NavbarNotificationIcon = () => {
   const { data, error, isLoading } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-
   if (error || (!data && !isLoading)) {
     console.log(
       '[NavbarNotificationIcon] Error fetching notification summary for NotificationIconCount',
@@ -337,8 +336,11 @@ const BulkActions = () => {
         padding: '0.15rem',
       }}
     >
-      <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
+        <Typography variant="body2">
+          {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
+        </Typography>
       </Box>
       <Collapse in={checkedEvents.length > 0}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -399,11 +401,13 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
 
   return (
     <>
-      {events.map((event, idx) => (
-        <div key={event.id + idx}>
-          <Notification eventData={event} event_id={event.id} />
-        </div>
-      ))}
+      {events.map((event, idx) => {
+        return (
+          <div key={event.id + idx}>
+            <Notification eventData={event} event_id={event.id} />
+          </div>
+        );
+      })}
 
       {events.length === 0 && <EmptyState />}
 
