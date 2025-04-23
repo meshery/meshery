@@ -1341,3 +1341,8 @@ func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	}
 	return config.CurrentContext, nil
 }
+
+//get the token.golden path
+func GetMesheryTokenPath() string {
+	return FixturesDir + "/" + "token.golden"
+}
