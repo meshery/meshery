@@ -38,7 +38,7 @@ Documentation for environment can be found at https://docs.meshery.io/reference/
 mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "[ Organization ID | Name | Description ] aren't specified\n\nUsage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]\nRun 'mesheryctl environment create --help' to see detailed help message"
+		const errMsg = "[ Organization ID | Name | Description ] aren't specified\n    Usage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]\n    Run 'mesheryctl environment create --help' to see detailed help message"
 
 		// Check if all three flags are set
 		orgIDFlag, _ := cmd.Flags().GetString("orgID")
