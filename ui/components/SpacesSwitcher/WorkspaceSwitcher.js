@@ -43,6 +43,12 @@ const SettingsIconWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
+export const WorkspaceSwitcherContext = React.createContext({
+  open: false,
+  openModal: () => {},
+  closeModal: () => {},
+});
+
 function WorkspaceSwitcher({ open }) {
   const [defaultWorkspace, setDefaultWorkspace] = useState(null);
   const [workspaceModal, setWorkspaceModal] = useState(false);
@@ -93,90 +99,103 @@ function WorkspaceSwitcher({ open }) {
   const theme = useTheme();
   return (
     <NoSsr>
-      {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
-        <div
-          style={{
-            width: open ? 'auto' : 0,
-            overflow: open ? '' : 'hidden',
-            transition: 'all 1s',
-          }}
-        >
-          <FormControl component="fieldset">
-            <FormGroup>
-              <FormControlLabel
-                key="SpacesPreferences"
-                control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
-                      <StyledSelect
-                        size="small"
-                        value={defaultWorkspace?.id || ''}
-                        onChange={(e) => {
-                          if (e.target.value !== defaultWorkspace?.id) {
-                            handleChangeWorkspace(e); // only call for new selection
-                          }
-                        }}
-                        renderValue={(selected) => {
-                          const workspace = workspacesData?.workspaces?.find(
-                            (w) => w.id === selected,
-                          );
-                          return workspace ? <span>{workspace.name}</span> : '';
-                        }}
-                        MenuProps={{
-                          anchorOrigin: {
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                          },
-                          transformOrigin: {
-                            vertical: 'top',
-                            horizontal: 'left',
-                          },
-                          getContentAnchorEl: null,
-                        }}
-                      >
-                        {workspacesData?.workspaces?.map((works) => (
-                          <HoverMenuItem
-                            key={works.id}
-                            value={works.id}
-                            onClick={() => {
-                              if (works.id === defaultWorkspace?.id) {
-                                handleChangeWorkspace({ target: { value: works.id } });
-                              }
-                            }}
-                          >
-                            <span>{works.name}</span>
-                            <SettingsIconWrapper className="setting-icon">
-                              <SettingsIcon {...iconMedium} />
-                            </SettingsIconWrapper>
-                          </HoverMenuItem>
-                        ))}
-                      </StyledSelect>
-                    </Grid>
-                  </Grid>
-                }
-              />
-            </FormGroup>
-          </FormControl>
-        </div>
-      )}
-      <Modal
-        closeModal={() => {
-          setWorkspaceModal(false);
-          if (router.query.id) {
-            router.back();
-          }
+      <WorkspaceSwitcherContext.Provider
+        value={{
+          open: workspaceModal,
+          openModal: () => setWorkspaceModal(true),
+          closeModal: () => {
+            setWorkspaceModal(false);
+            if (router.query.id) {
+              router.back();
+            }
+          },
         }}
-        open={workspaceModal}
-        maxWidth="xl"
-        headerIcon={
-          <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
-        }
-        title="Workspaces"
       >
-        <ModalBody style={{ maxHeight: '80vh', overflowY: 'auto' }}>
-          {workspaceModal && <WorkspacesComponent />}
-        </ModalBody>
-      </Modal>
+        {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
+          <div
+            style={{
+              width: open ? 'auto' : 0,
+              overflow: open ? '' : 'hidden',
+              transition: 'all 1s',
+            }}
+          >
+            <FormControl component="fieldset">
+              <FormGroup>
+                <FormControlLabel
+                  key="SpacesPreferences"
+                  control={
+                    <Grid container spacing={1} alignItems="flex-end">
+                      <Grid item xs={12} data-cy="mesh-adapter-url">
+                        <StyledSelect
+                          size="small"
+                          value={defaultWorkspace?.id || ''}
+                          onChange={(e) => {
+                            if (e.target.value !== defaultWorkspace?.id) {
+                              handleChangeWorkspace(e); // only call for new selection
+                            }
+                          }}
+                          renderValue={(selected) => {
+                            const workspace = workspacesData?.workspaces?.find(
+                              (w) => w.id === selected,
+                            );
+                            return workspace ? <span>{workspace.name}</span> : '';
+                          }}
+                          MenuProps={{
+                            anchorOrigin: {
+                              vertical: 'bottom',
+                              horizontal: 'left',
+                            },
+                            transformOrigin: {
+                              vertical: 'top',
+                              horizontal: 'left',
+                            },
+                            getContentAnchorEl: null,
+                          }}
+                        >
+                          {workspacesData?.workspaces?.map((works) => (
+                            <HoverMenuItem
+                              key={works.id}
+                              value={works.id}
+                              onClick={() => {
+                                if (works.id === defaultWorkspace?.id) {
+                                  handleChangeWorkspace({ target: { value: works.id } });
+                                }
+                              }}
+                            >
+                              <span>{works.name}</span>
+                              <SettingsIconWrapper className="setting-icon">
+                                <SettingsIcon {...iconMedium} />
+                              </SettingsIconWrapper>
+                            </HoverMenuItem>
+                          ))}
+                        </StyledSelect>
+                      </Grid>
+                    </Grid>
+                  }
+                />
+              </FormGroup>
+            </FormControl>
+          </div>
+        )}
+        <Modal
+          closeModal={() => {
+            setWorkspaceModal(false);
+            if (router.query.id) {
+              router.back();
+            }
+          }}
+          open={workspaceModal}
+          maxWidth="xl"
+          headerIcon={
+            <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
+          }
+          title="Workspaces"
+        >
+          <ModalBody style={{ maxHeight: '80vh', overflowY: 'auto' }}>
+            {workspaceModal && <WorkspacesComponent />}
+          </ModalBody>
+        </Modal>
+      </WorkspaceSwitcherContext.Provider>
     </NoSsr>
   );
 }
