@@ -377,7 +377,7 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 	}
 
 	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    h.log.Error(err)
+    		h.log.Error(err)
 	}
 
 }
@@ -410,7 +410,7 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 	}
 
 	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    h.log.Error(err)
+    		h.log.Error(err)
 	}
 }
 
