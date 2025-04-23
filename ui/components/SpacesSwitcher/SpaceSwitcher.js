@@ -209,7 +209,7 @@ function SpaceSwitcher(props) {
             onClick={() => setOrgOpen(!orgOpen)}
             style={{ marginRight: orgOpen ? '1rem' : '0' }}
           >
-            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.icon.secondary} />
+            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
           <Button
@@ -218,8 +218,8 @@ function SpaceSwitcher(props) {
           >
             <WorkspaceIcon
               {...iconLarge}
-              secondaryFill={theme.palette.icon.secondary}
-              fill={theme.palette.icon.secondary}
+              secondaryFill={theme.palette.common.white}
+              fill={theme.palette.common.white}
             />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/

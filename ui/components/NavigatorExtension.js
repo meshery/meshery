@@ -49,8 +49,8 @@ import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
 import Troubleshoot from './TroubleshootingComponent';
 import TypingFilter from './TypingFilter';
-import CreateModelModal from './MeshModelRegistry/CreateModelModal';
-import ImportModelModal from './MeshModelRegistry/ImportModelModal';
+import CreateModelModal from './Registry/CreateModelModal';
+import ImportModelModal from './Registry/ImportModelModal';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
