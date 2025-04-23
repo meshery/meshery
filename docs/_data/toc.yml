@@ -171,7 +171,7 @@
         - title: Meshery Server
           url: guides/troubleshooting/meshery-server
         - title: Kanvas
-          url: guides/troubleshooting/kanvas
+          url: extensions/kanvas/troubleshooting-guide
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
