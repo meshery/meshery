@@ -259,7 +259,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 	}
 	
 	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    h.log.Error(err)
+    		h.log.Error(err)
 	}
 }
 
@@ -296,7 +296,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	}
 	
 	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    h.log.Error(err)
+    		h.log.Error(err)
 	}
 }
 
