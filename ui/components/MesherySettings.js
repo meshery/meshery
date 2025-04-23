@@ -28,7 +28,7 @@ import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from '../lib/store';
 import _PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
-import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
+import MeshModelComponent from './Registry/MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
 import {
   getComponentsDetail,
@@ -48,7 +48,7 @@ import {
   PROMETHEUS,
   OVERVIEW,
 } from '@/constants/navigator';
-import { removeDuplicateVersions } from './MeshModelRegistry/helper';
+import { removeDuplicateVersions } from './Registry/helper';
 import DefaultError from './General/error-404';
 import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';

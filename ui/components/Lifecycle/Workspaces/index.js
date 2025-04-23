@@ -1,6 +1,5 @@
 import {
   Breadcrumbs,
-  Link,
   NoSsr,
   WorkspaceRecentActivityModal,
   WorkspaceTeamsTable,
@@ -22,7 +21,7 @@ import {
 } from '@layer5/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -124,6 +123,16 @@ const Workspaces = () => {
     id: router.query.id || '',
     name: router.query.name || '',
   });
+
+  useEffect(() => {
+    if (router.query.id) {
+      setSelectedWorkspace({
+        id: router.query.id,
+        name: router.query.name,
+      });
+    }
+  }, [router.query.id, router.query.name]);
+
   const [teamsModal, setTeamsModal] = useState({
     open: false,
     workspaceId: '',
@@ -134,6 +143,7 @@ const Workspaces = () => {
     workspaceId: '',
     workspaceName: '',
   });
+
   const handleRowClick = (rowData) => {
     const workspaceId = rowData[0];
     const workspaceName = rowData[4].props.children.at(-1); // Get the last child of the name cell
@@ -377,7 +387,7 @@ const Workspaces = () => {
               }
               aria-label="breadcrumb"
             >
-              <Link
+              <div
                 style={{
                   cursor: selectedWorkspace.id ? 'pointer' : 'default',
                   color: selectedWorkspace.id
@@ -385,16 +395,14 @@ const Workspaces = () => {
                     : theme.palette.text.default,
                   textDecoration: 'none',
                 }}
-                href="#"
                 onClick={() => {
                   if (selectedWorkspace.id) {
-                    router.back();
                     setSelectedWorkspace({ id: '', name: '' });
                   }
                 }}
               >
-                Workspace
-              </Link>
+                All Workspace
+              </div>
               {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
             </Breadcrumbs>
           </div>

@@ -1,60 +1,139 @@
 ---
 layout: default
 title: Managing Events with Notification Center
-abstract: A Comprehensive Guide to Managing Events with Meshery
-permalink: guides/events-management
+abstract: Meshery tracks operations performed on your infrastructure and workloads, and provides notification of environment issues, application conflicts with infrastructure configuration, policy violations, and so on.
+permalink: guides/infrastructure-management/notification-management
+redirect_from: guides/events-management
 type: guides
 category: infrastructure
 language: en
-abstract: "Meshery tracks operations performed on your infrastructure and workloads, and provides notification of environment issues, application conflicts with infrastructure configuration, policy violations, and so on."
 ---
 
-Meshery Server, while running, generates a variety of events for operations happening inside your Kubernetes and Cloud-Native clusters and Meshery Server itself. To observe, monitor, and effectively manage these events, Meshery provides a powerful and user-friendly Notification Center.
+Meshery continuously tracks activities affecting your infrastructure and workloads. Meshery generates a variety of events, reflecting activities affecting the design and operation of your infrastructure whether those activities are directly or indirectly performed through Meshery operations.
 
-## What is the Notification Center?
+### What is the Notification Center?
+The Notification Center is a dedicated panel in Meshery’s UI that helps you monitor, understand, and respond to events across your system. It acts as a central place where you can see important updates related to your infrastructure, workloads, and Meshery’s internal operations.
 
-The Notification Center in Meshery's user interface is a dedicated feature that empowers you to monitor and manage the events occurring within your clusters. This guide will walk you through the various aspects of utilizing the Notification Center effectively.
+<a href="{{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/find-notification-center.gif" alt="Notification Position" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
-## Key Features of the Notification Center
+### Types of Notifications
 
-<a href="{{ site.baseurl }}/assets/img/notification-center/NotificationCenterOverview.png"><img alt="Notification Center Overview" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/notification-center/NotificationCenterOverview.png" /></a>
+Given the variety of activities that occur through the process of managing infrastructure, notifications have been grouped into categories so that you can readily understand what a notification means and what do to about any particular type you have received.
 
-### 1. Views and Event Management
+Each notification in Meshery includes a clear summary of what occurred in your system. Notifications vary in format depending on the event type, but typically include:
 
-The Notification Center serves as your central hub for viewing and managing events within your environment. Whether you are monitoring a single cluster or an extensive mesh of interconnected services, Meshery's Notification Center provides you with a consolidated and comprehensive view of all events.
+- Action performed (e.g., saved a design, ran a dry run)
+- Affected components (e.g., deployments, MeshSync, events)
+- Validation results or errors (e.g., invalid values, missing fields)
+- Relationship updates (e.g., how components are linked)
+- Links to the related design or further details
 
-### 2. Event Search
+You can mark notifications as read or unread to stay organized and focused. Meshery highlights critical, actionable events in red, helping you quickly spot and respond to urgent issues.
 
-To simplify the process of pinpointing specific events, Meshery offers a powerful search functionality. You can search for events based on various parameters, such as the action that occurred, the type of operation, the actor responsible for the event, and more. This feature is invaluable for quickly identifying and addressing critical events within your infrastructure.
+<a href="{{ site.baseurl }}/assets/img/notification-center/description.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/description.png" alt="Event Descriptions" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
-### 3. Flexible Filtering Support
+> 🔗 For more technical details, see the [Contributor Reference](https://docs.meshery.io/project/contributing/contributing-ui-notification-center).
 
-<a href="{{ site.baseurl }}/assets/img/notification-center/NotificationCenterFiltering.png"><img alt="Notification Center Filtering" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/notification-center/NotificationCenterFiltering.png" /></a>
+### Notification Timestamps
+Each notification includes a timestamp showing when the event happened. The time is displayed based on your local device’s time zone, so it reflects your current time.
 
-Meshery's Notification Center offers robust filtering capabilities. You can customize the view by applying filters based on multiple criteria. For example, you can filter events based on their significance, source, or any other attributes that are important to you. These filters make it easy to focus on specific event categories and streamline your event management process.
+<a href="{{ site.baseurl }}/assets/img/notification-center/timestamps.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/timestamps.png" alt="Notification Timestamps" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
-### 4. Event Descriptions and Data
+### Data Sharing
+Need to collaborate?
+You can share notifications with teammates or stakeholders in just a few clicks — making it easier to communicate and resolve issues.
 
-Each event in Meshery's Notification Center contains a detailed description to provide you with a clear understanding of what happened. This includes information about the action, the entities involved, and any relevant data. Additionally, events may include tracebacks and other contextual data to help you troubleshoot and diagnose issues effectively.
+<a href="{{ site.baseurl }}/assets/img/notification-center/notification-share.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/notification-share.png" alt="Notification Share" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
-### 5. Data Sharing
+### Filtering and Searching
 
-Meshery allows you to easily share notifications with relevant stakeholders. Whether you need to collaborate with team members, share event details with developers, or involve other parties in the resolution process, Meshery simplifies the sharing of event information, facilitating efficient communication and issue resolution.
+The Notification Center provides a powerful way to filter and search through events. You can narrow down results using filters such as **severity**, **status**, **action**, **category**, and **author**.
 
-### 5. Event Status Tracking
+> Note: Some filter options such as `action`, `category`, and `author` are dynamically generated based on the notifications your Meshery instance has received. These values are retrieved from the `/api/system/events/types` endpoint.
 
-Meshery's Notification Center provides the ability to track the status of events. You can mark events as read or unread, helping you to prioritize and manage your response to events efficiently. This status tracking feature ensures that no critical event goes unnoticed, and you can easily keep track of events that require immediate attention.
+<a href="{{ site.baseurl }}/assets/img/notification-center/notification-filter.gif">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/notification-filter.gif" alt="Notification Filter" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
 
-Particular notifications that Meshery presents are immediately actionable. These are denoted by a red colored highlight. Be on the lookout for these alerts and take action promptly to ensure a smooth running infrastructure.
+#### Severity  
 
-### 6. Event Persistence
+Filter notifications based on the level of severity, indicated by icon color and symbol. These levels are defined in the `SEVERITY` constant and styled using `SEVERITY_STYLE`.
 
-Events in Meshery are always persisted, ensuring that you have a complete historical record of activities in your clusters and Meshery Server. This persistence is invaluable for compliance, auditing, and historical analysis, enabling you to track the evolution of your infrastructure and detect patterns over time.
+| Level        | Code Value       | Icon       | Color (Light Mode)   | Description                     |
+|--------------|------------------|------------|----------------------|---------------------------------|
+| Info         | `informational`  | ℹ️ InfoIcon | Blue                 | General updates or logs         |
+| Warning      | `warning`        | ⚠️ AlertIcon | Yellow               | Potential issues                |
+| Error        | `error`          | ❌ ErrorIcon | Red                  | Failures or critical problems   |
+| Success      | `success`        | ✅ InfoIcon  | Green                | Successfully completed actions  |
 
-## Summary
+#### Status  
+Filter notifications based on whether they have been read. These statuses are defined in `STATUS` and styled using `STATUS_STYLE`.
 
-Meshery's Notification Center simplifies the task of managing events in your Kubernetes and Cloud-Native environments. This robust feature offers a central hub to view, search, and filter events, making it effortless to identify and address critical incidents. Each event comes with detailed descriptions and additional data for efficient troubleshooting.
+| Status       | Code Value | Icon          | Description                        |
+|--------------|------------|---------------|------------------------------------|
+| Read         | `read`     | ReadIcon      | Notifications that have been opened |
+| Unread       | `unread`   | EnvelopeIcon  | New or untouched notifications      |
 
-You can easily collaborate with stakeholders by sharing event data, enhancing communication and issue resolution. What's more, Meshery enables you to track event statuses, ensuring no crucial event goes unnoticed. Plus, events are always persisted, providing a historical record for compliance and trend analysis. With Meshery's Notification Center, you can gain deep insights into your infrastructure, swiftly respond to critical events, and maintain optimal performance for your applications and services. Detailed instructions and best practices can be found in the official documentation and Meshery's user guide.
+### Understanding Notification Logos and Icons
+
+Meshery uses avatar icons to indicate who triggered a notification and what system was involved. These icons help users quickly understand the origin and nature of each event.
+
+<a href="{{ site.baseurl }}/assets/img/notification-center/avatar-icons.png">
+  <img src="{{ site.baseurl }}/assets/img/notification-center/avatar-icons.png" alt="Avatar Icons" style="width: 600px; height: auto; margin-top: 10px;" />
+</a>
+
+| Icon Type                       | Meaning                                                                 |
+|----------------------------------|-------------------------------------------------------------------------|
+| Meshery logo only               | System-triggered event – initiated automatically by Meshery (e.g., syncing errors, import failures). |
+| User avatar + Meshery logo      | User-triggered event – the user performed an action, and Meshery processed it (e.g., registering a Kubernetes context). |
+| User avatar only (rare)         | User-triggered event with no system action involved. |
+
+These icons are generated dynamically using the event’s metadata:
+ - If `user_id` is present → shows user avatar.
+ - If `system_id` is present → shows Meshery logo.
+
+<details close><summary>Visual Representation of System/User-triggered Notifications</summary>
+  <br>
+
+  <figure>
+    <figcaption>
+      1. 🟢 Meshery-only (System-triggered) Notification
+      <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=a7310bb4-e642-4e4e-807a-dbb602228f07">
+        (open in playground)
+      </a>
+    </figcaption>
+  </figure>
+  <div id="embedded-design-a7310bb4-e642-4e4e-807a-dbb602228f07" style="height:30rem;width:100%;"></div>
+  <script src="{{ site.baseurl }}/assets/img/notification-center/meshery-triggered.js" type="module"></script>
+
+  <figure>
+    <figcaption>
+      2. 👤+🌐 User + Meshery (User-triggered) Notification
+      <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=a96a3008-9c36-4862-b1e3-20cc2c35ca89">
+        (open in playground)
+      </a>
+    </figcaption>
+  </figure>
+  <div id="embedded-design-a96a3008-9c36-4862-b1e3-20cc2c35ca89" style="height:30rem;width:100%;"></div>
+  <script src="{{ site.baseurl }}/assets/img/notification-center/user-triggered.js" type="module"></script>
+
+</details>
+
+### Notification Retention and Visibility
+**How long are notifications stored?**
+
+The duration for which notifications are retained is determined by the provider you are using (e.g., Meshery Cloud, local Meshery Server).
+
+**What happens when retention ends?** 
+
+In Meshery Cloud, notifications are removed once the provider is updated, helping ensure the event stream reflects the most recent and relevant information.
 
 {% include related-discussions.html tag="meshery" %}

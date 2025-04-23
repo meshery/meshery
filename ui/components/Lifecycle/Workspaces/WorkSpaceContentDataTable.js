@@ -128,6 +128,14 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
 
   const shouldRenderTabs = isDesignsVisible && isViewVisible;
 
+  const handleOpenDesignInPlayground = (designId, designName) => {
+    window.location.href = `/extension/meshmap?mode=design&type=design&id=${designId}&name=${designName}`;
+  };
+
+  const handleOpenViewInPlayground = (designId, designName) => {
+    window.location.href = `/extension/meshmap?mode=operator&type=view&id=${designId}&name=${designName}`;
+  };
+
   return (
     <ErrorBoundary>
       {shouldRenderTabs && (
@@ -181,7 +189,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             useGetWorkspaceDesignsQuery={useGetDesignsOfWorkspaceQuery}
             meshModelModelsData={meshModelModelsData}
             handleCopyUrl={handleCopyUrl}
-            handleShowDetails={() => {}}
+            handleShowDetails={handleOpenDesignInPlayground}
             handleDownload={handleDesignDownloadModal}
             handlePublish={handlePublish}
             setDesignSearch={setDesignSearch}
@@ -200,7 +208,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
               keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
               keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
             )}
-            handleShowDetails={() => {}}
+            handleShowDetails={handleOpenViewInPlayground}
             useAssignViewToWorkspaceMutation={useAssignViewToWorkspaceMutation}
             useGetViewsOfWorkspaceQuery={useGetViewsOfWorkspaceQuery}
             useUnassignViewFromWorkspaceMutation={useUnassignViewFromWorkspaceMutation}

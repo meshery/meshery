@@ -10,7 +10,7 @@ const Environments = () => {
       <Head>
         <title>Environments | Meshery</title>
       </Head>
-      <Box sx={{ maxWidth: '90%', margin: 'auto', overflow: 'hidden' }}>
+      <Box sx={{ margin: 'auto', overflow: 'hidden' }}>
         <EnvironmentComponent />
       </Box>
     </NoSsr>

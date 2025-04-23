@@ -34,7 +34,8 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
 )
 
@@ -208,11 +209,11 @@ func main() {
 		models.Organization{},
 		models.Key{},
 		connections.Connection{},
-		v1beta1.Environment{},
-		v1beta1.EnvironmentConnectionMapping{},
-		v1beta1.Workspace{},
-		v1beta1.WorkspacesEnvironmentsMapping{},
-		v1beta1.WorkspacesDesignsMapping{},
+		environment.Environment{},
+		environment.EnvironmentConnectionMapping{},
+		workspace.Workspace{},
+		workspace.WorkspacesEnvironmentsMapping{},
+		workspace.WorkspacesDesignsMapping{},
 		_events.Event{},
 	)
 	if err != nil {

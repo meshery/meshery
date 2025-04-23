@@ -11,7 +11,7 @@ const Workspaces = () => {
       <Head>
         <title>Workspaces | Meshery</title>
       </Head>
-      <Box sx={{ maxWidth: '90%', margin: 'auto', overflow: 'hidden' }}>
+      <Box sx={{ margin: 'auto', overflow: 'hidden' }}>
         <WorkspacesComponent />
       </Box>
     </NoSsr>
