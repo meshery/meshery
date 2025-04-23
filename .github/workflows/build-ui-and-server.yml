@@ -74,7 +74,7 @@ jobs:
       - name: Check out meshery-istio code
         uses: actions/checkout@v4
         with:
-          repository: layer5io/meshery-istio
+          repository: meshery-extensions/meshery-istio
           path: ./meshery-istio
       # - name: Check out meshery-consul code
       #   uses: actions/checkout@v4
@@ -93,7 +93,7 @@ jobs:
         run: |
           mkdir -p /home/runner/.meshery/bin
           cd ./meshery-istio
-          go run main.go &
+          make run &
           sleep 60
       # - name: Run meshery-consul
       #   run: |
@@ -129,17 +129,17 @@ jobs:
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
           REMOTE_PROVIDER_URL: "https://cloud.layer5.io"
-          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}
-          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
-          PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_TEST_USER_EMAIL }}
+          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_TEST_USER_PASS }}
+          PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
         run: make test-e2e-ci
       - name: Save PR metadata
         if: ${{ !cancelled() }}
         run: |
           mkdir -p ./pr
-          echo ${{ github.event.number }} > ./pr/number
-          echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha
+          echo "${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.number }}" > ./pr/number
+          echo "${{ github.event_name == 'workflow_dispatch' && inputs.sha || github.event.pull_request.head.sha }}" > ./pr/sha      
       - name: Upload Test Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6

@@ -1,17 +1,16 @@
 import React, { useEffect } from 'react';
 import { NoSsr } from '@layer5/sistent';
-import { updatebetabadge, updatepagepath, updatepagetitle } from '../../../lib/store';
+import { updatepagepath, updatepagetitle } from '../../../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
 import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
 
-function DesignConfiguratorPage({ updatepagepath, updatepagetitle, updatebetabadge }) {
+function DesignConfiguratorPage({ updatepagepath, updatepagetitle }) {
   useEffect(() => {
-    updatepagepath({ path: getPath(), isBeta: true, title: 'Configure Design' });
+    updatepagepath({ path: getPath(), isBeta: false, title: 'Configure Design' });
     updatepagetitle({ title: 'Configure Design' });
-    updatebetabadge({ isBeta: true });
   }, []);
 
   return (
@@ -27,7 +26,6 @@ function DesignConfiguratorPage({ updatepagepath, updatepagetitle, updatebetabad
 const mapDispatchToProps = (dispatch) => ({
   updatepagepath: bindActionCreators(updatepagepath, dispatch),
   updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
-  updatebetabadge: bindActionCreators(updatebetabadge, dispatch),
 });
 
 export default connect(null, mapDispatchToProps)(DesignConfiguratorPage);
