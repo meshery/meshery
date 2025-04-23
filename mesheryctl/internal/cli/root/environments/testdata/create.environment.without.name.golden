@@ -1,4 +1,9 @@
-[ Organization ID | Name | Description ] aren't specified
+
+  [1mERROR CODE[0m: mesheryctl-1118
+  [1mDESCRIPTION[0m: Invalid Argument
+  [1mERROR[0m: [ Organization ID | Name | Description ] aren't specified
 
 Usage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 Run 'mesheryctl environment create --help' to see detailed help message
+  [1mPROBABLE CAUSE[0m: Invalid Argument
+  [1mSUGGESTED REMEDIATION[0m: Please check the arguments passed

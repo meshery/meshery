@@ -1,0 +1,6 @@
+
+  [1mERROR CODE[0m: mesheryctl-1151
+  [1mDESCRIPTION[0m: error creating environment
+  [1mERROR[0m: Response Status Code 400. Server emitted an error: Status Code: 400 .failed to save the environment
+  [1mPROBABLE CAUSE[0m: Invalid organization id provided
+  [1mSUGGESTED REMEDIATION[0m: Ensure that the environment creation parameters are correct

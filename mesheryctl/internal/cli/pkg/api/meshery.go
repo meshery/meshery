@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"net/http"
@@ -10,17 +11,9 @@ import (
 
 // Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
 func Fetch[T any](url string) (*T, error) {
-	return makeRequest[T](url, http.MethodGet, nil)
-}
 
-// Send a Http request to meshery server from mesheryctl cli
-func makeRequest[T any](url string, httpMethod string, body io.Reader) (*T, error) {
-	req, err := utils.NewRequest(httpMethod, url, body)
-	if err != nil {
-		return nil, err
-	}
+	resp, err := makeRequest(url, http.MethodGet, nil)
 
-	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		return nil, err
 	}
@@ -40,4 +33,33 @@ func makeRequest[T any](url string, httpMethod string, body io.Reader) (*T, erro
 	}
 
 	return &apiResponse, nil
+
+}
+
+func Add(url string, payload interface{}) error {
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return err
+	}
+
+	_, err = makeRequest(url, http.MethodPost, bytes.NewBuffer(body))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Send a Http request to meshery server from mesheryctl cli
+func makeRequest(url string, httpMethod string, body io.Reader) (*http.Response, error) {
+	req, err := utils.NewRequest(httpMethod, url, body)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := utils.MakeRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
 }

@@ -15,11 +15,10 @@
 package environments
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"net/http"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
@@ -47,7 +46,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
 		if orgIDFlag == "" || nameFlag == "" || descriptionFlag == "" {
-			return utils.ErrInvalidArgument(errors.New(errMsg))
+			return errors.New(display.GetErrorLog(utils.ErrInvalidArgument(errors.New(errMsg))))
 		}
 		return nil
 	},
@@ -66,36 +65,19 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		name, _ := cmd.Flags().GetString("name")
 		description, _ := cmd.Flags().GetString("description")
 
-		if name == "" || description == "" {
-			return utils.ErrInvalidArgument(errors.New("name is required"))
-		}
-
 		payload := &environments.EnvironmentPayload{
 			Name:        name,
 			Description: description,
 			OrgID:       orgID,
 		}
 
-		payloadBytes, err := json.Marshal(payload)
+		err = api.Add(url, payload)
 		if err != nil {
-			return err
+
+			return errors.New(display.GetErrorLog(ErrEnvironmentCreate(err)))
 		}
 
-		req, err := utils.NewRequest(http.MethodPost, url, bytes.NewBuffer(payloadBytes))
-		if err != nil {
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgID))
-			return nil
-		}
-		utils.Log.Info("Error creating environment")
+		utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgID))
 		return nil
 	},
 }

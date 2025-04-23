@@ -36,6 +36,7 @@ func TestCreateEnvironment(t *testing.T) {
 		Fixture          string
 		RequestBody      string
 		ExpectedResponse string
+		ResponseCode     int
 		Token            string
 		ExpectError      bool
 	}{
@@ -46,6 +47,7 @@ func TestCreateEnvironment(t *testing.T) {
 			Method:           "POST",
 			Fixture:          "",
 			ExpectedResponse: "create.environment.without.name.golden",
+			ResponseCode:     200,
 			ExpectError:      true,
 		},
 		{
@@ -55,7 +57,18 @@ func TestCreateEnvironment(t *testing.T) {
 			Method:           "POST",
 			Fixture:          "create.environment.response.golden",
 			ExpectedResponse: "create.environment.success.golden",
+			ResponseCode:     200,
 			ExpectError:      false,
+		},
+		{
+			Name:             "Create environment failure with bad organization ID",
+			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test", "--orgID", testConstants["invalidOrgID"]},
+			URL:              testContext.BaseURL + "/api/environments",
+			Method:           "POST",
+			Fixture:          "create.environment.failure.response.golden",
+			ExpectedResponse: "create.environment.failure.golden",
+			ResponseCode:     400,
+			ExpectError:      true,
 		},
 	}
 
@@ -68,15 +81,16 @@ func TestCreateEnvironment(t *testing.T) {
 				utils.TokenFlag = utils.GetToken(t)
 
 				httpmock.RegisterResponder(tt.Method, tt.URL,
-					httpmock.NewStringResponder(200, apiResponse))
+					httpmock.NewStringResponder(tt.ResponseCode, apiResponse))
 			}
 
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			b := utils.SetupMeshkitLoggerTesting(t, false)
+			buf := utils.SetupMeshkitLoggerTesting(t, false)
+
 			EnvironmentCmd.SetArgs(tt.Args)
-			EnvironmentCmd.SetOut(b)
+			EnvironmentCmd.SetOut(buf)
 			err := EnvironmentCmd.Execute()
 
 			if err != nil {
@@ -94,7 +108,7 @@ func TestCreateEnvironment(t *testing.T) {
 				t.Error(err)
 			}
 
-			actualResponse := b.String()
+			actualResponse := buf.String()
 
 			if *update {
 				golden.Write(actualResponse)
