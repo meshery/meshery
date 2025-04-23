@@ -8,6 +8,7 @@ display-title: "false"
 list: include
 type: extensions
 category: kanvas
+redirect_from: extensions/snapshot
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> Kanvas Snapshot

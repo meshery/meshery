@@ -82,7 +82,7 @@ Finally, you can also install the Meshery Docker Extension using the Docker CLI.
 
 It runs as a set of one or more containers inside your Docker Desktop virtual machine.
 
-## Remove Meshery Docker Extension
+## Remove Meshery as a Docker Extension
 
 You can remove the Docker Extension from Docker Desktop interface or from the CLI. 
 

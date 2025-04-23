@@ -53,9 +53,7 @@ function MesheryMetrics({
 
   return (
     <MetricsContainer>
-      <NoMetricsText align="center" color="text.secondary">
-        No Metrics Configurations Found
-      </NoMetricsText>
+      <NoMetricsText align="center">No Metrics Configurations Found</NoMetricsText>
       <MetricsConfigButton
         aria-label="Add Grafana Charts"
         data-testid="configure-metrics-button"

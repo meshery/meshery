@@ -1,15 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
-import { styled } from '@mui/material/styles';
-import { Typography, TextField, Paper, Chip, MenuItem, useTheme } from '@layer5/sistent';
-import NoSsr from '@mui/material/NoSsr';
+import {
+  Typography,
+  TextField,
+  Paper,
+  Chip,
+  MenuItem,
+  useTheme,
+  styled,
+  NoSsr,
+} from '@layer5/sistent';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const StyledNoOptionsMessage = styled(Typography)({
+const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({
   padding: '0.2rem',
   marginLeft: '0.8rem',
-});
+  color: theme.palette.text.disabled,
+}));
 
 const StyledValueContainer = styled('div')({
   display: 'flex',
@@ -18,11 +26,12 @@ const StyledValueContainer = styled('div')({
   overflow: 'hidden',
 });
 
-const StyledPlaceholder = styled(Typography)({
+const StyledPlaceholder = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.disabled,
   position: 'absolute',
   left: 16,
   fontSize: 16,
-});
+}));
 
 const StyledPaper = styled(Paper)({
   zIndex: 9999,
@@ -40,11 +49,7 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 }));
 
 function NoOptionsMessage(props) {
-  return (
-    <StyledNoOptionsMessage color="textSecondary" {...props.innerProps}>
-      {props.children}
-    </StyledNoOptionsMessage>
-  );
+  return <StyledNoOptionsMessage {...props.innerProps}>{props.children}</StyledNoOptionsMessage>;
 }
 
 function inputComponent({ inputRef, ...props }) {
@@ -87,11 +92,7 @@ function Option(props) {
 }
 
 function Placeholder(props) {
-  return (
-    <StyledPlaceholder color="textSecondary" {...props.innerProps}>
-      {props.children}
-    </StyledPlaceholder>
-  );
+  return <StyledPlaceholder {...props.innerProps}>{props.children}</StyledPlaceholder>;
 }
 
 function SingleValue(props) {
@@ -181,10 +182,10 @@ const ReactSelectWrapper = ({
 ReactSelectWrapper.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  onInputChange: PropTypes.func.isRequired,
-  value: PropTypes.object.isRequired,
+  onInputChange: PropTypes.func,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   options: PropTypes.array.isRequired,
-  error: PropTypes.bool.isRequired,
+  error: PropTypes.bool,
   isMulti: PropTypes.bool,
   noOptionsMessage: PropTypes.string,
 };

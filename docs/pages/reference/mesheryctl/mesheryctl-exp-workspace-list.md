@@ -37,7 +37,7 @@ mesheryctl exp workspace list --orgId [orgId]
 Documentation for workspace can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.meshery.io/concepts/logical/workspaces
+https://docs.layer5.io/cloud/spaces/workspaces/
 
 </div>
 </pre> 

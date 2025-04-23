@@ -1,13 +1,12 @@
-import { styled, Button } from '@layer5/sistent';
-import { alpha } from '@mui/material';
+import { styled, Button, alpha } from '@layer5/sistent';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 export const DisableButton = styled(Button)(({ theme }) => ({
   '&.MuiButtonBase-root:disabled': {
     cursor: 'not-allowed',
     pointerEvents: 'auto',
-    backgroundColor: theme.palette.secondary.disableButtonBg,
-    color: theme.palette.secondary.disableButton,
+    backgroundColor: theme.palette.background.brand.disabled,
+    color: theme.palette.text.disabled,
   },
 }));
 
@@ -87,4 +86,11 @@ export const StyledTreeItemDiv = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
   gap: '1rem',
+}));
+
+export const MesheryTreeViewWrapper = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
 }));

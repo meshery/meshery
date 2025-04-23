@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { ErrorBoundary, AppBar } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,7 +16,6 @@ import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { withRouter } from 'next/router';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
-import { UsesSistent } from '../SistentWrapper';
 
 /**
  * Parent Component for Connection Component
@@ -71,60 +70,94 @@ function ConnectionManagementPage(props) {
 function Connections(props) {
   const {
     updateProgress,
-    /*onOpenCreateConnectionModal,*/ operatorState,
+    operatorState,
     selectedK8sContexts,
     k8sconfig,
     connectionMetadataState,
     meshsyncControllerState,
+    router,
   } = props;
   const [_operatorState] = useState(operatorState || []);
-  const [tab, setTab] = useState(0);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
 
+  const { query, pathname, push, isReady } = router;
+  const tabParam = query.tab?.toLowerCase();
+  const connectionId = query.connectionId;
+
+  const tab = tabParam === 'meshsync' ? 1 : 0;
+
+  const updateUrlParams = (params) => {
+    const newQuery = { ...query, ...params };
+
+    Object.keys(newQuery).forEach((key) => {
+      if (newQuery[key] === undefined || newQuery[key] === '') {
+        delete newQuery[key];
+      }
+    });
+
+    push({ pathname, query: newQuery }, undefined, { shallow: true });
+  };
+
+  // Handle tab change and update URL
+  const handleTabChange = (e, newTab) => {
+    e.stopPropagation();
+
+    if (newTab !== tab) {
+      updateUrlParams({
+        tab: newTab === 0 ? 'connections' : 'meshsync',
+        connectionId: undefined, // Clear the connection ID when switching tabs
+      });
+    }
+  };
+  // Update URL with connection ID
+  const updateUrlWithConnectionId = (id) => {
+    if (id && id === connectionId) return;
+
+    updateUrlParams({ connectionId: id || undefined });
+  };
+
+  if (!isReady) return null;
   return (
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
         <>
-          <UsesSistent>
-            <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
-              <ConnectionTabs
-                value={tab}
-                onChange={(e, newTab) => {
-                  e.stopPropagation();
-                  setTab(newTab);
-                }}
-                indicatorColor="primary"
-                textColor="primary"
-                variant="fullWidth"
-                sx={{
-                  height: '10%',
-                }}
-              >
-                <ConnectionTab
-                  label={
-                    <ConnectionIconText>
-                      <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                      <ConnectionIcon width="20" height="20" />
-                    </ConnectionIconText>
-                  }
-                />
-                <ConnectionTab
-                  label={
-                    <ConnectionIconText>
-                      <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                      <MeshsyncIcon width="20" height="20" />
-                    </ConnectionIconText>
-                  }
-                />
-              </ConnectionTabs>
-            </AppBar>
-          </UsesSistent>
+          <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
+            <ConnectionTabs
+              value={tab}
+              onChange={handleTabChange}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              sx={{
+                height: '10%',
+              }}
+            >
+              <ConnectionTab
+                label={
+                  <ConnectionIconText>
+                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                    <ConnectionIcon width="20" height="20" />
+                  </ConnectionIconText>
+                }
+              />
+              <ConnectionTab
+                label={
+                  <ConnectionIconText>
+                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                    <MeshsyncIcon width="20" height="20" />
+                  </ConnectionIconText>
+                }
+              />
+            </ConnectionTabs>
+          </AppBar>
 
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable
               meshsyncControllerState={meshsyncControllerState}
               connectionMetadataState={connectionMetadataState}
+              selectedConnectionId={connectionId}
+              updateUrlWithConnectionId={updateUrlWithConnectionId}
             />
           )}
           {tab === 1 && (
@@ -132,6 +165,8 @@ function Connections(props) {
               updateProgress={updateProgress}
               selectedK8sContexts={selectedK8sContexts}
               k8sconfig={k8sconfig}
+              selectedResourceId={connectionId}
+              updateUrlWithResourceId={updateUrlWithConnectionId}
             />
           )}
         </>

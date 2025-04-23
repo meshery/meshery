@@ -41,18 +41,24 @@ jobs:
             repo: context.repo.repo,
             comment_id: ${{ steps.fc.outputs.comment-id }}
           })
-    - name: Comment on staging url
+    - name: Comment on PR with E2E results
       if: ${{ !cancelled() }}
       uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
       with:
         script: |
-            const fs = require('fs')
-            const PRNumber = Number(fs.readFileSync('./pr/number'))
-            const E2ETestReporter = String(fs.readFileSync('./ui/test-report.md'))
+          const fs = require('fs')
+          const PRNumber = Number(fs.readFileSync('./pr/number'))
+          const PRSha = fs.readFileSync('./pr/sha', 'utf8').trim()
+          const E2ETestReporter = fs.readFileSync('./ui/test-report.md', 'utf8')
+                
+          const body = `        
+            **Commit SHA:** \`${PRSha}\`  
 
-            await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: PRNumber,
-                body: E2ETestReporter
-            })
+            ${E2ETestReporter}
+            `
+          await github.rest.issues.createComment({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: PRNumber,
+            body: body
+          })

@@ -6,8 +6,8 @@
     <th style="text-align: center"><span class="sort-by"> Meshery Component </span></th>
     <th style="text-align: center"><span class="sort-by"> Meshery Component Version </span></th>
     <th style="text-align: center"><span class="sort-by"> Meshery Server Version </span></th>
-    <th style="text-align: center"><span class="sort-by"> Service Mesh </span></th>
-    <th style="text-align: center"><span class="sort-by"> Service Mesh Version </span></th>
+    <th style="text-align: center"><span class="sort-by"> Infrastructure </span></th>
+    <th style="text-align: center"><span class="sort-by"> Infrastructure Version </span></th>
   </thead>
   <tbody>
     {% for item in sorted_tests_istio %}
@@ -57,7 +57,7 @@
       
       <td>
         <img style="height: 1.5rem; vertical-align: text-bottom" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;
-        <a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a>
+        <a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a> 
       </td>
       
       <td>{{ item.service-mesh-version }}</td>

@@ -1,7 +1,7 @@
 import { DialogTitle, Typography, styled } from '@layer5/sistent';
 
 export const StyledDialog = styled(DialogTitle)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : '#396679',
   textAlign: 'center',
   minWidth: 400,
   padding: '10px',

@@ -13,8 +13,8 @@ import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { UsesSistent } from '@/components/SistentWrapper';
-import { Box, IconButton, Typography, useTheme } from '@layer5/sistent';
+
+import { Box, Typography, useTheme } from '@layer5/sistent';
 
 export default function MesheryConfigurationChart() {
   const router = useRouter();
@@ -77,57 +77,47 @@ export default function MesheryConfigurationChart() {
   };
 
   return (
-    <UsesSistent>
-      <Link
-        href="/configuration/designs"
-        style={{
-          pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject)
-            ? 'none'
-            : 'auto',
-        }}
-      >
-        <DashboardSection>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="h6" gutterBottom>
-              Configuration
-            </Typography>
-            <div onClick={(e) => e.stopPropagation()}>
-              <CustomTextTooltip
-                placement="left"
-                interactive={true}
-                variant="standard"
-                leaveDelay={200}
-                title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
-              >
-                <IconButton disableRipple={true} disableFocusRipple={true}>
-                  <InfoOutlined
-                    color={theme.palette.icon.default}
-                    style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  />
-                </IconButton>
-              </CustomTextTooltip>
-            </div>
+    <Link
+      href="/configuration/designs"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? 'none' : 'auto',
+      }}
+    >
+      <DashboardSection>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="h6" gutterBottom>
+            Configuration
+          </Typography>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              placement="left"
+              title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
+            >
+              <div>
+                <InfoOutlined
+                  color={theme.palette.icon.default}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                />
+              </div>
+            </CustomTextTooltip>
           </div>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              alignContent: 'center',
-              height: '100%',
-            }}
-          >
-            {chartData.length > 0 ? (
-              <BBChart options={chartOptions} />
-            ) : (
-              <ConnectCluster message={'No connections found in your clusters'} />
-            )}
-          </Box>
-        </DashboardSection>
-      </Link>
-    </UsesSistent>
+        </div>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            height: '100%',
+          }}
+        >
+          {chartData.length > 0 ? (
+            <BBChart options={chartOptions} />
+          ) : (
+            <ConnectCluster message={'No connections found in your clusters'} />
+          )}
+        </Box>
+      </DashboardSection>
+    </Link>
   );
 }

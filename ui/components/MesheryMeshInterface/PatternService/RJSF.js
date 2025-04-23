@@ -1,10 +1,10 @@
-import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import { withTheme } from '@rjsf/core';
 import { Theme as MaterialUITheme } from '@rjsf/mui';
 import ajv8validator from '@rjsf/validator-ajv8';
 import React, { useEffect } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
+import { useTheme, ThemeProvider } from '@layer5/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
@@ -54,16 +54,22 @@ function RJSFForm({
   uiSchema = {},
   validator,
   fieldTemplates = {},
+  customFields = {},
+  widgets = {},
   extraErrors,
   isExtensionTooltipPortal = true,
   ...restProps
 }) {
   const globalTheme = useTheme();
+
   useEffect(() => {
     const extensionTooltipPortal =
       isExtensionTooltipPortal && document.getElementById('extension-tooltip-portal');
     if (extensionTooltipPortal) {
-      rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
+      rjsfTheme.components.MuiMenu.defaultProps = {
+        ...rjsfTheme.components.MuiMenu.defaultProps,
+        container: extensionTooltipPortal,
+      };
     }
     rjsfTheme.zIndex.modal = 99999;
   }, []);
@@ -74,9 +80,8 @@ function RJSFForm({
 
   return (
     <ErrorBoundary customFallback={CustomErrorFallback}>
-      {' '}
-      {/* Putting RJSF into error boundary, so that error can be catched.. */}
-      <MuiThemeProvider theme={globalTheme.palette.type === 'dark' ? darkRjsfTheme : rjsfTheme}>
+      {/* Putting RJSF into error boundary, so that error can be catched.. */}{' '}
+      <ThemeProvider theme={globalTheme.palette.mode === 'dark' ? darkRjsfTheme : rjsfTheme}>
         <MuiRJSFForm
           schema={schema.rjsfSchema}
           idPrefix={jsonSchema?.title}
@@ -105,7 +110,9 @@ function RJSFForm({
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,
             URLWidget: CustomURLWidget,
+            ...widgets,
           }}
+          fields={customFields}
           liveValidate={liveValidate}
           showErrorList={false}
           noHtml5Validate
@@ -115,7 +122,7 @@ function RJSFForm({
           {children}
           <div></div>
         </MuiRJSFForm>
-      </MuiThemeProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

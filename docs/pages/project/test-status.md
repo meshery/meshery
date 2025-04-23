@@ -39,9 +39,9 @@ th, td {
     cursor: pointer;
     background-color: #444;
     color: white;
-    font-weight: bold;
+    font-weight: normal;
     text-align: center;
-    font-size: 18px;
+    font-size: 1rem;
 }
 
 .accordion-header:hover {
@@ -117,6 +117,14 @@ th, td {
         {% endfor %}
     </tbody>
 </table>
+
+## Latest E2E Test Report
+
+[🔗 View Build UI and Server Workflow](https://github.com/meshery/meshery/actions/workflows/build-ui-and-server.yml?query=branch%3Amaster)
+
+
+{% include test-report.md %}
+
 
 <script>
 // JavaScript for toggling the accordion content

@@ -2,12 +2,12 @@ Node Metrics Collection
 Performance Management
 
 Purpose
-Collection, summarization and persistence of node metrics for inclusion in performance analysis. Metrics are persisted for anonymous analysis and sharing with the Cloud Native community at-large. Publicly-shared and project-agnostic analysis serves to increase confidence in service mesh adoption.
+Collection, summarization and persistence of node metrics for inclusion in performance analysis. Metrics are persisted for anonymous analysis and sharing with the Cloud Native community at-large. Publicly-shared and project-agnostic analysis serves to increase confidence in infrastructure configuration.
 Guiding Principles
 Meshery may require local storage for temporary use w/o guarantee of data resiliency. 
 Meshery can require and install certain temporary infrastructure on the cluster (e.g. InfluxDB).
 Goals
-Users will want to compare service mesh overhead against application resource consumption.
+Users will want to compare infrastructure configuration overhead against application resource consumption.
 Users 
 Design
 Node metrics should not overlap, but complement request metrics gleaned from Meshery’s load generators, if possible. Tail latencies are readily available from the load-generator Fortio. 
@@ -56,7 +56,7 @@ Storage (not gathered for now)
 
 The challenge with collecting these metrics is that they will have to be collected for each of the nodes. Hence, we will first have to query Prometheus to get a list of nodes, and then query again for each of the nodes collect all the above list of metrics.
 Mechanics
-Glean from Grafana dashboards and service mesh-specific metrics tracked through Prometheus, but gather directly from Prometheus.
+Glean from Grafana dashboards and cloud native-specific metrics tracked through Prometheus, but gather directly from Prometheus.
 Requirements
 Prometheus node exporter deployed (i.e. as a daemonset),
 Reachable URL to Prometheus endpoint for querying.

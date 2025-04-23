@@ -10,7 +10,7 @@ category: performance
 
 ## Connect and use metrics in Meshery
 
-Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their service mesh's control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of service meshes and their workloads, Meshery uses Grafana and/or Prometheus as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the service mesh and its configuration.
+Meshery provides performance reports, including performance test results, node resource metrics etc. so that operators may easily understand the overhead of their cloud native infrastructure control plane and data plane in context of the overhead incurred on nodes running within the cluster. In order to generate performance test reports of infrastructure and their workloads, Meshery uses Grafana and/or Prometheus as visualization and metrics systems, respectively. This guide outlines the requirements necessary for Meshery to connect to these systems. The steps may vary depending upon the infrastructure and its configuration.
 
 In order to pull in these environment metrics, you can also manually configure Meshery to connect with your existing Grafana and/or Prometheus instances through the Meshery dashboard. Once they have been loaded and are displayed on the screen, you may also perform an _ad-hoc_ test to check Meshery's connection status.
 

@@ -11,7 +11,8 @@ on:
 jobs:
   fetch-keys:
     name: Fetch Keys
-    runs-on: ubuntu-22.04
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -75,7 +76,7 @@ jobs:
 
       - name: Send Email on Generate permission keys failure
         if: ${{ failure() }}
-        uses: dawidd6/action-send-mail@v3.7.1
+        uses: dawidd6/action-send-mail@v4
         env:
           msg: ${{ env.reason != '' && env.reason || ' Generate permission keys failure' }}
         with:

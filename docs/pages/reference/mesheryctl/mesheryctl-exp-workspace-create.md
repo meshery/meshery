@@ -37,7 +37,8 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 Documentation for workspace can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.meshery.io/concepts/logical/workspaces
+https://docs.layer5.io/cloud/spaces/workspaces/
+
 </div>
 </pre> 
 

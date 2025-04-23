@@ -3,7 +3,7 @@ function is_youtubelink(url) {
     return (url.match(p)) ? RegExp.$1 : false;
 }
 function is_imagelink(url) {
-    var p = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif))/i;
+    var p = /([a-z\-_0-9\/\:\.]*\.(jpg|jpeg|png|gif|svg))/i;
     return (url.match(p)) ? true : false;
 }
 function is_vimeolink(url,el) {
@@ -36,6 +36,7 @@ function is_vimeolink(url,el) {
     xmlhttp.open("GET", 'https://vimeo.com/api/oembed.json?url='+url, true);
     xmlhttp.send();
 }
+
 function setGallery(el) {
     var elements = document.body.querySelectorAll(".gallery");
     elements.forEach(element => {
@@ -57,26 +58,33 @@ function setGallery(el) {
 				link_element.classList.add('gallery');
 			});
 		}
-		var currentkey;
-		var gallery_elements = document.querySelectorAll('a.gallery');
-		Object.keys(gallery_elements).forEach(function (k) {
-			if(gallery_elements[k].classList.contains('current')) currentkey = k;
-		});
+        var gallery_elements = Array.from(document.querySelectorAll('a.gallery'));
+        var currentkey = gallery_elements.findIndex(item => 
+            item.classList.contains('current')
+        );
 
-		var nextkey;
-		if(currentkey==(gallery_elements.length-1)) nextkey = 0;
-		else nextkey = parseInt(currentkey)+1;
+        var nextkey = (currentkey + 1) % gallery_elements.length;
+        var prevkey = (currentkey - 1 + gallery_elements.length) % gallery_elements.length;
 
-		var prevkey;
-		if(currentkey==0) prevkey = parseInt(gallery_elements.length-1);
-		else prevkey = parseInt(currentkey)-1;
-		document.getElementById('next').addEventListener("click", function() {
-			gallery_elements[nextkey].click();
-		});
-		document.getElementById('prev').addEventListener("click", function() {
-			gallery_elements[prevkey].click();
-		});
-	}
+        var nextBtn = document.getElementById('next');
+        var prevBtn = document.getElementById('prev');
+        
+        if(nextBtn && prevBtn) {
+            nextBtn.replaceWith(nextBtn.cloneNode(true));
+            prevBtn.replaceWith(prevBtn.cloneNode(true));
+            
+            nextBtn = document.getElementById('next');
+            prevBtn = document.getElementById('prev');
+
+            nextBtn.addEventListener("click", () => {
+                gallery_elements[nextkey]?.click();
+            });
+            
+            prevBtn.addEventListener("click", () => {
+                gallery_elements[prevkey]?.click();
+            });
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -111,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     //remove the clicked lightbox
     document.getElementById('lightbox').addEventListener("click", function(event) {
+
         if(event.target.id != 'next' && event.target.id != 'prev'){
             this.innerHTML = '';
             document.getElementById('lightbox').style.display = 'none';
@@ -134,11 +143,23 @@ document.addEventListener("DOMContentLoaded", function() {
     elements.forEach(element => {
         element.addEventListener("click", function(event) {
             event.preventDefault();
-            document.getElementById('lightbox').innerHTML = '<a id="close"></a><a id="next">&rsaquo;</a><a id="prev">&lsaquo;</a><div class="img" style="background: url(\''+this.getAttribute('href')+'\') center center / contain no-repeat;" title="'+this.getAttribute('title')+'" ><img src="'+this.getAttribute('href')+'" alt="'+this.getAttribute('title')+'" /></div><span>'+this.getAttribute('title')+'</span>';
-            document.getElementById('lightbox').style.display = 'block';
+            const isSVG = this.getAttribute('href').toLowerCase().endsWith('.svg');
+        
+            // unified the content structure
+            const content = isSVG
+            ? `<object data="${this.href}" 
+                    style="max-width:90vw;max-height:90vh;"></object>`
+            : `<img src="${this.href}" 
+                alt="${this.title}">`;
 
+            document.getElementById('lightbox').innerHTML = `
+                <a id="close"></a>
+                <div class="img">${content}</div>
+                <span>${this.title}</span>
+            `;
+        
+            document.getElementById('lightbox').style.display = 'block';
             setGallery(this);
         });
     });
-
 });

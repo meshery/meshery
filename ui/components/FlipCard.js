@@ -1,7 +1,6 @@
 //@ts-check
 import React, { useState, useRef, useEffect } from 'react';
 import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
-import { UsesSistent } from './SistentWrapper';
 
 function GetChild(children, key) {
   if (children.length != 2) throw Error('FlipCard requires exactly two child components');
@@ -36,7 +35,7 @@ function FlipCard({ duration = 500, onClick, onShow, children }) {
   }, [flipped]);
 
   return (
-    <UsesSistent>
+    <>
       <FlipCardWrapper
         onClick={() => {
           setFlipped((flipped) => !flipped);
@@ -73,7 +72,7 @@ function FlipCard({ duration = 500, onClick, onShow, children }) {
           )}
         </InnerCard>
       </FlipCardWrapper>
-    </UsesSistent>
+    </>
   );
 }
 

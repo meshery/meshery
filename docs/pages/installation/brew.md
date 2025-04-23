@@ -6,7 +6,7 @@ type: installation
 category: mesheryctl
 redirect_from:
 - installation/platforms/brew
-display-title: "true"
+display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/homebrew.png

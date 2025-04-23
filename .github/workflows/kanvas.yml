@@ -12,7 +12,7 @@ on: # rebuild any PRs and main branch changes
     outputs:
       resource_url:
         description: "The URL of the generated resource."
-        value: ${{ jobs.MeshMapScreenshot.outputs.resource_url }}
+        value: ${{ jobs.KanvasScreenshot.outputs.resource_url }}
 permissions: 
   actions: read
   contents: write
@@ -22,7 +22,7 @@ permissions:
   id-token: write
 
 jobs:
-  MeshMapScreenshot:
+  KanvasScreenshot:
     runs-on: ubuntu-24.04
     outputs:
       resource_url: ${{ steps.test_result.outputs.resource_url }}
@@ -37,7 +37,7 @@ jobs:
           path: action
           repository: layer5labs/kanvas-snapshot
       - id: test_result
-        uses: layer5labs/Kanvas-Snapshot@v0.2.26
+        uses: layer5labs/Kanvas-Snapshot@v0.2.33
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
           mesheryToken: ${{ secrets.MESHERY_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....

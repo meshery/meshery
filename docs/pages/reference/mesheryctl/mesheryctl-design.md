@@ -83,6 +83,7 @@ mesheryctl design list
 
 * [mesheryctl design apply](/reference/mesheryctl/design/apply)
 * [mesheryctl design delete](/reference/mesheryctl/design/delete)
+* [mesheryctl design export](/reference/mesheryctl/design/export)
 * [mesheryctl design import](/reference/mesheryctl/design/import)
 * [mesheryctl design list](/reference/mesheryctl/design/list)
 * [mesheryctl design offboard](/reference/mesheryctl/design/offboard)

@@ -1,0 +1,4 @@
+[search term] isn't specified. Please enter component name to search
+
+Usage: mesheryctl exp component search [query-text]
+Run 'mesheryctl exp component search --help' to see detailed help message

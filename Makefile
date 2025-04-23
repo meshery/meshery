@@ -303,17 +303,20 @@ ui-server: ui-meshery-build ui-provider-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v19, $(shell node --version)), v19)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+ifeq ($(findstring v20, $(shell node --version)), v20)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
+else ifeq ($(findstring v19, $(shell node --version)), v19)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v18, $(shell node --version)), v18)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v17, $(shell node --version)), v17)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
-endif
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 
+endif
 ## Install dependencies for building Meshery UI.
 ui-setup:
 	cd ui; npm i; cd ..
@@ -334,11 +337,11 @@ ui-provider:
 
 ## Lint check Meshery UI and Provider UI on your local machine.
 ui-lint:
-	cd ui; npm run lint; cd ..
+	cd ui; npm i eslint; npx eslint . --fix; cd ..
 
 ## Lint check Meshery Provider UI on your local machine.
 ui-provider-lint:
-	cd provider-ui; npm run lint; cd ..
+	cd provider-ui && npm i eslint && npx eslint .
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:
@@ -347,7 +350,7 @@ ui-provider-test:
 ## Buils all Meshery UIs  on your local machine.
 ui-build: ui-setup
 	cd ui; npm run lint:fix && npm run build && npm run export; cd ..
-	cd provider-ui; npm run lint:fix && npm run build && npm run export; cd ..
+	cd provider-ui; npm run lint:fix && npm run build; cd ..
 
 ## Build only Meshery UI on your local machine.
 ui-meshery-build:
@@ -355,7 +358,7 @@ ui-meshery-build:
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
-	cd provider-ui; npm run build && npm run export; cd ..
+	cd provider-ui; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup

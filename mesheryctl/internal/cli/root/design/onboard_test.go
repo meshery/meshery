@@ -62,7 +62,7 @@ func TestOnboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},
@@ -127,7 +127,7 @@ func TestOnboardCmd(t *testing.T) {
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			DesignCmd.SetArgs(tt.Args)
-			DesignCmd.SetOutput(b)
+			DesignCmd.SetOut(b)
 			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error

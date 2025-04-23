@@ -15,13 +15,14 @@
 package registry
 
 import (
-	"bytes"
+	// "bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	comp "github.com/meshery/schemas/models/v1beta1/component"
@@ -119,7 +120,8 @@ func InvokeCompUpdate() error {
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
+
+	componentCSVHelper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
 		return err
 	}
@@ -163,7 +165,7 @@ func InvokeCompUpdate() error {
 				totalCompsUpdatedPerModelPerVersion := 0
 
 				if content.IsDir() {
-					if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+					if mutils.FindIndexInSlice(content.Name(), ExcludeDirs) != -1 {
 						continue
 					}
 
@@ -193,45 +195,20 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						tmpFilePath := filepath.Join(versionPath, "components", "tmp_model.json")
 
-						// Ensure the temporary file is removed regardless of what happens
-						defer func() {
-							_ = os.Remove(tmpFilePath)
-						}()
+						_, err = os.Stat(compPath)
 
-						if _, err := os.Stat(compPath); err == nil {
-							existingData, err := os.ReadFile(compPath)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							newData, err := os.ReadFile(tmpFilePath)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							if bytes.Equal(existingData, newData) {
-								utils.Log.Info("No changes detected for ", componentDef.Component.Kind)
-								continue
-							} else {
-								err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
-								if err != nil {
-									utils.Log.Error(err)
-									continue
-								}
-								totalCompsUpdatedPerModelPerVersion++
-
-							}
+						if err != nil {
+							utils.Log.Error(err)
+							continue
 						}
+
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
+						totalCompsUpdatedPerModelPerVersion++
 					}
 
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{

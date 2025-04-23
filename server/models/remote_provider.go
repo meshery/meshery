@@ -27,7 +27,8 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )
@@ -295,7 +296,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 		return
 	}
 	if resp.StatusCode != http.StatusCreated {
-		err = ErrPost(fmt.Errorf("status code: %d", resp.StatusCode), "user preference data", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("status code: %d. ", resp.StatusCode), "user preference data", resp.StatusCode)
 		l.Log.Error(err)
 	}
 }
@@ -1686,10 +1687,10 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips.", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your credentials.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions.", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusBadRequest:
 		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
@@ -3827,10 +3828,10 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// check for all success status codes
 	statusOK := response.StatusCode >= 200 && response.StatusCode < 300
 	if statusOK {
-		l.Log.Info("response retrieved from remote provider")
+		l.Log.Info("response retrieved from remote provider.")
 		return response, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {
@@ -4005,11 +4006,21 @@ func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uui
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
 	}
 	if resp.StatusCode == http.StatusOK {
-		var conn connections.Connection
-		if err = json.Unmarshal(bdr, &conn); err != nil {
+		connectionPage := &connections.ConnectionPage{}
+		if err = json.Unmarshal(bdr, connectionPage); err != nil {
+			l.Log.Error(ErrUnmarshal(err, "connection"))
 			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
 		}
-		return &conn, resp.StatusCode, nil
+
+		if len(connectionPage.Connections) < 1 {
+			l.Log.Error(ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound))
+			return nil, http.StatusNotFound, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound)
+		}
+
+		if len(connectionPage.Connections) > 1 {
+			l.Log.Warn(fmt.Errorf("multiple connections returned; expected exactly one. using the first connection."))
+		}
+		return connectionPage.Connections[0], resp.StatusCode, nil
 	}
 
 	l.Log.Debug(string(bdr))
@@ -4735,7 +4746,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -4823,11 +4834,11 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
+		return &environment.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -4862,7 +4873,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.Envir
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var environment v1beta1.Environment
+		var environment environment.Environment
 		if err = json.Unmarshal(bdr, &environment); err != nil {
 			return nil, err
 		}
@@ -5168,7 +5179,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	return nil, ErrFetch(fmt.Errorf("failed to get workspace by ID"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -5256,11 +5267,11 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
+		return &workspace.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5295,7 +5306,7 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.Workspa
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var workspace v1beta1.Workspace
+		var workspace workspace.Workspace
 		if err = json.Unmarshal(bdr, &workspace); err != nil {
 			return nil, err
 		}

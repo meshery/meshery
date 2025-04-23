@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateProgress } from '../../lib/store';
 import { bindActionCreators } from 'redux';
-import { useMediaQuery } from '@mui/material';
 import { withRouter } from 'next/router';
 import MesheryMetrics from '../MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
@@ -15,29 +14,25 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
-import { Modal, Button, Grid, Paper, Typography, useTheme, styled } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+import {
+  Modal,
+  Button,
+  Grid,
+  Paper,
+  Typography,
+  useTheme,
+  styled,
+  useMediaQuery,
+} from '@layer5/sistent';
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
+const StyledPaper = styled(Paper)({
   padding: '1rem',
-  backgroundColor: theme.palette.background?.default,
-}));
-
-const StyledButton = styled(Button)(() => {
-  const theme = useTheme();
-  return {
-    padding: '0.5rem',
-    color:
-      theme.palette.mode === 'dark'
-        ? theme.palette.text?.default
-        : theme.palette.background?.default,
-    backgroundColor:
-      theme.palette.mode === 'dark' ? theme.palette.border?.strong : theme.palette.icon?.weather,
-  };
 });
+
+const StyledButton = styled(Button)(() => ({ padding: '0.5rem' }));
 
 const ResultContainer = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -167,7 +162,7 @@ function Dashboard({ updateProgress, grafana, router }) {
   }
 
   return (
-    <UsesSistent>
+    <>
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <Grid container spacing={2} style={{ padding: '0.5rem' }} alignContent="space-around">
@@ -187,7 +182,7 @@ function Dashboard({ updateProgress, grafana, router }) {
                         <Typography
                           variant="h2"
                           component="div"
-                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.weather }}
+                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.default }}
                         >
                           {tests.count.toLocaleString('en')}
                         </Typography>
@@ -203,6 +198,7 @@ function Dashboard({ updateProgress, grafana, router }) {
                         <StyledButton
                           onClick={() => setRunTest(true)}
                           disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                          variant="contained"
                         >
                           Run Test
                         </StyledButton>
@@ -215,7 +211,7 @@ function Dashboard({ updateProgress, grafana, router }) {
                         <Typography
                           variant="h2"
                           component="div"
-                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.weather }}
+                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.default }}
                         >
                           {profiles.count}
                         </Typography>
@@ -228,7 +224,10 @@ function Dashboard({ updateProgress, grafana, router }) {
                         </Typography>
                       </div>
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
-                        <StyledButton onClick={() => router.push('/performance/profiles')}>
+                        <StyledButton
+                          variant="contained"
+                          onClick={() => router.push('/performance/profiles')}
+                        >
                           Manage Profiles
                         </StyledButton>
                       </div>
@@ -266,7 +265,7 @@ function Dashboard({ updateProgress, grafana, router }) {
       ) : (
         <DefaultError />
       )}
-    </UsesSistent>
+    </>
   );
 }
 

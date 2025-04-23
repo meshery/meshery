@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { Typography, Link, Box, styled } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background?.default,
@@ -52,7 +51,7 @@ const CustomErrorMessage = ({ message, showImage = true }) => {
   }, []);
 
   return (
-    <UsesSistent>
+    <>
       <NoSsr>
         <StyledBox>
           <Box>
@@ -77,14 +76,17 @@ const CustomErrorMessage = ({ message, showImage = true }) => {
           )}
           <StyledTypographyBody1 variant="body1">
             Start a conversation at Layer5 community{' '}
-            <StyledLink href="https://meshery.io/community#community-forums/c/meshery/5" target="_blank">
+            <StyledLink
+              href="https://meshery.io/community#community-forums/c/meshery/5"
+              target="_blank"
+            >
               discussion forum
             </StyledLink>
             .
           </StyledTypographyBody1>
         </StyledBox>
       </NoSsr>
-    </UsesSistent>
+    </>
   );
 };
 

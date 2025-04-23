@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Contributing to Meshery's End-to-End Tests
+title: Contributing to Meshery UI End-to-End Tests
 permalink: project/contributing/contributing-ui-tests
-abstract: How to contribute to End-to-End Tests using Playwright.
+abstract: How to contribute to end-to-end testing in Meshery UI using Playwright.
 language: en
 type: project
 category: contributing
@@ -30,8 +30,8 @@ To run the tests successfully, three environment variables must be configured:
 
 {% include alert.html
     type="info"
-    title="Layer5 Cloud Provider"
-    content='In the case you are using Layer5 Cloud as provider, you can generate your token on <a href="https://cloud.layer5.io/security/tokens">Layer5 cloud account token</a>' %}
+    title="Accessing Remote Providers"
+    content='In the case you are using Layer5 Cloud as a remote provider, you can <a href="https://cloud.layer5.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.' %}
 
 During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
 
@@ -86,9 +86,9 @@ make docker-testing-env-build
 make docker-testing-env
 ```
 
-## Setup playwright
+## Setup Playwright
 
-For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
+For Playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
 
 ### Playwright on Native OS (Recommended)
 
@@ -184,7 +184,9 @@ test('Random test', async ({ provider }) => {
 
 ## Testing Policy
 
-To maintain consistency across test cases, every new test will be tagged with `@unstable`. This will ensure that it appears with a warning icon rather than a failing icon in the test reporter comments on pull requests. For example:
+After merging a pull request, ensuring test stability across CI/CD runs is crucial. A test may pass locally but fail in the CI/CD environment due to differences in execution conditions. While one approach is to mark all new tests as @unstable by default, a more effective strategy is to apply the @unstable tag only if a test exhibits intermittent failures or flaky behavior.
+
+After merging into the master branch, monitor the GitHub workflow that executes the new test case and assess its stability. If the test fails, raise another PR to mark it as @unstable and communicate this to the team. For example:
 
 ```javascript
 import { expect, test } from './fixtures/project';
@@ -197,10 +199,10 @@ test('Random test',  { tag: '@unstable' }, async ({ provider }) => {
 
 ## Debugging Test on Github Actions
 
-We also storing test result on every PR in github actions, in case you need to debug it further:
+End-to-end test results are stored as artifacts on every PR in Github Actions. In case you need to debug a failed test:
 
-- Check the PR you are made, go to the bottom of PR directly above the comment
-- Wait until all github actions completed, and scroll until you see `Meshery UI and Server / UI end-to-end tests`  
+- Visit the PR in question. Go to the bottom of PR directly above the comment.
+- Wait until all Github Actions completed, and scroll until you see `Meshery UI and Server / UI end-to-end tests`  
 - Click details and it will redirect you to the actions workflow
 - Go to summary tab, scroll down until you see artifact, and check the artifact `playwright-report`
 - Download the artifact
@@ -208,3 +210,18 @@ We also storing test result on every PR in github actions, in case you need to d
 - Go to [Playwright Trace Page](https://trace.playwright.dev/)
 - From the test folder pick one folder which represents the test, you want to check
 - Upload the trace file
+
+
+Watch the training session on Playwright testing and trace debugging.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/x-W60mvDYuo?si=coN7RpRjkI4a_ndk&amp;start=1524" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+### Find Tests here
+Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
+
+To filter and view only UI-related tests using the Sheet Views feature:
+1. In the top menu bar, click Data → Change view
+2. Choose the pre-defined view labeled "UI"
+
+![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
+

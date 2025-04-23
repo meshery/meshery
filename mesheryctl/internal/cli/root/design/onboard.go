@@ -128,7 +128,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			if sourceType, err = getFullSourceType(sourceType); err != nil {
 				return ErrInValidSource(sourceType, validSourceTypes)
 			}
-			pattern, err := importPattern(sourceType, file, patternURL, !skipSave)
+			pattern, err := importPattern(sourceType, file, patternURL+"/import", !skipSave)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil

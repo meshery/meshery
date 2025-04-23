@@ -1,4 +1,4 @@
-import { Avatar } from '@layer5/sistent';
+import { Avatar, useTheme } from '@layer5/sistent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -10,7 +10,6 @@ import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
-import theme from '../../themes/app';
 import { CustomTooltip } from '@layer5/sistent';
 import {
   ChipWrapper,
@@ -24,13 +23,14 @@ import {
   RegisteredChip,
   ConnectionStyledMenuItem,
 } from './styles';
-import { iconMedium } from 'css/icons.styles';
-import { UsesSistent } from '../SistentWrapper';
+import { iconMedium, iconSmall } from 'css/icons.styles';
+import ConnectionIcon from '@/assets/icons/Connection';
 
-export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
+export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
+  const theme = useTheme();
+
   return (
-    // <Tooltip title={tooltip || title} placement="bottom">
     <ChipWrapper
       label={title}
       onClick={(e) => {
@@ -43,17 +43,17 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
           <BadgeAvatars
             color={
               status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
-                ? theme.palette.secondary.success
-                : theme.palette.secondary.penColorSecondary
+                ? theme.palette.background.brand.default
+                : theme.palette.text.disabled
             }
           >
             <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
-              <img style={iconMedium} src="/static/img/kubernetes.svg" />
+              <ConnectionIcon {...iconSmall} />
             </Avatar>
           </BadgeAvatars>
         ) : (
           <Avatar src={iconSrc} sx={iconMedium}>
-            <img style={iconMedium} src="/static/img/kubernetes.svg" />
+            <ConnectionIcon {...iconSmall} />
           </Avatar>
         )
       }
@@ -61,15 +61,14 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
       data-cy="chipContextName"
       style={chipStyle}
     />
-    // </Tooltip>
   );
 };
 
-export const TootltipWrappedConnectionChip = (props) => {
+export const TooltipWrappedConnectionChip = (props) => {
   return (
     <CustomTooltip title={props.tooltip || props.title} placement="left">
-      <div>
-        <_ConnectionChip {...props} />
+      <div style={{ display: 'inline-block' }}>
+        <ConnectionChip {...props} />
       </div>
     </CustomTooltip>
   );
@@ -227,5 +226,5 @@ function getStatusChip(status) {
 }
 
 export const ConnectionStateChip = ({ status }) => {
-  return <UsesSistent>{getStatusChip(status)}</UsesSistent>;
+  return <>{getStatusChip(status)}</>;
 };

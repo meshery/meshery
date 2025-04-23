@@ -26,8 +26,9 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -174,9 +175,9 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 	return l.EnvironmentPersister.DeleteEnvironmentByID(id)
 }
 
-func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
 	orgId, _ := uuid.FromString(environmentPayload.OrgId)
-	environment := &v1beta1.Environment{
+	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
@@ -187,10 +188,10 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 	return l.EnvironmentPersister.SaveEnvironment(environment)
 }
 
-func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
+func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
 	orgId, _ := uuid.FromString(environmentPayload.OrgId)
-	environment := &v1beta1.Environment{
+	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -484,7 +485,7 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 
 func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
-	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/result")
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/api/performance/results")
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
@@ -515,7 +516,9 @@ func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string
 		}
 		return "", nil
 	}
-	l.Log.Warn(ErrDoRequest(err, resp.Request.Method, remoteProviderURL.String()))
+	if err != nil {
+		l.Log.Warn(ErrDoRequest(err, cReq.Method, remoteProviderURL.String()))
+	}
 	return "", nil
 }
 
@@ -1452,9 +1455,9 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
-func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *v1beta1.WorkspacePayload, _ string, _ bool) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
 	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
-	workspace := &v1beta1.Workspace{
+	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
@@ -1465,10 +1468,10 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 	return l.WorkspacePersister.SaveWorkspace(workspace)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	id, _ := uuid.FromString(workspaceID)
 	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
-	workspace := &v1beta1.Workspace{
+	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,

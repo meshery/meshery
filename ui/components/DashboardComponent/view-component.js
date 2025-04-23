@@ -24,9 +24,9 @@ import {
   extractPodVolumnTables,
   splitCamelCaseString,
   KeyValueInRow,
+  convertToReadableUnit,
 } from '@layer5/sistent';
 import { SectionHeading } from '../DataFormatter';
-import { UsesSistent } from '../SistentWrapper';
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 const FormatterContext = React.createContext({
@@ -35,8 +35,13 @@ const FormatterContext = React.createContext({
 const LevelContext = React.createContext(0);
 
 export const ColourContainer = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#212121' : '#e9eff1',
+  backgroundColor: theme.palette.background.card,
   padding: '1rem',
+  [theme.breakpoints.down(599)]: {
+    width: '60vw',
+  },
+  width: '100%',
+  overflow: 'scroll',
 }));
 
 export const JSONViewFormatter = ({ data }) => {
@@ -134,7 +139,7 @@ const propertyFormatter = {
     return (
       <>
         {value.links.map((linkObj) => {
-          const { label, nodeName, namespace, serviceAccount } = linkObj;
+          const { label, nodeName, namespace, serviceAccount, resourceCategory } = linkObj;
           const name = nodeName || namespace || serviceAccount;
           if (!name) return null;
           return (
@@ -142,19 +147,19 @@ const propertyFormatter = {
               key={label}
               title={label}
               value={name}
-              // onClick={() => {
-              //   return value.router.push(
-              //     {
-              //       pathname: value.router.pathname,
-              //       query: {
-              //         resourceCategory: resourceCategory || label,
-              //         resourceName: name,
-              //       },
-              //     },
-              //     undefined,
-              //     { shallow: true },
-              //   );
-              // }}
+              onClick={() => {
+                return value.router.push(
+                  {
+                    pathname: value.router.pathname,
+                    query: {
+                      resourceCategory: resourceCategory || label,
+                      resourceName: name,
+                    },
+                  },
+                  undefined,
+                  { shallow: true },
+                );
+              }}
             />
           );
         })}
@@ -171,31 +176,46 @@ const propertyFormatter = {
     <KeyValueInRow
       Key={'Labels'}
       Value={<LabelFormatter data={value?.data} selectedLabels={[]} />}
+      showFold={value?.data?.length > 7}
     />
   ),
   annotations: (value) => (
-    <KeyValueInRow Key={'Annotations'} Value={<StatusFormatter status={value} />} />
-  ),
-  totalCapacity: (value) => (
     <KeyValueInRow
-      Key={'Capacity'}
-      Value={
-        <ColourContainer>
-          <TableDataFormatter data={value} />
-        </ColourContainer>
-      }
+      Key={'Annotations'}
+      Value={<StatusFormatter status={value} />}
+      showFold={value?.length > 7}
     />
   ),
-  totalAllocatable: (value) => (
-    <KeyValueInRow
-      Key={'Allocatable'}
-      Value={
-        <ColourContainer>
-          <TableDataFormatter data={value} />
-        </ColourContainer>
-      }
-    />
-  ),
+  totalCapacity: (value) => {
+    const readableData = Object.fromEntries(
+      Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
+    );
+    return (
+      <KeyValueInRow
+        Key={'Capacity'}
+        Value={
+          <ColourContainer>
+            <TableDataFormatter data={readableData} />
+          </ColourContainer>
+        }
+      />
+    );
+  },
+  totalAllocatable: (value) => {
+    const readableData = Object.fromEntries(
+      Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
+    );
+    return (
+      <KeyValueInRow
+        Key={'Allocatable'}
+        Value={
+          <ColourContainer>
+            <TableDataFormatter data={readableData} />
+          </ColourContainer>
+        }
+      />
+    );
+  },
   tolerations: (value) => (
     <KeyValueInRow
       Key={'Tolerations'}
@@ -311,24 +331,22 @@ const propertyFormatter = {
 };
 const ResourceDetailFormatData = ({ data }) => {
   return (
-    <UsesSistent>
-      <FormatterContext.Provider
-        value={{
-          propertyFormatters: propertyFormatter,
+    <FormatterContext.Provider
+      value={{
+        propertyFormatters: propertyFormatter,
+      }}
+    >
+      <Grid
+        container
+        style={{
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+          gap: '0.3rem 1rem',
         }}
       >
-        <Grid
-          container
-          style={{
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-            gap: '0.3rem 1rem',
-          }}
-        >
-          <ResourceDynamicFormatter data={data} />
-        </Grid>
-      </FormatterContext.Provider>
-    </UsesSistent>
+        <ResourceDynamicFormatter data={data} />
+      </Grid>
+    </FormatterContext.Provider>
   );
 };
 

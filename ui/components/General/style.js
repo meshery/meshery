@@ -11,9 +11,9 @@ import {
   styled,
   Drawer,
   charcoal,
+  CaretDownIcon,
 } from '@layer5/sistent';
 import { disabledStyleWithOutOpacity } from '../../css/disableComponent.styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const FallbackWrapper = styled(Box)(() => ({
   margin: '2rem',
@@ -108,6 +108,42 @@ export const MainLogoText = styled('img')(({ theme }) => ({
   width: 170,
   borderRadius: 'unset',
 }));
+
+export const ExpandMoreIcon = styled('svg', {
+  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
+})(({ isCollapsed, hasChildren, theme }) => ({
+  opacity: 0, // Initially hidden
+  visibility: 'hidden',
+  cursor: 'pointer',
+  display: hasChildren ? 'inline-block' : 'none',
+  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transition:
+    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
+
+  // Show icon when the parent element is hovered
+  '&:hover, *:hover > &': {
+    opacity: 1,
+    visibility: 'visible',
+  },
+
+  '&:hover': {
+    fill: theme?.palette?.background?.brand?.default || 'black',
+  },
+}));
+
+export const ExpandMore = ({ isCollapsed, hasChildren, theme, ...props }) => (
+  <ExpandMoreIcon
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    isCollapsed={isCollapsed}
+    hasChildren={hasChildren}
+    {...props}
+  >
+    <CaretDownIcon fill={theme.palette.icon.brand} />
+  </ExpandMoreIcon>
+);
 
 export const NavigatorList = styled(List)({
   padding: 0,
@@ -209,21 +245,6 @@ export const SideBarListItem = styled(ListItem, {
   fontSize: '14px',
 }));
 
-export const ExpandMoreIcon = styled(FontAwesomeIcon, {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
-  opacity: 0,
-  visibility: 'hidden',
-  cursor: 'pointer',
-  display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
-  transition:
-    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
-  '&:hover': {
-    color: theme.palette.background.brand.default,
-  },
-}));
-
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
@@ -266,21 +287,13 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   borderColor: '#404854',
 }));
 
-export const ChevronIcon = styled(FontAwesomeIcon)(({ theme }) => ({
-  color: theme.palette.icon.default,
-  cursor: 'pointer',
-  margin: '0.75rem 0.2rem',
-  width: '0.8rem',
-  verticalAlign: 'middle',
-}));
-
 export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({
   minWidth: theme.spacing(3.5),
   paddingTop: theme.spacing(0.5),
   textAlign: 'center',
   display: 'inline-table',
   paddingRight: theme.spacing(0.5),
-  marginLeft: theme.spacing(0.8),
+  marginLeft: '8.45px',
 }));
 
 export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
@@ -347,8 +360,8 @@ export const NavigatorFooter = styled('div')({
 
 export const ChevronButtonWrapper = styled('div', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed }) => ({
-  backgroundColor: isCollapsed ? '#515b60' : 'transparent',
+})(({ isCollapsed, theme }) => ({
+  backgroundColor: isCollapsed ? '#515b60' : theme.palette.background.tabs,
   color: isCollapsed ? '#ffffff' : 'inherit',
   boxShadow: !isCollapsed
     ? '0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)'
@@ -367,11 +380,11 @@ export const ChevronButtonWrapper = styled('div', {
 
   '&:hover': {
     opacity: 1,
-    background: !isCollapsed ? 'transparent' : undefined,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
   },
   '&:focus': {
     opacity: 1,
-    background: !isCollapsed ? 'transparent' : undefined,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
   },
 }));
 

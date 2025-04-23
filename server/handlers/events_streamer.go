@@ -34,7 +34,7 @@ type statusIDs struct {
 	IDs []*uuid.UUID `json:"ids"`
 }
 
-// swagger:route GET /api/v2/events EventsAPI idGetEventStreamer
+// swagger:route GET /api/system/events EventsAPI idGetEventStreamer
 // Handle GET request for events.
 // ```search={description}``` If search is non empty then a search is performed on event description
 // ```?category=[eventcategory] Returns event belonging to provided categories ```

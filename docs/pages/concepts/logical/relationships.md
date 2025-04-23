@@ -10,7 +10,7 @@ redirect_from:
   - concepts/relationships
 ---
 
-Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./design) to further in comprehending the overall structure and dependencies within managed systems.
+Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./designs) to further in comprehending the overall structure and dependencies within managed systems.
 
 Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
 
@@ -91,7 +91,7 @@ This Relationship type configures the networking between one or more components.
 **Examples**: An edge-network relationship between a Service and a Deployment or an edge-binding relationship between an Ingress and a Service.
 
 - Example 1) Service --> Deployment
-- Example 3) IngressController --> Ingress --> Service
+- Example 2) IngressController --> Ingress --> Service
 
 <details close><summary>Visual Representation of Edge-Network Relationships</summary>
            <br>
@@ -301,6 +301,16 @@ Meshery employs a policy-driven approach to evaluate relationships between compo
 - Suggesting potential relationships based on the current design
 - Validating existing relationships and identifying potential conflicts
 - Automating the configuration of components based on established relationships
+
+
+Each invocation of the evaluation process attempts to recursively evaluate the design until it reaches a stable state—i.e., no further changes are detected. If a bug in the evaluation policies causes non-terminating behavior (such as endlessly generating new components), the evaluation will be forcibly stopped after a configurable maximum depth (e.g., 5 iterations), and an error will be raised.
+
+During evaluation, in addition to the input design, the evaluation engine has access to all relationships stored in the registry. These relationships serve as the source of truth for policies to validate existing relationships  or identify new ones. Since relationships can be associated with different models, not all of them are relevant to a given design. To ensure efficiency, the evaluation process intelligently filters the registered relationships, retaining only those that directly impact the design.
+
+
+Currently, the filtering logic includes only relationships from models that are already part of the design. For example, if the design consists solely of Kubernetes components, relationships from the AWS model will not be loaded for evaluation.
+
+Beyond this automatic filtering, relationship evaluation can also be selectively disabled within the design. This is achieved by setting preferences to false for specific relationship categories, defined by their kind, type, and subtype.
 
 ![Meshery Relationship](/assets/img/concepts/logical/relationship-evaluation-flow.svg)
 

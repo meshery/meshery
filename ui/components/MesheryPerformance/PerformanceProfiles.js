@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { TableCell, TableRow } from '@mui/material';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -18,14 +17,16 @@ import {
   Paper,
   Typography,
   IconButton,
-  charcoal,
+  useTheme,
+  CustomTooltip,
+  TableCell,
+  TableRow,
 } from '@layer5/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
-import { UsesSistent } from '../SistentWrapper';
 import { updateProgress } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
@@ -33,7 +34,6 @@ import subscribePerformanceProfiles from '../graphql/subscriptions/PerformancePr
 import { iconMedium } from '../../css/icons.styles';
 import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
-import ReusableTooltip from '../reusable-tooltip';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
@@ -61,7 +61,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
   const modalRef = useRef(null);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('updated_at desc');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [testProfiles, setTestProfiles] = useState([]);
@@ -179,6 +179,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
   }, [selectedProfile]);
 
   const searchTimeout = useRef(null);
+  const theme = useTheme();
 
   let colViews = [
     ['name', 'xs'],
@@ -274,7 +275,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
     },
     {
       name: 'updated_at',
-      label: 'Updated On',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,
@@ -306,46 +307,50 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
-            <div style={{ display: 'flex' }}>
-              <ReusableTooltip title="Edit">
-                <IconButton
-                  style={iconMedium}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setSelectedProfile(testProfiles[tableMeta.rowIndex]);
-                  }}
-                  aria-label="edit"
-                  disabled={
-                    !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
-                  }
-                >
-                  <EditIcon
-                    style={{
-                      fill: charcoal[50],
-                      ...iconMedium,
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <CustomTooltip title="Edit">
+                <div>
+                  <IconButton
+                    style={iconMedium}
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setSelectedProfile(testProfiles[tableMeta.rowIndex]);
                     }}
-                  />
-                </IconButton>
-              </ReusableTooltip>
+                    aria-label="edit"
+                    disabled={
+                      !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
+                    }
+                  >
+                    <EditIcon
+                      style={{
+                        fill: theme.palette.icon.secondary,
+                        ...iconMedium,
+                      }}
+                    />
+                  </IconButton>
+                </div>
+              </CustomTooltip>
 
-              <ReusableTooltip title="Run test">
-                <IconButton
-                  style={iconMedium}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
-                  }}
-                  aria-label="run"
-                  disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
-                >
-                  <PlayArrowIcon
-                    style={{
-                      fill: charcoal[50],
-                      ...iconMedium,
+              <CustomTooltip title="Run test">
+                <div>
+                  <IconButton
+                    style={iconMedium}
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
                     }}
-                  />
-                </IconButton>
-              </ReusableTooltip>
+                    aria-label="run"
+                    disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                  >
+                    <PlayArrowIcon
+                      style={{
+                        fill: theme.palette.icon.secondary,
+                        ...iconMedium,
+                      }}
+                    />
+                  </IconButton>
+                </div>
+              </CustomTooltip>
             </div>
           );
         },
@@ -464,127 +469,121 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
 
   return (
     <>
-      <UsesSistent>
-        <div style={{ padding: '0.5rem' }}>
-          <ToolWrapper>
-            {width < 550 && isSearchExpanded ? null : (
-              <>
-                {(testProfiles.length > 0 || viewType == 'table') && (
-                  <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
-                    <Button
-                      aria-label="Add Performance Profile"
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      onClick={() => setProfileForModal({})}
-                      disabled={
-                        !CAN(
-                          keys.ADD_PERFORMANCE_PROFILE.action,
-                          keys.ADD_PERFORMANCE_PROFILE.subject,
-                        )
-                      }
-                    >
-                      <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
-                      <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-            <ViewSwitchBUtton>
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
-                  fetchTestProfiles(page, pageSize, value, sortOrder);
-                }}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder="Search Profiles..."
-              />
-              {viewType === 'table' && (
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={columns}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
+      <div style={{ padding: '0.5rem' }}>
+        <ToolWrapper>
+          {width < 550 && isSearchExpanded ? null : (
+            <>
+              {(testProfiles.length > 0 || viewType == 'table') && (
+                <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
+                  <Button
+                    aria-label="Add Performance Profile"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => setProfileForModal({})}
+                    disabled={
+                      !CAN(
+                        keys.ADD_PERFORMANCE_PROFILE.action,
+                        keys.ADD_PERFORMANCE_PROFILE.subject,
+                      )
+                    }
+                  >
+                    <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
+                    <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
+                  </Button>
+                </div>
               )}
-              <ViewSwitch view={viewType} changeView={setViewType} />
-            </ViewSwitchBUtton>
-          </ToolWrapper>
+            </>
+          )}
+          <ViewSwitchBUtton>
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                fetchTestProfiles(page, pageSize, value, sortOrder);
+              }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+              placeholder="Search Profiles..."
+            />
+            {viewType === 'table' && (
+              <CustomColumnVisibilityControl
+                id="ref"
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            )}
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </ViewSwitchBUtton>
+        </ToolWrapper>
 
-          {viewType === 'grid' ? (
-            <PerformanceProfileGrid
-              profiles={testProfiles}
-              deleteHandler={deleteProfile}
-              setProfileForModal={setProfileForModal}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              testHandler={setSelectedProfile}
-            />
-          ) : (
-            <ResponsiveDataTable
-              data={testProfiles}
-              columns={columns}
-              options={options}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
-          )}
-          {testProfiles.length === 0 && viewType === 'grid' && (
-            <Paper sx={{ padding: '0.5rem' }}>
-              <ProfileContainer>
-                <Typography
-                  sx={{ fontSize: '1.5rem', marginBottom: '2rem' }}
-                  align="center"
-                  color="textSecondary"
-                >
-                  No Performance Profiles Found
-                </Typography>
-                <Button
-                  aria-label="Add Performance Profile"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={() => setProfileForModal({})}
-                  disabled={
-                    !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
-                  }
-                >
-                  <Typography className="addIcon">Add Performance Profile</Typography>
-                </Button>
-              </ProfileContainer>
-            </Paper>
-          )}
-          <Modal
-            open={!!profileForModal}
-            title="Performance Profile Wizard"
+        {viewType === 'grid' ? (
+          <PerformanceProfileGrid
+            profiles={testProfiles}
+            deleteHandler={deleteProfile}
+            setProfileForModal={setProfileForModal}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+            testHandler={setSelectedProfile}
+          />
+        ) : (
+          <ResponsiveDataTable
+            data={testProfiles}
+            columns={columns}
+            options={options}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
+          />
+        )}
+        {testProfiles.length === 0 && viewType === 'grid' && (
+          <Paper sx={{ padding: '0.5rem' }}>
+            <ProfileContainer>
+              <Typography sx={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
+                No Performance Profiles Found
+              </Typography>
+              <Button
+                aria-label="Add Performance Profile"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => setProfileForModal({})}
+                disabled={
+                  !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
+                }
+              >
+                <Typography className="addIcon">Add Performance Profile</Typography>
+              </Button>
+            </ProfileContainer>
+          </Paper>
+        )}
+        <Modal
+          open={!!profileForModal}
+          title="Performance Profile Wizard"
+          closeModal={() => setProfileForModal(undefined)}
+          maxWidth="md"
+        >
+          <MesheryPerformanceComponent
+            loadAsPerformanceProfile
+            performanceProfileID={profileForModal?.id}
+            profileName={profileForModal?.name}
+            meshName={profileForModal?.service_mesh}
+            url={profileForModal?.endpoints?.[0]}
+            qps={profileForModal?.qps}
+            loadGenerator={profileForModal?.load_generators?.[0]}
+            t={profileForModal?.duration}
+            c={profileForModal?.concurrent_request}
+            reqBody={profileForModal?.request_body}
+            headers={profileForModal?.request_headers}
+            cookies={profileForModal?.request_cookies}
+            contentType={profileForModal?.content_type}
+            runTestOnMount={!!profileForModal?.runTest}
+            metadata={profileForModal?.metadata}
             closeModal={() => setProfileForModal(undefined)}
-            maxWidth="md"
-          >
-            <MesheryPerformanceComponent
-              loadAsPerformanceProfile
-              performanceProfileID={profileForModal?.id}
-              profileName={profileForModal?.name}
-              meshName={profileForModal?.service_mesh}
-              url={profileForModal?.endpoints?.[0]}
-              qps={profileForModal?.qps}
-              loadGenerator={profileForModal?.load_generators?.[0]}
-              t={profileForModal?.duration}
-              c={profileForModal?.concurrent_request}
-              reqBody={profileForModal?.request_body}
-              headers={profileForModal?.request_headers}
-              cookies={profileForModal?.request_cookies}
-              contentType={profileForModal?.content_type}
-              runTestOnMount={!!profileForModal?.runTest}
-              metadata={profileForModal?.metadata}
-              closeModal={() => setProfileForModal(undefined)}
-            />
-          </Modal>
-        </div>
+          />
+        </Modal>
+      </div>
 
-        <_PromptComponent ref={modalRef} />
-      </UsesSistent>
+      <_PromptComponent ref={modalRef} />
     </>
   );
 }

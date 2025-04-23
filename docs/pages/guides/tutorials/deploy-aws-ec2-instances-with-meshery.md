@@ -13,7 +13,7 @@ list: include
 
 ### Introduction
 
-Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer. 
+Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer.
 
 Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the [Kanvas]({{site.baseurl}}/extensions/kanvas) extension to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, Kanvas provides an alternative to command-line tools like `kubectl` by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Kanvas interface, making deployments more intuitive and collaborative 
 
@@ -27,14 +27,17 @@ In this guide, you’ll explore how to deploy AWS resources, including setup and
 
 ### Table of Contents
 
+- [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
+- [Table of Contents](#table-of-contents)
 - [Overview of Deployment Steps](#overview-of-deployment-steps)
-- [Connect your Kubernetes Cluster to Meshery](#1-connect-your-kubernetes-cluster-to-meshery)
-- [Configure and Deploy the EC2 Controller](#2-configure-and-deploy-the-ec2-controller)
+- [1. Connect your Kubernetes Cluster to Meshery](#1-connect-your-kubernetes-cluster-to-meshery)
+- [2. Configure and Deploy the EC2 Controller](#2-configure-and-deploy-the-ec2-controller)
   - [Configure the AWS Secret](#configure-the-aws-secret)
   - [Configure the EC2 Controller Pod to Use the Secret](#configure-the-ec2-controller-pod-to-use-the-secret)
   - [Deploy EC2 Controller Design](#deploy-ec2-controller-design)
-- [Deploy the VPC Workflow](#3-deploy-the-vpc-workflow)
-- [Deploy EC2 Instance](#4-deploy-ec2-instance)
+- [3. Deploy the VPC Workflow](#3-deploy-the-vpc-workflow)
+- [4. Deploy EC2 Instance](#4-deploy-ec2-instance)
 - [Conclusion](#conclusion)
 
 ### Overview of Deployment Steps
@@ -59,7 +62,7 @@ To begin, connect your Kubernetes cluster to Meshery. This guide uses `minikube`
 
 - **Out-of-Cluster Deployment**: Runs Meshery in Docker containers, allowing external connectivity to the Minikube cluster.
 
-For this guide, the `in-cluster deployment` method is used.  Follow this [setup guide for Meshery on Minikube](https://docs.meshery.io/installation/kubernetes/minikube) to deploy Meshery in-cluster. After the deployment, open the Meshery UI at `localhost:9081` to verify that the cluster is listed. Click on the cluster name to ping and confirm connectivity.
+For this guide, the `in-cluster deployment` method is used.  Follow this [setup guide for Meshery on Minikube](/installation/kubernetes/minikube) to deploy Meshery in-cluster. After the deployment, open the Meshery UI at `localhost:9081` to verify that the cluster is listed. Click on the cluster name to ping and confirm connectivity.
 
 ![Connect Minikube Cluster](./aws-controllers/aws-connection.png)
 
@@ -67,11 +70,11 @@ For this guide, the `in-cluster deployment` method is used.  Follow this [setup 
 
 In this section, you will set up the EC2 controller and configure it to connect to your AWS account. This process involves creating a Kubernetes secret that contains your AWS access keys and configuring the controller pod to consume this secret. While these configurations are already included in our designs, the steps will be demonstrated for clarity.
 
-1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://cloud.layer5.io/catalog/content/catalog/ec2-controller-design-28a7fad9-c7ef-440a-a8f0-7614e072b866?source=%257B%257D) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
+1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://cloud.layer5.io/catalog/content/catalog/ec2-controller-design-28a7fad9-c7ef-440a-a8f0-7614e072b866) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
 
     ![EC2 Controller Chart](./aws-controllers/controller-chart.png)
 
-1. **Set the Deployment Namespace**: This design has been configured to be deployed in the `ack-system` namespace.
+2. **Set the Deployment Namespace**: This design has been configured to be deployed in the `ack-system` namespace.
 
 This EC2 controller design includes:
 
@@ -133,25 +136,25 @@ This step involves deploying all the necessary resources to create the VPC and o
 - 2 Subnets (1 Public, 1 Private)
 - 1 Security Group
 
-1. Start by [cloning the design](https://cloud.layer5.io/catalog/content/catalog/vpc-workflow-design-50cac19e-209c-4acf-b91c-4784281db033?source=%257B%257D) from the catalog.
+1. Start by [cloning the design](https://cloud.layer5.io/catalog/content/catalog/vpc-workflow-design-50cac19e-209c-4acf-b91c-4784281db033) from the catalog.
 
-1. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
+2. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
 
-1. You can adjust CIDR blocks, region, and other parameters as needed through the configuration tab. This design is configured to be deployed in the `us-east-1` region.
+3. You can adjust CIDR blocks, region, and other parameters as needed through the configuration tab. This design is configured to be deployed in the `us-east-1` region.
 
-1. Click the **Actions** button to deploy.
+4. Click the **Actions** button to deploy.
 
-1. After deployment, verify the setup in your AWS Management Console.
+5. After deployment, verify the setup in your AWS Management Console.
 
 ### 4. Deploy EC2 Instance
 
 With the VPC and networking resources set up, deploy the EC2 instances within the VPC using the following steps.
 
-1. [Clone the EC2 instances design](https://cloud.layer5.io/catalog/content/catalog/ec2-instances-design-a344f109-2d92-41da-8644-3bc285c3ca9e?source=%257B%257D) from the catalog.
+1. [Clone the EC2 instances design](https://cloud.layer5.io/catalog/content/catalog/ec2-instances-design-a344f109-2d92-41da-8644-3bc285c3ca9e) from the catalog.
 
-1. Open the design on the Playground and deploy the instances.
+2. Open the design on the Playground and deploy the instances.
 
-1. Navigate to the AWS Management Console to confirm the instances' successful deployment.
+3. Navigate to the AWS Management Console to confirm the instances' successful deployment.
 
 ### Conclusion
 

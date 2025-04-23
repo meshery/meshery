@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { Autocomplete, NoSsr, Radio } from '@mui/material';
 import dataFetch from '../lib/data-fetch';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -11,8 +10,6 @@ import { durationOptions } from '../lib/prePopulatedOptions';
 import { ctxUrl } from '../utils/multi-ctx';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import theme from '@/themes/app';
-import { styled } from '@mui/styles';
 import {
   FormControl,
   CircularProgress,
@@ -22,6 +19,11 @@ import {
   Grid,
   Button,
   CustomTooltip,
+  useTheme,
+  styled,
+  Autocomplete,
+  NoSsr,
+  Radio,
 } from '@layer5/sistent';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
@@ -143,7 +145,7 @@ const MesherySettingsPerformanceComponent = (props) => {
   };
 
   // const { blockRunTest, qps, t, c, gen, tValue, tError } = state;
-
+  const theme = useTheme();
   return (
     <NoSsr>
       <React.Fragment>

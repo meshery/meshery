@@ -6,12 +6,12 @@ import {
   MenuItem,
   TextField,
   InputLabel,
-} from '@material-ui/core';
+  useTheme,
+} from '@layer5/sistent';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import theme from '../../../../themes/app';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import {
   ariaDescribedByIds,
@@ -20,7 +20,6 @@ import {
   labelValue,
 } from '@rjsf/utils';
 import { Checkbox } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 export default function CustomSelectWidget({
   schema,
@@ -62,7 +61,7 @@ export default function CustomSelectWidget({
   const _onFocus = ({ target: { value } }) =>
     onFocus(id, enumOptionsValueForIndex(value, enumOptions, optEmptyVal));
   const selectedIndexes = enumOptionsIndexForValue(value, enumOptions, multiple);
-
+  const theme = useTheme();
   return (
     <>
       {xRjsfGridArea && (
@@ -83,6 +82,7 @@ export default function CustomSelectWidget({
         onChange={_onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
+        size="small"
         InputProps={{
           style: { paddingRight: '0px' },
           endAdornment: (
@@ -114,7 +114,7 @@ export default function CustomSelectWidget({
                     <HelpOutlineIcon
                       width="14px"
                       height="14px"
-                      fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                      fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
                       style={{ verticalAlign: 'middle', ...iconSmall }}
                     />
                   </IconButton>
@@ -162,11 +162,7 @@ export default function CustomSelectWidget({
             const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
             return (
               <MenuItem key={i} value={String(i)} disabled={disabled}>
-                {multiple && (
-                  <UsesSistent>
-                    <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />
-                  </UsesSistent>
-                )}
+                {multiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
                 <ListItemText primary={label} />
               </MenuItem>
             );

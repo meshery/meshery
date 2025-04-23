@@ -12,6 +12,11 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+
+# *******
+# Deprecated: See https://meshery.io/install instead
+# *******
+
 #!/usr/bin/env bash
 
 # Get the platform to deploy Meshery from the flag

@@ -579,18 +579,18 @@ adapter:
 
     remove:
       name: remove
-      description: Remove service mesh in the connected Kubernetes cluster
+      description: Remove infrastructure in the connected Kubernetes cluster
       usage: mesheryctl adapter remove [args] [flags] [args]
       flags:
         namespace:
           name: --namespace, -n
-          description: Kubernetes namespace to be used for removing a service mesh under a specific namespace
+          description: Kubernetes namespace to be used for removing infrastrucutre under a specific namespace
           usage: mesheryctl adapter remove [args] --namespace [namespace to be used]
           example: mesheryctl adapter remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
 
     deploy:
       name: deploy
-      description: Deploy a service mesh into the cluster
+      description: Deploy infrastructure into the cluster
       usage: mesheryctl adapter deploy [flags]
       example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
@@ -701,22 +701,10 @@ design:
       name: export
       description: Export a design from Meshery
       usage: mesheryctl design export [design-name | ID]
-      example: |
-        # Export a design with a specific ID
-        mesheryctl design export [design-name | ID]
-
-        # Export a design with a specific ID and type
-        mesheryctl design export -[design-name | ID] --type [design-type]
-
-        # Export a design and save it to a specific directory
-        mesheryctl design export -[design-name | ID] --output ./designs
-
-        # Export a design with a specific type and save it to a directory
-        mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
       flags:
         type:
           name: --type
-          description: Specify the design type to export (default current). Supported types are oci,current,original.
+          description: Specify the design type to export (default current). Supported types are oci,current,original
           usage: mesheryctl design export --type [design-type]
           example: mesheryctl design export --type oci
         output:
@@ -759,7 +747,7 @@ design:
 
 filter:
   name: filter
-  description: Service Mesh Filter Management
+  description: Envoy Filter Management
   usage: mesheryctl filter [command] or
   example: mesheryctl filter list
   subcommands:
@@ -898,6 +886,20 @@ model:
       name: search
       description: Using a keyword(s) search the registry for matching model(s)
       usage: mesheryctl model search [keyword]
+    generate:
+      name: generate
+      description: Generate models by specifying the directory, file, or URL.
+      usage: mesheryctl model generate [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Specify the path to the file, directory, or URL.
+        template:
+          name: --template, -t
+          description: Specify the path to the template JSON file (only required for URLs).
+        register:
+          name: --register, -r
+          description: Skip model registration (default is true).    
     view:
       name: view
       description: View details of a specific model
@@ -923,10 +925,10 @@ model:
          - mesheryctl model export [model-name] -o yaml
          - mesheryctl model export [model-name] --version v0.7.3
 
-components:
-  name: components
+component:
+  name: component
   description: Fundamental building block used to represent and define the infrastructure under management
-  usage: mesheryctl components [command] [flags]
+  usage: mesheryctl component [command] [flags]
   flags:
     count:
       name: --count
@@ -934,13 +936,13 @@ components:
     help:
       name: --help, -h
       description: help for components
-      usage: mesheryctl components --help
-      example: mesheryctl components --help
+      usage: mesheryctl component --help
+      example: mesheryctl component --help
   subcommands:
     list:
       name: list
       description: List all components registered in Meshery Server
-      usage: mesheryctl components list [flags]
+      usage: mesheryctl component list [flags]
       flags:
         page:
           name: --page, -p
@@ -948,11 +950,11 @@ components:
     search:
       name: search
       description: Using a keyword(s) search the registry for matching component(s)
-      usage: mesheryctl components search [keyword]
+      usage: mesheryctl component search [keyword]
     view:
       name: view
       description: View details of a specific component
-      usage: mesheryctl components view [component-name]
+      usage: mesheryctl component view [component-name]
       flags:
         output-format:
           name: -o, --output-format
@@ -960,8 +962,8 @@ components:
         save:
           name: --save
           description: Save output as a JSON/YAML file
-          usage: mesheryctl components view --output-format [json|yaml] --save [filepath]
-          example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
+          usage: mesheryctl component view --output-format [json|yaml] --save [filepath]
+          example: mesheryctl component view --save "bookInfo.yaml" --output-format yaml
 
 environment:
   name: environment
@@ -1119,4 +1121,65 @@ exp:
         flags:
           org:
             name: -o, -orgId
-            description: organization id
+            description: organization id 
+  organization:
+    name: organization
+    description: Interact with existing organizations
+    usage: mesheryctl exp organization
+    flags:
+      count:
+        name: --count
+        description: (optional) Get the total of registrered organizations
+      help:
+        name: --help, -h
+        description: help for organization command
+        usage: mesheryctl exp organization --help
+        example: mesheryctl exp organization --help
+    subcommands:
+      list:
+        name: list
+        description: List all organizations registered in Meshery Server
+        usage: mesheryctl exp organization list [flags]
+        flags:
+          page:
+            name: --page, -p
+            description: list organizations by specific page number (25 models per page)  
+          count:
+            name: --count
+            description: (optional) Get the total of registrered organizations
+  model:
+    name: model
+    description: Manages models
+    usage: mesheryctl exp model
+    flags:
+      help:
+        name: --help, -h
+        description: help for model command
+        usage: mesheryctl exp model --help
+        example: mesheryctl exp model --help
+    subcommands:
+      init:
+        name: init
+        description: Scaffold a folder structure for model creation
+        usage: mesheryctl exp model init [model-name] [flags]
+        flags:
+          output-format:
+            name: --output-format, -o
+            description: (optional) format to scaffold files to, supports json or yaml, planned to support csv, defaults to json.
+            usage: mesheryctl exp model init [model-name] --output-format [format]
+            example:
+              mesheryctl exp model init aws-ec2-controller --output-format json
+              mesheryctl exp model init aws-ec2-controller --output-format yaml
+          path:
+            name: --path, -p
+            description: (optional) generates a folder structure under specified path, defaults to current dir.
+            usage: mesheryctl exp model init [model-name] --path [path]
+            example:
+              mesheryctl exp model init aws-ec2-controller --path .
+              mesheryctl exp model init aws-ec2-controller --path ./some/folder/where/to/put/files
+          count:
+            name: --version
+            description: (optional) model version, defaults to v0.1.0   
+            usage: mesheryctl exp model init [model-name] --path [path]
+            example:
+              mesheryctl exp model init aws-ec2-controller --version v1.2.3
