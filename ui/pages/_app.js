@@ -1,3 +1,4 @@
+//@ts-check
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -170,8 +171,19 @@ const KubernetesSubscription = ({ store, setActiveContexts, setAppState }) => {
 
     return subscribeK8sContext(
       (result) => {
+        // Initialize activeContexts with all context IDs plus "all"
+        const allContexts = [];
+        if (result.k8sContext?.contexts?.length > 0) {
+          result.k8sContext.contexts.forEach((ctx) => allContexts.push(ctx.id));
+          allContexts.push('all');
+        }
+
         // TODO: Remove local state and only use redux store
-        setAppState({ k8sContexts: result.k8sContext }, () => setActiveContexts('all'));
+        setAppState({
+          k8sContexts: result.k8sContext,
+          activeK8sContexts: allContexts,
+        });
+
         store.dispatch({
           type: actionTypes.UPDATE_CLUSTER_CONFIG,
           k8sConfig: result.k8sContext.contexts,
@@ -363,19 +375,16 @@ const MesheryApp = ({
           let activeContexts = [];
           state.k8sContexts.contexts.forEach((ctx) => activeContexts.push(ctx.id));
           activeContexts.push('all');
-          setState(
-            (prevState) => ({ ...prevState, activeK8sContexts: activeContexts }),
-            () => activeContextChangeCallback(activeContexts),
-          );
+          setState((prevState) => ({ ...prevState, activeK8sContexts: activeContexts }));
+          activeContextChangeCallback(activeContexts);
           return;
         }
 
         // if id is an empty array, clear all active contexts
         if (Array.isArray(id) && id.length === 0) {
-          setState(
-            (prevState) => ({ ...prevState, activeK8sContexts: [] }),
-            () => activeContextChangeCallback([]),
-          );
+          setState((prevState) => ({ ...prevState, activeK8sContexts: [] }));
+          activeContextChangeCallback([]);
+
           return;
         }
 
@@ -456,7 +465,8 @@ const MesheryApp = ({
     async (orgID, reFetchKeys) => {
       const storedKeys = sessionStorage.getItem('keys');
       if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
-        setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }), updateAbility);
+        setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }));
+        updateAbility();
       } else {
         dataFetch(
           `/api/identity/orgs/${orgID}/users/keys`,
@@ -466,16 +476,12 @@ const MesheryApp = ({
           },
           (result) => {
             if (result) {
-              setState(
-                (prevState) => ({ ...prevState, keys: result.keys }),
-                () => {
-                  store.dispatch({
-                    type: actionTypes.SET_KEYS,
-                    keys: result.keys,
-                  });
-                  updateAbility();
-                },
-              );
+              setState((prevState) => ({ ...prevState, keys: result.keys }));
+              store.dispatch({
+                type: actionTypes.SET_KEYS,
+                keys: result.keys,
+              });
+              updateAbility();
             }
           },
           (err) => console.log('There was an error fetching available orgs:', err),
