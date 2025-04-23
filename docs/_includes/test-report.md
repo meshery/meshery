@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 23rd 2025, 6:36:14 pm
+- Testing started at: April 23rd 2025, 9:19:08 pm
 
 **📦 Test Result Summary**
 
-- ✅ 61 passed
-- ❌ 0 failed
-- ⚠️ 2 flaked
-- ⏩ 0 skipped
+- ✅ 0 passed
+- ❌ 1 failed
+- ⚠️ 0 flaked
+- ⏩ 1 skipped
 
-⌛ _Duration: 5 minutes and 17 seconds_
+⌛ _Duration: 0 minutes and 1 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,15 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 5 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 6 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 7 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 8 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 9 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 1 | setup | authenticate as Meshery provider |  | ❌ |
+| 2 | setup | authenticate as None provider |  | ➖ |
 
 </div>
 </details>
