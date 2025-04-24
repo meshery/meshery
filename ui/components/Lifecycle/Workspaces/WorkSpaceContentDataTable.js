@@ -29,7 +29,9 @@ import ExportModal from '@/components/ExportModal';
 import { EVENT_TYPES } from '@/utils/Enum';
 import downloadContent from '@/utils/fileDownloader';
 import { iconMedium } from 'css/icons.styles';
+import _ from 'lodash';
 import {
+  JsonParse,
   openDesignInKanvas,
   openViewInKanvas,
   useIsKanvasDesignerEnabled,
@@ -38,6 +40,9 @@ import {
 import Router from 'next/router';
 import { useContext } from 'react';
 import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
+import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
+import { useLegacySelector } from 'lib/store';
+import { getView, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [designSearch, setDesignSearch] = useState('');
@@ -169,6 +174,63 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
 
     openViewInKanvas(viewId, viewName, Router);
   };
+  const [updatePattern] = useUpdatePatternFileMutation();
+  const [updateView] = useUpdateViewVisibilityMutation();
+
+  const handleDesignVisibilityChange = async (designId, viewType) => {
+    const { data: design } = await getDesign(
+      {
+        design_id: designId,
+      },
+      {
+        skip: !designId,
+      },
+    );
+    const msg = `${_.startCase(design?.name)} is now ${viewType}`;
+    const designFile = JsonParse(design?.pattern_file);
+    updatePattern({
+      updateBody: {
+        id: design?.id,
+        design_file: designFile,
+        visibility: viewType,
+        name: design?.name,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message: `${msg}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        refetchPatternData();
+      });
+  };
+
+  const handleViewVisibilityChange = async (viewId, viewType) => {
+    const { data: view } = await getView(
+      {
+        viewId: viewId,
+      },
+      {
+        skip: !viewId,
+      },
+    );
+    updateView({
+      id: viewId,
+      body: {
+        ...view,
+        visibility: viewType,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message: `View is now ${viewType}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      });
+  };
+  const currentUserId = useLegacySelector((state) => state.get('user')).toObject()?.id;
 
   return (
     <ErrorBoundary>
@@ -230,6 +292,8 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             handleDownload={handleDesignDownloadModal}
             handlePublish={handlePublish}
             setDesignSearch={setDesignSearch}
+            handleVisibilityChange={handleDesignVisibilityChange}
+            currentUserId={currentUserId}
           />
         </CustomTabPanel>
       )}
@@ -251,6 +315,8 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             useUnassignViewFromWorkspaceMutation={useUnassignViewFromWorkspaceMutation}
             workspaceId={workspaceId}
             workspaceName={workspaceName}
+            currentUserId={currentUserId}
+            handleVisibilityChange={handleViewVisibilityChange}
           />
         </CustomTabPanel>
       )}
