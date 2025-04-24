@@ -18,7 +18,6 @@ import { useLegacySelector } from '../../lib/store';
 import { StyledSelect } from './SpaceSwitcher';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
-import { useRouter } from 'next/router';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -47,11 +46,14 @@ export const WorkspaceSwitcherContext = React.createContext({
   open: false,
   openModal: () => {},
   closeModal: () => {},
+  selectedWorkspace: { id: '', name: '' },
+  setSelectedWorkspace: () => {},
 });
 
 function WorkspaceSwitcher({ open }) {
-  const [defaultWorkspace, setDefaultWorkspace] = useState(null);
+  const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
   const [workspaceModal, setWorkspaceModal] = useState(false);
+  const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
   const orgId = useLegacySelector((state) => state.get('organization'))?.id;
   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
     {
@@ -65,14 +67,13 @@ function WorkspaceSwitcher({ open }) {
       skip: !orgId ? true : false,
     },
   );
+
   useEffect(() => {
     if (workspacesData && workspacesData.workspaces?.length > 0) {
       const defaultWorkspace = workspacesData.workspaces[0];
       setDefaultWorkspace(defaultWorkspace);
     }
   }, [workspacesData]);
-
-  const router = useRouter();
 
   const handleChangeWorkspace = (e) => {
     if (!workspacesData || !workspacesData.workspaces) return;
@@ -81,21 +82,10 @@ function WorkspaceSwitcher({ open }) {
       (workspace) => workspace.id === e.target.value,
     );
     setDefaultWorkspace(selectedWorkspace);
+    setSelectedWorkspace({ id: selectedWorkspace.id, name: selectedWorkspace.name });
     setWorkspaceModal(true);
-    router.push(
-      {
-        pathname: router.pathname,
-        query: {
-          ...router.query,
-          view: 'table',
-          id: selectedWorkspace.id,
-          name: selectedWorkspace.name,
-        },
-      },
-      undefined,
-      { shallow: true },
-    );
   };
+
   const theme = useTheme();
   return (
     <NoSsr>
@@ -105,10 +95,9 @@ function WorkspaceSwitcher({ open }) {
           openModal: () => setWorkspaceModal(true),
           closeModal: () => {
             setWorkspaceModal(false);
-            if (router.query.id) {
-              router.back();
-            }
           },
+          selectedWorkspace,
+          setSelectedWorkspace,
         }}
       >
         {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
@@ -128,9 +117,9 @@ function WorkspaceSwitcher({ open }) {
                       <Grid item xs={12} data-cy="mesh-adapter-url">
                         <StyledSelect
                           size="small"
-                          value={defaultWorkspace?.id || ''}
+                          value={_defaultWorkspace?.id || ''}
                           onChange={(e) => {
-                            if (e.target.value !== defaultWorkspace?.id) {
+                            if (e.target.value !== _defaultWorkspace?.id) {
                               handleChangeWorkspace(e); // only call for new selection
                             }
                           }}
@@ -157,7 +146,7 @@ function WorkspaceSwitcher({ open }) {
                               key={works.id}
                               value={works.id}
                               onClick={() => {
-                                if (works.id === defaultWorkspace?.id) {
+                                if (works.id === _defaultWorkspace?.id) {
                                   handleChangeWorkspace({ target: { value: works.id } });
                                 }
                               }}
@@ -180,9 +169,6 @@ function WorkspaceSwitcher({ open }) {
         <Modal
           closeModal={() => {
             setWorkspaceModal(false);
-            if (router.query.id) {
-              router.back();
-            }
           }}
           open={workspaceModal}
           maxWidth="xl"
