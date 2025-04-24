@@ -26,11 +26,10 @@ import {
   Slide,
 } from '@layer5/sistent';
 import { useLegacySelector } from 'lib/store';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
-import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 
 const WorkspaceDataTable = ({
   handleWorkspaceModalOpen,
@@ -44,7 +43,6 @@ const WorkspaceDataTable = ({
   search,
   viewType,
 }) => {
-
   let colViews = [
     ['id', 'na'],
     ['name', 'xs'],
