@@ -327,7 +327,13 @@ const UrlStepper = React.memo(({ handleClose }) => {
               This helps improve discoverability in Kanvas. If no suitable option fits, select{' '}
               <em>Uncategorized</em>.
             </Typography>
-
+            <Typography variant="body2" gutterBottom>
+              Learn more about{' '}
+              <StyledDocsRedirectLink href="https://docs.meshery.io/guides/configuration-management/creating-models">
+                creating models
+              </StyledDocsRedirectLink>
+              .
+            </Typography>
             <ul>
               <li>
                 <strong>Category:</strong> {modelProperties.category.description}
