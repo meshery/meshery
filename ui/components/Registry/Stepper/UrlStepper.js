@@ -25,7 +25,7 @@ import {
   StyledSummaryItem,
   SectionHeading,
   StyledColorBox,
-  StyledLinkRedirect,
+  StyledDocsRedirectLink,
 } from './style';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -245,9 +245,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
               <li>
                 <strong>Model Name:</strong> {modelProperties.name.helperText} For example,{' '}
                 <em>{modelProperties.name.examples[0]}</em>. {modelProperties.name.description} (
-                <StyledLinkRedirect href="https://docs.meshery.io/concepts/logical/registry">
+                <StyledDocsRedirectLink href="https://docs.meshery.io/concepts/logical/registry">
                   learn more about registry
-                </StyledLinkRedirect>
+                </StyledDocsRedirectLink>
                 ).
               </li>
               <br />
@@ -518,9 +518,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
             </ul>
             <p>
               Learn more about the process of{' '}
-              <StyledLinkRedirect href="https://docs.meshery.io/guides/configuration-management/generating-models">
+              <StyledDocsRedirectLink href="https://docs.meshery.io/guides/configuration-management/generating-models">
                 creating and importing models
-              </StyledLinkRedirect>
+              </StyledDocsRedirectLink>
               .
             </p>
           </>
@@ -681,9 +681,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
             </p>
             <p>
               Learn more about{' '}
-              <StyledLinkRedirect href="https://docs.meshery.io/guides/configuration-management/generating-models">
+              <StyledDocsRedirectLink href="https://docs.meshery.io/guides/configuration-management/generating-models">
                 Model Generation
-              </StyledLinkRedirect>
+              </StyledDocsRedirectLink>
               .
             </p>
           </>

@@ -1,4 +1,3 @@
-//@ts-check
 import React from 'react';
 import {
   ModalFooter,
@@ -15,7 +14,6 @@ import {
   DownloadIcon,
   useTheme,
   styled,
-  Link,
   Chip,
 } from '@layer5/sistent';
 import ModelIcon from '@/assets/icons/ModelIcon';
@@ -23,6 +21,7 @@ import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { StyledDocsRedirectLink } from './style';
 import {
   ComponentDefinitionV1Beta1OpenApiSchema,
   ModelDefinitionV1Beta1OpenApiSchema,
@@ -36,11 +35,6 @@ const StyledHeadingBox = styled(Box)({
   alignItems: 'center',
   justifyContent: 'space-between',
 });
-
-export const StyledDocsRedirectLink = styled(Link)(({ theme }) => ({
-  color: theme.palette.text.brand,
-  textDecoration: 'underline',
-}));
 
 const StyledUploadSuccess = styled(Box)(({ theme }) => ({
   border: `1px solid ${theme.palette.border.brand}`,
@@ -249,7 +243,9 @@ const CsvStepper = React.memo(({ handleClose }) => {
         component: (
           <div>
             <StyledHeadingBox>
-              <Typography fontWeight={'bold'}>Please upload the relationship CSV file</Typography>
+              <Typography fontWeight={'bold'}>
+                Please upload the relationship CSVa sdf file
+              </Typography>
               <TooltipIconButton
                 title="Download Relationship CSV template"
                 onClick={() => handleDownload('Relationships.csv')}
@@ -302,8 +298,7 @@ const CsvStepper = React.memo(({ handleClose }) => {
             . Relationships define the nature of interaction between interconnected components in
             Meshery. The combination of relationship properties kind, type, and subtype characterize
             various genealogical relations among and between components. Relationships have
-            selectors, selector sets, metadata, and optional parameters. Learn more at
-            https://docs.meshery.io/concepts/logical/relationships.
+            selectors, selector sets, metadata, and optional parameters.
           </>
         ),
       },
