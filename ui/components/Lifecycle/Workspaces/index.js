@@ -21,7 +21,7 @@ import {
 } from '@layer5/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -47,9 +47,9 @@ import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
 import RightArrowIcon from '@/assets/icons/RightArrowIcon';
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
-import { useRouter } from 'next/router';
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
+import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -105,7 +105,6 @@ const columnList = [
 
 const Workspaces = () => {
   const theme = useTheme();
-  const router = useRouter();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
@@ -119,19 +118,16 @@ const Workspaces = () => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editWorkspaceId, setEditWorkspaceId] = useState('');
-  const [selectedWorkspace, setSelectedWorkspace] = useState({
-    id: router.query.id || '',
-    name: router.query.name || '',
+  let [selectedWorkspace, setSelectedWorkspace] = useState({
+    id: '',
+    name: '',
   });
-
-  useEffect(() => {
-    if (router.query.id) {
-      setSelectedWorkspace({
-        id: router.query.id,
-        name: router.query.name,
-      });
-    }
-  }, [router.query.id, router.query.name]);
+  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  if (workspaceSwitcherContext.selectedWorkspace.id) {
+    selectedWorkspace = workspaceSwitcherContext.selectedWorkspace;
+    setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
+  }
+  const [viewType, setViewType] = useState(selectedWorkspace.id ? 'table' : 'grid');
 
   const [teamsModal, setTeamsModal] = useState({
     open: false,
@@ -151,14 +147,6 @@ const Workspaces = () => {
       id: workspaceId,
       name: workspaceName,
     });
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, view: 'table', id: workspaceId, name: workspaceName },
-      },
-      undefined,
-      { shallow: true },
-    );
   };
   const ref = useRef(null);
   const bulkDeleteRef = useRef(null);
@@ -197,7 +185,6 @@ const Workspaces = () => {
       .catch((error) => handleError(`Workspace Create Error: ${error?.data}`));
     handleWorkspaceModalClose();
   };
-  const viewType = router.query.view === 'table' ? 'table' : 'grid';
 
   const handleEditWorkspace = ({ organization, name, description }) => {
     updateWorkspace({
@@ -363,15 +350,7 @@ const Workspaces = () => {
 
     setPage(0);
     setSelectedWorkspace({ id: '', name: '' });
-
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, view: val },
-      },
-      undefined,
-      { shallow: true },
-    );
+    setViewType(val);
   };
 
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -489,6 +468,7 @@ const Workspaces = () => {
                 selectedWorkspace={selectedWorkspace}
                 setColumnVisibility={setColumnVisibility}
                 search={search}
+                viewType={viewType}
               />
             )}
           </>
