@@ -503,35 +503,33 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
 };
 
 export const openDesignInKanvas = (designId, designName, router) => {
-  console.log('openDesignInKanvas', designId, designName, router);
   // disable due to bug in workspace switcher routing
-  // if (isExtensionOpen()) {
-  //   mesheryEventBus.publish({
-  //     type: 'OPEN_DESIGN_IN_KANVAS',
-  //     data: {
-  //       design_id: designId,
-  //       design_name: designName,
-  //     },
-  //   });
-  //   return;
-  // }
+  if (isExtensionOpen()) {
+    mesheryEventBus.publish({
+      type: 'OPEN_DESIGN_IN_KANVAS',
+      data: {
+        design_id: designId,
+        design_name: designName,
+      },
+    });
+    return;
+  }
 
-  window.open(`/extension/meshmap?mode=design&type=design&id=${designId}`);
+  router.push(`/extension/meshmap?mode=design&type=design&id=${designId}`);
 };
 
 export const openViewInKanvas = (viewId, viewName, router) => {
   console.log('openViewInKanvas', viewId, viewName, router);
-  // disable due to bug in workspace switcher routing
-  // if (isExtensionOpen()) {
-  //   mesheryEventBus.publish({
-  //     type: 'OPEN_VIEW_IN_KANVAS',
-  //     data: {
-  //       view_id: viewId,
-  //       view_name: viewName,
-  //     },
-  //   });
-  //   return;
-  // }
+  if (isExtensionOpen()) {
+    mesheryEventBus.publish({
+      type: 'OPEN_VIEW_IN_KANVAS',
+      data: {
+        view_id: viewId,
+        view_name: viewName,
+      },
+    });
+    return;
+  }
 
-  window.open(`/extension/meshmap?mode=operator&type=view&id=${viewId}`);
+  router.push(`/extension/meshmap?mode=operator&type=view&id=${viewId}`);
 };
