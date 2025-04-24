@@ -1,5 +1,7 @@
 Paras Chawla
 📍 Punjab, India  paraschawla277@gmail.com
+---
+[Resume](https://docs.google.com/document/d/17fb7mM_uVxnS2-LimxHJ7UFVH9DqU-1we32PcaSQDNA/edit?tab=t.0)
 
 💼 About Me
 Enthusiastic developer passionate about solving real-world problems through technology. I love participating in hackathons, building full-stack applications, and exploring APIs. Currently focused on project management solutions for the construction industry at Buildmate.
