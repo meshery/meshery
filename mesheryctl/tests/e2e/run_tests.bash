@@ -4,7 +4,7 @@
 source ./setup_suite.bash
 
 # echo "DEBUG: MESHERYCTL_BIN=$MESHERYCTL_BIN"
-# echo "DEBUG: TEMP_TEST_DATA_DIR=$TEMP_TEST_DATA_DIR"
+# echo "DEBUG: TEMP_DATA_DIR=$TEMP_DATA_DIR"
 
 ./setup_suite.bash
 

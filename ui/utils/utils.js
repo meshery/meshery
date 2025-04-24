@@ -467,18 +467,24 @@ export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
-export const isOperatorEnabled = (capabilitiesRegistry) => {
+export const isKanvasEnabled = (capabilitiesRegistry) => {
   const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
   return navigatorExtension.some((ext) => ext.title === 'Kanvas');
 };
 
-export const useIsOperatorEnabled = () => {
+export const isOperatorEnabled = isKanvasEnabled;
+export const isKanvasDesignerEnabled = isKanvasEnabled;
+
+export const useIsKanvasEnabled = () => {
   const capabilitiesRegistry = useLegacySelector((state) => {
     return state.get('capabilitiesRegistry');
   });
 
-  return isOperatorEnabled(capabilitiesRegistry);
+  return isKanvasEnabled(capabilitiesRegistry);
 };
+
+export const useIsOperatorEnabled = useIsKanvasEnabled;
+export const useIsKanvasDesignerEnabled = useIsKanvasEnabled;
 
 export const openViewScopedToDesignInOperator = (designName, designId, router) => {
   if (isExtensionOpen()) {
@@ -494,4 +500,36 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
 
   router.push(`/extension/meshmap?mode=operator&type=view&design_id=${designId}`);
   // window.open(view_link, '_blank');
+};
+
+export const openDesignInKanvas = (designId, designName, router) => {
+  // disable due to bug in workspace switcher routing
+  if (isExtensionOpen()) {
+    mesheryEventBus.publish({
+      type: 'OPEN_DESIGN_IN_KANVAS',
+      data: {
+        design_id: designId,
+        design_name: designName,
+      },
+    });
+    return;
+  }
+
+  router.push(`/extension/meshmap?mode=design&type=design&id=${designId}`);
+};
+
+export const openViewInKanvas = (viewId, viewName, router) => {
+  console.log('openViewInKanvas', viewId, viewName, router);
+  if (isExtensionOpen()) {
+    mesheryEventBus.publish({
+      type: 'OPEN_VIEW_IN_KANVAS',
+      data: {
+        view_id: viewId,
+        view_name: viewName,
+      },
+    });
+    return;
+  }
+
+  router.push(`/extension/meshmap?mode=operator&type=view&id=${viewId}`);
 };

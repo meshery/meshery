@@ -93,16 +93,39 @@ const ExportModal = (props) => {
       icon: <KubernetesIcon width={'30'} height="30" />,
       onClick: (e) =>
         handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
-      description:
-        <div><p>Download your design as a standard Kubernetes Manifest file. This file contains the Kubernetes resource definitions from your design and can be directly applied to a cluster using tools `kubectl`.</p><p><strong>Lossy Export:</strong> This process strips out Meshery-specific information (e.g., visual arrangement, comments, and so on). The resulting manifest only includes the core Kubernetes resource definitions, not the extra context that might be present in your Meshery design.</p></div>,
+      description: (
+        <div>
+          <p>
+            Download your design as a standard Kubernetes Manifest file. This file contains the
+            Kubernetes resource definitions from your design and can be directly applied to a
+            cluster using tools `kubectl`.
+          </p>
+          <p>
+            <strong>Lossy Export:</strong> This process strips out Meshery-specific information
+            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
+            the core Kubernetes resource definitions, not the extra context that might be present in
+            your Meshery design.
+          </p>
+        </div>
+      ),
     },
     {
-      title: 'Helm Chart (tar.gz) (Coming Soon)',
+      title: 'Helm Chart (tar.gz)',
       icon: <HelmIcon width={'30'} height="30" />,
-      onClick: () => {},
-      disabled: true,
-      description:
-       <div><p>Download your design as a Helm Chart.</p><p><strong>Lossy Export:</strong> This process strips out Meshery-specific information (e.g., visual arrangement, comments, and so on). The resulting manifest only includes the core Kubernetes resource definitions, not the extra context that might be present in your Meshery design.</p></div>,
+
+      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=helm-chart'),
+      disabled: false,
+      description: (
+        <div>
+          <p>Download your design as a Helm Chart.</p>
+          <p>
+            <strong>Lossy Export:</strong> This process strips out Meshery-specific information
+            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
+            the core Kubernetes resource definitions, not the extra context that might be present in
+            your Meshery design.
+          </p>
+        </div>
+      ),
     },
     ...extensionExportOptions,
   ];
@@ -138,61 +161,3 @@ const ExportModal = (props) => {
 };
 
 export default ExportModal;
-// <div>
-//        <Typography component="p" style={{ paddingBottom: '1.5rem' }}>
-//          Design File
-//        </Typography>
-//        <div style={exportBtnStyles}>
-//          <Button
-//            data-testid="export-current"
-//            onClick={(e) => handleDesignDownload(e, downloadModal.content)}
-//          >
-//            <div style={exportWrpStyles}>
-//              <ModifiedApplicationFileIcon width={75} height={82} />
-//              <div style={{ display: 'flex', padding: '0.4rem' }}>
-//                <Typography> EXPORT </Typography>
-//                <GetAppIcon />
-//              </div>
-//            </div>
-//          </Button>
-//        </div>
-//      </div>
-//      <div>
-//        <Typography component={'h4'} style={{ paddingBottom: '1.5rem', maxWidth: '9rem' }}>
-//          Kubernetes Manifest
-//        </Typography>
-//        <div style={exportBtnStyles}>
-//          <Button
-//            data-testid="export-original"
-//            onClick={(e) =>
-//              handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest')
-//            }
-//          >
-//            <div style={exportWrpStyles}>
-//              <KubernetesIcon width={75} height={75} />
-//              <div style={{ display: 'flex', padding: '0.8rem' }}>
-//                <Typography> EXPORT </Typography>
-//                <GetAppIcon />
-//              </div>
-//            </div>
-//          </Button>
-//        </div>
-//      </div>
-//      <div>
-//        <Typography style={{ paddingBottom: '1.5rem' }}>OCI</Typography>
-
-//        <div style={exportBtnStyles}>
-//          <Button
-//            data-testid="export-oci"
-//            onClick={(e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true')}
-//          >
-//            <div style={exportWrpStyles}>
-//              <ModifiedApplicationFileIcon width={75} height={82} />
-//              <div style={{ display: 'flex', padding: '0.4rem' }}>
-//                <Typography> EXPORT </Typography>
-//                <GetAppIcon />
-//              </div>
-//            </div>
-//          </Button>
-//        </div>
-//      </div>

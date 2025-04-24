@@ -27,6 +27,14 @@ func TestListModel(t *testing.T) {
 			ExpectedResponse: "list.model.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "List model no data",
+			Args:             []string{"list"},
+			URL:              fmt.Sprintf("/%s", modelsApiPath),
+			Fixture:          "list.model.empty.api.response.golden",
+			ExpectedResponse: "list.model.empty.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, ModelCmd, tests, currDir, "model")
