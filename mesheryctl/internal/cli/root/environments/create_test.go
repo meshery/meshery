@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestCreateEnvironmentCmd(t *testing.T) {
+func TestCreateEnvironment(t *testing.T) {
 
 	utils.SetupContextEnv(t)
 
@@ -38,10 +38,24 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 		ExpectedError    bool
 	}{
 		{
-			Name:             "Missing Name Flag",
-			Args:             []string{"create", "--orgID", "1234", "--description", "This is a test environment"},
+			Name:             "Missing name Flag",
+			Args:             []string{"create", "--name", "", "--orgID", "1234", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
-			ExpectedResponse: "create.environment.without.name.golden",
+			ExpectedResponse: "create.environment.without.any.flag.golden",
+			ExpectedError:    true,
+		},
+		{
+			Name:             "Missing orgID Flag",
+			Args:             []string{"create", "--name", "test", "--orgID", "", "--description", "This is a test environment"},
+			URL:              testContext.BaseURL + "/api/environments",
+			ExpectedResponse: "create.environment.without.any.flag.golden",
+			ExpectedError:    true,
+		},
+		{
+			Name:             "Missing description Flag",
+			Args:             []string{"create", "--orgID", "1234", "--name", "test", "--description", ""},
+			URL:              testContext.BaseURL + "/api/environments",
+			ExpectedResponse: "create.environment.without.any.flag.golden",
 			ExpectedError:    true,
 		},
 		{
