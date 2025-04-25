@@ -41,8 +41,8 @@ import Router from 'next/router';
 import { useContext } from 'react';
 import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
-import { useLegacySelector } from 'lib/store';
 import { getView, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
+import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [designSearch, setDesignSearch] = useState('');
@@ -230,7 +230,8 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
         });
       });
   };
-  const currentUserId = useLegacySelector((state) => state.get('user')).toObject()?.id;
+  const { data: currentUser } = useGetLoggedInUserQuery();
+  const currentUserId = currentUser?.id;
 
   return (
     <ErrorBoundary>
