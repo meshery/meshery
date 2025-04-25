@@ -72,6 +72,7 @@ function MesheryPatternCard_({
   const router = useRouter();
 
   const genericClickHandler = (ev, fn) => {
+    if (ev.currentTarget.disabled) return; // Prevent action if the button is disabled
     ev.stopPropagation();
     fn(ev);
   };
@@ -233,10 +234,21 @@ function MesheryPatternCard_({
                 style={{
                   padding: '6px 9px',
                   borderRadius: '8px',
+                  opacity: handleDownload.disabled ? 0.5 : 1,
+                  pointerEvents: handleDownload.disabled ? 'none' : 'auto',
+                  cursor: handleDownload.disabled ? 'not-allowed' : 'pointer',
                 }}
+                disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
               >
                 <GetAppIcon
-                  fill={theme.palette.background.constant.white}
+                  fill={
+                    !CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)
+                      ? theme.palette.grey[400]
+                      : theme.palette.background.constant.white 
+                  }
+                  style={{
+                    ...iconMedium,
+                  }}
                   data-cy="download-button"
                 />
                 <GridBtnText> Download </GridBtnText>
@@ -250,12 +262,22 @@ function MesheryPatternCard_({
                   style={{
                     padding: '6px 9px',
                     borderRadius: '8px',
+                    opacity: setSelectedPatterns.disabled ? 0.5 : 1,
+                    pointerEvents: setSelectedPatterns.disabled ? 'none' : 'auto',
+                    cursor: setSelectedPatterns.disabled ? 'not-allowed' : 'pointer',
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
                   <img
                     src="/static/img/pattern_trans.svg"
-                    style={{ borderRadius: '50%', ...iconMedium }}
+                    fill={
+                      !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)
+                        ? theme.palette.grey[400]
+                        : theme.palette.background.constant.white
+                    }
+                    style={{
+                      ...iconMedium,
+                    }}
                     // imgProps={{ height: '16px', width: '16px' }}
                   />
                   <GridBtnText> Design </GridBtnText>
@@ -269,10 +291,23 @@ function MesheryPatternCard_({
                   style={{
                     padding: '6px 9px',
                     borderRadius: '8px',
+                    opacity: handleClone.disabled ? 0.5 : 1,
+                    pointerEvents: handleClone.disabled ? 'none' : 'auto',
+                    cursor: handleClone.disabled ? 'not-allowed' : 'pointer',
+
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
-                  <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
+                  <CloneIcon
+                    fill={
+                      !CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)
+                        ? theme.palette.grey[400] 
+                        : theme.palette.background.constant.white 
+                    }
+                    style={{
+                      ...iconMedium,
+                    }}
+                  />
                   <GridCloneBtnText> Clone </GridCloneBtnText>
                 </TooltipButton>
               )}
@@ -287,9 +322,21 @@ function MesheryPatternCard_({
                   style={{
                     padding: '6px 9px',
                     borderRadius: '8px',
+                    opacity: editInConfigurator.disabled ? 0.5 : 1,
+                    pointerEvents: editInConfigurator.disabled ? 'none' : 'auto',
+                    cursor: editInConfigurator.disabled ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
+                  <Edit 
+                    fill={
+                      !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)
+                        ? theme.palette.grey[400]
+                        : theme.palette.background.constant.white 
+                    }
+                    style={{
+                      ...iconMedium,
+                    }}
+                     />
                   <GridCloneBtnText> Edit </GridCloneBtnText>
                 </TooltipButton>
               )}
@@ -301,11 +348,21 @@ function MesheryPatternCard_({
                 style={{
                   padding: '6px 9px',
                   borderRadius: '8px',
+                  opacity: handleInfoModal.disabled ? 0.5 : 1, // Reduced opacity for disabled state
+                  pointerEvents: handleInfoModal.disabled ? 'none' : 'auto', // Disable hover and click
+                  cursor: handleInfoModal.disabled ? 'not-allowed' : 'pointer', // Not-allowed cursor for disabled
                 }}
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
               >
                 <InfoOutlinedIcon
-                  style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
+                  fill={
+                    !CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)
+                      ? theme.palette.grey[400]  // disabled color
+                      : theme.palette.background.constant.white // active color
+                  }
+                  style={{
+                    ...iconMedium,
+                  }}
                 />
                 <GridBtnText> Info </GridBtnText>
               </TooltipButton>
