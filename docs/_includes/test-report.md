@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 25th 2025, 1:09:40 am
+- Testing started at: April 25th 2025, 3:49:01 am
 
 **📦 Test Result Summary**
 
-- ✅ 59 passed
-- ❌ 1 failed
+- ✅ 61 passed
+- ❌ 0 failed
 - ⚠️ 2 flaked
-- ⏩ 1 skipped
+- ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 58 seconds_
+⌛ _Duration: 5 minutes and 5 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -30,8 +30,6 @@
 | 7 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
 | 8 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 9 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 10 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
-| 11 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
 
 </div>
 </details>
