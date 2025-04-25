@@ -194,7 +194,7 @@ export const ModelImportedSection = ({ modelDetails }) => {
           <Box key={index} mb={2}>
             <div
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
-              data-testid="model-import-section"
+              data-testid={`ModelImportedSection-ModelHeader-${modelName}`}
             >
               <Typography gutterBottom>
                 <span style={{ fontWeight: 'bold', fontSize: '17px' }}>
@@ -253,7 +253,7 @@ export const ModelImportedSection = ({ modelDetails }) => {
 };
 
 export const ModelImportMessages = ({ message }) => (
-  <Typography data-testid="model-import-messages">
+  <Typography data-testid="ModelImportMessages-Wrapper">
     <span style={{ fontWeight: 'bold', fontSize: '17px' }}>{`SUMMARY: `}</span>
     <span style={{ fontSize: '17px' }}>{message}</span>
   </Typography>
