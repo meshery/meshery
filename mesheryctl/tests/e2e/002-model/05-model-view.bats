@@ -1,9 +1,8 @@
 #!/usr/bin/env bats
 
 setup() {
-  # Set the directory where mesheryctl is located if needed.
-  load "$SUPPORT_DESTDIR"
-  load "$ASSERT_DESTDIR"
+  load "$E2E_HELPERS_PATH/bats_libraries"
+  _load_bats_libraries
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-view"
 }
@@ -19,32 +18,24 @@ setup() {
 @test "mesheryctl model view displays an existing model" {
   run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu"
   [ "$status" -eq 0 ]
-  echo "$output" > actual_output.txt
-  diff actual_output.txt "$TESTDATA_DIR/exp_out_existing_model.txt"
+  assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_existing_model.txt")"
 }
 
 
 @test "mesheryctl model view handles non-existent models gracefully" {
   run $MESHERYCTL_BIN model view non-existent-model
   [ "$status" -eq 0 ]
-  actual_output=$(echo "$output")
   assert_output --partial "No model(s) found for the given name  non-existent-model"
 }
 
 @test "mesheryctl model view supports JSON output" {
   run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o json"
   [ "$status" -eq 0 ]
-  echo "$output" > actual_output.txt
-  diff actual_output.txt "$TESTDATA_DIR/exp_out_json.txt"
+  assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_json.txt")"
 }
 
 @test "mesheryctl model view supports YAML output" {
   run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o yaml"
   [ "$status" -eq 0 ]
-  echo "$output" > actual_output.txt
-  diff actual_output.txt "$TESTDATA_DIR/exp_out_yaml.txt"
-}
-
-teardown() {
-  rm -f actual_output.txt
+  assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_yaml.txt")"
 }

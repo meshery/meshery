@@ -13,8 +13,8 @@ registrant:
   kind: artifacthub
   status: registered
   user_id: 00000000-0000-0000-0000-000000000000
-  created_at: 2025-03-23T13:34:12.136334041Z
-  updated_at: 2025-03-23T13:34:12.136334041Z
+  created_at: 2025-04-25T09:17:06.846058619Z
+  updated_at: 2025-04-25T09:17:06.846058619Z
   deleted_at: 0001-01-01T00:00:00Z
 connection_id: 82e5bc76-4468-9d29-2e5f-94ccdbabd618
 category:
@@ -22,16 +22,13 @@ category:
   name: Provisioning
 subCategory: Automation & Configuration
 metadata:
-  capabilities: null
   isAnnotation: false
   primaryColor: '#000'
   secondaryColor: '#fff'
   svgWhite: ui/public/static/img/meshmodels/amd-gpu/white/amd-gpu-white.svg
   svgColor: ui/public/static/img/meshmodels/amd-gpu/color/amd-gpu-color.svg
   svgComplete: ""
-  additionalproperties:
-    shape: circle
-    styleOverrides: ""
+  shape: circle
 model:
   version: 0.19.0
 components_count: 3
