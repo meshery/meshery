@@ -380,66 +380,68 @@ const Workspaces = () => {
                   }
                 }}
               >
-                All Workspace
+                All Workspaces
               </div>
               {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
             </Breadcrumbs>
           </div>
-          <ToolWrapper>
-            <CreateButtonWrapper>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
-                sx={{
-                  backgroundColor: '#607d8b',
-                  padding: '8px',
-                  borderRadius: '5px',
-                  marginRight: '2rem',
-                }}
-                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
-                data-cy="btnResetDatabase"
-              >
-                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                <Typography
+          {!selectedWorkspace.id && (
+            <ToolWrapper>
+              <CreateButtonWrapper>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
                   sx={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
-                    textTransform: 'none',
+                    backgroundColor: '#607d8b',
+                    padding: '8px',
+                    borderRadius: '5px',
+                    marginRight: '2rem',
                   }}
+                  disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                  data-cy="btnResetDatabase"
                 >
-                  Create
-                </Typography>
-              </Button>
-            </CreateButtonWrapper>
-            <Box display={'flex'} alignItems={'center'}>
-              {!selectedWorkspace?.id && (
-                <>
-                  <SearchBar
-                    onSearch={(value) => {
-                      setSearch(value);
+                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                  <Typography
+                    sx={{
+                      paddingLeft: '4px',
+                      marginRight: '4px',
+                      textTransform: 'none',
                     }}
-                    placeholder="Search Workspaces..."
-                    expanded={isSearchExpanded}
-                    setExpanded={setIsSearchExpanded}
-                  />
-                  {viewType !== 'grid' && (
-                    <CustomColumnVisibilityControl
-                      columns={columnList}
-                      customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  >
+                    Create
+                  </Typography>
+                </Button>
+              </CreateButtonWrapper>
+              <Box display={'flex'} alignItems={'center'}>
+                {!selectedWorkspace?.id && (
+                  <>
+                    <SearchBar
+                      onSearch={(value) => {
+                        setSearch(value);
+                      }}
+                      placeholder="Search Workspaces..."
+                      expanded={isSearchExpanded}
+                      setExpanded={setIsSearchExpanded}
                     />
-                  )}
-                </>
-              )}
-              <ViewSwitch
-                view={viewType}
-                changeView={handleViewChange}
-                key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
-              />
-            </Box>
-          </ToolWrapper>
+                    {viewType !== 'grid' && (
+                      <CustomColumnVisibilityControl
+                        columns={columnList}
+                        customToolsProps={{ columnVisibility, setColumnVisibility }}
+                      />
+                    )}
+                  </>
+                )}
+                <ViewSwitch
+                  view={viewType}
+                  changeView={handleViewChange}
+                  key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
+                />
+              </Box>
+            </ToolWrapper>
+          )}
           <>
             {workspaces.length === 0 ? (
               <EmptyState
