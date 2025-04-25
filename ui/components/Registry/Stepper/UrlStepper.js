@@ -222,7 +222,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     required
                     id="model-display-name"
                     label={'Model Display Name'}
-                    placeholder={modelProperties.displayName.description}
+                    placeholder="My Model"
                     helperText={modelProperties.displayName.helperText}
                     error={
                       modelDisplayName.length > 0 &&
@@ -267,12 +267,6 @@ const UrlStepper = React.memo(({ handleClose }) => {
                 {' '}
                 Please select the appropriate <strong>Category</strong> and{' '}
                 <strong>Subcategory</strong> relevant to your model.
-                <br />
-                <em>
-                  Note: If you can&apos;t find the appropriate category or subcategory, please
-                  select <strong>Uncategorized</strong>
-                </em>
-                .
               </Typography>
             </Box>
 
@@ -326,6 +320,20 @@ const UrlStepper = React.memo(({ handleClose }) => {
         label: 'Model Categorization',
         helpText: (
           <>
+            <Typography variant="body2" gutterBottom>
+              Choose the Category and Subcategory that best describe your model.
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              This helps improve discoverability in Kanvas. If no suitable option fits, select{' '}
+              <em>Uncategorized</em>.
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Learn more about{' '}
+              <StyledDocsRedirectLink href="https://docs.meshery.io/guides/configuration-management/creating-models">
+                creating models
+              </StyledDocsRedirectLink>
+              .
+            </Typography>
             <ul>
               <li>
                 <strong>Category:</strong> {modelProperties.category.description}
