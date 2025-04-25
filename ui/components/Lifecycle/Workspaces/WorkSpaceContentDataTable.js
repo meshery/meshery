@@ -26,7 +26,7 @@ import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import Modal from '@/components/Modal';
 import { useNotification } from '@/utils/hooks/useNotification';
 import ExportModal from '@/components/ExportModal';
-import { EVENT_TYPES } from '@/utils/Enum';
+import { EVENT_TYPES } from 'lib/event-types';
 import downloadContent from '@/utils/fileDownloader';
 import { iconMedium } from 'css/icons.styles';
 import _ from 'lodash';
