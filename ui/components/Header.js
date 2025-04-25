@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import { Edit, Search } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
 import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
