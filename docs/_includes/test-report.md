@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 25th 2025, 8:08:10 am
+- Testing started at: April 25th 2025, 2:07:24 pm
 
 **📦 Test Result Summary**
 
 - ✅ 60 passed
 - ❌ 0 failed
-- ⚠️ 2 flaked
+- ⚠️ 3 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 10 seconds_
+⌛ _Duration: 5 minutes and 25 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,11 +21,11 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 5 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 6 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
 | 7 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
 | 8 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
