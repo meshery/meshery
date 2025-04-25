@@ -340,7 +340,7 @@ function K8sContextMenu({
                         <CustomTooltip title="Configure Connections">
                           <div>
                             <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
-                              <Edit style={{ ...iconSmall }} />
+                              <SettingsIcon style={{ ...iconSmall }} />
                             </IconButton>
                           </div>
                         </CustomTooltip>
