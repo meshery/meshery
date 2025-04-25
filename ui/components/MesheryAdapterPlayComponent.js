@@ -40,7 +40,7 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
-import { setK8sContexts, updateProgress, actionTypes } from '../lib/store';
+import { setK8sContexts, updateProgress } from '../lib/store';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
@@ -91,7 +91,6 @@ const ChipNamespaceContainer = styled(Grid)(() => ({
   margin: '0px',
 }));
 
-
 const InputWrapper = styled('div')(() => ({
   flex: '1',
   minWidth: '250px',
@@ -104,15 +103,7 @@ const AdapterCard = styled(Card)(() => ({
 }));
 
 const MesheryAdapterPlayComponent = (props) => {
-  const {
-    adapter,
-    updateProgress,
-    setK8sContexts,
-    notify,
-    selectedK8sContexts,
-    k8sconfig,
-    grafana,
-  } = props;
+  const { adapter, updateProgress, notify, selectedK8sContexts, k8sconfig, grafana } = props;
 
   const router = useRouter();
   const cmEditorAddRef = useRef(null);
@@ -141,7 +132,7 @@ const MesheryAdapterPlayComponent = (props) => {
   const [namespaceList, setNamespaceList] = useState([]);
   const [namespaceSubscription, setNamespaceSubscription] = useState(null);
   const [, setActiveContexts] = useState([]);
-  const [, setDeployModalOpen] = useState(false);
+  // const [deployModalOpen, setDeployModalOpen] = useState(false);
   const [category, setCategory] = useState(0);
   const [selectedOp, setSelectedOp] = useState('');
   const [isDeleteOp, setIsDeleteOp] = useState(false);
@@ -281,32 +272,32 @@ const MesheryAdapterPlayComponent = (props) => {
     setAddonSwitchGroup(localState);
   };
 
-  const handleChange =
-    (name, isDelete = false) =>
-    (event) => {
-      if (name === 'selectedOp' && event.target.value !== '') {
-        if (event.target.value === 'custom') {
-          if (isDelete) {
-            if (cmEditorValDel !== '' && cmEditorDelRef.current?.state.lint.marked.length === 0) {
-              setSelectionError(false);
-              setCmEditorValDelError(false);
-            }
-          } else if (
-            cmEditorValAdd !== '' &&
-            cmEditorAddRef.current?.state.lint.marked.length === 0
-          ) {
-            setSelectionError(false);
-            setCmEditorValAddError(false);
-          }
-        } else {
-          setSelectionError(false);
-        }
-      }
+  // const handleChange =
+  //   (name, isDelete = false) =>
+  //   (event) => {
+  //     if (name === 'selectedOp' && event.target.value !== '') {
+  //       if (event.target.value === 'custom') {
+  //         if (isDelete) {
+  //           if (cmEditorValDel !== '' && cmEditorDelRef.current?.state.lint.marked.length === 0) {
+  //             setSelectionError(false);
+  //             setCmEditorValDelError(false);
+  //           }
+  //         } else if (
+  //           cmEditorValAdd !== '' &&
+  //           cmEditorAddRef.current?.state.lint.marked.length === 0
+  //         ) {
+  //           setSelectionError(false);
+  //           setCmEditorValAddError(false);
+  //         }
+  //       } else {
+  //         setSelectionError(false);
+  //       }
+  //     }
 
-      if (name === 'selectedOp') {
-        setSelectedOp(event.target.value);
-      }
-    };
+  //     if (name === 'selectedOp') {
+  //       setSelectedOp(event.target.value);
+  //     }
+  //   };
 
   const handleNamespaceChange = (newValue) => {
     if (typeof newValue !== 'undefined') {
@@ -342,13 +333,13 @@ const MesheryAdapterPlayComponent = (props) => {
     setSelectedRowData(null);
   };
 
-  const handleModalOpen = (isDelete) => () => {
-    if (isDelete) {
-      setCustomDialogDel(true);
-    } else {
-      setCustomDialogAdd(true);
-    }
-  };
+  // const handleModalOpen = (isDelete) => () => {
+  //   if (isDelete) {
+  //     setCustomDialogDel(true);
+  //   } else {
+  //     setCustomDialogAdd(true);
+  //   }
+  // };
 
   const handleOpen = () => {
     setModalOpen(true);
@@ -358,13 +349,13 @@ const MesheryAdapterPlayComponent = (props) => {
     setModalOpen(false);
   };
 
-  const handleDeployModalOpen = () => {
-    setDeployModalOpen(true);
-  };
+  // const handleDeployModalOpen = () => {
+  //   setDeployModalOpen(true);
+  // };
 
-  const handleDeployModalClose = () => {
-    setDeployModalOpen(false);
-  };
+  // const handleDeployModalClose = () => {
+  //   setDeployModalOpen(false);
+  // };
 
   const handleSubmit =
     (cat, op, deleteOp = false) =>
@@ -511,12 +502,12 @@ const MesheryAdapterPlayComponent = (props) => {
     );
   };
 
-  const handleSMIClick = (adapterName) => () => {
-    updateProgress({ showProgress: true });
-    fetchSMIResults(adapterName, page, pageSize, search, sortOrder);
-    updateProgress({ showProgress: false });
-    setCustomDialogSMI(true);
-  };
+  // const handleSMIClick = (adapterName) => () => {
+  //   updateProgress({ showProgress: true });
+  //   fetchSMIResults(adapterName, page, pageSize, search, sortOrder);
+  //   updateProgress({ showProgress: false });
+  //   setCustomDialogSMI(true);
+  // };
 
   const handleError = (cat, deleteOp, selectedOp) => {
     return (error) => {
@@ -545,15 +536,15 @@ const MesheryAdapterPlayComponent = (props) => {
     };
   };
 
-  const activeContextChangeCallback = (activeK8sContexts) => {
-    if (activeK8sContexts.includes('all')) {
-      activeK8sContexts = ['all'];
-    }
-    setK8sContexts({
-      type: actionTypes.SET_K8S_CONTEXT,
-      selectedK8sContexts: activeK8sContexts,
-    });
-  };
+  // const activeContextChangeCallback = (activeK8sContexts) => {
+  //   if (activeK8sContexts.includes('all')) {
+  //     activeK8sContexts = ['all'];
+  //   }
+  //   setK8sContexts({
+  //     type: actionTypes.SET_K8S_CONTEXT,
+  //     selectedK8sContexts: activeK8sContexts,
+  //   });
+  // };
 
   const addDelHandleClick = (cat, isDelete) => () => {
     const newMenuState = { ...menuState };

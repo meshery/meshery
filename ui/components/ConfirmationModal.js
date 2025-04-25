@@ -2,11 +2,9 @@ import {
   Box,
   Button,
   Checkbox,
-  Chip,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
   TextField,
   Typography,
   styled,
@@ -41,31 +39,6 @@ import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
-
-const ContextChip = styled(Chip)(({ theme }) => ({
-  height: '50px',
-  fontSize: '15px',
-  position: 'relative',
-  top: theme.spacing(0.5),
-  [theme.breakpoints.down('md')]: {
-    fontSize: '12px',
-  },
-}));
-
-const ContextIcon = styled('img')(({ theme }) => ({
-  display: 'inline',
-  verticalAlign: 'text-top',
-  width: theme.spacing(2.5),
-  marginLeft: theme.spacing(0.5),
-}));
-
-const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
-  textAlign: 'center',
-  padding: theme.spacing(1),
-  color: '#fff',
-  backgroundColor: theme.palette.background.tabs,
-  fontSize: '1rem',
-}));
 
 const DialogSubtitle = styled(DialogContentText)({
   overflowWrap: 'anywhere',
@@ -405,6 +378,7 @@ function ConfirmationMsg(props) {
                     <ContextsContainer>
                       {context.map((ctx) => (
                         <div
+                          key={ctx.id}
                           style={{
                             display: 'flex',
                             justifyContent: 'flex-wrap',
