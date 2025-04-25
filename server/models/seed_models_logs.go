@@ -177,7 +177,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {
-				successMessage += fmt.Sprintf(" %d %s", value, label)
+				successMessage += fmt.Sprintf(" %d %s,", value, label)
 			}
 		}
 		appendIfNonZero(host.Summary.Models, "models")
@@ -185,9 +185,12 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 		appendIfNonZero(host.Summary.Relationships, "relationships")
 		appendIfNonZero(host.Summary.Policies, "policies")
 
+		successMessage = strings.TrimSuffix(successMessage, ",") + "."
+
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
 			"kind": host.Kind,
+			"doclink": "https://docs.meshery.io/concepts/logical#logical-concepts",
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
