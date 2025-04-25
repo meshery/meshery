@@ -30,7 +30,6 @@ export const StyledColorBox = styled(Box)(({ color }) => ({
   verticalAlign: 'middle',
 }));
 
-
 export const StyledDocsRedirectLink = styled(Link)(({ theme }) => ({
   color: theme.palette.background.brand.default,
   textDecoration: 'underline',

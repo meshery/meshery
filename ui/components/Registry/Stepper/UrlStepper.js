@@ -60,7 +60,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
   const [modelSubcategory, setModelSubcategory] = React.useState(
     SubCategoryDefinitionV1Beta1Schema.default,
   );
-  
+
   const [modelShape, setModelShape] = React.useState(
     ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.default,
   );

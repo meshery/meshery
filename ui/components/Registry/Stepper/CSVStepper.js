@@ -14,7 +14,6 @@ import {
   DownloadIcon,
   useTheme,
   styled,
-  Link,
   Chip,
 } from '@layer5/sistent';
 import ModelIcon from '@/assets/icons/ModelIcon';
