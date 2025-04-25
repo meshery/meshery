@@ -45,21 +45,7 @@ import { useLegacySelector } from 'lib/store';
 import { getView, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
-  const [designSearch, setDesignSearch] = useState('');
   const { notify } = useNotification();
-
-  const { data: designsOfWorkspace, refetch: refetchPatternData } = useGetDesignsOfWorkspaceQuery(
-    {
-      workspaceId: workspaceId,
-      page: 0,
-      pageSize: 10,
-      expandUser: true,
-      search: designSearch,
-    },
-    {
-      skip: !workspaceId,
-    },
-  );
 
   const handleCopyUrl = (type, designName, designId) => {
     notify({
@@ -77,10 +63,8 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
     pagesize: 'all',
   });
 
-  const { handlePublish, handlePublishModal: publishModalHandler } = usePublishPattern(
-    meshModelModelsData,
-    refetchPatternData,
-  );
+  const { handlePublish, handlePublishModal: publishModalHandler } =
+    usePublishPattern(meshModelModelsData);
 
   const handleDesignDownloadModal = (pattern) => {
     setDownloadModal((prevState) => ({
@@ -178,14 +162,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [updateView] = useUpdateViewVisibilityMutation();
 
   const handleDesignVisibilityChange = async (designId, viewType) => {
-    const { data: design } = await getDesign(
-      {
-        design_id: designId,
-      },
-      {
-        skip: !designId,
-      },
-    );
+    const { data: design } = await getDesign({
+      design_id: designId,
+    });
     const msg = `${_.startCase(design?.name)} is now ${viewType}`;
     const designFile = JsonParse(design?.pattern_file);
     updatePattern({
@@ -202,19 +181,13 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
           message: `${msg}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        refetchPatternData();
       });
   };
 
   const handleViewVisibilityChange = async (viewId, viewType) => {
-    const { data: view } = await getView(
-      {
-        viewId: viewId,
-      },
-      {
-        skip: !viewId,
-      },
-    );
+    const { data: view } = await getView({
+      viewId: viewId,
+    });
     updateView({
       id: viewId,
       body: {
@@ -262,9 +235,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
           <DesignTable
             handleOpenInDesigner={isKanvasDesignerAvailable && handleOpenDesignInDesigner}
             showPlaygroundActions={false}
-            showOpenInPlayground={false}
             GenericRJSFModal={Modal}
-            designsOfWorkspace={designsOfWorkspace}
             handleBulkWorkspaceDesignDeleteModal={handleBulkWorkspaceDesignDeleteModal}
             handleWorkspaceDesignDeleteModal={handleWorkspaceDesignDeleteModal}
             isAssignAllowed={CAN(
@@ -291,7 +262,6 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             handleShowDetails={handleOpenDesignInDesigner}
             handleDownload={handleDesignDownloadModal}
             handlePublish={handlePublish}
-            setDesignSearch={setDesignSearch}
             handleVisibilityChange={handleDesignVisibilityChange}
             currentUserId={currentUserId}
           />
