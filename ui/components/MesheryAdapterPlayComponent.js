@@ -91,9 +91,6 @@ const ChipNamespaceContainer = styled(Grid)(() => ({
   margin: '0px',
 }));
 
-const CardMeshContainer = styled(Grid)(() => ({
-  margin: '-8px 0px',
-}));
 
 const InputWrapper = styled('div')(() => ({
   flex: '1',
@@ -1153,8 +1150,8 @@ const MesheryAdapterPlayComponent = (props) => {
                       />
                     </InputWrapper>
                   </ChipNamespaceContainer>
-                  <Grid container spacing={1}>
-                    <CardMeshContainer
+                  <Grid container spacing={1} style={{ margin: '1rem' }}>
+                    <Grid
                       container
                       item
                       lg={!extractAddonOperations(2).length ? 12 : 10}
@@ -1166,7 +1163,7 @@ const MesheryAdapterPlayComponent = (props) => {
                           {generateCardForCategory(val)}
                         </Grid>
                       ))}
-                    </CardMeshContainer>
+                    </Grid>
                     <Grid container item lg={2} xs={12}>
                       <Grid item xs={12} md={4}>
                         {generateAddonSwitches(extractAddonOperations(2))}
