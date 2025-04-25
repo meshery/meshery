@@ -22,10 +22,10 @@ import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { StyledDocsRedirectLink } from './style';
 import {
-  ModelDefinitionV1Beta1Schema,
-  ComponentDefinitionV1Beta1Schema,
-  RelationshipDefinitionV1Alpha3Schema,
+  ComponentDefinitionV1Beta1OpenApiSchema,
+  ModelDefinitionV1Beta1OpenApiSchema,
 } from '@layer5/schemas';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import FinishModelGenerateStep from './FinishModelGenerateStep';
@@ -36,11 +36,6 @@ const StyledHeadingBox = styled(Box)({
   alignItems: 'center',
   justifyContent: 'space-between',
 });
-
-export const StyledDocsRedirectLink = styled(Link)(({ theme }) => ({
-  color: theme.palette.text.brand,
-  textDecoration: 'underline',
-}));
 
 const StyledUploadSuccess = styled(Box)(({ theme }) => ({
   border: `1px solid ${theme.palette.border.brand}`,
@@ -180,7 +175,7 @@ const CsvStepper = React.memo(({ handleClose }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . {ModelDefinitionV1Beta1Schema.description}
+            . {ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition.description}
           </>
         ),
       },
@@ -237,7 +232,11 @@ const CsvStepper = React.memo(({ handleClose }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . {ComponentDefinitionV1Beta1Schema.description}
+            .{' '}
+            {
+              ComponentDefinitionV1Beta1OpenApiSchema.components.schemas.ComponentDefinition
+                .description
+            }
           </>
         ),
       },
@@ -245,7 +244,9 @@ const CsvStepper = React.memo(({ handleClose }) => {
         component: (
           <div>
             <StyledHeadingBox>
-              <Typography fontWeight={'bold'}>Please upload the relationship CSV file</Typography>
+              <Typography fontWeight={'bold'}>
+                Please upload the relationship CSVa sdf file
+              </Typography>
               <TooltipIconButton
                 title="Download Relationship CSV template"
                 onClick={() => handleDownload('Relationships.csv')}
@@ -295,7 +296,10 @@ const CsvStepper = React.memo(({ handleClose }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . {RelationshipDefinitionV1Alpha3Schema.description}
+            . Relationships define the nature of interaction between interconnected components in
+            Meshery. The combination of relationship properties kind, type, and subtype characterize
+            various genealogical relations among and between components. Relationships have
+            selectors, selector sets, metadata, and optional parameters.
           </>
         ),
       },

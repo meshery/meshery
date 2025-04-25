@@ -25,7 +25,7 @@ import {
   StyledSummaryItem,
   SectionHeading,
   StyledColorBox,
-  StyledLinkRedirect,
+  StyledDocsRedirectLink,
 } from './style';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -35,13 +35,22 @@ import { capitalize } from 'lodash';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import {
-  CategoryDefinitionV1Beta1Schema,
-  ModelDefinitionV1Beta1Schema,
-  SubCategoryDefinitionV1Beta1Schema,
+  CategoryDefinitionV1Beta1OpenApiSchema,
+  ModelDefinitionV1Beta1OpenApiSchema,
+  SubCategoryDefinitionV1Beta1OpenApiSchema,
 } from '@layer5/schemas';
 import FinishModelGenerateStep from './FinishModelGenerateStep';
 
 const UrlStepper = React.memo(({ handleClose }) => {
+  const ModelDefinitionV1Beta1Schema =
+    ModelDefinitionV1Beta1OpenApiSchema.components.schemas.ModelDefinition;
+
+  const CategoryDefinitionV1Beta1Schema =
+    CategoryDefinitionV1Beta1OpenApiSchema.components.schemas.CategoryDefinition;
+
+  const SubCategoryDefinitionV1Beta1Schema =
+    SubCategoryDefinitionV1Beta1OpenApiSchema.components.schemas.SubCategoryDefinition;
+
   const [modelSource, setModelSource] = React.useState('');
   const [modelName, setModelName] = React.useState('');
   const [modelDisplayName, setModelDisplayName] = React.useState('');
@@ -51,6 +60,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
   const [modelSubcategory, setModelSubcategory] = React.useState(
     SubCategoryDefinitionV1Beta1Schema.default,
   );
+  
   const [modelShape, setModelShape] = React.useState(
     ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.default,
   );
@@ -212,7 +222,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     required
                     id="model-display-name"
                     label={'Model Display Name'}
-                    placeholder={modelProperties.displayName.description}
+                    placeholder="My Model"
                     helperText={modelProperties.displayName.helperText}
                     error={
                       modelDisplayName.length > 0 &&
@@ -235,9 +245,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
               <li>
                 <strong>Model Name:</strong> {modelProperties.name.helperText} For example,{' '}
                 <em>{modelProperties.name.examples[0]}</em>. {modelProperties.name.description} (
-                <StyledLinkRedirect href="https://docs.meshery.io/concepts/logical/registry">
+                <StyledDocsRedirectLink href="https://docs.meshery.io/concepts/logical/registry">
                   learn more about registry
-                </StyledLinkRedirect>
+                </StyledDocsRedirectLink>
                 ).
               </li>
               <br />
@@ -257,12 +267,6 @@ const UrlStepper = React.memo(({ handleClose }) => {
                 {' '}
                 Please select the appropriate <strong>Category</strong> and{' '}
                 <strong>Subcategory</strong> relevant to your model.
-                <br />
-                <em>
-                  Note: If you can&apos;t find the appropriate category or subcategory, please
-                  select <strong>Uncategorized</strong>
-                </em>
-                .
               </Typography>
             </Box>
 
@@ -316,6 +320,20 @@ const UrlStepper = React.memo(({ handleClose }) => {
         label: 'Model Categorization',
         helpText: (
           <>
+            <Typography variant="body2" gutterBottom>
+              Choose the Category and Subcategory that best describe your model.
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              This helps improve discoverability in Kanvas. If no suitable option fits, select{' '}
+              <em>Uncategorized</em>.
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Learn more about{' '}
+              <StyledDocsRedirectLink href="https://docs.meshery.io/guides/configuration-management/creating-models">
+                creating models
+              </StyledDocsRedirectLink>
+              .
+            </Typography>
             <ul>
               <li>
                 <strong>Category:</strong> {modelProperties.category.description}
@@ -509,9 +527,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
             </ul>
             <p>
               Learn more about the process of{' '}
-              <StyledLinkRedirect href="https://docs.meshery.io/guides/configuration-management/generating-models">
+              <StyledDocsRedirectLink href="https://docs.meshery.io/guides/configuration-management/generating-models">
                 creating and importing models
-              </StyledLinkRedirect>
+              </StyledDocsRedirectLink>
               .
             </p>
           </>
@@ -673,9 +691,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
             </p>
             <p>
               Learn more about{' '}
-              <StyledLinkRedirect href="https://docs.meshery.io/guides/configuration-management/generating-models">
+              <StyledDocsRedirectLink href="https://docs.meshery.io/guides/configuration-management/generating-models">
                 Model Generation
-              </StyledLinkRedirect>
+              </StyledDocsRedirectLink>
               .
             </p>
           </>

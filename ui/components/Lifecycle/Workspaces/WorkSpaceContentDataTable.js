@@ -26,9 +26,23 @@ import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import Modal from '@/components/Modal';
 import { useNotification } from '@/utils/hooks/useNotification';
 import ExportModal from '@/components/ExportModal';
-import { EVENT_TYPES } from '@/utils/Enum';
+import { EVENT_TYPES } from 'lib/event-types';
 import downloadContent from '@/utils/fileDownloader';
 import { iconMedium } from 'css/icons.styles';
+import _ from 'lodash';
+import {
+  JsonParse,
+  openDesignInKanvas,
+  openViewInKanvas,
+  useIsKanvasDesignerEnabled,
+  useIsOperatorEnabled,
+} from '@/utils/utils';
+import Router from 'next/router';
+import { useContext } from 'react';
+import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
+import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
+import { useLegacySelector } from 'lib/store';
+import { getView, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const [designSearch, setDesignSearch] = useState('');
@@ -104,6 +118,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const theme = useTheme();
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
+  const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
+  const isKanvasOperatorAvailable = useIsOperatorEnabled();
+  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
 
   function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -127,6 +144,93 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   };
 
   const shouldRenderTabs = isDesignsVisible && isViewVisible;
+
+  const handleOpenDesignInDesigner = (designId, designName) => {
+    if (!isKanvasDesignerAvailable) {
+      notify({
+        message: 'Kanvas Designer is not available',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (workspaceSwitcherContext?.closeModal) {
+      workspaceSwitcherContext.closeModal();
+    }
+
+    openDesignInKanvas(designId, designName, Router);
+  };
+
+  const handleOpenViewInOperator = (viewId, viewName) => {
+    if (!isKanvasOperatorAvailable) {
+      notify({
+        message: 'Kanvas Operator is not available',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (workspaceSwitcherContext?.closeModal) {
+      workspaceSwitcherContext.closeModal();
+    }
+
+    openViewInKanvas(viewId, viewName, Router);
+  };
+  const [updatePattern] = useUpdatePatternFileMutation();
+  const [updateView] = useUpdateViewVisibilityMutation();
+
+  const handleDesignVisibilityChange = async (designId, viewType) => {
+    const { data: design } = await getDesign(
+      {
+        design_id: designId,
+      },
+      {
+        skip: !designId,
+      },
+    );
+    const msg = `${_.startCase(design?.name)} is now ${viewType}`;
+    const designFile = JsonParse(design?.pattern_file);
+    updatePattern({
+      updateBody: {
+        id: design?.id,
+        design_file: designFile,
+        visibility: viewType,
+        name: design?.name,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message: `${msg}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        refetchPatternData();
+      });
+  };
+
+  const handleViewVisibilityChange = async (viewId, viewType) => {
+    const { data: view } = await getView(
+      {
+        viewId: viewId,
+      },
+      {
+        skip: !viewId,
+      },
+    );
+    updateView({
+      id: viewId,
+      body: {
+        ...view,
+        visibility: viewType,
+      },
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message: `View is now ${viewType}`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      });
+  };
+  const currentUserId = useLegacySelector((state) => state.get('user')).toObject()?.id;
 
   return (
     <ErrorBoundary>
@@ -156,6 +260,9 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
       {isDesignsVisible && (
         <CustomTabPanel value={value} index={0}>
           <DesignTable
+            handleOpenInDesigner={isKanvasDesignerAvailable && handleOpenDesignInDesigner}
+            showPlaygroundActions={false}
+            showOpenInPlayground={false}
             GenericRJSFModal={Modal}
             designsOfWorkspace={designsOfWorkspace}
             handleBulkWorkspaceDesignDeleteModal={handleBulkWorkspaceDesignDeleteModal}
@@ -181,10 +288,12 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
             useGetWorkspaceDesignsQuery={useGetDesignsOfWorkspaceQuery}
             meshModelModelsData={meshModelModelsData}
             handleCopyUrl={handleCopyUrl}
-            handleShowDetails={() => {}}
+            handleShowDetails={handleOpenDesignInDesigner}
             handleDownload={handleDesignDownloadModal}
             handlePublish={handlePublish}
             setDesignSearch={setDesignSearch}
+            handleVisibilityChange={handleDesignVisibilityChange}
+            currentUserId={currentUserId}
           />
         </CustomTabPanel>
       )}
@@ -200,12 +309,14 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
               keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
               keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
             )}
-            handleShowDetails={() => {}}
+            handleShowDetails={handleOpenViewInOperator}
             useAssignViewToWorkspaceMutation={useAssignViewToWorkspaceMutation}
             useGetViewsOfWorkspaceQuery={useGetViewsOfWorkspaceQuery}
             useUnassignViewFromWorkspaceMutation={useUnassignViewFromWorkspaceMutation}
             workspaceId={workspaceId}
             workspaceName={workspaceName}
+            currentUserId={currentUserId}
+            handleVisibilityChange={handleViewVisibilityChange}
           />
         </CustomTabPanel>
       )}
