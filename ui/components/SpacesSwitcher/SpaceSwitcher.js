@@ -50,7 +50,8 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   fill: theme.palette.text.default,
 }));
 
-export const StyledSelect = styled(Select)(() => ({
+export const StyledSelect = styled(Select)(({ theme }) => ({
+  color: theme.palette.common.white,
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
