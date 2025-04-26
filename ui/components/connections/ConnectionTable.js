@@ -455,33 +455,52 @@ const ConnectionTable = ({
       });
   };
 
-  const getSubtitle = (status) => {
-    switch (status) {
-      case 'DISCONNECTED':
-        return 'Are you sure you want to disconnect this Kubernetes cluster? Disconnecting will uninstall the Meshery Operator from the cluster and may impact active Meshery workloads.';
-      case 'IGNORED':
-        return 'Are you sure you want to mark this connection as IGNORED? This action will exclude the connection from Meshery’s management. It will not be re-discovered or managed again, even after the current user session expires.';
-      case 'NOT FOUND':
-        return 'Are you sure you want to mark this connection as NOT FOUND? This will indicate that Meshery couldn’t establish a connection during registration or the connection is unavailable. As a result, the connection will no longer be managed by Meshery. You can either delete the connection or attempt to re-register it.';
-      case 'DELETED':
-        return 'Are you sure you want to delete this connection? This will permanently remove the connection from Meshery’s management view. All associated and previously collected data will also be deleted and cannot be recovered.';
-      case 'REGISTERED':
-        return 'Are you sure you want to mark this connection as Registered? This means the connection has been verified for reachability but is not yet in active use. It will now await further administrative action, such as being connected, put under maintenance, or marked as not found.';
-      case 'DISCOVERED':
-        return `Connections with "discovered" status have been identified through MeshSync’s discovery process. Meshery's ability to reach (connectivity) and manage (authenticate and authorization) have yet to be verified`;
-      case 'CONNECTED':
-        return 'Meshery will begin actively managing this connection. It may auto-transition to Disconnected if communication is lost.';
+  const kubernetesConnectionTransitions = {
+    connected: {
+      disconnected:
+        'Are you sure you want to transition from CONNECTED to DISCONNECTED? This will perform planned maintenance by removing the operator but keeping the cluster registered.',
+      ignored:
+        'Are you sure you want to transition from CONNECTED to IGNORED? This will mark the connection as ignored due to unplanned maintenance, without deleting the registration.',
+      deleted:
+        'Are you sure you want to transition from CONNECTED to DELETED? This will undeploy the operator and unregister the cluster completely.',
+      'not found':
+        'Are you sure you want to transition from CONNECTED to NOT FOUND? Meshery could not connect to the cluster or it is currently unavailable. You can either delete the connection or try re-registering.',
+    },
+    disconnected: {
+      connected:
+        'Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the cluster and redeploy the operator after maintenance.',
+      deleted:
+        'Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the cluster completely by undeploying the operator and unregistering.',
+    },
+    ignored: {
+      deleted:
+        'Are you sure you want to transition from IGNORED to DELETED? This will completely remove the ignored cluster by undeploying the operator and unregistering.',
+      registered:
+        'Are you sure you want to transition from IGNORED to REGISTER? This will reinitiate the registration process for the ignored connection and attempt to connect it again.',
+    },
+    'not found': {
+      discovered:
+        'Are you sure you want to transition from NOT FOUND to DISCOVERED? You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster.',
+      deleted:
+        'Are you sure you want to transition from NOT FOUND to DELETED? This will remove the unreachable connection completely by unregistering it.',
+    },
+  };
+
+  const getStatusTransition = (connectionKind, connectionState, transitionState) => {
+    switch (connectionKind) {
+      case 'kubernetes':
+        return kubernetesConnectionTransitions[connectionState][transitionState];
       default:
-        return `Are you sure that you want to transition the connection status to ${status}?`;
+        return `Are you sure you want to transition from ${connectionState} to ${transitionState}?`;
     }
   };
 
-  const handleStatusChange = async (e, connectionId, connectionKind) => {
+  const handleStatusChange = async (e, connectionId, connectionKind, connectionStatus) => {
     e.stopPropagation();
-    const status = e.target.value.toUpperCase();
-    let subtitle = getSubtitle(status);
+    const status = e.target.value;
+    let subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
     let response = await modalRef.current.show({
-      title: `Transition connection to ${status}?`,
+      title: `Transition connection to ${status.toUpperCase()}?`,
       subtitle,
       primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
@@ -876,6 +895,7 @@ const ConnectionTable = ({
                     e,
                     getColumnValue(tableMeta.rowData, 'id', columns),
                     getColumnValue(tableMeta.rowData, 'kind', columns),
+                    getColumnValue(tableMeta.rowData, 'status', columns),
                   )
                 }
                 disableUnderline
