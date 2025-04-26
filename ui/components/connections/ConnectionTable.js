@@ -227,7 +227,7 @@ const ConnectionTable = ({
     const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
     return statusMatch && kindMatch;
   });
-  
+
   const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
   const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
 

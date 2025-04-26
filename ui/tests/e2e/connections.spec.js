@@ -190,7 +190,7 @@ transitionTests.forEach((t) => {
 
     // since test run serially, and latest connection appears at topmost,
     // the connection created in the previous test will appear in the first row of the table
-    const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();;
+    const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();
     await firstRow.scrollIntoViewIfNeeded();
     await expect(firstRow).toBeVisible();
 
@@ -242,7 +242,7 @@ test('Delete Kubernetes cluster connections', async ({ page }) => {
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
   // Find the row with the connection to be deleted
-  const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();;
+  const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();
   await firstRow.scrollIntoViewIfNeeded();
   await expect(firstRow).toBeVisible();
 
