@@ -16,7 +16,7 @@ language: en
 
 # Import and Export Designs
 
-Meshery supports two primary operations for working with designs: **Import** and **Export**. 
+Meshery supports two primary operations for working with designs: **Import** and **Export**.
 A **[design](https://docs.meshery.io/concepts/logical/designs)** in Meshery is a structured model describing how various components (e.g., Kubernetes manifests, Helm charts, or Docker Compose objects) should be managed and deployed. This document details the core concepts, the import/export processes, and the available methods to perform them.
 
 ## Core Operations
@@ -33,8 +33,8 @@ When **importing** a design, Meshery:
 When **exporting** a design, Meshery:
 1. **Fetches** the design data from the Meshery database using `/api/pattern/download/{id}`.
 2. **Converts** the design format if necessary (e.g., from V1alpha2 to V1beta1).
-3. **Applies** requested export format (e.g., `current`, `original`, `oci`).
-4. **Sends** the exported design file for download as a YAML file or OCI artifact.
+3. **Applies** requested export format (e.g., `current`, `original`, `oci`, `helm-chart`).
+4. **Sends** the exported design file for download as a YAML file or OCI artifact or Helm chart(.tgz).
 
 ## Import Methods
 
@@ -62,18 +62,18 @@ mesheryctl design import -f ./app-deployment.yaml -s manifest
 
 After you initiate an import, Meshery executes a **dataflow sequence** to properly handle the design:
 
-1. **Client submits a design**  
+1. **Client submits a design**
    A POST request is sent to `/api/pattern/import`, containing a design file. If the design is sourced from Kubernetes Manifests, Docker Compose, or Helm Charts, it is first converted into a standard Kubernetes Manifest.
 
-2. **Pattern Engine queries registry**  
+2. **Pattern Engine queries registry**
    Meshery queries the component registry to match the design’s `kind`, `apiVersion`, and other identifiers. If the design originates from non-Meshery formats, Meshery attempts to transform it accordingly.
 
-3. **System converts design format**  
-   - Converts Helm Charts, Docker Compose, and Kubernetes Manifests into Meshery Design.  
+3. **System converts design format**
+   - Converts Helm Charts, Docker Compose, and Kubernetes Manifests into Meshery Design.
    - Removes unnecessary fields and ensures compatibility.
 
-4. **Validated components are stored in Meshery**  
-   Once validated, the design is stored in Meshery. Users can later deploy it to a supported platform (e.g., Kubernetes, Consul, Istio) using Meshery UI or CLI. 
+4. **Validated components are stored in Meshery**
+   Once validated, the design is stored in Meshery. Users can later deploy it to a supported platform (e.g., Kubernetes, Consul, Istio) using Meshery UI or CLI.
 
 ## Export Methods
 

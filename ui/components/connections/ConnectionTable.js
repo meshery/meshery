@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import {
   CustomTooltip,
   CustomColumnVisibilityControl,
@@ -91,7 +92,14 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, selectedFilter }) => {
+const ConnectionTable = ({
+  meshsyncControllerState,
+  connectionMetadataState,
+  selectedFilter,
+  selectedConnectionId,
+  updateUrlWithConnectionId,
+}) => {
+  const router = useRouter();
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -116,6 +124,11 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   const open = Boolean(anchorEl);
   const modalRef = useRef(null);
 
+  useEffect(() => {
+    if (router.query.searchText) {
+      setSearch(router.query.searchText);
+    }
+  }, [router.query.searchText]);
   const filters = {
     status: {
       name: 'Status',
@@ -177,6 +190,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       skip: !organization?.id,
     },
   );
+
   let environments = environmentsResponse?.environments || [];
 
   useEffect(() => {
@@ -328,15 +342,6 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'DELETE') {
-        // let bulkConnections = {}
-        // selected.data.map(({ index }) => {
-        //   bulkConnections = {
-        //     ...bulkConnections,
-        //     [connections[index].id]: CONNECTION_STATES.DELETED
-        //   };
-        // })
-        // const requestBody = JSON.stringify(bulkConnections);
-        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
@@ -457,11 +462,59 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       });
   };
 
-  const handleStatusChange = async (e, connectionId, connectionKind) => {
+  const kubernetesConnectionTransitions = {
+    connected: {
+      disconnected:
+        'Are you sure you want to transition from CONNECTED to DISCONNECTED? This will perform planned maintenance by removing the operator but keeping the cluster registered.',
+      ignored:
+        'Are you sure you want to transition from CONNECTED to IGNORED? This will mark the connection as ignored due to unplanned maintenance, without deleting the registration.',
+      deleted:
+        'Are you sure you want to transition from CONNECTED to DELETED? This will undeploy the operator and unregister the cluster completely.',
+      'not found':
+        'Are you sure you want to transition from CONNECTED to NOT FOUND? Meshery could not connect to the cluster or it is currently unavailable. You can either delete the connection or try re-registering.',
+    },
+    disconnected: {
+      connected:
+        'Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the cluster and redeploy the operator after maintenance.',
+      deleted:
+        'Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the cluster completely by undeploying the operator and unregistering.',
+    },
+    ignored: {
+      deleted:
+        'Are you sure you want to transition from IGNORED to DELETED? This will completely remove the ignored cluster by undeploying the operator and unregistering.',
+      registered:
+        'Are you sure you want to transition from IGNORED to REGISTER? This will reinitiate the registration process for the ignored connection and attempt to connect it again.',
+    },
+    'not found': {
+      discovered:
+        'Are you sure you want to transition from NOT FOUND to DISCOVERED? You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster.',
+      deleted:
+        'Are you sure you want to transition from NOT FOUND to DELETED? This will remove the unreachable connection completely by unregistering it.',
+    },
+  };
+
+  const getStatusTransition = (connectionKind, connectionState, transitionState) => {
+    // This is for one connection kind that is kubernetes, and adding other connection kinds
+    // here will make it more complex.
+    // This issue can be resolved if we add the transition messages in the connection schemas
+    // and use the same schema to get the transition messages.
+    // Github issue: https://github.com/meshery/schemas/issues/303
+
+    switch (connectionKind) {
+      case 'kubernetes':
+        return kubernetesConnectionTransitions[connectionState][transitionState];
+      default:
+        return `Are you sure you want to transition from ${connectionState} to ${transitionState}?`;
+    }
+  };
+
+  const handleStatusChange = async (e, connectionId, connectionKind, connectionStatus) => {
     e.stopPropagation();
+    const status = e.target.value;
+    let subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
     let response = await modalRef.current.show({
-      title: `Connection Status Transition`,
-      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
+      title: `Transition connection to ${status.toUpperCase()}?`,
+      subtitle,
       primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.WARNING,
@@ -480,6 +533,35 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     setRowData(tableMeta);
   };
   const theme = useTheme();
+
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
+
+  // Update rowsExpanded when a specific connection ID is selected
+  useEffect(() => {
+    if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
+
+    if (connections && connections.length > 0) {
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedConnectionId;
+
+      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithConnectionId('');
+      }
+
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
+    }
+  }, [selectedConnectionId, connections]);
 
   const columns = [
     {
@@ -826,6 +908,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
                     e,
                     getColumnValue(tableMeta.rowData, 'id', columns),
                     getColumnValue(tableMeta.rowData, 'kind', columns),
+                    getColumnValue(tableMeta.rowData, 'status', columns),
                   )
                 }
                 disableUnderline
@@ -993,7 +1076,28 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      if (expansionFlags.current.isUrlExpansion) return;
+
+      expansionFlags.current.isHandlingExpansion = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && connections) {
+        const index = expandedRows[0].index;
+        const connection = connections[index];
+
+        if (
+          connection &&
+          updateUrlWithConnectionId &&
+          (!expansionFlags.current.isInitialLoad || connection.id !== selectedConnectionId)
+        ) {
+          updateUrlWithConnectionId(connection.id);
+        }
+      } else if (updateUrlWithConnectionId && !expansionFlags.current.isInitialLoad) {
+        updateUrlWithConnectionId('');
+      }
+
+      expansionFlags.current.isHandlingExpansion = false;
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;

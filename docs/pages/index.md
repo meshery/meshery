@@ -323,7 +323,7 @@ list: exclude
 
   <div class="section">
   <a href="{{ site.baseurl }}/reference">
-        <div class="btn-primary">Reference</div>
+        <div class="btn-primary">Extensibility & Reference</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6> -->
     <ul>
