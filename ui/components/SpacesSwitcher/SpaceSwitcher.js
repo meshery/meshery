@@ -50,7 +50,8 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   fill: theme.palette.text.default,
 }));
 
-export const StyledSelect = styled(Select)(() => ({
+export const StyledSelect = styled(Select)(({ theme }) => ({
+  color: theme.palette.common.white,
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
@@ -209,14 +210,18 @@ function SpaceSwitcher(props) {
             onClick={() => setOrgOpen(!orgOpen)}
             style={{ marginRight: orgOpen ? '1rem' : '0' }}
           >
-            <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
+            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
           >
-            <WorkspaceIcon {...iconLarge} secondaryFill={theme.palette.icon.disabled} />
+            <WorkspaceIcon
+              {...iconLarge}
+              secondaryFill={theme.palette.common.white}
+              fill={theme.palette.common.white}
+            />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/
           <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />

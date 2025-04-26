@@ -163,7 +163,7 @@ const WorkspaceGridView = ({
   const theme = useTheme();
   return (
     <>
-      <Grid container spacing={2} sx={{ marginTop: '0px' }}>
+      <Grid container spacing={2} sx={{ marginTop: '-16px' }}>
         {selectedWorkspaces?.length > 0 && (
           <UserCommonBox
             sx={{
