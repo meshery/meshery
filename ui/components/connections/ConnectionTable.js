@@ -487,6 +487,12 @@ const ConnectionTable = ({
   };
 
   const getStatusTransition = (connectionKind, connectionState, transitionState) => {
+    // This is for one connection kind that is kubernetes, and adding other connection kinds
+    // here will make it more complex.
+    // This issue can be resolved if we add the transition messages in the connection schemas
+    // and use the same schema to get the transition messages.
+    // Github issue: https://github.com/meshery/schemas/issues/303
+
     switch (connectionKind) {
       case 'kubernetes':
         return kubernetesConnectionTransitions[connectionState][transitionState];
