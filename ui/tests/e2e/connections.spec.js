@@ -247,14 +247,14 @@ test('Delete Kubernetes cluster connections', async ({ page }) => {
   await expect(firstRow).toBeVisible();
 
   // Fail the test if the connection is not found
-  if ((await row.count()) === 0) {
+  if ((await firstRow.count()) === 0) {
     throw new Error(
       'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
     );
   }
 
   //find the checkbox in the row
-  const checkbox = row.locator('input[type="checkbox"]').first();
+  const checkbox = firstRow.locator('input[type="checkbox"]').first();
   await checkbox.check();
 
   // Click "Delete" button in the table
