@@ -48,21 +48,21 @@ const verifyConnectionsResBody = (body, provider) => {
 const transitionTests = [
   {
     name: 'Transition to disconnected state and then back to connected state',
-    transitionOption: 'Disconnect',
+    transitionOption: 'disconnected',
     statusAfterTransition: 'disconnected',
-    restorationOption: 'Connect',
+    restorationOption: 'connected',
   },
   {
     name: 'Transition to ignored state and then back to connected state',
-    transitionOption: 'Ignore',
+    transitionOption: 'ignored',
     statusAfterTransition: 'ignored',
-    restorationOption: 'Register',
+    restorationOption: 'registered',
   },
   {
     name: 'Transition to not found state and then back to connected state',
-    transitionOption: 'Not Found',
+    transitionOption: 'not found',
     statusAfterTransition: 'not found',
-    restorationOption: 'Discover',
+    restorationOption: 'discovered',
   },
 ];
 
@@ -151,16 +151,17 @@ test(
     // Verify displaying of success modal
     await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
 
-    // Verify available contexts were connected
-    await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
+    await page.getByRole('button', { name: 'OK' }).click();
 
-    // Click "OK" button to close success modal
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
+    // Verify available contexts were connected
+    const connectedItem = page.getByRole('menuitem', { name: 'connected' }).first();
+    await connectedItem.scrollIntoViewIfNeeded();
+    await expect(connectedItem).toBeVisible();
   },
 );
 
 transitionTests.forEach((t) => {
-  test(t.name, { tag: '@unstable' }, async ({ page, provider }) => {
+  test(t.name, async ({ page, provider }) => {
     const stateTransitionReq = page.waitForRequest(
       (request) =>
         request.url() ===
@@ -189,10 +190,9 @@ transitionTests.forEach((t) => {
 
     // since test run serially, and latest connection appears at topmost,
     // the connection created in the previous test will appear in the first row of the table
-    const firstRow = page.locator('tbody').locator('tr').first();
-
-    // expect connected state initially
-    await expect(firstRow.locator('span', { hasText: 'connected' })).toBeVisible();
+    const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();;
+    await firstRow.scrollIntoViewIfNeeded();
+    await expect(firstRow).toBeVisible();
 
     // ===== TRANSITIONING TO A NEW STATE =====
 
@@ -200,7 +200,7 @@ transitionTests.forEach((t) => {
     await firstRow.locator('span', { hasText: 'connected' }).click();
 
     // click required option
-    await page.getByText(t.transitionOption, { exact: true }).click();
+    await page.getByRole('option', { name: t.transitionOption }).click();
 
     // verify that Confirmation modal opened
     await expect(page.getByText('Connection Status Transition')).toBeVisible();
@@ -225,7 +225,7 @@ transitionTests.forEach((t) => {
     await firstRow.locator('span', { hasText: t.statusAfterTransition }).click();
 
     // click the option required to transition back to "connected" state
-    await page.getByText(t.restorationOption, { exact: true }).click();
+    await page.getByRole('option', { name: t.restorationOption }).click();
 
     // verify that Confirmation modal opened again
     await expect(page.getByText('Connection Status Transition')).toBeVisible();
@@ -238,11 +238,13 @@ transitionTests.forEach((t) => {
   });
 });
 
-test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
+test('Delete Kubernetes cluster connections', async ({ page }) => {
   // Navigate to 'Connections' tab
   await page.getByRole('tab', { name: 'Connections' }).click();
   // Find the row with the connection to be deleted
-  const row = page.locator('tr').filter({ hasText: 'connected' }).first();
+  const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();;
+  await firstRow.scrollIntoViewIfNeeded();
+  await expect(firstRow).toBeVisible();
 
   // Fail the test if the connection is not found
   if ((await row.count()) === 0) {
@@ -268,7 +270,7 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
       response.status() === 202,
   );
 
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.getByRole('button', { name: 'DELETE', exact: true }).click();
 
   await responsePromise;
 });

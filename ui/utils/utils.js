@@ -244,7 +244,7 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
  */
 
 export const getColumnValue = (rowData, columnName, columns) => {
-  const columnIndex = columns.findIndex((column) => column.name === columnName);
+  const columnIndex = columns?.findIndex((column) => column.name === columnName);
   return rowData[columnIndex];
 };
 
