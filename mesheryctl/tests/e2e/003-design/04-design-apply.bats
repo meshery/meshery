@@ -1,20 +1,16 @@
 #!/usr/bin/env bats
 
 # Setup function to load libraries and prepare test fixtures
+
 setup() {
   load "$E2E_HELPERS_PATH/bats_libraries"
   _load_bats_libraries
 
-  mkdir -p "$TEMP_DATA_DIR/design"
-  cp "$E2E_TESTDATA_PATH/design-import/nginx.yaml" "$TEMP_DATA_DIR/design/nginx.yaml"
-  export TESTDATA_PATH="$TEMP_DATA_DIR/design/nginx.yaml"
+  export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
+  export TESTDATA_PATH="$FIXTURES_DIR/design-import/nginx.yaml"
 }
 
 @test "mesheryctl design apply applies design file" {
-  if [ ! -f "$TESTDATA_PATH" ]; then
-    skip "Test fixture $TESTDATA_PATH not found"
-  fi
-
   run $MESHERYCTL_BIN design apply -f "$TESTDATA_PATH"
 
   assert_success
