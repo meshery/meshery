@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect, useSelector } from 'react-redux';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import { Edit, Search } from '@mui/icons-material';
+import { Search } from '@mui/icons-material';
 import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
@@ -340,7 +340,7 @@ function K8sContextMenu({
                         <CustomTooltip title="Configure Connections">
                           <div>
                             <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
-                              <Edit style={{ ...iconSmall }} />
+                              <SettingsIcon style={{ ...iconSmall }} />
                             </IconButton>
                           </div>
                         </CustomTooltip>

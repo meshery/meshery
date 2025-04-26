@@ -11,7 +11,8 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
 // ContextKey is a custom type for setting context key
@@ -484,9 +485,9 @@ type Provider interface {
 
 	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
-	SaveEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
+	SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
-	UpdateEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error)
+	UpdateEnvironment(req *http.Request, env *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order, filter string) ([]byte, error)
@@ -495,9 +496,9 @@ type Provider interface {
 
 	GetWorkspaces(token, page, pagesize, search, order, filter, orgID string) ([]byte, error)
 	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
-	SaveWorkspace(req *http.Request, workspace *v1beta1.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
+	SaveWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
-	UpdateWorkspace(req *http.Request, workspace *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error)
+	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error)
 	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
 	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)

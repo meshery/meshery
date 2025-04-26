@@ -50,7 +50,14 @@ export const useDeletePattern = () => {
     unassignDesignFromWorkspace({
       workspaceId,
       designId: designId,
-    });
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message: 'Design removed from workspace',
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      });
   };
 
   const handleBulkDeleteModal = async (patterns, modalRef) => {
@@ -137,7 +144,7 @@ export const usePublishPattern = (meshModelModelsData, refetchPatternData) => {
         } else if (_.toLower(res.status) === 'approved') {
           handleSuccess(`${publishModal?.pattern?.name} published successfully`);
         }
-        refetchPatternData();
+        refetchPatternData && refetchPatternData();
       })
       .catch((error) => handleError(error.data));
   };

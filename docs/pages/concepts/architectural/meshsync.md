@@ -11,9 +11,6 @@ list: include
 ---
 
 <div style="display:flex;align-items:center;">
-    <div style="flex: 1; margin: 1rem;">
-        <img src="{{site.baseurl}}/assets/img/meshsync/meshsync.svg" />
-    </div>
     <div style="flex: 4;">
         <h1>MeshSync</h1>
         <p>
@@ -105,11 +102,15 @@ Meshery's event-driven approach ensures high-speed operations, making it suitabl
 
 ## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
 
-MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the `meshsync` CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the `meshsync` CRD using kubectl:
+MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the meshsync CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the meshsync CRD using kubectl:
 
-- Download the CRD with `kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml`
-- Open the downloaded file and edit the field `informer_config` to blacklist all the types of resources that you don't want updates from.
-- Apply the new definition with `kubectl apply -f meshsync.yaml`
+- Download the CRD with kubectl get crd meshsyncs.meshery.io -o yaml > meshsync.yaml
+- Open the downloaded file and edit the field informer_config to blacklist all the types of resources that you don't want updates from.
+- Apply the new definition with kubectl apply -f meshsync.yaml
+
+
+{% include alert.html type="info" title="Still seeing issues?" content="Check the <a href='https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync'><strong>Meshery Troubleshooting Guide</strong></a> for help with common issues." %}
+
 
 # Roadmap
 
