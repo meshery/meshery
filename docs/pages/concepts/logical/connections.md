@@ -98,18 +98,5 @@ For more information on the different states and the lifecycle of connections, r
 ![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
 
 
-## Introducing State Transition Info in Connection Schema
 
-Meshery supports different kinds of connections, and each connection handles state transitions differently.
-
-To improve user experience, we are now adding state transition information directly inside the connection schema ([meshery/schemas](https://github.com/meshery/schemas/)).
-This helps users clearly understand what will happen when they move a connection from one state to another.
-
-What's new:
-
-1. For each connection, possible state transitions effect are now defined in schemas.
-
-2. These messages will be shown to users in modals before confirming a transition.
-
-This change will make transitions safer, more predictable, and improve overall UX.
-
+Meshery supports different kinds of connections, and each handles transitions between their statuses differently. 
