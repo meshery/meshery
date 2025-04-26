@@ -1,11 +1,10 @@
 #!/usr/bin/env bats
 
 setup() {
- load "$E2E_HELPERS_PATH/bats_libraries"
- _load_bats_libraries
+   load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
 
-  MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
-  export FIXTURES_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/fixtures/model-import" 
+  export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/model-import" 
 }
 
 @test "mesheryctl model import displays usage instructions" {
