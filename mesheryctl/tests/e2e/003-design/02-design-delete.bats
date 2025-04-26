@@ -2,21 +2,16 @@
 
 # Setup function to load libraries
 setup() {
-  # Load libraries
-  load '../helpers/bats-support/load'
-  load '../helpers/bats-assert/load'
+  load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
+  
+  load "$E2E_HELPERS_PATH/constants"
 
-  DESIGN_ID_FILE="${TEMP_TEST_DATA_DIR}/design/id"
+  export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/design"
 }
 
-# Test 1: Verify successful deletion of a design
-@test "mesheryctl design delete is succeeded" {
-
-  if [ ! -f "$DESIGN_ID_FILE" ]; then
-    skip "No design ID available to delete"
-  fi
-
-  DESIGN_ID=$(cat "$DESIGN_ID_FILE")
+@test "mesheryctl design delete removes the associate design" {
+  DESIGN_ID=$(cat "$TESTDATA_DIR/id")
   [ -n "$DESIGN_ID" ] || skip "Empty design ID"
 
   # Delete the design

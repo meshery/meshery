@@ -18,10 +18,12 @@ on:
       - "*.github/**"
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: "Log level"
+      sha:
+        description: "Commit SHA to test"
         required: true
-        default: "warning"
+      pr_number:
+        description: "PR number (for commenting)"
+        required: true
 
 permissions: read-all
 
@@ -34,7 +36,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
       - uses: actions/setup-node@v4
         with:
           node-version: "20.x"
@@ -67,10 +70,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
       - name: Check out meshery-istio code
         uses: actions/checkout@v4
         with:
-          repository: layer5io/meshery-istio
+          repository: meshery-extensions/meshery-istio
           path: ./meshery-istio
       # - name: Check out meshery-consul code
       #   uses: actions/checkout@v4
@@ -89,7 +93,7 @@ jobs:
         run: |
           mkdir -p /home/runner/.meshery/bin
           cd ./meshery-istio
-          go run main.go &
+          make run &
           sleep 60
       # - name: Run meshery-consul
       #   run: |
@@ -125,16 +129,17 @@ jobs:
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
           REMOTE_PROVIDER_URL: "https://cloud.layer5.io"
-          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}
-          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
-          PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_TEST_USER_EMAIL }}
+          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_TEST_USER_PASS }}
+          PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
         run: make test-e2e-ci
-      - name: Save PR number
+      - name: Save PR metadata
         if: ${{ !cancelled() }}
         run: |
           mkdir -p ./pr
-          echo ${{ github.event.number }} > ./pr/number
+          echo "${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.number }}" > ./pr/number
+          echo "${{ github.event_name == 'workflow_dispatch' && inputs.sha || github.event.pull_request.head.sha }}" > ./pr/sha      
       - name: Upload Test Report
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
@@ -142,7 +147,7 @@ jobs:
           name: e2e-test-reporter
           path: |
             ui/test-report.md
-            pr/number
+            pr/
           retention-days: 14
       - name: Upload Test Trace
         if: ${{ !cancelled() }}
@@ -159,7 +164,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -174,13 +180,13 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
       - name: Docker edge push
-        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
         run: |
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
       - name: Docker Hub Description
-        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
         uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -221,7 +227,8 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
       - name: Check if schema was modified
         uses: dorny/paths-filter@v3
         id: filter

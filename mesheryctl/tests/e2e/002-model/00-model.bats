@@ -1,9 +1,10 @@
 #!/usr/bin/env bats
 
 setup() {
-   load "$E2E_HELPERS_PATH/tests_helpers"
-	_tests_helper
+   load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
 
+  load "$E2E_HELPERS_PATH/constants"
 }
 
 
@@ -11,5 +12,5 @@ setup() {
   run $MESHERYCTL_BIN model --count
   assert_success
 
-  assert_output --regexp "^Total number of models: [0-9]+$"
+  assert_output --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"
 }
