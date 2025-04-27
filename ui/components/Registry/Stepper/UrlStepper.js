@@ -272,7 +272,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
 
             <Grid container spacing={2}>
               <Grid item xs={6}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl fullWidth variant="outlined" data-testid="UrlStepper-Select-Category">
                   <InputLabel id="category-label">Category</InputLabel>
                   <Select
                     labelId="category-label"
@@ -293,7 +293,11 @@ const UrlStepper = React.memo(({ handleClose }) => {
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl
+                  fullWidth
+                  variant="outlined"
+                  data-testid="UrlStepper-Select-Subcategory"
+                >
                   <InputLabel id="subcategory-label">Subcategory</InputLabel>
                   <Select
                     labelId="subcategory-label"
@@ -358,7 +362,11 @@ const UrlStepper = React.memo(({ handleClose }) => {
 
             <Grid container spacing={1}>
               <Grid item xs={6}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl
+                  fullWidth
+                  variant="outlined"
+                  data-testid="UrlStepper-Select-Logo-Dark-Theme"
+                >
                   <Typography>Logo (Dark Theme)</Typography>
                   <input
                     id="logo-dark-theme"
@@ -372,7 +380,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth data-testid="UrlStepper-Select-Logo-Light-Theme">
                   <Typography>Logo (Light Theme)</Typography>
                   <input
                     id="logo-light-theme"
@@ -385,7 +393,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={6} style={{ marginTop: '2rem' }}>
-                <FormControl fullWidth>
+                <FormControl fullWidth data-testid="UrlStepper-Select-Primary-Color">
                   <Typography>Primary Color</Typography>
                   <input
                     id="primary-color"
@@ -398,7 +406,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={6} style={{ marginTop: '2rem' }}>
-                <FormControl fullWidth>
+                <FormControl fullWidth data-testid="UrlStepper-Select-Secondary-Color">
                   <Typography>Secondary Color</Typography>
                   <input
                     id="secondary-color"
@@ -411,7 +419,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Grid>
 
               <Grid item xs={12} style={{ marginTop: '1rem' }}>
-                <FormControl fullWidth variant="outlined">
+                <FormControl fullWidth variant="outlined" data-testid="UrlStepper-Select-Shape">
                   <InputLabel id="shape-label">Shape</InputLabel>
                   <Select
                     labelId="shape-label"
@@ -483,6 +491,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     value={source.toLowerCase()}
                     control={<Radio />}
                     label={<>{source}</>}
+                    data-testid={`UrlStepper-Select-Source-${source}`}
                   />
                 ))}
               </RadioGroup>
@@ -548,6 +557,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     onChange={(e) => setIsAnnotation(e.target.checked)}
                     name="registerModel"
                     color="primary"
+                    data-testid="UrlStepper-Visual-Annotation-Checkbox"
                   />
                 }
               />
@@ -791,6 +801,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
           <ModalButtonPrimary
             disabled={!canGoNext}
             onClick={transitionConfig[urlStepper.activeStep].nextAction}
+            data-testid={`UrlStepper-Button-${nextButtonText}`}
           >
             {nextButtonText}
           </ModalButtonPrimary>
