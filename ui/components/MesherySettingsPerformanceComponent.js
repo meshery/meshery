@@ -26,7 +26,7 @@ import {
   Radio,
 } from '@layer5/sistent';
 
-const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+const loadGenerators = ['fortio', 'wrk2']; //'nighthawk' option is disabled 
 
 const FormControlWrapper = styled(FormControl)({
   minWidth: 180,
