@@ -83,9 +83,10 @@ mesheryctl exp model build [model-name] --version [version]
 		// modelFolder := buildModelCompileFolderName(path, modelName, "")
 
 		// Save OCI artifact into a tar file under current folder
-		tarfileName := buildModelCompileImageName(modelName, version)
+		imageName := buildModelCompileImageName(modelName, version)
 
-		if err := meshkitOci.SaveOCIArtifact(img, tarfileName, modelName); err != nil {
+		utils.Log.Infof("Saving OCI artifact as %s", imageName)
+		if err := meshkitOci.SaveOCIArtifact(img, imageName, modelName); err != nil {
 			return ErrModelBuild(err)
 		}
 
