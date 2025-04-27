@@ -21,7 +21,7 @@ Documentation for exp model init can be found at https://docs.meshery.io/referen
 Documentation for exp model build can be found at https://docs.meshery.io/reference/mesheryctl/exp/model/build`,
 	Example: `
 // Create an OCI-compliant package from the model files
-mesheryctl exp model build [model-name]
+mesheryctl exp model build [model-name] --version [version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
@@ -33,6 +33,11 @@ mesheryctl exp model build [model-name]
 		modelName := args[0]
 		path, _ := cmd.Flags().GetString("path")
 		version, _ := cmd.Flags().GetString("version")
+
+		// validate version is not empty
+		if version == "" {
+			return ErrModelBuildFromStrings("--version is empty")
+		}
 
 		{
 			folder := buildModelCompileFolderName(path, modelName, version)
@@ -88,7 +93,8 @@ mesheryctl exp model build [model-name]
 
 func init() {
 	buildModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
-	buildModelCmd.Flags().StringP("version", "", "", "(optional) model version (if not specified, cmd builds all version from model folder)")
+	// TODO make optional (if not specified look inside the model directory and take subfolder if only one subfolder, fail if few)
+	buildModelCmd.Flags().StringP("version", "", "", "(mandatory) model version")
 }
 
 func buildModelCompileFolderName(path string, modelName string, version string) string {
