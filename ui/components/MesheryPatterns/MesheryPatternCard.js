@@ -244,7 +244,7 @@ function MesheryPatternCard_({
                   fill={
                     !CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)
                       ? theme.palette.grey[400]
-                      : theme.palette.background.constant.white 
+                      : theme.palette.background.constant.white
                   }
                   style={{
                     ...iconMedium,
@@ -294,15 +294,14 @@ function MesheryPatternCard_({
                     opacity: handleClone.disabled ? 0.5 : 1,
                     pointerEvents: handleClone.disabled ? 'none' : 'auto',
                     cursor: handleClone.disabled ? 'not-allowed' : 'pointer',
-
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon
                     fill={
                       !CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)
-                        ? theme.palette.grey[400] 
-                        : theme.palette.background.constant.white 
+                        ? theme.palette.grey[400]
+                        : theme.palette.background.constant.white
                     }
                     style={{
                       ...iconMedium,
@@ -327,16 +326,16 @@ function MesheryPatternCard_({
                     cursor: editInConfigurator.disabled ? 'not-allowed' : 'pointer',
                   }}
                 >
-                  <Edit 
+                  <Edit
                     fill={
                       !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)
                         ? theme.palette.grey[400]
-                        : theme.palette.background.constant.white 
+                        : theme.palette.background.constant.white
                     }
                     style={{
                       ...iconMedium,
                     }}
-                     />
+                  />
                   <GridCloneBtnText> Edit </GridCloneBtnText>
                 </TooltipButton>
               )}
@@ -357,7 +356,7 @@ function MesheryPatternCard_({
                 <InfoOutlinedIcon
                   fill={
                     !CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)
-                      ? theme.palette.grey[400]  // disabled color
+                      ? theme.palette.grey[400] // disabled color
                       : theme.palette.background.constant.white // active color
                   }
                   style={{
