@@ -84,6 +84,12 @@ func TestModelBuild(t *testing.T) {
 			ExpectedResponse: "model.build.error.invalid-amount-of-args.golden",
 		},
 		{
+			Name:             "model build version not specified",
+			Args:             []string{"build", "aws-ec2-controller", "--version", ""},
+			ExpectError:      true,
+			ExpectedResponse: "model.build.error.version-not-specified.golden",
+		},
+		{
 			Name:             "model build folder does not exist",
 			Args:             []string{"build", "aws-ec2-controller", "--version", "v0.1.0", "--path", "./not_existing_folder"},
 			ExpectError:      true,
