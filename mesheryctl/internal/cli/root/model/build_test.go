@@ -53,11 +53,11 @@ func TestModelBuild(t *testing.T) {
 	tests := []struct {
 		Name             string
 		Args             []string
-		SetupHook        func()
+		SetupHooks       []func()
 		ExpectError      bool
 		ExpectedResponse string
 		ExpectedFiles    []string
-		CleanupHook      func()
+		CleanupHooks     []func()
 	}{
 		{
 			Name:             "model build from model name and version",
@@ -67,11 +67,15 @@ func TestModelBuild(t *testing.T) {
 			ExpectedFiles: []string{
 				"test-case-aws-lambda-controller-v0-1-0.tar",
 			},
-			SetupHook: setupHookModelInit("init", "test-case-aws-lambda-controller", "--version", "v0.1.0"),
-			CleanupHook: cleanUpHookRemoveDirsAndFiles(
-				"test-case-aws-lambda-controller",
-				"test-case-aws-lambda-controller-v0-1-0.tar",
-			),
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-aws-lambda-controller", "--version", "v0.1.0"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-aws-lambda-controller",
+					"test-case-aws-lambda-controller-v0-1-0.tar",
+				),
+			},
 		},
 		{
 			Name:             "model build no params",
@@ -88,11 +92,15 @@ func TestModelBuild(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
-			if tc.CleanupHook != nil {
-				defer tc.CleanupHook()
+			if len(tc.CleanupHooks) > 0 {
+				for _, cleanupHook := range tc.CleanupHooks {
+					defer cleanupHook()
+				}
 			}
-			if tc.SetupHook != nil {
-				tc.SetupHook()
+			if len(tc.SetupHooks) > 0 {
+				for _, setupHook := range tc.SetupHooks {
+					setupHook()
+				}
 			}
 			// Expected response
 			testdataDir := filepath.Join(currDir, "testdata")
