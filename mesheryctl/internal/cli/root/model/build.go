@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -81,8 +82,9 @@ mesheryctl exp model build [model-name] --version [version]
 
 		// modelFolder := buildModelCompileFolderName(path, modelName, "")
 
-		// Save OCI artifact into a tar file
-		tarfileName := filepath.Join(folder, "model.tar")
+		// Save OCI artifact into a tar file under current folder
+		tarfileName := buildModelCompileImageName(modelName, version)
+
 		if err := meshkitOci.SaveOCIArtifact(img, tarfileName, modelName); err != nil {
 			return ErrModelBuild(err)
 		}
@@ -107,4 +109,13 @@ func buildModelCompileFolderName(path string, modelName string, version string) 
 		dirParts = append(dirParts, version)
 	}
 	return filepath.Join(dirParts...)
+}
+
+func buildModelCompileImageName(modelName string, version string) string {
+	return fmt.Sprintf(
+		"%s-%s.%s",
+		modelName,
+		strings.ReplaceAll(version, ".", "-"),
+		"tar",
+	)
 }

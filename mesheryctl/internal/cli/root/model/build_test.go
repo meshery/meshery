@@ -34,7 +34,7 @@ func TestModelBuild(t *testing.T) {
 			}
 		}
 	}
-	cleanUpHookRemoveDirs := func(dirs ...string) func() {
+	cleanUpHookRemoveDirsAndFiles := func(dirs ...string) func() {
 		return func() {
 			errs := make([]error, 0, 1)
 			for _, dir := range dirs {
@@ -46,7 +46,7 @@ func TestModelBuild(t *testing.T) {
 				t.Fatal(errors.Join(errs...))
 			}
 
-			t.Log("removed created folders")
+			t.Log("removed created dirs and files")
 		}
 	}
 
@@ -65,10 +65,13 @@ func TestModelBuild(t *testing.T) {
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-version.golden",
 			ExpectedFiles: []string{
-				"test-case-aws-lambda-controller/v0.1.0/model.tar",
+				"test-case-aws-lambda-controller-v0-1-0.tar",
 			},
-			SetupHook:   setupHookModelInit("init", "test-case-aws-lambda-controller", "--version", "v0.1.0"),
-			CleanupHook: cleanUpHookRemoveDirs("test-case-aws-lambda-controller"),
+			SetupHook: setupHookModelInit("init", "test-case-aws-lambda-controller", "--version", "v0.1.0"),
+			CleanupHook: cleanUpHookRemoveDirsAndFiles(
+				"test-case-aws-lambda-controller",
+				"test-case-aws-lambda-controller-v0-1-0.tar",
+			),
 		},
 		{
 			Name:             "model build no params",
