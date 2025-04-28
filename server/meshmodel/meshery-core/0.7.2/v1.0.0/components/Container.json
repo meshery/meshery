@@ -87,20 +87,6 @@
       "version": "0.7.0"
     },
     {
-      "description": "Configure Labels And Annotations for  the component ",
-      "displayName": "Labels and Annotations Configuration",
-      "entityState": [
-        "declaration"
-      ],
-      "key": "",
-      "kind": "mutate",
-      "schemaVersion": "capability.meshery.io/v1alpha1",
-      "status": "enabled",
-      "subType": "labels-and-annotations",
-      "type": "configuration",
-      "version": "0.7.0"
-    },
-    {
       "description": "View relationships for the component",
       "displayName": "Relationships",
       "entityState": [
