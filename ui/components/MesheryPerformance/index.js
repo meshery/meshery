@@ -112,7 +112,7 @@ export function generatePerformanceProfile(data) {
 }
 
 // =============================== PERFORMANCE COMPONENT =======================
-const loadGenerators = ['fortio', 'wrk2']; //'nighthawk' option currently disabled 
+const loadGenerators = ['fortio', 'wrk2']; // 'nighthawk' option currently disabled
 
 const infoFlags = <>Only .json files are supported.</>;
 
