@@ -17,6 +17,7 @@ var buildModelCmd = &cobra.Command{
 	Use:   "build",
 	Short: "Create an OCI-compliant package from the model files",
 	Long: `Create an OCI-compliant package from the model files.
+Model files are taken from [path]/[model-name]/[version] folder.
 Expects input to be in the format scaffolded by the model init command.
 Documentation for exp model init can be found at https://docs.meshery.io/reference/mesheryctl/exp/model/init
 Documentation for exp model build can be found at https://docs.meshery.io/reference/mesheryctl/exp/model/build`,
