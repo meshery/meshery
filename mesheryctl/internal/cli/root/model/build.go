@@ -80,8 +80,6 @@ mesheryctl exp model build [model-name] --version [version]
 			return ErrModelBuild(errBuildImage)
 		}
 
-		// modelFolder := buildModelCompileFolderName(path, modelName, "")
-
 		// Save OCI artifact into a tar file under current folder
 		imageName := buildModelCompileImageName(modelName, version)
 
