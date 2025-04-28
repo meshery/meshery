@@ -19,7 +19,6 @@ import {
   PROMPT_VARIANTS,
   ModalFooter,
 } from '@layer5/sistent';
-import _ from 'lodash';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useContext, useRef, useState } from 'react';
