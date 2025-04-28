@@ -1,9 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
-import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  CircularProgress,
+  useTheme,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+} from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { REGISTRY_ITEM_STATES } from '../../utils/Enum';
 // import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 // import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -25,6 +38,9 @@ import {
   StyledKeyValueProperty,
 } from './MeshModel.style';
 import { iconSmall } from 'css/icons.styles';
+import dataFetch from '../../lib/data-fetch';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -119,7 +135,11 @@ const RenderContents = ({
   );
 };
 
-const ModelContents = ({ modelDef }) => {
+const ModelContents = ({ modelDef, onModelDeleted }) => {
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { notify } = useNotification();
+
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
@@ -177,6 +197,54 @@ const ModelContents = ({ modelDef }) => {
     a.click();
     a.remove();
   };
+
+  const handleDeleteConfirm = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+  };
+
+  const handleDeleteModel = () => {
+    setIsDeleting(true);
+
+    dataFetch(
+      `/api/meshmodels/models/${modelDef.name}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+      },
+      (result) => {
+        setIsDeleting(false);
+        setDeleteDialogOpen(false);
+        if (result && result.status === 'ok') {
+          notify({
+            message: `Model "${modelDef.displayName}" successfully deleted`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+          if (onModelDeleted) {
+            onModelDeleted(modelDef);
+          }
+        } else {
+          notify({
+            message: `Failed to delete model: ${result.message || 'Unknown error'}`,
+            event_type: EVENT_TYPES.ERROR,
+          });
+        }
+      },
+      (error) => {
+        setIsDeleting(false);
+        setDeleteDialogOpen(false);
+        notify({
+          message: `Error deleting model: ${error}`,
+          event_type: EVENT_TYPES.ERROR,
+          details: error.toString(),
+        });
+      },
+    );
+  };
+
   const orderRight = ['category', 'duplicates', 'relationships'];
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
   const isShowStatusSelector = !Array.isArray(modelDef?.model.version);
@@ -199,6 +267,17 @@ const ModelContents = ({ modelDef }) => {
               Export
             </Button>
           ) : null}
+          <Button
+            aria-label="Delete Model"
+            variant="contained"
+            color="error"
+            alt="Delete Model"
+            onClick={handleDeleteConfirm}
+            size="small"
+          >
+            <DeleteIcon style={iconSmall} />
+            Delete
+          </Button>
           {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
         </div>
       </div>
@@ -211,6 +290,36 @@ const ModelContents = ({ modelDef }) => {
         orderRight={orderdMetadataRight}
         jsonData={modelDef}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={handleDeleteCancel}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">Delete Model</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete model &quot;{modelDef.displayName}&quot;? This will
+            permanently remove the model and all its components from the registry.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteCancel} color="primary" disabled={isDeleting}>
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteModel}
+            color="error"
+            variant="contained"
+            autoFocus
+            disabled={isDeleting}
+          >
+            {isDeleting ? <CircularProgress size={24} color="inherit" /> : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
@@ -447,7 +556,7 @@ const StatusChip = ({ entityData, entityType }) => {
   );
 };
 
-const MeshModelDetails = ({ view, showDetailsData }) => {
+const MeshModelDetails = ({ view, showDetailsData, onModelDeleted }) => {
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
@@ -458,7 +567,7 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   const getContent = (type) => {
     switch (type) {
       case MODELS:
-        return <ModelContents modelDef={showDetailsData.data} />;
+        return <ModelContents modelDef={showDetailsData.data} onModelDeleted={onModelDeleted} />;
       case RELATIONSHIPS:
         return <RelationshipContents relationshipDef={showDetailsData.data} />;
       case COMPONENTS:

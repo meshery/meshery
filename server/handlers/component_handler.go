@@ -1728,6 +1728,144 @@ func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// swagger:route DELETE /api/meshmodels/models/{model} DeleteMeshmodelModel idDeleteMeshmodelModel
+// Handle DELETE request for deleting a meshmodel by name.
+//
+// Delete a model by name. The model name should be lowercase like "kubernetes", "istio".
+// This will permanently remove the model and its components from the database.
+//
+// responses:
+//
+//	200: noContentWrapper
+//	400: errorResponseWrapper
+//	401: errorResponseWrapper
+//	500: errorResponseWrapper
+func (h *Handler) DeleteMeshmodelModel(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+
+	// Extract model name from URL parameters
+	modelName := mux.Vars(r)["model"]
+	if modelName == "" {
+		http.Error(rw, "model name cannot be empty", http.StatusBadRequest)
+		return
+	}
+
+	// Get user ID for event logging
+	userID := uuid.FromStringOrNil(user.ID)
+
+	// First, get the model to confirm it exists and get its display name for better error messages
+	entities, _, _, err := h.registryManager.GetEntities(&regv1beta1.ModelFilter{
+		Name:   modelName,
+		Greedy: true,
+	})
+
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		event := events.NewEvent().
+			ActedUpon(userID).
+			FromUser(userID).
+			FromSystem(*h.SystemID).
+			WithCategory("model").
+			WithAction("delete").
+			WithSeverity(events.Error).
+			WithDescription(fmt.Sprintf("Failed to fetch model '%s' before deletion", modelName)).
+			WithMetadata(map[string]interface{}{"error": err.Error()}).
+			Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if len(entities) == 0 {
+		errMsg := fmt.Sprintf("Model '%s' not found", modelName)
+		h.log.Error(fmt.Errorf(errMsg))
+		event := events.NewEvent().
+			ActedUpon(userID).
+			FromUser(userID).
+			FromSystem(*h.SystemID).
+			WithCategory("model").
+			WithAction("delete").
+			WithSeverity(events.Error).
+			WithDescription(errMsg).
+			Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		http.Error(rw, errMsg, http.StatusNotFound)
+		return
+	}
+
+	// Get the model definition for better error messages
+	model, ok := entities[0].(*_model.ModelDefinition)
+	if !ok {
+		errMsg := fmt.Sprintf("Model '%s' not found", modelName)
+		h.log.Error(fmt.Errorf(errMsg))
+		event := events.NewEvent().
+			ActedUpon(userID).
+			FromUser(userID).
+			FromSystem(*h.SystemID).
+			WithCategory("model").
+			WithAction("delete").
+			WithSeverity(events.Error).
+			WithDescription(errMsg).
+			Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		http.Error(rw, errMsg, http.StatusInternalServerError)
+		return
+	}
+
+	// Now delete the model from the registry
+	err = h.registryManager.DeleteModel(modelName)
+	if err != nil {
+		h.log.Error(err)
+		event := events.NewEvent().
+			ActedUpon(userID).
+			FromUser(userID).
+			FromSystem(*h.SystemID).
+			WithCategory("model").
+			WithAction("delete").
+			WithSeverity(events.Error).
+			WithDescription(fmt.Sprintf("Failed to delete model '%s'", model.DisplayName)).
+			WithMetadata(map[string]interface{}{"error": err.Error()}).
+			Build()
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Success - log event and notify subscribers
+	description := fmt.Sprintf("Model '%s' successfully deleted", model.DisplayName)
+	event := events.NewEvent().
+		ActedUpon(userID).
+		FromUser(userID).
+		FromSystem(*h.SystemID).
+		WithCategory("model").
+		WithAction("delete").
+		WithSeverity(events.Informational).
+		WithDescription(description).
+		Build()
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+	go h.config.MeshModelSummaryChannel.Publish()
+
+	// Return standardized JSON response
+	res := struct {
+		Status  string `json:"status"`
+		Message string `json:"message"`
+	}{
+		Status:  "ok",
+		Message: fmt.Sprintf("Model '%s' successfully deleted", model.DisplayName),
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+}
+
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {
 	case entity.ComponentDefinition:

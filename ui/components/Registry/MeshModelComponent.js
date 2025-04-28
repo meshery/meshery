@@ -306,6 +306,28 @@ const MeshModelComponent_ = ({
     fetchData();
   }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
 
+  const handleModelDeleted = (deletedModel) => {
+    // Clear the details view if the deleted model was selected
+    if (showDetailsData.type === MODELS && showDetailsData.data.id === deletedModel.id) {
+      setShowDetailsData({ type: 'none', data: {} });
+    }
+
+    // Refresh the models data by resetting filters and fetching data again
+    setModelsFilters({ page: 0 });
+    setResourcesDetail([]);
+    getMeshModelsData(
+      {
+        params: {
+          page: 0,
+          pagesize: 25,
+          components: false,
+          relationships: false,
+        },
+      },
+      true,
+    );
+  };
+
   return (
     <div data-test="workloads">
       <TabBar
@@ -393,6 +415,7 @@ const MeshModelComponent_ = ({
             view={view}
             setShowDetailsData={setShowDetailsData}
             showDetailsData={showDetailsData}
+            onModelDeleted={handleModelDeleted}
           />
         </TreeWrapper>
       </MainContainer>
