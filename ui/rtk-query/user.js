@@ -5,7 +5,7 @@ import { initiateQuery } from './utils';
 const Tags = {
   USER_PREF: 'userPref',
   LOAD_TEST_PREF: 'loadTestPref',
-  PROVIDER_CAP:'provider_capabilities'
+  PROVIDER_CAP: 'provider_capabilities',
 };
 
 export const userApi = api
