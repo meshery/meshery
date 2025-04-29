@@ -7,7 +7,7 @@ import {
   styled,
   ResponsiveDataTable,
 } from '@layer5/sistent';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Modal from './Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -53,7 +53,6 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
   const [formData, setFormData] = useState({});
-  const [credentials, setCredentials] = useState([]);
   const [credModal, setCredModal] = useState({
     open: false,
     data: null,
@@ -64,12 +63,6 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
   const [credentialName, setCredentialName] = useState(null);
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
-
-  useEffect(() => {
-    if (credentialsData) {
-      setCredentials(credentialsData.credentials || []);
-    }
-  }, [credentialsData]);
 
   const schemaChangeHandler = (type) => {
     setCredentialType(type);
@@ -248,7 +241,7 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
           return <CustomTableCell key={index}>{column.label}</CustomTableCell>;
         },
         customBodyRender: (_, tableMeta) => {
-          const rowData = credentials[tableMeta.rowIndex];
+          const rowData = (credentialsData?.credentials || [])[tableMeta.rowIndex];
           return (
             <ActionContainer>
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
@@ -399,7 +392,7 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
       </ToolWrapper>
       <ResponsiveDataTable
         columns={columns}
-        data={credentials}
+        data={credentialsData?.credentials || []}
         options={options}
         tableCols={tableCols}
         updateCols={updateCols}

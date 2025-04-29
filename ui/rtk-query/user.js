@@ -5,11 +5,12 @@ import { initiateQuery } from './utils';
 const Tags = {
   USER_PREF: 'userPref',
   LOAD_TEST_PREF: 'loadTestPref',
+  PROVIDER_CAP:'provider_capabilities'
 };
 
 export const userApi = api
   .enhanceEndpoints({
-    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF],
+    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -122,7 +123,7 @@ export const userApi = api
             return [];
           }
         },
-        providesTags: ['provider_capabilities'],
+        providesTags: [Tags.PROVIDER_CAP],
       }),
       getFullPageExtensions: builder.query({
         query: () => ({
@@ -153,7 +154,7 @@ export const userApi = api
           return extNames;
         },
         // Make sure we have proper tag
-        providesTags: ['provider_capabilities'],
+        providesTags: [Tags.PROVIDER_CAP],
       }),
       getSystemVersion: builder.query({
         query: () => 'system/version',
