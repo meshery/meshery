@@ -217,7 +217,6 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
           <Tabs
             value={value}
             onChange={handleChange}
-            // style={{ backgroun/dColor: 'transparent', marginBottom: '2rem' }}
           >
             {isDesignsVisible && (
               <Tab
