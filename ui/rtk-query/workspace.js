@@ -5,6 +5,10 @@ import _ from 'lodash';
 
 const TAGS = {
   WORKSPACES: 'workspaces',
+  DESIGNS: 'workspaces_designs',
+  ENVIRONMENTS: 'workspaces_environments',
+  VIEWS: 'workspaces_views',
+  TEAMS: 'workspaces_teams',
 };
 const workspacesApi = api
   .enhanceEndpoints({
@@ -68,7 +72,7 @@ const workspacesApi = api
           },
           method: 'GET',
         }),
-        providesTags: () => [{ type: TAGS.WORKSPACES }],
+        providesTags: () => [{ type: TAGS.ENVIRONMENTS }],
       }),
 
       assignEnvironmentToWorkspace: builder.mutation({
@@ -77,7 +81,7 @@ const workspacesApi = api
           method: 'POST',
         }),
 
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENTS }],
       }),
 
       unassignEnvironmentFromWorkspace: builder.mutation({
@@ -86,7 +90,7 @@ const workspacesApi = api
           method: 'DELETE',
         }),
 
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.ENVIRONMENTS }],
       }),
 
       getDesignsOfWorkspace: builder.query({
@@ -116,8 +120,8 @@ const workspacesApi = api
 
           return designs;
         },
-        providesTags: () => [{ type: TAGS.WORKSPACES }],
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        providesTags: () => [{ type: TAGS.DESIGNS }],
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
 
       assignDesignToWorkspace: builder.mutation({
@@ -126,7 +130,7 @@ const workspacesApi = api
           method: 'POST',
         }),
 
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
 
       unassignDesignFromWorkspace: builder.mutation({
@@ -134,7 +138,7 @@ const workspacesApi = api
           url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'DELETE',
         }),
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       getViewsOfWorkspace: builder.query({
         queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
@@ -162,15 +166,15 @@ const workspacesApi = api
 
           return views;
         },
-        providesTags: () => [{ type: TAGS.WORKSPACES }],
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        providesTags: () => [{ type: TAGS.VIEWS }],
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       assignViewToWorkspace: builder.mutation({
         query: (queryArg) => ({
           url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
           method: 'POST',
         }),
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       unassignViewFromWorkspace: builder.mutation({
@@ -178,7 +182,7 @@ const workspacesApi = api
           url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
           method: 'DELETE',
         }),
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       getTeamsOfWorkspace: builder.query({
@@ -193,7 +197,7 @@ const workspacesApi = api
           },
           method: 'GET',
         }),
-        providesTags: () => [{ type: TAGS.WORKSPACES }],
+        providesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
       assignTeamToWorkspace: builder.mutation({
@@ -201,7 +205,7 @@ const workspacesApi = api
           url: `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
           method: 'POST',
         }),
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
       unassignTeamFromWorkspace: builder.mutation({
@@ -209,7 +213,7 @@ const workspacesApi = api
           url: `extensions/api/workspaces/${queryArg.workspaceId}/teams/${queryArg.teamId}`,
           method: 'DELETE',
         }),
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.TEAMS }],
       }),
 
       getEventsOfWorkspace: builder.query({
@@ -222,7 +226,7 @@ const workspacesApi = api
             order: queryArg.order,
           },
         }),
-        invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
+        invalidatesTags: () => [{ type: TAGS.TEAMS }],
       }),
     }),
   });
