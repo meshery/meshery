@@ -320,7 +320,8 @@ function MesheryPatterns({
     selectedResource: {},
   });
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [viewType, setViewType] = useState('grid');
+  const {view} = router.query;
+  const [viewType, setViewType] = useState(view === 'table' ? 'table':'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
@@ -504,6 +505,14 @@ function MesheryPatterns({
     if (viewType === 'grid') {
       setSearch('');
     }
+    router.push(
+      {
+        pathname: router.pathname,
+        query: {...router.query,view: viewType},
+      },
+      undefined,
+      {shallow:true}
+    );
   }, [viewType]);
 
   const initPatternsSubscription = (
