@@ -4,14 +4,37 @@ import { initiateQuery } from './utils';
 
 const Tags = {
   USER_PREF: 'userPref',
+  LOAD_TEST_PREF: 'loadTestPref',
+  PROVIDER_CAP: 'provider_capabilities',
 };
 
 export const userApi = api
   .enhanceEndpoints({
-    addTagTypes: [Tags.USER_PREF],
+    addTagTypes: [Tags.USER_PREF, Tags.LOAD_TEST_PREF, Tags.PROVIDER_CAP],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
+      getLoadTestPrefs: builder.query({
+        query: (selectedK8sContexts) => ({
+          url: ctxUrl('/api/user/prefs', selectedK8sContexts),
+          method: 'GET',
+          credentials: 'include',
+        }),
+        providesTags: [Tags.LOAD_TEST_PREF],
+        // Transform response to directly get the loadTestPrefs
+        transformResponse: (response) => response?.loadTestPrefs || {},
+      }),
+
+      updateLoadTestPrefs: builder.mutation({
+        query: (queryArg) => ({
+          url: ctxUrl('/api/user/prefs', queryArg.selectedK8sContexts),
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json;charset=UTF-8' },
+          body: JSON.stringify({ loadTestPrefs: queryArg.loadTestPrefs }),
+        }),
+        invalidatesTags: [Tags.LOAD_TEST_PREF],
+      }),
       getLoggedInUser: builder.query({
         query: () => `user`,
         method: 'GET',
@@ -78,6 +101,61 @@ export const userApi = api
         query: () => 'provider/capabilities',
         method: 'GET',
       }),
+      getExtensionsByType: builder.query({
+        query: () => ({
+          url: 'provider/capabilities',
+          method: 'GET',
+          credentials: 'include',
+        }),
+        transformResponse: (response, _, type) => {
+          if (!response?.extensions || !response?.extensions[type]) {
+            return [];
+          }
+
+          try {
+            const ExtensionPointSchemaValidator =
+              require('../utils/ExtensionPointSchemaValidator').default;
+            return ExtensionPointSchemaValidator(type)(response?.extensions[type]);
+          } catch (error) {
+            console.group('extension error');
+            console.error(error);
+            console.groupEnd();
+            return [];
+          }
+        },
+        providesTags: [Tags.PROVIDER_CAP],
+      }),
+      getFullPageExtensions: builder.query({
+        query: () => ({
+          url: 'provider/capabilities',
+          method: 'GET',
+          credentials: 'include',
+        }),
+        transformResponse: (response) => {
+          if (!response?.extensions) {
+            return [];
+          }
+
+          let extNames = [];
+          for (var key of Object.keys(response.extensions)) {
+            if (Array.isArray(response.extensions[key])) {
+              response.extensions[key].forEach((comp) => {
+                if (comp?.type === 'full_page') {
+                  let ext = {
+                    name: key,
+                    uri: comp?.href?.uri,
+                  };
+                  extNames.push(ext);
+                }
+              });
+            }
+          }
+
+          return extNames;
+        },
+        // Make sure we have proper tag
+        providesTags: [Tags.PROVIDER_CAP],
+      }),
       getSystemVersion: builder.query({
         query: () => 'system/version',
         method: 'GET',
@@ -136,6 +214,12 @@ export const userApi = api
   });
 
 export const {
+  useGetExtensionsByTypeQuery,
+  useLazyGetExtensionsByTypeQuery,
+  useGetFullPageExtensionsQuery,
+  useLazyGetFullPageExtensionsQuery,
+  useGetLoadTestPrefsQuery,
+  useUpdateLoadTestPrefsMutation,
   useHandleUserInviteMutation,
   useGetLoggedInUserQuery,
   useGetUserByIdQuery,
