@@ -61,7 +61,7 @@ const WorkspaceDataTable = ({
   const org_id = useLegacySelector((state) => {
     return typeof state?.get === 'function'
       ? state.get('organization')?.id
-      : state?.organization?.id || "";
+      : state?.organization?.id || '';
   });
 
   const theme = useTheme();

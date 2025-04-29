@@ -214,10 +214,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
     <ErrorBoundary>
       {shouldRenderTabs && (
         <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: '2rem' }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-          >
+          <Tabs value={value} onChange={handleChange}>
             {isDesignsVisible && (
               <Tab
                 label="Design"
