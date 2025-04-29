@@ -200,17 +200,22 @@ export default function Provider() {
 
                 <DropDownIcon />
               </Button>
-              <Button 
-                  variant="outlined"
-                  color="secondary"
-                  size="small"
-                  style={{ marginTop: "10px" }}
-                  onClick={() => window.open("https://docs.meshery.io/extensibility/providers", "_blank")}
-            >
-              Create Your Own Provider
-            </Button>
+              <Button
+                variant="outlined"
+                color="secondary"
+                size="small"
+                style={{ marginTop: "10px" }}
+                onClick={() =>
+                  window.open(
+                    "https://docs.meshery.io/extensibility/providers",
+                    "_blank"
+                  )
+                }
+              >
+                Create Your Own Provider
+              </Button>
             </StyledButtonGroup>
-                  
+
             <StyledPopover
               id={id}
               open={open}
@@ -369,8 +374,7 @@ export default function Provider() {
               <img
                 src="/provider/static/img/external-link.svg"
                 onError={(e) =>
-                  (e.target.src =
-                    "/static/img/external-link.svg")
+                  (e.target.src = "/static/img/external-link.svg")
                 }
                 width="16px"
               />

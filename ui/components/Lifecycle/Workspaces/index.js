@@ -109,7 +109,9 @@ const Workspaces = () => {
     open: false,
     schema: {},
   });
-  const organization = useLegacySelector((state) => state.get('organization'));
+  const organization = useLegacySelector((state) => {
+    return typeof state?.get === 'function' ? state.get('organization') : state?.organization || {};
+  });
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';

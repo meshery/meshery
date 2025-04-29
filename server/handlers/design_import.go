@@ -304,15 +304,8 @@ func (h *Handler) DesignFileImportHandler(
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
 
 	if err != nil {
-		h.log.Error(ErrSavePattern(err))
-		http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
 
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
 		return
 	}
 
