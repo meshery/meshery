@@ -97,6 +97,40 @@ func (h *Handler) PatternFileRequestHandler(
 	}
 }
 
+func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
+
+	var meshkitErr errors.Error
+	var event *events.Event
+	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
+
+	description := ""
+	if len(meshkitErr.ShortDescription) > 0 {
+		description = fmt.Sprintf("Failed To Save Design, %s", meshkitErr.ShortDescription[0])
+	} else {
+		description = "Failed to save design"
+	}
+
+	if errorParsingToMeshkitError == nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		rw.Write(body)
+		h.log.Error(&meshkitErr)
+		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+			"error": meshkitErr,
+		}).Build()
+
+	} else {
+		h.log.Error(ErrSavePattern(err))
+		http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrSavePattern(err),
+		}).WithDescription(ErrSavePattern(err).Error()).Build()
+	}
+
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+	return
+}
+
 // swagger:route POST /api/pattern PatternsAPI idPostPatternFile
 // Handle POST requests for patterns
 //
@@ -153,15 +187,7 @@ func (h *Handler) handlePatternPOST(
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &mesheryPatternRecord)
 
 	if err != nil {
-		h.log.Error(ErrSavePattern(err))
-		http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
-
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
 		return
 	}
 
