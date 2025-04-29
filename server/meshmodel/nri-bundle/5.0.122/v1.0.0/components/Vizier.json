@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Vizier",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "nri-bundle",
+    "displayName": "NRI Bundle",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/newrelic/helm-charts/releases/download/nri-bundle-5.0.122/nri-bundle-5.0.122.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "5.0.122"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/newrelic/helm-charts/releases/download/nri-bundle-5.0.122/nri-bundle-5.0.122.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "px.dev/v1alpha1",
+    "kind": "Vizier",
+    "schema": "{\n \"description\": \"Vizier is the Schema for the viziers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VizierSpec defines the desired state of Vizier\",\n   \"properties\": {\n    \"autopilot\": {\n     \"description\": \"Autopilot should be set if running Pixie on GKE Autopilot.\",\n     \"type\": \"boolean\"\n    },\n    \"clockConverter\": {\n     \"description\": \"ClockConverter specifies which routine to use for converting timestamps to a synced reference time.\",\n     \"enum\": [\n      \"default\",\n      \"grpc\"\n     ],\n     \"type\": \"string\"\n    },\n    \"cloudAddr\": {\n     \"description\": \"CloudAddr is the address of the cloud instance that the Vizier should be pointing to.\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"ClusterName is a name for the Vizier instance, usually specifying which cluster the Vizier is deployed to. If not specified, a random name will be generated.\",\n     \"type\": \"string\"\n    },\n    \"customDeployKeySecret\": {\n     \"description\": \"CustomDeployKeySecret is the name of the secret where the deploy key is stored.\",\n     \"type\": \"string\"\n    },\n    \"dataAccess\": {\n     \"description\": \"DataAccess defines the level of data that may be accesssed when executing a script on the cluster. If none specified, assumes full data access.\",\n     \"enum\": [\n      \"Full\",\n      \"Restricted\"\n     ],\n     \"type\": \"string\"\n    },\n    \"dataCollectorParams\": {\n     \"description\": \"DataCollectorParams specifies the set of params for configuring the dataCollector. If no params are specified, defaults are used.\",\n     \"properties\": {\n      \"customPEMFlags\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"This contains custom flags that should be passed to the PEM via environment variables.\",\n       \"type\": \"object\"\n      },\n      \"datastreamBufferSize\": {\n       \"description\": \"DatastreamBufferSize is the data buffer size per connection. Default size is 1 Mbyte. For high-throughput applications, try increasing this number if experiencing data loss.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"datastreamBufferSpikeSize\": {\n       \"description\": \"DatastreamBufferSpikeSize is the maximum temporary size of a data stream buffer before processing.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"deployKey\": {\n     \"description\": \"DeployKey is the deploy key associated with the Vizier instance. This is used to link the Vizier to a specific user/org. This is required unless specifying a CustomDeployKeySecret.\",\n     \"type\": \"string\"\n    },\n    \"devCloudNamespace\": {\n     \"description\": \"DevCloudNamespace should be specified only for dev versions of Pixie cloud which have no ingress to help redirect traffic to the correct service. The DevCloudNamespace is the namespace that the dev Pixie cloud is running on, for example: \\\"plc-dev\\\".\",\n     \"type\": \"string\"\n    },\n    \"disableAutoUpdate\": {\n     \"description\": \"DisableAutoUpdate specifies whether auto update should be enabled for the Vizier instance.\",\n     \"type\": \"boolean\"\n    },\n    \"leadershipElectionParams\": {\n     \"description\": \"LeadershipElectionParams specifies configurable values for the K8s leaderships elections which Vizier uses manage pod leadership.\",\n     \"properties\": {\n      \"electionPeriodMs\": {\n       \"description\": \"ElectionPeriodMs defines how frequently Vizier attempts to run a K8s leader election, in milliseconds. The period also determines how long Vizier waits for a leader election response back from the K8s API. If the K8s API is slow to respond, consider increasing this number.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"patches\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Patches defines patches that should be applied to Vizier resources. The key of the patch should be the name of the resource that is patched. The value of the patch is the patch, encoded as a string which follow the \\\"strategic merge patch\\\" rules for K8s.\",\n     \"type\": \"object\"\n    },\n    \"pemMemoryLimit\": {\n     \"description\": \"PemMemoryLimit is a memory limit applied specifically to PEM pods.\",\n     \"type\": \"string\"\n    },\n    \"pemMemoryRequest\": {\n     \"description\": \"PemMemoryRequest is a memory request applied specifically to PEM pods. It will automatically use the value of pemMemoryLimit if not specified.\",\n     \"type\": \"string\"\n    },\n    \"pod\": {\n     \"description\": \"Pod defines the policy for creating Vizier pods.\",\n     \"properties\": {\n      \"annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Annotations specifies the annotations to attach to pods the operator creates.\",\n       \"type\": \"object\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Labels specifies the labels to attach to pods the operator creates.\",\n       \"type\": \"object\"\n      },\n      \"nodeSelector\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/ This field cannot be updated once the cluster is created.\",\n       \"type\": \"object\"\n      },\n      \"resources\": {\n       \"description\": \"Resources is the resource requirements for a container. This field cannot be updated once the cluster is created.\",\n       \"properties\": {\n        \"claims\": {\n         \"description\": \"Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container. \\n This is an alpha field and requires enabling the DynamicResourceAllocation feature gate. \\n This field is immutable.\",\n         \"items\": {\n          \"description\": \"ResourceClaim references one entry in PodSpec.ResourceClaims.\",\n          \"properties\": {\n           \"name\": {\n            \"description\": \"Name must match the name of one entry in pod.spec.resourceClaims of the Pod where this field is used. It makes that resource available inside a container.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-map-keys\": [\n          \"name\"\n         ],\n         \"x-kubernetes-list-type\": \"map\"\n        },\n        \"limits\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"description\": \"Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\",\n         \"type\": \"object\"\n        },\n        \"requests\": {\n         \"additionalProperties\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"description\": \"Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\",\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"securityContext\": {\n       \"description\": \"The securityContext which should be set on non-privileged pods. All pods which require privileged permissions will still require a privileged securityContext.\",\n       \"properties\": {\n        \"enabled\": {\n         \"description\": \"Whether a securityContext should be set on the pod. In cases where no PSPs are applied to the cluster, this is not necessary.\",\n         \"type\": \"boolean\"\n        },\n        \"fsGroup\": {\n         \"description\": \"A special supplemental group that applies to all containers in a pod.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"runAsGroup\": {\n         \"description\": \"The GID to run the entrypoint of the container process.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"runAsUser\": {\n         \"description\": \"The UID to run the entrypoint of the container process.\",\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"tolerations\": {\n       \"description\": \"Tolerations allows scheduling pods on nodes with matching taints. More info: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/: This field cannot be updated once the cluster is created.\",\n       \"items\": {\n        \"description\": \"The pod this Toleration is attached to tolerates any taint that matches the triple \\u003ckey,value,effect\\u003e using the matching operator \\u003coperator\\u003e.\",\n        \"properties\": {\n         \"effect\": {\n          \"description\": \"Effect indicates the taint effect to match. Empty means match all taint effects. When specified, allowed values are NoSchedule, PreferNoSchedule and NoExecute.\",\n          \"type\": \"string\"\n         },\n         \"key\": {\n          \"description\": \"Key is the taint key that the toleration applies to. Empty means match all taint keys. If the key is empty, operator must be Exists; this combination means to match all values and all keys.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"Operator represents a key's relationship to the value. Valid operators are Exists and Equal. Defaults to Equal. Exists is equivalent to wildcard for value, so that a pod can tolerate all taints of a particular category.\",\n          \"type\": \"string\"\n         },\n         \"tolerationSeconds\": {\n          \"description\": \"TolerationSeconds represents the period of time the toleration (which must be of effect NoExecute, otherwise this field is ignored) tolerates the taint. By default, it is not set, which means tolerate the taint forever (do not evict). Zero and negative values will be treated as 0 (evict immediately) by the system.\",\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"value\": {\n          \"description\": \"Value is the taint value the toleration matches to. If the operator is Exists, the value should be empty, otherwise just a regular string.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"registry\": {\n     \"description\": \"Registry specifies the image registry to use rather than Pixie's default registry (gcr.io). We expect any forward slashes in Pixie's image paths are replaced with a \\\"-\\\". For example: \\\"gcr.io/pixie-oss/pixie-dev/vizier/metadata_server_image:latest\\\" should be pushed to \\\"$registry/gcr.io-pixie-oss-pixie-dev-vizier-metadata_server_image:latest\\\".\",\n     \"type\": \"string\"\n    },\n    \"useEtcdOperator\": {\n     \"description\": \"UseEtcdOperator specifies whether the metadata service should use etcd for storage.\",\n     \"type\": \"boolean\"\n    },\n    \"version\": {\n     \"description\": \"Version is the desired version of the Vizier instance.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vizier\",\n \"type\": \"object\"\n}"
+  }
+}
