@@ -110,7 +110,11 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
     const { children, value, index, ...other } = props;
 
     return (
-      <div hidden={value !== index} {...other}>
+      <div
+        hidden={value !== index}
+        {...other}
+        style={{ backgroundColor: theme.palette.background.tabs }}
+      >
         {value === index && <>{children}</>}
       </div>
     );
@@ -209,8 +213,12 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   return (
     <ErrorBoundary>
       {shouldRenderTabs && (
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-          <Tabs value={value} onChange={handleChange}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider', marginBottom: '2rem' }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            // style={{ backgroun/dColor: 'transparent', marginBottom: '2rem' }}
+          >
             {isDesignsVisible && (
               <Tab
                 label="Design"

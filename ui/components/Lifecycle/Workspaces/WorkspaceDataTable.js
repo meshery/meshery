@@ -335,21 +335,18 @@ const WorkspaceDataTable = ({
   return (
     <div key={`list-view-${viewType}`}>
       <Slide direction="left" in={selectedWorkspace.id ? true : false}>
-        {
-          <div
-            style={{
-              marginTop: '1rem',
-              backgroundColor: theme.palette.background.paper,
-            }}
-          >
-            {selectedWorkspace?.id && (
-              <WorkSpaceContentDataTable
-                workspaceId={selectedWorkspace?.id}
-                workspaceName={selectedWorkspace?.name}
-              />
-            )}
-          </div>
-        }
+        <div
+          style={{
+            marginTop: '1rem',
+          }}
+        >
+          {selectedWorkspace?.id && (
+            <WorkSpaceContentDataTable
+              workspaceId={selectedWorkspace?.id}
+              workspaceName={selectedWorkspace?.name}
+            />
+          )}
+        </div>
       </Slide>
       <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
         <div
