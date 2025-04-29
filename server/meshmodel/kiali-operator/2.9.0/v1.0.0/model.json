@@ -1,0 +1,44 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "kiali-operator",
+  "displayName": "Kiali Operator",
+  "status": "enabled",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Artifact Hub",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "artifacthub",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Observability and Analysis"
+  },
+  "subCategory": "Monitoring",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#0093dd",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 1280 1280\" style=\"enable-background:new 0 0 1280 1280\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#013144}.st1{fill:#0093dd}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M810.9 180.9c-253.6.0-459.1 205.5-459.1 459.1s205.5 459.1 459.1 459.1S1270 893.6 1270 640 1064.5 180.9 810.9 180.9zM810.9 1029.2c-215 0-389.2-174.3-389.2-389.2.0-215 174.3-389.2 389.2-389.2S1200.1 425 1200.1 640 1025.9 1029.2 810.9 1029.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M653.3 284c-136.4 60.5-231.6 197.1-231.6 356 0 158.8 95.2 295.5 231.6 356 98.4-87.1 160.4-214.3 160.4-356C813.7 498.3 751.6 371.1 653.3 284z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M351.8 640c0-109.8 38.6-210.5 102.8-289.5-39.6-18.2-83.6-28.3-130-28.3C150.9 322.2 10 464.5 10 640s140.9 317.8 314.6 317.8c46.3.0 90.4-10.1 130-28.3C390.3 850.5 351.8 749.8 351.8 640z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 1280 1280\" style=\"enable-background:new 0 0 1280 1280\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st0{fill:#ffffff}.st1{fill:#ffffff}\u003c/style\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M810.9 180.9c-253.6.0-459.1 205.5-459.1 459.1s205.5 459.1 459.1 459.1S1270 893.6 1270 640 1064.5 180.9 810.9 180.9zM810.9 1029.2c-215 0-389.2-174.3-389.2-389.2.0-215 174.3-389.2 389.2-389.2S1200.1 425 1200.1 640 1025.9 1029.2 810.9 1029.2z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M653.3 284c-136.4 60.5-231.6 197.1-231.6 356 0 158.8 95.2 295.5 231.6 356 98.4-87.1 160.4-214.3 160.4-356C813.7 498.3 751.6 371.1 653.3 284z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M351.8 640c0-109.8 38.6-210.5 102.8-289.5-39.6-18.2-83.6-28.3-130-28.3C150.9 322.2 10 464.5 10 640s140.9 317.8 314.6 317.8c46.3.0 90.4-10.1 130-28.3C390.3 850.5 351.8 749.8 351.8 640z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "2.9.0"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

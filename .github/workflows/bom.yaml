@@ -3,7 +3,9 @@ on:
   workflow_dispatch: {}
   schedule:
     - cron: 0 3 * * *
-permissions: read-all
+permissions: 
+  contents: read
+  actions: write
 jobs:
   sbom:
     if: github.repository == 'meshery/meshery' 
