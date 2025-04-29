@@ -87,6 +87,20 @@
       "version": "0.7.0"
     },
     {
+      "description": "Initiate a terminal session",
+      "displayName": "Interactive Terminal",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "terminal",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
       "description": "View relationships for the component",
       "displayName": "Relationships",
       "entityState": [
@@ -142,6 +156,20 @@
       "status": "enabled",
       "subType": "shape",
       "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Initiate log streaming session",
+      "displayName": "Stream Logs",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "logs",
+      "type": "operator",
       "version": "0.7.0"
     },
     {

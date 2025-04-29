@@ -58,7 +58,11 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useLegacySelector((state) => state.get('organization'))?.id;
+  const org_id = useLegacySelector((state) => {
+    return typeof state?.get === 'function'
+      ? state.get('organization')?.id
+      : state?.organization?.id || "";
+  });
 
   const theme = useTheme();
 
