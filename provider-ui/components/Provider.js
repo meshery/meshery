@@ -268,35 +268,35 @@ export default function Provider() {
                     <span> Offline</span>
                   </MenuProviderDisabled>
                   <Button
-                size="small"
-                variant="contained"
-                aria-describedby={id}
-                onClick={() =>
-                  window.open(
-                    "https://docs.meshery.io/extensibility/providers",
-                    "_blank"
-                  )
-                }
-                aria-label="Create Provider"
-                data-cy="create_provider"
-                disableElevation
-                sx={{
-                  width:'100%',
-                  marginTop:'0.4rem'
-                }}
-              >Create Your Own Provider&nbsp;
-              <img
-                  src="/provider/static/img/external-link.svg"
-                  onError={(e) =>
-                  (e.target.src = "/static/img/external-link.svg")
-                  }
-                  width="16px"
-                  alt="External link"
-                  style={{
-                    filter:'brightness(0)'
-                  }}
-                  />
-              </Button>
+                    size="small"
+                    variant="contained"
+                    aria-describedby={id}
+                    onClick={() =>
+                      window.open(
+                        "https://docs.meshery.io/extensibility/providers",
+                        "_blank"
+                      )
+                    }
+                    aria-label="Create Provider"
+                    data-cy="create_provider"
+                    disableElevation
+                    sx={{
+                      width: '100%',
+                      marginTop: '0.4rem'
+                    }}
+                  >Create Your Own Provider&nbsp;
+                    <img
+                      src="/provider/static/img/external-link.svg"
+                      onError={(e) =>
+                        (e.target.src = "/static/img/external-link.svg")
+                      }
+                      width="16px"
+                      alt="External link"
+                      style={{
+                        filter: 'brightness(0)'
+                      }}
+                    />
+                  </Button>
                 </MenuList>
               </ClickAwayListener>
             </StyledPopover>
