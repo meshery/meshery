@@ -14,7 +14,7 @@ Meshery follows schema-driven development. As a project, Meshery has different t
 
 The schemas follow a versioned approach to maintain backward compatibility while allowing for the evolution of the definitions.
 
-{% include alert.html type="info" title="Meshery Documentation Core Concepts" content="To better understand how schemas fit into Meshery's architecture, read about Meshery's core concepts in the <a href='https://docs.meshery.io/concepts/logical'>Meshery documentation</a>.`" %}
+{% include alert.html type="info" title="Meshery Documentation Core Concepts" content="To better understand how schemas fit into Meshery's architecture, read about Meshery's core concepts in the <a href='https://docs.meshery.io/concepts/logical'>Meshery documentation</a>." %}
 
 ### Prerequisites
 - **oapi-codegen**: This tool is essential for generating Go code from OpenAPI specifications. Install it using:
@@ -40,11 +40,13 @@ All schemas are stored in the **`schemas`** directory at the root of the project
 ```
 schemas/
   constructs/
-    <schema-version>/  # e.g., v1beta1
-      <construct>/  # e.g., model, component
-        <construct>.json    # Schema definition for the construct (noun)
-        subschemas/         # Any subschemas used within the construct
-        openapi.yml         # OpenAPI schema defining API operations (verbs like create, update, delete)
+    <schema-version>/               # e.g., v1beta1
+      <construct>/                  # e.g., model, component
+        <construct>.json            # Schema definition for the construct (noun)
+        <construct>_template.json   # json template generated from schema
+        <construct>_template.yaml   # yaml template generated from schema
+        subschemas/                 # Any subschemas used within the construct
+        openapi.yml                 # OpenAPI schema defining API operations (verbs like create, update, delete)
 ```
 
 ### **Explanation**
@@ -52,6 +54,8 @@ schemas/
 - **`<schema-version>/`** – Each schema version (e.g., `v1beta1`, `v1alpha2`) is a separate directory.
 - **`<construct>/`** – Each construct (e.g., `capability`, `category`) has its own folder.
 - **`<construct>.json`** – Defines the **schema for the noun** (i.e., the entity).
+- **`<construct>_template.json`** - json template generated from schema. Valid json document generated from schema definition. Has all references resolved, contains default values.
+- **`<construct>_template.yaml`** - yaml template generated from schema. Valid yaml document generated from schema definition. Has all references resolved, contains default values.
 - **`subschemas/`** – Contains reusable subschemas for modularity.
 - **`openapi.yml`** – Defines **API operations** (verbs: `create`, `update`, `delete`) and serves as the **entry point** for the schema.
 
@@ -76,6 +80,8 @@ To add a new schema, follow these steps:
 Meshery supports **automatic code generation** for:
 - **Golang** (structs and types)
 - **TypeScript** (interfaces and types)
+- **JSON template** (json document with default values)
+- **YAML template** (yaml document with default values)
 
 ### **Generating Code from Schemas**
 The schema-to-code mapping is defined in **`generate.sh`**, which automates the generation process.
@@ -88,14 +94,20 @@ make golang-generate
 
 This also generates a merged_openapi.yml file which can be used to generate the redoc documentation and for rtk-api
 
-#### **Generating TypeScript Models**
-To generate TypeScript types and and ts objects for the schemas use:
+#### **Generating TypeScript Models, JSON and YAML templates**
+To generate
+
+- TypeScript types
+- json templates
+- yaml templates 
+
+from schemas, use:  
 ```bash
-make generate-ts
+make generate-types
 ```
 
-This will generate the typescript types and also javascript objects for the schemas
-the javascript objects can be used to do run time validation of data or for getting information from the schema
+This will generate the typescript types, javascript objects for the schemas, json templates, yaml templates.
+The javascript objects can be used to do run time validation of data or for getting information from the schema.
 
 
 ### **Schema-to-Code Mapping**

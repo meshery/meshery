@@ -192,7 +192,10 @@ export const ModelImportedSection = ({ modelDetails }) => {
 
         return (
           <Box key={index} mb={2}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              data-testid={`ModelImportedSection-ModelHeader-${modelName}`}
+            >
               <Typography gutterBottom>
                 <span style={{ fontWeight: 'bold', fontSize: '17px' }}>
                   {isEntityFile ? 'FILE NAME:' : 'MODEL:'}{' '}
@@ -250,7 +253,7 @@ export const ModelImportedSection = ({ modelDetails }) => {
 };
 
 export const ModelImportMessages = ({ message }) => (
-  <Typography>
+  <Typography data-testid="ModelImportMessages-Wrapper">
     <span style={{ fontWeight: 'bold', fontSize: '17px' }}>{`SUMMARY: `}</span>
     <span style={{ fontSize: '17px' }}>{message}</span>
   </Typography>
