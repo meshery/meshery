@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { connect } from 'react-redux';
@@ -21,6 +21,7 @@ import {
   styled,
   LinearProgress,
 } from '@layer5/sistent';
+import grafanaDateRangeToDate from './helper';
 
 const StyledCard = styled(Card)(() => ({
   height: '100%',
@@ -51,305 +52,98 @@ const ErrorText = styled('span')(({ theme }) => ({
   color: theme.palette.error.default,
 }));
 
-const grafanaDateRangeToDate = (dt, startDate) => {
-  const dto = new Date();
-  switch (dt) {
-    case 'now-2d':
-      dto.setDate(dto.getDate() - 2);
-      break;
-    case 'now-7d':
-      dto.setDate(dto.getDate() - 7);
-      break;
-    case 'now-30d':
-      dto.setDate(dto.getDate() - 30);
-      break;
-    case 'now-90d':
-      dto.setDate(dto.getDate() - 90);
-      break;
-    case 'now-6M':
-      dto.setMonth(dto.getMonth() - 6);
-      break;
-    case 'now-1y':
-      dto.setFullYear(dto.getFullYear() - 1);
-      break;
-    case 'now-2y':
-      dto.setFullYear(dto.getFullYear() - 2);
-      break;
-    case 'now-5y':
-      dto.setFullYear(dto.getFullYear() - 5);
-      break;
-    case 'now-1d/d':
-      dto.setDate(dto.getDate() - 1);
-      if (startDate) {
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now-2d/d':
-      dto.setDate(dto.getDate() - 2);
-      if (startDate) {
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now-7d/d':
-      dto.setDate(dto.getDate() - 7);
-      if (startDate) {
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now-1w/w':
-      dto.setDate(dto.getDate() - 6 - ((dto.getDay() + 8) % 7));
-      if (startDate) {
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setDate(dto.getDate() + 6);
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now-1M/M':
-      dto.setMonth(dto.getMonth() - 1);
-      if (startDate) {
-        dto.setDate(1);
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setMonth(dto.getMonth());
-        dto.setDate(0);
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now-1y/y':
-      dto.setFullYear(dto.getFullYear() - 1);
-      if (startDate) {
-        dto.setMonth(0);
-        dto.setDate(1);
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setMonth(12);
-        dto.setDate(0);
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now/d':
-      dto.setDate(dto.getDate() - 6 - ((dto.getDay() + 8) % 7));
-      if (startDate) {
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now':
-      break;
-    case 'now/w':
-      dto.setDate(dto.getDate() - ((dto.getDay() + 7) % 7));
-      if (startDate) {
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setDate(dto.getDate() + 6);
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now/M':
-      if (startDate) {
-        dto.setDate(1);
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setMonth(dto.getMonth() + 1);
-        dto.setDate(0);
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now/y':
-      if (startDate) {
-        dto.setMonth(0);
-        dto.setDate(1);
-        dto.setHours(0);
-        dto.setMinutes(0);
-        dto.setSeconds(0);
-        dto.setMilliseconds(0);
-      } else {
-        dto.setMonth(12);
-        dto.setDate(0);
-        dto.setHours(23);
-        dto.setMinutes(59);
-        dto.setSeconds(59);
-        dto.setMilliseconds(999);
-      }
-      break;
-    case 'now-5m':
-      dto.setMinutes(dto.getMinutes() - 5);
-      break;
-    case 'now-15m':
-      dto.setMinutes(dto.getMinutes() - 15);
-      break;
-    case 'now-30m':
-      dto.setMinutes(dto.getMinutes() - 30);
-      break;
-    case 'now-1h':
-      dto.setHours(dto.getHours() - 1);
-      break;
-    case 'now-3h':
-      dto.setHours(dto.getHours() - 3);
-      break;
-    case 'now-6h':
-      dto.setHours(dto.getHours() - 6);
-      break;
-    case 'now-12h':
-      dto.setHours(dto.getHours() - 12);
-      break;
-    case 'now-24h':
-      dto.setHours(dto.getHours() - 24);
-      break;
-    default:
-      return new Date(parseFloat(dt));
-  }
-  return dto;
-};
+function GrafanaCustomChart(props) {
+  const {
+    panel,
+    board,
+    inDialog,
+    handleChartDialogOpen,
+    panelData,
+    prometheusURL,
+    grafanaURL,
+    grafanaAPIKey,
+    from,
+    to,
+    templateVars,
+    testUUID,
+    connectionID,
+    refresh,
+    liveTail,
+    updateProgress,
+    updateDateRange,
+    sparkline,
+  } = props;
 
-class GrafanaCustomChart extends Component {
-  constructor(props) {
-    super(props);
-    this.chartRef = null;
-    this.chart = null;
-    this.timeFormat = 'MM/DD/YYYY HH:mm:ss';
-    this.bbTimeFormat = '%Y-%m-%d %h:%M:%S %p';
-    this.panelType = '';
-    switch (props.panel.type) {
-      case 'graph':
-        this.panelType = props.panel.type;
-        break;
-      case 'singlestat':
-        this.panelType =
-          props.panel.type === 'singlestat' &&
-          props.panel.sparkline &&
-          props.panel.sparkline.show === true
-            ? 'sparkline'
-            : 'gauge';
-        // this.panelType = props.panel.type ==='singlestat' && props.panel.sparkline ? 'sparkline':'gauge';
-        break;
-    }
-    const { sparkline } = props;
-    this.datasetIndex = {};
-    this.state = {
-      xAxis: [],
-      sparkline: !!sparkline,
-      chartData: [],
-      error: '',
-      errorCount: 0,
-    };
+  const chartRef = useRef(null);
+  const [chart, setChart] = useState(null);
+  const timeFormat = 'MM/DD/YYYY HH:mm:ss';
+  const bbTimeFormat = '%Y-%m-%d %h:%M:%S %p';
+
+  // Determine panelType based on panel properties
+  let panelType = '';
+  switch (panel.type) {
+    case 'graph':
+      panelType = panel.type;
+      break;
+    case 'singlestat':
+      panelType =
+        panel.type === 'singlestat' && panel.sparkline && panel.sparkline.show === true
+          ? 'sparkline'
+          : 'gauge';
+      // panelType = panel.type ==='singlestat' && panel.sparkline ? 'sparkline':'gauge';
+      break;
   }
 
-  componentDidMount() {
-    this.configChartData();
-  }
+  // State declarations
+  const [datasetIndex, setDatasetIndex] = useState({});
+  const [xAxis, setXAxis] = useState([]);
+  const [chartData, setChartData] = useState([]);
+  const [error, setError] = useState('');
+  const [errorCount, setErrorCount] = useState(0);
+  const [isSparkline] = useState(!!sparkline);
+  const [interval, setIntervalState] = useState(undefined);
 
-  configChartData = () => {
-    const { panel, refresh, liveTail } = this.props;
-    const self = this;
-
-    if (panel.targets) {
-      panel.targets.forEach((target, ind) => {
-        self.datasetIndex[`${ind}_0`] = ind;
-      });
-    }
-    if (typeof self.interval !== 'undefined') {
-      clearInterval(self.interval);
-    }
-    if (liveTail) {
-      self.interval = setInterval(
-        () => {
-          self.collectChartData();
-        },
-        self.computeRefreshInterval(refresh) * 1000,
-      );
-    }
-    self.collectChartData();
-  };
-
-  getOrCreateIndex(datasetInd) {
-    if (typeof this.datasetIndex[datasetInd] !== 'undefined') {
-      return this.datasetIndex[datasetInd];
+  // Helper function to get or create index
+  const getOrCreateIndex = (datasetInd) => {
+    if (typeof datasetIndex[datasetInd] !== 'undefined') {
+      return datasetIndex[datasetInd];
     }
     let max = 0;
-    Object.keys(this.datasetIndex).forEach((i) => {
-      if (this.datasetIndex[i] > max) {
-        max = this.datasetIndex[i];
+    Object.keys(datasetIndex).forEach((i) => {
+      if (datasetIndex[i] > max) {
+        max = datasetIndex[i];
       }
     });
-    this.datasetIndex[datasetInd] = max + 1;
+    const newDatasetIndex = { ...datasetIndex };
+    newDatasetIndex[datasetInd] = max + 1;
+    setDatasetIndex(newDatasetIndex);
     return max + 1;
-  }
-
-  collectChartData = (chartInst) => {
-    const { panel } = this.props;
-    const self = this;
-
-    if (panel.targets) {
-      panel.targets.forEach((target, ind) => {
-        self.getData(ind, target, chartInst, target.datasource?.type);
-      });
-    }
   };
 
-  computeStep = (start, end) => {
+  // Compute refresh interval
+  const computeRefreshInterval = (refreshStr) => {
+    refreshStr = refreshStr.toLowerCase();
+    const l = refreshStr.length;
+    const dur = refreshStr.substring(l - 1, l);
+    refreshStr = refreshStr.substring(0, l - 1);
+    let val = parseInt(refreshStr);
+    if (dur === 'd') {
+      val *= 24;
+    }
+    if (dur === 'h') {
+      val *= 60;
+    }
+    if (dur === 'm') {
+      val *= 60;
+    }
+    if (dur === 's') {
+      return val;
+    }
+    return 30; //fallback
+  };
+
+  // Compute step for queries
+  const computeStep = (start, end) => {
     let step = 10;
     const diff = end - start;
     const min = 60;
@@ -412,154 +206,8 @@ class GrafanaCustomChart extends Component {
     return step;
   };
 
-  getData = async (ind, target, datasource) => {
-    const {
-      prometheusURL,
-      grafanaURL,
-      grafanaAPIKey,
-      panel,
-      from,
-      to,
-      templateVars,
-      testUUID,
-      panelData,
-      connectionID,
-    } = this.props;
-    const { chartData } = this.state;
-    let { xAxis } = this.state;
-
-    let queryRangeURL = '';
-    let endpointURL = '';
-    let endpointAPIKey = '';
-    if (prometheusURL && prometheusURL !== '') {
-      endpointURL = prometheusURL;
-      queryRangeURL = `/api/prometheus/query_range/${connectionID}`;
-    } else if (grafanaURL && grafanaURL !== '') {
-      endpointURL = grafanaURL;
-      endpointAPIKey = grafanaAPIKey;
-      queryRangeURL = `/api/grafana/query_range/${connectionID}`;
-    }
-    const self = this;
-    let { expr } = target;
-    if (templateVars && templateVars !== null && templateVars.length > 0) {
-      templateVars.forEach((tv) => {
-        const tvrs = tv.split('=');
-        if (tvrs.length === 2) {
-          expr = expr.replace(
-            new RegExp(`$${tvrs[0]}`.replace(/[-/^$*+?.()|[\]{}]/g, '\\$&'), 'g'),
-            tvrs[1],
-          ); //eslint-disable-line
-        }
-      });
-    }
-    const start = Math.round(grafanaDateRangeToDate(from).getTime() / 1000);
-    const end = Math.round(grafanaDateRangeToDate(to).getTime() / 1000);
-
-    let ds = datasource?.charAt(0).toUpperCase() + datasource?.substring(1);
-
-    let queryParams = `ds=${ds}&query=${encodeURIComponent(
-      expr,
-    )}&start=${start}&end=${end}&step=${self.computeStep(start, end)}`;
-    if (testUUID && testUUID.trim() !== '') {
-      queryParams += `&uuid=${encodeURIComponent(testUUID)}`; // static_chart=true ?
-    }
-
-    const processReceivedData = (result) => {
-      self.props.updateProgress({ showProgress: false });
-
-      if (typeof result == 'undefined' || result?.status != 'success') {
-        return;
-      }
-
-      if (typeof result !== 'undefined') {
-        const fullData = self.transformDataForChart(result);
-        if (fullData.length === 0) {
-          return;
-        }
-
-        fullData.forEach(({ metric, data }, di) => {
-          const datasetInd = self.getOrCreateIndex(`${ind}_${di}`);
-          const newData = [];
-
-          // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
-          let legend = typeof target.legendFormat !== 'undefined' ? target.legendFormat : '';
-          if (legend === '') {
-            legend = Object.keys(metric).length > 0 ? JSON.stringify(metric) : '';
-          } else {
-            Object.keys(metric).forEach((metricKey) => {
-              legend = legend
-                .replace(`{{${metricKey}}}`, metric[metricKey])
-                .replace(`{{ ${metricKey} }}`, metric[metricKey]);
-            });
-            legend = legend
-              .replace('{{ ', '')
-              .replace('{{', '')
-              .replace(' }}', '')
-              .replace('}}', '');
-          }
-
-          // bb does NOT like labels which start with a number
-          if (!isNaN(legend.charAt(0))) {
-            legend = ` ${legend}`;
-          }
-          // if(legend.trim() === ''){
-          //   legend = 'NO VALUE';
-          // }
-          newData.push(legend);
-          xAxis = ['x'];
-          // }
-          data.forEach(({ x, y }) => {
-            newData.push(y);
-            xAxis.push(new Date(x));
-          });
-          chartData[datasetInd] = newData;
-        });
-        let groups = [];
-        if (typeof panel.stack !== 'undefined' && panel.stack) {
-          const panelGroups = [];
-          chartData.forEach((y) => {
-            if (y.length > 0) {
-              panelGroups.push(y[0]); // just the label
-            }
-          });
-          groups = [panelGroups];
-        }
-        let chartDataFiltered = chartData.filter((element) => element !== undefined);
-        if (self.chart && self.chart !== null) {
-          self.chart.load({ columns: [xAxis, ...chartDataFiltered] });
-        } else {
-          self.createOptions(xAxis, chartDataFiltered, groups);
-        }
-        self.state.error &&
-          self.setState({
-            xAxis,
-            chartData,
-            error: '',
-            errorCount: 0,
-          });
-      }
-    };
-
-    if (panelData && panelData[expr]) {
-      processReceivedData(panelData[expr]);
-    } else {
-      queryParams += `&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(
-        endpointAPIKey,
-      )}`;
-      dataFetch(
-        `${queryRangeURL}?${queryParams}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-          // headers: headers,
-        },
-        processReceivedData,
-        self.handleError,
-      );
-    }
-  };
-
-  transformDataForChart(data) {
+  // Transform data for chart
+  const transformDataForChart = (data) => {
     if (
       data &&
       data.status === 'success' &&
@@ -572,7 +220,7 @@ class GrafanaCustomChart extends Component {
       const fullData = [];
       data.data.result.forEach((r) => {
         const localData = r.values.map((arr) => {
-          const x = moment(arr[0] * 1000).format(this.timeFormat);
+          const x = moment(arr[0] * 1000).format(timeFormat);
           const y = parseFloat(parseFloat(arr[1]).toFixed(2));
           return { x, y };
         });
@@ -581,33 +229,39 @@ class GrafanaCustomChart extends Component {
       return fullData;
     }
     return [];
-  }
+  };
 
-  updateDateRange() {
-    const self = this;
+  // Handle error
+  const handleError = (error) => {
+    updateProgress({ showProgress: false });
+    if (error) {
+      setError(error.message && error.message !== '' ? error.message : error !== '' ? error : '');
+      setErrorCount((prevCount) => prevCount + 1);
+    }
+  };
+
+  // Update date range function
+  const updateDateRangeFunc = () => {
     return function (domain) {
       if (domain.length === 2) {
         const min = domain[0];
         const max = domain[1];
-        self.props.updateDateRange(
+        updateDateRange(
           `${min.getTime().toString()}`,
           min,
           `${max.getTime().toString()}`,
           max,
           false,
-          self.props.refresh,
+          refresh,
         );
       }
     };
-  }
+  };
 
-  // createOptions() {
-  //   const {panel, from, to, panelData} = this.props;
-  //   const fromDate = grafanaDateRangeToDate(from);
-  //   const toDate = grafanaDateRangeToDate(to);
-  createOptions(xAxis, chartData, groups) {
-    const { panel, board, inDialog } = this.props;
-    const self = this;
+  // Create chart options
+  const createOptions = (xAxis, chartData, groups) => {
+    // const fromDate = grafanaDateRangeToDate(from);
+    // const toDate = grafanaDateRangeToDate(to);
 
     // const showAxis = panel.type ==='singlestat' && panel.sparkline && panel.sparkline.show === true?false:true;
     const showAxis = !(panel.type === 'singlestat' && panel.sparkline);
@@ -615,9 +269,9 @@ class GrafanaCustomChart extends Component {
     const xAxes = {
       type: 'timeseries',
       // type : 'category',
-      show: showAxis && !this.state.sparkline,
+      show: showAxis && !isSparkline,
       tick: {
-        // format: self.c3TimeFormat,
+        // format: c3TimeFormat,
         // fit: true,
         fit: false,
         count: 5,
@@ -629,7 +283,7 @@ class GrafanaCustomChart extends Component {
       // }
     };
 
-    const yAxes = { show: showAxis && !this.state.sparkline };
+    const yAxes = { show: showAxis && !isSparkline };
     if (panel.yaxes) {
       panel.yaxes.forEach((ya) => {
         if (typeof ya.label !== 'undefined' && ya.label !== null) {
@@ -656,23 +310,24 @@ class GrafanaCustomChart extends Component {
       // }
     };
 
-    const linked = this.state.sparkline
+    const linked = isSparkline
       ? false
       : !inDialog
         ? { name: board && board.title ? board.title : '' }
         : false;
 
-    let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10;
+    let shouldDisplayLegend = Object.keys(datasetIndex).length <= 10;
     if (panel.type !== 'graph') {
       shouldDisplayLegend = false;
     }
-    if (self.chartRef && self.chartRef !== null) {
+
+    if (chartRef && chartRef.current) {
       const chartConfig = {
         // oninit: function(args){
         //   console.log(JSON.stringify(args));
         // },
-        bindto: self.chartRef,
-        size: this.state.sparkline
+        bindto: chartRef.current,
+        size: isSparkline
           ? {
               // width: 150,
               height: 50,
@@ -680,15 +335,15 @@ class GrafanaCustomChart extends Component {
           : null,
         data: {
           x: 'x',
-          xFormat: self.bbTimeFormat,
+          xFormat: bbTimeFormat,
           columns: [xAxis, ...chartData],
           groups,
-          type: this.state.sparkline ? line() : area(),
+          type: isSparkline ? line() : area(),
         },
         axis: { x: xAxes, y: yAxes },
-        zoom: { enabled: true, type: 'drag', onzoomend: self.updateDateRange() },
+        zoom: { enabled: true, type: 'drag', onzoomend: updateDateRangeFunc() },
         grid,
-        legend: { show: shouldDisplayLegend && !this.state.sparkline },
+        legend: { show: shouldDisplayLegend && !isSparkline },
 
         point: { r: 0, focus: { expand: { r: 5 } } },
         tooltip: {
@@ -696,8 +351,8 @@ class GrafanaCustomChart extends Component {
           linked,
           format: {
             title(x) {
-              // return d3.timeFormat(self.bbTimeFormat)(x);
-              return moment(x).format(self.timeFormat);
+              // return d3.timeFormat(bbTimeFormat)(x);
+              return moment(x).format(timeFormat);
             },
           },
         },
@@ -705,7 +360,7 @@ class GrafanaCustomChart extends Component {
       };
 
       if (
-        self.panelType === 'sparkline' &&
+        panelType === 'sparkline' &&
         panel.sparkline &&
         panel.sparkline.lineColor &&
         panel.sparkline.fillColor
@@ -745,140 +400,296 @@ class GrafanaCustomChart extends Component {
         chartConfig.color = { pattern: [panel.sparkline.fillColor] };
       }
 
-      self.chart = bb.generate(chartConfig);
+      const newChart = bb.generate(chartConfig);
+      setChart(newChart);
     }
-  }
-
-  componentWillUnmount() {
-    if (typeof this.interval !== 'undefined') {
-      clearInterval(this.interval);
-    }
-  }
-
-  computeRefreshInterval = (refresh) => {
-    refresh = refresh.toLowerCase();
-    const l = refresh.length;
-    const dur = refresh.substring(l - 1, l);
-    refresh = refresh.substring(0, l - 1);
-    let val = parseInt(refresh);
-    if (dur === 'd') {
-      val *= 24;
-    }
-    if (dur === 'h') {
-      val *= 60;
-    }
-    if (dur === 'm') {
-      val *= 60;
-    }
-    if (dur === 's') {
-      return val;
-    }
-    return 30; //fallback
   };
 
-  handleError = (error) => {
-    const self = this;
-    this.props.updateProgress({ showProgress: false });
-    if (error) {
-      this.setState({
-        error: error.message && error.message !== '' ? error.message : error !== '' ? error : '',
-        errorCount: self.state.errorCount + 1,
+  // Get data for chart
+  const getData = async (ind, target, chartInst, datasource) => {
+    let { xAxis: currentXAxis, chartData: currentChartData } = { xAxis, chartData };
+
+    let queryRangeURL = '';
+    let endpointURL = '';
+    let endpointAPIKey = '';
+    if (prometheusURL && prometheusURL !== '') {
+      endpointURL = prometheusURL;
+      queryRangeURL = `/api/prometheus/query_range/${connectionID}`;
+    } else if (grafanaURL && grafanaURL !== '') {
+      endpointURL = grafanaURL;
+      endpointAPIKey = grafanaAPIKey;
+      queryRangeURL = `/api/grafana/query_range/${connectionID}`;
+    }
+
+    let { expr } = target;
+    if (templateVars && templateVars !== null && templateVars.length > 0) {
+      templateVars.forEach((tv) => {
+        const tvrs = tv.split('=');
+        if (tvrs.length === 2) {
+          expr = expr.replace(
+            new RegExp(`$${tvrs[0]}`.replace(/[-/^$*+?.()|[\]{}]/g, '\\$&'), 'g'),
+            tvrs[1],
+          ); //eslint-disable-line
+        }
+      });
+    }
+    const start = Math.round(grafanaDateRangeToDate(from).getTime() / 1000);
+    const end = Math.round(grafanaDateRangeToDate(to).getTime() / 1000);
+
+    let ds = datasource?.charAt(0).toUpperCase() + datasource?.substring(1);
+
+    let queryParams = `ds=${ds}&query=${encodeURIComponent(
+      expr,
+    )}&start=${start}&end=${end}&step=${computeStep(start, end)}`;
+    if (testUUID && testUUID.trim() !== '') {
+      queryParams += `&uuid=${encodeURIComponent(testUUID)}`; // static_chart=true ?
+    }
+
+    const processReceivedData = (result) => {
+      updateProgress({ showProgress: false });
+
+      if (typeof result == 'undefined' || result?.status != 'success') {
+        return;
+      }
+
+      if (typeof result !== 'undefined') {
+        const fullData = transformDataForChart(result);
+        if (fullData.length === 0) {
+          return;
+        }
+
+        const newChartData = [...currentChartData];
+        let newXAxis = [...currentXAxis];
+
+        fullData.forEach(({ metric, data }, di) => {
+          const datasetInd = getOrCreateIndex(`${ind}_${di}`);
+          const newData = [];
+
+          // if (typeof cd.labels[datasetInd] === 'undefined' || typeof cd.datasets[datasetInd] === 'undefined'){
+          let legend = typeof target.legendFormat !== 'undefined' ? target.legendFormat : '';
+          if (legend === '') {
+            legend = Object.keys(metric).length > 0 ? JSON.stringify(metric) : '';
+          } else {
+            Object.keys(metric).forEach((metricKey) => {
+              legend = legend
+                .replace(`{{${metricKey}}}`, metric[metricKey])
+                .replace(`{{ ${metricKey} }}`, metric[metricKey]);
+            });
+            legend = legend
+              .replace('{{ ', '')
+              .replace('{{', '')
+              .replace(' }}', '')
+              .replace('}}', '');
+          }
+
+          // bb does NOT like labels which start with a number
+          if (!isNaN(legend.charAt(0))) {
+            legend = ` ${legend}`;
+          }
+          // if(legend.trim() === ''){
+          //   legend = 'NO VALUE';
+          // }
+          newData.push(legend);
+          newXAxis = ['x'];
+          // }
+          data.forEach(({ x, y }) => {
+            newData.push(y);
+            newXAxis.push(new Date(x));
+          });
+          newChartData[datasetInd] = newData;
+        });
+
+        let groups = [];
+        if (typeof panel.stack !== 'undefined' && panel.stack) {
+          const panelGroups = [];
+          newChartData.forEach((y) => {
+            if (y && y.length > 0) {
+              panelGroups.push(y[0]); // just the label
+            }
+          });
+          groups = [panelGroups];
+        }
+
+        let chartDataFiltered = newChartData.filter((element) => element !== undefined);
+
+        if (chart && chart !== null) {
+          chart.load({ columns: [newXAxis, ...chartDataFiltered] });
+        } else {
+          createOptions(newXAxis, chartDataFiltered, groups);
+        }
+
+        if (error) {
+          setXAxis(newXAxis);
+          setChartData(newChartData);
+          setError('');
+          setErrorCount(0);
+        } else {
+          setXAxis(newXAxis);
+          setChartData(newChartData);
+        }
+      }
+    };
+
+    if (panelData && panelData[expr]) {
+      processReceivedData(panelData[expr]);
+    } else {
+      queryParams += `&url=${encodeURIComponent(endpointURL)}&api-key=${encodeURIComponent(
+        endpointAPIKey,
+      )}`;
+      dataFetch(
+        `${queryRangeURL}?${queryParams}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+          // headers: headers,
+        },
+        processReceivedData,
+        handleError,
+      );
+    }
+  };
+
+  // Collect chart data
+  const collectChartData = (chartInst) => {
+    if (panel.targets) {
+      panel.targets.forEach((target, ind) => {
+        getData(ind, target, chartInst, target.datasource?.type);
       });
     }
   };
 
-  render() {
-    const { board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
-    const { error, errorCount, chartData } = this.state;
-    const self = this;
+  // Config chart data
+  const configChartData = () => {
+    // Initialize datasetIndex
+    const initialDatasetIndex = {};
+    if (panel.targets) {
+      panel.targets.forEach((target, ind) => {
+        initialDatasetIndex[`${ind}_0`] = ind;
+      });
+    }
+    setDatasetIndex(initialDatasetIndex);
 
-    let loadingBar;
-    let reloadButton;
-
-    if (error) {
-      self.createOptions([], [], []); // add empty data to charts
-      loadingBar = (
-        <Box sx={{ width: '100%' }}>
-          <LinearProgress />
-        </Box>
-      );
+    // Clear existing interval if it exists
+    if (interval) {
+      clearInterval(interval);
     }
 
-    if (errorCount > 3 * panel?.targets?.length && typeof self.interval !== 'undefined') {
-      clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
-      loadingBar = null;
-      reloadButton = (
-        <HeaderIcon
-          key="Reload"
-          aria-label="reload the Chart"
-          color="inherit"
-          onClick={() => self.configChartData()}
-        >
-          <CachedIcon />
-        </HeaderIcon>
+    // Set new interval if liveTail is enabled
+    if (liveTail) {
+      const newInterval = setInterval(
+        () => {
+          collectChartData();
+        },
+        computeRefreshInterval(refresh) * 1000,
       );
+      setIntervalState(newInterval);
     }
 
-    const iconComponent = (
-      <div>
-        {reloadButton}
-        <HeaderIcon
-          key="chartDialog"
-          aria-label="Open chart in a dialog"
-          color="inherit"
-          onClick={() => handleChartDialogOpen(board, panel, panelData)}
-        >
-          <OpenInNewIcon />
-        </HeaderIcon>
-      </div>
-    );
+    // Initial data collection
+    collectChartData();
+  };
 
-    let mainChart;
-    if (this.panelType === 'gauge') {
-      mainChart = <GrafanaCustomGaugeChart data={chartData} panel={panel} error={error} />;
-    } else {
-      mainChart = (
-        <ChartContainer>
-          <div ref={(ch) => (self.chartRef = ch)} />
-        </ChartContainer>
-      );
-    }
-    //  if (this.state.sparkline){
-    //    return (
-    //       <NoSsr>
-    //       {loadingBar}
-    //       <StyledSparklineContent>
-    //         <div>{panel.title}</div>
-    //         <div>{mainChart}</div>
-    //         <div>{iconComponent}</div>
-    //       </StyledSparklineContent>
-    //     </NoSsr>
-    //   )
-    // }
-    return (
-      <NoSsr>
-        {loadingBar}
-        <StyledCard>
-          {!inDialog && (
-            <CardHeader
-              disableTypography
-              avatar={
-                error && (
-                  <Tooltip title="There was an error communicating with the server" placement="top">
-                    <WarningIcon component={ErrorText} />
-                  </Tooltip>
-                )
-              }
-              title={panel.title}
-              action={iconComponent}
-              sx={{ fontSize: (theme) => theme.spacing(2), width: '100%' }}
-            />
-          )}
-          <StyledCardContent>{mainChart}</StyledCardContent>
-        </StyledCard>
-      </NoSsr>
+  // ComponentDidMount equivalent
+  useEffect(() => {
+    configChartData();
+
+    // ComponentWillUnmount equivalent
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Render
+  let loadingBar;
+  let reloadButton;
+
+  if (error) {
+    createOptions([], [], []); // add empty data to charts
+    loadingBar = (
+      <Box sx={{ width: '100%' }}>
+        <LinearProgress />
+      </Box>
     );
   }
+
+  if (errorCount > 3 * panel?.targets?.length && interval) {
+    clearInterval(interval); // clearing the interval to prevent further calls to get chart data
+    loadingBar = null;
+    reloadButton = (
+      <HeaderIcon
+        key="Reload"
+        aria-label="reload the Chart"
+        color="inherit"
+        onClick={() => configChartData()}
+      >
+        <CachedIcon />
+      </HeaderIcon>
+    );
+  }
+
+  const iconComponent = (
+    <div>
+      {reloadButton}
+      <HeaderIcon
+        key="chartDialog"
+        aria-label="Open chart in a dialog"
+        color="inherit"
+        onClick={() => handleChartDialogOpen(board, panel, panelData)}
+      >
+        <OpenInNewIcon />
+      </HeaderIcon>
+    </div>
+  );
+
+  let mainChart;
+  if (panelType === 'gauge') {
+    mainChart = <GrafanaCustomGaugeChart data={chartData} panel={panel} error={error} />;
+  } else {
+    mainChart = (
+      <ChartContainer>
+        <div ref={chartRef} />
+      </ChartContainer>
+    );
+  }
+
+  //  if (isSparkline){
+  //    return (
+  //       <NoSsr>
+  //       {loadingBar}
+  //       <StyledSparklineContent>
+  //         <div>{panel.title}</div>
+  //         <div>{mainChart}</div>
+  //         <div>{iconComponent}</div>
+  //       </StyledSparklineContent>
+  //     </NoSsr>
+  //   )
+  // }
+
+  return (
+    <NoSsr>
+      {loadingBar}
+      <StyledCard>
+        {!inDialog && (
+          <CardHeader
+            disableTypography
+            avatar={
+              error && (
+                <Tooltip title="There was an error communicating with the server" placement="top">
+                  <WarningIcon component={ErrorText} />
+                </Tooltip>
+              )
+            }
+            title={panel.title}
+            action={iconComponent}
+            sx={{ fontSize: (theme) => theme.spacing(2), width: '100%' }}
+          />
+        )}
+        <StyledCardContent>{mainChart}</StyledCardContent>
+      </StyledCard>
+    </NoSsr>
+  );
 }
 
 GrafanaCustomChart.propTypes = {
