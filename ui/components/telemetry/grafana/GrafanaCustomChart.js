@@ -100,7 +100,7 @@ function GrafanaCustomChart(props) {
   const [chartData, setChartData] = useState([]);
   const [error, setError] = useState('');
   const [errorCount, setErrorCount] = useState(0);
-  const [isSparkline, setIsSparkline] = useState(!!sparkline);
+  const [isSparkline] = useState(!!sparkline);
   const [interval, setIntervalState] = useState(undefined);
 
   // Helper function to get or create index

@@ -98,9 +98,7 @@ const GrafanaCustomCharts = (props) => {
     propLiveTail && propLiveTail !== null ? propLiveTail : true,
   );
   const [refresh, setRefresh] = useState('10s');
-  const [sparkline, setSparkline] = useState(
-    propSparkline && propSparkline !== null ? true : false,
-  );
+  const [sparkline] = useState(propSparkline && propSparkline !== null ? true : false);
   const [chartDialogOpen, setChartDialogOpen] = useState(false);
   const [chartDialogPanelData, setChartDialogPanelData] = useState({});
   const [chartDialogPanel, setChartDialogPanel] = useState({});
