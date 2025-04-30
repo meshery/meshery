@@ -28,6 +28,7 @@ import {
   ConnectionStyledSelect,
 } from './styles';
 import { FormatId } from '../DataFormatter';
+import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
@@ -167,6 +168,8 @@ const ConnectionTable = ({
     isError: isConnectionError,
     error: connectionError,
     refetch: getConnections,
+    isLoading: isConnectionLoading,
+    isFetching: isConnectionFetching,
   } = useGetConnectionsQuery({
     page: page,
     pagesize: pageSize,
@@ -220,14 +223,19 @@ const ConnectionTable = ({
         nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
         kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
       }));
-  }, [connectionData, connectionMetadataState]);
+  }, [
+    connectionData,
+    isConnectionLoading,
+    isConnectionFetching,
+    Object.keys(connectionMetadataState).length,
+  ]);
 
   const filteredConnections = enhancedConnections?.filter(({ status, kind }) => {
     const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
     const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
     return statusMatch && kindMatch;
   });
-  
+
   const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
   const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
 
@@ -1088,6 +1096,10 @@ const ConnectionTable = ({
     });
     return initialVisibility;
   });
+
+  if (isConnectionLoading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
+  }
 
   return (
     <>

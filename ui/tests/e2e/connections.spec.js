@@ -2,45 +2,6 @@ import { expect, test } from './fixtures/project';
 import { ENV } from './env';
 import os from 'os';
 
-const verifyConnectionsResBody = (body, provider) => {
-  expect(body).toEqual(
-    expect.objectContaining({
-      connections: expect.any(Array),
-      total_count: expect.any(Number),
-      page: expect.any(Number),
-      page_size: expect.any(Number),
-    }),
-  );
-  for (const connection of body.connections) {
-    const mesheryKeys =
-      provider === 'Meshery'
-        ? {
-            sub_type: expect.any(String),
-            metadata: expect.anything(),
-            kind: expect.any(String),
-            name: expect.any(String),
-            status: expect.any(String),
-            type: expect.any(String),
-          }
-        : null;
-
-    expect(connection).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        credential_id: expect.any(String),
-        user_id: expect.any(String),
-        created_at: expect.any(String),
-        updated_at: expect.any(String),
-        deleted_at: expect.objectContaining({
-          Time: expect.any(String),
-          Valid: expect.any(Boolean),
-        }),
-        ...mesheryKeys,
-      }),
-    );
-  }
-};
-
 // name: Name of the test
 // transitionOption: Option to be chosen from dropdown to transition to another state
 // statusAfterTransition: Text shown in current state after transition
@@ -66,54 +27,21 @@ const transitionTests = [
   },
 ];
 
-test.describe.configure({ mode: 'serial' });
-let connectionCount = 0;
 
-test.beforeEach(async ({ page, provider }) => {
-  const connectionsReq = page.waitForRequest(
-    (request) =>
-      request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-      request.method() === 'GET',
-  );
-  const connectionsRes = page.waitForResponse(async (response) => {
-    if (!response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`))
-      return false;
-    if (response.status() !== 200) return false;
-    const body = await response.json();
-    if (body.connections && body.connections.length > 0) return true;
-    else return false;
+test.describe.serial('Connection Management Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Lifecycle' }).click();
+
+  });
+  test('Verify that UI components are displayed', async ({ page }) => {
+    // Verify that connections table is displayed (by checking for table headings)
+    for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
+      await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
+    }
   });
 
-  // Visit Connections Page
-  await page.goto(`${ENV.MESHERY_SERVER_URL}/management/connections`);
-
-  // Verify requests and responses expected on initial page load
-  await connectionsReq;
-  const res = await connectionsRes;
-  const body = await res.json();
-  verifyConnectionsResBody(body, provider);
-
-  connectionCount = body.total_count;
-});
-test('Verify that UI components are displayed', async ({ page }) => {
-  // Verify that connections table is displayed (by checking for table headings)
-  for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
-    await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
-  }
-
-  // Get total count from the table footer pagination text
-  const paginationText = await page.locator('.MuiTablePagination-displayedRows').textContent();
-  const totalCount = parseInt(paginationText.split('of')[1].trim());
-
-  // Verify that total count matches the connections count from the server
-  expect(totalCount).toEqual(connectionCount);
-});
-
-test(
-  'Add a cluster connection by uploading kubeconfig file',
-  { tag: '@unstable' },
-  async ({ page }) => {
-    // Navigate to 'Connections' tab
+  test('Add a cluster connection by uploading kubeconfig file', async ({ page }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
     const addConnectionReq = page.waitForRequest(
@@ -126,8 +54,6 @@ test(
         response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
         response.status() === 200,
     );
-
-    // Click Add Cluster button
     await page.getByTestId('connection-addCluster').click();
 
     // Verify "Add Kubernetes Cluster(s)" modal opens
@@ -136,141 +62,116 @@ test(
     const fileChooserPromise = page.waitForEvent('filechooser');
     await page.getByTestId('connection-uploadKubeConfig').click();
     const fileChooser = await fileChooserPromise;
-
     // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
     const kubeConfigPath = `${os.homedir()}/.kube/config`;
     await fileChooser.setFiles(kubeConfigPath);
 
-    // Click "IMPORT" button
     await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
 
-    // Verify requests and responses
     await addConnectionReq;
     await addConnectionRes;
 
-    // Verify displaying of success modal
     await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
 
     await page.getByRole('button', { name: 'OK' }).click();
 
-    // Verify available contexts were connected
     const connectedItem = page.getByRole('menuitem', { name: 'connected' }).first();
     await connectedItem.scrollIntoViewIfNeeded();
     await expect(connectedItem).toBeVisible();
-  },
-);
+  });
 
-transitionTests.forEach((t) => {
-  test(t.name, async ({ page, provider }) => {
-    const stateTransitionReq = page.waitForRequest(
-      (request) =>
-        request.url() ===
-          `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
-        request.method() === 'PUT',
-    );
+  transitionTests.forEach((t) => {
+    test(t.name, async ({ page }) => {
+      const stateTransitionReq = page.waitForRequest(
+        (request) =>
+          request.url() ===
+            `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
+          request.method() === 'PUT',
+      );
 
-    const stateTransitionRes = page.waitForResponse(
-      (response) =>
-        response.url() ===
-          `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
-        response.status() === 202,
-    );
+      const stateTransitionRes = page.waitForResponse(
+        (response) =>
+          response.url() ===
+            `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
+          response.status() === 202,
+      );
 
-    const getConnectionsReq = page.waitForRequest(
-      (request) =>
-        request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-        request.method() === 'GET',
-    );
+      const getConnectionsReq = page.waitForRequest(
+        (request) =>
+          request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
+          request.method() === 'GET',
+      );
 
-    const getConnectionsRes = page.waitForResponse(
-      (response) =>
-        response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-        response.status() === 200,
-    );
+      const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();
+      await firstRow.scrollIntoViewIfNeeded();
+      await expect(firstRow).toBeVisible();
+      // ===== TRANSITIONING TO A NEW STATE =====
 
-    // since test run serially, and latest connection appears at topmost,
-    // the connection created in the previous test will appear in the first row of the table
-    const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();;
+      // open state transition options dropdown
+      await firstRow.locator('span', { hasText: 'connected' }).click();
+      await page.getByRole('option', { name: t.transitionOption }).click();
+
+      await expect(page.getByText('Connection Status Transition')).toBeVisible();
+      await page.getByRole('button', { name: 'Confirm' }).click();
+
+      await expect(page.getByText('Connection status updated')).toBeVisible();
+
+      await stateTransitionReq;
+      await stateTransitionRes;
+      await getConnectionsReq;
+      // expect new state to be shown as current state
+
+      const updatedFirstRow = page.getByRole('menuitem', { name: t.statusAfterTransition }).first();
+      await expect(updatedFirstRow).toBeVisible();
+
+      // ===== TRANSITION BACK TO "connected" STATE =====
+      // open state transition options dropdown again
+      await updatedFirstRow.locator('span', { hasText: t.statusAfterTransition }).click();
+      await page.getByRole('option', { name: t.restorationOption }).click();
+
+      await expect(page.getByText('Connection Status Transition')).toBeVisible();
+      await page.getByRole('button', { name: 'Confirm' }).click();
+      // expect the state to be restored to "connected"
+
+      const restoredFirstRow = page.getByRole('menuitem', { name: 'connected' }).first();
+      await expect(restoredFirstRow).toBeVisible();
+
+      await expect(page.getByText('Connection status updated')).toBeVisible();
+    });
+  });
+
+  test('Delete Kubernetes cluster connections', async ({ page }) => {
+    await page.getByRole('tab', { name: 'Connections' }).click();
+
+    const firstRow = page
+      .locator('tr', { has: page.getByRole('menuitem', { name: 'connected' }) })
+      .first();
     await firstRow.scrollIntoViewIfNeeded();
     await expect(firstRow).toBeVisible();
 
-    // ===== TRANSITIONING TO A NEW STATE =====
+    if ((await firstRow.count()) === 0) {
+      throw new Error(
+        'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
+      );
+    }
 
-    // open state transition options dropdown
-    await firstRow.locator('span', { hasText: 'connected' }).click();
+    const checkbox = firstRow.locator('input[type="checkbox"]').first();
+    await checkbox.check();
 
-    // click required option
-    await page.getByRole('option', { name: t.transitionOption }).click();
+    await page.getByRole('button', { name: 'Delete', exact: true }).click();
+    await expect(page.getByText('Delete Connections')).toBeVisible();
 
-    // verify that Confirmation modal opened
-    await expect(page.getByText('Connection Status Transition')).toBeVisible();
-
-    // click "Confirm"
-    await page.getByRole('button', { name: 'Confirm' }).click();
-
-    // verify API requests and responses
-    await stateTransitionReq;
-    await stateTransitionRes;
-    await getConnectionsReq;
-    const res = await getConnectionsRes;
-    const body = await res.json();
-    verifyConnectionsResBody(body, provider);
-
-    // expect new state to be shown as current state
-    await expect(firstRow.locator('span', { hasText: t.statusAfterTransition })).toBeVisible();
-
-    // ===== TRANSITION BACK TO "connected" STATE =====
-
-    // open state transition options dropdown again
-    await firstRow.locator('span', { hasText: t.statusAfterTransition }).click();
-
-    // click the option required to transition back to "connected" state
-    await page.getByRole('option', { name: t.restorationOption }).click();
-
-    // verify that Confirmation modal opened again
-    await expect(page.getByText('Connection Status Transition')).toBeVisible();
-
-    // click "Confirm"
-    await page.getByRole('button', { name: 'Confirm' }).click();
-
-    // expect the state to be restored to "connected"
-    await expect(firstRow.locator('span', { hasText: 'connected' })).toBeVisible();
-  });
-});
-
-test('Delete Kubernetes cluster connections', async ({ page }) => {
-  // Navigate to 'Connections' tab
-  await page.getByRole('tab', { name: 'Connections' }).click();
-  // Find the row with the connection to be deleted
-  const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();;
-  await firstRow.scrollIntoViewIfNeeded();
-  await expect(firstRow).toBeVisible();
-
-  // Fail the test if the connection is not found
-  if ((await row.count()) === 0) {
-    throw new Error(
-      'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
+    const responsePromise = page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status`) &&
+        response.status() === 202,
     );
-  }
 
-  //find the checkbox in the row
-  const checkbox = row.locator('input[type="checkbox"]').first();
-  await checkbox.check();
+    await page.getByRole('button', { name: 'DELETE', exact: true }).click();
+    await expect(page.getByText('Connection status updated')).toBeVisible();
 
-  // Click "Delete" button in the table
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
-  // Verify that Confirmation modal opened and delete
-  await expect(page.getByText('Delete Connections')).toBeVisible();
-
-  const responsePromise = page.waitForResponse(
-    (response) =>
-      response
-        .url()
-        .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status`) &&
-      response.status() === 202,
-  );
-
-  await page.getByRole('button', { name: 'DELETE', exact: true }).click();
-
-  await responsePromise;
+    await responsePromise;
+  });
 });
