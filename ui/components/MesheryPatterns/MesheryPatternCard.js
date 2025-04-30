@@ -42,6 +42,7 @@ import { VISIBILITY } from '@/utils/Enum';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge, iconMedium } from 'css/icons.styles';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
+import { getButtonStateStyles } from '@/utils/buttonUtils';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({
@@ -234,9 +235,7 @@ function MesheryPatternCard_({
                 style={{
                   padding: '6px 9px',
                   borderRadius: '8px',
-                  opacity: handleDownload.disabled ? 0.5 : 1,
-                  pointerEvents: handleDownload.disabled ? 'none' : 'auto',
-                  cursor: handleDownload.disabled ? 'not-allowed' : 'pointer',
+                  ...getButtonStateStyles(handleDownload.disabled),
                 }}
                 disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
               >
@@ -262,9 +261,7 @@ function MesheryPatternCard_({
                   style={{
                     padding: '6px 9px',
                     borderRadius: '8px',
-                    opacity: setSelectedPatterns.disabled ? 0.5 : 1,
-                    pointerEvents: setSelectedPatterns.disabled ? 'none' : 'auto',
-                    cursor: setSelectedPatterns.disabled ? 'not-allowed' : 'pointer',
+                    ...getButtonStateStyles(setSelectedPatterns.disabled),
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
@@ -291,9 +288,7 @@ function MesheryPatternCard_({
                   style={{
                     padding: '6px 9px',
                     borderRadius: '8px',
-                    opacity: handleClone.disabled ? 0.5 : 1,
-                    pointerEvents: handleClone.disabled ? 'none' : 'auto',
-                    cursor: handleClone.disabled ? 'not-allowed' : 'pointer',
+                    ...getButtonStateStyles(handleClone.disabled),
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
@@ -321,9 +316,7 @@ function MesheryPatternCard_({
                   style={{
                     padding: '6px 9px',
                     borderRadius: '8px',
-                    opacity: editInConfigurator.disabled ? 0.5 : 1,
-                    pointerEvents: editInConfigurator.disabled ? 'none' : 'auto',
-                    cursor: editInConfigurator.disabled ? 'not-allowed' : 'pointer',
+                    ...getButtonStateStyles(editInConfigurator.disabled),
                   }}
                 >
                   <Edit
@@ -347,9 +340,7 @@ function MesheryPatternCard_({
                 style={{
                   padding: '6px 9px',
                   borderRadius: '8px',
-                  opacity: handleInfoModal.disabled ? 0.5 : 1, // Reduced opacity for disabled state
-                  pointerEvents: handleInfoModal.disabled ? 'none' : 'auto', // Disable hover and click
-                  cursor: handleInfoModal.disabled ? 'not-allowed' : 'pointer', // Not-allowed cursor for disabled
+                  ...getButtonStateStyles(handleInfoModal.disabled),
                 }}
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
               >
