@@ -1,6 +1,7 @@
 import { urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
+import { initiateQuery } from './utils';
 
 const TAGS = {
   DESIGNS: 'designs',
@@ -24,6 +25,13 @@ export const designsApi = api
           });
           return `pattern?${params}`;
         },
+        providesTags: () => [{ type: TAGS.DESIGNS }],
+      }),
+      getDesign: builder.query({
+        query: ({ design_id }) => ({
+          url: `pattern/${design_id}`,
+          method: 'GET',
+        }),
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       getUserDesigns: builder.query({
@@ -138,8 +146,19 @@ export const designsApi = api
     }),
   });
 
+export const getDesign = async ({ design_id }) => {
+  return await initiateQuery(
+    designsApi.endpoints.getDesign,
+    { design_id },
+    {
+      forceRefetch: true,
+    },
+  );
+};
+
 export const {
   useGetPatternsQuery,
+  useGetDesignQuery,
   useGetUserDesignsQuery,
   useDeployPatternMutation,
   useUndeployPatternMutation,

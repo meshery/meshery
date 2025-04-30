@@ -87,17 +87,17 @@
       "version": "0.7.0"
     },
     {
-      "description": "Configure Labels And Annotations for  the component ",
-      "displayName": "Labels and Annotations Configuration",
+      "description": "Initiate a terminal session",
+      "displayName": "Interactive Terminal",
       "entityState": [
-        "declaration"
+        "instance"
       ],
       "key": "",
-      "kind": "mutate",
+      "kind": "action",
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
-      "subType": "labels-and-annotations",
-      "type": "configuration",
+      "subType": "terminal",
+      "type": "operator",
       "version": "0.7.0"
     },
     {
@@ -156,6 +156,20 @@
       "status": "enabled",
       "subType": "shape",
       "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Initiate log streaming session",
+      "displayName": "Stream Logs",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "logs",
+      "type": "operator",
       "version": "0.7.0"
     },
     {

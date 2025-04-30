@@ -469,11 +469,59 @@ const ConnectionTable = ({
       });
   };
 
-  const handleStatusChange = async (e, connectionId, connectionKind) => {
+  const kubernetesConnectionTransitions = {
+    connected: {
+      disconnected:
+        'Are you sure you want to transition from CONNECTED to DISCONNECTED? This will perform planned maintenance by removing the operator but keeping the cluster registered.',
+      ignored:
+        'Are you sure you want to transition from CONNECTED to IGNORED? This will mark the connection as ignored due to unplanned maintenance, without deleting the registration.',
+      deleted:
+        'Are you sure you want to transition from CONNECTED to DELETED? This will undeploy the operator and unregister the cluster completely.',
+      'not found':
+        'Are you sure you want to transition from CONNECTED to NOT FOUND? Meshery could not connect to the cluster or it is currently unavailable. You can either delete the connection or try re-registering.',
+    },
+    disconnected: {
+      connected:
+        'Are you sure you want to transition from DISCONNECTED to CONNECTED? This will reconnect the cluster and redeploy the operator after maintenance.',
+      deleted:
+        'Are you sure you want to transition from DISCONNECTED to DELETED? This will remove the cluster completely by undeploying the operator and unregistering.',
+    },
+    ignored: {
+      deleted:
+        'Are you sure you want to transition from IGNORED to DELETED? This will completely remove the ignored cluster by undeploying the operator and unregistering.',
+      registered:
+        'Are you sure you want to transition from IGNORED to REGISTER? This will reinitiate the registration process for the ignored connection and attempt to connect it again.',
+    },
+    'not found': {
+      discovered:
+        'Are you sure you want to transition from NOT FOUND to DISCOVERED? You are trying to re-register the cluster. Meshery will attempt to reconnect to the cluster.',
+      deleted:
+        'Are you sure you want to transition from NOT FOUND to DELETED? This will remove the unreachable connection completely by unregistering it.',
+    },
+  };
+
+  const getStatusTransition = (connectionKind, connectionState, transitionState) => {
+    // This is for one connection kind that is kubernetes, and adding other connection kinds
+    // here will make it more complex.
+    // This issue can be resolved if we add the transition messages in the connection schemas
+    // and use the same schema to get the transition messages.
+    // Github issue: https://github.com/meshery/schemas/issues/303
+
+    switch (connectionKind) {
+      case 'kubernetes':
+        return kubernetesConnectionTransitions[connectionState][transitionState];
+      default:
+        return `Are you sure you want to transition from ${connectionState} to ${transitionState}?`;
+    }
+  };
+
+  const handleStatusChange = async (e, connectionId, connectionKind, connectionStatus) => {
     e.stopPropagation();
+    const status = e.target.value;
+    let subtitle = getStatusTransition(connectionKind, connectionStatus, status.toLowerCase());
     let response = await modalRef.current.show({
-      title: `Connection Status Transition`,
-      subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
+      title: `Transition connection to ${status.toUpperCase()}?`,
+      subtitle,
       primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
       variant: PROMPT_VARIANTS.WARNING,
@@ -867,6 +915,7 @@ const ConnectionTable = ({
                     e,
                     getColumnValue(tableMeta.rowData, 'id', columns),
                     getColumnValue(tableMeta.rowData, 'kind', columns),
+                    getColumnValue(tableMeta.rowData, 'status', columns),
                   )
                 }
                 disableUnderline

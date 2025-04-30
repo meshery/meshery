@@ -13,10 +13,8 @@ import {
   AuthorCell,
   Box,
   CustomTooltip,
-  EditIcon,
   Grid,
   IconButton,
-  L5DeleteIcon,
   ResponsiveDataTable,
   TableCell,
   Typography,
@@ -27,15 +25,11 @@ import {
   WorkspaceIcon,
   Slide,
 } from '@layer5/sistent';
-import { GroupAdd } from '@mui/icons-material';
-import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import { useLegacySelector } from 'lib/store';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { TableIconsContainer, IconWrapper } from './styles';
-import { iconMedium, iconSmall } from 'css/icons.styles';
-import { WORKSPACE_ACTION_TYPES } from '.';
+import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
+import WorkspaceActionList from './WorkspaceActionList';
 
 const WorkspaceDataTable = ({
   handleWorkspaceModalOpen,
@@ -47,6 +41,7 @@ const WorkspaceDataTable = ({
   handleRowClick,
   setColumnVisibility,
   search,
+  viewType,
 }) => {
   let colViews = [
     ['id', 'na'],
@@ -63,9 +58,12 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useLegacySelector((state) => state.get('organization'))?.id;
-  const router = useRouter();
-  const viewType = router.query.view === 'table' ? 'table' : 'grid';
+  const org_id = useLegacySelector((state) => {
+    return typeof state?.get === 'function'
+      ? state.get('organization')?.id
+      : state?.organization?.id || '';
+  });
+
   const theme = useTheme();
 
   const { data: workspaces } = useGetWorkspacesQuery({
@@ -238,74 +236,26 @@ const WorkspaceDataTable = ({
         customBodyRender: (value, tableMeta) => {
           const workspaceId = getColumnValue(tableMeta.rowData, 'id', columns);
           const workspaceName = getColumnValue(tableMeta.rowData, 'name', columns);
+
           return (
-            <TableIconsContainer>
-              <IconWrapper>
-                {
-                  <>
-                    {
-                      <CustomTooltip title="Manage Teams">
-                        <div>
-                          <IconButton
-                            disabled={
-                              !CAN(
-                                keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-                                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
-                              )
-                            }
-                            onClick={(e) => handleTeamsModalOpen(e, workspaceId, workspaceName)}
-                          >
-                            <GroupAdd
-                              style={{ color: theme.palette.icon.default, ...iconMedium }}
-                            />
-                          </IconButton>
-                        </div>
-                      </CustomTooltip>
-                    }
-                    <CustomTooltip title="Recent Activity">
-                      <div>
-                        <IconButton
-                          onClick={(e) => handleActivityModalOpen(e, workspaceId, workspaceName)}
-                        >
-                          <AccessTimeFilledIcon
-                            style={{ color: theme.palette.icon.default, ...iconMedium }}
-                          />
-                        </IconButton>
-                      </div>
-                    </CustomTooltip>
-                    <CustomTooltip title="Edit Workspace">
-                      <div>
-                        <IconButton
-                          disabled={!CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
-                          onClick={(e) =>
-                            handleWorkspaceModalOpen(
-                              e,
-                              WORKSPACE_ACTION_TYPES.EDIT,
-                              workspacesData[tableMeta.rowIndex],
-                            )
-                          }
-                        >
-                          <EditIcon fill={theme.palette.icon.default} />
-                        </IconButton>
-                      </div>
-                    </CustomTooltip>
-                    <L5DeleteIcon
-                      key={`delete_role-${tableMeta.rowIndex}`}
-                      disabled={!CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
-                      onClick={(e) =>
-                        handleDeleteWorkspaceConfirm(e, workspacesData[tableMeta.rowIndex])
-                      }
-                    />
-                  </>
-                }
-              </IconWrapper>
-            </TableIconsContainer>
+            <WorkspaceActionList
+              handleActivityModalOpen={handleActivityModalOpen}
+              handleTeamsModalOpen={handleTeamsModalOpen}
+              handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+              handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+              workspaceId={workspaceId}
+              workspaceName={workspaceName}
+              selectedWorkspace={workspacesData[tableMeta.rowIndex]}
+            />
           );
         },
       },
     },
   ];
+
+  // Window dimensions for responsive column visibility
   const { width } = useWindowDimensions();
+
   useEffect(() => {
     let showCols = updateVisibleColumns(colViews, width);
     const initialVisibility = {};
@@ -313,7 +263,7 @@ const WorkspaceDataTable = ({
       initialVisibility[col.name] = showCols[col.name];
     });
     setColumnVisibility(initialVisibility);
-  }, []);
+  }, [width]);
 
   const options = {
     filter: false,
@@ -389,21 +339,18 @@ const WorkspaceDataTable = ({
   return (
     <div key={`list-view-${viewType}`}>
       <Slide direction="left" in={selectedWorkspace.id ? true : false}>
-        {
-          <div
-            style={{
-              marginTop: '1rem',
-              backgroundColor: theme.palette.background.paper,
-            }}
-          >
-            {selectedWorkspace?.id && (
-              <WorkSpaceContentDataTable
-                workspaceId={selectedWorkspace?.id}
-                workspaceName={selectedWorkspace?.name}
-              />
-            )}
-          </div>
-        }
+        <div
+          style={{
+            marginTop: '1rem',
+          }}
+        >
+          {selectedWorkspace?.id && (
+            <WorkSpaceContentDataTable
+              workspaceId={selectedWorkspace?.id}
+              workspaceName={selectedWorkspace?.name}
+            />
+          )}
+        </div>
       </Slide>
       <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
         <div

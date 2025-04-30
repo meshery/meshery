@@ -2,7 +2,7 @@
   "id": "336465da-5ead-418c-baee-a369fb5581e9",
   "name": "Kubernetes-service Design",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.112",
+  "version": "0.0.113",
   "metadata": {
     "resolvedAliases": {}
   },

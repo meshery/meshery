@@ -2,10 +2,37 @@ import { api } from './index';
 
 const TAGS = {
   CONNECTIONS: 'connections',
+  CREDENTIALS: 'credentials',
 };
 
 const connectionsApi = api.injectEndpoints({
+  overrideExisting: true,
   endpoints: (builder) => ({
+    getCredentials: builder.query({
+      query: () => ({
+        url: 'integrations/credentials',
+        method: 'GET',
+      }),
+      providesTags: [TAGS.CREDENTIALS],
+    }),
+
+    verifyAndRegisterConnection: builder.mutation({
+      query: (queryArg) => ({
+        url: 'integrations/connections/register',
+        method: 'POST',
+        body: queryArg.body,
+      }),
+      invalidatesTags: [TAGS.CONNECTIONS],
+    }),
+
+    connectToConnection: builder.mutation({
+      query: (queryArg) => ({
+        url: 'integrations/connections/register',
+        method: 'POST',
+        body: queryArg.body,
+      }),
+      invalidatesTags: [TAGS.CONNECTIONS],
+    }),
     getConnections: builder.query({
       query: (queryArg) => ({
         url: `integrations/connections`,
@@ -99,6 +126,9 @@ const connectionsApi = api.injectEndpoints({
 });
 
 export const {
+  useGetCredentialsQuery,
+  useVerifyAndRegisterConnectionMutation,
+  useConnectToConnectionMutation,
   useGetConnectionsQuery,
   useGetConnectionStatusQuery,
   useLazyGetConnectionDetailsQuery,
