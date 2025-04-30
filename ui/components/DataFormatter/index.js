@@ -180,6 +180,21 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
 
 export const KeyValue = ({ Key, Value, style }) => {
   const theme = useTheme();
+
+  // Skip rendering if the Key is "Id" - we'll handle it with the copy button instead
+  if (Key === 'Id') {
+    return null;
+  }
+
+  // Skip rendering if the Key is "Doclink" - we'll handle it differently
+  if (Key === 'Doclink') {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+        <Link href={Value} title="Documentation" />
+      </div>
+    );
+  }
+
   return (
     <div
       style={{
@@ -199,15 +214,13 @@ export const KeyValue = ({ Key, Value, style }) => {
         }}
       />
 
-      {React.isValidElement(Value) ? (
-        Value
+      {typeof Value === 'string' && Value.startsWith('http') ? (
+        <Link href={Value} title={Value} />
       ) : (
         <SectionBody
           body={Value}
           style={{
-            color: theme.palette.text.tertiary,
-            textOverflow: 'ellipsis',
-            wordBreak: 'break-word',
+            fontWeight: 'normal',
             overflow: 'hidden',
             ...style,
           }}

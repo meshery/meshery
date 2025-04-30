@@ -9,26 +9,56 @@ import { ErrorMetadataFormatter } from './formatters/error';
 import { DryRunResponse } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
-import { useTheme, DownloadIcon, InfoIcon } from '@layer5/sistent';
+import { useTheme, DownloadIcon, InfoIcon, IconButton, Box, Typography } from '@layer5/sistent';
 import _ from 'lodash';
 import { ChipWrapper } from '../connections/styles';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { CustomTooltip } from '@layer5/sistent';
 
 const DesignFormatter = ({ value }) => {
   const theme = useTheme();
   const { name, id } = value;
+  const [copySuccess, setCopySuccess] = React.useState('');
+
+  const copyToClipboard = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(id).then(
+      () => {
+        setCopySuccess('Design ID copied!');
+        setTimeout(() => setCopySuccess(''), 2000);
+      },
+      (err) => {
+        console.error('Could not copy text: ', err);
+      },
+    );
+  };
 
   return (
-    <TitleLink
-      href={'/extension/meshmap?mode=design&design=' + encodeURIComponent(id)}
-      style={{
-        color: theme.palette.text.default,
-        fontWeight: 'normal',
-        textDecoration: 'none',
-      }}
-      target="_self"
-    >
-      Saved design {name}
-    </TitleLink>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+      <TitleLink
+        href={'/extension/meshmap?mode=design&design=' + encodeURIComponent(id)}
+        style={{
+          color: theme.palette.primary.main,
+          fontWeight: 'normal',
+          textDecoration: 'underline',
+        }}
+        target="_self"
+      >
+        {name}
+      </TitleLink>
+      <CustomTooltip title={copySuccess || 'Copy Design ID'}>
+        <IconButton
+          size="small"
+          onClick={copyToClipboard}
+          style={{ alignSelf: 'flex-start', padding: '4px' }}
+        >
+          <ContentCopyIcon fontSize="small" />
+          <Typography variant="caption" style={{ marginLeft: '4px' }}>
+            Copy ID
+          </Typography>
+        </IconButton>
+      </CustomTooltip>
+    </Box>
   );
 };
 
@@ -67,11 +97,12 @@ export const LinkFormatters = {
   doclink: (value) => {
     return (
       <TitleLink href={value} style={{ textAlign: 'end', color: 'inherit' }}>
-        Doc
+        Documentation
       </TitleLink>
     );
   },
 };
+
 export const PropertyLinkFormatters = {
   doc: (value) => ({
     label: 'Doc',
