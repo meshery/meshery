@@ -27,12 +27,10 @@ const transitionTests = [
   },
 ];
 
-
 test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Lifecycle' }).click();
-
   });
   test('Verify that UI components are displayed', async ({ page }) => {
     // Verify that connections table is displayed (by checking for table headings)
