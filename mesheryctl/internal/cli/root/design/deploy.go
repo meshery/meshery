@@ -40,25 +40,25 @@ var (
 	sourceType string // pattern file type (manifest / compose)
 )
 
-var linkDocpatternOnboard = map[string]string{
-	"link":    "![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)",
-	"caption": "Usage of mesheryctl design onboard",
+var linkDocpatternDeploy = map[string]string{
+	"link":    "![pattern-deploy-usage](/assets/img/mesheryctl/pattern-deploy.png)",
+	"caption": "Usage of mesheryctl design deploy",
 }
 
-var onboardCmd = &cobra.Command{
-	Use:   "onboard",
-	Short: "Onboard design",
+var deployCmd = &cobra.Command{
+	Use:   "deploy",
+	Short: "Deploy design",
 	Long:  `Command will trigger deploy of design`,
 	Example: `
-// Onboard design by providing file path
-mesheryctl design onboard -f [filepath] -s [source type]
-mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
+// deploy design by providing file path
+mesheryctl design deploy -f [filepath] -s [source type]
+mesheryctl design deploy -f ./pattern.yml -s "Kubernetes Manifest"
 	`,
-	Annotations: linkDocpatternOnboard,
+	Annotations: linkDocpatternDeploy,
 	Args: func(_ *cobra.Command, args []string) error {
 
 		if file == "" && len(args) == 0 {
-			return ErrOnboardDesign()
+			return ErrDeployDesign()
 		}
 		return nil
 	},
@@ -168,7 +168,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design onboarded")
+			utils.Log.Info("design deployed")
 		}
 		utils.Log.Info(string(body))
 		return nil
@@ -266,7 +266,7 @@ func getFullSourceType(sType string) (string, error) {
 }
 
 func init() {
-	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
-	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
-	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	deployCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
+	deployCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
+	deployCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
 }

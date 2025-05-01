@@ -24,8 +24,8 @@ import (
 const (
 	ErrImportDesignCode          = "mesheryctl-1001"
 	ErrInValidSourceCode         = "mesheryctl-1002"
-	ErrOnboardDesignCode         = "mesheryctl-1003"
-	ErrOffboardDesignCode        = "mesheryctl-1005"
+	ErrDeployDesignCode          = "mesheryctl-1003"
+	ErrUndeployDesignCode        = "mesheryctl-1005"
 	ErrDesignFlagCode            = "mesheryctl-1006"
 	ErrDesignManifestCode        = "mesheryctl-1007"
 	ErrDesignFileNotProvidedCode = "mesheryctl-1140"
@@ -44,9 +44,9 @@ const (
 	errPatternMsg = `Usage: mesheryctl design import -f [file/url] -s [source-type]
 Example: mesheryctl design import -f ./pattern.yml -s "Kubernetes Manifest"`
 
-	errOnboardMsg = `Usage: mesheryctl design onboard -f [filepath] -s [source type]
-Example: mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
-Description: Onboard pattern`
+	errDeployMsg = `Usage: mesheryctl design deploy -f [filepath] -s [source type]
+Example: mesheryctl design deploy -f ./pattern.yml -s "Kubernetes Manifest"
+Description: Deploy pattern`
 )
 
 func ErrDesignNotFound() error {
@@ -99,12 +99,12 @@ func ErrDesignFileNotProvided() error {
 		[]string{"Provide the path to the design file using the '-f' flag. Ensure that the file path or URL is correctly specified and accessible. \n\n%v", errPatternMsg})
 }
 
-func ErrOnboardDesign() error {
-	return errors.New(ErrOnboardDesignCode, errors.Alert,
-		[]string{"Error Onboarding design"},
-		[]string{"Unable to onboard design due to empty path"},
+func ErrDeployDesign() error {
+	return errors.New(ErrDeployDesignCode, errors.Alert,
+		[]string{"Error Deploying design"},
+		[]string{"Unable to deploy design due to empty path"},
 		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+		[]string{"Provide a file path/design name. \n\n%v", errDeployMsg})
 }
 
 func ErrDesignSourceType() error {
@@ -123,12 +123,12 @@ func ErrViewDesignFlag() error {
 		[]string{"-a/-all cannot be used when [design name|id] is specified"})
 }
 
-func ErrOffboardDesign(err error) error {
-	return errors.New(ErrOffboardDesignCode, errors.Alert,
-		[]string{"Error Offboarding design"},
-		[]string{"Unable to offboard design due to empty path"},
+func ErrUndeployDesign(err error) error {
+	return errors.New(ErrUndeployDesignCode, errors.Alert,
+		[]string{"Error Undeploying design"},
+		[]string{"Unable to undeploy design due to empty path"},
 		[]string{"File path or design name not provided."},
-		[]string{"Provide a file path/design name. \n\n%v", errOnboardMsg})
+		[]string{"Provide a file path/design name. \n\n%v", errDeployMsg})
 }
 func ErrCopyData(filepath string, err error) error {
 	return errors.New(ErrCopyDataCode, errors.Alert,

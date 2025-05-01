@@ -32,19 +32,19 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-var offboardCmd = &cobra.Command{
-	Use:   "offboard",
-	Short: "Offboard design",
-	Long:  `Offboard design will trigger undeploy of design`,
+var undeployCmd = &cobra.Command{
+	Use:   "undeploy",
+	Short: "Undeploy design",
+	Long:  `Undeploy design will trigger undeploy of design`,
 	Example: `
-// Offboard design by providing file path
-mesheryctl design offboard -f [filepath]
+// Undeploy design by providing file path
+mesheryctl design undeploy -f [filepath]
 	`,
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		if cmd.Flags().Changed("file") && file == "" {
-			errMsg := `Usage: mesheryctl design offboard -f [filepath]`
-			return ErrOffboardDesign(errors.New(errMsg))
+			errMsg := `Usage: mesheryctl design undeploy -f [filepath]`
+			return ErrUndeployDesign(errors.New(errMsg))
 		}
 		return nil
 	},
@@ -160,7 +160,7 @@ mesheryctl design offboard -f [filepath]
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design offboarded")
+			utils.Log.Info("design undeployed")
 		}
 		utils.Log.Info(string(body))
 
@@ -169,5 +169,5 @@ mesheryctl design offboard -f [filepath]
 }
 
 func init() {
-	offboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
+	undeployCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 }
