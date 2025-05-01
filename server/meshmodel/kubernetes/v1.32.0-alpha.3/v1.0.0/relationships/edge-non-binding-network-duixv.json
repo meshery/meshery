@@ -90,6 +90,12 @@
               "components": null,
               "relationships": null
             },
+
+            "match_strategy_matrix": [
+                  ["to_contains_from","not_null"] ,
+                  ["equal_as_strings","not_null"],
+                  ["equal"]
+            ],
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
