@@ -12,7 +12,7 @@ const TAGS = {
 };
 const workspacesApi = api
   .enhanceEndpoints({
-    addTagTypes: [TAGS.WORKSPACES],
+    addTagTypes: [TAGS.WORKSPACES, TAGS.DESIGNS, TAGS.ENVIRONMENTS, TAGS.VIEWS, TAGS.TEAMS],
   })
   .injectEndpoints({
     endpoints: (builder) => ({
@@ -120,6 +120,24 @@ const workspacesApi = api
 
           return designs;
         },
+        serializeQueryArgs: ({ endpointName }) => {
+          return endpointName;
+        },
+        // Always merge incoming data to the cache entry
+        merge: (currentCache, newItems, { arg }) => {
+          if (arg.page === 0) {
+            return newItems;
+          }
+          return {
+            ...(currentCache || {}),
+            ...(newItems || {}),
+            designs: [...(currentCache?.designs || []), ...(newItems?.designs || [])],
+          };
+        },
+        // Refetch when the page arg changes
+        forceRefetch({ currentArg, previousArg }) {
+          return !_.eq(currentArg, previousArg);
+        },
         providesTags: () => [{ type: TAGS.DESIGNS }],
         invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
@@ -165,6 +183,24 @@ const workspacesApi = api
           }
 
           return views;
+        },
+        serializeQueryArgs: ({ endpointName }) => {
+          return endpointName;
+        },
+        // Always merge incoming data to the cache entry
+        merge: (currentCache, newItems, { arg }) => {
+          if (arg.page === 0) {
+            return newItems;
+          }
+          return {
+            ...(currentCache || {}),
+            ...(newItems || {}),
+            views: [...(currentCache?.views || []), ...(newItems?.views || [])],
+          };
+        },
+        // Refetch when the page arg changes
+        forceRefetch({ currentArg, previousArg }) {
+          return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.VIEWS }],
         invalidatesTags: () => [{ type: TAGS.VIEWS }],

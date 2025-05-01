@@ -1,3 +1,4 @@
+import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 import { initiateQuery } from './utils';
 
@@ -26,10 +27,44 @@ export const viewsApi = api
         }),
         invalidatesTags: [{ type: TAGS.VIEWS }],
       }),
+      fetchViews: builder.query({
+        query: (queryArg) =>
+          `extensions/api/content/views?${urlEncodeArrayParam(
+            'visibility',
+            queryArg.visibility,
+          )}&${urlEncodeParams({
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search || '',
+            order: queryArg.order || '',
+            trim: queryArg.trim || false,
+            user_id: queryArg.user_id,
+          })}`,
+
+        // Only have one cache entry
+        serializeQueryArgs: ({ endpointName }) => {
+          return endpointName;
+        },
+        // Always merge incoming data to the cache entry
+        merge: (currentCache, newItems, { arg }) => {
+          if (arg.page === 0) {
+            return newItems;
+          }
+          return {
+            ...(currentCache || {}),
+            ...(newItems || {}),
+            views: [...(currentCache?.views || []), ...(newItems?.views || [])],
+          };
+        },
+        // Refetch when the page arg changes
+        forceRefetch({ currentArg, previousArg }) {
+          return !_.eq(currentArg, previousArg);
+        },
+      }),
     }),
   });
 
 export const getView = async ({ viewId }) => {
   return await initiateQuery(viewsApi.endpoints.getView, { viewId });
 };
-export const { useUpdateViewVisibilityMutation } = viewsApi;
+export const { useUpdateViewVisibilityMutation, useFetchViewsQuery } = viewsApi;

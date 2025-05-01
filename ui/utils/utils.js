@@ -445,6 +445,12 @@ export const getDesignVersion = (design) => {
     }
   }
 };
+export const urlEncodeArrayParam = (key, array) => {
+  if (typeof array === 'string') {
+    return array;
+  }
+  return array.map((item) => `${key}=${item}`).join('&');
+};
 
 export const urlEncodeParams = (params) => {
   const urlSearchParams = new URLSearchParams();
