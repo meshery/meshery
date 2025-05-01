@@ -1,3 +1,4 @@
+//@ts-check
 import {
   Breadcrumbs,
   NoSsr,
@@ -21,7 +22,7 @@ import {
 } from '@layer5/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -129,7 +130,13 @@ const Workspaces = () => {
     selectedWorkspace = workspaceSwitcherContext.selectedWorkspace;
     setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
   }
+
   const [viewType, setViewType] = useState(selectedWorkspace.id ? 'table' : 'grid');
+  useEffect(() => {
+    if (selectedWorkspace.id) {
+      setViewType('table');
+    }
+  }, [selectedWorkspace?.id]);
 
   const [teamsModal, setTeamsModal] = useState({
     open: false,
