@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: April 30th 2025, 7:46:29 pm
+- Testing started at: May 1st 2025, 1:12:55 am
 
 **📦 Test Result Summary**
 
-- ✅ 66 passed
-- ❌ 3 failed
+- ✅ 67 passed
+- ❌ 2 failed
 - ⚠️ 4 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 44 seconds_
+⌛ _Duration: 6 minutes and 56 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -33,8 +33,7 @@
 | 10 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 11 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
 | 12 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 13 | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
-| 14 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 13 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
 
 </div>
 </details>
