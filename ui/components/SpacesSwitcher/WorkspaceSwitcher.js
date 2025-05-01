@@ -1,23 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {
-  FormControl,
-  FormControlLabel,
-  FormGroup,
-  Grid,
-  styled,
-  MenuItem,
-  Modal,
-  WorkspaceIcon,
-  ModalBody,
-  useTheme,
-} from '@layer5/sistent';
-import { WorkspacesComponent } from '../../components/Lifecycle';
+import { FormControl, FormControlLabel, FormGroup, Grid, styled, MenuItem } from '@layer5/sistent';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
 import { useLegacySelector } from '../../lib/store';
 import { StyledSelect } from './SpaceSwitcher';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
+import WorkspaceModal from './WorkspaceModal';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -86,7 +75,13 @@ function WorkspaceSwitcher({ open }) {
     setWorkspaceModal(true);
   };
 
-  const theme = useTheme();
+  const handleSetSelectedWorkspace = (workspace) => {
+    // Add validation to prevent unnecessary updates
+    if (workspace.id !== selectedWorkspace.id) {
+      setSelectedWorkspace(workspace);
+    }
+  };
+
   return (
     <NoSsr>
       <WorkspaceSwitcherContext.Provider
@@ -97,7 +92,7 @@ function WorkspaceSwitcher({ open }) {
             setWorkspaceModal(false);
           },
           selectedWorkspace,
-          setSelectedWorkspace,
+          setSelectedWorkspace: handleSetSelectedWorkspace,
         }}
       >
         {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
@@ -166,21 +161,7 @@ function WorkspaceSwitcher({ open }) {
             </FormControl>
           </div>
         )}
-        <Modal
-          closeModal={() => {
-            setWorkspaceModal(false);
-          }}
-          open={workspaceModal}
-          maxWidth="xl"
-          headerIcon={
-            <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
-          }
-          title="Workspaces"
-        >
-          <ModalBody style={{ maxHeight: '80vh', overflowY: 'auto' }}>
-            {workspaceModal && <WorkspacesComponent />}
-          </ModalBody>
-        </Modal>
+        <WorkspaceModal workspaceModal={workspaceModal} setWorkspaceModal={setWorkspaceModal} />
       </WorkspaceSwitcherContext.Provider>
     </NoSsr>
   );
