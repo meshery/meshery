@@ -103,7 +103,7 @@
                   "spec",
                   "ports",
                   "0",
-                  "port"
+                  "targetPort"
                 ],
                 [
                   "configuration",
