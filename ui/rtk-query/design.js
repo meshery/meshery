@@ -43,8 +43,30 @@ export const designsApi = api
             user_id: queryArg.user_id,
             expandUser: queryArg.expandUser,
             metrics: queryArg.metrics,
+            search: queryArg.search,
+            visibility: queryArg.visibility,
+            orgID: queryArg.orgId,
+
           });
           return `extensions/api/content/patterns?${params}`;
+        },
+        serializeQueryArgs: ({ endpointName }) => {
+          return endpointName;
+        },
+        // Always merge incoming data to the cache entry
+        merge: (currentCache, newItems, { arg }) => {
+          if (arg.page === 0) {
+            return newItems;
+          }
+          return {
+            ...(currentCache || {}),
+            ...(newItems || {}),
+            patterns: [...(currentCache?.patterns || []), ...(newItems?.patterns || [])],
+          };
+        },
+        // Refetch when the page arg changes
+        forceRefetch({ currentArg, previousArg }) {
+          return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
