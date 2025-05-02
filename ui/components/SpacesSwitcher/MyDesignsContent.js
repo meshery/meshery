@@ -4,6 +4,9 @@ import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import React, { useState } from 'react';
 import MainDesignsContent from './MainDesignsContent';
 import { VISIBILITY } from '@/utils/Enum';
+import { Box, useTheme } from '@layer5/sistent';
+import { StyledSearchBar } from '@layer5/sistent';
+import { SortBySelect, VisibilitySelect } from './components';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -11,10 +14,10 @@ const MyDesignsContent = () => {
 
   const [visibility, setVisibility] = useState(visibilityItems);
   const [searchQuery, setSearchQuery] = useState('');
-  const [modified, setModified] = useState('updated_at desc');
-  const handleModifiedChange = (event) => {
+  const [sortBy, setSortBy] = useState('updated_at desc');
+  const handleSortByChange = (event) => {
     setPage(0);
-    setModified(event.target.value);
+    setSortBy(event.target.value);
   };
   const handleVisibilityChange = (event) => {
     const value = event.target.value;
@@ -39,6 +42,8 @@ const MyDesignsContent = () => {
       order: 'updated_at desc',
       user_id: currentUser?.id,
       metrics: true,
+      visibility: visibility,
+      search: searchQuery,
     },
     {
       skip: !currentUser?.id,
@@ -46,8 +51,33 @@ const MyDesignsContent = () => {
   );
   const hasMore = designsData?.total_count > designsData?.page_size * (designsData?.page + 1);
   const total_count = designsData?.total_count || 0;
+  const theme = useTheme();
   return (
-    <>
+    <Box display={'flex'} flexDirection="column" gap="1rem">
+      <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
+        <StyledSearchBar
+          sx={{
+            backgroundColor: 'transparent',
+          }}
+          width="auto"
+          placeholder={'Search Designs'}
+          value={searchQuery}
+          onChange={onSearchChange}
+          endAdornment={
+            <p style={{ color: theme.palette.text.default }}>Total Designs: {total_count}</p>
+          }
+        />
+        <Box sx={{ minWidth: 120 }}>
+          <SortBySelect sortBy={sortBy} handleSortByChange={handleSortByChange} />
+        </Box>
+        <Box sx={{ minWidth: 120 }}>
+          <VisibilitySelect
+            visibility={visibility}
+            handleVisibilityChange={handleVisibilityChange}
+            visibilityItems={visibilityItems}
+          />
+        </Box>
+      </Box>
       <MainDesignsContent
         designs={designsData?.patterns}
         isFetching={isFetching}
@@ -56,7 +86,7 @@ const MyDesignsContent = () => {
         hasMore={hasMore}
         total_count={total_count}
       />
-    </>
+    </Box>
   );
 };
 
