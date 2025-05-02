@@ -10,7 +10,7 @@ import {
   DeleteIcon,
 } from '@layer5/sistent';
 import React, { useCallback, useRef } from 'react';
-import DesignViewListItem from './DesignViewListItem';
+import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll from './hooks';
 import { GeorgeMenu } from './MenuComponent';
 import { VISIBILITY } from '@/utils/Enum';
@@ -146,7 +146,15 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
             );
           })}
         <LoadingContainer ref={loadingRef}>
-          {(isFetching || isLoading) && <CircularProgress size={24} />}
+          {isLoading ? (
+            Array(3)
+              .fill()
+              .map((_, index) => <DesignViewListItemSkeleton key={index} />)
+          ) : isFetching ? (
+            <DesignViewListItemSkeleton />
+          ) : (
+            <></>
+          )}{' '}
           {!hasMore && views?.length > 0 && total_count > 0 && (
             <ListItemText secondary={`No more views to load`} />
           )}

@@ -3,7 +3,7 @@ import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import { styled, List, ListItem, ListItemText, Divider, CircularProgress } from '@layer5/sistent';
 import React, { useCallback, useRef, useState } from 'react';
-import DesignViewListItem from './DesignViewListItem';
+import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll from './hooks';
 import MenuComponent from './MenuComponent';
 import { MoreVert } from '@mui/icons-material';
@@ -74,7 +74,15 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
           })}
 
         <LoadingContainer ref={loadingRef}>
-          {(isFetching || isLoading) && <CircularProgress size={24} />}
+          {isLoading ? (
+            Array(3)
+              .fill()
+              .map((_, index) => <DesignViewListItemSkeleton key={index} />)
+          ) : isFetching ? (
+            <DesignViewListItemSkeleton />
+          ) : (
+            <></>
+          )}
           {!hasMore && designs?.length > 0 && total_count > 0 && (
             <ListItemText secondary={`No more designs to load`} />
           )}

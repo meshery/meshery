@@ -39,11 +39,12 @@ export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
   // States.
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
   // Handlers.
   const handleClick = (event) => {
     event.stopPropagation();
-
     setAnchorEl(event.currentTarget);
   };
 
@@ -55,6 +56,34 @@ export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
 
   const WrapperIcon = triggerIcon;
 
+  // Renders direct icons for non-mobile view
+  const renderDirectIcons = () => {
+    return (
+      <div style={{ display: 'flex', gap: '0.5rem' }}>
+        {options.map((option) => (
+          <CustomTooltip key={option.title} title={option.title}>
+            <div
+              style={{ cursor: 'pointer' }}
+              onClick={(event) => {
+                option.handler(event);
+              }}
+            >
+              {option.icon && (
+                <option.icon fill="#eeeeee" style={{ ...iconMedium }} {...iconMedium} />
+              )}
+            </div>
+          </CustomTooltip>
+        ))}
+      </div>
+    );
+  };
+
+  // Return direct icons for non-mobile/larger screens
+  if (!isMobile) {
+    return renderDirectIcons();
+  }
+
+  // Default menu for mobile screens
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }} onClick={handleClick}>
@@ -92,7 +121,7 @@ export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
         }}
       >
         {options.map((option) => (
-          <StyledMenuDiv key={option.key}>
+          <StyledMenuDiv key={option.key || option.title}>
             <StyledMenuDiv>
               <CustomTooltip key={option.title} title={option.title}>
                 <StyledMenuItem

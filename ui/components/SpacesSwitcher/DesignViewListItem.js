@@ -3,9 +3,6 @@ import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import {
   Divider,
-  ListItem,
-  ListItemText,
-  styled,
   CustomTooltip,
   Skeleton,
   Link,
@@ -17,54 +14,18 @@ import {
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
-
-const StyledListItem = styled(ListItem)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '1.5rem',
-  marginBlock: '0',
-  paddingBlock: '6px',
-  position: 'relative',
-  cursor: 'grab',
-  '&:hover': {
-    backgroundColor: theme.palette.background.hover,
-    '& .menu-component': {
-      opacity: 1,
-      visibility: 'visible',
-    },
-  },
-}));
-
-const MainMenuComponent = styled('div')({
-  opacity: 0,
-  visibility: 'hidden',
-  transition: 'all 0.2s ease-in-out',
-  cursor: 'pointer',
-});
-
-const TextContainer = styled('div')({
-  width: '45%',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-});
-
-const StyledListItemText = styled(ListItemText)({
-  cursor: 'grab',
-  width: '100%',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  margin: '0',
-});
-
-const UpdatedText = styled('p')({
-  margin: '0',
-  fontSize: '0.8rem',
-  fontStyle: 'italic',
-  color: '#647881',
-  cursor: 'grab',
-});
+import {
+  StyledActionsContainer,
+  StyledAvatarContainer,
+  StyledListItem,
+  StyledListItemText,
+  StyledTextContainer,
+  StyledUpdatedText,
+  StyledUserDetailsContainer,
+  StyledUserInfoContainer,
+  StyledVisibilityContainer,
+} from './styles';
+import React from 'react';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -84,7 +45,7 @@ const DesignViewListItem = ({
         key={selectedItem.id}
         onClick={handleItemClick}
       >
-        <TextContainer>
+        <StyledTextContainer>
           <StyledListItemText
             primary={selectedItem.name ?? 'Untitled'}
             primaryTypographyProps={{ fontSize: '0.9rem' }}
@@ -94,47 +55,32 @@ const DesignViewListItem = ({
                 title={getFullFormattedTime(selectedItem.updated_at)}
                 placement="bottom"
               >
-                <UpdatedText>{getRelativeTime(selectedItem.updated_at)}</UpdatedText>
+                <StyledUpdatedText>{getRelativeTime(selectedItem.updated_at)}</StyledUpdatedText>
               </CustomTooltip>
             }
           />
-        </TextContainer>
+        </StyledTextContainer>
 
-        <div style={{ display: 'flex', gap: '1rem', width: '30%' }}>
+        <StyledUserInfoContainer>
           {isUserLoading ? (
-            <div style={{ width: '100%' }}>
-              <Skeleton
-                animation="wave"
-                variant="circular"
-                height={32}
-                width={32}
-                style={{ minWidth: '32px' }}
-              />
-            </div>
+            <AvatarSkeleton />
           ) : (
-            <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+            <StyledAvatarContainer>
               <Link href={`https://${MESHERY_CLOUD_PROD}/user/${userData?.id}`}>
                 <Avatar alt={userData?.first_name} src={userData?.avatar_url} />
               </Link>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'start',
-                  flexDirection: 'column',
-                  marginLeft: '1rem',
-                  gap: '0.1rem',
-                }}
-              >
+              <StyledUserDetailsContainer>
                 <Typography variant="body2">
                   {userData?.first_name}
                   {userData?.last_name ? ` ${userData?.last_name}` : ''}
                 </Typography>
-                <UpdatedText variant="subtitle1">{userData?.email}</UpdatedText>
-              </div>
-            </div>
+                <StyledUpdatedText variant="subtitle1">{userData?.email}</StyledUpdatedText>
+              </StyledUserDetailsContainer>
+            </StyledAvatarContainer>
           )}
-        </div>
-        <div style={{ width: '10%' }}>
+        </StyledUserInfoContainer>
+
+        <StyledVisibilityContainer>
           <VisibilityChipMenu
             value={selectedItem?.visibility}
             onChange={(value) => onVisibilityChange(value, selectedItem)}
@@ -144,12 +90,9 @@ const DesignViewListItem = ({
               [VIEW_VISIBILITY.PRIVATE, Lock],
             ]}
           />
-        </div>
-        <div style={{ width: '15%' }}>
-          {/* <MainMenuComponent id={`menu-${selectedItem.id}`} className="menu-component"> */}
-          {MenuComponent}
-          {/* </MainMenuComponent> */}
-        </div>
+        </StyledVisibilityContainer>
+
+        <StyledActionsContainer>{MenuComponent}</StyledActionsContainer>
       </StyledListItem>
       <Divider light />
     </>
@@ -157,3 +100,51 @@ const DesignViewListItem = ({
 };
 
 export default DesignViewListItem;
+
+export const DesignViewListItemSkeleton = () => {
+  return (
+    <>
+      <StyledListItem>
+        <StyledTextContainer>
+          <Skeleton animation="wave" height={24} width="80%" />
+          <Skeleton animation="wave" height={16} width="40%" />
+        </StyledTextContainer>
+
+        <StyledUserInfoContainer>
+          <AvatarSkeleton />
+        </StyledUserInfoContainer>
+
+        <StyledVisibilityContainer>
+          <Skeleton animation="wave" height={32} width="70%" />
+        </StyledVisibilityContainer>
+
+        <StyledActionsContainer>
+          {Array(4)
+            .fill()
+            .map((_, index) => (
+              <Skeleton key={index} variant="circular" animation="wave" width={24} height={24} />
+            ))}
+        </StyledActionsContainer>
+      </StyledListItem>
+      <Divider light />
+    </>
+  );
+};
+
+const AvatarSkeleton = () => {
+  return (
+    <StyledAvatarContainer>
+      <Skeleton
+        animation="wave"
+        variant="circular"
+        height={32}
+        width={32}
+        style={{ minWidth: '32px' }}
+      />
+      <StyledUserDetailsContainer style={{ width: '70%' }}>
+        <Skeleton animation="wave" height={20} width="60%" />
+        <Skeleton animation="wave" height={16} width="80%" />
+      </StyledUserDetailsContainer>
+    </StyledAvatarContainer>
+  );
+};

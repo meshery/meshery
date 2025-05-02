@@ -1,4 +1,4 @@
-import { styled, Drawer as MuiDrawer, List } from '@layer5/sistent';
+import { styled, Drawer as MuiDrawer, List, ListItem, ListItemText } from '@layer5/sistent';
 
 const DRAWER_WIDTH = 300;
 
@@ -92,4 +92,74 @@ export const GhostImage = styled('img')({
 
 export const GhostText = styled('div')({
   fontSize: 15,
+});
+
+export const StyledListItem = styled(ListItem)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '1.5rem',
+  marginBlock: '0',
+  paddingBlock: '6px',
+  position: 'relative',
+}));
+
+export const StyledTextContainer = styled('div')({
+  width: '45%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+});
+
+export const StyledUserInfoContainer = styled('div')({
+  display: 'flex',
+  gap: '1rem',
+  width: '30%',
+});
+
+export const StyledUserDetailsContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'start',
+  flexDirection: 'column',
+  marginLeft: '1rem',
+  gap: '0.1rem',
+});
+
+export const StyledVisibilityContainer = styled('div')({
+  width: '10%',
+});
+
+export const StyledActionsContainer = styled('div')({
+  width: '15%',
+  display: 'flex',
+  gap: '0.5rem',
+});
+
+export const StyledAvatarContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  width: '100%',
+});
+
+export const StyledMainMenuComponent = styled('div')({
+  opacity: 0,
+  visibility: 'hidden',
+  transition: 'all 0.2s ease-in-out',
+  cursor: 'pointer',
+});
+
+export const StyledListItemText = styled(ListItemText)({
+  cursor: 'grab',
+  width: '100%',
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  margin: '0',
+});
+
+export const StyledUpdatedText = styled('p')({
+  margin: '0',
+  fontSize: '0.8rem',
+  fontStyle: 'italic',
+  color: '#647881',
+  cursor: 'grab',
 });
