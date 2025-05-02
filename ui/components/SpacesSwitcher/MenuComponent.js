@@ -173,7 +173,16 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
       items[0].unPublishHandler();
     } else if (action === 'clone' && items[0]?.cloneHandler) {
       items[0].cloneHandler();
+    } else if (action === 'export' && items[0]?.downloadHandler) {
+      items[0].downloadHandler();
+    } else if (action === 'delete' && items[0]?.deleteHandler) {
+      items[0].deleteHandler();
+    } else if (action === 'share' && items[0]?.shareHandler) {
+      items[0].shareHandler();
+    } else if (action === 'info' && items[0]?.infoHandler) {
+      items[0].infoHandler();
     }
+
     if (!isMobile) handleClose(event);
   };
 
@@ -272,6 +281,10 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
             onClick={(event) => {
               if (item.action === 'unpublish') option.unPublishHandler();
               else if (item.action === 'clone') option.cloneHandler();
+              else if (item.action === 'download') option.downloadHandler();
+              else if (item.action === 'delete') option.deleteHandler();
+              else if (item.action === 'share') option.shareHandler();
+              else if (item.action === 'info') option.infoHandler();
               handleClose(event);
             }}
           >

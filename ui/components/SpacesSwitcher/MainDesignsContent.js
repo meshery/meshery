@@ -8,9 +8,16 @@ import useInfiniteScroll from './hooks';
 import MenuComponent from './MenuComponent';
 import { MoreVert } from '@mui/icons-material';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
+import ExportModal from '../ExportModal';
+import { updateProgress } from 'lib/store';
+import downloadContent from '@/utils/fileDownloader';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
+  const { notify } = useNotification();
+
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
     setPage((prevPage) => prevPage + 1);
@@ -21,6 +28,39 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
     hasMore,
     onLoadMore: loadNextPage,
   });
+  const [downloadModal, setDownloadModal] = useState({
+    open: false,
+    content: null,
+  });
+
+  const handleDesignDownloadModal = (design) => {
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: true,
+      content: design,
+    }));
+  };
+  const handleDownloadDialogClose = () => {
+    setDownloadModal((prevState) => ({
+      ...prevState,
+      open: false,
+      content: null,
+    }));
+  };
+
+  const handleDownload = (e, design, source_type, params) => {
+    e.stopPropagation();
+    updateProgress({ showProgress: true });
+    try {
+      let id = design.id;
+      let name = design.name;
+      downloadContent({ id, name, type: 'pattern', source_type, params });
+      updateProgress({ showProgress: false });
+      notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
@@ -57,7 +97,7 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                       items={[
                         {
                           deleteHandler: () => {},
-                          downloadDesignHandler: () => {},
+                          downloadHandler: () => handleDesignDownloadModal(design),
                           cloneHandler: () => {},
                           shareHandler: () => {},
                           infoHandler: () => {},
@@ -92,6 +132,11 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
         <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
         <GhostText ref={ghostTextNodeRef}></GhostText>
       </GhostContainer>
+      <ExportModal
+        downloadModal={downloadModal}
+        handleDownloadDialogClose={handleDownloadDialogClose}
+        handleDesignDownload={handleDownload}
+      />
     </>
   );
 };
