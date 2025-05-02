@@ -5,7 +5,7 @@ setup() {
 	_load_bats_libraries
 
   export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/component-search" 
-  # run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-model
+  run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-model
 }
 
 @test "Search for a known component" {
