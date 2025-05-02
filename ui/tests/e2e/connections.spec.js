@@ -1,6 +1,7 @@
 import { expect, test } from './fixtures/project';
 import { ENV } from './env';
 import os from 'os';
+import { waitForSnackBar } from './utils/waitForSnackBar';
 
 // name: Name of the test
 // transitionOption: Option to be chosen from dropdown to transition to another state
@@ -111,8 +112,11 @@ test.describe.serial('Connection Management Tests', () => {
 
       await expect(page.locator('#searchClick')).toBeVisible();
       await page.getByRole('button', { name: 'Confirm' }).click();
+      
 
-      await expect(page.getByText('Connection status updated')).toBeVisible();
+      await waitForSnackBar(page, 'Connection status updated');
+
+
 
       await stateTransitionReq;
       await stateTransitionRes;
@@ -129,12 +133,12 @@ test.describe.serial('Connection Management Tests', () => {
 
       await expect(page.locator('#searchClick')).toBeVisible();
       await page.getByRole('button', { name: 'Confirm' }).click();
-      // expect the state to be restored to "connected"
 
+      // expect the state to be restored to "connected"
       const restoredFirstRow = page.getByRole('menuitem', { name: 'connected' }).first();
       await expect(restoredFirstRow).toBeVisible();
 
-      await expect(page.getByText('Connection status updated')).toBeVisible();
+      await waitForSnackBar(page, 'Connection status updated');
     });
   });
 
