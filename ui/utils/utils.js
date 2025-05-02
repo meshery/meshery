@@ -505,11 +505,9 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
   }
 
   router.push(`/extension/meshmap?mode=operator&type=view&design_id=${designId}`);
-  // window.open(view_link, '_blank');
 };
 
 export const openDesignInKanvas = (designId, designName, router) => {
-  // disable due to bug in workspace switcher routing
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
       type: 'OPEN_DESIGN_IN_KANVAS',

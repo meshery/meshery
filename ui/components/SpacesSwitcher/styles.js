@@ -148,7 +148,7 @@ export const StyledMainMenuComponent = styled('div')({
 });
 
 export const StyledListItemText = styled(ListItemText)({
-  cursor: 'grab',
+  cursor: 'pointer',
   width: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -161,5 +161,5 @@ export const StyledUpdatedText = styled('p')({
   fontSize: '0.8rem',
   fontStyle: 'italic',
   color: '#647881',
-  cursor: 'grab',
+  cursor: 'pointer',
 });

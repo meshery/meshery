@@ -20,7 +20,7 @@ import {
   useModal,
   Modal,
 } from '@layer5/sistent';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, {
   getModelNamesBasedOnDisplayNames,
@@ -40,6 +40,9 @@ import InfoModal from '../Modals/Information/InfoModal';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import _ from 'lodash';
+import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
+import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
+import Router from 'next/router';
 
 const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -239,7 +242,23 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
   const [updatePatterns] = useUpdatePatternFileMutation();
+  const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
+  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
 
+  const handleOpenDesignInDesigner = (designId, designName) => {
+    if (!isKanvasDesignerAvailable) {
+      notify({
+        message: 'Kanvas Designer is not available',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (workspaceSwitcherContext?.closeModal) {
+      workspaceSwitcherContext.closeModal();
+    }
+
+    openDesignInKanvas(designId, designName, Router);
+  };
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -259,7 +278,9 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
               <React.Fragment key={design?.id}>
                 <DesignViewListItem
                   selectedItem={design}
-                  handleItemClick={(e) => {}}
+                  handleItemClick={() => {
+                    handleOpenDesignInDesigner(design?.id, design?.name);
+                  }}
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={(value, selectedItem) => {
                     handleUpdatePatternVisibility({
@@ -290,7 +311,7 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
 
         <LoadingContainer ref={loadingRef}>
           {isLoading ? (
-            Array(3)
+            Array(10)
               .fill()
               .map((_, index) => <DesignViewListItemSkeleton key={index} />)
           ) : isFetching ? (

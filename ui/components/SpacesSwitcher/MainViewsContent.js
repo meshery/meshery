@@ -9,7 +9,7 @@ import {
   InfoIcon,
   DeleteIcon,
 } from '@layer5/sistent';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, { handleUpdateViewVisibility } from './hooks';
 import { GeorgeMenu } from './MenuComponent';
@@ -22,6 +22,11 @@ import { api } from '@/rtk-query/index';
 import { getView, useDeleteViewMutation, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
 import { ViewsInfoModal } from '../ViewInfoModal';
+import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
+import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
+import { Router } from 'next/router';
 
 const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -146,7 +151,23 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
 
     return options.filter((option) => option.enabled({ view, userId: user?.id }));
   };
+  const isKanvasDesignerAvailable = useIsOperatorEnabled();
+  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const notify = useNotification();
+  const handleOpenViewInOperator = (viewId, viewName) => {
+    if (!isKanvasDesignerAvailable) {
+      notify({
+        message: 'Kanvas Designer is not available',
+        event_type: EVENT_TYPES.ERROR,
+      });
+      return;
+    }
+    if (workspaceSwitcherContext?.closeModal) {
+      workspaceSwitcherContext.closeModal();
+    }
 
+    openViewInKanvas(viewId, viewName, Router);
+  };
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -165,7 +186,9 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
               <React.Fragment key={view?.id}>
                 <DesignViewListItem
                   selectedItem={view}
-                  handleItemClick={(e) => {}}
+                  handleItemClick={() => {
+                    handleOpenViewInOperator(view?.id, view?.name);
+                  }}
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={(value, selectedItem) => {
                     handleUpdateViewVisibility({
@@ -193,7 +216,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
           })}
         <LoadingContainer ref={loadingRef}>
           {isLoading ? (
-            Array(3)
+            Array(10)
               .fill()
               .map((_, index) => <DesignViewListItemSkeleton key={index} />)
           ) : isFetching ? (
