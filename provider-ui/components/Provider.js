@@ -200,20 +200,6 @@ export default function Provider() {
 
                 <DropDownIcon />
               </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                size="small"
-                style={{ marginTop: "10px" }}
-                onClick={() =>
-                  window.open(
-                    "https://docs.meshery.io/extensibility/providers",
-                    "_blank"
-                  )
-                }
-              >
-                Create Your Own Provider
-              </Button>
             </StyledButtonGroup>
 
             <StyledPopover
@@ -281,6 +267,36 @@ export default function Provider() {
                     The University of Texas at Austin{"\u00A0"}
                     <span> Offline</span>
                   </MenuProviderDisabled>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    aria-describedby={id}
+                    onClick={() =>
+                      window.open(
+                        "https://docs.meshery.io/extensibility/providers",
+                        "_blank"
+                      )
+                    }
+                    aria-label="Create Provider"
+                    data-cy="create_provider"
+                    disableElevation
+                    sx={{
+                      width: '100%',
+                      marginTop: '0.4rem'
+                    }}
+                  >Create Your Own Provider&nbsp;
+                    <img
+                      src="/provider/static/img/external-link.svg"
+                      onError={(e) =>
+                        (e.target.src = "/static/img/external-link.svg")
+                      }
+                      width="16px"
+                      alt="External link"
+                      style={{
+                        filter: 'brightness(0)'
+                      }}
+                    />
+                  </Button>
                 </MenuList>
               </ClickAwayListener>
             </StyledPopover>
