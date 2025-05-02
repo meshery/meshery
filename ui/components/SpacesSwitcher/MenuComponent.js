@@ -6,6 +6,7 @@ import { Public as PublicIcon, Reply } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
+import { useMediaQuery, useTheme } from '@mui/material';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import React from 'react';
 
@@ -72,7 +73,7 @@ export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'left',
         }}
         MenuListProps={{
           style: {
@@ -118,11 +119,12 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
   // States.
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
   // Handlers.
   const handleClick = (event) => {
     event.stopPropagation();
-
     setAnchorEl(event.currentTarget);
   };
 
@@ -135,6 +137,127 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
   const WrapperIcon = iconType;
   const { data: currentUser } = useGetLoggedInUserQuery();
 
+  // Function to handle specific actions
+  const handleAction = (action, event) => {
+    event.stopPropagation();
+    if (action === 'unpublish' && items[0]?.unPublishHandler) {
+      items[0].unPublishHandler();
+    } else if (action === 'clone' && items[0]?.cloneHandler) {
+      items[0].cloneHandler();
+    }
+    if (!isMobile) handleClose(event);
+  };
+
+  // Common configuration for menu items
+  const menuItems = [
+    {
+      key: 'unpublish',
+      title: 'Unpublish',
+      icon: PublicIcon,
+      action: 'unpublish',
+      visible:
+        visibility === 'published' && currentUser?.user_details?.role_names?.includes('admin'),
+    },
+    {
+      key: 'clone',
+      title: 'Clone',
+      icon: CloneIcon,
+      action: 'clone',
+      iconProps: { fill: '#eee', style: { ...iconSmall } },
+      visible: visibility === 'published',
+    },
+    {
+      key: 'export_design',
+      title: 'Export Design',
+      icon: GetAppIcon,
+      action: 'export',
+      iconProps: { fill: '#eee', style: { ...iconMedium } },
+      visible: true,
+    },
+    {
+      key: 'delete',
+      title: 'Delete',
+      icon: DeleteIcon,
+      action: 'delete',
+      iconProps: { fill: '#eee', style: { ...iconMedium } },
+      visible: true,
+    },
+    {
+      key: 'share',
+      title: 'Share',
+      icon: Reply,
+      action: 'share',
+      iconProps: { style: { ...iconMedium, transform: 'scaleX(-1)', color: '#eee' } },
+      visible: visibility !== 'published',
+    },
+    {
+      key: 'info',
+      title: 'Info',
+      icon: InfoIcon,
+      action: 'info',
+      iconProps: { style: { ...iconMedium, transform: 'scaleX(-1)', color: '#eee' } },
+      visible: true,
+    },
+  ];
+
+  // Renders direct icons for mobile view
+  const renderDirectIcons = () => {
+    return (
+      <div
+        data-testid={`designs-tr-icons-${rowData?.id}`}
+        style={{ display: 'flex', gap: '0.5rem' }}
+      >
+        {menuItems
+          .filter((item) => item.visible)
+          .map((item) => (
+            <CustomTooltip key={item.key} title={item.title}>
+              {item.key === 'clone' ? (
+                <div
+                  style={{ cursor: 'pointer' }}
+                  onClick={(event) => handleAction(item.action, event)}
+                >
+                  <item.icon {...(item.iconProps || {})} />
+                </div>
+              ) : (
+                <item.icon
+                  {...(item.iconProps || {})}
+                  style={{ ...(item.iconProps?.style || {}), cursor: 'pointer' }}
+                  onClick={(event) => handleAction(item.action, event)}
+                />
+              )}
+            </CustomTooltip>
+          ))}
+      </div>
+    );
+  };
+
+  // Render menu items for the dropdown
+  const renderMenuItems = (option) => {
+    return menuItems
+      .filter((item) => item.visible)
+      .map((item) => (
+        <CustomTooltip key={item.key} title={item.title}>
+          <StyledMenuItem
+            data-testid={`designs-tr-menu-li-${item.key}-${rowData?.id}`}
+            key={item.key}
+            onClick={(event) => {
+              if (item.action === 'unpublish') option.unPublishHandler();
+              else if (item.action === 'clone') option.cloneHandler();
+              handleClose(event);
+            }}
+          >
+            <item.icon {...(item.iconProps || {})} />
+          </StyledMenuItem>
+        </CustomTooltip>
+      ));
+  };
+
+  // Return direct icons for non-mobile/larger screens
+  if (!isMobile) {
+    return renderDirectIcons();
+  }
+
+  // Default menu for mobile screens
   return (
     <div data-testid={`designs-tr-menu-${rowData?.id}`}>
       <div style={{ display: 'flex', alignItems: 'center' }} onClick={handleClick}>
@@ -147,7 +270,7 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
         anchorEl={anchorEl}
         anchorOrigin={{
           vertical: 'top',
-          horizontal: 'right',
+          horizontal: 'left',
         }}
         MenuListProps={{
           style: {
@@ -164,88 +287,11 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
         style={{ borderRadius: '3px' }}
       >
         {items.map((option) => (
-          <StyledMenuDiv key={CustomTooltip} data-testid={`design-tr-menu-list-${rowData?.id}`}>
-            <StyledMenuDiv>
-              {visibility === 'published' &&
-                currentUser?.user_details?.role_names?.includes('admin') && (
-                  <CustomTooltip key="unpublish" title="Unpublish">
-                    <StyledMenuItem
-                      data-testid={`designs-tr-menu-li-unpublish-${rowData?.id}`}
-                      key="unpublish"
-                      onClick={(event) => {
-                        option.unPublishHandler();
-                        handleClose(event);
-                      }}
-                    >
-                      <PublicIcon styles={{ ...iconMedium }} />
-                    </StyledMenuItem>
-                  </CustomTooltip>
-                )}
-
-              {visibility === 'published' && (
-                <CustomTooltip key="clone" title="Clone">
-                  <StyledMenuItem
-                    data-testid={`designs-tr-menu-li-clone-${rowData?.id}`}
-                    key="clone"
-                    onClick={(event) => {
-                      option.cloneHandler();
-                      handleClose(event);
-                    }}
-                  >
-                    <CloneIcon fill="#eee" style={{ ...iconSmall }} />
-                  </StyledMenuItem>
-                </CustomTooltip>
-              )}
-              <CustomTooltip key="export_design" title="Export Design">
-                <StyledMenuItem
-                  data-testid={`designs-tr-menu-li-export-${rowData?.id}`}
-                  key="export_design"
-                  onClick={(event) => {
-                    handleClose(event);
-                  }}
-                >
-                  <GetAppIcon fill="#eee" style={{ ...iconMedium }} />
-                </StyledMenuItem>
-              </CustomTooltip>
-
-              <CustomTooltip key="delete" title="Delete">
-                <StyledMenuItem
-                  data-testid={`designs-tr-menu-li-delete-${rowData?.id}`}
-                  key="delete"
-                  onClick={(event) => {
-                    handleClose(event);
-                  }}
-                >
-                  <DeleteIcon fill="#eee" style={{ ...iconMedium }} />
-                </StyledMenuItem>
-              </CustomTooltip>
-
-              {visibility !== 'published' && (
-                <CustomTooltip key="share" title="Share">
-                  <StyledMenuItem
-                    data-testid={`designs-tr-menu-li-share-${rowData?.id}`}
-                    key="Share"
-                    onClick={(event) => {
-                      handleClose(event);
-                    }}
-                  >
-                    <Reply style={{ ...iconMedium, transform: 'scaleX(-1)', color: '#eee' }} />
-                  </StyledMenuItem>
-                </CustomTooltip>
-              )}
-
-              <CustomTooltip key="info" title="Info">
-                <StyledMenuItem
-                  data-testid={`designs-tr-menu-li-info-${rowData?.id}`}
-                  key="Info"
-                  onClick={(event) => {
-                    handleClose(event);
-                  }}
-                >
-                  <InfoIcon style={{ ...iconMedium, transform: 'scaleX(-1)', color: '#eee' }} />
-                </StyledMenuItem>
-              </CustomTooltip>
-            </StyledMenuDiv>
+          <StyledMenuDiv
+            key={option.key || 'menu-item'}
+            data-testid={`design-tr-menu-list-${rowData?.id}`}
+          >
+            <StyledMenuDiv>{renderMenuItems(option)}</StyledMenuDiv>
           </StyledMenuDiv>
         ))}
       </Menu>

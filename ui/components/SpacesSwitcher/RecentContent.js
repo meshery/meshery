@@ -47,7 +47,6 @@ const RecentContent = () => {
   const [author, setAuthor] = React.useState('');
   const [modified, setModified] = useState('updated_at desc');
   const [visibility, setVisibility] = useState(visibilityItems);
-  console.log('amit author', author);
   const handleTypeChange = (event) => {
     setType(event.target.value);
     setDesignsPage(0);
@@ -127,6 +126,9 @@ const RecentContent = () => {
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <StyledSearchBar
+          sx={{
+            backgroundColor: 'transparent',
+          }}
           width="auto"
           placeholder={type === 'design' ? 'Search Designs' : 'Search Views'}
           value={searchQuery}
@@ -195,6 +197,21 @@ const RecentContent = () => {
             </FormControl>
           </Box>
         </Box>
+        <Box display={'flex'} width={'100%'} paddingInline={'1rem'} gap={'1rem'}>
+          <Typography style={{ width: '50%' }} variant="body1">
+            Name
+          </Typography>
+          <Typography style={{ width: '30%' }} variant="body1">
+            Author
+          </Typography>
+          <Typography style={{ width: '10%' }} variant="body1">
+            Visibility
+          </Typography>
+          <Typography style={{ width: '10%' }} variant="body1">
+            Actions
+          </Typography>
+        </Box>
+
         {type == 'design' && (
           <MainDesignsContent
             designsData={designsData}

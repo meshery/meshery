@@ -19,6 +19,7 @@ const WorkspaceDesignContent = ({ workspaceId }) => {
     isFetching,
   } = useGetDesignsOfWorkspaceQuery(
     {
+      infiniteScroll: true,
       workspaceId: workspaceId,
       page: page,
       pagesize: 10,
@@ -40,6 +41,7 @@ const WorkspaceDesignContent = ({ workspaceId }) => {
     hasMore,
     onLoadMore: loadNextPage,
   });
+
   const total_count = designsData?.total_count || 0;
 
   const ghostRef = useRef(null);

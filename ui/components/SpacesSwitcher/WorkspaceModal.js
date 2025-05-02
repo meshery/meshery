@@ -44,7 +44,9 @@ const navConfig = {
     {
       id: 'My-Designs',
       label: 'My Designs',
-      icon: <DesignIcon fill="white" secondaryFill="white" width="20" height="20" />,
+      icon: (
+        <DesignIcon fill="white" secondaryFill="white" width="20" height="20" primaryFill="white" />
+      ),
       content: <DesignsContent filterByAuthor={true} />,
     },
     {
@@ -181,7 +183,13 @@ const NestedNavItem = ({ item, open, selectedId, onSelect, level = 0 }) => {
                   justifyContent: 'center',
                 }}
               >
-                <DesignIcon fill="white" secondaryFill="white" width="20" height="20" />
+                <DesignIcon
+                  fill="white"
+                  secondaryFill="white"
+                  width="20"
+                  height="20"
+                  primaryFill="white"
+                />
               </ListItemIcon>
               <ListItemText
                 primary="Designs"
@@ -241,7 +249,15 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
       {
         id: `${workspace.id}_designs`,
         name: 'Designs',
-        icon: <DesignIcon fill="white" secondaryFill="white" width="20" height="20" />,
+        icon: (
+          <DesignIcon
+            fill="white"
+            secondaryFill="white"
+            width="20"
+            height="20"
+            primaryFill="white"
+          />
+        ),
       },
       {
         id: `${workspace.id}_views`,

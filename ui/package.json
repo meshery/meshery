@@ -4,7 +4,7 @@
   "description": "collaborative management plane",
   "main": "index.js",
   "scripts": {
-    "dev": "next lint --fix && node ui_dev_server.js",
+    "dev": " node ui_dev_server.js",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "format": "npx prettier --write \"**/*.{ts,tsx,js,jsx,md,json}\"",

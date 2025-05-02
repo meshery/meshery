@@ -22,7 +22,6 @@ import { MoreVert } from '@mui/icons-material';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
 
 const WorkspaceViewContent = ({ workspaceId }) => {
-  console.log('amit workspaceId', workspaceId);
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [page, setPage] = useState(0);
   const {
@@ -32,6 +31,7 @@ const WorkspaceViewContent = ({ workspaceId }) => {
     error,
   } = useGetViewsOfWorkspaceQuery(
     {
+      infiniteScroll: true,
       workspaceId: workspaceId,
       page: page,
       pagesize: 10,
@@ -41,7 +41,6 @@ const WorkspaceViewContent = ({ workspaceId }) => {
       skip: !workspaceId,
     },
   );
-  console.log('amit viewsData', viewsData);
   const views = viewsData?.views || [];
   const hasMore = viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1);
 
