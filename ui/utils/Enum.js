@@ -150,3 +150,8 @@ export const APP_MODE = {
   DESIGN: 'design',
   OPERATOR: 'operator',
 };
+
+export const VIEW_VISIBILITY = {
+  PUBLIC: 'public',
+  PRIVATE: 'private',
+};

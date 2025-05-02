@@ -245,7 +245,9 @@ const ViewVisibilityMenu = ({ view }) => {
   return (
     <VisibilityChipMenu
       value={view.visibility}
-      onChange={(value) => handleUpdateViewVisibility(value, updateView, view)}
+      onChange={(value) =>
+        handleUpdateViewVisibility({ value: value, updateView: updateView, selectedResource: view })
+      }
       enabled={view?.user_id === userData?.id}
       options={[
         [VIEW_VISIBILITY.PUBLIC, Public],

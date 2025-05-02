@@ -57,7 +57,7 @@ export const GeorgeMenu = ({ options = [] }) => {
   // Renders direct icons for non-mobile view
   const renderDirectIcons = () => {
     return (
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', gap: '0.75rem' }}>
         {options.map((option) => (
           <CustomTooltip key={option.title} title={option.title}>
             <div
@@ -240,7 +240,7 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
     return (
       <div
         data-testid={`designs-tr-icons-${rowData?.id}`}
-        style={{ display: 'flex', gap: '0.5rem' }}
+        style={{ display: 'flex', gap: '0.75rem' }}
       >
         {menuItems
           .filter((item) => item.visible)

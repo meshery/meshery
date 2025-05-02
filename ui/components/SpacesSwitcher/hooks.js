@@ -108,7 +108,11 @@ export const getModelNamesBasedOnDisplayNames = (meshModels, displayNames) => {
   return compatibilityStore;
 };
 
-export const handleUpdatePatternVisibility = async ({value, updatePatterns, selectedResource}) => {
+export const handleUpdatePatternVisibility = async ({
+  value,
+  updatePatterns,
+  selectedResource,
+}) => {
   const res = await updatePatterns({
     body: {
       id: selectedResource?.id,
@@ -123,7 +127,7 @@ export const handleUpdatePatternVisibility = async ({value, updatePatterns, sele
   };
 };
 
-export const handleUpdateViewVisibility = async (value, updateView, selectedResource) => {
+export const handleUpdateViewVisibility = async ({ value, updateView, selectedResource }) => {
   const res = await updateView({
     id: selectedResource?.id,
     body: {
@@ -134,4 +138,3 @@ export const handleUpdateViewVisibility = async (value, updateView, selectedReso
     error: res.error?.error,
   };
 };
-

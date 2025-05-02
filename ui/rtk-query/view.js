@@ -78,5 +78,9 @@ export const viewsApi = api
 export const getView = async ({ viewId }) => {
   return await initiateQuery(viewsApi.endpoints.getView, { viewId });
 };
-export const { useUpdateViewVisibilityMutation, useFetchViewsQuery, useDeleteViewMutation } =
-  viewsApi;
+export const {
+  useGetViewQuery,
+  useUpdateViewVisibilityMutation,
+  useFetchViewsQuery,
+  useDeleteViewMutation,
+} = viewsApi;

@@ -28,7 +28,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setinfoModal] = useState(null);
   const [selectedView, setSetselectedView] = useState(null);
-  const [updateViewVisibility] = useUpdateViewVisibilityMutation();
+  const [updateView] = useUpdateViewVisibilityMutation();
   const handleOpenShareModal = (view) => {
     setSetselectedView(view);
     setShareModal(true);
@@ -171,8 +171,9 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
                     handleUpdateViewVisibility({
                       value: value,
                       selectedResource: selectedItem,
-                      updatePatterns: updateViewVisibility,
+                      updateView: updateView,
                     });
+                    setPage(0);
                   }}
                   MenuComponent={
                     <GeorgeMenu
