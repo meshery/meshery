@@ -11,7 +11,7 @@ import {
 } from '@layer5/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll from './hooks';
+import useInfiniteScroll, { handleUpdateViewVisibility } from './hooks';
 import { GeorgeMenu } from './MenuComponent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
@@ -19,14 +19,16 @@ import { MoreVert } from '@mui/icons-material';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
 import { downloadFileFromContent } from '@/utils/fileDownloader';
 import { api } from '@/rtk-query/index';
-import { getView, useDeleteViewMutation } from '@/rtk-query/view';
+import { getView, useDeleteViewMutation, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
+import { ViewsInfoModal } from '../ViewInfoModal';
 
 const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [shareModal, setShareModal] = useState(false);
+  const [infoModal, setinfoModal] = useState(null);
   const [selectedView, setSetselectedView] = useState(null);
-
+  const [updateViewVisibility] = useUpdateViewVisibilityMutation();
   const handleOpenShareModal = (view) => {
     setSetselectedView(view);
     setShareModal(true);
@@ -35,6 +37,16 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const handleCloseShareModal = () => {
     setSetselectedView(null);
     setShareModal(false);
+  };
+
+  const handleOpenInfoModal = (view) => {
+    setSetselectedView(view);
+    setinfoModal(true);
+  };
+
+  const handleCloseInfoModal = () => {
+    setSetselectedView(null);
+    setinfoModal(false);
   };
 
   const loadNextPage = useCallback(() => {
@@ -155,13 +167,19 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
                   selectedItem={view}
                   handleItemClick={(e) => {}}
                   canChangeVisibility={canChangeVisibility}
-                  onVisibilityChange={() => {}}
+                  onVisibilityChange={(value, selectedItem) => {
+                    handleUpdateViewVisibility({
+                      value: value,
+                      selectedResource: selectedItem,
+                      updatePatterns: updateViewVisibility,
+                    });
+                  }}
                   MenuComponent={
                     <GeorgeMenu
                       options={getGeorgeOptions({
                         view,
                         user: currentUser,
-                        handleOpenInfoModal: () => {},
+                        handleOpenInfoModal: handleOpenInfoModal,
                         handleOpenShareModal: handleOpenShareModal,
                         setPage,
                       })}
@@ -196,6 +214,15 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
           resource={selectedView}
           handleClose={handleCloseShareModal}
           type={RESOURCE_TYPE.VIEW}
+        />
+      )}
+      {infoModal && (
+        <ViewsInfoModal
+          open={infoModal}
+          closeModal={handleCloseInfoModal}
+          view_id={selectedView?.id}
+          view_name={selectedView?.name}
+          metadata={selectedView?.metadata}
         />
       )}
     </>
