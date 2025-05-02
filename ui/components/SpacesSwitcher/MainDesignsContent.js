@@ -1,5 +1,11 @@
 //@ts-check
-import { useDeletePatternFileMutation, useGetUserDesignsQuery } from '@/rtk-query/design';
+import {
+  getDesign,
+  useDeletePatternFileMutation,
+  useGetUserDesignsQuery,
+  usePublishPatternMutation,
+  useUpdatePatternFileMutation,
+} from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   styled,
@@ -10,10 +16,16 @@ import {
   CircularProgress,
   PROMPT_VARIANTS,
   PromptComponent,
+  OutlinedPatternIcon,
+  useModal,
+  Modal,
 } from '@layer5/sistent';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll from './hooks';
+import useInfiniteScroll, {
+  getModelNamesBasedOnDisplayNames,
+  handleUpdatePatternVisibility,
+} from './hooks';
 import MenuComponent from './MenuComponent';
 import { MoreVert } from '@mui/icons-material';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
@@ -24,11 +36,17 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
+import InfoModal from '../Modals/Information/InfoModal';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
+import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
+import _ from 'lodash';
 
 const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
-  const [selectedShareDesign, setSelectedShareDesign] = useState(null);
+  const [selectedDesign, setSelectedDesign] = useState(null);
   const [shareModal, setShareModal] = useState(false);
+  const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
+  const [publishCatalog] = usePublishPatternMutation();
 
   const { notify } = useNotification();
   const modalRef = useRef(true);
@@ -105,16 +123,122 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
 
   const handleShare = async (design) => {
     setShareModal(true);
-    setSelectedShareDesign(design);
+    setSelectedDesign(design);
   };
 
   const handleShareClose = () => {
     setShareModal(false);
-    setSelectedShareDesign(null);
+    setSelectedDesign(null);
+  };
+  const sistentInfoModal = useModal({
+    headerIcon: OutlinedPatternIcon,
+  });
+
+  const handleInfoModal = async (design) => {
+    const selectedDesignWithPatternFile = await getDesign({
+      design_id: design?.id,
+    });
+
+    setSelectedDesign(selectedDesignWithPatternFile?.data);
+
+    sistentInfoModal.openModal({
+      title: selectedDesign?.name,
+    });
+    setInfoModal({
+      open: true,
+      userId: selectedDesignWithPatternFile?.data?.user_id,
+    });
+  };
+  const [formSchema, setFormSchema] = useState({});
+  const { data: publishFormSchema } = useGetSchemaQuery(
+    { schemaName: 'publish' },
+    {
+      skip: !infoModal.open,
+    },
+  );
+
+  const { data: meshModelsData } = useGetMeshModelsQuery(
+    {
+      params: {
+        pagesize: 'all',
+        trim: true,
+      },
+    },
+    {
+      skip: !infoModal.open,
+    },
+  );
+  const modifyRJSFSchema = (schema, propertyPath, newValue) => {
+    const clonedSchema = _.cloneDeep(schema);
+    _.set(clonedSchema, propertyPath, newValue);
+    return clonedSchema;
   };
 
+  useEffect(() => {
+    if (infoModal.open && publishFormSchema && meshModelsData) {
+      const modelNames = _.uniq(meshModelsData.models?.map((model) => model.displayName));
+
+      const modifiedSchema = modifyRJSFSchema(
+        publishFormSchema.rjsfSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
+
+      setFormSchema({ rjsfSchema: modifiedSchema, uiSchema: publishFormSchema.uiSchema });
+    }
+  }, [publishFormSchema, meshModelsData]);
+
+  const handleInfoModalClose = () => {
+    setSelectedDesign(null);
+    setInfoModal({ open: false, userId: '' });
+  };
+
+  const handlePublish = (formData) => {
+    const compatibilityStore = _.uniqBy(meshModelsData, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+      )
+      ?.map((model) => model.name);
+
+    const payload = {
+      id: infoModal.selectedDesign?.id,
+      catalog_data: {
+        ...formData,
+        compatibility: compatibilityStore,
+        type: _.toLower(formData?.type),
+      },
+    };
+    updateProgress({ showProgress: true });
+    publishCatalog({
+      publishBody: JSON.stringify(payload),
+    })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        if (currentUser.role_names.includes('admin')) {
+          notify({
+            message: `${selectedDesign?.name} Design Published`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        } else {
+          notify({
+            message:
+              'Design queued for publishing into Meshery Catalog. Maintainers notified for review',
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `Unable to publish ${selectedDesign?.name} Design`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
+  };
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
+  const [updatePatterns] = useUpdatePatternFileMutation();
 
   return (
     <>
@@ -137,23 +261,24 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                   selectedItem={design}
                   handleItemClick={(e) => {}}
                   canChangeVisibility={canChangeVisibility}
-                  onVisibilityChange={() => {}}
+                  onVisibilityChange={(value, selectedItem) => {
+                    handleUpdatePatternVisibility({
+                      value: value,
+                      selectedResource: selectedItem,
+                      updatePatterns: updatePatterns,
+                    });
+                  }}
                   MenuComponent={
                     <MenuComponent
-                      // dataName={PATTERN_PLURAL}
                       iconType={MoreVert}
                       rowData={design}
-                      // designOwnerId={design?.user_id}
                       visibility={design?.visibility}
                       items={[
                         {
                           deleteHandler: () => handleDelete(design),
                           downloadHandler: () => handleDesignDownloadModal(design),
-                          cloneHandler: () => {},
                           shareHandler: () => handleShare(design),
-                          infoHandler: () => {},
-                          publishHandler: () => {},
-                          unPublishHandler: () => {},
+                          infoHandler: () => handleInfoModal(design),
                         },
                       ]}
                     />
@@ -190,10 +315,25 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
       />
       {shareModal && (
         <ShareModal
-          resource={selectedShareDesign}
+          resource={selectedDesign}
           handleClose={handleShareClose}
           type={RESOURCE_TYPE.DESIGN}
         />
+      )}
+      {infoModal.open && (
+        <Modal {...sistentInfoModal}>
+          <InfoModal
+            handlePublish={handlePublish}
+            infoModalOpen={infoModal.open}
+            handleInfoModalClose={handleInfoModalClose}
+            dataName={'patterns'}
+            selectedResource={selectedDesign}
+            resourceOwnerID={infoModal.userId}
+            currentUser={currentUser}
+            formSchema={formSchema}
+            meshModels={meshModelsData?.models}
+          />
+        </Modal>
       )}
       <PromptComponent ref={modalRef} />
     </>

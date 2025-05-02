@@ -1,5 +1,7 @@
 //@ts-check
 import { APP_MODE, RESOURCE_TYPE } from '@/utils/Enum';
+import { JsonParse } from '@/utils/utils';
+import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 
 const useInfiniteScroll = ({ isLoading, hasMore, onLoadMore }) => {
@@ -90,3 +92,46 @@ export const getShareableResourceRoute = (type, id, name) => {
 
   throw new Error(`Unknown resource type ${type}`);
 };
+
+/**
+ * Get model names based on their display names
+ * @param {object} - Models data
+ * @param {array} - Array of model display names
+ * @return {array} - Array of unique model names
+ */
+export const getModelNamesBasedOnDisplayNames = (meshModels, displayNames) => {
+  const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+    ?.filter((model) =>
+      displayNames.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+    )
+    ?.map((model) => model.name);
+  return compatibilityStore;
+};
+
+export const handleUpdatePatternVisibility = async ({value, updatePatterns, selectedResource}) => {
+  const res = await updatePatterns({
+    body: {
+      id: selectedResource?.id,
+      name: selectedResource.name,
+      catalog_data: selectedResource.catalog_data,
+      design_file: JsonParse(selectedResource.pattern_file),
+      visibility: value,
+    },
+  });
+  return {
+    error: res?.error?.error,
+  };
+};
+
+export const handleUpdateViewVisibility = async (value, updateView, selectedResource) => {
+  const res = await updateView({
+    id: selectedResource?.id,
+    body: {
+      visibility: value,
+    },
+  });
+  return {
+    error: res.error?.error,
+  };
+};
+

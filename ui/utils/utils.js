@@ -434,7 +434,7 @@ export const getComponentFromDesign = (design, componentId) => {
  * @param {object} design - The design resource
  */
 export const getDesignVersion = (design) => {
-  if (design.visibility === 'published') {
+  if (design?.visibility === 'published') {
     return design.catalog_data.published_version;
   } else {
     try {
@@ -539,3 +539,4 @@ export const openViewInKanvas = (viewId, viewName, router) => {
 
   router.push(`/extension/meshmap?mode=operator&type=view&id=${viewId}`);
 };
+
