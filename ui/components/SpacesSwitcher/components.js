@@ -120,6 +120,11 @@ export const VisibilitySelect = ({ visibility, handleVisibilityChange, visibilit
     <FormControl fullWidth>
       <InputLabel>Visibility</InputLabel>
       <Select
+        sx={{
+          '& .MuiSelect-select': {
+            paddingBlock: '0.85rem',
+          },
+        }}
         value={visibility}
         label="Visibility"
         multiple
@@ -154,6 +159,11 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
     <FormControl fullWidth>
       <InputLabel>Sort By</InputLabel>
       <Select
+        sx={{
+          '& .MuiSelect-select': {
+            paddingBlock: '0.85rem',
+          },
+        }}
         value={sortBy}
         label="Sort By"
         onChange={handleSortByChange}

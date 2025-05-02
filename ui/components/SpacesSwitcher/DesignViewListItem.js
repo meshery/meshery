@@ -146,9 +146,9 @@ const DesignViewListItem = ({
           />
         </div>
         <div style={{ width: '15%' }}>
-          <MainMenuComponent id={`menu-${selectedItem.id}`} className="menu-component">
-            {MenuComponent}
-          </MainMenuComponent>
+          {/* <MainMenuComponent id={`menu-${selectedItem.id}`} className="menu-component"> */}
+          {MenuComponent}
+          {/* </MainMenuComponent> */}
         </div>
       </StyledListItem>
       <Divider light />

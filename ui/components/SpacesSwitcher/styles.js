@@ -17,6 +17,11 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
+    [theme.breakpoints.down('md')]: {
+      position: 'absolute',
+      height: '100%',
+      zIndex: theme.zIndex.drawer,
+    },
     ...(open && {
       width: DRAWER_WIDTH,
       transition: theme.transitions.create('width', {

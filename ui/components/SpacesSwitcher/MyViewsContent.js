@@ -6,7 +6,7 @@ import { useFetchViewsQuery } from '@/rtk-query/view';
 import { VISIBILITY } from '@/utils/Enum';
 import MainViewsContent from './MainViewsContent';
 import { StyledSearchBar } from '@layer5/sistent';
-import { SortBySelect, VisibilitySelect } from './components';
+import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
 
 const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -80,6 +80,7 @@ const MyViewsContent = () => {
           />
         </Box>
       </Box>
+      <TableListHeader />
       <MainViewsContent
         hasMore={hasMore}
         isFetching={isFetching}

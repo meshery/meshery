@@ -6,7 +6,7 @@ import MainDesignsContent from './MainDesignsContent';
 import { VISIBILITY } from '@/utils/Enum';
 import { Box, useTheme } from '@layer5/sistent';
 import { StyledSearchBar } from '@layer5/sistent';
-import { SortBySelect, VisibilitySelect } from './components';
+import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -77,6 +77,7 @@ const MyDesignsContent = () => {
           />
         </Box>
       </Box>
+      <TableListHeader />
       <MainDesignsContent
         designs={designsData?.patterns}
         isFetching={isFetching}

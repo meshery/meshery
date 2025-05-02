@@ -122,7 +122,16 @@ const RecentContent = () => {
         <Box sx={{ minWidth: 120 }}>
           <FormControl fullWidth>
             <InputLabel>Type</InputLabel>
-            <Select value={type} label="Type" onChange={handleTypeChange}>
+            <Select
+              value={type}
+              label="Type"
+              onChange={handleTypeChange}
+              sx={{
+                '& .MuiSelect-select': {
+                  paddingBlock: '0.85rem',
+                },
+              }}
+            >
               <MenuItem value={'design'}>Design</MenuItem>
               <MenuItem value={'view'}>View</MenuItem>
             </Select>
@@ -145,28 +154,30 @@ const RecentContent = () => {
           />
         </Box>
       </Box>
-      <TableListHeader />
+      <Box minWidth={'50rem'}>
+        <TableListHeader />
 
-      {type == 'design' && (
-        <MainDesignsContent
-          setPage={setDesignsPage}
-          isLoading={isLoading}
-          isFetching={isFetching}
-          designs={designsData?.patterns}
-          hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
-          total_count={designsData?.total_count}
-        />
-      )}
-      {type == 'view' && (
-        <MainViewsContent
-          setPage={setViewsPage}
-          isLoading={isViewLoading}
-          isFetching={isViewFetching}
-          views={viewsData?.views}
-          hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
-          total_count={viewsData?.total_count}
-        />
-      )}
+        {type == 'design' && (
+          <MainDesignsContent
+            setPage={setDesignsPage}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            designs={designsData?.patterns}
+            hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
+            total_count={designsData?.total_count}
+          />
+        )}
+        {type == 'view' && (
+          <MainViewsContent
+            setPage={setViewsPage}
+            isLoading={isViewLoading}
+            isFetching={isViewFetching}
+            views={viewsData?.views}
+            hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
+            total_count={viewsData?.total_count}
+          />
+        )}
+      </Box>
     </Box>
   );
 };
