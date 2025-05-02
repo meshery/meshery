@@ -109,7 +109,7 @@ test.describe.serial('Connection Management Tests', () => {
       await firstRow.locator('span', { hasText: 'connected' }).click();
       await page.getByRole('option', { name: t.transitionOption }).click();
 
-      await expect(page.getByText('Connection Status Transition')).toBeVisible();
+      await expect(page.locator('#searchClick')).toBeVisible();
       await page.getByRole('button', { name: 'Confirm' }).click();
 
       await expect(page.getByText('Connection status updated')).toBeVisible();
@@ -127,7 +127,7 @@ test.describe.serial('Connection Management Tests', () => {
       await updatedFirstRow.locator('span', { hasText: t.statusAfterTransition }).click();
       await page.getByRole('option', { name: t.restorationOption }).click();
 
-      await expect(page.getByText('Connection Status Transition')).toBeVisible();
+      await expect(page.locator('#searchClick')).toBeVisible();
       await page.getByRole('button', { name: 'Confirm' }).click();
       // expect the state to be restored to "connected"
 
