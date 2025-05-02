@@ -10,6 +10,7 @@ import { DryRunResponse } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
 import { useTheme, DownloadIcon, InfoIcon } from '@layer5/sistent';
+import { Launch as LaunchIcon } from '@mui/icons-material';
 import _ from 'lodash';
 import { ChipWrapper } from '../connections/styles';
 
@@ -18,17 +19,39 @@ const DesignFormatter = ({ value }) => {
   const { name, id } = value;
 
   return (
-    <TitleLink
-      href={'/extension/meshmap?mode=design&design=' + encodeURIComponent(id)}
-      style={{
-        color: theme.palette.text.default,
-        fontWeight: 'normal',
-        textDecoration: 'none',
-      }}
-      target="_self"
-    >
-      Saved design {name}
-    </TitleLink>
+    <span>
+      Saved design{' '}
+      <a
+        href={'/extension/meshmap?mode=design&design=' + encodeURIComponent(id)}
+        style={{
+          color: theme.palette.text.default,
+          fontWeight: 'normal',
+          textDecoration: 'underline',
+        }}
+        target="_self"
+      >
+        "{name}"
+        <sup>
+          <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
+        </sup>
+      </a>
+      {id && (
+        <span
+          style={{
+            fontSize: '0.75rem',
+            color: theme.palette.text.secondary,
+            padding: '0.1rem 0.4rem',
+            marginLeft: '0.35rem',
+            verticalAlign: 'middle',
+            display: 'inline-flex',
+            alignItems: 'center',
+            height: '1.2rem',
+          }}
+        >
+          v: {id}
+        </span>
+      )}
+    </span>
   );
 };
 
