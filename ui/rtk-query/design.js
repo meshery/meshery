@@ -46,7 +46,6 @@ export const designsApi = api
             search: queryArg.search,
             visibility: queryArg.visibility,
             orgID: queryArg.orgId,
-
           });
           return `extensions/api/content/patterns?${params}`;
         },
@@ -147,6 +146,8 @@ export const designsApi = api
           url: `pattern/${queryArg.id}`,
           method: 'DELETE',
         }),
+        providesTags: () => [{ type: TAGS.DESIGNS }],
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       updatePatternFile: builder.mutation({
         query: (queryArg) => ({

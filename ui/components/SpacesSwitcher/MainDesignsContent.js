@@ -1,7 +1,16 @@
 //@ts-check
-import { useGetUserDesignsQuery } from '@/rtk-query/design';
+import { useDeletePatternFileMutation, useGetUserDesignsQuery } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { styled, List, ListItem, ListItemText, Divider, CircularProgress } from '@layer5/sistent';
+import {
+  styled,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  CircularProgress,
+  PROMPT_VARIANTS,
+  PromptComponent,
+} from '@layer5/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll from './hooks';
@@ -17,7 +26,8 @@ import { EVENT_TYPES } from 'lib/event-types';
 const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const { notify } = useNotification();
-
+  const modalRef = useRef(true);
+  const [deletePatternFile] = useDeletePatternFileMutation();
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
     setPage((prevPage) => prevPage + 1);
@@ -62,6 +72,32 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
     }
   };
 
+  const handleDelete = async (design) => {
+    setPage(0);
+    const response = await modalRef.current.show({
+      title: `Delete catalog item?`,
+      subtitle: `Are you sure you want to delete ${design?.name}?`,
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+      showInfoIcon:
+        "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
+    });
+    if (response === 'DELETE') {
+      const selectedPattern = design;
+      const { name, id } = selectedPattern;
+      deletePatternFile({
+        id: id,
+      })
+        .unwrap()
+        .then(() => {
+          notify({ message: `"${name}" Design deleted`, event_type: EVENT_TYPES.SUCCESS });
+        })
+        .catch(() => {
+          notify({ message: `Unable to delete "${name}" Design`, event_type: EVENT_TYPES.ERROR });
+        });
+    }
+  };
+
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
 
@@ -96,7 +132,7 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                       visibility={design?.visibility}
                       items={[
                         {
-                          deleteHandler: () => {},
+                          deleteHandler: () => handleDelete(design),
                           downloadHandler: () => handleDesignDownloadModal(design),
                           cloneHandler: () => {},
                           shareHandler: () => {},
@@ -137,6 +173,7 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
         handleDownloadDialogClose={handleDownloadDialogClose}
         handleDesignDownload={handleDownload}
       />
+      <PromptComponent ref={modalRef} />
     </>
   );
 };
