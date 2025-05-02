@@ -153,8 +153,10 @@ export const designsApi = api
         query: (queryArg) => ({
           url: `pattern`,
           method: 'POST',
+          credentials: 'include',
           body: queryArg.updateBody,
         }),
+        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       uploadPatternFile: builder.mutation({
         query: (queryArg) => ({

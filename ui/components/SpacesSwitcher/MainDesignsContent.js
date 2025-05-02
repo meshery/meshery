@@ -22,9 +22,14 @@ import { updateProgress } from 'lib/store';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import { RESOURCE_TYPE } from '@/utils/Enum';
+import ShareModal from './ShareModal';
 
 const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
+  const [selectedShareDesign, setSelectedShareDesign] = useState(null);
+  const [shareModal, setShareModal] = useState(false);
+
   const { notify } = useNotification();
   const modalRef = useRef(true);
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -98,6 +103,16 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
     }
   };
 
+  const handleShare = async (design) => {
+    setShareModal(true);
+    setSelectedShareDesign(design);
+  };
+
+  const handleShareClose = () => {
+    setShareModal(false);
+    setSelectedShareDesign(null);
+  };
+
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
 
@@ -135,7 +150,7 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                           deleteHandler: () => handleDelete(design),
                           downloadHandler: () => handleDesignDownloadModal(design),
                           cloneHandler: () => {},
-                          shareHandler: () => {},
+                          shareHandler: () => handleShare(design),
                           infoHandler: () => {},
                           publishHandler: () => {},
                           unPublishHandler: () => {},
@@ -173,6 +188,13 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
         handleDownloadDialogClose={handleDownloadDialogClose}
         handleDesignDownload={handleDownload}
       />
+      {shareModal && (
+        <ShareModal
+          resource={selectedShareDesign}
+          handleClose={handleShareClose}
+          type={RESOURCE_TYPE.DESIGN}
+        />
+      )}
       <PromptComponent ref={modalRef} />
     </>
   );
