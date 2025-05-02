@@ -36,7 +36,7 @@
     "@layer5/sistent": "^0.14.183",
     "@mui/icons-material": "^5.15.11",
     "@mui/material": "^5.15.11",
-    "@mui/x-date-pickers": "^7.24.0",
+    "@mui/x-date-pickers": "^8.2.0",
     "@mui/x-tree-view": "^6.0.0-beta.0",
     "@open-policy-agent/opa-wasm": "^1.10.0",
     "@paciolan/remote-component": "^2.13.0",
