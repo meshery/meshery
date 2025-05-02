@@ -5,16 +5,23 @@ import { Box, FormControl, InputLabel, MenuItem, Select, useTheme } from '@layer
 import React, { useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
-import { useGetUserDesignsQuery } from '@/rtk-query/design';
+import { useGetUserDesignsQuery, useImportPatternMutation } from '@/rtk-query/design';
 import MainViewsContent from './MainViewsContent';
 import { useFetchViewsQuery } from '@/rtk-query/view';
 import { VISIBILITY } from '@/utils/Enum';
 import {
+  ImportButton,
   SortBySelect,
   TableListHeader,
   UserSearchAutoComplete,
   VisibilitySelect,
 } from './components';
+import ImportModal from '../Modals/ImportModal';
+import { updateProgress } from 'lib/store';
+import { getUnit8ArrayDecodedFile } from '@/utils/utils';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
+import { ImportDesignModal } from '../MesheryPatterns';
 
 const RecentContent = () => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
@@ -61,6 +68,7 @@ const RecentContent = () => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: getPattern,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
@@ -96,89 +104,96 @@ const RecentContent = () => {
   );
 
   const theme = useTheme();
+
   return (
-    <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <StyledSearchBar
-        sx={{
-          backgroundColor: 'transparent',
-        }}
-        width="auto"
-        placeholder={type === 'design' ? 'Search Designs' : 'Search Views'}
-        value={searchQuery}
-        onChange={onSearchChange}
-        endAdornment={
-          type === 'design' ? (
-            <p style={{ color: theme.palette.text.default }}>
-              Total Designs: {designsData?.total_count ?? 0}
-            </p>
-          ) : (
-            <p style={{ color: theme.palette.text.default }}>
-              Total Views: {viewsData?.total_count ?? 0}
-            </p>
-          )
-        }
-      />
-      <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
-        <Box sx={{ minWidth: 120 }}>
-          <FormControl fullWidth>
-            <InputLabel>Type</InputLabel>
-            <Select
-              value={type}
-              label="Type"
-              onChange={handleTypeChange}
-              sx={{
-                '& .MuiSelect-select': {
-                  paddingBlock: '0.85rem',
-                },
-              }}
-            >
-              <MenuItem value={'design'}>Design</MenuItem>
-              <MenuItem value={'view'}>View</MenuItem>
-            </Select>
-          </FormControl>
+    <>
+      <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <Box display={'flex'} alignItems="center" gap={'1rem'}>
+          <StyledSearchBar
+            sx={{
+              backgroundColor: 'transparent',
+            }}
+            width="auto"
+            placeholder={type === 'design' ? 'Search Designs' : 'Search Views'}
+            value={searchQuery}
+            onChange={onSearchChange}
+            endAdornment={
+              type === 'design' ? (
+                <p style={{ color: theme.palette.text.default }}>
+                  Total Designs: {designsData?.total_count ?? 0}
+                </p>
+              ) : (
+                <p style={{ color: theme.palette.text.default }}>
+                  Total Views: {viewsData?.total_count ?? 0}
+                </p>
+              )
+            }
+          />{' '}
+          {type == 'design' && <ImportButton />}
         </Box>
+        <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel>Type</InputLabel>
+              <Select
+                value={type}
+                label="Type"
+                onChange={handleTypeChange}
+                sx={{
+                  '& .MuiSelect-select': {
+                    paddingBlock: '0.85rem',
+                  },
+                }}
+              >
+                <MenuItem value={'design'}>Design</MenuItem>
+                <MenuItem value={'view'}>View</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
 
-        <Box sx={{ minWidth: 120 }}>
-          <SortBySelect sortBy={sortBy} handleSortByChange={handleSortByChange} />
+          <Box sx={{ minWidth: 120 }}>
+            <SortBySelect sortBy={sortBy} handleSortByChange={handleSortByChange} />
+          </Box>
+          <Box sx={{ minWidth: 300 }}>
+            <FormControl fullWidth>
+              <UserSearchAutoComplete handleAuthorChange={handleAuthorChange} />
+            </FormControl>
+          </Box>
+          <Box sx={{ minWidth: 120 }}>
+            <VisibilitySelect
+              visibility={visibility}
+              handleVisibilityChange={handleVisibilityChange}
+              visibilityItems={visibilityItems}
+            />
+          </Box>
         </Box>
-        <Box sx={{ minWidth: 300 }}>
-          <FormControl fullWidth>
-            <UserSearchAutoComplete handleAuthorChange={handleAuthorChange} />
-          </FormControl>
-        </Box>
-        <Box sx={{ minWidth: 120 }}>
-          <VisibilitySelect
-            visibility={visibility}
-            handleVisibilityChange={handleVisibilityChange}
-            visibilityItems={visibilityItems}
-          />
+        <Box minWidth={'50rem'}>
+          <TableListHeader />
+
+          {type == 'design' && (
+            <MainDesignsContent
+              setPage={setDesignsPage}
+              isLoading={isLoading}
+              isFetching={isFetching}
+              designs={designsData?.patterns}
+              hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
+              total_count={designsData?.total_count}
+            />
+          )}
+          {type == 'view' && (
+            <MainViewsContent
+              setPage={setViewsPage}
+              isLoading={isViewLoading}
+              isFetching={isViewFetching}
+              views={viewsData?.views}
+              hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
+              total_count={viewsData?.total_count}
+            />
+          )}
         </Box>
       </Box>
-      <Box minWidth={'50rem'}>
-        <TableListHeader />
-
-        {type == 'design' && (
-          <MainDesignsContent
-            setPage={setDesignsPage}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            designs={designsData?.patterns}
-            hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
-            total_count={designsData?.total_count}
-          />
-        )}
-        {type == 'view' && (
-          <MainViewsContent
-            setPage={setViewsPage}
-            isLoading={isViewLoading}
-            isFetching={isViewFetching}
-            views={viewsData?.views}
-            hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
-            total_count={viewsData?.total_count}
-          />
-        )}
-      </Box>
-    </Box>
+     
+    </>
   );
 };
 

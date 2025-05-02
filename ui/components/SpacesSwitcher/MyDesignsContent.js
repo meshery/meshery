@@ -6,7 +6,7 @@ import MainDesignsContent from './MainDesignsContent';
 import { VISIBILITY } from '@/utils/Enum';
 import { Box, useTheme } from '@layer5/sistent';
 import { StyledSearchBar } from '@layer5/sistent';
-import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
+import { ImportButton, SortBySelect, TableListHeader, VisibilitySelect } from './components';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -76,6 +76,7 @@ const MyDesignsContent = () => {
             visibilityItems={visibilityItems}
           />
         </Box>
+        <ImportButton />
       </Box>
       <TableListHeader />
       <MainDesignsContent

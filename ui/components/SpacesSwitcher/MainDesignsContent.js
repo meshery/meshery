@@ -270,7 +270,6 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                   }}
                   MenuComponent={
                     <MenuComponent
-                      iconType={MoreVert}
                       rowData={design}
                       visibility={design?.visibility}
                       items={[

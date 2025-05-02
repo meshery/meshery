@@ -3,22 +3,32 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  Button,
   Checkbox,
   CircularProgress,
   FormControl,
   InputLabel,
   ListItemText,
   MenuItem,
+  PublishIcon,
   Select,
   TextField,
   Typography,
 } from '@layer5/sistent';
-import React from 'react';
+import React, { useState } from 'react';
 import { OutlinedInput } from '@layer5/sistent';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
 import { Grid } from '@layer5/sistent';
 import { PersonIcon } from '@layer5/sistent';
+import { useTheme } from '@mui/material';
+import { FileUpload, UploadFile } from '@mui/icons-material';
+import { ImportDesignModal } from '../MesheryPatterns';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { updateProgress } from 'lib/store';
+import { getUnit8ArrayDecodedFile } from '@/utils/utils';
+import { EVENT_TYPES } from 'lib/event-types';
+import { useImportPatternMutation } from '@/rtk-query/design';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
@@ -195,5 +205,84 @@ export const TableListHeader = () => {
         Actions
       </Typography>
     </Box>
+  );
+};
+
+export const ImportButton = () => {
+  const [importModal, setImportModal] = useState(false);
+  const handleImportModalOpen = () => {
+    setImportModal(true);
+  };
+  const handleImportModalClose = () => {
+    setImportModal(false);
+  };
+  const [importPattern] = useImportPatternMutation();
+  const { notify } = useNotification();
+  const theme = useTheme();
+  function handleImportDesign(data) {
+    updateProgress({ showProgress: true });
+    const { uploadType, name, url, file } = data;
+
+    let requestBody = null;
+    switch (uploadType) {
+      case 'File Upload': {
+        const fileElement = document.getElementById('root_file');
+        const fileName = fileElement.files[0].name;
+        requestBody = JSON.stringify({
+          name,
+          file_name: fileName,
+          file: getUnit8ArrayDecodedFile(file),
+        });
+        break;
+      }
+      case 'URL Import':
+        requestBody = JSON.stringify({
+          url,
+          name,
+        });
+        break;
+    }
+
+    importPattern({
+      importBody: requestBody,
+    })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `"${name}" design uploaded`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+        // getPattern();
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: 'Error uploading design',
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
+  }
+  return (
+    <>
+      {importModal && (
+        <ImportDesignModal
+          handleClose={handleImportModalClose}
+          handleImportDesign={handleImportDesign}
+        />
+      )}
+      <Button
+        color="primary"
+        variant="contained"
+        onClick={handleImportModalOpen}
+        sx={{
+          minWidth: 'fit-content',
+          padding: '0.85rem',
+        }}
+        startIcon={<FileUpload color={theme.palette.common.white} />}
+      >
+        Import
+      </Button>
+    </>
   );
 };

@@ -9,17 +9,33 @@ import {
   InfoIcon,
   DeleteIcon,
 } from '@layer5/sistent';
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll from './hooks';
 import { GeorgeMenu } from './MenuComponent';
-import { VISIBILITY } from '@/utils/Enum';
+import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { MoreVert } from '@mui/icons-material';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
+import { downloadFileFromContent } from '@/utils/fileDownloader';
+import { api } from '@/rtk-query/index';
+import { getView, useDeleteViewMutation } from '@/rtk-query/view';
+import ShareModal from './ShareModal';
 
 const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
+  const [shareModal, setShareModal] = useState(false);
+  const [selectedView, setSetselectedView] = useState(null);
+
+  const handleOpenShareModal = (view) => {
+    setSetselectedView(view);
+    setShareModal(true);
+  };
+
+  const handleCloseShareModal = () => {
+    setSetselectedView(null);
+    setShareModal(false);
+  };
 
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
@@ -38,29 +54,31 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const viewIsPublic = (v) => v?.visibility === VISIBILITY.PUBLIC;
   const viewIsPrivate = (v) => v?.visibility === VISIBILITY.PRIVATE;
   const viewIsOwnedByUser = (v, userId) => v?.user_id === userId;
+  const [deleteView] = useDeleteViewMutation();
 
   const VIEW_ACTIONS = {
-    LOAD_VIEW: {
-      id: 'LOAD_VIEW',
-      title: 'Load View',
-      icon: GetAppIcon,
-      handler: ({ dispatchCmdToEditor, view }) => {},
-      enabled: ({ view, userId }) => viewIsOwnedByUser(view, userId) || viewIsPublic(view),
-    },
-
     EXPORT_VIEW: {
       id: 'EXPORT_VIEW',
       title: 'Export View',
       icon: GetAppIcon,
-      handler: async ({ view }) => {},
+      handler: async ({ view }) => {
+        const res = await getView({ viewId: view.id });
+        console.log('amit res', res);
+        downloadFileFromContent(JSON.stringify(res.data), `${view.name}.json`, 'application/json');
+      },
       enabled: () => true,
     },
-
     DELETE_VIEW: {
       id: 'DELETE_VIEW',
       title: 'Delete View',
       icon: DeleteIcon,
-      handler: async ({ dispatchCmdToEditor, view }) => {},
+      handler: async ({ view, setPage }) => {
+        deleteView({ id: view.id })
+          .unwrap()
+          .then(() => {
+            setPage(0);
+          });
+      },
       enabled: ({ view, userId }) => viewIsOwnedByUser(view, userId),
     },
 
@@ -76,7 +94,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
     UPDATE_INFO: {
       id: 'UPDATE_INFO',
       title: 'Update Info',
-      icon: () => null,
+      icon: InfoIcon,
       handler: ({ view, metadata }) => {},
       enabled: ({ view, userId }) => {
         return viewIsOwnedByUser(view, userId);
@@ -87,37 +105,36 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       title: 'Share View',
       icon: ShareIcon,
       handler: ({ view, emails }) => {},
-      enabled: ({ view, userId }) => {
-        return viewIsOwnedByUser(view, userId);
-      },
+      enabled: () => true,
     },
   };
-  const getGeorgeOptions = () => {
+  const getGeorgeOptions = ({ view, user, handleOpenInfoModal, handleOpenShareModal, setPage }) => {
     const options = [
       {
-        ...VIEW_ACTIONS.DELETE_VIEW,
-        handler: () => {},
+        ...VIEW_ACTIONS.EXPORT_VIEW,
+        handler: () => VIEW_ACTIONS.EXPORT_VIEW.handler({ view }),
       },
       {
-        ...VIEW_ACTIONS.EXPORT_VIEW,
-        handler: () => {},
+        ...VIEW_ACTIONS.DELETE_VIEW,
+        handler: () => VIEW_ACTIONS.DELETE_VIEW.handler({ view, setPage }),
       },
+
       {
         ...VIEW_ACTIONS.SHARE_VIEW,
-        enabled: () => true,
-        handler: () => {},
+        handler: () => handleOpenShareModal(view, RESOURCE_TYPE.VIEW),
       },
       {
         id: 'VIEW_INFO',
         title: 'View Info',
         icon: InfoIcon,
         enabled: () => true,
-        handler: () => {},
+        handler: () => handleOpenInfoModal(view, user),
       },
     ];
 
-    return options;
+    return options.filter((option) => option.enabled({ view, userId: user?.id }));
   };
+
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -139,7 +156,17 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
                   handleItemClick={(e) => {}}
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={() => {}}
-                  MenuComponent={<GeorgeMenu options={getGeorgeOptions()} triggerIcon={MoreVert} />}
+                  MenuComponent={
+                    <GeorgeMenu
+                      options={getGeorgeOptions({
+                        view,
+                        user: currentUser,
+                        handleOpenInfoModal: () => {},
+                        handleOpenShareModal: handleOpenShareModal,
+                        setPage,
+                      })}
+                    />
+                  }
                 />
                 <Divider light />
               </React.Fragment>
@@ -164,6 +191,13 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
         <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
         <GhostText ref={ghostTextNodeRef}></GhostText>
       </GhostContainer>
+      {shareModal && (
+        <ShareModal
+          resource={selectedView}
+          handleClose={handleCloseShareModal}
+          type={RESOURCE_TYPE.VIEW}
+        />
+      )}
     </>
   );
 };

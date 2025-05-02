@@ -2,7 +2,7 @@
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import { CloneIcon } from '@layer5/sistent';
 import { CustomTooltip, styled, Menu, MenuItem } from '@layer5/sistent';
-import { Public as PublicIcon, Reply } from '@mui/icons-material';
+import { MoreVert, Public as PublicIcon, Reply } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
@@ -35,7 +35,7 @@ const StyledMenuDiv = styled('div')({
   backgroundColor: '#263238',
 });
 
-export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
+export const GeorgeMenu = ({ options = [] }) => {
   // States.
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -53,8 +53,6 @@ export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
     event.preventDefault();
     setAnchorEl(null);
   };
-
-  const WrapperIcon = triggerIcon;
 
   // Renders direct icons for non-mobile view
   const renderDirectIcons = () => {
@@ -88,7 +86,7 @@ export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }} onClick={handleClick}>
         <CustomTooltip title="Single-click Actions">
-          <WrapperIcon
+          <MoreVert
             style={{
               cursor: 'pointer',
               fontSize: '1rem',
@@ -144,7 +142,7 @@ export const GeorgeMenu = ({ triggerIcon, options = [] }) => {
   );
 };
 
-const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
+const MenuComponent = ({ items, visibility, rowData = null }) => {
   // States.
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -163,7 +161,6 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
     setAnchorEl(null);
   };
 
-  const WrapperIcon = iconType;
   const { data: currentUser } = useGetLoggedInUserQuery();
 
   // Function to handle specific actions
@@ -304,7 +301,7 @@ const MenuComponent = ({ iconType, items, visibility, rowData = null }) => {
     <div data-testid={`designs-tr-menu-${rowData?.id}`}>
       <div style={{ display: 'flex', alignItems: 'center' }} onClick={handleClick}>
         <CustomTooltip title="Quick actions">
-          <WrapperIcon style={{ fontSize: '1rem', ...iconMedium }} />
+          <MoreVert style={{ fontSize: '1rem', ...iconMedium }} />
         </CustomTooltip>
       </div>
       <Menu

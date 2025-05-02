@@ -1647,7 +1647,7 @@ function MesheryPatterns({
                 />
               )}
             {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
-              <ImportModal
+              <ImportDesignModal
                 handleClose={handleUploadImportClose}
                 handleImportDesign={handleImportDesign}
               />
@@ -1662,7 +1662,7 @@ function MesheryPatterns({
   );
 }
 
-const ImportModal = React.memo((props) => {
+export const ImportDesignModal = React.memo((props) => {
   const { handleClose, handleImportDesign } = props;
 
   return (

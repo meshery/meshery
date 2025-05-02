@@ -166,7 +166,7 @@ const WorkspaceViewContent = ({ workspaceId }) => {
                   handleItemClick={(e) => {}}
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={() => {}}
-                  MenuComponent={<GeorgeMenu options={getGeorgeOptions()} triggerIcon={MoreVert} />}
+                  MenuComponent={<GeorgeMenu options={getGeorgeOptions()} />}
                 />
                 <Divider light />
               </React.Fragment>

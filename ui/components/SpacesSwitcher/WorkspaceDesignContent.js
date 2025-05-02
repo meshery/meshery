@@ -72,7 +72,6 @@ const WorkspaceDesignContent = ({ workspaceId }) => {
                   MenuComponent={
                     <MenuComponent
                       // dataName={PATTERN_PLURAL}
-                      iconType={MoreVert}
                       rowData={design}
                       // designOwnerId={design?.user_id}
                       visibility={design?.visibility}

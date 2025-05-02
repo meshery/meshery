@@ -12,7 +12,7 @@ const resourceApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `extensions/api/resource/${queryArg.resourceType}/share/${queryArg.resourceId}`,
         method: 'POST',
-        body: queryArg.body,
+        body: queryArg.resourceAccessMappingPayload,
       }),
       invalidatesTags: ['access_update'],
     }),
