@@ -1,8 +1,6 @@
 //@ts-check
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
-  styled,
-  List,
   ListItem,
   ListItemText,
   Divider,
@@ -11,10 +9,9 @@ import {
   InfoIcon,
   DeleteIcon,
 } from '@layer5/sistent';
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 import DesignViewListItem from './DesignViewListItem';
 import useInfiniteScroll from './hooks';
-import { useFetchViewsQuery } from '@/rtk-query/view';
 import { GeorgeMenu } from './MenuComponent';
 import { VISIBILITY } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
@@ -126,7 +123,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       <DesignList data-testid="designs-list-item">
         {(!isFetching || !isLoading) && total_count === 0 && (
           <ListItem>
-            <ListItemText primary={`No Designs found`} style={{ textAlign: 'center' }} />
+            <ListItemText primary={`No Views found`} style={{ textAlign: 'center' }} />
           </ListItem>
         )}
         {total_count !== 0 &&
@@ -151,7 +148,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
         <LoadingContainer ref={loadingRef}>
           {(isFetching || isLoading) && <CircularProgress size={24} />}
           {!hasMore && views?.length > 0 && total_count > 0 && (
-            <ListItemText secondary={`No more designs to load`} />
+            <ListItemText secondary={`No more views to load`} />
           )}
         </LoadingContainer>
       </DesignList>

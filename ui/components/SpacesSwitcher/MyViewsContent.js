@@ -1,28 +1,31 @@
 //@ts-check
-import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import React, { useState } from 'react';
-import MainDesignsContent from './MainDesignsContent';
-import { VISIBILITY } from '@/utils/Enum';
 import { Box, useTheme } from '@layer5/sistent';
+import React, { useState } from 'react';
+import { useFetchViewsQuery } from '@/rtk-query/view';
+import { VISIBILITY } from '@/utils/Enum';
+import MainViewsContent from './MainViewsContent';
 import { StyledSearchBar } from '@layer5/sistent';
 import { SortBySelect, VisibilitySelect } from './components';
 
-const MyDesignsContent = () => {
+const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
-  const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE, VISIBILITY.PUBLISHED];
+  const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
   const [visibility, setVisibility] = useState(visibilityItems);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('updated_at desc');
+
   const handleSortByChange = (event) => {
     setPage(0);
     setSortBy(event.target.value);
   };
+
   const handleVisibilityChange = (event) => {
     const value = event.target.value;
     setVisibility(typeof value === 'string' ? value.split(',') : value);
     setPage(0);
   };
+
   const onSearchChange = (e) => {
     setPage(0);
     setSearchQuery(e.target.value);
@@ -30,26 +33,26 @@ const MyDesignsContent = () => {
 
   const [page, setPage] = useState(0);
   const {
-    data: designsData,
+    data: viewsData,
     isLoading,
     isFetching,
-  } = useGetUserDesignsQuery(
+  } = useFetchViewsQuery(
     {
-      expandUser: true,
       page: page,
       pagesize: 10,
-      order: 'updated_at desc',
-      user_id: currentUser?.id,
-      metrics: true,
+      order: sortBy,
       visibility: visibility,
       search: searchQuery,
+      user_id: currentUser?.id,
     },
     {
       skip: !currentUser?.id,
     },
   );
-  const hasMore = designsData?.total_count > designsData?.page_size * (designsData?.page + 1);
-  const total_count = designsData?.total_count || 0;
+
+  const views = viewsData?.views || [];
+  const hasMore = viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1);
+  const total_count = viewsData?.total_count || 0;
   const theme = useTheme();
   return (
     <Box display={'flex'} flexDirection="column" gap="1rem">
@@ -59,11 +62,11 @@ const MyDesignsContent = () => {
             backgroundColor: 'transparent',
           }}
           width="auto"
-          placeholder={'Search Designs'}
+          placeholder={'Search Views'}
           value={searchQuery}
           onChange={onSearchChange}
           endAdornment={
-            <p style={{ color: theme.palette.text.default }}>Total Designs: {total_count}</p>
+            <p style={{ color: theme.palette.text.default }}>Total Views: {total_count}</p>
           }
         />
         <Box sx={{ minWidth: 200 }}>
@@ -77,16 +80,16 @@ const MyDesignsContent = () => {
           />
         </Box>
       </Box>
-      <MainDesignsContent
-        designs={designsData?.patterns}
+      <MainViewsContent
+        hasMore={hasMore}
         isFetching={isFetching}
         isLoading={isLoading}
         setPage={setPage}
-        hasMore={hasMore}
+        views={views}
         total_count={total_count}
       />
     </Box>
   );
 };
 
-export default MyDesignsContent;
+export default MyViewsContent;

@@ -23,7 +23,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import ViewsContent from './ViewsContent';
+import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
@@ -53,7 +53,7 @@ const navConfig = {
       id: 'My-Views',
       label: 'My Views',
       icon: <ViewIcon height="24" width="24" fill="white" />,
-      content: <ViewsContent filterByAuthor={true} />,
+      content: <MyViewsContent filterByAuthor={true} />,
     },
     // {
     //   id: 'SharedWithMe',
