@@ -21,10 +21,8 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import { MoreVert } from '@mui/icons-material';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
 
-const MainViewsContent = ({ viewsData, setPage, isLoading, isFetching, views }) => {
+const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
-
-  const hasMore = viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1);
 
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
@@ -39,8 +37,6 @@ const MainViewsContent = ({ viewsData, setPage, isLoading, isFetching, views }) 
 
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
-
-  const total_count = viewsData?.total_count || 0;
 
   const viewIsPublic = (v) => v?.visibility === VISIBILITY.PUBLIC;
   const viewIsPrivate = (v) => v?.visibility === VISIBILITY.PRIVATE;

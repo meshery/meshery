@@ -43,7 +43,7 @@ const MainMenuComponent = styled('div')({
 });
 
 const TextContainer = styled('div')({
-  width: '50%',
+  width: '45%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -145,7 +145,7 @@ const DesignViewListItem = ({
             ]}
           />
         </div>
-        <div style={{ width: '10%' }}>
+        <div style={{ width: '15%' }}>
           <MainMenuComponent id={`menu-${selectedItem.id}`} className="menu-component">
             {MenuComponent}
           </MainMenuComponent>

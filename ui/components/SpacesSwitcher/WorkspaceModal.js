@@ -24,7 +24,7 @@ import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import ViewsContent from './ViewsContent';
-import DesignsContent from './DesignsContent';
+import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
 import { useLegacySelector } from 'lib/store';
@@ -47,7 +47,7 @@ const navConfig = {
       icon: (
         <DesignIcon fill="white" secondaryFill="white" width="20" height="20" primaryFill="white" />
       ),
-      content: <DesignsContent filterByAuthor={true} />,
+      content: <MyDesignsContent />,
     },
     {
       id: 'My-Views',

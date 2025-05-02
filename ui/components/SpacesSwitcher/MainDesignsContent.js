@@ -9,9 +9,8 @@ import MenuComponent from './MenuComponent';
 import { MoreVert } from '@mui/icons-material';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 
-const MainDesignsContent = ({ designsData, setPage, isLoading, isFetching, designs }) => {
+const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
-  const hasMore = designsData?.total_count > designsData?.page_size * (designsData?.page + 1);
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
     setPage((prevPage) => prevPage + 1);
@@ -22,7 +21,6 @@ const MainDesignsContent = ({ designsData, setPage, isLoading, isFetching, desig
     hasMore,
     onLoadMore: loadNextPage,
   });
-  const total_count = designsData?.total_count || 0;
 
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
