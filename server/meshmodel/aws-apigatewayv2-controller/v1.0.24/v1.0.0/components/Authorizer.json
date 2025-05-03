@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Authorizer",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-apigatewayv2-controller",
+    "displayName": "AWS API Gateway v2",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Proxy",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ff9900",
+      "secondaryColor": "#F4BC79",
+      "shape": "triangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}\n\u003c/style\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\u0026#xA;V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\u0026#xA;C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\u0026#xA;M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\u0026#xA;v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\u0026#xA;M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\u0026#xA;l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\u0026#xA;V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\u0026#xA;C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\u0026#xA;M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\u0026#xA;v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\u0026#xA;M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\u0026#xA;l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.24"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ff9900",
+    "secondaryColor": "#F4BC79",
+    "shape": "triangle",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}\n\u003c/style\u003e\n\u003cg id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n        \u003cg id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n                \u003cpath id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\n                        V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\n                        C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\n                         M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\n                        v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\n                         M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\n                        l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"/\u003e\n        \u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\" width='44' height='44'\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cg id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n        \u003cg id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n                \u003cpath id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\n                        V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\n                        C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\n                         M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\n                        v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\n                         M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\n                        l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"/\u003e\n        \u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e\n"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "apigatewayv2.services.k8s.aws/v1alpha1",
+    "kind": "Authorizer",
+    "schema": "{\n \"description\": \"Authorizer is the Schema for the Authorizers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AuthorizerSpec defines the desired state of Authorizer.\\n\\nRepresents an authorizer.\",\n   \"properties\": {\n    \"apiID\": {\n     \"description\": \"The API identifier.\",\n     \"type\": \"string\"\n    },\n    \"apiRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"authorizerCredentialsARN\": {\n     \"description\": \"Specifies the required credentials as an IAM role for API Gateway to invoke\\nthe authorizer. To specify an IAM role for API Gateway to assume, use the\\nrole's Amazon Resource Name (ARN). To use resource-based permissions on the\\nLambda function, don't specify this parameter. Supported only for REQUEST\\nauthorizers.\",\n     \"type\": \"string\"\n    },\n    \"authorizerPayloadFormatVersion\": {\n     \"description\": \"Specifies the format of the payload sent to an HTTP API Lambda authorizer.\\nRequired for HTTP API Lambda authorizers. Supported values are 1.0 and 2.0.\\nTo learn more, see Working with AWS Lambda authorizers for HTTP APIs (https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html).\",\n     \"type\": \"string\"\n    },\n    \"authorizerResultTTLInSeconds\": {\n     \"description\": \"The time to live (TTL) for cached authorizer results, in seconds. If it equals\\n0, authorization caching is disabled. If it is greater than 0, API Gateway\\ncaches authorizer responses. The maximum value is 3600, or 1 hour. Supported\\nonly for HTTP API Lambda authorizers.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"authorizerType\": {\n     \"description\": \"The authorizer type. Specify REQUEST for a Lambda function using incoming\\nrequest parameters. Specify JWT to use JSON Web Tokens (supported only for\\nHTTP APIs).\",\n     \"type\": \"string\"\n    },\n    \"authorizerURI\": {\n     \"description\": \"The authorizer's Uniform Resource Identifier (URI). For REQUEST authorizers,\\nthis must be a well-formed Lambda function URI, for example, arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/arn:aws:lambda:us-west-2:{account_id}:function:{lambda_function_name}/invocations.\\nIn general, the URI has this form: arn:aws:apigateway:{region}:lambda:path/{service_api}\\n, where {region} is the same as the region hosting the Lambda function, path\\nindicates that the remaining substring in the URI should be treated as the\\npath to the resource, including the initial /. For Lambda functions, this\\nis usually of the form /2015-03-31/functions/[FunctionARN]/invocations. Supported\\nonly for REQUEST authorizers.\",\n     \"type\": \"string\"\n    },\n    \"enableSimpleResponses\": {\n     \"description\": \"Specifies whether a Lambda authorizer returns a response in a simple format.\\nBy default, a Lambda authorizer must return an IAM policy. If enabled, the\\nLambda authorizer can return a boolean value instead of an IAM policy. Supported\\nonly for HTTP APIs. To learn more, see Working with AWS Lambda authorizers\\nfor HTTP APIs (https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html)\",\n     \"type\": \"boolean\"\n    },\n    \"identitySource\": {\n     \"description\": \"The identity source for which authorization is requested.\\n\\nFor a REQUEST authorizer, this is optional. The value is a set of one or\\nmore mapping expressions of the specified request parameters. The identity\\nsource can be headers, query string parameters, stage variables, and context\\nparameters. For example, if an Auth header and a Name query string parameter\\nare defined as identity sources, this value is route.request.header.Auth,\\nroute.request.querystring.Name for WebSocket APIs. For HTTP APIs, use selection\\nexpressions prefixed with $, for example, $request.header.Auth, $request.querystring.Name.\\nThese parameters are used to perform runtime validation for Lambda-based\\nauthorizers by verifying all of the identity-related request parameters are\\npresent in the request, not null, and non-empty. Only when this is true does\\nthe authorizer invoke the authorizer Lambda function. Otherwise, it returns\\na 401 Unauthorized response without calling the Lambda function. For HTTP\\nAPIs, identity sources are also used as the cache key when caching is enabled.\\nTo learn more, see Working with AWS Lambda authorizers for HTTP APIs (https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-lambda-authorizer.html).\\n\\nFor JWT, a single entry that specifies where to extract the JSON Web Token\\n(JWT) from inbound requests. Currently only header-based and query parameter-based\\nselections are supported, for example $request.header.Authorization.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"identityValidationExpression\": {\n     \"description\": \"This parameter is not used.\",\n     \"type\": \"string\"\n    },\n    \"jwtConfiguration\": {\n     \"description\": \"Represents the configuration of a JWT authorizer. Required for the JWT authorizer\\ntype. Supported only for HTTP APIs.\",\n     \"properties\": {\n      \"audience\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"issuer\": {\n       \"description\": \"A string representation of a URI with a length between [1-2048].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name of the authorizer.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"authorizerType\",\n    \"identitySource\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Authorizer\",\n \"type\": \"object\"\n}"
+  }
+}
