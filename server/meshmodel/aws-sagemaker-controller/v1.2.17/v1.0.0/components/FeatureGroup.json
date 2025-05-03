@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Feature Group",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-sagemaker-controller",
+    "displayName": "AWS SageMaker",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Machine Learning"
+    },
+    "subCategory": "Machine Learning",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#01A88D",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.2.17"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#01A88D",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e            \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e        \u003c/g\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "sagemaker.services.k8s.aws/v1alpha1",
+    "kind": "FeatureGroup",
+    "schema": "{\n \"description\": \"FeatureGroup is the Schema for the FeatureGroups API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FeatureGroupSpec defines the desired state of FeatureGroup.\\n\\nAmazon SageMaker Feature Store stores features in a collection called Feature\\nGroup. A Feature Group can be visualized as a table which has rows, with\\na unique identifier for each row where each column in the table is a feature.\\nIn principle, a Feature Group is composed of features and values per features.\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"A free-form description of a FeatureGroup.\",\n     \"type\": \"string\"\n    },\n    \"eventTimeFeatureName\": {\n     \"description\": \"The name of the feature that stores the EventTime of a Record in a FeatureGroup.\\n\\nAn EventTime is a point in time when a new event occurs that corresponds\\nto the creation or update of a Record in a FeatureGroup. All Records in the\\nFeatureGroup must have a corresponding EventTime.\\n\\nAn EventTime can be a String or Fractional.\\n\\n  - Fractional: EventTime feature values must be a Unix timestamp in seconds.\\n\\n  - String: EventTime feature values must be an ISO-8601 string in the format.\\n    The following formats are supported yyyy-MM-dd'T'HH:mm:ssZ and yyyy-MM-dd'T'HH:mm:ss.SSSZ\\n    where yyyy, MM, and dd represent the year, month, and day respectively\\n    and HH, mm, ss, and if applicable, SSS represent the hour, month, second\\n    and milliseconds respsectively. 'T' and Z are constants.\",\n     \"type\": \"string\"\n    },\n    \"featureDefinitions\": {\n     \"description\": \"A list of Feature names and types. Name and Type is compulsory per Feature.\\n\\nValid feature FeatureTypes are Integral, Fractional and String.\\n\\nFeatureNames cannot be any of the following: is_deleted, write_time, api_invocation_time\\n\\nYou can create up to 2,500 FeatureDefinitions per FeatureGroup.\",\n     \"items\": {\n      \"description\": \"A list of features. You must include FeatureName and FeatureType. Valid feature\\nFeatureTypes are Integral, Fractional and String.\",\n      \"properties\": {\n       \"collectionConfig\": {\n        \"description\": \"Configuration for your collection.\",\n        \"properties\": {\n         \"vectorConfig\": {\n          \"description\": \"Configuration for your vector collection type.\",\n          \"properties\": {\n           \"dimension\": {\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"collectionType\": {\n        \"type\": \"string\"\n       },\n       \"featureName\": {\n        \"type\": \"string\"\n       },\n       \"featureType\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"featureGroupName\": {\n     \"description\": \"The name of the FeatureGroup. The name must be unique within an Amazon Web\\nServices Region in an Amazon Web Services account.\\n\\nThe name:\\n\\n  - Must start with an alphanumeric character.\\n\\n  - Can only include alphanumeric characters, underscores, and hyphens.\\n    Spaces are not allowed.\",\n     \"type\": \"string\"\n    },\n    \"offlineStoreConfig\": {\n     \"description\": \"Use this to configure an OfflineFeatureStore. This parameter allows you to\\nspecify:\\n\\n  - The Amazon Simple Storage Service (Amazon S3) location of an OfflineStore.\\n\\n  - A configuration for an Amazon Web Services Glue or Amazon Web Services\\n    Hive data catalog.\\n\\n  - An KMS encryption key to encrypt the Amazon S3 location used for OfflineStore.\\n    If KMS encryption key is not specified, by default we encrypt all data\\n    at rest using Amazon Web Services KMS key. By defining your bucket-level\\n    key (https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html)\\n    for SSE, you can reduce Amazon Web Services KMS requests costs by up to\\n    99 percent.\\n\\n  - Format for the offline store table. Supported formats are Glue (Default)\\n    and Apache Iceberg (https://iceberg.apache.org/).\\n\\nTo learn more about this parameter, see OfflineStoreConfig (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_OfflineStoreConfig.html).\",\n     \"properties\": {\n      \"dataCatalogConfig\": {\n       \"description\": \"The meta data of the Glue table which serves as data catalog for the OfflineStore.\",\n       \"properties\": {\n        \"catalog\": {\n         \"type\": \"string\"\n        },\n        \"database\": {\n         \"type\": \"string\"\n        },\n        \"tableName\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"disableGlueTableCreation\": {\n       \"type\": \"boolean\"\n      },\n      \"s3StorageConfig\": {\n       \"description\": \"The Amazon Simple Storage (Amazon S3) location and security configuration\\nfor OfflineStore.\",\n       \"properties\": {\n        \"kmsKeyID\": {\n         \"type\": \"string\"\n        },\n        \"resolvedOutputS3URI\": {\n         \"type\": \"string\"\n        },\n        \"s3URI\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"onlineStoreConfig\": {\n     \"description\": \"You can turn the OnlineStore on or off by specifying True for the EnableOnlineStore\\nflag in OnlineStoreConfig.\\n\\nYou can also include an Amazon Web Services KMS key ID (KMSKeyId) for at-rest\\nencryption of the OnlineStore.\\n\\nThe default value is False.\",\n     \"properties\": {\n      \"enableOnlineStore\": {\n       \"type\": \"boolean\"\n      },\n      \"securityConfig\": {\n       \"description\": \"The security configuration for OnlineStore.\",\n       \"properties\": {\n        \"kmsKeyID\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"storageType\": {\n       \"type\": \"string\"\n      },\n      \"ttlDuration\": {\n       \"description\": \"Time to live duration, where the record is hard deleted after the expiration\\ntime is reached; ExpiresAt = EventTime + TtlDuration. For information on\\nHardDelete, see the DeleteRecord (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_feature_store_DeleteRecord.html)\\nAPI in the Amazon SageMaker API Reference guide.\",\n       \"properties\": {\n        \"unit\": {\n         \"type\": \"string\"\n        },\n        \"value\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"recordIdentifierFeatureName\": {\n     \"description\": \"The name of the Feature whose value uniquely identifies a Record defined\\nin the FeatureStore. Only the latest record per identifier value will be\\nstored in the OnlineStore. RecordIdentifierFeatureName must be one of feature\\ndefinitions' names.\\n\\nYou use the RecordIdentifierFeatureName to access data in a FeatureStore.\\n\\nThis name:\\n\\n  - Must start with an alphanumeric character.\\n\\n  - Can only contains alphanumeric characters, hyphens, underscores. Spaces\\n    are not allowed.\",\n     \"type\": \"string\"\n    },\n    \"roleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the IAM execution role used to persist\\ndata into the OfflineStore if an OfflineStoreConfig is provided.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"Tags used to identify Features in each FeatureGroup.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AddTags.html).\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"throughputConfig\": {\n     \"description\": \"Used to set feature group throughput configuration. There are two modes:\\nON_DEMAND and PROVISIONED. With on-demand mode, you are charged for data\\nreads and writes that your application performs on your feature group. You\\ndo not need to specify read and write throughput because Feature Store accommodates\\nyour workloads as they ramp up and down. You can switch a feature group to\\non-demand only once in a 24 hour period. With provisioned throughput mode,\\nyou specify the read and write capacity per second that you expect your application\\nto require, and you are billed based on those limits. Exceeding provisioned\\nthroughput will result in your requests being throttled.\\n\\nNote: PROVISIONED throughput mode is supported only for feature groups that\\nare offline-only, or use the Standard (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_OnlineStoreConfig.html#sagemaker-Type-OnlineStoreConfig-StorageType)\\ntier online store.\",\n     \"properties\": {\n      \"provisionedReadCapacityUnits\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"provisionedWriteCapacityUnits\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"throughputMode\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"eventTimeFeatureName\",\n    \"featureDefinitions\",\n    \"featureGroupName\",\n    \"recordIdentifierFeatureName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Feature Group\",\n \"type\": \"object\"\n}"
+  }
+}
