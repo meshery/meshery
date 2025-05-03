@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Restore",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "vmware-tanzu",
+    "displayName": "Vmware Tanzu",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Certified Kubernetes - Distribution",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/vmware-tanzu/helm-charts/releases/download/velero-9.0.4/velero-9.0.4.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "9.0.4"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/vmware-tanzu/helm-charts/releases/download/velero-9.0.4/velero-9.0.4.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "velero.io/v1",
+    "kind": "Restore",
+    "schema": "{\n \"description\": \"Restore is a Velero resource that represents the application of\\nresources from a Velero backup to a target Kubernetes cluster.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"RestoreSpec defines the specification for a Velero restore.\",\n   \"properties\": {\n    \"backupName\": {\n     \"description\": \"BackupName is the unique name of the Velero backup to restore\\nfrom.\",\n     \"type\": \"string\"\n    },\n    \"excludedNamespaces\": {\n     \"description\": \"ExcludedNamespaces contains a list of namespaces that are not\\nincluded in the restore.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"excludedResources\": {\n     \"description\": \"ExcludedResources is a slice of resource names that are not\\nincluded in the restore.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"existingResourcePolicy\": {\n     \"description\": \"ExistingResourcePolicy specifies the restore behavior for the Kubernetes resource to be restored\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"hooks\": {\n     \"description\": \"Hooks represent custom behaviors that should be executed during or post restore.\",\n     \"properties\": {\n      \"resources\": {\n       \"items\": {\n        \"description\": \"RestoreResourceHookSpec defines one or more RestoreResrouceHooks that should be executed based on\\nthe rules defined for namespaces, resources, and label selector.\",\n        \"properties\": {\n         \"excludedNamespaces\": {\n          \"description\": \"ExcludedNamespaces specifies the namespaces to which this hook spec does not apply.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"excludedResources\": {\n          \"description\": \"ExcludedResources specifies the resources to which this hook spec does not apply.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"includedNamespaces\": {\n          \"description\": \"IncludedNamespaces specifies the namespaces to which this hook spec applies. If empty, it applies\\nto all namespaces.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"includedResources\": {\n          \"description\": \"IncludedResources specifies the resources to which this hook spec applies. If empty, it applies\\nto all resources.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"labelSelector\": {\n          \"description\": \"LabelSelector, if specified, filters the resources to which this hook spec applies.\",\n          \"nullable\": true,\n          \"properties\": {\n           \"matchExpressions\": {\n            \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n            \"items\": {\n             \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n             \"properties\": {\n              \"key\": {\n               \"description\": \"key is the label key that the selector applies to.\",\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\",\n               \"x-kubernetes-list-type\": \"atomic\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\",\n            \"x-kubernetes-list-type\": \"atomic\"\n           },\n           \"matchLabels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of this hook.\",\n          \"type\": \"string\"\n         },\n         \"postHooks\": {\n          \"description\": \"PostHooks is a list of RestoreResourceHooks to execute during and after restoring a resource.\",\n          \"items\": {\n           \"description\": \"RestoreResourceHook defines a restore hook for a resource.\",\n           \"properties\": {\n            \"exec\": {\n             \"description\": \"Exec defines an exec restore hook.\",\n             \"properties\": {\n              \"command\": {\n               \"description\": \"Command is the command and arguments to execute from within a container after a pod has been restored.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"minItems\": 1,\n               \"type\": \"array\"\n              },\n              \"container\": {\n               \"description\": \"Container is the container in the pod where the command should be executed. If not specified,\\nthe pod's first container is used.\",\n               \"type\": \"string\"\n              },\n              \"execTimeout\": {\n               \"description\": \"ExecTimeout defines the maximum amount of time Velero should wait for the hook to complete before\\nconsidering the execution a failure.\",\n               \"type\": \"string\"\n              },\n              \"onError\": {\n               \"description\": \"OnError specifies how Velero should behave if it encounters an error executing this hook.\",\n               \"enum\": [\n                \"Continue\",\n                \"Fail\"\n               ],\n               \"type\": \"string\"\n              },\n              \"waitForReady\": {\n               \"description\": \"WaitForReady ensures command will be launched when container is Ready instead of Running.\",\n               \"nullable\": true,\n               \"type\": \"boolean\"\n              },\n              \"waitTimeout\": {\n               \"description\": \"WaitTimeout defines the maximum amount of time Velero should wait for the container to be Ready\\nbefore attempting to run the command.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"command\"\n             ],\n             \"type\": \"object\"\n            },\n            \"init\": {\n             \"description\": \"Init defines an init restore hook.\",\n             \"properties\": {\n              \"initContainers\": {\n               \"description\": \"InitContainers is list of init containers to be added to a pod during its restore.\",\n               \"format\": \"textarea\",\n               \"items\": {\n                \"format\": \"textarea\",\n                \"type\": \"string\"\n               },\n               \"type\": \"string\"\n              },\n              \"timeout\": {\n               \"description\": \"Timeout defines the maximum amount of time Velero should wait for the initContainers to complete.\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"includeClusterResources\": {\n     \"description\": \"IncludeClusterResources specifies whether cluster-scoped resources\\nshould be included for consideration in the restore. If null, defaults\\nto true.\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"includedNamespaces\": {\n     \"description\": \"IncludedNamespaces is a slice of namespace names to include objects\\nfrom. If empty, all namespaces are included.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"includedResources\": {\n     \"description\": \"IncludedResources is a slice of resource names to include\\nin the restore. If empty, all resources in the backup are included.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"itemOperationTimeout\": {\n     \"description\": \"ItemOperationTimeout specifies the time used to wait for RestoreItemAction operations\\nThe default value is 4 hour.\",\n     \"type\": \"string\"\n    },\n    \"labelSelector\": {\n     \"description\": \"LabelSelector is a metav1.LabelSelector to filter with\\nwhen restoring individual objects from the backup. If empty\\nor nil, all objects are included. Optional.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"namespaceMapping\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"NamespaceMapping is a map of source namespace names\\nto target namespace names to restore into. Any source\\nnamespaces not included in the map will be restored into\\nnamespaces of the same name.\",\n     \"type\": \"object\"\n    },\n    \"orLabelSelectors\": {\n     \"description\": \"OrLabelSelectors is list of metav1.LabelSelector to filter with\\nwhen restoring individual objects from the backup. If multiple provided\\nthey will be joined by the OR operator. LabelSelector as well as\\nOrLabelSelectors cannot co-exist in restore request, only one of them\\ncan be used\",\n     \"items\": {\n      \"description\": \"A label selector is a label query over a set of resources. The result of matchLabels and\\nmatchExpressions are ANDed. An empty label selector matches all objects. A null\\nlabel selector matches no objects.\",\n      \"properties\": {\n       \"matchExpressions\": {\n        \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n        \"items\": {\n         \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"key is the label key that the selector applies to.\",\n           \"type\": \"string\"\n          },\n          \"operator\": {\n           \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n           \"type\": \"string\"\n          },\n          \"values\": {\n           \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\",\n           \"x-kubernetes-list-type\": \"atomic\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"operator\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-type\": \"atomic\"\n       },\n       \"matchLabels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"preserveNodePorts\": {\n     \"description\": \"PreserveNodePorts specifies whether to restore old nodePorts from backup.\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"resourceModifier\": {\n     \"description\": \"ResourceModifier specifies the reference to JSON resource patches that should be applied to resources before restoration.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"APIGroup is the group for the resource being referenced.\\nIf APIGroup is not specified, the specified Kind must be in the core API group.\\nFor any other third-party types, APIGroup is required.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the type of resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"restorePVs\": {\n     \"description\": \"RestorePVs specifies whether to restore all included\\nPVs from snapshot\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"restoreStatus\": {\n     \"description\": \"RestoreStatus specifies which resources we should restore the status\\nfield. If nil, no objects are included. Optional.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"excludedResources\": {\n       \"description\": \"ExcludedResources specifies the resources to which will not restore the status.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"nullable\": true,\n       \"type\": \"array\"\n      },\n      \"includedResources\": {\n       \"description\": \"IncludedResources specifies the resources to which will restore the status.\\nIf empty, it applies to all resources.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"nullable\": true,\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"scheduleName\": {\n     \"description\": \"ScheduleName is the unique name of the Velero schedule to restore\\nfrom. If specified, and BackupName is empty, Velero will restore\\nfrom the most recent successful backup created from this schedule.\",\n     \"type\": \"string\"\n    },\n    \"uploaderConfig\": {\n     \"description\": \"UploaderConfig specifies the configuration for the restore.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"parallelFilesDownload\": {\n       \"description\": \"ParallelFilesDownload is the concurrency number setting for restore.\",\n       \"type\": \"integer\"\n      },\n      \"writeSparseFiles\": {\n       \"description\": \"WriteSparseFiles is a flag to indicate whether write files sparsely or not.\",\n       \"nullable\": true,\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Restore\",\n \"type\": \"object\"\n}"
+  }
+}

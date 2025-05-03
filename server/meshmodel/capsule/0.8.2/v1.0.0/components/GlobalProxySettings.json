@@ -1,0 +1,78 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Global Proxy Settings",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "capsule",
+    "displayName": "Capsule",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Scheduling \u0026 Orchestration",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://projectcapsule.github.io/charts/capsule-0.8.2.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.8.2"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "https://projectcapsule.github.io/charts/capsule-0.8.2.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "capsule.clastix.io/v1beta1",
+    "kind": "GlobalProxySettings",
+    "schema": "{\n \"description\": \"GlobalProxySettings is the Schema for the globalproxysettings API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"GlobalProxySettingsSpec defines the desired state of GlobalProxySettings.\",\n   \"properties\": {\n    \"rules\": {\n     \"description\": \"Subjects that should receive additional permissions.\\nThe subjects are selected based on the oncoming requests. They don't have to relate to an existing tenant.\\nHowever they must be part of the capsule-user groups.\",\n     \"items\": {\n      \"properties\": {\n       \"clusterResources\": {\n        \"description\": \"Cluster Resources for tenant Owner.\",\n        \"items\": {\n         \"properties\": {\n          \"apiGroups\": {\n           \"description\": \"APIGroups is the name of the APIGroup that contains the resources. If multiple API groups are specified, any action requested against any resource listed will be allowed. '*' represents all resources. Empty string represents v1 api resources.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"operations\": {\n           \"description\": \"Operations which can be executed on the selected resources.\\nDeprecated: For all registered Routes only LIST ang GET requests will intercepted\\nOther permissions must be implemented via kubernetes native RBAC\",\n           \"items\": {\n            \"enum\": [\n             \"List\",\n             \"Update\",\n             \"Delete\"\n            ],\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"resources\": {\n           \"description\": \"Resources is a list of resources this rule applies to. '*' represents all resources.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"selector\": {\n           \"description\": \"Select all cluster scoped resources with the given label selector.\\nDefining a selector which does not match any resources is considered not selectable (eg. using operation NotExists).\",\n           \"properties\": {\n            \"matchExpressions\": {\n             \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n             \"items\": {\n              \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n              \"properties\": {\n               \"key\": {\n                \"description\": \"key is the label key that the selector applies to.\",\n                \"type\": \"string\"\n               },\n               \"operator\": {\n                \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n                \"type\": \"string\"\n               },\n               \"values\": {\n                \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n                \"items\": {\n                 \"type\": \"string\"\n                },\n                \"type\": \"array\",\n                \"x-kubernetes-list-type\": \"atomic\"\n               }\n              },\n              \"required\": [\n               \"key\",\n               \"operator\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\",\n             \"x-kubernetes-list-type\": \"atomic\"\n            },\n            \"matchLabels\": {\n             \"additionalProperties\": {\n              \"type\": \"string\"\n             },\n             \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n             \"type\": \"object\"\n            }\n           },\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"required\": [\n          \"apiGroups\",\n          \"resources\",\n          \"selector\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"subjects\": {\n        \"description\": \"Subjects that should receive additional permissions.\\nThe subjects are selected based on the oncoming requests. They don't have to relate to an existing tenant.\\nHowever they must be part of the capsule-user groups.\",\n        \"items\": {\n         \"properties\": {\n          \"kind\": {\n           \"description\": \"Kind of tenant owner. Possible values are \\\"User\\\", \\\"Group\\\", and \\\"ServiceAccount\\\".\",\n           \"enum\": [\n            \"User\",\n            \"Group\",\n            \"ServiceAccount\"\n           ],\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of tenant owner.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"kind\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"subjects\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"rules\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Global Proxy Settings\",\n \"type\": \"object\"\n}"
+  }
+}

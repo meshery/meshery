@@ -58,7 +58,11 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useLegacySelector((state) => state.get('organization'))?.id;
+  const org_id = useLegacySelector((state) => {
+    return typeof state?.get === 'function'
+      ? state.get('organization')?.id
+      : state?.organization?.id || '';
+  });
 
   const theme = useTheme();
 
@@ -335,21 +339,18 @@ const WorkspaceDataTable = ({
   return (
     <div key={`list-view-${viewType}`}>
       <Slide direction="left" in={selectedWorkspace.id ? true : false}>
-        {
-          <div
-            style={{
-              marginTop: '1rem',
-              backgroundColor: theme.palette.background.paper,
-            }}
-          >
-            {selectedWorkspace?.id && (
-              <WorkSpaceContentDataTable
-                workspaceId={selectedWorkspace?.id}
-                workspaceName={selectedWorkspace?.name}
-              />
-            )}
-          </div>
-        }
+        <div
+          style={{
+            marginTop: '1rem',
+          }}
+        >
+          {selectedWorkspace?.id && (
+            <WorkSpaceContentDataTable
+              workspaceId={selectedWorkspace?.id}
+              workspaceName={selectedWorkspace?.name}
+            />
+          )}
+        </div>
       </Slide>
       <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
         <div
