@@ -112,11 +112,8 @@ test.describe.serial('Connection Management Tests', () => {
 
       await expect(page.locator('#searchClick')).toBeVisible();
       await page.getByRole('button', { name: 'Confirm' }).click();
-      
 
       await waitForSnackBar(page, 'Connection status updated');
-
-
 
       await stateTransitionReq;
       await stateTransitionRes;
