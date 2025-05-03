@@ -38,7 +38,7 @@ mesheryctl exp model build [model-name] --version [version]
 
 		// validate version is not empty
 		if version == "" {
-			return ErrModelBuildFromStrings("--version is empty")
+			return ErrModelBuildFromStrings("--version cannot be blank")
 		}
 
 		{
