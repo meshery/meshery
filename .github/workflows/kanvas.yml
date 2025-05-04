@@ -44,3 +44,12 @@ jobs:
           prNumber: ${{ env.PULL_NO }} # auto-filled from the above step
           application_type: Kubernetes Manifest # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
           filePath: ${{ inputs.fileName == '' && 'install/deployment_yamls/k8s' || inputs.fileName }} # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
+
+  yellowteststp:
+    if: github.repository == 'meshery/meshery'
+    name: yellowteststp
+    runs-on: ubuntu-24.04
+    steps:
+    - name: echo
+      run: |
+        echo "ololo"
