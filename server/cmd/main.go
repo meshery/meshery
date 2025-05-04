@@ -324,6 +324,7 @@ func main() {
 		cp.Initialize()
 
 		cp.SyncPreferences()
+
 		defer cp.StopSyncPreferences()
 		provs[cp.Name()] = cp
 	}
