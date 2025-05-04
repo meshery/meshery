@@ -489,3 +489,26 @@ ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 #	 Required golang version is: 'go$(GOVERSION).x'. \
 #	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif
+
+## Runs meshsync integration tests check dependencies script (if docker, kind, kubectl, helm are present)
+server-integration-tests-meshsync-check-dependencies:
+	./server/integration-tests/meshsync/infrastructure/setup.sh check_dependencies
+
+## Runs meshsync integration tests set up script (runs creates a test kind cluster, deploys operator to it)
+## docker compose exposes nats on default ports to host, so they must be available
+server-integration-tests-meshsync-setup:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup
+
+## Runs meshsync integration tests clean up (stops docker compose and deletes test cluster)
+server-integration-tests-meshsync-cleanup:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup
+
+## Runs meshsync integration tests code itself
+server-integration-tests-meshsync-run: build-server
+	RUN_INTEGRATION_TESTS=true \
+	MESHERY_BINARY_PATH=$(TODO_MESHERY_BINARY_TARGET_ABSOLUTE) \
+	SAVE_MESHSYNC_OUTPUT=true \
+	go test -v -count=1 -run Integration $(TODO_INTEGRATION_TESTS_DIR)
+
+## Runs meshsync integration tests full cycle (setup, run, cleanup)
+server-integration-tests-meshsync: server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
