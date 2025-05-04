@@ -7,17 +7,11 @@ setup() {
   
   load "$E2E_HELPERS_PATH/constants"
 
-  DESIGN_ID_FILE="${TEMP_DATA_DIR}/design/id"
+  export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/design"
 }
 
-# Test 1: Verify successful deletion of a design
 @test "mesheryctl design delete removes the associate design" {
-
-  if [ ! -f "$DESIGN_ID_FILE" ]; then
-    skip "No design ID available to delete"
-  fi
-
-  DESIGN_ID=$(cat "$DESIGN_ID_FILE")
+  DESIGN_ID=$(cat "$TESTDATA_DIR/id")
   [ -n "$DESIGN_ID" ] || skip "Empty design ID"
 
   # Delete the design

@@ -26,7 +26,6 @@ import {
   Slide,
 } from '@layer5/sistent';
 import { useLegacySelector } from 'lib/store';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
@@ -42,6 +41,7 @@ const WorkspaceDataTable = ({
   handleRowClick,
   setColumnVisibility,
   search,
+  viewType,
 }) => {
   let colViews = [
     ['id', 'na'],
@@ -58,9 +58,12 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useLegacySelector((state) => state.get('organization'))?.id;
-  const router = useRouter();
-  const viewType = router.query.view === 'table' ? 'table' : 'grid';
+  const org_id = useLegacySelector((state) => {
+    return typeof state?.get === 'function'
+      ? state.get('organization')?.id
+      : state?.organization?.id || '';
+  });
+
   const theme = useTheme();
 
   const { data: workspaces } = useGetWorkspacesQuery({
@@ -249,7 +252,10 @@ const WorkspaceDataTable = ({
       },
     },
   ];
+
+  // Window dimensions for responsive column visibility
   const { width } = useWindowDimensions();
+
   useEffect(() => {
     let showCols = updateVisibleColumns(colViews, width);
     const initialVisibility = {};
@@ -257,7 +263,7 @@ const WorkspaceDataTable = ({
       initialVisibility[col.name] = showCols[col.name];
     });
     setColumnVisibility(initialVisibility);
-  }, []);
+  }, [width]);
 
   const options = {
     filter: false,
@@ -333,21 +339,18 @@ const WorkspaceDataTable = ({
   return (
     <div key={`list-view-${viewType}`}>
       <Slide direction="left" in={selectedWorkspace.id ? true : false}>
-        {
-          <div
-            style={{
-              marginTop: '1rem',
-              backgroundColor: theme.palette.background.paper,
-            }}
-          >
-            {selectedWorkspace?.id && (
-              <WorkSpaceContentDataTable
-                workspaceId={selectedWorkspace?.id}
-                workspaceName={selectedWorkspace?.name}
-              />
-            )}
-          </div>
-        }
+        <div
+          style={{
+            marginTop: '1rem',
+          }}
+        >
+          {selectedWorkspace?.id && (
+            <WorkSpaceContentDataTable
+              workspaceId={selectedWorkspace?.id}
+              workspaceName={selectedWorkspace?.name}
+            />
+          )}
+        </div>
       </Slide>
       <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
         <div

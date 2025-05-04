@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Addon",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-eks-controller",
+    "displayName": "AWS Elastic Kubernetes Service",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Containers",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ED7100",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/eks-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-Elastic-Kubernetes-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.403,16.1433741 L19.403,19.4551416 L22.273,16.1433741 L23.716,16.1433741 L20.465,20.1487363 L23.882,24.3702329 L22.459,24.3702329 L19.403,20.5652861 L19.403,24.3564789 L18.117,24.3564789 L18.117,16.1433741 L19.403,16.1433741 Z M32,24.2493941 L28,21.8925474 L28,15.8250672 C28,15.6354584 27.888,15.4625509 27.713,15.3810093 L22,12.736311 L22,8.28492611 L32,13.1823337 L32,24.2493941 Z M32.722,12.4386351 L21.722,7.05197797 C21.567,6.97534852 21.383,6.98419038 21.237,7.0735914 C21.09,7.16299242 21,7.32116346 21,7.49112364 L21,13.0477409 C21,13.2373497 21.111,13.4112396 21.287,13.4917988 L27,16.1364971 L27,22.1705748 C27,22.3434823 27.091,22.5026357 27.243,22.5910543 L32.243,25.5383407 C32.322,25.5854973 32.411,25.6090756 32.5,25.6090756 C32.585,25.6090756 32.67,25.5874622 32.746,25.5452177 C32.903,25.4577816 33,25.2946984 33,25.1178612 L33,12.8777808 C33,12.6921017 32.892,12.5211591 32.722,12.4386351 L32.722,12.4386351 Z M19.995,32.9517485 L9,27.3165369 L9,13.1685797 L18,8.32029355 L18,12.7618542 L13.254,15.3977106 C13.096,15.4851468 13,15.64823 13,15.8250672 L13,24.6669264 C13,24.8457284 13.099,25.0107765 13.258,25.0972302 L19.758,28.6123605 C19.909,28.693902 20.091,28.693902 20.24,28.6133429 L26.49,25.2416472 L30.036,27.5719684 L19.995,32.9517485 Z M26.794,24.2592184 C26.638,24.1570458 26.439,24.1491864 26.275,24.2366226 L20,27.6220722 L14,24.3771099 L14,16.1119364 L18.746,13.4750975 C18.903,13.3886437 19,13.2245781 19,13.0477409 L19,7.49112364 C19,7.31723374 18.907,7.15709785 18.755,7.06867926 C18.603,6.98026067 18.415,6.97731338 18.259,7.0598374 L8.259,12.4474769 C8.099,12.5339307 8,12.6989787 8,12.8777808 L8,27.6142128 C8,27.797927 8.103,27.9649399 8.268,28.0504112 L19.768,33.944984 C19.84,33.9813339 19.921,34 20,34 C20.082,34 20.165,33.9803514 20.239,33.9400718 L31.239,28.045499 C31.392,27.962975 31.491,27.8087337 31.499,27.6368087 C31.507,27.4648836 31.424,27.3018004 31.278,27.2065048 L26.794,24.2592184 Z\" id=\"Amazon-Elastic-Kubernetes-Service_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-Elastic-Kubernetes-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M19.403,16.1433741 L19.403,19.4551416 L22.273,16.1433741 L23.716,16.1433741 L20.465,20.1487363 L23.882,24.3702329 L22.459,24.3702329 L19.403,20.5652861 L19.403,24.3564789 L18.117,24.3564789 L18.117,16.1433741 L19.403,16.1433741 Z M32,24.2493941 L28,21.8925474 L28,15.8250672 C28,15.6354584 27.888,15.4625509 27.713,15.3810093 L22,12.736311 L22,8.28492611 L32,13.1823337 L32,24.2493941 Z M32.722,12.4386351 L21.722,7.05197797 C21.567,6.97534852 21.383,6.98419038 21.237,7.0735914 C21.09,7.16299242 21,7.32116346 21,7.49112364 L21,13.0477409 C21,13.2373497 21.111,13.4112396 21.287,13.4917988 L27,16.1364971 L27,22.1705748 C27,22.3434823 27.091,22.5026357 27.243,22.5910543 L32.243,25.5383407 C32.322,25.5854973 32.411,25.6090756 32.5,25.6090756 C32.585,25.6090756 32.67,25.5874622 32.746,25.5452177 C32.903,25.4577816 33,25.2946984 33,25.1178612 L33,12.8777808 C33,12.6921017 32.892,12.5211591 32.722,12.4386351 L32.722,12.4386351 Z M19.995,32.9517485 L9,27.3165369 L9,13.1685797 L18,8.32029355 L18,12.7618542 L13.254,15.3977106 C13.096,15.4851468 13,15.64823 13,15.8250672 L13,24.6669264 C13,24.8457284 13.099,25.0107765 13.258,25.0972302 L19.758,28.6123605 C19.909,28.693902 20.091,28.693902 20.24,28.6133429 L26.49,25.2416472 L30.036,27.5719684 L19.995,32.9517485 Z M26.794,24.2592184 C26.638,24.1570458 26.439,24.1491864 26.275,24.2366226 L20,27.6220722 L14,24.3771099 L14,16.1119364 L18.746,13.4750975 C18.903,13.3886437 19,13.2245781 19,13.0477409 L19,7.49112364 C19,7.31723374 18.907,7.15709785 18.755,7.06867926 C18.603,6.98026067 18.415,6.97731338 18.259,7.0598374 L8.259,12.4474769 C8.099,12.5339307 8,12.6989787 8,12.8777808 L8,27.6142128 C8,27.797927 8.103,27.9649399 8.268,28.0504112 L19.768,33.944984 C19.84,33.9813339 19.921,34 20,34 C20.082,34 20.165,33.9803514 20.239,33.9400718 L31.239,28.045499 C31.392,27.962975 31.491,27.8087337 31.499,27.6368087 C31.507,27.4648836 31.424,27.3018004 31.278,27.2065048 L26.794,24.2592184 Z\" id=\"Amazon-Elastic-Kubernetes-Service_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.7.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ED7100",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Elastic-Kubernetes-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M19.403,16.1433741 L19.403,19.4551416 L22.273,16.1433741 L23.716,16.1433741 L20.465,20.1487363 L23.882,24.3702329 L22.459,24.3702329 L19.403,20.5652861 L19.403,24.3564789 L18.117,24.3564789 L18.117,16.1433741 L19.403,16.1433741 Z M32,24.2493941 L28,21.8925474 L28,15.8250672 C28,15.6354584 27.888,15.4625509 27.713,15.3810093 L22,12.736311 L22,8.28492611 L32,13.1823337 L32,24.2493941 Z M32.722,12.4386351 L21.722,7.05197797 C21.567,6.97534852 21.383,6.98419038 21.237,7.0735914 C21.09,7.16299242 21,7.32116346 21,7.49112364 L21,13.0477409 C21,13.2373497 21.111,13.4112396 21.287,13.4917988 L27,16.1364971 L27,22.1705748 C27,22.3434823 27.091,22.5026357 27.243,22.5910543 L32.243,25.5383407 C32.322,25.5854973 32.411,25.6090756 32.5,25.6090756 C32.585,25.6090756 32.67,25.5874622 32.746,25.5452177 C32.903,25.4577816 33,25.2946984 33,25.1178612 L33,12.8777808 C33,12.6921017 32.892,12.5211591 32.722,12.4386351 L32.722,12.4386351 Z M19.995,32.9517485 L9,27.3165369 L9,13.1685797 L18,8.32029355 L18,12.7618542 L13.254,15.3977106 C13.096,15.4851468 13,15.64823 13,15.8250672 L13,24.6669264 C13,24.8457284 13.099,25.0107765 13.258,25.0972302 L19.758,28.6123605 C19.909,28.693902 20.091,28.693902 20.24,28.6133429 L26.49,25.2416472 L30.036,27.5719684 L19.995,32.9517485 Z M26.794,24.2592184 C26.638,24.1570458 26.439,24.1491864 26.275,24.2366226 L20,27.6220722 L14,24.3771099 L14,16.1119364 L18.746,13.4750975 C18.903,13.3886437 19,13.2245781 19,13.0477409 L19,7.49112364 C19,7.31723374 18.907,7.15709785 18.755,7.06867926 C18.603,6.98026067 18.415,6.97731338 18.259,7.0598374 L8.259,12.4474769 C8.099,12.5339307 8,12.6989787 8,12.8777808 L8,27.6142128 C8,27.797927 8.103,27.9649399 8.268,28.0504112 L19.768,33.944984 C19.84,33.9813339 19.921,34 20,34 C20.082,34 20.165,33.9803514 20.239,33.9400718 L31.239,28.045499 C31.392,27.962975 31.491,27.8087337 31.499,27.6368087 C31.507,27.4648836 31.424,27.3018004 31.278,27.2065048 L26.794,24.2592184 Z\" id=\"Amazon-Elastic-Kubernetes-Service_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Elastic-Kubernetes-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M19.403,16.1433741 L19.403,19.4551416 L22.273,16.1433741 L23.716,16.1433741 L20.465,20.1487363 L23.882,24.3702329 L22.459,24.3702329 L19.403,20.5652861 L19.403,24.3564789 L18.117,24.3564789 L18.117,16.1433741 L19.403,16.1433741 Z M32,24.2493941 L28,21.8925474 L28,15.8250672 C28,15.6354584 27.888,15.4625509 27.713,15.3810093 L22,12.736311 L22,8.28492611 L32,13.1823337 L32,24.2493941 Z M32.722,12.4386351 L21.722,7.05197797 C21.567,6.97534852 21.383,6.98419038 21.237,7.0735914 C21.09,7.16299242 21,7.32116346 21,7.49112364 L21,13.0477409 C21,13.2373497 21.111,13.4112396 21.287,13.4917988 L27,16.1364971 L27,22.1705748 C27,22.3434823 27.091,22.5026357 27.243,22.5910543 L32.243,25.5383407 C32.322,25.5854973 32.411,25.6090756 32.5,25.6090756 C32.585,25.6090756 32.67,25.5874622 32.746,25.5452177 C32.903,25.4577816 33,25.2946984 33,25.1178612 L33,12.8777808 C33,12.6921017 32.892,12.5211591 32.722,12.4386351 L32.722,12.4386351 Z M19.995,32.9517485 L9,27.3165369 L9,13.1685797 L18,8.32029355 L18,12.7618542 L13.254,15.3977106 C13.096,15.4851468 13,15.64823 13,15.8250672 L13,24.6669264 C13,24.8457284 13.099,25.0107765 13.258,25.0972302 L19.758,28.6123605 C19.909,28.693902 20.091,28.693902 20.24,28.6133429 L26.49,25.2416472 L30.036,27.5719684 L19.995,32.9517485 Z M26.794,24.2592184 C26.638,24.1570458 26.439,24.1491864 26.275,24.2366226 L20,27.6220722 L14,24.3771099 L14,16.1119364 L18.746,13.4750975 C18.903,13.3886437 19,13.2245781 19,13.0477409 L19,7.49112364 C19,7.31723374 18.907,7.15709785 18.755,7.06867926 C18.603,6.98026067 18.415,6.97731338 18.259,7.0598374 L8.259,12.4474769 C8.099,12.5339307 8,12.6989787 8,12.8777808 L8,27.6142128 C8,27.797927 8.103,27.9649399 8.268,28.0504112 L19.768,33.944984 C19.84,33.9813339 19.921,34 20,34 C20.082,34 20.165,33.9803514 20.239,33.9400718 L31.239,28.045499 C31.392,27.962975 31.491,27.8087337 31.499,27.6368087 C31.507,27.4648836 31.424,27.3018004 31.278,27.2065048 L26.794,24.2592184 Z\" id=\"Amazon-Elastic-Kubernetes-Service_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/eks-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "eks.services.k8s.aws/v1alpha1",
+    "kind": "Addon",
+    "schema": "{\n \"description\": \"Addon is the Schema for the Addons API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AddonSpec defines the desired state of Addon.\\n\\nAn Amazon EKS add-on. For more information, see Amazon EKS add-ons (https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)\\nin the Amazon EKS User Guide.\",\n   \"properties\": {\n    \"addonVersion\": {\n     \"description\": \"The version of the add-on. The version must match one of the versions returned\\nby DescribeAddonVersions (https://docs.aws.amazon.com/eks/latest/APIReference/API_DescribeAddonVersions.html).\",\n     \"type\": \"string\"\n    },\n    \"clientRequestToken\": {\n     \"description\": \"A unique, case-sensitive identifier that you provide to ensurethe idempotency\\nof the request.\",\n     \"type\": \"string\"\n    },\n    \"clusterName\": {\n     \"description\": \"The name of your cluster.\",\n     \"type\": \"string\"\n    },\n    \"clusterRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"configurationValues\": {\n     \"description\": \"The set of configuration values for the add-on that's created. The values\\nthat you provide are validated against the schema returned by DescribeAddonConfiguration.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"The name of the add-on. The name must match one of the names returned by\\nDescribeAddonVersions.\",\n     \"type\": \"string\"\n    },\n    \"podIdentityAssociations\": {\n     \"description\": \"An array of Pod Identity Assocations to be created. Each EKS Pod Identity\\nassociation maps a Kubernetes service account to an IAM Role.\\n\\nFor more information, see Attach an IAM Role to an Amazon EKS add-on using\\nPod Identity (https://docs.aws.amazon.com/eks/latest/userguide/add-ons-iam.html)\\nin the Amazon EKS User Guide.\",\n     \"items\": {\n      \"description\": \"A type of Pod Identity Association owned by an Amazon EKS Add-on.\\n\\nEach EKS Pod Identity Association maps a role to a service account in a namespace\\nin the cluster.\\n\\nFor more information, see Attach an IAM Role to an Amazon EKS add-on using\\nPod Identity (https://docs.aws.amazon.com/eks/latest/userguide/add-ons-iam.html)\\nin the Amazon EKS User Guide.\",\n      \"properties\": {\n       \"roleARN\": {\n        \"type\": \"string\"\n       },\n       \"serviceAccount\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resolveConflicts\": {\n     \"description\": \"How to resolve field value conflicts for an Amazon EKS add-on. Conflicts\\nare handled based on the value you choose:\\n\\n  - None – If the self-managed version of the add-on is installed on your\\n    cluster, Amazon EKS doesn't change the value. Creation of the add-on might\\n    fail.\\n\\n  - Overwrite – If the self-managed version of the add-on is installed\\n    on your cluster and the Amazon EKS default value is different than the\\n    existing value, Amazon EKS changes the value to the Amazon EKS default\\n    value.\\n\\n  - Preserve – This is similar to the NONE option. If the self-managed\\n    version of the add-on is installed on your cluster Amazon EKS doesn't\\n    change the add-on resource properties. Creation of the add-on might fail\\n    if conflicts are detected. This option works differently during the update\\n    operation. For more information, see UpdateAddon (https://docs.aws.amazon.com/eks/latest/APIReference/API_UpdateAddon.html).\\n\\nIf you don't currently have the self-managed version of the add-on installed\\non your cluster, the Amazon EKS add-on is installed. Amazon EKS sets all\\nvalues to default values, regardless of the option that you specify.\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountRoleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of an existing IAM role to bind to the add-on's\\nservice account. The role must be assigned the IAM permissions required by\\nthe add-on. If you don't specify an existing IAM role, then the add-on uses\\nthe permissions assigned to the node IAM role. For more information, see\\nAmazon EKS node IAM role (https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html)\\nin the Amazon EKS User Guide.\\n\\nTo specify an existing IAM role, you must have an IAM OpenID Connect (OIDC)\\nprovider created for your cluster. For more information, see Enabling IAM\\nroles for service accounts on your cluster (https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html)\\nin the Amazon EKS User Guide.\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountRoleRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Metadata that assists with categorization and organization. Each tag consists\\nof a key and an optional value. You define both. Tags don't propagate to\\nany other cluster or Amazon Web Services resources.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Addon\",\n \"type\": \"object\"\n}"
+  }
+}

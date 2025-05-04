@@ -1,0 +1,76 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Open Stack Floating IP Pool",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "cluster-api-provider-openstack",
+    "displayName": "OpenStack (Cluster API Provider)",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Provisioning",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#DA1A32",
+      "shape": "round-rectangle",
+      "source_uri": "git://github.com/kubernetes-sigs/cluster-api-provider-openstack/main/config/crd/bases",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#DA1A32\"\u003e\n\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#fff\"\u003e\n\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v0.12.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#DA1A32",
+    "shape": "round-rectangle",
+    "svgColor": "\u003csvg width=\"800px\" height=\"800px\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n    \u003cg\u003e\n        \u003cpath d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#DA1A32\"\u003e\n\n\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"800px\" height=\"800px\" viewBox=\"0 -2.5 256 256\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" preserveAspectRatio=\"xMidYMid\"\u003e\n    \u003cg\u003e\n        \u003cpath d=\"M57.8196917,170.722795 L57.8196917,179.878808 C57.8196917,186.98261 63.5764029,192.739322 70.6802055,192.739322 L70.6802055,192.739322 L185.330319,192.739322 C192.434121,192.739322 198.190832,186.98261 198.190832,179.878808 L198.190832,179.878808 L198.190832,170.722795 L256,170.722795 L256,226.77443 C256,239.855951 245.296937,250.559013 232.215416,250.559013 L232.215416,250.559013 L23.7845838,250.559013 C10.7030627,250.559013 0,239.855951 0,226.77443 L0,226.77443 L0,170.722795 L57.8196917,170.722795 Z M57.8091675,96.3696608 L57.8091675,154.178828 L0,154.178828 L0,96.3696608 L57.8091675,96.3696608 Z M256,96.3696608 L256,154.178828 L198.190832,154.178828 L198.190832,96.3696608 L256,96.3696608 Z M232.215416,0 C245.296937,0 256,10.7030627 256,23.7951079 L256,23.7951079 L256,79.8362179 L198.190832,79.8362179 L198.190832,70.6802055 C198.190832,63.5764029 192.434121,57.8196917 185.330319,57.8196917 L185.330319,57.8196917 L70.6696814,57.8196917 C63.5658787,57.8196917 57.8091675,63.5764029 57.8091675,70.6802055 L57.8091675,70.6802055 L57.8091675,79.8362179 L0,79.8362179 L0,23.7845838 C0,10.7030627 10.7030627,0 23.7845838,0 L23.7845838,0 Z\" fill=\"#fff\"\u003e\n\u003c/path\u003e\n    \u003c/g\u003e\n\u003c/svg\u003e"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/kubernetes-sigs/cluster-api-provider-openstack/main/config/crd/bases"
+  },
+  "configuration": null,
+  "component": {
+    "version": "infrastructure.cluster.x-k8s.io/v1alpha1",
+    "kind": "OpenStackFloatingIPPool",
+    "schema": "{\n \"description\": \"OpenStackFloatingIPPool is the Schema for the openstackfloatingippools API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OpenStackFloatingIPPoolSpec defines the desired state of OpenStackFloatingIPPool.\",\n   \"properties\": {\n    \"floatingIPNetwork\": {\n     \"description\": \"FloatingIPNetwork is the external network to use for floating ips, if there's only one external network it will be used by default\",\n     \"maxProperties\": 1,\n     \"minProperties\": 1,\n     \"properties\": {\n      \"filter\": {\n       \"description\": \"Filter specifies a filter to select an OpenStack network. If provided, cannot be empty.\",\n       \"minProperties\": 1,\n       \"properties\": {\n        \"description\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"notTags\": {\n         \"description\": \"NotTags is a list of tags to filter by. If specified, resources which\\ncontain all of the given tags will be excluded from the result.\",\n         \"items\": {\n          \"description\": \"NeutronTag represents a tag on a Neutron resource.\\nIt may not be empty and may not contain commas.\",\n          \"minLength\": 1,\n          \"pattern\": \"^[^,]+$\",\n          \"type\": \"string\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"set\"\n        },\n        \"notTagsAny\": {\n         \"description\": \"NotTagsAny is a list of tags to filter by. If specified, resources\\nwhich contain any of the given tags will be excluded from the result.\",\n         \"items\": {\n          \"description\": \"NeutronTag represents a tag on a Neutron resource.\\nIt may not be empty and may not contain commas.\",\n          \"minLength\": 1,\n          \"pattern\": \"^[^,]+$\",\n          \"type\": \"string\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"set\"\n        },\n        \"projectID\": {\n         \"type\": \"string\"\n        },\n        \"tags\": {\n         \"description\": \"Tags is a list of tags to filter by. If specified, the resource must\\nhave all of the tags specified to be included in the result.\",\n         \"items\": {\n          \"description\": \"NeutronTag represents a tag on a Neutron resource.\\nIt may not be empty and may not contain commas.\",\n          \"minLength\": 1,\n          \"pattern\": \"^[^,]+$\",\n          \"type\": \"string\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"set\"\n        },\n        \"tagsAny\": {\n         \"description\": \"TagsAny is a list of tags to filter by. If specified, the resource\\nmust have at least one of the tags specified to be included in the\\nresult.\",\n         \"items\": {\n          \"description\": \"NeutronTag represents a tag on a Neutron resource.\\nIt may not be empty and may not contain commas.\",\n          \"minLength\": 1,\n          \"pattern\": \"^[^,]+$\",\n          \"type\": \"string\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"set\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"id\": {\n       \"description\": \"ID is the ID of the network to use. If ID is provided, the other filters cannot be provided. Must be in UUID format.\",\n       \"format\": \"uuid\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"identityRef\": {\n     \"description\": \"IdentityRef is a reference to a identity to be used when reconciling this pool.\",\n     \"properties\": {\n      \"cloudName\": {\n       \"description\": \"CloudName specifies the name of the entry in the clouds.yaml file to use.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of a secret in the same namespace as the resource being provisioned.\\nThe secret must contain a key named `clouds.yaml` which contains an OpenStack clouds.yaml file.\\nThe secret may optionally contain a key named `cacert` containing a PEM-encoded CA certificate.\",\n       \"type\": \"string\"\n      },\n      \"region\": {\n       \"description\": \"Region specifies an OpenStack region to use. If specified, it overrides\\nany value in clouds.yaml. If specified for an OpenStackMachine, its\\nvalue will be included in providerID.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"cloudName\",\n      \"name\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"region is immutable\",\n       \"rule\": \"(!has(self.region) \\u0026\\u0026 !has(oldSelf.region)) || self.region == oldSelf.region\"\n      }\n     ]\n    },\n    \"maxIPs\": {\n     \"description\": \"MaxIPs is the maximum number of floating ips that can be allocated from this pool, if nil there is no limit.\\nIf set, the pool will stop allocating floating ips when it reaches this number of ClaimedIPs.\",\n     \"type\": \"integer\"\n    },\n    \"preAllocatedFloatingIPs\": {\n     \"description\": \"PreAllocatedFloatingIPs is a list of floating IPs precreated in OpenStack that should be used by this pool.\\nThese are used before allocating new ones and are not deleted from OpenStack when the pool is deleted.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"reclaimPolicy\": {\n     \"description\": \"The stratergy to use for reclaiming floating ips when they are released from a machine\",\n     \"enum\": [\n      \"Retain\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"identityRef\",\n    \"reclaimPolicy\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Open Stack Floating IP Pool\",\n \"type\": \"object\"\n}"
+  }
+}

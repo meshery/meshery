@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Operator Condition",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "nri-bundle",
+    "displayName": "NRI Bundle",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/newrelic/helm-charts/releases/download/nri-bundle-5.0.122/nri-bundle-5.0.122.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "5.0.122"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/newrelic/helm-charts/releases/download/nri-bundle-5.0.122/nri-bundle-5.0.122.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "operators.coreos.com/v1",
+    "kind": "OperatorCondition",
+    "schema": "{\n \"description\": \"OperatorCondition is a Custom Resource of type `OperatorCondition` which is used to convey information to OLM about the state of an operator.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"OperatorConditionSpec allows a cluster admin to convey information about the state of an operator to OLM, potentially overriding state reported by the operator.\",\n   \"properties\": {\n    \"deployments\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"overrides\": {\n     \"items\": {\n      \"description\": \"Condition contains details for one aspect of the current state of this API Resource. --- This struct is intended for direct use as an array at the field path .status.conditions.  For example, \\n type FooStatus struct{ // Represents the observations of a foo's current state. // Known .status.conditions.type are: \\\"Available\\\", \\\"Progressing\\\", and \\\"Degraded\\\" // +patchMergeKey=type // +patchStrategy=merge // +listType=map // +listMapKey=type Conditions []metav1.Condition `json:\\\"conditions,omitempty\\\" patchStrategy:\\\"merge\\\" patchMergeKey:\\\"type\\\" protobuf:\\\"bytes,1,rep,name=conditions\\\"` \\n // other fields }\",\n      \"properties\": {\n       \"lastTransitionTime\": {\n        \"description\": \"lastTransitionTime is the last time the condition transitioned from one status to another. This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.\",\n        \"format\": \"date-time\",\n        \"type\": \"string\"\n       },\n       \"message\": {\n        \"description\": \"message is a human readable message indicating details about the transition. This may be an empty string.\",\n        \"maxLength\": 32768,\n        \"type\": \"string\"\n       },\n       \"observedGeneration\": {\n        \"description\": \"observedGeneration represents the .metadata.generation that the condition was set based upon. For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date with respect to the current state of the instance.\",\n        \"format\": \"int64\",\n        \"minimum\": 0,\n        \"type\": \"integer\"\n       },\n       \"reason\": {\n        \"description\": \"reason contains a programmatic identifier indicating the reason for the condition's last transition. Producers of specific condition types may define expected values and meanings for this field, and whether the values are considered a guaranteed API. The value should be a CamelCase string. This field may not be empty.\",\n        \"maxLength\": 1024,\n        \"minLength\": 1,\n        \"pattern\": \"^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$\",\n        \"type\": \"string\"\n       },\n       \"status\": {\n        \"description\": \"status of the condition, one of True, False, Unknown.\",\n        \"enum\": [\n         \"True\",\n         \"False\",\n         \"Unknown\"\n        ],\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"type of condition in CamelCase or in foo.example.com/CamelCase. --- Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be useful (see .node.status.conditions), the ability to deconflict is important. The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)\",\n        \"maxLength\": 316,\n        \"pattern\": \"^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\\\\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"message\",\n       \"reason\",\n       \"status\",\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"serviceAccounts\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\"\n ],\n \"title\": \"Operator Condition\",\n \"type\": \"object\"\n}"
+  }
+}

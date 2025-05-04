@@ -50,7 +50,8 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   fill: theme.palette.text.default,
 }));
 
-export const StyledSelect = styled(Select)(() => ({
+export const StyledSelect = styled(Select)(({ theme }) => ({
+  color: theme.palette.common.white,
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
@@ -209,7 +210,7 @@ function SpaceSwitcher(props) {
             onClick={() => setOrgOpen(!orgOpen)}
             style={{ marginRight: orgOpen ? '1rem' : '0' }}
           >
-            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.icon.secondary} />
+            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
           </Button>
           <OrgMenu {...props} open={orgOpen} />/
           <Button
@@ -218,8 +219,8 @@ function SpaceSwitcher(props) {
           >
             <WorkspaceIcon
               {...iconLarge}
-              secondaryFill={theme.palette.icon.secondary}
-              fill={theme.palette.icon.secondary}
+              secondaryFill={theme.palette.common.white}
+              fill={theme.palette.common.white}
             />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/

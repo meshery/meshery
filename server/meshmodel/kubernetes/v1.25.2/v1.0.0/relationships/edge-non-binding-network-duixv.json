@@ -55,6 +55,19 @@
             "id": null,
             "kind": "Service",
             "match": {},
+            "match_strategy_matrix": [
+              [
+                "to_contains_from",
+                "not_null"
+              ],
+              [
+                "equal_as_strings",
+                "not_null"
+              ],
+              [
+                "equal"
+              ]
+            ],
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -103,7 +116,7 @@
                   "spec",
                   "ports",
                   "0",
-                  "port"
+                  "targetPort"
                 ],
                 [
                   "configuration",
@@ -121,6 +134,7 @@
             "id": null,
             "kind": "Deployment",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -197,6 +211,7 @@
             "id": null,
             "kind": "Service",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -240,6 +255,7 @@
             "id": null,
             "kind": "Service",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -281,6 +297,7 @@
             "id": null,
             "kind": "Pod",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",

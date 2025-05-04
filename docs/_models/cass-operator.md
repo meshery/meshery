@@ -18,7 +18,11 @@ components:
   colorIcon: assets/img/integrations/cass-operator/components/cassandra-task/icons/color/cassandra-task-color.svg
   whiteIcon: assets/img/integrations/cass-operator/components/cassandra-task/icons/white/cassandra-task-white.svg
   description: 
-components-count: 2
+- name: scheduled-task
+  colorIcon: assets/img/integrations/cass-operator/components/scheduled-task/icons/color/scheduled-task-color.svg
+  whiteIcon: assets/img/integrations/cass-operator/components/scheduled-task/icons/white/scheduled-task-white.svg
+  description: 
+components-count: 3
 relationships: 
 relationship-count: 0
 featureList: [

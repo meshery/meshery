@@ -37,7 +37,7 @@ Updates to this central `struct` is made through updates in `Context` with sette
 
 ### Logging
 
-For logs, `mesheryctl` uses [Logrus](https://github.com/sirupsen/logrus). Going through the docs and understanding the different [log-levels](https://github.com/sirupsen/logrus#level-logging) will help a lot.
+For logs, `mesheryctl` uses [MeshKit](https://github.com/meshery/meshkit).
 
 ### Documenting
 

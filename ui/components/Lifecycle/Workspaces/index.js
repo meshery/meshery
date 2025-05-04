@@ -21,7 +21,7 @@ import {
 } from '@layer5/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -47,9 +47,9 @@ import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
 import RightArrowIcon from '@/assets/icons/RightArrowIcon';
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
-import { useRouter } from 'next/router';
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
+import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -105,12 +105,13 @@ const columnList = [
 
 const Workspaces = () => {
   const theme = useTheme();
-  const router = useRouter();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
   });
-  const organization = useLegacySelector((state) => state.get('organization'));
+  const organization = useLegacySelector((state) => {
+    return typeof state?.get === 'function' ? state.get('organization') : state?.organization || {};
+  });
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';
@@ -119,19 +120,16 @@ const Workspaces = () => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editWorkspaceId, setEditWorkspaceId] = useState('');
-  const [selectedWorkspace, setSelectedWorkspace] = useState({
-    id: router.query.id || '',
-    name: router.query.name || '',
+  let [selectedWorkspace, setSelectedWorkspace] = useState({
+    id: '',
+    name: '',
   });
-
-  useEffect(() => {
-    if (router.query.id) {
-      setSelectedWorkspace({
-        id: router.query.id,
-        name: router.query.name,
-      });
-    }
-  }, [router.query.id, router.query.name]);
+  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  if (workspaceSwitcherContext.selectedWorkspace.id) {
+    selectedWorkspace = workspaceSwitcherContext.selectedWorkspace;
+    setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
+  }
+  const [viewType, setViewType] = useState(selectedWorkspace.id ? 'table' : 'grid');
 
   const [teamsModal, setTeamsModal] = useState({
     open: false,
@@ -151,14 +149,6 @@ const Workspaces = () => {
       id: workspaceId,
       name: workspaceName,
     });
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, view: 'table', id: workspaceId, name: workspaceName },
-      },
-      undefined,
-      { shallow: true },
-    );
   };
   const ref = useRef(null);
   const bulkDeleteRef = useRef(null);
@@ -197,7 +187,6 @@ const Workspaces = () => {
       .catch((error) => handleError(`Workspace Create Error: ${error?.data}`));
     handleWorkspaceModalClose();
   };
-  const viewType = router.query.view === 'table' ? 'table' : 'grid';
 
   const handleEditWorkspace = ({ organization, name, description }) => {
     updateWorkspace({
@@ -363,15 +352,7 @@ const Workspaces = () => {
 
     setPage(0);
     setSelectedWorkspace({ id: '', name: '' });
-
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, view: val },
-      },
-      undefined,
-      { shallow: true },
-    );
+    setViewType(val);
   };
 
   const [columnVisibility, setColumnVisibility] = useState({});
@@ -401,66 +382,68 @@ const Workspaces = () => {
                   }
                 }}
               >
-                All Workspace
+                All Workspaces
               </div>
               {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
             </Breadcrumbs>
           </div>
-          <ToolWrapper>
-            <CreateButtonWrapper>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
-                sx={{
-                  backgroundColor: '#607d8b',
-                  padding: '8px',
-                  borderRadius: '5px',
-                  marginRight: '2rem',
-                }}
-                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
-                data-cy="btnResetDatabase"
-              >
-                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                <Typography
+          {!selectedWorkspace.id && (
+            <ToolWrapper>
+              <CreateButtonWrapper>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
                   sx={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
-                    textTransform: 'none',
+                    backgroundColor: '#607d8b',
+                    padding: '8px',
+                    borderRadius: '5px',
+                    marginRight: '2rem',
                   }}
+                  disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                  data-cy="btnResetDatabase"
                 >
-                  Create
-                </Typography>
-              </Button>
-            </CreateButtonWrapper>
-            <Box display={'flex'} alignItems={'center'}>
-              {!selectedWorkspace?.id && (
-                <>
-                  <SearchBar
-                    onSearch={(value) => {
-                      setSearch(value);
+                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                  <Typography
+                    sx={{
+                      paddingLeft: '4px',
+                      marginRight: '4px',
+                      textTransform: 'none',
                     }}
-                    placeholder="Search Workspaces..."
-                    expanded={isSearchExpanded}
-                    setExpanded={setIsSearchExpanded}
-                  />
-                  {viewType !== 'grid' && (
-                    <CustomColumnVisibilityControl
-                      columns={columnList}
-                      customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  >
+                    Create
+                  </Typography>
+                </Button>
+              </CreateButtonWrapper>
+              <Box display={'flex'} alignItems={'center'}>
+                {!selectedWorkspace?.id && (
+                  <>
+                    <SearchBar
+                      onSearch={(value) => {
+                        setSearch(value);
+                      }}
+                      placeholder="Search Workspaces..."
+                      expanded={isSearchExpanded}
+                      setExpanded={setIsSearchExpanded}
                     />
-                  )}
-                </>
-              )}
-              <ViewSwitch
-                view={viewType}
-                changeView={handleViewChange}
-                key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
-              />
-            </Box>
-          </ToolWrapper>
+                    {viewType !== 'grid' && (
+                      <CustomColumnVisibilityControl
+                        columns={columnList}
+                        customToolsProps={{ columnVisibility, setColumnVisibility }}
+                      />
+                    )}
+                  </>
+                )}
+                <ViewSwitch
+                  view={viewType}
+                  changeView={handleViewChange}
+                  key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
+                />
+              </Box>
+            </ToolWrapper>
+          )}
           <>
             {workspaces.length === 0 ? (
               <EmptyState
@@ -489,6 +472,7 @@ const Workspaces = () => {
                 selectedWorkspace={selectedWorkspace}
                 setColumnVisibility={setColumnVisibility}
                 search={search}
+                viewType={viewType}
               />
             )}
           </>
