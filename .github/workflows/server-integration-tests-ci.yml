@@ -1,17 +1,17 @@
-name: Golang Unit and Integration Tests
+name: Meshery Server Integration Tests
 on:
   push:
     branches:
       - "master"
     paths:
-      - "server/**.go"
-      - "server/**.golden"
+      - "**.go"
+      - "**.golden"
   pull_request:
     branches:
       - "master"
     paths:
-      - "server/**.go"
-      - "server/**.golden"
+      - "**.go"
+      - "**.golden"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -20,8 +20,8 @@ on:
         default: "warning"
 
 jobs:
-  server-integration-tests:
-    name: Integration tests
+  server-integration-tests-with-meshsync:
+    name: Integration tests with meshsync
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
