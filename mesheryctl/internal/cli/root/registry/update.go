@@ -23,6 +23,7 @@ import (
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	comp "github.com/meshery/schemas/models/v1beta1/component"
@@ -31,7 +32,7 @@ import (
 )
 
 type ComponentSourceParser interface {
-	parse() (map[string]map[string][]utils.ComponentCSV, error)
+	parse() (map[string]map[string][]ComponentCSV, error)
 }
 
 type LocalCSVDirParser struct {
@@ -42,6 +43,8 @@ type GoogleSheetParser struct {
 	spreadsheeetID   string
 	spreadsheeetCred string
 }
+
+type ComponentCSV = meshkitRegistryUtils.ComponentCSV
 
 var (
 	csvDir                   string
@@ -58,7 +61,7 @@ var (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
-	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet or CSV directory",
+	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet or CSV directory.",
 	Example: `
 // Update models from Meshery Integration Spreadsheet
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
@@ -78,7 +81,7 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
 		if csvDir == "" && (spreadsheeetID == "" || spreadsheeetCred == "") {
-			return errors.New("please provide a CSV directory or both spreadsheet-id and spreadsheet-cred")
+			return errors.New("Please provide a CSV directory or both spreadsheet-id and spreadsheet-cred.")
 		}
 
 		err := os.MkdirAll(logDirPath, 0755)
@@ -139,7 +142,7 @@ type compUpdateTracker struct {
 }
 
 func updateRegistryComponents(
-	components map[string]map[string][]utils.ComponentCSV,
+	components map[string]map[string][]ComponentCSV,
 	modelToCompUpdateTracker *store.GenerticThreadSafeStore[[]compUpdateTracker],
 ) error {
 	var modelLocPath string
@@ -188,7 +191,7 @@ func updateRegistryComponents(
 				if !content.IsDir() {
 					continue
 				}
-				if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+				if mutils.Contains(ExcludeDirs, content.Name()) {
 					continue
 				}
 
@@ -254,7 +257,6 @@ func updateRegistryComponents(
 								continue
 							}
 							totalCompsUpdatedPerModelPerVersion++
-
 						}
 					}
 				}
@@ -286,8 +288,8 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", len(values), totalAggregateComponents))
 }
 
-func (parser *LocalCSVDirParser) parse() (map[string]map[string][]utils.ComponentCSV, error) {
-	localComps := make(map[string]map[string][]utils.ComponentCSV)
+func (parser *LocalCSVDirParser) parse() (map[string]map[string][]ComponentCSV, error) {
+	localComps := make(map[string]map[string][]ComponentCSV)
 	var allErrors []error
 
 	entries, err := os.ReadDir(parser.dirPath)
@@ -301,7 +303,7 @@ func (parser *LocalCSVDirParser) parse() (map[string]map[string][]utils.Componen
 		}
 		if filepath.Ext(entry.Name()) == ".csv" {
 			csvPath := filepath.Join(parser.dirPath, entry.Name())
-			helper, err := utils.NewComponentCSVHelper("", "Components", 0, csvPath)
+			helper, err := meshkitRegistryUtils.NewComponentCSVHelper("", "Components", 0, csvPath)
 			if err != nil {
 				allErrors = append(allErrors, err)
 				continue
@@ -317,7 +319,7 @@ func (parser *LocalCSVDirParser) parse() (map[string]map[string][]utils.Componen
 			for registrant, modelMap := range helper.Components {
 				utils.Log.Info("  Registrant: ", registrant, ", models = ", len(modelMap))
 				if _, ok := localComps[registrant]; !ok {
-					localComps[registrant] = make(map[string][]utils.ComponentCSV)
+					localComps[registrant] = make(map[string][]ComponentCSV)
 				}
 				for model, comps := range modelMap {
 					utils.Log.Info("    model ", model, " => # of comps: ", len(comps))
@@ -332,7 +334,7 @@ func (parser *LocalCSVDirParser) parse() (map[string]map[string][]utils.Componen
 	return localComps, nil
 }
 
-func (parser *GoogleSheetParser) parse() (map[string]map[string][]utils.ComponentCSV, error) {
+func (parser *GoogleSheetParser) parse() (map[string]map[string][]ComponentCSV, error) {
 	srv, err := mutils.NewSheetSRV(parser.spreadsheeetCred)
 	if err != nil {
 		return nil, err
@@ -345,7 +347,7 @@ func (parser *GoogleSheetParser) parse() (map[string]map[string][]utils.Componen
 
 	gid := GetSheetIDFromTitle(resp, "Components")
 	url := GoogleSpreadSheetURL + parser.spreadsheeetID
-	helper, err := utils.NewComponentCSVHelper(url, "Components", gid, componentCSVFilePath)
+	helper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", gid, componentCSVFilePath)
 	if err != nil {
 		return nil, err
 	}
@@ -359,7 +361,7 @@ func (parser *GoogleSheetParser) parse() (map[string]map[string][]utils.Componen
 	return helper.Components, nil
 }
 
-func InvokeComponentsUpdate(comps map[string]map[string][]utils.ComponentCSV) error {
+func InvokeComponentsUpdate(comps map[string]map[string][]ComponentCSV) error {
 	utils.Log.UpdateLogOutput(logFile)
 	defer func() {
 		_ = logFile.Close()
