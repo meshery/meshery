@@ -192,6 +192,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }}
+  
+  yellowteststp:
+    if: github.repository == 'meshery/meshery'
+    name: yellowteststp
+    runs-on: ubuntu-24.04
+    steps:
+    - name: echo
+      run: |
+        echo "ololo"
+  
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'
