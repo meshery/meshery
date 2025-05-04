@@ -1,16 +1,12 @@
 name: Re-usable Workflow - Build UI and Server
 on:
   workflow_call:
-    secrets:
-      NODE_VERSION:
-        required: true
-      GO_VERSION:
-        required: true
+    secrets: {}
 
 jobs:
   build-backend:
     name: Backend build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -30,7 +26,7 @@ jobs:
           path: ./main
   ui-build:
     name: UI build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -39,9 +35,10 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: "20.x"
+          check-latest: true
           cache: "npm"
-          cache-dependency-path: '**/package-lock.json'
+          cache-dependency-path: "**/package-lock.json"
       - name: Install dependencies
         run: |
           make ui-build
@@ -55,4 +52,3 @@ jobs:
         with:
           name: meshery-provider-ui build
           path: provider-ui/out/
-

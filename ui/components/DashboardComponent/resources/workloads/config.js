@@ -3,7 +3,7 @@ import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
-import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import { ResizableCell } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
@@ -190,7 +190,7 @@ export const WorkloadTableConfig = (
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <TootltipWrappedConnectionChip
+                  <TooltipWrappedConnectionChip
                     title={context.name}
                     iconSrc={
                       connectionMetadataState
@@ -365,7 +365,7 @@ export const WorkloadTableConfig = (
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <TootltipWrappedConnectionChip
+                  <TooltipWrappedConnectionChip
                     title={context.name}
                     iconSrc={
                       connectionMetadataState
@@ -504,7 +504,7 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -658,7 +658,7 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -824,7 +824,7 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -973,7 +973,7 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -1090,7 +1090,7 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -1239,7 +1239,7 @@ export const WorkloadTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState

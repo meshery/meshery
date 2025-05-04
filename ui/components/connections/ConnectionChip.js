@@ -23,12 +23,13 @@ import {
   RegisteredChip,
   ConnectionStyledMenuItem,
 } from './styles';
-import { iconMedium } from 'css/icons.styles';
-import { UsesSistent } from '../SistentWrapper';
+import { iconMedium, iconSmall } from 'css/icons.styles';
+import ConnectionIcon from '@/assets/icons/Connection';
 
-export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
+export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
   const theme = useTheme();
+
   return (
     <ChipWrapper
       label={title}
@@ -47,12 +48,12 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
             }
           >
             <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
-              <img style={iconMedium} src="/static/img/kubernetes.svg" />
+              <ConnectionIcon {...iconSmall} />
             </Avatar>
           </BadgeAvatars>
         ) : (
           <Avatar src={iconSrc} sx={iconMedium}>
-            <img style={iconMedium} src="/static/img/kubernetes.svg" />
+            <ConnectionIcon {...iconSmall} />
           </Avatar>
         )
       }
@@ -63,15 +64,13 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
   );
 };
 
-export const TootltipWrappedConnectionChip = (props) => {
+export const TooltipWrappedConnectionChip = (props) => {
   return (
-    <UsesSistent>
-      <CustomTooltip title={props.tooltip || props.title} placement="left">
-        <div>
-          <_ConnectionChip {...props} />
-        </div>
-      </CustomTooltip>
-    </UsesSistent>
+    <CustomTooltip title={props.tooltip || props.title} placement="left">
+      <div style={{ display: 'inline-block' }}>
+        <ConnectionChip {...props} />
+      </div>
+    </CustomTooltip>
   );
 };
 
@@ -227,5 +226,5 @@ function getStatusChip(status) {
 }
 
 export const ConnectionStateChip = ({ status }) => {
-  return <UsesSistent>{getStatusChip(status)}</UsesSistent>;
+  return <>{getStatusChip(status)}</>;
 };

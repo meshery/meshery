@@ -296,11 +296,11 @@ func ErrFetchSMIResults(err error) error {
 }
 
 func ErrFormFile(err error) error {
-	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{"The kubeconfig file does not exist in the location"}, []string{"Make sure to upload the correct kubeconfig file"})
+	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting kubeconfig file"}, []string{err.Error()}, []string{"The kubeconfig file does not exist in the location."}, []string{"Make sure to upload the correct kubeconfig file."})
 }
 
 func ErrReadConfig(err error) error {
-	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config"}, []string{err.Error()}, []string{"The kubeconfig file is empty or not valid"}, []string{"Make sure to upload the correct kubeconfig file"})
+	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config."}, []string{err.Error()}, []string{"The kubeconfig file is empty or not valid."}, []string{"Make sure to upload the correct kubeconfig file."})
 }
 
 func ErrLoadConfig(err error) error {
@@ -308,15 +308,15 @@ func ErrLoadConfig(err error) error {
 }
 
 func ErrOpenFile(file string) error {
-	return errors.New(ErrOpenFileCode, errors.Alert, []string{"unable to open file: ", file}, []string{}, []string{"The file does not exist in the location"}, []string{"Make sure to upload the correct file"})
+	return errors.New(ErrOpenFileCode, errors.Alert, []string{"Unable to open file: ", file}, []string{}, []string{"The file does not exist in the location."}, []string{"Make sure to upload the correct file."})
 }
 
 func ErrKubeVersion(err error) error {
-	return errors.New(ErrKubeVersionCode, errors.Alert, []string{"unable to get Kubernetes version"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from Meshery"}, []string{"Make sure Meshery has connectivity to Kubernetes"})
+	return errors.New(ErrKubeVersionCode, errors.Alert, []string{"Unable to get Kubernetes version."}, []string{err.Error()}, []string{"Kubernetes might not be reachable from Meshery."}, []string{"Make sure Meshery has connectivity to Kubernetes."})
 }
 
 func ErrRetrieveData(err error) error {
-	return errors.New(ErrRetrieveDataCode, errors.Alert, []string{"Unable to retrieve the requested data"}, []string{err.Error()}, []string{"Adapter operation invalid"}, []string{"Make sure adapter is reachable and running"})
+	return errors.New(ErrRetrieveDataCode, errors.Alert, []string{"Unable to retrieve the requested data"}, []string{err.Error()}, []string{"Adapter operation invalid"}, []string{"Make sure adapter is running and reachable by Meshery Server."})
 }
 
 func ErrOperationID(err error) error {
@@ -328,7 +328,7 @@ func ErrApplyChange(err error) error {
 }
 
 func ErrRetrieveMeshData(err error) error {
-	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the mesh", "Error getting component name"}, []string{err.Error()}, []string{"unable to retrieve the requested data"}, []string{"Make sure adapter is reachable and running"})
+	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the adapter.", "Error getting component name."}, []string{err.Error()}, []string{"Unable to retrieve the requested data."}, []string{"Make sure adapter is reachable and running."})
 }
 
 func ErrApplicationFailure(err error, obj string) error {
@@ -340,7 +340,7 @@ func ErrApplicationSourceContent(err error, obj string) error {
 }
 
 func ErrDesignSourceContent(err error, obj string) error {
-	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
+	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable.", "Remote provider doesn't support this capability."}, []string{"Ensure you have required permissions or retry after sometime."})
 }
 
 func ErrDownloadWASMFile(err error, obj string) error {
@@ -363,7 +363,7 @@ func ErrFailToDelete(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
-	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{"Load test name empty or not valid"}, []string{"Provide a name for the test"})
+	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank."}, []string{err.Error()}, []string{"Load test name empty or not valid."}, []string{"Provide a name for the test."})
 }
 
 func ErrConversion(err error) error {
@@ -371,35 +371,35 @@ func ErrConversion(err error) error {
 }
 
 func ErrLoadTest(err error, obj string) error {
-	return errors.New(ErrLoadTestCode, errors.Alert, []string{"Load test error: ", obj}, []string{err.Error()}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
+	return errors.New(ErrLoadTestCode, errors.Alert, []string{"Load test error: ", obj}, []string{err.Error()}, []string{"Load test endpoint might be not reachable."}, []string{"Make sure load test endpoint is reachable by Meshery Server."})
 }
 
 func ErrFetchKubernetes(err error) error {
-	return errors.New(ErrFetchKubernetesCode, errors.Alert, []string{"unable to ping Kubernetes", "unable to scan"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from Meshery"}, []string{"Make sure Meshery has connectivity to Kubernetes"})
+	return errors.New(ErrFetchKubernetesCode, errors.Alert, []string{"Unable to ping Kubernetes.", "Unable to run a discovery scan for Kubernetes cluster."}, []string{err.Error()}, []string{"Kubernetes might not be reachable from Meshery."}, []string{"Make sure Meshery has connectivity to Kubernetes."})
 }
 
 func ErrPanicRecovery(r interface{}) error {
-	return errors.New(ErrPanicRecoveryCode, errors.Alert, []string{"Recovered from panic"}, []string{fmt.Sprint(r)}, []string{"Meshery crashes"}, []string{"Restart Meshery"})
+	return errors.New(ErrPanicRecoveryCode, errors.Alert, []string{"Recovered from panic."}, []string{fmt.Sprint(r)}, []string{"Meshery crashed."}, []string{"Restart Meshery."})
 }
 
 func ErrFailToLoadExtensions(err error) error {
-	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package"}, []string{err.Error()}, []string{"Plugin is not available in the location", "plugin does not match with Meshery version"}, []string{"Make sure the plugin is compatible with Meshery server"})
+	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package."}, []string{err.Error()}, []string{"Plugin is not available in the location.", "Plugin does not match with Meshery version."}, []string{"Make sure the plugin is compatible with Meshery server."})
 }
 
 func ErrInvalidLTURL(url string) error {
-	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{"URL for load test could be invalid"}, []string{"please refer to: https://docs.meshery.io/tasks/performance-management"})
+	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid load test url: ", url}, []string{}, []string{"URL for load test could be invalid."}, []string{"Please refer to: https://docs.meshery.io/tasks/performance-management"})
 }
 
 func ErrVersionCompare(err error) error {
-	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery."}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGetLatestVersion(err error) error {
-	return errors.New(ErrGetLatestVersionCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGetLatestVersionCode, errors.Alert, []string{"failed to get latest version of Meshery."}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrSaveSession(err error) error {
-	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{"User session could be expired"}, []string{"Re-initiate login"})
+	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session."}, []string{err.Error()}, []string{"User session could be expired."}, []string{"Re-initiate login."})
 }
 
 func ErrCreateDir(err error, obj string) error {
@@ -411,7 +411,7 @@ func ErrInvalidRequestObject(fields ...string) error {
 }
 
 func ErrChangeK8sContext(err error) error {
-	return errors.New(ErrChangeK8sContextCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+	return errors.New(ErrChangeK8sContextCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig, then try uploading the kubeconfig again."})
 }
 
 func ErrInvalidKubeConfig(err error, content string) error {
@@ -423,7 +423,7 @@ func ErrInvalidKubeHandler(err error, userId string) error {
 }
 
 func ErrInvalidKubeContext(err error, content string) error {
-	return errors.New(ErrInvalidKubeContextCode, errors.Alert, []string{"Invalid Kube Context", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid Kubernetes context for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"})
+	return errors.New(ErrInvalidKubeContextCode, errors.Alert, []string{"Invalid Kube Context", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid Kubernetes context for the deployment."}, []string{"Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server."})
 }
 
 func ErrSavingUserPreference(err error) error {
@@ -451,19 +451,19 @@ func ErrImportFilter(err error) error {
 }
 
 func ErrFetchFilter(err error) error {
-	return errors.New(ErrFetchFilterCode, errors.Alert, []string{"Error failed to fetch filter"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Filters"}, []string{})
+	return errors.New(ErrFetchFilterCode, errors.Alert, []string{"Error failed to fetch filter."}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Filters"}, []string{})
 }
 
 func ErrDeleteFilter(err error) error {
-	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter"}, []string{err.Error()}, []string{"Failed to delete Filter with the given ID"}, []string{"Check if the Filter ID is correct"})
+	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter."}, []string{err.Error()}, []string{"Failed to delete Filter with the given ID"}, []string{"Check if the Filter ID is correct"})
 }
 
 func ErrSavePattern(err error) error {
-	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design"}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Confirm the correct path / URL to the design"})
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design."}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Verify that you have an active user session. Try logging and in again.", "Confirm that you have sufficient permissions to save the design.", "Try reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."})
 }
 
 func ErrSaveApplication(err error) error {
-	return errors.New(ErrSaveApplicationCode, errors.Alert, []string{"Error failed to save application"}, []string{err.Error()}, []string{"Cannot save the Application due to wrong path or URL"}, []string{"Check if the given path or URL of the Application is correct"})
+	return errors.New(ErrSaveApplicationCode, errors.Alert, []string{"Error failed to save application."}, []string{err.Error()}, []string{"Cannot save the Application due to wrong path or URL."}, []string{"Check if the given path or URL of the Application is correct."})
 }
 
 func ErrFetchApplication(err error) error {

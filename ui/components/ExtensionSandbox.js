@@ -274,13 +274,13 @@ function getComponentURIFromPathForUserPrefs(extensions) {
  * @param {import("../utils/ExtensionPointSchemaValidator").CollaboratorSchema[]} extensions
  * @returns {string[]}
  */
-// function getComponentURIFromPathForCollaborator(extensions) {
-//   if (Array.isArray(extensions)) {
-//     return extensions.map((ext) => ext.component);
-//   }
+function getComponentURIFromPathForCollaborator(extensions) {
+  if (Array.isArray(extensions)) {
+    return extensions.map((ext) => ext.component);
+  }
 
-//   return [];
-// }
+  return [];
+}
 
 /**
  * createPathForRemoteComponent takes in the name of the component and
@@ -316,7 +316,6 @@ const ExtensionSandbox = React.memo(
   }) {
     const [extension, setExtension] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
         toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
@@ -326,13 +325,14 @@ const ExtensionSandbox = React.memo(
         try {
           const extensionData = capabilitiesRegistry.extensions[type];
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
-
           setExtension(processedData);
           setIsLoading(false);
         } catch (error) {
           setExtension([]);
           setIsLoading(false);
         }
+      } else {
+        setIsLoading(true);
       }
       // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
       return () => {
@@ -349,6 +349,12 @@ const ExtensionSandbox = React.memo(
       }
 
       switch (type) {
+        case 'collaborator': {
+          const collaboratorUri = getComponentURIFromPathForCollaborator(extension, getPath());
+          return collaboratorUri.map((uri) => (
+            <Extension url={createPathForRemoteComponent(uri)} key={uri} />
+          ));
+        }
         case 'navigator': {
           const navigatorUri = getComponentURIFromPathForNavigator(extension, getPath());
           return navigatorUri ? (
@@ -373,7 +379,9 @@ const ExtensionSandbox = React.memo(
 
     return <>{renderContent()}</>;
   },
-  (prevProps, nextProps) => prevProps.type === nextProps.type,
+  (prevProps, nextProps) =>
+    prevProps.type === nextProps.type &&
+    prevProps.capabilitiesRegistry === nextProps.capabilitiesRegistry,
 );
 
 const mapDispatchToProps = (dispatch) => ({

@@ -1,5 +1,4 @@
-import { alpha } from '@mui/material/styles';
-import { Box, List, ListItem, ListItemText, ListSubheader, styled } from '@layer5/sistent';
+import { Box, List, ListItem, ListItemText, ListSubheader, styled, alpha } from '@layer5/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 
 export const ValidationErrorListItem = styled(ListItem)(({ theme }) => ({

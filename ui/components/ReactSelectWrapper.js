@@ -1,9 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
-import { styled } from '@mui/material/styles';
-import { Typography, TextField, Paper, Chip, MenuItem, useTheme } from '@layer5/sistent';
-import NoSsr from '@mui/material/NoSsr';
+import {
+  Typography,
+  TextField,
+  Paper,
+  Chip,
+  MenuItem,
+  useTheme,
+  styled,
+  NoSsr,
+} from '@layer5/sistent';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({
@@ -175,10 +182,10 @@ const ReactSelectWrapper = ({
 ReactSelectWrapper.propTypes = {
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  onInputChange: PropTypes.func.isRequired,
-  value: PropTypes.object.isRequired,
+  onInputChange: PropTypes.func,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
   options: PropTypes.array.isRequired,
-  error: PropTypes.bool.isRequired,
+  error: PropTypes.bool,
   isMulti: PropTypes.bool,
   noOptionsMessage: PropTypes.string,
 };

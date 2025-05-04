@@ -15,7 +15,7 @@ const BBChart = ({ options }) => {
 
   return (
     <ErrorBoundary>
-      <div ref={chartRef} onClick={(e) => e.stopPropagation()}></div>
+      <div ref={chartRef} style={{ width: '100%' }} onClick={(e) => e.stopPropagation()}></div>
     </ErrorBoundary>
   );
 };

@@ -4,7 +4,7 @@ import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
 import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
-import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
+import { REGISTRY_ITEM_STATES } from '../../utils/Enum';
 // import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 // import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
@@ -18,12 +18,13 @@ import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, styled } from '@layer5/sistent';
 import dynamic from 'next/dynamic';
-import { UsesSistent } from '../SistentWrapper';
+
 import {
   StyledKeyValueFormattedValue,
   StyledKeyValuePropertyDiv,
   StyledKeyValueProperty,
 } from './MeshModel.style';
+import { iconSmall } from 'css/icons.styles';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -184,18 +185,16 @@ const ModelContents = ({ modelDef }) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
-        <div style={{ display: 'flex', gap: '1rem', marginRight: '2rem' }}>
+        <div style={{ display: 'flex', gap: '1rem' }}>
           {ExportAvailable ? (
             <Button
               aria-label="Export Model"
               variant="contained"
-              color="primary"
-              size="medium"
               alt="Export Model to OCI Image"
               onClick={handleExport}
-              style={{ display: 'flex', width: '100%', paddingInline: '0' }}
+              size="small"
             >
-              <DownloadIcon style={{ fontSize: '1.2rem' }} />
+              <DownloadIcon style={iconSmall} />
               Export
             </Button>
           ) : null}
@@ -406,7 +405,7 @@ const StatusChip = ({ entityData, entityType }) => {
     updateEntityStatus({
       entityType: _.toLower(entityType),
       body: {
-        id: data.id,
+        id: data?.id || entityData.id,
         status: e.target.value,
         displayname: entityData.displayName,
       },
@@ -425,46 +424,18 @@ const StatusChip = ({ entityData, entityType }) => {
           labelId="entity-status-select-label"
           id={data?.id}
           key={data?.id}
-          value={data?.status}
-          defaultValue={data?.status}
-          onClick={(e) => e.stopPropagation()}
+          size="small"
+          value={data?.status || REGISTRY_ITEM_STATES.IGNORED}
+          defaultValue={data?.status || REGISTRY_ITEM_STATES.IGNORED}
           onChange={(e) => handleStatusChange(e)}
           sx={{
             textTransform: 'capitalize',
-            '& .MuiSelect-select': {
-              p: '0.5rem !important',
-              pr: '2rem !important',
-            },
           }}
-          disableUnderline
           disabled={!isSuccess} // Disable the select when isSuccess is false
-          MenuProps={{
-            anchorOrigin: {
-              vertical: 'bottom',
-              horizontal: 'left',
-            },
-            transformOrigin: {
-              vertical: 'top',
-              horizontal: 'left',
-            },
-            getContentAnchorEl: null,
-            MenuListProps: { disablePadding: true },
-            PaperProps: { square: true },
-          }}
         >
           {nextStatus.map((status) => (
-            <MenuItem
-              disabled={status === data?.status}
-              style={{
-                display: status === data?.status ? 'none' : 'flex',
-                textTransform: 'capitalize',
-              }}
-              value={status}
-              key={status}
-            >
-              {status === data?.status
-                ? status
-                : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status}
+            <MenuItem style={{ textTransform: 'capitalize' }} value={status} key={status}>
+              {status}
             </MenuItem>
           ))}
         </Select>
@@ -499,11 +470,9 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   };
 
   return (
-    <UsesSistent>
-      <DetailsContainer isEmpty={isEmptyDetails}>
-        {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-      </DetailsContainer>
-    </UsesSistent>
+    <DetailsContainer isEmpty={isEmptyDetails}>
+      {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+    </DetailsContainer>
   );
 };
 

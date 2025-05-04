@@ -87,6 +87,14 @@ const connectionsApi = api.injectEndpoints({
         body: queryArg.body,
       }),
     }),
+    addKubernetesConfig: builder.mutation({
+      query: (queryArg) => ({
+        url: `system/kubernetes`,
+        method: 'POST',
+        body: queryArg.body,
+      }),
+      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
+    }),
   }),
 });
 
@@ -101,4 +109,5 @@ export const {
   useGetAllConnectionStatusQuery,
   useGetConnectionByKindQuery,
   useCancelConnectionRegisterMutation,
+  useAddKubernetesConfigMutation,
 } = connectionsApi;

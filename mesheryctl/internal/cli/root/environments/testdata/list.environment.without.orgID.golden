@@ -1,0 +1,4 @@
+[ orgID ] isn't specified
+
+Usage: mesheryctl environment list --orgID [orgID]
+Run 'mesheryctl environment list --help' to see detailed help message

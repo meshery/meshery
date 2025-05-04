@@ -14,40 +14,9 @@ list: include
 
 [Meshery Components](/concepts/logical/components) are the building blocks of a model. Each component represents a different part of the system or application. Components can be anything from a database to a microservice to a server. Relationships define how components interact with each other. For example, a database component might have a relationship with a microservice component that represents the microservice's dependency on the database.
 
-## Creating your first Meshery Model
+### Creating your first Meshery Model
 
-The following instructions are a no-fluff guide to creating your own Meshery Models quickly. For more detailed information, see the [Contributing to Models](/project/contributing/contributing-models) documentation.
-
-### Prerequisites
-
-1. Fork the [meshery/meshery](https://github.com/meshery/meshery) repository.
-1. Install the Meshery CLI by following the [installation instructions](https://docs.meshery.io/installation/).
-
-### Create a Model Definition
-
-<ol>
-
-<li>In your meshery/meshery fork, open the template <a href="https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975">spreadsheet</a>.</li>
-<ul><li>Or, optionally, use CSVs by navigating to <code>mesheryctl/templates/templates-csvs</code> directory.</li></ul>
-<li>Edit the <code>models sheet</code> file to include your model definition.
-   <ol>
-      <li>[Annotation-only Components] For models that contain annotation components, edit the <code>components sheet</code> file to include your component definitions.</li>
-   </ol>
-</li>
-<li>Generate your new models using a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>). Click the "Generate" button after navigating to Meshery UI --> Settings --> Registry.</li>
-<li> 
-
-<details>
-   <summary>Or use Meshery CLI</summary>
-   Or, opttionally, use Meshery CLI by executing the following command:<code>mesheryctl registry generate --directory templates-csvs</code>
-   Review the generated components inside of the <code>server/meshmodel</code> directory under your model's name.
-
-</details></li>
-<li> Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.</li>
-
-</ol>
-
-**Congratulations! You have successfully created a new model.**
+To get started quickly, check out the [Creating Models](/guides/configuration-management/creating-models)  guide for step-by-step instructions.
 
 ### Contributing a Model Definition
 
@@ -57,11 +26,8 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 1. Create a pull request to the meshery/meshery.io repository.
 1. Once your pull request is merged, your model will be available in the next Meshery release.
 
-## Next Steps
+### Next Steps
 
-{% include alert.html type="info" title="Contributing to Models" content="See the <a href='/project/contributing/contributing-models'>full Contributing to Models</a> documentation for a detailed understanding of models and the many ways in which you can customize them." %}
+To learn more about how to contribute and customize your models, check out the full [Contributing to Models](/project/contributing/contributing-models/) documentation. We encourage you to get involved in the development of Meshery Models and to share your feedback!
 
-We encourage you to get involved in the development of Meshery Models and to share your feedback.
-
-{% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
-
+{% include alert.html type="info" title="Meshery Models are Extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}

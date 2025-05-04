@@ -20,8 +20,13 @@ import {
   Table,
   Tooltip,
   styled,
+  FormLabel,
+  TableBody,
+  TableCell,
+  TableRow,
+  NoSsr,
+  TableHead,
 } from '@layer5/sistent';
-import { FormLabel, TableBody, TableCell, TableHead, TableRow, NoSsr } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayIcon from '@mui/icons-material/PlayArrow';
@@ -996,11 +1001,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         </DialogContent>
         <Divider variant="fullWidth" light />
         <DialogActions>
-          <IconButton
-            aria-label="Apply"
-            color="primary"
-            onClick={this.handleSubmit(cat, 'custom', isDelete)}
-          >
+          <IconButton aria-label="Apply" onClick={this.handleSubmit(cat, 'custom', isDelete)}>
             {/* <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth /> */}
             {!isDelete && <PlayIcon style={iconMedium} />}
             {isDelete && <DeleteIcon style={iconMedium} />}

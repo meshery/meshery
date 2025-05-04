@@ -88,7 +88,7 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 		return "", err
 	}
 	if r.StatusCode == http.StatusInternalServerError {
-		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token: status code 500"))
+		return "", ErrTokenRefresh(fmt.Errorf("failed to refresh token. Status code 500."))
 	}
 
 	defer SafeClose(r.Body, l.Log)

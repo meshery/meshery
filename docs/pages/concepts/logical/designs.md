@@ -32,7 +32,7 @@ As the deployable unit in Meshery, a Design consists of [Components]({{site.base
   - from individual YAML files, remote HTTP location, local filesystem, or OCI images.
 - Designs can be exported or embedded.
   - Designs can be embedded in web pages either as a bundle of HTML or as a React component using the [meshery-design-embed](https://www.npmjs.com/package/@layer5/meshery-design-embed) NPM package.
-- Designs can be [snapshotted](https://docs.meshery.io/extensions/snapshot). Snapshots are immutable. Snapshots can be compared for differences between Design versions.
+- Designs can be [snapshotted](https://docs.meshery.io/extensions/kanvas-snapshot). Snapshots are immutable. Snapshots can be compared for differences between Design versions.
 - Designs can be published or unpublished. Published Designs are available to all users of any Meshery instance through the [Catalog]({{site.baseurl}}/concepts/catalog). Unpublished Designs can still be available to other users if that Design is made public.
 - Designs are versioned. Each time a Design is saved, a new version is created.
   <!-- - You can revert to any previous version of a Design. -->

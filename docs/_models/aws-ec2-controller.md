@@ -78,7 +78,27 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/color/vpc-endpoint-service-configuration-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/white/vpc-endpoint-service-configuration-white.svg
   description: 
-components-count: 17
+- name: capacity-reservation
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+- name: capacity-reservation
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+- name: launch-template
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/color/launch-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/white/launch-template-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+components-count: 22
 relationships: 
 relationship-count: 0
 featureList: [

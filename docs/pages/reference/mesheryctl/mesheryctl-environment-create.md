@@ -17,6 +17,7 @@ Create a new environments
 ## Synopsis
 
 Create a new environments by providing the name and description of the environment
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/create
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment create [flags]
@@ -29,15 +30,7 @@ mesheryctl environment create [flags]
 Create a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment create --orgId [orgId] --name [name] --description [description]
-
-</div>
-</pre> 
-
-Documentation for environment can be found at:
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-https://docs.meshery.io/concepts/logical/environments
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 
 </div>
 </pre> 
@@ -49,7 +42,7 @@ https://docs.meshery.io/concepts/logical/environments
   -d, --description string   Description of the environment
   -h, --help                 help for create
   -n, --name string          Name of the environment
-  -o, --orgId string         Organization ID
+  -o, --orgID string         Organization ID
 
 </div>
 </pre>

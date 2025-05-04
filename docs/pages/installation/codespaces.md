@@ -79,7 +79,7 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
 ## Installation: Manual Steps
 

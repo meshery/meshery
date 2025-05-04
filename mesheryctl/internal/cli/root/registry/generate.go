@@ -17,14 +17,13 @@ package registry
 import (
 	"errors"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"sync"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
@@ -115,7 +114,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			// Collect list of corresponding relationship by name from spreadsheet
 			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
 		} else {
-			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = utils.GetCsv(csvDirectory)
+			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
 			if err != nil {
 				return fmt.Errorf("error reading the directory: %v", err)
 			}
@@ -123,29 +122,8 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("ModelCSV, ComponentCSV and RelationshipCSV files must be present in the directory")
 			}
 		}
-		err = os.MkdirAll(logDirPath, 0755)
-		if err != nil {
-			return ErrUpdateRegistry(err, modelLocation)
-		}
-		utils.Log.SetLevel(logrus.DebugLevel)
-		logFilePath := filepath.Join(logDirPath, "model-generation.log")
-		logFile, err = os.Create(logFilePath)
-		if err != nil {
-			return err
-		}
 
-		utils.LogError.SetLevel(logrus.ErrorLevel)
-		logErrorFilePath := filepath.Join(logDirPath, "registry-errors.log")
-		errorLogFile, err = os.Create(logErrorFilePath)
-		if err != nil {
-			return err
-		}
-		multiWriter := io.MultiWriter(os.Stdout, logFile)
-		multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
-
-		utils.Log.UpdateLogOutput(multiWriter)
-		utils.LogError.UpdateLogOutput(multiErrorWriter)
-		err = utils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
 			// meshkit
 			utils.LogError.Error(err)

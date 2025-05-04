@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import NoSsr from '@mui/material';
 import { setOrganization, setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
@@ -10,7 +9,7 @@ import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import { ErrorBoundary, FormControl, FormGroup, MenuItem, useTheme } from '@layer5/sistent';
+import { ErrorBoundary, FormControl, FormGroup, MenuItem, useTheme, NoSsr } from '@layer5/sistent';
 import {
   OrgName,
   StyledSelect,
@@ -32,12 +31,12 @@ const RequestForm = (props) => {
   } = useGetOrgsQuery({});
   const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization } = props;
+  const { organization, setOrganization, setKeys } = props;
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
 
-  useGetCurrentAbilities(organization, props.setKeys, skip);
+  useGetCurrentAbilities(organization, setKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {

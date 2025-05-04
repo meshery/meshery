@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
 import MesheryPatterns from '../../../components/MesheryPatterns';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 
 function Patterns({ updatepagepath }) {
   useEffect(() => {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { updateProgress } from '../lib/store';
-import { Button, Typography } from '@layer5/sistent';
+import { Button, Typography, ResponsiveDataTable } from '@layer5/sistent';
 import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { store } from '../store';
@@ -22,6 +21,7 @@ const DatabaseSummary = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
+  const [sortOrder, setSortOrder] = useState('');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
@@ -34,9 +34,10 @@ const DatabaseSummary = (props) => {
   };
 
   const { data: databaseSummary, refetch } = useGetDatabaseSummaryQuery({
-    page: page + 1,
+    page: page,
     pagesize: rowsPerPage,
     search: searchText,
+    order: sortOrder,
   });
 
   const handleResetDatabase = () => {
@@ -70,9 +71,26 @@ const DatabaseSummary = (props) => {
     };
   };
 
+  const columns = [
+    {
+      name: 'name',
+      label: 'Name',
+      options: {
+        sort: true,
+      },
+    },
+    {
+      name: 'count',
+      label: 'Count',
+      options: {
+        sort: true,
+      },
+    },
+  ];
+
   const table_options = {
     filter: false,
-    sort: false,
+    sort: true,
     selectableRows: 'none',
     responsive: 'scrollMaxHeight',
     print: false,
@@ -90,18 +108,10 @@ const DatabaseSummary = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
+    onColumnSortChange: (_, direction) => {
+      setSortOrder(`name ${direction}`);
+    },
   };
-
-  const columns = [
-    {
-      name: 'name',
-      label: 'Name',
-    },
-    {
-      name: 'count',
-      label: 'Count',
-    },
-  ];
 
   const [tableCols, updateCols] = useState(columns);
 

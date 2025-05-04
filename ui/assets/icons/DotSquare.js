@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgIcon } from '@mui/material';
+import { SvgIcon } from '@layer5/sistent';
 
 export function DotSquare(props) {
   return (

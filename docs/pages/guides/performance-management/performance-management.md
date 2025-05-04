@@ -22,11 +22,7 @@ _Meshery dashboard_
 
 If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery's cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernets. With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
 
-To install cloud native infrastructure, see [this guide]({{ site.baseurl }}/service-meshes).
-
-Meshery also comes with a set of [sample applications](h{{ site.baseurl }}/guides/sample-apps) that you can quickly deploy to test out the capabilities of your cloud native infrastructure.
-
-Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/tasks/performance/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/guides/performance-management/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
 
 ## Running Performance Benchmarks Through Meshery UI
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Avatar, Button } from '@layer5/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
@@ -42,21 +42,27 @@ const User = (props) => {
     }
   };
 
-  if (!userLoaded && isGetUserSuccess) {
-    props.updateUser({ user: userData });
-    setUserLoaded(true);
-  } else if (isGetUserError) {
-    notify({
-      message: 'Error fetching user',
-      event_type: EVENT_TYPES.ERROR,
-      details: getUserError?.data,
-    });
-  }
+  useEffect(() => {
+    if (!userLoaded && isGetUserSuccess) {
+      props.updateUser({ user: userData });
+      setUserLoaded(true);
+    } else if (isGetUserError) {
+      notify({
+        message: 'Error fetching user',
+        event_type: EVENT_TYPES.ERROR,
+        details: getUserError?.data,
+      });
+    }
+  }, [userData, isGetUserSuccess, isGetUserError]);
 
-  if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
-    capabilitiesLoadedRef.current = true;
-    setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
-  }
+  useEffect(() => {
+    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+      capabilitiesLoadedRef.current = true;
+      setAccount(
+        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+      );
+    }
+  }, [capabilitiesRegistry]);
 
   const { color } = props;
 

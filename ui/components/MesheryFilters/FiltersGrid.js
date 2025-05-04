@@ -14,7 +14,7 @@ import { RJSFModalWrapper } from '../Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Modal as SistentModal } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
 
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
@@ -157,86 +157,84 @@ function FiltersGrid({
   };
 
   return (
-    <UsesSistent>
-      <div>
-        {!selectedFilter.show && (
-          <Grid container spacing={3}>
-            {filters.map((filter) => (
-              <FilterCardGridItem
-                key={filter.id}
-                filter={filter}
-                yamlConfig={getYamlConfig(filter.filter_resource)}
-                handleClone={() => handleClone(filter.id, filter.name)}
-                handleDownload={handleDownload}
-                handleSubmit={handleSubmit}
-                setSelectedFilters={setSelectedFilter}
-                canPublishFilter={canPublishFilter}
-                handlePublishModal={() => handlePublishModal(filter)}
-                handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
-                handleInfoModal={() => handleInfoModal(filter)}
-              />
-            ))}
-          </Grid>
-        )}
-        {!selectedFilter.show && filters.length === 0 && (
-          <GridNoPapperStyles>
-            <GridNoContainerStyles>
-              <GridNoTextStyles align="center" color="textSecondary">
-                No Filters Found
-              </GridNoTextStyles>
-              <div>
-                <Button
-                  aria-label="Add Application"
-                  variant="contained"
-                  color="primary"
-                  disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
-                  size="large"
-                  // @ts-ignore
-                  onClick={handleUploadImport}
-                  style={{ marginRight: '2rem' }}
-                >
-                  <GridAddIconStyles />
-                  Import Filter
-                </Button>
-              </div>
-            </GridNoContainerStyles>
-          </GridNoPapperStyles>
-        )}
-        {filters.length ? (
-          <GridPaginationStyles>
-            <Pagination
-              count={pages}
-              page={selectedPage + 1}
-              onChange={(_, page) => setPage(page - 1)}
+    <div>
+      {!selectedFilter.show && (
+        <Grid container spacing={3}>
+          {filters.map((filter) => (
+            <FilterCardGridItem
+              key={filter.id}
+              filter={filter}
+              yamlConfig={getYamlConfig(filter.filter_resource)}
+              handleClone={() => handleClone(filter.id, filter.name)}
+              handleDownload={handleDownload}
+              handleSubmit={handleSubmit}
+              setSelectedFilters={setSelectedFilter}
+              canPublishFilter={canPublishFilter}
+              handlePublishModal={() => handlePublishModal(filter)}
+              handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
+              handleInfoModal={() => handleInfoModal(filter)}
             />
-          </GridPaginationStyles>
-        ) : null}
-        {canPublishFilter && publishModal.open && (
-          <SistentModal
-            open={true}
-            title={publishModal.filter?.name}
-            closeModal={handlePublishModalClose}
-            maxWidth="sm"
-            headerIcon={
-              <Filter
-                fill="#fff"
-                style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-                className={undefined}
-              />
-            }
-          >
-            <RJSFModalWrapper
-              schema={publishSchema.rjsfSchema}
-              uiSchema={publishSchema.uiSchema}
-              handleSubmit={handlePublish}
-              handleClose={handlePublishModalClose}
-              submitBtnText="Submit for Approval"
-              helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          ))}
+        </Grid>
+      )}
+      {!selectedFilter.show && filters.length === 0 && (
+        <GridNoPapperStyles>
+          <GridNoContainerStyles>
+            <GridNoTextStyles align="center" color="textSecondary">
+              No Filters Found
+            </GridNoTextStyles>
+            <div>
+              <Button
+                aria-label="Add Application"
+                variant="contained"
+                color="primary"
+                disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                size="large"
+                // @ts-ignore
+                onClick={handleUploadImport}
+                style={{ marginRight: '2rem' }}
+              >
+                <GridAddIconStyles />
+                Import Filter
+              </Button>
+            </div>
+          </GridNoContainerStyles>
+        </GridNoPapperStyles>
+      )}
+      {filters.length ? (
+        <GridPaginationStyles>
+          <Pagination
+            count={pages}
+            page={selectedPage + 1}
+            onChange={(_, page) => setPage(page - 1)}
+          />
+        </GridPaginationStyles>
+      ) : null}
+      {canPublishFilter && publishModal.open && (
+        <SistentModal
+          open={true}
+          title={publishModal.filter?.name}
+          closeModal={handlePublishModalClose}
+          maxWidth="sm"
+          headerIcon={
+            <Filter
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
             />
-          </SistentModal>
-        )}
-      </div>
-    </UsesSistent>
+          }
+        >
+          <RJSFModalWrapper
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
+            handleSubmit={handlePublish}
+            handleClose={handlePublishModalClose}
+            submitBtnText="Submit for Approval"
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          />
+        </SistentModal>
+      )}
+    </div>
   );
 }
 

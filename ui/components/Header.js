@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Hidden, NoSsr } from '@mui/material';
 import { connect, useSelector } from 'react-redux';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import { Edit, Search } from '@mui/icons-material';
 import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
-import { _ConnectionChip } from './connections/ConnectionChip';
+import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
@@ -15,9 +14,7 @@ import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
-import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import dataFetch from '../lib/data-fetch';
 import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
@@ -35,12 +32,14 @@ import {
   IconButton,
   Grid,
   Slide,
+  Hidden,
+  NoSsr,
+  useTheme,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './Modals/ConnectionModal';
@@ -56,7 +55,10 @@ import {
   UserSpan,
   CBadge,
   StyledToolbar,
+  UserInfoContainer,
 } from './Header.styles';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { EVENT_TYPES } from 'lib/event-types';
 
 async function loadActiveK8sContexts() {
   try {
@@ -105,11 +107,11 @@ const K8sContextConnectionChip_ = ({
           }}
         >
           {selectable && (
-            <UsesSistent>
+            <>
               <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
-            </UsesSistent>
+            </>
           )}
-          <_ConnectionChip
+          <ConnectionChip
             title={ctx?.name}
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
@@ -117,7 +119,7 @@ const K8sContextConnectionChip_ = ({
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                 : '/static/img/kubernetes.svg'
-            } // TODO: Make this a dyanmic referernce to the respective Connection's color SVG
+            }
             status={operatorState}
           />
         </div>
@@ -135,9 +137,9 @@ function K8sContextMenu({
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
-  const [anchorEl, setAnchorEl] = React.useState(false);
-  const [showFullContextMenu, setShowFullContextMenu] = React.useState(false);
-  const [transformProperty, setTransformProperty] = React.useState(100);
+  const [anchorEl, setAnchorEl] = useState(false);
+  const [showFullContextMenu, setShowFullContextMenu] = useState(false);
+  const [transformProperty, setTransformProperty] = useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
@@ -224,7 +226,7 @@ function K8sContextMenu({
       (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
     );
   }, []);
-  const [isConnectionOpenModal, setIsConnectionOpenModal] = React.useState(false);
+  const [isConnectionOpenModal, setIsConnectionOpenModal] = useState(false);
 
   return (
     <>
@@ -323,7 +325,7 @@ function K8sContextMenu({
                         }}
                       >
                         <div>
-                          <UsesSistent>
+                          <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
                               onChange={() =>
@@ -331,9 +333,8 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
-                              color="primary"
                             />
-                          </UsesSistent>
+                          </>
                           <span style={{ fontWeight: 'bolder' }}>select all</span>
                         </div>
                         <CustomTooltip title="Configure Connections">
@@ -380,105 +381,115 @@ function K8sContextMenu({
   );
 }
 
-class Header extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      /** @type {CapabilityRegistryClass} */
-      capabilityregistryObj: null,
-      collaboratorExt: null,
-    };
-  }
-  componentDidMount() {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+const Header = ({
+  title,
+  onDrawerToggle,
+  isBeta,
+  onDrawerCollapse,
+  abilityUpdated,
+  contexts,
+  activeContexts,
+  setActiveContexts,
+  searchContexts,
+  operatorState,
+  meshSyncState,
+  updateK8SConfig,
+  updateProgress,
+  updateCapabilities,
+  updateExtensionType,
+}) => {
+  const { notify } = useNotification;
 
-          this.setState({
-            collaboratorExt: ExtensionPointSchemaValidator('collaborator')(
-              result?.extensions?.collaborator,
-            ),
-            capabilityregistryObj: capabilitiesRegistryObj,
-          });
-          this.props.updateCapabilities({ capabilitiesRegistry: result });
-        }
-      },
-      (err) => console.error(err),
-    );
-    this._isMounted = true;
-  }
-  componentWillUnmount = () => {
-    this._isMounted = false;
+  const {
+    data: providerCapabilities,
+    isSuccess: isProviderCapabilitiesSuccess,
+    isError: isProviderCapabilitiesError,
+    error: providerCapabilitiesError,
+  } = useGetProviderCapabilitiesQuery();
+
+  const collaboratorExt = () => {
+    if (isProviderCapabilitiesSuccess) {
+      updateCapabilities({ capabilitiesRegistry: providerCapabilities });
+      return ExtensionPointSchemaValidator('collaborator')(
+        providerCapabilities?.extensions?.collaborator,
+      );
+    }
+    return null;
   };
 
-  render() {
-    const { title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
-    const loaderType = 'circular';
+  if (isProviderCapabilitiesError) {
+    notify({
+      message: 'Error fetching provider capabilities',
+      event_type: EVENT_TYPES.ERROR,
+      details: providerCapabilitiesError?.data,
+    });
+  }
 
-    return (
-      <NoSsr>
-        <UsesSistent>
-          <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
-            <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
-              <Grid container alignItems="center">
-                <Hidden smUp>
-                  <Grid item style={{ display: 'none' }}>
-                    <MenuIconButton
-                      color="inherit"
-                      aria-label="Open drawer"
-                      onClick={onDrawerToggle}
-                    >
-                      <HeaderIcons style={iconMedium} />
-                    </MenuIconButton>
-                  </Grid>
-                </Hidden>
-                <Grid item xs container alignItems="center" component={PageTitleWrapper}>
-                  {/* Extension Point for   Logo */}
-                  <div
-                    id="nav-header-logo"
-                    style={{
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      minWidth: '34px',
-                      justifyContent: 'center',
-                    }}
-                  ></div>
-                  <SpaceSwitcher title={title} isBeta={isBeta} />
+  const loaderType = 'circular';
+  const theme = useTheme();
+  return (
+    <NoSsr>
+      <>
+        <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
+          <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
+            <Grid container alignItems="center">
+              <Hidden smUp>
+                <Grid item style={{ display: 'none' }}>
+                  <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
+                    <HeaderIcons style={iconMedium} />
+                  </MenuIconButton>
                 </Grid>
-                <Grid item component={UserContainer} style={{ position: 'relative' }}>
-                  {/* According to the capabilities load the component */}
-                  {this.state.collaboratorExt && (
-                    <ExtensionSandbox
-                      type="collaborator"
-                      Extension={(url) => RemoteComponent({ url, loaderType })}
-                    />
-                  )}
+              </Hidden>
+              <Grid item xs container alignItems="center" component={PageTitleWrapper}>
+                {/* Extension Point for   Logo */}
+                <div
+                  id="nav-header-logo"
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    minWidth: '34px',
+                    justifyContent: 'center',
+                  }}
+                ></div>
+                <SpaceSwitcher title={title} isBeta={isBeta} />
+              </Grid>
+              <Box
+                component={UserContainer}
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '1rem 0.5rem',
+                }}
+              >
+                {/* According to the capabilities load the component */}
+                {collaboratorExt && (
+                  <ExtensionSandbox
+                    type="collaborator"
+                    Extension={(url) => RemoteComponent({ url, loaderType })}
+                  />
+                )}
+                <UserInfoContainer>
                   <UserSpan style={{ position: 'relative' }}>
                     <K8sContextMenu
-                      contexts={this.props.contexts}
-                      activeContexts={this.props.activeContexts}
-                      setActiveContexts={this.props.setActiveContexts}
-                      searchContexts={this.props.searchContexts}
+                      contexts={contexts}
+                      activeContexts={activeContexts}
+                      setActiveContexts={setActiveContexts}
+                      searchContexts={searchContexts}
                       runningStatus={{
-                        operatorStatus: this.props.operatorState,
-                        meshSyncStatus: this.props.meshSyncState,
+                        operatorStatus: operatorState,
+                        meshSyncStatus: meshSyncState,
                       }}
-                      updateK8SConfig={this.props.updateK8SConfig}
-                      updateProgress={this.props.updateProgress}
+                      updateK8SConfig={updateK8SConfig}
+                      updateProgress={updateProgress}
                     />
                   </UserSpan>
 
                   <div data-testid="settings-button" aria-describedby={abilityUpdated}>
                     <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')} color="inherit">
-                        <SettingsIcon style={iconMedium} />
+                      <IconButton onClick={() => Router.push('/settings')}>
+                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
                       </IconButton>
                     </CanShow>
                   </div>
@@ -488,23 +499,20 @@ class Header extends React.PureComponent {
                   </div>
 
                   <UserSpan>
-                    <User color="inherit" updateExtensionType={this.props.updateExtensionType} />
+                    <User updateExtensionType={updateExtensionType} />
                   </UserSpan>
-                  <UserSpan>
-                    <HeaderMenu
-                      color="inherit"
-                      updateExtensionType={this.props.updateExtensionType}
-                    />
+                  <UserSpan data-testid="header-menu">
+                    <HeaderMenu updateExtensionType={updateExtensionType} />
                   </UserSpan>
-                </Grid>
-              </Grid>
-            </StyledToolbar>
-          </HeaderAppBar>
-        </UsesSistent>
-      </NoSsr>
-    );
-  }
-}
+                </UserInfoContainer>
+              </Box>
+            </Grid>
+          </StyledToolbar>
+        </HeaderAppBar>
+      </>
+    </NoSsr>
+  );
+};
 
 Header.propTypes = {
   onDrawerToggle: PropTypes.func.isRequired,

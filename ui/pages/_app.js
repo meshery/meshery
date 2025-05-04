@@ -1,4 +1,3 @@
-import { Hidden, NoSsr } from '@mui/material';
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -24,6 +23,8 @@ import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import {
   actionTypes,
   makeStore,
@@ -63,6 +64,8 @@ import {
   SistentThemeProvider,
   CssBaseline,
   Typography,
+  Hidden,
+  NoSsr,
 } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
@@ -650,6 +653,7 @@ class MesheryApp extends App {
   render() {
     const { Component, pageProps, isDrawerCollapsed, relayEnvironment } = this.props;
     const setAppState = this.setAppState.bind(this);
+    const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
 
     return (
       <LoadingScreen message={randomLoadingMessage} isLoading={this.state.isLoading}>
@@ -666,10 +670,10 @@ class MesheryApp extends App {
                         mobileOpen={this.state.mobileOpen}
                         handleDrawerToggle={this.handleDrawerToggle}
                         handleCollapseDrawer={this.handleCollapseDrawer}
-                        isFullScreenMode={this.state.isFullScreenMode}
                         updateExtensionType={this.updateExtensionType}
+                        canShowNav={canShowNav}
                       />
-                      <StyledAppContent>
+                      <StyledAppContent canShowNav={canShowNav}>
                         <SnackbarProvider
                           anchorOrigin={{
                             vertical: 'bottom',
@@ -805,11 +809,9 @@ const NavigationBar = ({
   mobileOpen,
   handleDrawerToggle,
   handleCollapseDrawer,
-  isFullScreenMode,
   updateExtensionType,
+  canShowNav,
 }) => {
-  const canShowNav = !isFullScreenMode && uiConfig?.components?.navigator !== false;
-
   if (!canShowNav) {
     return null;
   }

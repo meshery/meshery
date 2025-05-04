@@ -5,6 +5,7 @@ permalink: extensions/kubectl-meshsync-snapshot
 language: en
 abstract: A native kubectl plugin for conveniently synchronizing the state of your cluster with Meshery Server.
 display-title: "false"
+redirect_from: extensions/kubectl-kanvas-snapshot
 list: include
 type: extensions
 category: kanvas
@@ -18,7 +19,7 @@ A `kubectl` plugin for performing an ad hoc collection of resource information f
 
 ## About Meshery Extensions
 
-[Meshery Extensions](https://meshery.io/extension) are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions ([docs](https://docs.meshery.io/extensions/)):
+[Meshery Extensions](https://meshery.io/extensions) are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions ([docs](https://docs.meshery.io/extensions/)):
 
 - [Adapters](https://docs.meshery.io/concepts/architecture/adapters): Adapters allow Meshery to interface with the different cloud native infrastructure.
 - [Load Generators](https://docs.meshery.io/extensibility/load-generators): for performance characterization and benchmarking

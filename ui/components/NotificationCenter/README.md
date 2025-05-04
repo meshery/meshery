@@ -42,15 +42,37 @@ To ensure a seamless user experience with bulk operations in the Notification Ce
 
 When an event is received from the server, it adheres to a fixed schema containing information that is valuable for presentation to the user. This information typically includes details such as the description, date, user_id, system_id, action, and acted-upon resources. Additionally, sometimes there may be a detailed traceback, a summary, or a comprehensive error log, all of which are dynamically generated data encapsulated within the metadata of the event. Presenting this structured data in a user-friendly manner is a crucial task because it contains valuable insights into ongoing operations.
 
-To accomplish this task, we employ metadata formatters that transform structured data into visually appealing formats. There are currently two types of formatters in use:
+Here's a refactored and enhanced version of your documentation with improved clarity, structure, and readability:
 
-1. **Metadata Specific Formatters**: These formatters are specifically designed for particular types of metadata, such as Error and DryRunResponse. Metadata Specific Formatters are implemented as React components that take the metadata as input and render it within the component.
+---
 
-2. **Dynamic Formatter**: Since metadata can vary significantly in structure, it is not practical to create a specific formatter for each kind. Dynamic formatters analyze the schema's structure and apply custom-defined rules for formatting:
+### Event Formatting Component
 
-## The Metadata Specific Formatter
+This component serves as the entry point for formatting events. It provides the logic for mapping custom formatters to different event types and properties, ensuring consistent and dynamic formatting.
 
-Certain metadata, such as Kubernetes responses and Errors, hold high importance and have dedicated renderers. These dedicated renderers can still utilize the dynamic formatter to format specific parts of the response, such as _DryRunResponse_.
+### Formatter Hierarchy
+
+Formatting follows a structured hierarchy to determine the most appropriate transformation for event data:
+
+1. **Custom Event Formatter**
+
+   - Defines specialized formatting for specific event types.
+   - Applied when formatting depends on the event's type, action, or category.
+   - Should only be used for events that require highly specific or unique formatting.
+
+2. **Custom Property Formatter**
+   - Automatically formats specific properties based on their names.
+   - Useful for generic properties that appear across multiple events (e.g., `id`, `data`, `doc`, `description`).
+   - Can also be defined for complex properties like `error` or `trace` to ensure structured formatting.
+
+### When to Use Which Formatter?
+
+- Use a **Property Formatter** if the formatting is generic and applies to a specific property across multiple event types (e.g., `description`, `error`).
+- Use an **Event Formatter** if the formatting is unique to a particular event type and does not apply elsewhere.
+
+### Recursive Dynamic Formatting
+
+Both **event-based** and **property-based** formatters can recursively utilize the **Dynamic Formatter**, allowing for structured and consistent data transformation across nested properties.
 
 ## Reusability
 

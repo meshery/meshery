@@ -258,6 +258,13 @@ func updateRegistryComponents(
 							}
 							totalCompsUpdatedPerModelPerVersion++
 						}
+
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
+						totalCompsUpdatedPerModelPerVersion++
 					}
 				}
 

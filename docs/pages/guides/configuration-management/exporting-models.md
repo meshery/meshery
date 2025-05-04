@@ -14,8 +14,7 @@ Export existing Meshery [Models](/concepts/logical/models) or your custom infras
 
 **Step 1: Install Meshery CLI**
 
-Before you can use the Meshery CLI to export a [Model]((/concepts/logical/models)), you must first install it. You can install Meshery CLI by [following the instructions]({{site.baseurl}}/installation#install-mesheryctl).
-
+Before you can use the Meshery CLI to export a [Model](/concepts/logical/models), you must first install it. You can install Meshery CLI by [following the instructions]({{site.baseurl}}/installation#install-mesheryctl).
 
 **Step 2: Export the Model**
 
@@ -27,7 +26,6 @@ Model can be exported in 2 format and OCI or Compress file. These files contain 
 
 Different file type and output type can be set using flags `-o` for oci and tar and `-t` for json or yaml. A location can also be specified using the -l flag where user needs to export the model
 
-
 **Example :**
 
 <pre class="codeblock-pre">
@@ -38,10 +36,7 @@ Different file type and output type can be set using flags `-o` for oci and tar 
 <div class="codeblock"><div class="clipboardjs">mesheryctl model export istio-base -o oci -t json</div></div>
 </pre>
 
-
 **Note:** A `--discard-components --discard-relationships` flag is present to skip [component](/concepts/logical/components) and [relationships](/concepts/logical/relationships) generation in the export only the model is exported without any components and relationships.
-
-
 
 ## Export Models Using Meshery UI
 
@@ -64,4 +59,3 @@ This Meshery model will include components, relationships.
 <a href="{{ site.baseurl }}/assets/img/export/ExportModel.gif"><img alt="Export-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/export/ExportModel.gif" /></a>
 
 Once the Meshery model has been exported, you can export your model anytime back using `Import` on UI and then visualize on Kanvas, operate and observe your components that are geneated from the crd. You can also use Meshery to deploy your Meshery Model in form of a design to any of your connected kubernetes clusters. For more information, see [connections](/installation/kubernetes)
-

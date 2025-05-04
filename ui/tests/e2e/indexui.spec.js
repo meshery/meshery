@@ -1,10 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { ENV } from './env';
 
 test.describe('Index Page UI Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Visit Index Page
-    await page.goto(ENV.MESHERY_SERVER_URL);
+    // Visit Index Page (Dasboard)
+    await page.goto('/');
   });
 
   test('Test if Left Navigation Panel is displayed', async ({ page }) => {

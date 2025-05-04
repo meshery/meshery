@@ -14,6 +14,9 @@ export const StyledToolbar = styled(Toolbar, {
   paddingRight: 34,
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
   boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
+  [theme.breakpoints.down('sm')]: {
+    paddingRight: 8,
+  },
   ...(isDrawerCollapsed
     ? {
         [theme.breakpoints.down('xs')]: {
@@ -99,6 +102,15 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
   transitionProperty: 'height',
 }));
 
-export const IconButtonAvatar = styled(IconButton)({
+export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
   padding: 4,
-});
+  color: theme.palette.common.white,
+}));
+
+export const UserInfoContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  [theme.breakpoints.down('399')]: {
+    gap: '0.3rem',
+  },
+}));

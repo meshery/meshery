@@ -14,7 +14,7 @@ import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';
 import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
 import useKubernetesHook from '../hooks/useKubernetesHook';
-import { TootltipWrappedConnectionChip } from '../connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
 import { styled } from '@mui/system';
 import { useRouter } from 'next/router';
@@ -32,6 +32,7 @@ const Header = styled('div')({
   justifyItems: 'center',
   textTransform: 'uppercase',
   fontSize: '.9rem',
+  flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'space-between',
 });
@@ -89,11 +90,12 @@ const View = (props) => {
               />
               <Typography variant="h6">{resource?.metadata?.name}</Typography>
             </HeaderLeft>
-            <TootltipWrappedConnectionChip
+            <TooltipWrappedConnectionChip
               title={context.name}
               width="100%"
               handlePing={() => ping(context.name, context.server, context.connection_id)}
               status={CONNECTION_STATES.CONNECTED}
+              iconSrc={'/static/img/kubernetes.svg'}
             />
           </Header>
           <ErrorBoundary>

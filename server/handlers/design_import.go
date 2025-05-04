@@ -21,7 +21,7 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/meshery/schemas/models/core"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -91,21 +91,21 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 
 	switch identifiedFile.Type {
 
-	case core.IacFileTypes.HELM_CHART:
+	case coreV1.HelmChart:
 		return files.ConvertHelmChartToKubernetesManifest(identifiedFile)
-	case core.IacFileTypes.DOCKER_COMPOSE:
+	case coreV1.DockerCompose:
 		return files.ConvertDockerComposeToKubernetesManifest(identifiedFile)
-	case core.IacFileTypes.KUBERNETES_MANIFEST:
+	case coreV1.K8sManifest:
 		return string(rawFile.Data), nil
-	case core.IacFileTypes.KUSTOMIZE:
+	case coreV1.K8sKustomize:
 		return files.ConvertKustomizeToKubernetesManifest(identifiedFile)
 	default:
-		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, identifiedFile.Type)
+		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, string(identifiedFile.Type))
 	}
 }
 
 // returns the design file , the type of file that was identified during converion , and any error
-func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, string, error) {
+func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, coreV1.IaCFileTypes, error) {
 
 	defer utils.TrackTime(logger, time.Now(), "ConvertFileToDesign")
 
@@ -130,6 +130,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	now := time.Now()
+	// NOTE: the FileName must also have extension
 	sanitizedFile, err := files.SanitizeFile(fileToImport.Data, fileToImport.FileName, tempDir, validImportExtensions)
 	utils.TrackTime(logger, now, "SanitizeFile")
 
@@ -145,7 +146,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 		return emptyDesign, "", err
 	}
 
-	if identifiedFile.Type == core.IacFileTypes.MESHERY_DESIGN {
+	if identifiedFile.Type == coreV1.MesheryDesign {
 		design := identifiedFile.ParsedFile.(pattern.PatternFile)
 		return design, identifiedFile.Type, nil
 	}
@@ -295,7 +296,7 @@ func (h *Handler) DesignFileImportHandler(
 		PatternFile:   string(patternFile),
 		SourceContent: fileToImport.Data,
 		Type: sql.NullString{
-			String: sourceFileType,
+			String: string(sourceFileType),
 			Valid:  true,
 		},
 	}
