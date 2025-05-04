@@ -17,7 +17,7 @@ on:
       - "mesheryctl/**"
       - "*.md"
       - "*.github/**"
-
+  workflow_dispatch:
 
 jobs:
   server-integration-tests-with-meshsync:
