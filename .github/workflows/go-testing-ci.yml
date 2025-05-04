@@ -60,6 +60,12 @@ jobs:
         with:
           files: ./coverage.txt
           flags: unittests
+  yellowteststp:
+    name: yellowteststp
+    runs-on: ubuntu-24.04
+    steps:
+    - name: echo
+      run: echo "ololo"
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-24.04
