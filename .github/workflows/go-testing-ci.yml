@@ -109,12 +109,12 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.txt
-          flags: gointegrationtests     
+          flags: gointegrationtests    
+  # TODO: move to separate workflow
   server-integration-tests-with-meshsync:
     if: github.repository == 'meshery/meshery'
     name: Integration tests with meshsync
     runs-on: ubuntu-24.04
-    needs: golangci
     steps:
       - uses: actions/checkout@v4
         with:
