@@ -1,3 +1,5 @@
+# This is not working, because not yet in master
+# running from .github/workflows/go-testing-ci.yml for now
 name: Meshery Server Integration Tests
 on:
   pull_request_target:

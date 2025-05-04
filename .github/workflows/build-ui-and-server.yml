@@ -192,7 +192,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }} 
-  
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'
