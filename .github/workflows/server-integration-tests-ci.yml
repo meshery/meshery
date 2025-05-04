@@ -1,23 +1,23 @@
 name: Meshery Server Integration Tests
 on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - "*.github/**"
   push:
     branches:
       - "master"
-    paths:
-      - "**.go"
-      - "**.golden"
-  pull_request:
-    branches:
-      - "master"
-    paths:
-      - "**.go"
-      - "**.golden"
-  workflow_dispatch:
-    inputs:
-      logLevel:
-        description: "Log level"
-        required: true
-        default: "warning"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - "*.github/**"
+
 
 jobs:
   server-integration-tests-with-meshsync:
