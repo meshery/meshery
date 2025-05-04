@@ -194,6 +194,7 @@ jobs:
           repository: ${{ secrets.IMAGE_NAME }}
   
   server-integration-tests-with-meshsync:
+    if: github.repository == 'meshery/meshery'
     name: Integration tests with meshsync
     runs-on: ubuntu-24.04
     steps:
