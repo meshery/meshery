@@ -295,7 +295,6 @@ func main() {
 	}()
 
 	lProv.SeedContent(log)
-
 	provs[lProv.Name()] = lProv
 
 	providerEnvVar := viper.GetString(constants.ProviderENV)
