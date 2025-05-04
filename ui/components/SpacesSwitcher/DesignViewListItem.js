@@ -118,7 +118,7 @@ export const DesignViewListItemSkeleton = () => {
           <Skeleton animation="wave" height={32} width="70%" />
         </StyledVisibilityContainer>
 
-        <StyledActionsContainer>
+        <StyledActionsContainer style={{ gap: '0.75rem' }}>
           {Array(4)
             .fill()
             .map((_, index) => (

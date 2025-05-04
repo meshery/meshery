@@ -320,7 +320,7 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
             <></>
           )}
           {!hasMore && designs?.length > 0 && total_count > 0 && (
-            <ListItemText secondary={`No more designs to load`} />
+            <ListItemText secondary={`No more designs to load`} sx={{ padding: '1rem' }} />
           )}
         </LoadingContainer>
       </DesignList>

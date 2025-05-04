@@ -74,7 +74,6 @@ export const DesignList = styled(List)({
 
 export const LoadingContainer = styled('div')({
   textAlign: 'center',
-  padding: '1rem',
 });
 
 export const GhostContainer = styled('div')({

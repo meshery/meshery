@@ -30,6 +30,7 @@ import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
 import { useLegacySelector } from 'lib/store';
 import { DrawerHeader, StyledDrawer } from './styles';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
+import WorkspaceContent from './WorkspaceContent';
 
 const navConfig = {
   mainItems: [
@@ -167,19 +168,37 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
   );
 };
 
-const WorkspaceContent = ({ id, workspacesData }) => {
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+// const WorkspaceContent = ({ id, workspacesData }) => {
+//   // const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
 
+// useEffect(() => {
+//   if (id !== 'All Workspaces' && workspacesData) {
+//     const workspace = workspacesData.workspaces?.find((workspace) => workspace.id === id);
+//     if (workspace) {
+//       workspaceSwitcherContext.setSelectedWorkspace({
+//         id: id,
+//         name: workspace.name,
+//       });
+//     }
+//   } else {
+//     workspaceSwitcherContext.setSelectedWorkspace({
+//       id: null,
+//       name: null,
+//     });
+//   }
+// }, [id, workspaceSwitcherContext, workspacesData]);
+//   if (id != 'All Workspaces') {
+//     const workspace = workspacesData.workspaces?.find((workspace) => workspace.id === id);
+//     return <WorkspaceContent workspace={workspace} />;
+//   }
+
+//   return <WorkspacesComponent />;
+// };
+
+const getContentById = (id, workspacesData) => {
+  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   useEffect(() => {
-    if (id !== 'All Workspaces' && workspacesData) {
-      const workspace = workspacesData.workspaces?.find((workspace) => workspace.id === id);
-      if (workspace) {
-        workspaceSwitcherContext.setSelectedWorkspace({
-          id: id,
-          name: workspace.name,
-        });
-      }
-    } else {
+    if (id === 'All Workspaces') {
       workspaceSwitcherContext.setSelectedWorkspace({
         id: null,
         name: null,
@@ -187,16 +206,18 @@ const WorkspaceContent = ({ id, workspacesData }) => {
     }
   }, [id, workspaceSwitcherContext, workspacesData]);
 
-  return <WorkspacesComponent />;
-};
-
-const getContentById = (id, workspacesData) => {
   const mainItem = navConfig.mainItems.find((item) => item.id === id);
   if (mainItem && mainItem.content) {
     return mainItem.content;
   }
 
-  return <WorkspaceContent id={id} workspacesData={workspacesData} />;
+  if (id != 'All Workspaces') {
+    const workspace = workspacesData.workspaces?.find((workspace) => workspace.id === id);
+    return <WorkspaceContent workspace={workspace} />;
+  }
+
+  return <WorkspacesComponent />;
+  // return <WorkspaceContent id={id} workspacesData={workspacesData} />;
 };
 
 const Navigation = () => {

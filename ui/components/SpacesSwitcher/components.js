@@ -22,7 +22,7 @@ import { getAllUsers } from '@/rtk-query/user';
 import { Grid } from '@layer5/sistent';
 import { PersonIcon } from '@layer5/sistent';
 import { useTheme } from '@mui/material';
-import { FileUpload, UploadFile } from '@mui/icons-material';
+import { Edit, FileUpload, UploadFile } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { updateProgress } from 'lib/store';
@@ -286,3 +286,21 @@ export const ImportButton = () => {
     </>
   );
 };
+
+export const AssignDesignViewButton = ({ type, handleAssign }) => {
+  const theme = useTheme();
+  return (
+    <Button
+      color="primary"
+      variant="contained"
+      onClick={handleAssign}
+      sx={{
+        minWidth: 'fit-content',
+        padding: '0.85rem',
+      }}
+      startIcon={<Edit color={theme.palette.common.white} />}
+    >
+      {type === 'design' ? 'Manage Designs' : 'Manage Views'}
+    </Button>
+  );
+}
