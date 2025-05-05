@@ -13,7 +13,7 @@ import {
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, { handleUpdateViewVisibility } from './hooks';
-import { GeorgeMenu } from './MenuComponent';
+import { MenuComponent } from './MenuComponent';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
@@ -28,11 +28,22 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { Router } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 
-const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, total_count }) => {
+const MainViewsContent = ({
+  setPage,
+  isLoading,
+  isFetching,
+  views,
+  hasMore,
+  total_count,
+  workspaceId,
+}) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setinfoModal] = useState(null);
+  const [unassignViewFromWorkspace] = useUnassignViewFromWorkspaceMutation();
 
   const [selectedView, setSetselectedView] = useState(null);
   const [updateView] = useUpdateViewVisibilityMutation();
@@ -76,9 +87,22 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
           notify({ message: `"${name}" View deleted`, event_type: EVENT_TYPES.SUCCESS });
         })
         .catch(() => {
-          notify({ message: `Unable to delete "${name}" Design`, event_type: EVENT_TYPES.ERROR });
+          notify({ message: `Unable to delete "${name}" View`, event_type: EVENT_TYPES.ERROR });
         });
     }
+  };
+  const handleRemove = async (view, workspaceId) => {
+    unassignViewFromWorkspace({
+      workspaceId: workspaceId,
+      viewId: view.id,
+    })
+      .unwrap()
+      .then(() => {
+        notify({
+          message: 'View removed from workspace',
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      });
   };
 
   const loadNextPage = useCallback(() => {
@@ -110,11 +134,17 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       enabled: () => true,
     },
     DELETE_VIEW: {
-      id: 'DELETE_VIEW',
-      title: 'Delete View',
-      icon: <DeleteIcon fill={theme.palette.icon.default} />,
+      id: workspaceId ? 'MOVE_VIEW' : 'DELETE_VIEW',
+      title: workspaceId ? 'MOVE VIEW' : 'Delete View',
+      icon: workspaceId ? (
+        <RemoveCircleIcon fill={theme.palette.icon.default} />
+      ) : (
+        <DeleteIcon fill={theme.palette.icon.default} />
+      ),
       enabled: ({ view, userId }) =>
-        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
+        workspaceId
+          ? CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject)
+          : CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
     },
 
     VIEW_INFO: {
@@ -130,9 +160,10 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       enabled: () => true,
     },
   };
-  const getGeorgeOptions = ({
+  const getMenuOptions = ({
     view,
     user,
+    handleRemove,
     handleOpenInfoModal,
     handleOpenShareModal,
     handlerOpenDeleteModal,
@@ -144,7 +175,8 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       },
       {
         ...VIEW_ACTIONS.DELETE_VIEW,
-        handler: () => handlerOpenDeleteModal(view),
+        handler: () =>
+          workspaceId ? handleRemove(view, workspaceId) : handlerOpenDeleteModal(view),
       },
 
       {
@@ -207,10 +239,11 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
                     });
                   }}
                   MenuComponent={
-                    <GeorgeMenu
-                      options={getGeorgeOptions({
+                    <MenuComponent
+                      options={getMenuOptions({
                         view,
                         user: currentUser,
+                        handleRemove: handleRemove,
                         handleOpenInfoModal: handleOpenInfoModal,
                         handleOpenShareModal: handleOpenShareModal,
                         handlerOpenDeleteModal: handleOpenDeleteModal,

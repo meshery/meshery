@@ -212,6 +212,7 @@ const WorkspaceContent = ({ workspace }) => {
               designs={designsData?.designs}
               hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
               total_count={designsData?.total_count}
+              workspaceId={workspace?.id}
             />
           )}
           {type == 'view' && (
@@ -222,6 +223,7 @@ const WorkspaceContent = ({ workspace }) => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
+              workspaceId={workspace?.id}
             />
           )}
         </Box>

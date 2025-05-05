@@ -20,7 +20,7 @@ import {
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
-import { GeorgeMenu } from './MenuComponent';
+import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
 import { updateProgress } from 'lib/store';
@@ -41,14 +41,24 @@ import { keys } from '@/utils/permission_constants';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
+import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import { useDeletePattern } from '../Lifecycle/Workspaces/hooks';
 
-const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
+const MainDesignsContent = ({
+  setPage,
+  isLoading,
+  isFetching,
+  designs,
+  hasMore,
+  total_count,
+  workspaceId,
+}) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
   const [publishCatalog] = usePublishPatternMutation();
-
+  const { handleWorkspaceDesignDeleteModal } = useDeletePattern();
   const { notify } = useNotification();
   const modalRef = useRef(true);
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -119,6 +129,10 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
           notify({ message: `Unable to delete "${name}" Design`, event_type: EVENT_TYPES.ERROR });
         });
     }
+  };
+
+  const handleRemove = async (design, workspaceId) => {
+    handleWorkspaceDesignDeleteModal(design.id, workspaceId)
   };
 
   const handleShare = async (design) => {
@@ -265,10 +279,20 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
       enabled: () => CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
     },
     DELETE_DESIGN: {
-      id: 'delete',
-      title: 'Delete',
-      icon: <DeleteIcon fill={theme.palette.icon.default} />,
-      enabled: () => CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+      id: workspaceId ? 'move' : 'delete',
+      title: workspaceId ? 'Move' : 'Delete',
+      icon: workspaceId ? (
+        <RemoveCircleIcon fill={theme.palette.icon.default} />
+      ) : (
+        <DeleteIcon fill={theme.palette.icon.default} />
+      ),
+      enabled: () =>
+        workspaceId
+          ? CAN(
+              keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
+              keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
+            )
+          : CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
     },
     SHARE_DESIGN: {
       id: 'share',
@@ -286,10 +310,11 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
     },
   };
 
-  const getGeorgeOptions = ({
+  const getMenuOptions = ({
     design,
     handleDesignDownloadModal,
     handleDelete,
+    handleRemove,
     handleShare,
     handleInfoModal,
   }) => {
@@ -300,9 +325,8 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
       },
       {
         ...DESIGN_ACTIONS.DELETE_DESIGN,
-        handler: () => handleDelete(design),
+        handler: () => (workspaceId ? handleRemove(design, workspaceId) : handleDelete(design)),
       },
-
       {
         ...DESIGN_ACTIONS.SHARE_DESIGN,
         handler: () => handleShare(design),
@@ -347,9 +371,10 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                     });
                   }}
                   MenuComponent={
-                    <GeorgeMenu
-                      options={getGeorgeOptions({
+                    <MenuComponent
+                      options={getMenuOptions({
                         design,
+                        handleRemove: handleRemove,
                         handleDelete: handleDelete,
                         handleDesignDownloadModal: handleDesignDownloadModal,
                         handleShare: handleShare,

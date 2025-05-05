@@ -26,7 +26,7 @@ const StyledMenuDiv = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
 }));
 
-export const GeorgeMenu = ({ options = [] }) => {
+export const MenuComponent = ({ options = [] }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
