@@ -5,11 +5,14 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLUSTER_NAME="meshery-integration-test-meshsync-cluster"
 HELM_LOCAL_REPO_NAME="meshery-integration-test-meshsync"
+DOCKER_IMAGE="layer5/meshery"
+DOCKER_IMAGE_TAG="integration-test"
 
 MESHERY_K8S_NAMESPACE="meshery"
 CUSTOM_K8S_NAMESPACE="calm-koala"
 PATH_TO_CRDS_YAML="install/kubernetes/helm/meshery-operator/crds/crds.yaml"
 PATH_TO_MESHERY_OPERATOR_CHART="install/kubernetes/helm/meshery-operator"
+PATH_TO_MESHERY_CHART="install/kubernetes/helm/meshery"
 
 check_dependencies() {
   # Check for docker
@@ -60,6 +63,12 @@ check_dependencies() {
 setup() {
   check_dependencies
   echo "🔧 Setting up..."
+  echo ""
+
+  # image must be build and present with latest tag 
+  echo "Checking meshery docker image is present..."
+  docker image inspect --format '{{.RepoTags}}' $DOCKER_IMAGE:latest
+  echo ""
 
   # we do not need this, no standalone nats, use broker in cluster
   # echo "Running docker compose..."
@@ -68,36 +77,62 @@ setup() {
   echo "Creating KinD cluster..."
   kind create cluster --name $CLUSTER_NAME
   # kind create cluster --config $SCRIPT_DIR/kind-config.yaml
+  echo ""
 
   echo "Creating meshery namespace..."
   kubectl create namespace $MESHERY_K8S_NAMESPACE
+  echo ""
 
   # this is not working for now, it is applying only operator, not subcharts (meshsync, broker)
   echo "Applying meshery resources..."
   kubectl apply -f $PATH_TO_CRDS_YAML
   helm install meshery-operator $PATH_TO_MESHERY_OPERATOR_CHART --namespace $MESHERY_K8S_NAMESPACE --dependency-update
+  echo ""
 
   echo "Creating $CUSTOM_K8S_NAMESPACE namespace..."
   kubectl create namespace $CUSTOM_K8S_NAMESPACE
+  echo ""
 
   echo "Applying $CUSTOM_K8S_NAMESPACE resources..."
   kubectl --namespace $CUSTOM_K8S_NAMESPACE apply -f $SCRIPT_DIR/test-deployment.yaml
+  echo ""
 
+  echo "Tag image with custom tag..."
+  docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+  echo ""
+
+  echo "Upload image to kind..."
+  kind load docker-image $DOCKER_IMAGE:$DOCKER_IMAGE_TAG --name $CLUSTER_NAME 
+  echo ""
+
+  echo "Deploying meshery server..."
+  helm install meshery $PATH_TO_MESHERY_CHART \
+    --namespace $MESHERY_K8S_NAMESPACE \
+    --set image.tag=$DOCKER_IMAGE_TAG \
+    --set image.pullPolicy=Never
+  echo ""
+
+  sleep 16
   echo "Outputing cluster resources..."
-  kubectl --namespace default get deployment
-  kubectl --namespace default get rs
-  kubectl --namespace default get po
-  kubectl --namespace default get service
-  kubectl --namespace default get configmap
-  kubectl --namespace $CUSTOM_K8S_NAMESPACE get deployment
-  kubectl --namespace $CUSTOM_K8S_NAMESPACE get rs
-  kubectl --namespace $CUSTOM_K8S_NAMESPACE get po
-  kubectl --namespace $CUSTOM_K8S_NAMESPACE get service
-  kubectl --namespace $CUSTOM_K8S_NAMESPACE get configmap
+  kubectl --namespace meshery get po
+
+#  echo "Outputing cluster resources..."
+#  kubectl --namespace default get deployment
+#  kubectl --namespace default get rs
+#  kubectl --namespace default get po
+#  kubectl --namespace default get service
+#  kubectl --namespace default get configmap
+#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get deployment
+#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get rs
+#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get po
+#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get service
+#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get configmap
+#  echo ""
 }
 
 cleanup() {
   echo "🧹 Cleaning up..."
+  echo ""
 
   # we do not need this
   # echo "Stopping docker compose..."
@@ -105,6 +140,12 @@ cleanup() {
 
   echo "Deleting KinD cluster..."
   kind delete cluster --name $CLUSTER_NAME
+  echo ""
+
+  if docker image inspect "$DOCKER_IMAGE:$DOCKER_IMAGE_TAG" > /dev/null 2>&1; then
+    echo "Untagging custom image tag..."
+    docker rmi $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
+  fi
 }
 
 print_help() {
