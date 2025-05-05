@@ -537,4 +537,3 @@ export const openViewInKanvas = (viewId, viewName, router) => {
 
   router.push(`/extension/meshmap?mode=operator&type=view&id=${viewId}`);
 };
-

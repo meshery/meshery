@@ -1,6 +1,7 @@
 import { urlEncodeArrayParam, urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 import { initiateQuery } from './utils';
+import _ from 'lodash';
 
 const TAGS = {
   VIEWS: 'view',
