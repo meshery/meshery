@@ -241,7 +241,6 @@ const formatUsername = ({ first_name, last_name }) => {
 const ViewVisibilityMenu = ({ view }) => {
   const { data: userData } = useGetLoggedInUserQuery();
   const [updateView] = useUpdateViewVisibilityMutation();
-  console.log('amit view?.user_id === userData?.id', view?.user_id, userData);
   return (
     <VisibilityChipMenu
       value={view.visibility}

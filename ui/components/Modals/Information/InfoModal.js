@@ -73,7 +73,6 @@ const InfoModal_ = React.memo((props) => {
     meshModels = [],
     isReadOnly = false,
   } = props;
-  console.log('amit selectedResource', selectedResource);
   const formRef = React.createRef();
   const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);

@@ -48,8 +48,7 @@ function WorkspaceSwitcher({ open }) {
     {
       page: 0,
       pagesize: 'all',
-      search: '',
-      order: '',
+      order: 'updated_at desc',
       orgId: orgId,
     },
     {

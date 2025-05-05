@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useContext, useState, useEffect } from 'react';
 import {
   Modal,
@@ -52,7 +51,7 @@ const navConfig = {
       id: 'My-Views',
       label: 'My Views',
       icon: <ViewIcon height="24" width="24" fill="white" />,
-      content: <MyViewsContent filterByAuthor={true} />,
+      content: <MyViewsContent />,
     },
   ],
 };
@@ -85,7 +84,7 @@ const NavItem = ({ item, open, selectedId, onSelect }) => {
 };
 
 const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoading }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const handleWorkspacesClick = () => {
     onSelect('All Workspaces');
@@ -168,35 +167,9 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
   );
 };
 
-// const WorkspaceContent = ({ id, workspacesData }) => {
-//   // const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
-
-// useEffect(() => {
-//   if (id !== 'All Workspaces' && workspacesData) {
-//     const workspace = workspacesData.workspaces?.find((workspace) => workspace.id === id);
-//     if (workspace) {
-//       workspaceSwitcherContext.setSelectedWorkspace({
-//         id: id,
-//         name: workspace.name,
-//       });
-//     }
-//   } else {
-//     workspaceSwitcherContext.setSelectedWorkspace({
-//       id: null,
-//       name: null,
-//     });
-//   }
-// }, [id, workspaceSwitcherContext, workspacesData]);
-//   if (id != 'All Workspaces') {
-//     const workspace = workspacesData.workspaces?.find((workspace) => workspace.id === id);
-//     return <WorkspaceContent workspace={workspace} />;
-//   }
-
-//   return <WorkspacesComponent />;
-// };
-
 const getContentById = (id, workspacesData) => {
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+
   useEffect(() => {
     if (id === 'All Workspaces') {
       workspaceSwitcherContext.setSelectedWorkspace({
@@ -211,26 +184,32 @@ const getContentById = (id, workspacesData) => {
     return mainItem.content;
   }
 
-  if (id != 'All Workspaces') {
-    const workspace = workspacesData.workspaces?.find((workspace) => workspace.id === id);
-    return <WorkspaceContent workspace={workspace} />;
+  if (id === 'All Workspaces') {
+    return <WorkspacesComponent />;
   }
 
-  return <WorkspacesComponent />;
-  // return <WorkspaceContent id={id} workspacesData={workspacesData} />;
+  const foundWorkspace = workspacesData?.workspaces?.find((workspace) => workspace.id === id);
+  if (foundWorkspace) {
+    return <WorkspaceContent workspace={foundWorkspace} />;
+  }
+
+  return <RecentContent />;
 };
 
 const Navigation = () => {
   const [open, setOpen] = useState(true);
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
-  const [selectedId, setSelectedId] = useState('Recent');
+
+  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
+
   const currentOrganization = useLegacySelector((state) => state.get('organization'));
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
     {
       page: 0,
       pagesize: 'all',
+      order: 'updated_at desc',
       orgId: currentOrganization?.id,
     },
     {
@@ -312,7 +291,7 @@ const WorkspaceModal = ({ setWorkspaceModal, workspaceModal }) => {
       headerIcon={
         <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
       }
-      title="Workspaces"
+      title="All Workspaces"
     >
       <ModalBody style={{ maxHeight: '80vh', overflowY: 'hidden', padding: '0' }}>
         {workspaceModal && <Navigation />}

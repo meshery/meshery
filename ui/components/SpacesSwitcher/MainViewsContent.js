@@ -80,7 +80,6 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       icon: GetAppIcon,
       handler: async ({ view }) => {
         const res = await getView({ viewId: view.id });
-        console.log('amit res', res);
         downloadFileFromContent(JSON.stringify(res.data), `${view.name}.json`, 'application/json');
       },
       enabled: () => true,
