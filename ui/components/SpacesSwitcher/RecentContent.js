@@ -2,7 +2,7 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Box, FormControl, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
@@ -23,35 +23,44 @@ const RecentContent = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
-  const [designsPage, setDesignsPage] = useState(0);
-  const [viewsPage, setViewsPage] = useState(0);
+
   const [type, setType] = React.useState('design');
   const [author, setAuthor] = React.useState('');
   const [sortBy, setSortBy] = useState('updated_at desc');
   const [visibility, setVisibility] = useState(visibilityItems);
-
-  const handleTypeChange = (event) => {
+  const handleTypeChange = useCallback((event) => {
     setType(event.target.value);
+    setDesignsPage(0);
+    setViewsPage(0);
+  }, []);
 
-  };
-  const handleAuthorChange = (user_id) => {
-  
+  const handleAuthorChange = useCallback((user_id) => {
     setAuthor(user_id);
-  };
-  const handleSortByChange = (event) => {
-   
+    setDesignsPage(0);
+    setViewsPage(0);
+  }, []);
+
+  const handleSortByChange = useCallback((event) => {
     setSortBy(event.target.value);
-  };
-  const handleVisibilityChange = (event) => {
+    setDesignsPage(0);
+    setViewsPage(0);
+  }, []);
+
+  const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
     setVisibility(typeof value === 'string' ? value.split(',') : value);
+    setDesignsPage(0);
+    setViewsPage(0);
+  }, []);
 
-  
-  };
-  const onSearchChange = (e) => {
+  const onSearchChange = useCallback((e) => {
     setSearchQuery(e.target.value);
-  };
+    setDesignsPage(0);
+    setViewsPage(0);
+  }, []);
 
+  const [designsPage, setDesignsPage] = useState(0);
+  const [viewsPage, setViewsPage] = useState(0);
   const {
     data: designsData,
     isLoading,
@@ -159,6 +168,7 @@ const RecentContent = () => {
 
           {type == 'design' && (
             <MainDesignsContent
+              page={designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
               isFetching={isFetching}
@@ -171,6 +181,7 @@ const RecentContent = () => {
           )}
           {type == 'view' && (
             <MainViewsContent
+              page={viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}
               isFetching={isViewFetching}

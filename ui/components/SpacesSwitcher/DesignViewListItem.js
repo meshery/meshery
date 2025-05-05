@@ -11,12 +11,16 @@ import {
   getRelativeTime,
   getFullFormattedTime,
   Typography,
+  ListItemIcon,
+  DesignIcon,
+  ViewIcon,
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
 import {
   StyledActionsContainer,
   StyledAvatarContainer,
+  StyledListIcon,
   StyledListItem,
   StyledListItemText,
   StyledTextContainer,
@@ -33,6 +37,7 @@ const DesignViewListItem = ({
   MenuComponent,
   onVisibilityChange,
   canChangeVisibility,
+  type = 'design',
 }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
@@ -46,6 +51,7 @@ const DesignViewListItem = ({
         onClick={handleItemClick}
       >
         <StyledTextContainer>
+          <StyledListIcon>{type === 'design' ? <DesignIcon /> : <ViewIcon />}</StyledListIcon>
           <StyledListItemText
             primary={selectedItem.name ?? 'Untitled'}
             primaryTypographyProps={{ fontSize: '0.9rem' }}
@@ -106,8 +112,11 @@ export const DesignViewListItemSkeleton = () => {
     <>
       <StyledListItem>
         <StyledTextContainer>
-          <Skeleton animation="wave" height={24} width="80%" />
-          <Skeleton animation="wave" height={16} width="40%" />
+          <Skeleton variant="circular" animation="wave" width={24} height={24} />
+          <div style={{ width: '100%', paddingLeft: '1rem' }}>
+            <Skeleton animation="wave" height={24} width="80%" />
+            <Skeleton animation="wave" height={16} width="40%" />
+          </div>
         </StyledTextContainer>
 
         <StyledUserInfoContainer>
@@ -137,8 +146,8 @@ const AvatarSkeleton = () => {
       <Skeleton
         animation="wave"
         variant="circular"
-        height={32}
-        width={32}
+        height={40}
+        width={40}
         style={{ minWidth: '32px' }}
       />
       <StyledUserDetailsContainer style={{ width: '70%' }}>

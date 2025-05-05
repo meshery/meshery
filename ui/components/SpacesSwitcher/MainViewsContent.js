@@ -60,7 +60,6 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const modalRef = useRef(true);
 
   const handleOpenDeleteModal = async (view) => {
-  
     const response = await modalRef.current.show({
       title: `Delete catalog item?`,
       subtitle: `Are you sure you want to delete ${view?.name}?`,
@@ -118,11 +117,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       title: 'Delete View',
       icon: DeleteIcon,
       handler: async ({ view, setPage }) => {
-        deleteView({ id: view.id })
-          .unwrap()
-          .then(() => {
-            setPage(0);
-          });
+        deleteView({ id: view.id });
       },
       enabled: ({ view, userId }) => viewIsOwnedByUser(view, userId),
     },
@@ -239,7 +234,6 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
                         handleOpenInfoModal: handleOpenInfoModal,
                         handleOpenShareModal: handleOpenShareModal,
                         handlerOpenDeleteModal: handleOpenDeleteModal,
-                        
                       })}
                     />
                   }

@@ -1,4 +1,11 @@
-import { styled, Drawer as MuiDrawer, List, ListItem, ListItemText } from '@layer5/sistent';
+import {
+  styled,
+  Drawer as MuiDrawer,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+} from '@layer5/sistent';
 
 const DRAWER_WIDTH = 300;
 
@@ -103,6 +110,8 @@ export const StyledListItem = styled(ListItem)(({ theme }) => ({
 }));
 
 export const StyledTextContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
   width: '45%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
@@ -153,6 +162,11 @@ export const StyledListItemText = styled(ListItemText)({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   margin: '0',
+});
+
+export const StyledListIcon = styled(ListItemIcon)({
+  minWidth: '0px',
+  paddingRight: '1rem',
 });
 
 export const StyledUpdatedText = styled('p')({

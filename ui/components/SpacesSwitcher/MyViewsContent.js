@@ -1,7 +1,7 @@
 //@ts-check
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import { Box, useTheme } from '@layer5/sistent';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useFetchViewsQuery } from '@/rtk-query/view';
 import { VISIBILITY } from '@/utils/Enum';
 import MainViewsContent from './MainViewsContent';
@@ -15,21 +15,21 @@ const MyViewsContent = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('updated_at desc');
 
-  const handleSortByChange = (event) => {
-    setPage(0);
+  const handleSortByChange = useCallback((event) => {
     setSortBy(event.target.value);
-  };
+    setPage(0);
+  }, []);
 
-  const handleVisibilityChange = (event) => {
+  const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
     setVisibility(typeof value === 'string' ? value.split(',') : value);
     setPage(0);
-  };
+  }, []);
 
-  const onSearchChange = (e) => {
+  const onSearchChange = useCallback((e) => {
     setPage(0);
     setSearchQuery(e.target.value);
-  };
+  }, []);
 
   const [page, setPage] = useState(0);
   const {

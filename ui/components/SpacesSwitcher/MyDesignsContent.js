@@ -1,7 +1,7 @@
 //@ts-check
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import MainDesignsContent from './MainDesignsContent';
 import { VISIBILITY } from '@/utils/Enum';
 import { Box, useTheme } from '@layer5/sistent';
@@ -14,19 +14,19 @@ const MyDesignsContent = () => {
   const [visibility, setVisibility] = useState(visibilityItems);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('updated_at desc');
-  const handleSortByChange = (event) => {
-    setPage(0);
+  const handleSortByChange = useCallback((event) => {
     setSortBy(event.target.value);
-  };
-  const handleVisibilityChange = (event) => {
+    setPage(0);
+  }, []);
+  const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
     setVisibility(typeof value === 'string' ? value.split(',') : value);
     setPage(0);
-  };
-  const onSearchChange = (e) => {
-    setPage(0);
+  }, []);
+  const onSearchChange = useCallback((e) => {
     setSearchQuery(e.target.value);
-  };
+    setPage(0);
+  }, []);
 
   const [page, setPage] = useState(0);
   const {
