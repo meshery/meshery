@@ -1,4 +1,3 @@
-//@ts-check
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   ListItem,

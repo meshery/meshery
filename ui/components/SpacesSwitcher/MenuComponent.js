@@ -1,4 +1,3 @@
-//@ts-check
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { DARK_BLUE_GRAY, IconButton } from '@layer5/sistent';

@@ -1,4 +1,3 @@
-//@ts-check
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import React, { useCallback, useState } from 'react';
@@ -38,7 +37,7 @@ const MyDesignsContent = () => {
       expandUser: true,
       page: page,
       pagesize: 10,
-      order: 'updated_at desc',
+      order: sortBy,
       user_id: currentUser?.id,
       metrics: true,
       visibility: visibility,

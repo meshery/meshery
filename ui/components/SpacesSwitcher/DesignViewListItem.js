@@ -1,4 +1,3 @@
-//@ts-check
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import {
@@ -139,7 +138,7 @@ export const DesignViewListItemSkeleton = () => {
           {Array(4)
             .fill()
             .map((_, index) => (
-              <Skeleton key={index} variant="circular" animation="wave" width={24} height={24} />
+              <Skeleton key={index} variant="circular" animation="wave" {...iconMedium} />
             ))}
         </StyledActionsContainer>
       </StyledListItem>

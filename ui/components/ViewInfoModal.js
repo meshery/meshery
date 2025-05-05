@@ -1,4 +1,3 @@
-//@ts-check
 import {
   Avatar,
   Chip,

@@ -1,4 +1,3 @@
-//@ts-check
 import {
   getDesign,
   useDeletePatternFileMutation,
@@ -287,7 +286,6 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                       visibility={design?.visibility}
                       items={[
                         {
-                          removeHandler: () => handleDelete(design),
                           deleteHandler: () => handleDelete(design),
                           downloadHandler: () => handleDesignDownloadModal(design),
                           shareHandler: () => handleShare(design),

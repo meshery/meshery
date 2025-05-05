@@ -1,4 +1,3 @@
-//@ts-check
 import { APP_MODE, RESOURCE_TYPE } from '@/utils/Enum';
 import { JsonParse } from '@/utils/utils';
 import _ from 'lodash';

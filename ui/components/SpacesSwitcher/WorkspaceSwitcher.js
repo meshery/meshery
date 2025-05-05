@@ -74,13 +74,6 @@ function WorkspaceSwitcher({ open }) {
     setWorkspaceModal(true);
   };
 
-  const handleSetSelectedWorkspace = (workspace) => {
-    // Add validation to prevent unnecessary updates
-    if (workspace.id !== selectedWorkspace.id) {
-      setSelectedWorkspace(workspace);
-    }
-  };
-
   return (
     <NoSsr>
       <WorkspaceSwitcherContext.Provider
@@ -91,7 +84,7 @@ function WorkspaceSwitcher({ open }) {
             setWorkspaceModal(false);
           },
           selectedWorkspace,
-          setSelectedWorkspace: handleSetSelectedWorkspace,
+          setSelectedWorkspace,
         }}
       >
         {!isWorkspacesError && workspacesData && workspacesData.workspaces && (

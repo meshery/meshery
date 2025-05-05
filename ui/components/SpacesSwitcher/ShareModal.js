@@ -1,5 +1,3 @@
-//@ts-check
-
 import { useUpdatePatternFileMutation } from '@/rtk-query/design';
 import {
   useCreateAndRevokeResourceAccessRecordMutation,

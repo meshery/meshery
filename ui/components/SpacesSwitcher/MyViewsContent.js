@@ -1,4 +1,3 @@
-//@ts-check
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import { Box, useTheme } from '@layer5/sistent';
 import React, { useCallback, useState } from 'react';

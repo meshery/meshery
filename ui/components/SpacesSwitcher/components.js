@@ -1,4 +1,3 @@
-//@ts-check
 import {
   Autocomplete,
   Avatar,
@@ -13,14 +12,14 @@ import {
   Select,
   TextField,
   Typography,
+  Grid,
+  useTheme,
+  PersonIcon,
+  OutlinedInput,
 } from '@layer5/sistent';
 import React, { useState } from 'react';
-import { OutlinedInput } from '@layer5/sistent';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
-import { Grid } from '@layer5/sistent';
-import { PersonIcon } from '@layer5/sistent';
-import { useTheme } from '@mui/material';
 import { Edit, FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
