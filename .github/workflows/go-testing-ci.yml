@@ -131,10 +131,17 @@ jobs:
         uses: docker/setup-buildx-action@v3 
       - name: Install Kind and kubectl
         uses: helm/kind-action@v1.10.0
+
+        # TODO  could reuse from ui-and-server build workflow?
+        #       maybe move there whole this whole job?
+      - name: Build meshery image
+        run: make docker-build
+
       - name: Integration tests set up
         run: make server-integration-tests-meshsync-setup
+
       - name: Integration tests run
-        # run: make server-integration-tests-meshsync-run
-        run: echo "TODO"
+        run: make server-integration-tests-meshsync-run
+
       - name: Integration tests clean up
         run: make server-integration-tests-meshsync-cleanup
