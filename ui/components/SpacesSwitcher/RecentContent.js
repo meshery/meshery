@@ -141,8 +141,8 @@ const RecentContent = () => {
                   },
                 }}
               >
-                <MenuItem value={'design'}>Design</MenuItem>
-                <MenuItem value={'view'}>View</MenuItem>
+                {isDesignsVisible && <MenuItem value={'design'}>Design</MenuItem>}
+                {isViewVisible && <MenuItem value={'view'}>View</MenuItem>}
               </Select>
             </FormControl>
           </Box>

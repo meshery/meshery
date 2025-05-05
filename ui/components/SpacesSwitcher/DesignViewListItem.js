@@ -11,7 +11,6 @@ import {
   getRelativeTime,
   getFullFormattedTime,
   Typography,
-  ListItemIcon,
   DesignIcon,
   ViewIcon,
   useTheme,

@@ -33,8 +33,7 @@ import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
-const getNavItem = () => {
-  const theme = useTheme();
+const getNavItem = (theme) => {
   return [
     {
       id: 'Recent',
@@ -184,8 +183,9 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
   );
 };
 
-const getContentById = (id, workspacesData) => {
+const WorkspaceContentWrapper = ({ id, workspacesData }) => {
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const theme = useTheme();
 
   useEffect(() => {
     if (id === 'All Workspaces') {
@@ -195,8 +195,10 @@ const getContentById = (id, workspacesData) => {
       });
     }
   }, [id, workspaceSwitcherContext, workspacesData]);
-  const navConfig = getNavItem();
+
+  const navConfig = getNavItem(theme);
   const mainItem = navConfig.find((item) => item.id === id);
+
   if (mainItem && mainItem.content) {
     return mainItem.content;
   }
@@ -250,7 +252,7 @@ const Navigation = () => {
   const handleItemSelect = (id) => {
     setSelectedId(id);
   };
-  const navConfig = getNavItem();
+  const navConfig = getNavItem(theme);
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', height: '100%' }}>
@@ -291,7 +293,9 @@ const Navigation = () => {
           </IconButton>
         </DrawerHeader>
       </StyledDrawer>
-      <StyledMainContent>{getContentById(selectedId, workspacesData)}</StyledMainContent>
+      <StyledMainContent>
+        <WorkspaceContentWrapper id={selectedId} workspacesData={workspacesData} />
+      </StyledMainContent>
     </Box>
   );
 };

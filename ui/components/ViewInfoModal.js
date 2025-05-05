@@ -10,14 +10,10 @@ import {
   styled,
   useTheme,
 } from '@layer5/sistent';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import _ from 'lodash';
 import { Box, Modal, ModalBody, ModalFooter } from '@layer5/sistent';
-import {
-  useFetchViewsQuery,
-  useGetViewQuery,
-  useUpdateViewVisibilityMutation,
-} from '@/rtk-query/view';
+import { useGetViewQuery, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useGetLoggedInUserQuery, useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import { iconLarge } from 'css/icons.styles';
 import { VisibilityChipMenu } from '@layer5/sistent';

@@ -118,14 +118,14 @@ export const GhostText = styled('div')({
   fontSize: 15,
 });
 
-export const StyledListItem = styled(ListItem)(({ theme }) => ({
+export const StyledListItem = styled(ListItem)({
   display: 'flex',
   alignItems: 'center',
   gap: '1.5rem',
   marginBlock: '0',
   paddingBlock: '6px',
   position: 'relative',
-}));
+});
 
 export const StyledTextContainer = styled('div')({
   display: 'flex',

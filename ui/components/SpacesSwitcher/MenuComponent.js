@@ -11,14 +11,14 @@ import { useMediaQuery, useTheme } from '@mui/material';
 import { iconMedium } from 'css/icons.styles';
 import React from 'react';
 
-const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
+const StyledMenuItem = styled(MenuItem)({
   paddingLeft: '.5rem',
   paddingRight: '.5rem',
   paddingTop: '.65rem',
   paddingBottom: '.65rem',
   margin: '0px',
   height: '100%',
-}));
+});
 
 const StyledMenuDiv = styled('div')(({ theme }) => ({
   display: 'flex',

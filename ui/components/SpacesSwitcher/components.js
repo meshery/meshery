@@ -10,7 +10,6 @@ import {
   InputLabel,
   ListItemText,
   MenuItem,
-  PublishIcon,
   Select,
   TextField,
   Typography,
@@ -22,7 +21,7 @@ import { getAllUsers } from '@/rtk-query/user';
 import { Grid } from '@layer5/sistent';
 import { PersonIcon } from '@layer5/sistent';
 import { useTheme } from '@mui/material';
-import { Edit, FileUpload, UploadFile } from '@mui/icons-material';
+import { Edit, FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { updateProgress } from 'lib/store';

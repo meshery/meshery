@@ -17,16 +17,12 @@ import {
 import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
-import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import MainViewsContent from './MainViewsContent';
-import { useFetchViewsQuery } from '@/rtk-query/view';
 import { VISIBILITY } from '@/utils/Enum';
 import {
   AssignDesignViewButton,
-  ImportButton,
   SortBySelect,
   TableListHeader,
-  UserSearchAutoComplete,
   VisibilitySelect,
 } from './components';
 import {
@@ -189,8 +185,8 @@ const WorkspaceContent = ({ workspace }) => {
                   },
                 }}
               >
-                <MenuItem value={'design'}>Design</MenuItem>
-                <MenuItem value={'view'}>View</MenuItem>
+                {isDesignsVisible && <MenuItem value={'design'}>Design</MenuItem>}
+                {isViewVisible && <MenuItem value={'view'}>View</MenuItem>}
               </Select>
             </FormControl>
           </Box>

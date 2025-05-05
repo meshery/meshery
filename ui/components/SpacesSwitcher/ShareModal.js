@@ -17,11 +17,6 @@ import { getShareableResourceRoute } from './hooks';
 import { JsonParse } from '@/utils/utils';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 
-const SHARE_MODE = {
-  PRIVATE: 'private',
-  PUBLIC: 'public',
-};
-
 export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose }) => {
   const resourceType = dataName === 'design' ? 'pattern' : dataName;
 

@@ -2,33 +2,24 @@
 import {
   getDesign,
   useDeletePatternFileMutation,
-  useGetUserDesignsQuery,
   usePublishPatternMutation,
   useUpdatePatternFileMutation,
 } from '@/rtk-query/design';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
-  styled,
-  List,
   ListItem,
   ListItemText,
   Divider,
-  CircularProgress,
   PROMPT_VARIANTS,
   PromptComponent,
   OutlinedPatternIcon,
   useModal,
   Modal,
-  Box,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll, {
-  getModelNamesBasedOnDisplayNames,
-  handleUpdatePatternVisibility,
-} from './hooks';
+import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
 import MenuComponent from './MenuComponent';
-import { MoreVert } from '@mui/icons-material';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
 import { updateProgress } from 'lib/store';
