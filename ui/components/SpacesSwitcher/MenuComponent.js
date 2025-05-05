@@ -1,5 +1,7 @@
 //@ts-check
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 import { CloneIcon, IconButton } from '@layer5/sistent';
 import { CustomTooltip, styled, Menu, MenuItem } from '@layer5/sistent';
 import { MoreVert, Public as PublicIcon, Reply } from '@mui/icons-material';
@@ -163,16 +165,10 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
     setAnchorEl(null);
   };
 
-  const { data: currentUser } = useGetLoggedInUserQuery();
-
   // Function to handle specific actions
   const handleAction = (action, event) => {
     event.stopPropagation();
-    if (action === 'unpublish' && items[0]?.unPublishHandler) {
-      items[0].unPublishHandler();
-    } else if (action === 'clone' && items[0]?.cloneHandler) {
-      items[0].cloneHandler();
-    } else if (action === 'export' && items[0]?.downloadHandler) {
+    if (action === 'export' && items[0]?.downloadHandler) {
       items[0].downloadHandler();
     } else if (action === 'delete' && items[0]?.deleteHandler) {
       items[0].deleteHandler();
@@ -188,28 +184,12 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
   // Common configuration for menu items
   const menuItems = [
     {
-      key: 'unpublish',
-      title: 'Unpublish',
-      icon: PublicIcon,
-      action: 'unpublish',
-      visible:
-        visibility === 'published' && currentUser?.user_details?.role_names?.includes('admin'),
-    },
-    {
-      key: 'clone',
-      title: 'Clone',
-      icon: CloneIcon,
-      action: 'clone',
-      iconProps: { fill: '#eee', style: { ...iconSmall } },
-      visible: visibility === 'published',
-    },
-    {
       key: 'export_design',
       title: 'Export Design',
       icon: GetAppIcon,
       action: 'export',
       iconProps: { fill: '#eee', style: { ...iconMedium } },
-      visible: true,
+      visible: CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
     },
     {
       key: 'delete',
@@ -217,7 +197,7 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
       icon: DeleteIcon,
       action: 'delete',
       iconProps: { fill: '#eee', style: { ...iconMedium } },
-      visible: true,
+      visible: CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
     },
     {
       key: 'share',
@@ -225,7 +205,8 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
       icon: Reply,
       action: 'share',
       iconProps: { style: { ...iconMedium, transform: 'scaleX(-1)', color: '#eee' } },
-      visible: visibility !== 'published',
+      visible:
+        visibility !== 'published' && CAN(keys.SHARE_DESIGN.action, keys.SHARE_DESIGN.subject),
     },
     {
       key: 'info',

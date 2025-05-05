@@ -287,10 +287,11 @@ export const ImportButton = () => {
   );
 };
 
-export const AssignDesignViewButton = ({ type, handleAssign }) => {
+export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
   const theme = useTheme();
   return (
     <Button
+      disabled={disabled}
       color="primary"
       variant="contained"
       onClick={handleAssign}
@@ -303,4 +304,4 @@ export const AssignDesignViewButton = ({ type, handleAssign }) => {
       {type === 'design' ? 'Manage Designs' : 'Manage Views'}
     </Button>
   );
-}
+};

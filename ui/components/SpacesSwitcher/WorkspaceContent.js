@@ -160,6 +160,17 @@ const WorkspaceContent = ({ workspace }) => {
                 viewAssignment.handleAssignModal();
               }
             }}
+            disabled={
+              type === 'design'
+                ? !CAN(
+                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+                  )
+                : !CAN(
+                    keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+                    keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+                  )
+            }
           />
         </Box>
         <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>

@@ -14,6 +14,7 @@ import {
   ListItemIcon,
   DesignIcon,
   ViewIcon,
+  useTheme,
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
@@ -30,6 +31,7 @@ import {
   StyledVisibilityContainer,
 } from './styles';
 import React from 'react';
+import { iconMedium } from 'css/icons.styles';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -42,6 +44,7 @@ const DesignViewListItem = ({
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
   });
+  const theme = useTheme();
 
   return (
     <>
@@ -51,7 +54,13 @@ const DesignViewListItem = ({
         onClick={handleItemClick}
       >
         <StyledTextContainer>
-          <StyledListIcon>{type === 'design' ? <DesignIcon /> : <ViewIcon />}</StyledListIcon>
+          <StyledListIcon>
+            {type === 'design' ? (
+              <DesignIcon />
+            ) : (
+              <ViewIcon {...iconMedium} fill={theme.palette.icon.brand} />
+            )}
+          </StyledListIcon>
           <StyledListItemText
             primary={selectedItem.name ?? 'Untitled'}
             primaryTypographyProps={{ fontSize: '0.9rem' }}

@@ -4,7 +4,6 @@ import {
   ListItem,
   ListItemText,
   Divider,
-  CircularProgress,
   ShareIcon,
   InfoIcon,
   DeleteIcon,
@@ -15,12 +14,10 @@ import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, { handleUpdateViewVisibility } from './hooks';
 import { GeorgeMenu } from './MenuComponent';
-import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
+import { RESOURCE_TYPE } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import { MoreVert } from '@mui/icons-material';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
 import { downloadFileFromContent } from '@/utils/fileDownloader';
-import { api } from '@/rtk-query/index';
 import { getView, useDeleteViewMutation, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
 import { ViewsInfoModal } from '../ViewInfoModal';
@@ -29,6 +26,8 @@ import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { Router } from 'next/router';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -96,9 +95,6 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
 
-  const viewIsPublic = (v) => v?.visibility === VISIBILITY.PUBLIC;
-  const viewIsPrivate = (v) => v?.visibility === VISIBILITY.PRIVATE;
-  const viewIsOwnedByUser = (v, userId) => v?.user_id === userId;
   const [deleteView] = useDeleteViewMutation();
 
   const VIEW_ACTIONS = {
@@ -116,35 +112,20 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       id: 'DELETE_VIEW',
       title: 'Delete View',
       icon: DeleteIcon,
-      handler: async ({ view, setPage }) => {
-        deleteView({ id: view.id });
-      },
-      enabled: ({ view, userId }) => viewIsOwnedByUser(view, userId),
+      enabled: ({ view, userId }) =>
+        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
     },
 
-    UPDATE_VISIBILITY: {
-      id: 'UPDATE_VISIBILITY',
-      title: 'Update Visibility',
-      icon: () => null,
-      handler: ({ view, visibility }) => {},
-      enabled: ({ view, userId }) => {
-        return viewIsOwnedByUser(view, userId);
-      },
-    },
     UPDATE_INFO: {
       id: 'UPDATE_INFO',
       title: 'Update Info',
       icon: InfoIcon,
-      handler: ({ view, metadata }) => {},
-      enabled: ({ view, userId }) => {
-        return viewIsOwnedByUser(view, userId);
-      },
+      enabled: () => CAN(keys.EDIT_VIEW.action, keys.EDIT_VIEW.subject),
     },
     SHARE_VIEW: {
       id: 'SHARE_VIEW',
       title: 'Share View',
       icon: ShareIcon,
-      handler: ({ view, emails }) => {},
       enabled: () => true,
     },
   };
@@ -214,6 +195,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
             return (
               <React.Fragment key={view?.id}>
                 <DesignViewListItem
+                  type="view"
                   selectedItem={view}
                   handleItemClick={() => {
                     handleOpenViewInOperator(view?.id, view?.name);

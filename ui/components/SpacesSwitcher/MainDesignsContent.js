@@ -277,6 +277,7 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
             return (
               <React.Fragment key={design?.id}>
                 <DesignViewListItem
+                  type="design"
                   selectedItem={design}
                   handleItemClick={() => {
                     handleOpenDesignInDesigner(design?.id, design?.name);
