@@ -30,8 +30,6 @@ import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
 import { useLegacySelector } from 'lib/store';
 import { DrawerHeader, StyledDrawer } from './styles';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
-import WorkspaceDesignContent from './WorkspaceDesignContent';
-import WorkspaceViewContent from './WorkspaceViewContent';
 
 const navConfig = {
   mainItems: [
@@ -55,17 +53,6 @@ const navConfig = {
       icon: <ViewIcon height="24" width="24" fill="white" />,
       content: <MyViewsContent filterByAuthor={true} />,
     },
-    // {
-    //   id: 'SharedWithMe',
-    //   label: 'Shared With Me',
-    //   icon: <PeopleAltIcon />,
-    //   content: (
-    //     <div>
-    //       <h2>Shared With Me</h2>
-    //       <p>All the resources that are shared with me</p>
-    //     </div>
-    //   ),
-    // },
   ],
 };
 
@@ -96,175 +83,18 @@ const NavItem = ({ item, open, selectedId, onSelect }) => {
   );
 };
 
-const NestedNavItem = ({ item, open, selectedId, onSelect, level = 0 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const hasChildren = item.items && item.items.length > 0;
-
-  const handleClick = () => {
-    // Only select the item, don't toggle expansion
-    onSelect(item.id);
-  };
-
-  const handleToggleExpand = (e) => {
-    // Stop event propagation to prevent triggering the parent button's onClick
-    e.stopPropagation();
-    setIsExpanded(!isExpanded);
-  };
-
-  const handleDesignsClick = () => {
-    // setFetchDesigns(true);
-    onSelect(`${item.id}_designs`);
-  };
-
-  const handleViewsClick = () => {
-    // setFetchViews(true);
-    onSelect(`${item.id}_views`);
-  };
-
-  return (
-    <>
-      <ListItem disablePadding sx={{ display: 'block' }}>
-        <ListItemButton
-          selected={selectedId === item.id}
-          onClick={handleClick}
-          sx={{
-            minHeight: 48,
-            px: 2.5,
-            pl: level > 0 ? `${(level + 2) * 16}px` : 2.5, // Increased padding for better indentation
-            justifyContent: open ? 'initial' : 'center',
-            position: 'relative', // For absolute positioning of the chevron
-          }}
-        >
-          {/* Expansion chevron - only visible when the drawer is open and has children */}
-          {open && hasChildren && (
-            <Box
-              onClick={handleToggleExpand}
-              size="small"
-              sx={{
-                position: 'absolute',
-                left: level > 0 ? `${level * 16}px` : 0,
-                paddingLeft: '4px',
-                paddingTop: '4px',
-              }}
-            >
-              {isExpanded ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
-            </Box>
-          )}
-
-          <ListItemIcon
-            sx={{
-              minWidth: 0,
-              justifyContent: 'center',
-              mr: open ? 3 : 'auto',
-            }}
-          >
-            {item.icon}
-          </ListItemIcon>
-          <ListItemText primary={item.name} sx={{ opacity: open ? 1 : 0 }} />
-        </ListItemButton>
-      </ListItem>
-
-      {open && hasChildren && (
-        <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-          <ListItem key={`${item.id}_designs`} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              selected={selectedId === `${item.id}_designs`}
-              onClick={handleDesignsClick}
-              sx={{
-                pl: `${(level + 3) * 16}px`, // Consistent indentation
-                minHeight: 40,
-                justifyContent: open ? 'initial' : 'center',
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 2 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                <DesignIcon
-                  fill="white"
-                  secondaryFill="white"
-                  width="20"
-                  height="20"
-                  primaryFill="white"
-                />
-              </ListItemIcon>
-              <ListItemText
-                primary="Designs"
-                sx={{ opacity: open ? 1 : 0 }}
-                primaryTypographyProps={{ fontSize: '0.9rem' }}
-              />
-            </ListItemButton>
-          </ListItem>
-
-          <ListItem key={`${item.id}_views`} disablePadding sx={{ display: 'block' }}>
-            <ListItemButton
-              selected={selectedId === `${item.id}_views`}
-              onClick={handleViewsClick}
-              sx={{
-                pl: `${(level + 3) * 16}px`, // Consistent indentation
-                minHeight: 40,
-                justifyContent: open ? 'initial' : 'center',
-              }}
-            >
-              <ListItemIcon
-                sx={{
-                  minWidth: 0,
-                  mr: open ? 2 : 'auto',
-                  justifyContent: 'center',
-                }}
-              >
-                <ViewIcon height="20" width="20" fill="white" />
-              </ListItemIcon>
-              <ListItemText
-                primary="Views"
-                sx={{ opacity: open ? 1 : 0 }}
-                primaryTypographyProps={{ fontSize: '0.9rem' }}
-              />
-            </ListItemButton>
-          </ListItem>
-        </Collapse>
-      )}
-    </>
-  );
-};
-
-// Update WorkspacesSection to receive workspacesData as prop
 const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoading }) => {
-  // Always expanded by default - no toggle needed
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleWorkspacesClick = () => {
-    // Only select workspaces without expanding
     onSelect('All Workspaces');
+    setIsExpanded(!isExpanded);
   };
 
   const workspaces = workspacesData?.workspaces?.map((workspace) => ({
     id: workspace.id,
     name: workspace.name,
     icon: <WorkspaceIcon fill="white" secondaryFill="white" width="20" height="20" />,
-    items: [
-      {
-        id: `${workspace.id}_designs`,
-        name: 'Designs',
-        icon: (
-          <DesignIcon
-            fill="white"
-            secondaryFill="white"
-            width="20"
-            height="20"
-            primaryFill="white"
-          />
-        ),
-      },
-      {
-        id: `${workspace.id}_views`,
-        name: 'Views',
-        icon: <ViewIcon height="20" width="20" fill="white" />,
-      },
-    ],
   }));
 
   return (
@@ -289,6 +119,11 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
             <WorkspaceIcon fill="white" secondaryFill="white" />
           </ListItemIcon>
           <ListItemText primary="All Workspaces" sx={{ opacity: open ? 1 : 0 }} />
+          {open && workspaces && workspaces.length > 0 && (
+            <Box component="span" sx={{ color: 'white' }}>
+              {isExpanded ? <ExpandLess /> : <ExpandMore />}
+            </Box>
+          )}
         </ListItemButton>
       </ListItem>
 
@@ -299,15 +134,31 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
               <ListItemText primary="Loading..." />
             </ListItem>
           ) : (
+            workspaces &&
             workspaces.map((workspace) => (
-              <NestedNavItem
-                key={workspace.id}
-                item={workspace}
-                open={open}
-                selectedId={selectedId}
-                onSelect={onSelect}
-                level={1}
-              />
+              <ListItem key={workspace.id} disablePadding sx={{ display: 'block' }}>
+                <ListItemButton
+                  selected={selectedId === workspace.id}
+                  onClick={() => onSelect(workspace.id)}
+                  sx={{
+                    minHeight: 48,
+                    px: 2.5,
+                    pl: '2.5rem',
+                    justifyContent: open ? 'initial' : 'center',
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      minWidth: 0,
+                      justifyContent: 'center',
+                      mr: open ? 3 : 'auto',
+                    }}
+                  >
+                    {workspace.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={workspace.name} sx={{ opacity: open ? 1 : 0 }} />
+                </ListItemButton>
+              </ListItem>
             ))
           )}
         </Collapse>
@@ -339,25 +190,10 @@ const WorkspaceContent = ({ id, workspacesData }) => {
   return <WorkspacesComponent />;
 };
 
-// Update getContentById to receive workspacesData as parameter
 const getContentById = (id, workspacesData) => {
   const mainItem = navConfig.mainItems.find((item) => item.id === id);
   if (mainItem && mainItem.content) {
     return mainItem.content;
-  }
-
-  if (id && (id.endsWith('_designs') || id.endsWith('_views'))) {
-    const parts = id.split('_');
-    const workspaceId = parts[0];
-    const contentType = parts[parts.length - 1];
-
-    if (contentType === 'designs') {
-      return <WorkspaceDesignContent workspaceId={workspaceId} />;
-      // return <div>Designs</div>;
-    } else if (contentType === 'views') {
-      return <WorkspaceViewContent workspaceId={workspaceId} />;
-      // return <WorkspaceViewContent workspacesData={workspacesData} />;
-    }
   }
 
   return <WorkspaceContent id={id} workspacesData={workspacesData} />;
@@ -367,7 +203,6 @@ const Navigation = () => {
   const [open, setOpen] = useState(true);
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
-  // const [selectedId, setSelectedId] = useState(selectedWorkspace.id || 'Recent');
   const [selectedId, setSelectedId] = useState('Recent');
   const currentOrganization = useLegacySelector((state) => state.get('organization'));
 
