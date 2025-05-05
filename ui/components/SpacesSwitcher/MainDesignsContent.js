@@ -43,6 +43,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useDeletePattern } from '../Lifecycle/Workspaces/hooks';
+import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
 const MainDesignsContent = ({
   setPage,
@@ -132,7 +133,7 @@ const MainDesignsContent = ({
   };
 
   const handleRemove = async (design, workspaceId) => {
-    handleWorkspaceDesignDeleteModal(design.id, workspaceId)
+    handleWorkspaceDesignDeleteModal(design.id, workspaceId);
   };
 
   const handleShare = async (design) => {
@@ -282,7 +283,7 @@ const MainDesignsContent = ({
       id: workspaceId ? 'move' : 'delete',
       title: workspaceId ? 'Move' : 'Delete',
       icon: workspaceId ? (
-        <RemoveCircleIcon fill={theme.palette.icon.default} />
+        <MoveFileIcon fill={theme.palette.icon.default} />
       ) : (
         <DeleteIcon fill={theme.palette.icon.default} />
       ),

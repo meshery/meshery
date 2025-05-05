@@ -30,6 +30,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
 const MainViewsContent = ({
   setPage,
@@ -137,7 +138,7 @@ const MainViewsContent = ({
       id: workspaceId ? 'MOVE_VIEW' : 'DELETE_VIEW',
       title: workspaceId ? 'MOVE VIEW' : 'Delete View',
       icon: workspaceId ? (
-        <RemoveCircleIcon fill={theme.palette.icon.default} />
+        <MoveFileIcon fill={theme.palette.icon.default} />
       ) : (
         <DeleteIcon fill={theme.palette.icon.default} />
       ),

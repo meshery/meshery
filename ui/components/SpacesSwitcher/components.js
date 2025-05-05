@@ -20,13 +20,14 @@ import {
 import React, { useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
-import { Edit, FileUpload } from '@mui/icons-material';
+import { FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { updateProgress } from 'lib/store';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
@@ -286,7 +287,6 @@ export const ImportButton = () => {
 };
 
 export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
-  const theme = useTheme();
   return (
     <Button
       disabled={disabled}
@@ -297,7 +297,7 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
         minWidth: 'fit-content',
         padding: '0.85rem',
       }}
-      startIcon={<Edit color={theme.palette.common.white} />}
+      startIcon={<SettingsIcon />}
     >
       {type === 'design' ? 'Manage Designs' : 'Manage Views'}
     </Button>

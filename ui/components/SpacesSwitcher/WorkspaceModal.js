@@ -15,6 +15,7 @@ import {
   ViewIcon,
   Collapse,
   useMediaQuery,
+  Divider,
 } from '@layer5/sistent';
 import { WorkspacesComponent } from '../Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
@@ -152,7 +153,11 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
           ) : (
             workspaces &&
             workspaces.map((workspace) => (
-              <ListItem key={workspace.id} disablePadding sx={{ display: 'block' }}>
+              <ListItem
+                key={workspace.id}
+                disablePadding
+                sx={{ display: 'block', backgroundColor: theme.palette.background.secondary }}
+              >
                 <ListItemButton
                   selected={selectedId === workspace.id}
                   onClick={() => onSelect(workspace.id)}
@@ -194,7 +199,7 @@ const WorkspaceContentWrapper = ({ id, workspacesData }) => {
         name: null,
       });
     }
-  }, [id, workspaceSwitcherContext, workspacesData]);
+  }, [id, workspacesData]);
 
   const navConfig = getNavItem(theme);
   const mainItem = navConfig.find((item) => item.id === id);
@@ -215,23 +220,17 @@ const WorkspaceContentWrapper = ({ id, workspacesData }) => {
   return <RecentContent />;
 };
 
-const Navigation = () => {
+const Navigation = ({ setHeaderInfo }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
-  useEffect(() => {
-    setOpen(isMobile ? false : true);
-  }, [isMobile]);
-
-  const [open, setOpen] = useState(isMobile ? false : true);
+  const [open, setOpen] = useState(!isMobile);
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
-
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
-
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-
   const currentOrganization = useLegacySelector((state) => state.get('organization'));
+  const navConfig = getNavItem(theme);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
     {
@@ -245,14 +244,49 @@ const Navigation = () => {
     },
   );
 
+  useEffect(() => {
+    setOpen(!isMobile);
+  }, [isMobile]);
+
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
 
+  const updateHeaderInfo = (id) => {
+    const mainItem = navConfig.find((item) => item.id === id);
+
+    if (mainItem) {
+      setHeaderInfo({
+        title: mainItem.label,
+        icon: mainItem.icon,
+      });
+    } else if (id === 'All Workspaces') {
+      setHeaderInfo({
+        title: 'All Workspaces',
+        icon: <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />,
+      });
+    } else {
+      const foundWorkspace = workspacesData?.workspaces?.find((workspace) => workspace.id === id);
+      if (foundWorkspace) {
+        setHeaderInfo({
+          title: `Workspace "${foundWorkspace.name}"`,
+          icon: (
+            <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
+          ),
+        });
+      }
+    }
+  };
+
   const handleItemSelect = (id) => {
     setSelectedId(id);
+    updateHeaderInfo(id);
   };
-  const navConfig = getNavItem(theme);
+
+  // Set initial header info on component mount or when data changes
+  useEffect(() => {
+    updateHeaderInfo(selectedId);
+  }, [selectedId, workspacesData, theme]);
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', height: '100%' }}>
@@ -277,7 +311,11 @@ const Navigation = () => {
                 onSelect={handleItemSelect}
               />
             ))}
-
+          <Divider
+            sx={{
+              marginBlock: '0.25rem',
+            }}
+          />
           <WorkspacesSection
             open={open}
             selectedId={selectedId}
@@ -302,6 +340,10 @@ const Navigation = () => {
 
 const WorkspaceModal = ({ setWorkspaceModal, workspaceModal }) => {
   const theme = useTheme();
+  const [headerInfo, setHeaderInfo] = useState({
+    title: 'All Workspaces',
+    icon: <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />,
+  });
 
   return (
     <Modal
@@ -310,13 +352,11 @@ const WorkspaceModal = ({ setWorkspaceModal, workspaceModal }) => {
       fullWidth
       sx={{ margin: '5rem 8rem' }}
       open={workspaceModal}
-      headerIcon={
-        <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
-      }
-      title="All Workspaces"
+      headerIcon={headerInfo.icon}
+      title={headerInfo.title}
     >
       <ModalBody style={{ height: '100%', padding: '0' }}>
-        {workspaceModal && <Navigation />}
+        {workspaceModal && <Navigation setHeaderInfo={setHeaderInfo} />}
       </ModalBody>
     </Modal>
   );
