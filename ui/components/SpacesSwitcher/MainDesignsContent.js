@@ -14,11 +14,13 @@ import {
   OutlinedPatternIcon,
   useModal,
   Modal,
+  ShareIcon,
+  useTheme,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
-import MenuComponent from './MenuComponent';
+import { GeorgeMenu } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
 import { updateProgress } from 'lib/store';
@@ -34,6 +36,11 @@ import _ from 'lodash';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import Router from 'next/router';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import DeleteIcon from '@mui/icons-material/Delete';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import InfoIcon from '@mui/icons-material/Info';
 
 const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, total_count }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -249,6 +256,65 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
 
     openDesignInKanvas(designId, designName, Router);
   };
+  const theme = useTheme();
+  const DESIGN_ACTIONS = {
+    EXPORT_DESIGN: {
+      id: 'export_design',
+      title: 'Export Design',
+      icon: <GetAppIcon style={{ fill: theme.palette.icon.default }} />,
+      enabled: () => CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
+    },
+    DELETE_DESIGN: {
+      id: 'delete',
+      title: 'Delete',
+      icon: <DeleteIcon fill={theme.palette.icon.default} />,
+      enabled: () => CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+    },
+    SHARE_DESIGN: {
+      id: 'share',
+      title: 'Share',
+      icon: <ShareIcon fill={theme.palette.icon.default} />,
+      enabled: ({ design }) =>
+        design?.visibility !== 'published' &&
+        CAN(keys.SHARE_DESIGN.action, keys.SHARE_DESIGN.subject),
+    },
+    INFO_DESIGN: {
+      id: 'info',
+      title: 'Info',
+      icon: <InfoIcon fill={theme.palette.icon.default} />,
+      enabled: () => true,
+    },
+  };
+
+  const getGeorgeOptions = ({
+    design,
+    handleDesignDownloadModal,
+    handleDelete,
+    handleShare,
+    handleInfoModal,
+  }) => {
+    const options = [
+      {
+        ...DESIGN_ACTIONS.EXPORT_DESIGN,
+        handler: () => handleDesignDownloadModal(design),
+      },
+      {
+        ...DESIGN_ACTIONS.DELETE_DESIGN,
+        handler: () => handleDelete(design),
+      },
+
+      {
+        ...DESIGN_ACTIONS.SHARE_DESIGN,
+        handler: () => handleShare(design),
+      },
+      {
+        ...DESIGN_ACTIONS.INFO_DESIGN,
+        handler: () => handleInfoModal(design),
+      },
+    ];
+
+    return options.filter((option) => option.enabled({ design }));
+  };
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -281,17 +347,14 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
                     });
                   }}
                   MenuComponent={
-                    <MenuComponent
-                      rowData={design}
-                      visibility={design?.visibility}
-                      items={[
-                        {
-                          deleteHandler: () => handleDelete(design),
-                          downloadHandler: () => handleDesignDownloadModal(design),
-                          shareHandler: () => handleShare(design),
-                          infoHandler: () => handleInfoModal(design),
-                        },
-                      ]}
+                    <GeorgeMenu
+                      options={getGeorgeOptions({
+                        design,
+                        handleDelete: handleDelete,
+                        handleDesignDownloadModal: handleDesignDownloadModal,
+                        handleShare: handleShare,
+                        handleInfoModal: handleInfoModal,
+                      })}
                     />
                   }
                 />
