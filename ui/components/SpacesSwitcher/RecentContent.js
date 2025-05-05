@@ -2,7 +2,7 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Box, FormControl, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
@@ -23,7 +23,8 @@ const RecentContent = () => {
 
   const [searchQuery, setSearchQuery] = useState('');
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
-
+  const [designsPage, setDesignsPage] = useState(0);
+  const [viewsPage, setViewsPage] = useState(0);
   const [type, setType] = React.useState('design');
   const [author, setAuthor] = React.useState('');
   const [sortBy, setSortBy] = useState('updated_at desc');
@@ -31,33 +32,26 @@ const RecentContent = () => {
 
   const handleTypeChange = (event) => {
     setType(event.target.value);
-    setDesignsPage(0);
-    setViewsPage(0);
+
   };
   const handleAuthorChange = (user_id) => {
-    setDesignsPage(0);
-    setViewsPage(0);
+  
     setAuthor(user_id);
   };
   const handleSortByChange = (event) => {
-    setDesignsPage(0);
-    setViewsPage(0);
+   
     setSortBy(event.target.value);
   };
   const handleVisibilityChange = (event) => {
     const value = event.target.value;
     setVisibility(typeof value === 'string' ? value.split(',') : value);
-    setDesignsPage(0);
-    setViewsPage(0);
+
+  
   };
   const onSearchChange = (e) => {
-    setDesignsPage(0);
-    setViewsPage(0);
     setSearchQuery(e.target.value);
   };
 
-  const [designsPage, setDesignsPage] = useState(0);
-  const [viewsPage, setViewsPage] = useState(0);
   const {
     data: designsData,
     isLoading,
@@ -169,7 +163,9 @@ const RecentContent = () => {
               isLoading={isLoading}
               isFetching={isFetching}
               designs={designsData?.patterns}
-              hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
+              hasMore={
+                !!designsData && designsData.total_count > (designsPage + 1) * designsData.page_size
+              }
               total_count={designsData?.total_count}
             />
           )}

@@ -8,6 +8,8 @@ import {
   ShareIcon,
   InfoIcon,
   DeleteIcon,
+  PROMPT_VARIANTS,
+  PromptComponent,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -32,6 +34,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setinfoModal] = useState(null);
+
   const [selectedView, setSetselectedView] = useState(null);
   const [updateView] = useUpdateViewVisibilityMutation();
   const handleOpenShareModal = (view) => {
@@ -52,6 +55,32 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const handleCloseInfoModal = () => {
     setSetselectedView(null);
     setinfoModal(false);
+  };
+
+  const modalRef = useRef(true);
+
+  const handleOpenDeleteModal = async (view) => {
+  
+    const response = await modalRef.current.show({
+      title: `Delete catalog item?`,
+      subtitle: `Are you sure you want to delete ${view?.name}?`,
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    if (response === 'DELETE') {
+      const selectedView = view;
+      const { name, id } = selectedView;
+      deleteView({
+        id: id,
+      })
+        .unwrap()
+        .then(() => {
+          notify({ message: `"${name}" View deleted`, event_type: EVENT_TYPES.SUCCESS });
+        })
+        .catch(() => {
+          notify({ message: `Unable to delete "${name}" Design`, event_type: EVENT_TYPES.ERROR });
+        });
+    }
   };
 
   const loadNextPage = useCallback(() => {
@@ -124,7 +153,13 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       enabled: () => true,
     },
   };
-  const getGeorgeOptions = ({ view, user, handleOpenInfoModal, handleOpenShareModal, setPage }) => {
+  const getGeorgeOptions = ({
+    view,
+    user,
+    handleOpenInfoModal,
+    handleOpenShareModal,
+    handlerOpenDeleteModal,
+  }) => {
     const options = [
       {
         ...VIEW_ACTIONS.EXPORT_VIEW,
@@ -132,7 +167,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
       },
       {
         ...VIEW_ACTIONS.DELETE_VIEW,
-        handler: () => VIEW_ACTIONS.DELETE_VIEW.handler({ view, setPage }),
+        handler: () => handlerOpenDeleteModal(view),
       },
 
       {
@@ -152,7 +187,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   };
   const isKanvasDesignerAvailable = useIsOperatorEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
-  const notify = useNotification();
+  const { notify } = useNotification();
   const handleOpenViewInOperator = (viewId, viewName) => {
     if (!isKanvasDesignerAvailable) {
       notify({
@@ -189,13 +224,12 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
                     handleOpenViewInOperator(view?.id, view?.name);
                   }}
                   canChangeVisibility={canChangeVisibility}
-                  onVisibilityChange={(value, selectedItem) => {
-                    handleUpdateViewVisibility({
+                  onVisibilityChange={async (value, selectedItem) => {
+                    await handleUpdateViewVisibility({
                       value: value,
                       selectedResource: selectedItem,
                       updateView: updateView,
                     });
-                    setPage(0);
                   }}
                   MenuComponent={
                     <GeorgeMenu
@@ -204,7 +238,8 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
                         user: currentUser,
                         handleOpenInfoModal: handleOpenInfoModal,
                         handleOpenShareModal: handleOpenShareModal,
-                        setPage,
+                        handlerOpenDeleteModal: handleOpenDeleteModal,
+                        
                       })}
                     />
                   }
@@ -248,6 +283,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
           metadata={selectedView?.metadata}
         />
       )}
+      <PromptComponent ref={modalRef} />
     </>
   );
 };

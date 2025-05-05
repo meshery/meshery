@@ -1,6 +1,6 @@
 //@ts-check
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { CloneIcon } from '@layer5/sistent';
+import { CloneIcon, IconButton } from '@layer5/sistent';
 import { CustomTooltip, styled, Menu, MenuItem } from '@layer5/sistent';
 import { MoreVert, Public as PublicIcon, Reply } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -57,19 +57,20 @@ export const GeorgeMenu = ({ options = [] }) => {
   // Renders direct icons for non-mobile view
   const renderDirectIcons = () => {
     return (
-      <div style={{ display: 'flex', gap: '0.75rem' }}>
+      <div style={{ display: 'flex' }}>
         {options.map((option) => (
           <CustomTooltip key={option.title} title={option.title}>
-            <div
+            <IconButton
               style={{ cursor: 'pointer' }}
               onClick={(event) => {
+                event.stopPropagation();
                 option.handler(event);
               }}
             >
               {option.icon && (
                 <option.icon fill="#eeeeee" style={{ ...iconMedium }} {...iconMedium} />
               )}
-            </div>
+            </IconButton>
           </CustomTooltip>
         ))}
       </div>
@@ -125,6 +126,7 @@ export const GeorgeMenu = ({ options = [] }) => {
                 <StyledMenuItem
                   key={option.title}
                   onClick={(event) => {
+                    event.stopPropagation();
                     option.handler(event);
                     handleClose(event);
                   }}

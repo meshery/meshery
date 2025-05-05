@@ -19,6 +19,7 @@ import {
   OutlinedPatternIcon,
   useModal,
   Modal,
+  Box,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -99,7 +100,6 @@ const MainDesignsContent = ({ setPage, isLoading, isFetching, designs, hasMore, 
   };
 
   const handleDelete = async (design) => {
-    setPage(0);
     const response = await modalRef.current.show({
       title: `Delete catalog item?`,
       subtitle: `Are you sure you want to delete ${design?.name}?`,

@@ -201,7 +201,8 @@ const Navigation = () => {
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
 
-  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
+  // const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
+  const [selectedId, setSelectedId] = useState('Recent');
 
   const currentOrganization = useLegacySelector((state) => state.get('organization'));
 
