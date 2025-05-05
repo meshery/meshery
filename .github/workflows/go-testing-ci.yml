@@ -132,6 +132,14 @@ jobs:
       - name: Install Kind and kubectl
         uses: helm/kind-action@v1.10.0
 
+        # inspired by .github/workflows/build-ui-and-server.yml
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+
         # TODO  could reuse from ui-and-server build workflow?
         #       maybe move there whole this whole job?
       - name: Build meshery image
