@@ -60,7 +60,7 @@ const DesignViewListItem = ({
             )}
           </StyledListIcon>
           <StyledListItemText
-            primary={selectedItem.name ?? 'Untitled'}
+            primary={selectedItem.name || ''}
             primaryTypographyProps={{ fontSize: '0.9rem' }}
             secondary={
               <CustomTooltip

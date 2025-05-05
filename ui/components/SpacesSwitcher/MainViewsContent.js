@@ -33,6 +33,7 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
 const MainViewsContent = ({
+  page,
   setPage,
   isLoading,
   isFetching,
@@ -108,7 +109,7 @@ const MainViewsContent = ({
 
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
-    setPage((prevPage) => prevPage + 1);
+    setPage(page + 1);
   }, [isLoading, isFetching]);
 
   const { loadingRef } = useInfiniteScroll({

@@ -10,24 +10,46 @@ import { ImportButton, SortBySelect, TableListHeader, VisibilitySelect } from '.
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE, VISIBILITY.PUBLISHED];
-  const [visibility, setVisibility] = useState(visibilityItems);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('updated_at desc');
+
+  const [filters, setFilters] = useState({
+    visibility: visibilityItems,
+    searchQuery: '',
+    sortBy: 'updated_at desc',
+    page: 0,
+  });
+
   const handleSortByChange = useCallback((event) => {
-    setSortBy(event.target.value);
-    setPage(0);
-  }, []);
-  const handleVisibilityChange = useCallback((event) => {
-    const value = event.target.value;
-    setVisibility(typeof value === 'string' ? value.split(',') : value);
-    setPage(0);
-  }, []);
-  const onSearchChange = useCallback((e) => {
-    setSearchQuery(e.target.value);
-    setPage(0);
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      sortBy: event.target.value,
+      page: 0,
+    }));
   }, []);
 
-  const [page, setPage] = useState(0);
+  const handleVisibilityChange = useCallback((event) => {
+    const value = event.target.value;
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      visibility: typeof value === 'string' ? value.split(',') : value,
+      page: 0,
+    }));
+  }, []);
+
+  const onSearchChange = useCallback((e) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      searchQuery: e.target.value,
+      page: 0,
+    }));
+  }, []);
+
+  const setPage = useCallback((newPage) => {
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      page: newPage,
+    }));
+  }, []);
+
   const {
     data: designsData,
     isLoading,
@@ -35,13 +57,13 @@ const MyDesignsContent = () => {
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
-      page: page,
+      page: filters.page,
       pagesize: 10,
-      order: sortBy,
+      order: filters.sortBy,
       user_id: currentUser?.id,
       metrics: true,
-      visibility: visibility,
-      search: searchQuery,
+      visibility: filters.visibility,
+      search: filters.searchQuery,
     },
     {
       skip: !currentUser?.id,
@@ -59,18 +81,18 @@ const MyDesignsContent = () => {
           }}
           width="auto"
           placeholder={'Search Designs'}
-          value={searchQuery}
+          value={filters.searchQuery}
           onChange={onSearchChange}
           endAdornment={
             <p style={{ color: theme.palette.text.default }}>Total Designs: {total_count}</p>
           }
         />
         <Box sx={{ minWidth: 200 }}>
-          <SortBySelect sortBy={sortBy} handleSortByChange={handleSortByChange} />
+          <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
         </Box>
         <Box sx={{ minWidth: 150 }}>
           <VisibilitySelect
-            visibility={visibility}
+            visibility={filters.visibility}
             handleVisibilityChange={handleVisibilityChange}
             visibilityItems={visibilityItems}
           />
@@ -79,6 +101,8 @@ const MyDesignsContent = () => {
       </Box>
       <TableListHeader />
       <MainDesignsContent
+        key={'my-designs-content'}
+        page={filters.page}
         designs={designsData?.patterns}
         isFetching={isFetching}
         isLoading={isLoading}

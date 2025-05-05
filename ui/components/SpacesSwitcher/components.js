@@ -156,8 +156,8 @@ export const VisibilitySelect = ({ visibility, handleVisibilityChange, visibilit
 
 export const SortBySelect = ({ sortBy, handleSortByChange }) => {
   const sortOptions = [
-    { value: 'name desc', label: 'Name (A-Z)' },
-    { value: 'name asc', label: 'Name (Z-A)' },
+    { value: 'name asc', label: 'Name (A-Z)' },
+    { value: 'name desc', label: 'Name (Z-A)' },
     { value: 'updated_at desc', label: 'Last Updated (Newest First)' },
     { value: 'updated_at asc', label: 'Last Updated (Oldest First)' },
     { value: 'created_at desc', label: 'Created At (Newest First)' },
@@ -191,7 +191,7 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
 export const TableListHeader = () => {
   return (
     <Box display={'flex'} width={'100%'} paddingInline={'1rem'} gap={'1rem'}>
-      <Typography style={{ width: '45%' }} variant="body1">
+      <Typography style={{ width: '40%' }} variant="body1">
         Name
       </Typography>
       <Typography style={{ width: '30%' }} variant="body1">
@@ -200,7 +200,7 @@ export const TableListHeader = () => {
       <Typography style={{ width: '10%' }} variant="body1">
         Visibility
       </Typography>
-      <Typography style={{ width: '15%' }} variant="body1">
+      <Typography style={{ width: '20%' }} variant="body1">
         Actions
       </Typography>
     </Box>

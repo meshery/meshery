@@ -10,38 +10,57 @@ import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
 const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
-  const [visibility, setVisibility] = useState(visibilityItems);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('updated_at desc');
+
+  const [filters, setFilters] = useState({
+    visibility: visibilityItems,
+    searchQuery: '',
+    sortBy: 'updated_at desc',
+    page: 0,
+  });
 
   const handleSortByChange = useCallback((event) => {
-    setSortBy(event.target.value);
-    setPage(0);
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: event.target.value,
+      page: 0,
+    }));
   }, []);
 
   const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
-    setVisibility(typeof value === 'string' ? value.split(',') : value);
-    setPage(0);
+    setFilters((prev) => ({
+      ...prev,
+      visibility: typeof value === 'string' ? value.split(',') : value,
+      page: 0,
+    }));
   }, []);
 
   const onSearchChange = useCallback((e) => {
-    setPage(0);
-    setSearchQuery(e.target.value);
+    setFilters((prev) => ({
+      ...prev,
+      searchQuery: e.target.value,
+      page: 0,
+    }));
   }, []);
 
-  const [page, setPage] = useState(0);
+  const setPage = useCallback((newPage) => {
+    setFilters((prev) => ({
+      ...prev,
+      page: newPage,
+    }));
+  }, []);
+
   const {
     data: viewsData,
     isLoading,
     isFetching,
   } = useFetchViewsQuery(
     {
-      page: page,
+      page: filters.page,
       pagesize: 10,
-      order: sortBy,
-      visibility: visibility,
-      search: searchQuery,
+      order: filters.sortBy,
+      visibility: filters.visibility,
+      search: filters.searchQuery,
       user_id: currentUser?.id,
     },
     {
@@ -62,18 +81,18 @@ const MyViewsContent = () => {
           }}
           width="auto"
           placeholder={'Search Views'}
-          value={searchQuery}
+          value={filters.searchQuery}
           onChange={onSearchChange}
           endAdornment={
             <p style={{ color: theme.palette.text.default }}>Total Views: {total_count}</p>
           }
         />
         <Box sx={{ minWidth: 200 }}>
-          <SortBySelect sortBy={sortBy} handleSortByChange={handleSortByChange} />
+          <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
         </Box>
         <Box sx={{ minWidth: 150 }}>
           <VisibilitySelect
-            visibility={visibility}
+            visibility={filters.visibility}
             handleVisibilityChange={handleVisibilityChange}
             visibilityItems={visibilityItems}
           />
@@ -81,6 +100,8 @@ const MyViewsContent = () => {
       </Box>
       <TableListHeader />
       <MainViewsContent
+        key={'my-views'}
+        page={filters.page}
         hasMore={hasMore}
         isFetching={isFetching}
         isLoading={isLoading}

@@ -37,38 +37,62 @@ const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
 
-  const [searchQuery, setSearchQuery] = useState('');
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
-  const [type, setType] = React.useState('design');
-  const [sortBy, setSortBy] = useState('updated_at desc');
-  const [visibility, setVisibility] = useState(visibilityItems);
+
+  const [filters, setFilters] = useState({
+    type: 'design',
+    searchQuery: '',
+    sortBy: 'updated_at desc',
+    visibility: visibilityItems,
+    designsPage: 0,
+    viewsPage: 0,
+  });
+
+  const updateFilters = (newFilters) => {
+    setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
+  };
 
   const handleTypeChange = useCallback((event) => {
-    setType(event.target.value);
-    setDesignsPage(0);
-    setViewsPage(0);
+    updateFilters({
+      type: event.target.value,
+      designsPage: 0,
+      viewsPage: 0,
+    });
   }, []);
+
   const handleSortByChange = useCallback((event) => {
-    setDesignsPage(0);
-    setViewsPage(0);
-    setSortBy(event.target.value);
+    updateFilters({
+      sortBy: event.target.value,
+      designsPage: 0,
+      viewsPage: 0,
+    });
   }, []);
 
   const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
-    setVisibility(typeof value === 'string' ? value.split(',') : value);
-    setDesignsPage(0);
-    setViewsPage(0);
+    updateFilters({
+      visibility: typeof value === 'string' ? value.split(',') : value,
+      designsPage: 0,
+      viewsPage: 0,
+    });
   }, []);
 
   const onSearchChange = useCallback((e) => {
-    setDesignsPage(0);
-    setViewsPage(0);
-    setSearchQuery(e.target.value);
+    updateFilters({
+      searchQuery: e.target.value,
+      designsPage: 0,
+      viewsPage: 0,
+    });
   }, []);
 
-  const [designsPage, setDesignsPage] = useState(0);
-  const [viewsPage, setViewsPage] = useState(0);
+  const setDesignsPage = useCallback((page) => {
+    updateFilters({ designsPage: page });
+  }, []);
+
+  const setViewsPage = useCallback((page) => {
+    updateFilters({ viewsPage: page });
+  }, []);
+
   const {
     data: designsData,
     isLoading,
@@ -77,14 +101,14 @@ const WorkspaceContent = ({ workspace }) => {
     {
       infiniteScroll: true,
       workspaceId: workspace?.id,
-      search: searchQuery,
-      page: designsPage,
+      search: filters.searchQuery,
+      page: filters.designsPage,
       pagesize: 10,
-      order: sortBy,
-      visibility: visibility,
+      order: filters.sortBy,
+      visibility: filters.visibility,
     },
     {
-      skip: type !== 'design',
+      skip: filters.type !== 'design',
     },
   );
 
@@ -96,14 +120,14 @@ const WorkspaceContent = ({ workspace }) => {
     {
       infiniteScroll: true,
       workspaceId: workspace?.id,
-      search: searchQuery,
-      page: viewsPage,
+      search: filters.searchQuery,
+      page: filters.viewsPage,
       pagesize: 10,
-      visibility: visibility,
+      visibility: filters.visibility,
       order: 'updated_at desc',
     },
     {
-      skip: type !== 'view' || !workspace?.id,
+      skip: filters.type !== 'view' || !workspace?.id,
     },
   );
 
@@ -132,11 +156,11 @@ const WorkspaceContent = ({ workspace }) => {
               backgroundColor: 'transparent',
             }}
             width="auto"
-            placeholder={type === 'design' ? 'Search Designs' : 'Search Views'}
-            value={searchQuery}
+            placeholder={filters.type === 'design' ? 'Search Designs' : 'Search Views'}
+            value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              type === 'design' ? (
+              filters.type === 'design' ? (
                 <p style={{ color: theme.palette.text.default }}>
                   Total Designs: {designsData?.total_count ?? 0}
                 </p>
@@ -148,17 +172,17 @@ const WorkspaceContent = ({ workspace }) => {
             }
           />{' '}
           <AssignDesignViewButton
-            type={type}
+            type={filters.type}
             handleAssign={(e) => {
               e.stopPropagation();
-              if (type === 'design') {
+              if (filters.type === 'design') {
                 designAssignment.handleAssignModal();
               } else {
                 viewAssignment.handleAssignModal();
               }
             }}
             disabled={
-              type === 'design'
+              filters.type === 'design'
                 ? !CAN(
                     keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
                     keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
@@ -175,7 +199,7 @@ const WorkspaceContent = ({ workspace }) => {
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
-                value={type}
+                value={filters.type}
                 label="Type"
                 onChange={handleTypeChange}
                 sx={{
@@ -191,11 +215,11 @@ const WorkspaceContent = ({ workspace }) => {
           </Box>
 
           <Box sx={{ minWidth: 120 }}>
-            <SortBySelect sortBy={sortBy} handleSortByChange={handleSortByChange} />
+            <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
           </Box>
           <Box sx={{ minWidth: 120 }}>
             <VisibilitySelect
-              visibility={visibility}
+              visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
@@ -204,8 +228,9 @@ const WorkspaceContent = ({ workspace }) => {
         <Box minWidth={'50rem'}>
           <TableListHeader />
 
-          {type == 'design' && (
+          {filters.type == 'design' && (
             <MainDesignsContent
+              page={filters.designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
               isFetching={isFetching}
@@ -215,8 +240,9 @@ const WorkspaceContent = ({ workspace }) => {
               workspaceId={workspace?.id}
             />
           )}
-          {type == 'view' && (
+          {filters.type == 'view' && (
             <MainViewsContent
+              page={filters.viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}
               isFetching={isViewFetching}

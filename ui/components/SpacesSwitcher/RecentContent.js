@@ -20,46 +20,78 @@ const RecentContent = () => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
 
-  const [searchQuery, setSearchQuery] = useState('');
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
-  const [type, setType] = React.useState('design');
-  const [author, setAuthor] = React.useState('');
-  const [sortBy, setSortBy] = useState('updated_at desc');
-  const [visibility, setVisibility] = useState(visibilityItems);
+  const [filters, setFilters] = useState({
+    type: 'design',
+    searchQuery: '',
+    author: '',
+    sortBy: 'updated_at desc',
+    visibility: visibilityItems,
+    designsPage: 0,
+    viewsPage: 0,
+  });
+
   const handleTypeChange = useCallback((event) => {
-    setType(event.target.value);
-    setDesignsPage(0);
-    setViewsPage(0);
+    setFilters((prev) => ({
+      ...prev,
+      type: event.target.value,
+      designsPage: 0,
+      viewsPage: 0,
+    }));
   }, []);
 
   const handleAuthorChange = useCallback((user_id) => {
-    setAuthor(user_id);
-    setDesignsPage(0);
-    setViewsPage(0);
+    setFilters((prev) => ({
+      ...prev,
+      author: user_id,
+      designsPage: 0,
+      viewsPage: 0,
+    }));
   }, []);
 
   const handleSortByChange = useCallback((event) => {
-    setSortBy(event.target.value);
-    setDesignsPage(0);
-    setViewsPage(0);
+    setFilters((prev) => ({
+      ...prev,
+      sortBy: event.target.value,
+      designsPage: 0,
+      viewsPage: 0,
+    }));
   }, []);
 
   const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
-    setVisibility(typeof value === 'string' ? value.split(',') : value);
-    setDesignsPage(0);
-    setViewsPage(0);
+    setFilters((prev) => ({
+      ...prev,
+      visibility: typeof value === 'string' ? value.split(',') : value,
+      designsPage: 0,
+      viewsPage: 0,
+    }));
   }, []);
 
   const onSearchChange = useCallback((e) => {
-    setSearchQuery(e.target.value);
-    setDesignsPage(0);
-    setViewsPage(0);
+    setFilters((prev) => ({
+      ...prev,
+      searchQuery: e.target.value,
+      designsPage: 0,
+      viewsPage: 0,
+    }));
   }, []);
 
-  const [designsPage, setDesignsPage] = useState(0);
-  const [viewsPage, setViewsPage] = useState(0);
+  const setDesignsPage = useCallback((page) => {
+    setFilters((prev) => ({
+      ...prev,
+      designsPage: page,
+    }));
+  }, []);
+
+  const setViewsPage = useCallback((page) => {
+    setFilters((prev) => ({
+      ...prev,
+      viewsPage: page,
+    }));
+  }, []);
+
   const {
     data: designsData,
     isLoading,
@@ -67,16 +99,16 @@ const RecentContent = () => {
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
-      page: designsPage,
+      page: filters.designsPage,
       pagesize: 10,
-      order: sortBy,
+      order: filters.sortBy,
       metrics: true,
-      search: searchQuery,
-      visibility: visibility,
-      user_id: author,
+      search: filters.searchQuery,
+      visibility: filters.visibility,
+      user_id: filters.author,
     },
     {
-      skip: type !== 'design',
+      skip: filters.type !== 'design',
     },
   );
 
@@ -86,15 +118,15 @@ const RecentContent = () => {
     isFetching: isViewFetching,
   } = useFetchViewsQuery(
     {
-      page: viewsPage,
+      page: filters.viewsPage,
       pagesize: 10,
-      order: sortBy,
-      user_id: author,
-      visibility: visibility,
-      search: searchQuery,
+      order: filters.sortBy,
+      user_id: filters.author,
+      visibility: filters.visibility,
+      search: filters.searchQuery,
     },
     {
-      skip: type !== 'view',
+      skip: filters.type !== 'view',
     },
   );
 
@@ -109,11 +141,11 @@ const RecentContent = () => {
               backgroundColor: 'transparent',
             }}
             width="auto"
-            placeholder={type === 'design' ? 'Search Designs' : 'Search Views'}
-            value={searchQuery}
+            placeholder={filters.type === 'design' ? 'Search Designs' : 'Search Views'}
+            value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              type === 'design' ? (
+              filters.type === 'design' ? (
                 <p style={{ color: theme.palette.text.default }}>
                   Total Designs: {designsData?.total_count ?? 0}
                 </p>
@@ -124,14 +156,14 @@ const RecentContent = () => {
               )
             }
           />{' '}
-          {type == 'design' && <ImportButton />}
+          {filters.type == 'design' && <ImportButton />}
         </Box>
         <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
-                value={type}
+                value={filters.type}
                 label="Type"
                 onChange={handleTypeChange}
                 sx={{
@@ -147,7 +179,7 @@ const RecentContent = () => {
           </Box>
 
           <Box sx={{ minWidth: 120 }}>
-            <SortBySelect sortBy={sortBy} handleSortByChange={handleSortByChange} />
+            <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
           </Box>
           <Box sx={{ minWidth: 300 }}>
             <FormControl fullWidth>
@@ -156,7 +188,7 @@ const RecentContent = () => {
           </Box>
           <Box sx={{ minWidth: 120 }}>
             <VisibilitySelect
-              visibility={visibility}
+              visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
@@ -165,22 +197,25 @@ const RecentContent = () => {
         <Box minWidth={'50rem'}>
           <TableListHeader />
 
-          {type == 'design' && (
+          {filters.type == 'design' && (
             <MainDesignsContent
-              page={designsPage}
+              key={'designs'}
+              page={filters.designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
               isFetching={isFetching}
               designs={designsData?.patterns}
               hasMore={
-                !!designsData && designsData.total_count > (designsPage + 1) * designsData.page_size
+                !!designsData &&
+                designsData.total_count > (filters.designsPage + 1) * designsData.page_size
               }
               total_count={designsData?.total_count}
             />
           )}
-          {type == 'view' && (
+          {filters.type == 'view' && (
             <MainViewsContent
-              page={viewsPage}
+              key={'views'}
+              page={filters.viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}
               isFetching={isViewFetching}

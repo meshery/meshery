@@ -41,11 +41,11 @@ import { keys } from '@/utils/permission_constants';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import { useDeletePattern } from '../Lifecycle/Workspaces/hooks';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
 const MainDesignsContent = ({
+  page,
   setPage,
   isLoading,
   isFetching,
@@ -65,7 +65,7 @@ const MainDesignsContent = ({
   const [deletePatternFile] = useDeletePatternFileMutation();
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
-    setPage((prevPage) => prevPage + 1);
+    setPage(page + 1);
   }, [isLoading, isFetching]);
 
   const { loadingRef } = useInfiniteScroll({
@@ -356,7 +356,7 @@ const MainDesignsContent = ({
             const canChangeVisibility = !isPublished && isOwner;
 
             return (
-              <React.Fragment key={design?.id}>
+              <React.Fragment key={`${design?.id}-${design?.name}`}>
                 <DesignViewListItem
                   type="design"
                   selectedItem={design}

@@ -68,10 +68,9 @@ export const viewsApi = api
         },
         // Refetch when the page arg changes
         forceRefetch({ currentArg, previousArg }) {
-          return !_.eq(currentArg, previousArg);
+          return !_.isEqual(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.VIEWS }],
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
     }),
   });

@@ -130,7 +130,7 @@ export const StyledListItem = styled(ListItem)({
 export const StyledTextContainer = styled('div')({
   display: 'flex',
   alignItems: 'center',
-  width: '45%',
+  width: '40%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -155,7 +155,7 @@ export const StyledVisibilityContainer = styled('div')({
 });
 
 export const StyledActionsContainer = styled('div')({
-  width: '15%',
+  width: '20%',
   display: 'flex',
   gap: '0.5rem',
 });

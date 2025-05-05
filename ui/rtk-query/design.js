@@ -53,6 +53,7 @@ export const designsApi = api
         serializeQueryArgs: ({ endpointName }) => {
           return endpointName;
         },
+
         // Always merge incoming data to the cache entry
         merge: (currentCache, newItems, { arg }) => {
           if (arg.page === 0) {
@@ -64,9 +65,10 @@ export const designsApi = api
             patterns: [...(currentCache?.patterns || []), ...(newItems?.patterns || [])],
           };
         },
-        // Refetch when the page arg changes
+
+        // Refetch when any arg changes
         forceRefetch({ currentArg, previousArg }) {
-          return !_.eq(currentArg, previousArg);
+          return !_.isEqual(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
