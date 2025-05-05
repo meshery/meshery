@@ -14,7 +14,7 @@ import {
   useTheme,
   useViewAssignment,
 } from '@layer5/sistent';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
@@ -48,27 +48,29 @@ const WorkspaceContent = ({ workspace }) => {
   const [sortBy, setSortBy] = useState('updated_at desc');
   const [visibility, setVisibility] = useState(visibilityItems);
 
-  const handleTypeChange = (event) => {
+  const handleTypeChange = useCallback((event) => {
     setType(event.target.value);
     setDesignsPage(0);
     setViewsPage(0);
-  };
-  const handleSortByChange = (event) => {
+  }, []);
+  const handleSortByChange = useCallback((event) => {
     setDesignsPage(0);
     setViewsPage(0);
     setSortBy(event.target.value);
-  };
-  const handleVisibilityChange = (event) => {
+  }, []);
+
+  const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
     setVisibility(typeof value === 'string' ? value.split(',') : value);
     setDesignsPage(0);
     setViewsPage(0);
-  };
-  const onSearchChange = (e) => {
+  }, []);
+
+  const onSearchChange = useCallback((e) => {
     setDesignsPage(0);
     setViewsPage(0);
     setSearchQuery(e.target.value);
-  };
+  }, []);
 
   const [designsPage, setDesignsPage] = useState(0);
   const [viewsPage, setViewsPage] = useState(0);

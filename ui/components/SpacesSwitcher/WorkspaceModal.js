@@ -30,6 +30,7 @@ import { useLegacySelector } from 'lib/store';
 import { DrawerHeader, StyledDrawer } from './styles';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import WorkspaceContent from './WorkspaceContent';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 const navConfig = {
   mainItems: [
@@ -198,11 +199,13 @@ const getContentById = (id, workspacesData) => {
 
 const Navigation = () => {
   const [open, setOpen] = useState(true);
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+  const isLocalProvider = capabilitiesData?.provider_type === 'local';
+
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
 
-  // const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const [selectedId, setSelectedId] = useState('Recent');
+  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
 
   const currentOrganization = useLegacySelector((state) => state.get('organization'));
 
@@ -239,15 +242,16 @@ const Navigation = () => {
         }}
       >
         <List>
-          {navConfig.mainItems.map((item) => (
-            <NavItem
-              key={item.id}
-              item={item}
-              open={open}
-              selectedId={selectedId}
-              onSelect={handleItemSelect}
-            />
-          ))}
+          {!isLocalProvider &&
+            navConfig.mainItems.map((item) => (
+              <NavItem
+                key={item.id}
+                item={item}
+                open={open}
+                selectedId={selectedId}
+                onSelect={handleItemSelect}
+              />
+            ))}
 
           <WorkspacesSection
             open={open}
