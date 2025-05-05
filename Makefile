@@ -504,11 +504,9 @@ server-integration-tests-meshsync-cleanup:
 	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup
 
 ## Runs meshsync integration tests code itself
-server-integration-tests-meshsync-run: build-server
+server-integration-tests-meshsync-run:
 	RUN_INTEGRATION_TESTS=true \
-	MESHERY_BINARY_PATH=$(TODO_MESHERY_BINARY_TARGET_ABSOLUTE) \
-	SAVE_MESHSYNC_OUTPUT=true \
-	go test -v -count=1 -run Integration $(TODO_INTEGRATION_TESTS_DIR)
+	go test -v -count=1 -run Integration ./server/integration-tests/meshsync
 
-## Runs meshsync integration tests full cycle (setup, run, cleanup)
-server-integration-tests-meshsync: server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
+## Runs meshsync integration tests full cycle (docker build, setup, run, cleanup)
+server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
