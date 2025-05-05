@@ -158,7 +158,11 @@ components:
   colorIcon: assets/img/integrations/kubedb/components/shard-configuration/icons/color/shard-configuration-color.svg
   whiteIcon: assets/img/integrations/kubedb/components/shard-configuration/icons/white/shard-configuration-white.svg
   description: 
-components-count: 37
+- name: ignite-version
+  colorIcon: assets/img/integrations/kubedb/components/ignite-version/icons/color/ignite-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/ignite-version/icons/white/ignite-version-white.svg
+  description: 
+components-count: 38
 relationships: 
 relationship-count: 0
 featureList: [

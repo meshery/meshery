@@ -42,7 +42,11 @@ components:
   colorIcon: assets/img/integrations/aws-memorydb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-memorydb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
-components-count: 8
+- name: multi-region-cluster
+  colorIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/color/multi-region-cluster-color.svg
+  whiteIcon: assets/img/integrations/aws-memorydb-controller/components/multi-region-cluster/icons/white/multi-region-cluster-white.svg
+  description: 
+components-count: 9
 relationships: 
 relationship-count: 0
 featureList: [
