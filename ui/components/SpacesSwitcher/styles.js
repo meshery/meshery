@@ -5,6 +5,8 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
+  DARK_BLUE_GRAY,
+  Box,
 } from '@layer5/sistent';
 
 const DRAWER_WIDTH = 300;
@@ -24,7 +26,7 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('lg')]: {
       position: 'absolute',
       height: '100%',
       zIndex: theme.zIndex.drawer,
@@ -37,6 +39,8 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
       }),
       overflowX: 'hidden',
       '& .MuiDrawer-paper': {
+        backgroundColor:
+          theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
         width: DRAWER_WIDTH,
         transition: theme.transitions.create('width', {
           easing: theme.transitions.easing.sharp,
@@ -56,6 +60,8 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
         width: `calc(${theme.spacing(8)} + 1px)`,
       },
       '& .MuiDrawer-paper': {
+        backgroundColor:
+          theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
         transition: theme.transitions.create('width', {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.leavingScreen,
@@ -69,6 +75,18 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
     }),
   }),
 );
+
+export const StyledMainContent = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  width: '100%',
+  height: '100%',
+  padding: '1rem 2rem',
+  overflowY: 'auto',
+  [theme.breakpoints.down('lg')]: {
+    paddingLeft: '5rem',
+  },
+}));
 
 export const DesignList = styled(List)({
   width: '100%',

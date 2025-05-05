@@ -65,8 +65,6 @@ export const designsApi = api
         },
         // Refetch when the page arg changes
         forceRefetch({ currentArg, previousArg }) {
-          console.log('amit currentArg', currentArg);
-          console.log('amit previousArg', previousArg);
           return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.DESIGNS }],

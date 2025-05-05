@@ -1,31 +1,26 @@
 //@ts-check
-import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { CloneIcon, IconButton } from '@layer5/sistent';
+import { DARK_BLUE_GRAY, IconButton } from '@layer5/sistent';
 import { CustomTooltip, styled, Menu, MenuItem } from '@layer5/sistent';
-import { MoreVert, Public as PublicIcon, Reply } from '@mui/icons-material';
+import { MoreVert, Reply } from '@mui/icons-material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
 import { useMediaQuery, useTheme } from '@mui/material';
-import { iconMedium, iconSmall } from 'css/icons.styles';
+import { iconMedium } from 'css/icons.styles';
 import React from 'react';
 
-const StyledMenuItem = styled(MenuItem)({
+const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   paddingLeft: '.5rem',
   paddingRight: '.5rem',
   paddingTop: '.65rem',
   paddingBottom: '.65rem',
-  color: '#eee',
   margin: '0px',
   height: '100%',
-  '&:hover': {
-    backgroundColor: '#36474f',
-  },
-});
+}));
 
-const StyledMenuDiv = styled('div')({
+const StyledMenuDiv = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -34,17 +29,15 @@ const StyledMenuDiv = styled('div')({
   position: 'relative',
   padding: '0',
   gap: '0.4rem',
-  backgroundColor: '#263238',
-});
+  backgroundColor: theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
+}));
 
 export const GeorgeMenu = ({ options = [] }) => {
-  // States.
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
-  // Handlers.
   const handleClick = (event) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -56,7 +49,6 @@ export const GeorgeMenu = ({ options = [] }) => {
     setAnchorEl(null);
   };
 
-  // Renders direct icons for non-mobile view
   const renderDirectIcons = () => {
     return (
       <div style={{ display: 'flex' }}>
@@ -69,9 +61,7 @@ export const GeorgeMenu = ({ options = [] }) => {
                 option.handler(event);
               }}
             >
-              {option.icon && (
-                <option.icon fill="#eeeeee" style={{ ...iconMedium }} {...iconMedium} />
-              )}
+              {option.icon}
             </IconButton>
           </CustomTooltip>
         ))}
@@ -79,12 +69,10 @@ export const GeorgeMenu = ({ options = [] }) => {
     );
   };
 
-  // Return direct icons for non-mobile/larger screens
   if (!isMobile) {
     return renderDirectIcons();
   }
 
-  // Default menu for mobile screens
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }} onClick={handleClick}>
@@ -133,9 +121,7 @@ export const GeorgeMenu = ({ options = [] }) => {
                     handleClose(event);
                   }}
                 >
-                  {option.icon && (
-                    <option.icon fill="#eeeeee" style={{ ...iconMedium }} {...iconMedium} />
-                  )}
+                  {option.icon}
                 </StyledMenuItem>
               </CustomTooltip>
             </StyledMenuDiv>
@@ -147,13 +133,11 @@ export const GeorgeMenu = ({ options = [] }) => {
 };
 
 const MenuComponent = ({ items, visibility, rowData = null }) => {
-  // States.
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
-  // Handlers.
   const handleClick = (event) => {
     event.stopPropagation();
     setAnchorEl(event.currentTarget);
@@ -165,7 +149,6 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
     setAnchorEl(null);
   };
 
-  // Function to handle specific actions
   const handleAction = (action, event) => {
     event.stopPropagation();
     if (action === 'export' && items[0]?.downloadHandler) {
@@ -181,14 +164,13 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
     if (!isMobile) handleClose(event);
   };
 
-  // Common configuration for menu items
   const menuItems = [
     {
       key: 'export_design',
       title: 'Export Design',
       icon: GetAppIcon,
       action: 'export',
-      iconProps: { fill: '#eee', style: { ...iconMedium } },
+      iconProps: { style: { ...iconMedium } },
       visible: CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
     },
     {
@@ -196,7 +178,7 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
       title: 'Delete',
       icon: DeleteIcon,
       action: 'delete',
-      iconProps: { fill: '#eee', style: { ...iconMedium } },
+      iconProps: { style: { ...iconMedium } },
       visible: CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
     },
     {
@@ -204,7 +186,7 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
       title: 'Share',
       icon: Reply,
       action: 'share',
-      iconProps: { style: { ...iconMedium, transform: 'scaleX(-1)', color: '#eee' } },
+      iconProps: { style: { ...iconMedium, transform: 'scaleX(-1)' } },
       visible:
         visibility !== 'published' && CAN(keys.SHARE_DESIGN.action, keys.SHARE_DESIGN.subject),
     },
@@ -213,43 +195,27 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
       title: 'Info',
       icon: InfoIcon,
       action: 'info',
-      iconProps: { style: { ...iconMedium, transform: 'scaleX(-1)', color: '#eee' } },
+      iconProps: { style: { ...iconMedium, transform: 'scaleX(-1)' } },
       visible: true,
     },
   ];
 
-  // Renders direct icons for mobile view
   const renderDirectIcons = () => {
     return (
-      <div
-        data-testid={`designs-tr-icons-${rowData?.id}`}
-        style={{ display: 'flex', gap: '0.75rem' }}
-      >
+      <div data-testid={`designs-tr-icons-${rowData?.id}`} style={{ display: 'flex' }}>
         {menuItems
           .filter((item) => item.visible)
           .map((item) => (
             <CustomTooltip key={item.key} title={item.title}>
-              {item.key === 'clone' ? (
-                <div
-                  style={{ cursor: 'pointer' }}
-                  onClick={(event) => handleAction(item.action, event)}
-                >
-                  <item.icon {...(item.iconProps || {})} />
-                </div>
-              ) : (
-                <item.icon
-                  {...(item.iconProps || {})}
-                  style={{ ...(item.iconProps?.style || {}), cursor: 'pointer' }}
-                  onClick={(event) => handleAction(item.action, event)}
-                />
-              )}
+              <IconButton onClick={(event) => handleAction(item.action, event)}>
+                <item.icon style={{ ...(item.iconProps?.style || {}) }} />
+              </IconButton>
             </CustomTooltip>
           ))}
       </div>
     );
   };
 
-  // Render menu items for the dropdown
   const renderMenuItems = (option) => {
     return menuItems
       .filter((item) => item.visible)
@@ -259,12 +225,22 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
             data-testid={`designs-tr-menu-li-${item.key}-${rowData?.id}`}
             key={item.key}
             onClick={(event) => {
-              if (item.action === 'unpublish') option.unPublishHandler();
-              else if (item.action === 'clone') option.cloneHandler();
-              else if (item.action === 'download') option.downloadHandler();
-              else if (item.action === 'delete') option.deleteHandler();
-              else if (item.action === 'share') option.shareHandler();
-              else if (item.action === 'info') option.infoHandler();
+              switch (item.action) {
+                case 'export':
+                  option.downloadHandler();
+                  break;
+                case 'delete':
+                  option.deleteHandler();
+                  break;
+                case 'share':
+                  option.shareHandler();
+                  break;
+                case 'info':
+                  option.infoHandler();
+                  break;
+                default:
+                  break;
+              }
               handleClose(event);
             }}
           >
@@ -274,19 +250,19 @@ const MenuComponent = ({ items, visibility, rowData = null }) => {
       ));
   };
 
-  // Return direct icons for non-mobile/larger screens
   if (!isMobile) {
     return renderDirectIcons();
   }
 
-  // Default menu for mobile screens
   return (
     <div data-testid={`designs-tr-menu-${rowData?.id}`}>
-      <div style={{ display: 'flex', alignItems: 'center' }} onClick={handleClick}>
-        <CustomTooltip title="Quick actions">
-          <MoreVert style={{ fontSize: '1rem', ...iconMedium }} />
-        </CustomTooltip>
-      </div>
+      <CustomTooltip title="Quick actions">
+        <div>
+          <IconButton onClick={handleClick}>
+            <MoreVert style={{ fontSize: '1rem', ...iconMedium }} />
+          </IconButton>
+        </div>
+      </CustomTooltip>
       <Menu
         id="long-menu"
         anchorEl={anchorEl}

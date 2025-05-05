@@ -9,6 +9,7 @@ import {
   DeleteIcon,
   PROMPT_VARIANTS,
   PromptComponent,
+  useTheme,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -96,12 +97,13 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
   const ghostTextNodeRef = useRef(null);
 
   const [deleteView] = useDeleteViewMutation();
+  const theme = useTheme();
 
   const VIEW_ACTIONS = {
     EXPORT_VIEW: {
       id: 'EXPORT_VIEW',
       title: 'Export View',
-      icon: GetAppIcon,
+      icon: <GetAppIcon style={{ fill: theme.palette.icon.default }} />,
       handler: async ({ view }) => {
         const res = await getView({ viewId: view.id });
         downloadFileFromContent(JSON.stringify(res.data), `${view.name}.json`, 'application/json');
@@ -111,21 +113,21 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
     DELETE_VIEW: {
       id: 'DELETE_VIEW',
       title: 'Delete View',
-      icon: DeleteIcon,
+      icon: <DeleteIcon fill={theme.palette.icon.default} />,
       enabled: ({ view, userId }) =>
         CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
     },
 
-    UPDATE_INFO: {
-      id: 'UPDATE_INFO',
-      title: 'Update Info',
-      icon: InfoIcon,
-      enabled: () => CAN(keys.EDIT_VIEW.action, keys.EDIT_VIEW.subject),
+    VIEW_INFO: {
+      id: 'VIEW_INFO',
+      title: 'View Info',
+      icon: <InfoIcon fill={theme.palette.icon.default} />,
+      enabled: () => true,
     },
     SHARE_VIEW: {
       id: 'SHARE_VIEW',
       title: 'Share View',
-      icon: ShareIcon,
+      icon: <ShareIcon fill={theme.palette.icon.default} />,
       enabled: () => true,
     },
   };
@@ -151,10 +153,7 @@ const MainViewsContent = ({ setPage, isLoading, isFetching, views, hasMore, tota
         handler: () => handleOpenShareModal(view, RESOURCE_TYPE.VIEW),
       },
       {
-        id: 'VIEW_INFO',
-        title: 'View Info',
-        icon: InfoIcon,
-        enabled: () => true,
+        ...VIEW_ACTIONS.VIEW_INFO,
         handler: () => handleOpenInfoModal(view, user),
       },
     ];

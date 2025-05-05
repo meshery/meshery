@@ -14,9 +14,10 @@ import {
   DesignIcon,
   ViewIcon,
   Collapse,
+  useMediaQuery,
 } from '@layer5/sistent';
 import { WorkspacesComponent } from '../Lifecycle';
-import { iconMedium } from 'css/icons.styles';
+import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
@@ -27,13 +28,14 @@ import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
 import { useLegacySelector } from 'lib/store';
-import { DrawerHeader, StyledDrawer } from './styles';
+import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
-const navConfig = {
-  mainItems: [
+const getNavItem = () => {
+  const theme = useTheme();
+  return [
     {
       id: 'Recent',
       label: 'Recent',
@@ -44,17 +46,22 @@ const navConfig = {
       id: 'My-Designs',
       label: 'My Designs',
       icon: (
-        <DesignIcon fill="white" secondaryFill="white" width="20" height="20" primaryFill="white" />
+        <DesignIcon
+          fill={theme.palette.icon.default}
+          secondaryFill={theme.palette.icon.default}
+          {...iconSmall}
+          primaryFill={theme.palette.icon.default}
+        />
       ),
       content: <MyDesignsContent />,
     },
     {
       id: 'My-Views',
       label: 'My Views',
-      icon: <ViewIcon height="24" width="24" fill="white" />,
+      icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
       content: <MyViewsContent />,
     },
-  ],
+  ];
 };
 
 const NavItem = ({ item, open, selectedId, onSelect }) => {
@@ -85,6 +92,7 @@ const NavItem = ({ item, open, selectedId, onSelect }) => {
 };
 
 const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoading }) => {
+  const theme = useTheme();
   const [isExpanded, setIsExpanded] = useState(true);
 
   const handleWorkspacesClick = () => {
@@ -95,7 +103,13 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
   const workspaces = workspacesData?.workspaces?.map((workspace) => ({
     id: workspace.id,
     name: workspace.name,
-    icon: <WorkspaceIcon fill="white" secondaryFill="white" width="20" height="20" />,
+    icon: (
+      <WorkspaceIcon
+        fill={theme.palette.icon.default}
+        secondaryFill={theme.palette.icon.default}
+        {...iconSmall}
+      />
+    ),
   }));
 
   return (
@@ -117,13 +131,15 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
               mr: open ? 3 : 'auto',
             }}
           >
-            <WorkspaceIcon fill="white" secondaryFill="white" />
+            <WorkspaceIcon
+              fill={theme.palette.icon.default}
+              secondaryFill={theme.palette.icon.default}
+              {...iconSmall}
+            />{' '}
           </ListItemIcon>
           <ListItemText primary="All Workspaces" sx={{ opacity: open ? 1 : 0 }} />
           {open && workspaces && workspaces.length > 0 && (
-            <Box component="span" sx={{ color: 'white' }}>
-              {isExpanded ? <ExpandLess /> : <ExpandMore />}
-            </Box>
+            <Box component="span">{isExpanded ? <ExpandLess /> : <ExpandMore />}</Box>
           )}
         </ListItemButton>
       </ListItem>
@@ -179,8 +195,8 @@ const getContentById = (id, workspacesData) => {
       });
     }
   }, [id, workspaceSwitcherContext, workspacesData]);
-
-  const mainItem = navConfig.mainItems.find((item) => item.id === id);
+  const navConfig = getNavItem();
+  const mainItem = navConfig.find((item) => item.id === id);
   if (mainItem && mainItem.content) {
     return mainItem.content;
   }
@@ -198,7 +214,13 @@ const getContentById = (id, workspacesData) => {
 };
 
 const Navigation = () => {
-  const [open, setOpen] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  useEffect(() => {
+    setOpen(isMobile ? false : true);
+  }, [isMobile]);
+
+  const [open, setOpen] = useState(isMobile ? false : true);
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
 
@@ -228,9 +250,10 @@ const Navigation = () => {
   const handleItemSelect = (id) => {
     setSelectedId(id);
   };
+  const navConfig = getNavItem();
 
   return (
-    <Box sx={{ display: 'flex', position: 'relative', height: '70vh' }}>
+    <Box sx={{ display: 'flex', position: 'relative', height: '100%' }}>
       <StyledDrawer
         variant="permanent"
         open={open}
@@ -243,7 +266,7 @@ const Navigation = () => {
       >
         <List>
           {!isLocalProvider &&
-            navConfig.mainItems.map((item) => (
+            navConfig.map((item) => (
               <NavItem
                 key={item.id}
                 item={item}
@@ -268,19 +291,7 @@ const Navigation = () => {
           </IconButton>
         </DrawerHeader>
       </StyledDrawer>
-      <Box
-        component="div"
-        sx={{
-          display: 'flex',
-          width: '100%',
-          height: '100%',
-          flexDirection: 'column',
-          padding: '1rem 2rem',
-          overflowY: 'auto',
-        }}
-      >
-        {getContentById(selectedId, workspacesData)}
-      </Box>
+      <StyledMainContent>{getContentById(selectedId, workspacesData)}</StyledMainContent>
     </Box>
   );
 };
@@ -291,14 +302,16 @@ const WorkspaceModal = ({ setWorkspaceModal, workspaceModal }) => {
   return (
     <Modal
       closeModal={() => setWorkspaceModal(false)}
+      fullScreen
+      fullWidth
+      sx={{ margin: '5rem 8rem' }}
       open={workspaceModal}
-      maxWidth="xl"
       headerIcon={
         <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />
       }
       title="All Workspaces"
     >
-      <ModalBody style={{ maxHeight: '80vh', overflowY: 'hidden', padding: '0' }}>
+      <ModalBody style={{ height: '100%', padding: '0' }}>
         {workspaceModal && <Navigation />}
       </ModalBody>
     </Modal>
