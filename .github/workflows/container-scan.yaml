@@ -9,16 +9,16 @@ on:
 jobs:
   scan:
     name: Scan Docker Image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
         
       - name: Build Docker image
         run: docker build -t meshery:${{ github.sha }} -f ./install/docker/Dockerfile .
         
       - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@0.62.0
         with:
           image-ref: 'meshery:${{ github.sha }}'
           format: 'table'
