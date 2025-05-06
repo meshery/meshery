@@ -352,17 +352,13 @@ const MainDesignsContent = ({
 
     return options.filter((option) => option.enabled({ design }));
   };
+  const isInitialFetch = isFetching && page === 0;
+  const isEmpty = total_count === 0;
+  const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   return (
     <>
       <DesignList data-testid="designs-list-item">
-        {(!isFetching || !isLoading) && total_count === 0 && (
-          <ListItem>
-            <ListItemText primary={`No Designs found`} style={{ textAlign: 'center' }} />
-          </ListItem>
-        )}
-
-        {total_count !== 0 &&
-          !(isFetching === true && page == 0) &&
+        {shouldRenderDesigns &&
           designs?.map((design) => {
             const isPublished = design?.visibility === 'published';
             const isOwner = currentUser?.id === design?.user_id;
@@ -379,22 +375,21 @@ const MainDesignsContent = ({
                   canChangeVisibility={canChangeVisibility}
                   onVisibilityChange={async (value, selectedItem) => {
                     await handleUpdatePatternVisibility({
-                      value: value,
+                      value,
                       selectedResource: selectedItem,
-                      updatePatterns: updatePatterns,
+                      updatePatterns,
                     });
-
                     refetch();
                   }}
                   MenuComponent={
                     <MenuComponent
                       options={getMenuOptions({
                         design,
-                        handleRemove: handleRemove,
-                        handleDelete: handleDelete,
-                        handleDesignDownloadModal: handleDesignDownloadModal,
-                        handleShare: handleShare,
-                        handleInfoModal: handleInfoModal,
+                        handleRemove,
+                        handleDelete,
+                        handleDesignDownloadModal,
+                        handleShare,
+                        handleInfoModal,
                       })}
                     />
                   }
@@ -405,19 +400,24 @@ const MainDesignsContent = ({
           })}
 
         <LoadingContainer ref={loadingRef}>
-          {isLoading || (isFetching && page == 0) ? (
+          {isLoading || isInitialFetch ? (
             Array(10)
-              .fill()
+              .fill(null)
               .map((_, index) => <DesignViewListItemSkeleton key={index} />)
           ) : isFetching ? (
             <DesignViewListItemSkeleton />
-          ) : (
-            <></>
-          )}
-          {!hasMore && !isLoading && !isFetching && designs?.length > 0 && total_count > 0 && (
-            <ListItemText secondary={`No more designs to load`} sx={{ padding: '1rem' }} />
+          ) : null}
+
+          {!hasMore && !isLoading && !isFetching && designs?.length > 0 && !isEmpty && (
+            <ListItemText secondary="No more designs to load" sx={{ padding: '1rem' }} />
           )}
         </LoadingContainer>
+
+        {!isLoading && isEmpty && (
+          <ListItem>
+            <ListItemText primary="No Designs found" style={{ textAlign: 'center' }} />
+          </ListItem>
+        )}
       </DesignList>
       <GhostContainer ref={ghostRef}>
         <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />

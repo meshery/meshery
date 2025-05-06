@@ -63,7 +63,6 @@ const getNavItem = (theme) => {
       icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
       content: <MyViewsContent />,
     },
-    // api endpoint for shared content is not available yet
     {
       id: 'Shared-With-Me',
       label: 'Shared With Me',

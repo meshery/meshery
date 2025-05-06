@@ -169,7 +169,7 @@ const MainViewsContent = ({
     handleRemove,
     handleOpenInfoModal,
     handleOpenShareModal,
-    handlerOpenDeleteModal,
+    handleOpenDeleteModal,
   }) => {
     const options = [
       {
@@ -179,7 +179,7 @@ const MainViewsContent = ({
       {
         ...VIEW_ACTIONS.DELETE_VIEW,
         handler: () =>
-          workspaceId ? handleRemove(view, workspaceId) : handlerOpenDeleteModal(view),
+          workspaceId ? handleRemove(view, workspaceId) : handleOpenDeleteModal(view),
       },
 
       {
@@ -211,16 +211,13 @@ const MainViewsContent = ({
 
     openViewInKanvas(viewId, viewName, Router);
   };
+  const isInitialFetch = isFetching && page === 0;
+  const isEmpty = total_count === 0;
+  const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   return (
     <>
       <DesignList data-testid="designs-list-item">
-        {(!isFetching || !isLoading) && total_count === 0 && (
-          <ListItem>
-            <ListItemText primary={`No Views found`} style={{ textAlign: 'center' }} />
-          </ListItem>
-        )}
-        {total_count !== 0 &&
-          !(isFetching === true && page == 0) &&
+        {shouldRenderDesigns &&
           views?.map((view) => {
             const isPublished = view?.visibility === 'published';
             const isOwner = currentUser?.id === view?.user_id;
@@ -241,7 +238,6 @@ const MainViewsContent = ({
                       selectedResource: selectedItem,
                       updateView: updateView,
                     });
-                    // page == 0 ? refetch() : setPage(0);
                     refetch();
                   }}
                   MenuComponent={
@@ -249,10 +245,10 @@ const MainViewsContent = ({
                       options={getMenuOptions({
                         view,
                         user: currentUser,
-                        handleRemove: handleRemove,
-                        handleOpenInfoModal: handleOpenInfoModal,
-                        handleOpenShareModal: handleOpenShareModal,
-                        handlerOpenDeleteModal: handleOpenDeleteModal,
+                        handleRemove,
+                        handleOpenInfoModal,
+                        handleOpenShareModal,
+                        handleOpenDeleteModal,
                       })}
                     />
                   }
@@ -262,7 +258,7 @@ const MainViewsContent = ({
             );
           })}
         <LoadingContainer ref={loadingRef}>
-          {isLoading || (isFetching && page === 0) ? (
+          {isLoading || isInitialFetch ? (
             Array(10)
               .fill()
               .map((_, index) => <DesignViewListItemSkeleton key={index} />)
@@ -271,10 +267,16 @@ const MainViewsContent = ({
           ) : (
             <></>
           )}
-          {!hasMore && views?.length > 0 && total_count > 0 && (
+          {!hasMore && !isLoading && !isFetching && views?.length > 0 && !isEmpty && (
             <ListItemText secondary={`No more views to load`} style={{ padding: '1rem' }} />
           )}
         </LoadingContainer>
+
+        {!isLoading && isEmpty && (
+          <ListItem>
+            <ListItemText primary={`No Views found`} style={{ textAlign: 'center' }} />
+          </ListItem>
+        )}
       </DesignList>
       <GhostContainer ref={ghostRef}>
         <GhostImage src="/static/img/service-mesh-pattern.png" height={30} width={30} />
