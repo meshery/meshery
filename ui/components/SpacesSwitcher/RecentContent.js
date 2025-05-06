@@ -96,7 +96,6 @@ const RecentContent = () => {
     data: designsData,
     isLoading,
     isFetching,
-    refetch: refetchDesigns,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
