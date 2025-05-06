@@ -29,7 +29,6 @@ import { Router } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
 const MainViewsContent = ({
@@ -41,6 +40,7 @@ const MainViewsContent = ({
   hasMore,
   total_count,
   workspaceId,
+  refetch,
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [shareModal, setShareModal] = useState(false);
@@ -100,6 +100,7 @@ const MainViewsContent = ({
     })
       .unwrap()
       .then(() => {
+        setPage(0);
         notify({
           message: 'View removed from workspace',
           event_type: EVENT_TYPES.SUCCESS,
@@ -137,7 +138,7 @@ const MainViewsContent = ({
     },
     DELETE_VIEW: {
       id: workspaceId ? 'MOVE_VIEW' : 'DELETE_VIEW',
-      title: workspaceId ? 'MOVE VIEW' : 'Delete View',
+      title: workspaceId ? 'Move View' : 'Delete View',
       icon: workspaceId ? (
         <MoveFileIcon fill={theme.palette.icon.default} />
       ) : (
@@ -219,6 +220,7 @@ const MainViewsContent = ({
           </ListItem>
         )}
         {total_count !== 0 &&
+          !(isFetching === true && page == 0) &&
           views?.map((view) => {
             const isPublished = view?.visibility === 'published';
             const isOwner = currentUser?.id === view?.user_id;
@@ -239,6 +241,8 @@ const MainViewsContent = ({
                       selectedResource: selectedItem,
                       updateView: updateView,
                     });
+                    // page == 0 ? refetch() : setPage(0);
+                    refetch();
                   }}
                   MenuComponent={
                     <MenuComponent
@@ -258,7 +262,7 @@ const MainViewsContent = ({
             );
           })}
         <LoadingContainer ref={loadingRef}>
-          {isLoading ? (
+          {isLoading || (isFetching && page === 0) ? (
             Array(10)
               .fill()
               .map((_, index) => <DesignViewListItemSkeleton key={index} />)
@@ -266,9 +270,9 @@ const MainViewsContent = ({
             <DesignViewListItemSkeleton />
           ) : (
             <></>
-          )}{' '}
+          )}
           {!hasMore && views?.length > 0 && total_count > 0 && (
-            <ListItemText secondary={`No more views to load`} />
+            <ListItemText secondary={`No more views to load`} style={{ padding: '1rem' }} />
           )}
         </LoadingContainer>
       </DesignList>

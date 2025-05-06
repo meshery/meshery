@@ -160,13 +160,7 @@ export const designsApi = api
           credentials: 'include',
           body: queryArg.updateBody,
         }),
-        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
-        async onQueryStarted(_, { dispatch, queryFulfilled }) {
-          await queryFulfilled;
-          dispatch(
-            designsApi.endpoints.getUserDesigns.initiate({ page: 0 }, { forceRefetch: true }),
-          );
-        },
+        providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       uploadPatternFile: builder.mutation({
         query: (queryArg) => ({

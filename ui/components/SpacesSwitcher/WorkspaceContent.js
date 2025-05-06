@@ -48,49 +48,55 @@ const WorkspaceContent = ({ workspace }) => {
     viewsPage: 0,
   });
 
-  const updateFilters = (newFilters) => {
-    setFilters((prevFilters) => ({ ...prevFilters, ...newFilters }));
-  };
-
   const handleTypeChange = useCallback((event) => {
-    updateFilters({
+    setFilters((prev) => ({
+      ...prev,
       type: event.target.value,
       designsPage: 0,
       viewsPage: 0,
-    });
+    }));
   }, []);
 
   const handleSortByChange = useCallback((event) => {
-    updateFilters({
+    setFilters((prev) => ({
+      ...prev,
       sortBy: event.target.value,
       designsPage: 0,
       viewsPage: 0,
-    });
+    }));
   }, []);
 
   const handleVisibilityChange = useCallback((event) => {
     const value = event.target.value;
-    updateFilters({
+    setFilters((prev) => ({
+      ...prev,
       visibility: typeof value === 'string' ? value.split(',') : value,
       designsPage: 0,
       viewsPage: 0,
-    });
+    }));
   }, []);
 
   const onSearchChange = useCallback((e) => {
-    updateFilters({
+    setFilters((prev) => ({
+      ...prev,
       searchQuery: e.target.value,
       designsPage: 0,
       viewsPage: 0,
-    });
+    }));
   }, []);
 
   const setDesignsPage = useCallback((page) => {
-    updateFilters({ designsPage: page });
+    setFilters((prev) => ({
+      ...prev,
+      designsPage: page,
+    }));
   }, []);
 
   const setViewsPage = useCallback((page) => {
-    updateFilters({ viewsPage: page });
+    setFilters((prev) => ({
+      ...prev,
+      viewsPage: page,
+    }));
   }, []);
 
   const {
@@ -108,7 +114,7 @@ const WorkspaceContent = ({ workspace }) => {
       visibility: filters.visibility,
     },
     {
-      skip: filters.type !== 'design',
+      skip: filters.type !== 'design' || !workspace?.id,
     },
   );
 
@@ -238,6 +244,7 @@ const WorkspaceContent = ({ workspace }) => {
               hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
               total_count={designsData?.total_count}
               workspaceId={workspace?.id}
+              refetch={() => setDesignsPage(0)}
             />
           )}
           {filters.type == 'view' && (
@@ -250,6 +257,7 @@ const WorkspaceContent = ({ workspace }) => {
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
               workspaceId={workspace?.id}
+              refetch={() => setViewsPage(0)}
             />
           )}
         </Box>

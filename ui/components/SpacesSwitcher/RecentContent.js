@@ -96,6 +96,7 @@ const RecentContent = () => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: refetchDesigns,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
@@ -206,10 +207,10 @@ const RecentContent = () => {
               isFetching={isFetching}
               designs={designsData?.patterns}
               hasMore={
-                !!designsData &&
-                designsData.total_count > (filters.designsPage + 1) * designsData.page_size
+                designsData?.total_count > (filters.designsPage + 1) * designsData?.page_size
               }
               total_count={designsData?.total_count}
+              refetch={() => setDesignsPage(0)}
             />
           )}
           {filters.type == 'view' && (
@@ -222,6 +223,7 @@ const RecentContent = () => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
+              refetch={() => setViewsPage(0)}
             />
           )}
         </Box>

@@ -113,7 +113,7 @@ export const handleUpdatePatternVisibility = async ({
   selectedResource,
 }) => {
   const res = await updatePatterns({
-    body: {
+    updateBody: {
       id: selectedResource?.id,
       name: selectedResource.name,
       catalog_data: selectedResource.catalog_data,

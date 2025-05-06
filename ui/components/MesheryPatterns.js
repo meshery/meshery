@@ -854,11 +854,6 @@ function MesheryPatterns({
       });
   }
 
-  // this function returns fetchPattern function with latest values so that it can be used in child components
-  function fetchPatternsCaller() {
-    return () => getPatterns();
-  }
-
   const handleError = (action) => (error) => {
     updateProgress({ showProgress: false });
 
@@ -1629,7 +1624,7 @@ function MesheryPatterns({
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
                     currentUser={user}
-                    patternFetcher={fetchPatternsCaller}
+                    patternFetcher={getPatterns}
                     formSchema={publishSchema}
                     meshModels={meshModels}
                   />

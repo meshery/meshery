@@ -108,6 +108,7 @@ const MyDesignsContent = () => {
         isLoading={isLoading}
         setPage={setPage}
         hasMore={hasMore}
+        refetch={() => setPage(0)}
         total_count={total_count}
       />
     </Box>

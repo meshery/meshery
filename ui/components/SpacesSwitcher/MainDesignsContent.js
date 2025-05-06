@@ -41,8 +41,8 @@ import { keys } from '@/utils/permission_constants';
 import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
-import { useDeletePattern } from '../Lifecycle/Workspaces/hooks';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
+import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';
 
 const MainDesignsContent = ({
   page,
@@ -53,13 +53,14 @@ const MainDesignsContent = ({
   hasMore,
   total_count,
   workspaceId,
+  refetch,
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
   const [publishCatalog] = usePublishPatternMutation();
-  const { handleWorkspaceDesignDeleteModal } = useDeletePattern();
+  const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
   const { notify } = useNotification();
   const modalRef = useRef(true);
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -133,7 +134,18 @@ const MainDesignsContent = ({
   };
 
   const handleRemove = async (design, workspaceId) => {
-    handleWorkspaceDesignDeleteModal(design.id, workspaceId);
+    unassignDesignFromWorkspace({
+      workspaceId,
+      designId: design?.id,
+    })
+      .unwrap()
+      .then(() => {
+        setPage(0);
+        notify({
+          message: 'Design removed from workspace',
+          event_type: EVENT_TYPES.SUCCESS,
+        });
+      });
   };
 
   const handleShare = async (design) => {
@@ -281,7 +293,7 @@ const MainDesignsContent = ({
     },
     DELETE_DESIGN: {
       id: workspaceId ? 'move' : 'delete',
-      title: workspaceId ? 'Move' : 'Delete',
+      title: workspaceId ? 'Move Design' : 'Delete Design',
       icon: workspaceId ? (
         <MoveFileIcon fill={theme.palette.icon.default} />
       ) : (
@@ -297,7 +309,7 @@ const MainDesignsContent = ({
     },
     SHARE_DESIGN: {
       id: 'share',
-      title: 'Share',
+      title: 'Share Design',
       icon: <ShareIcon fill={theme.palette.icon.default} />,
       enabled: ({ design }) =>
         design?.visibility !== 'published' &&
@@ -350,6 +362,7 @@ const MainDesignsContent = ({
         )}
 
         {total_count !== 0 &&
+          !(isFetching === true && page == 0) &&
           designs?.map((design) => {
             const isPublished = design?.visibility === 'published';
             const isOwner = currentUser?.id === design?.user_id;
@@ -364,12 +377,14 @@ const MainDesignsContent = ({
                     handleOpenDesignInDesigner(design?.id, design?.name);
                   }}
                   canChangeVisibility={canChangeVisibility}
-                  onVisibilityChange={(value, selectedItem) => {
-                    handleUpdatePatternVisibility({
+                  onVisibilityChange={async (value, selectedItem) => {
+                    await handleUpdatePatternVisibility({
                       value: value,
                       selectedResource: selectedItem,
                       updatePatterns: updatePatterns,
                     });
+
+                    refetch();
                   }}
                   MenuComponent={
                     <MenuComponent
@@ -390,7 +405,7 @@ const MainDesignsContent = ({
           })}
 
         <LoadingContainer ref={loadingRef}>
-          {isLoading ? (
+          {isLoading || (isFetching && page == 0) ? (
             Array(10)
               .fill()
               .map((_, index) => <DesignViewListItemSkeleton key={index} />)
@@ -399,7 +414,7 @@ const MainDesignsContent = ({
           ) : (
             <></>
           )}
-          {!hasMore && designs?.length > 0 && total_count > 0 && (
+          {!hasMore && !isLoading && !isFetching && designs?.length > 0 && total_count > 0 && (
             <ListItemText secondary={`No more designs to load`} sx={{ padding: '1rem' }} />
           )}
         </LoadingContainer>
@@ -432,6 +447,7 @@ const MainDesignsContent = ({
             currentUser={currentUser}
             formSchema={formSchema}
             meshModels={meshModelsData?.models}
+            patternFetcher={refetch}
           />
         </Modal>
       )}

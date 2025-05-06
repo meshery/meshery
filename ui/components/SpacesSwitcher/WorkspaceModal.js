@@ -135,7 +135,7 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
               fill={theme.palette.icon.default}
               secondaryFill={theme.palette.icon.default}
               {...iconSmall}
-            />{' '}
+            />
           </ListItemIcon>
           <ListItemText primary="All Workspaces" sx={{ opacity: open ? 1 : 0 }} />
           {open && workspaces && workspaces.length > 0 && (

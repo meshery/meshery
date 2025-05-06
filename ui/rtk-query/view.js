@@ -35,7 +35,6 @@ export const viewsApi = api
           body: body,
         }),
         providesTags: () => [{ type: TAGS.VIEWS }],
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       fetchViews: builder.query({
         query: (queryArg) =>

@@ -108,6 +108,7 @@ const MyViewsContent = () => {
         setPage={setPage}
         views={views}
         total_count={total_count}
+        refetch={() => setPage(0)}
       />
     </Box>
   );

@@ -156,7 +156,7 @@ const InfoModal_ = React.memo((props) => {
           message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        patternFetcher && patternFetcher()();
+        patternFetcher && patternFetcher();
         handleInfoModalClose();
       })
       .catch((error) => {
