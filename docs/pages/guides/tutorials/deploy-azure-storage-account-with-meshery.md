@@ -51,8 +51,7 @@ Before you begin, ensure you have the following:
 If you do not already have a Service Principal (SP) for Meshery, create one using the Azure CLI:
 
 ```bash
-az ad sp create-for-rbac -n azure-service-operator --role contributor \
-    --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
+az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
 ```
 
 This command outputs the following credentials:
@@ -107,12 +106,7 @@ Azure Service Operator requires a Kubernetes secret with your Azure identity:
 ```bash
 kubectl create namespace azureserviceoperator-system || true
 
-kubectl create secret generic azure-credentials \
-  --namespace azureserviceoperator-system \
-  --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID \
-  --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET \
-  --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID \
-  --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
+kubectl create secret generic azure-credentials --namespace azureserviceoperator-system --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
 ```
 
 
