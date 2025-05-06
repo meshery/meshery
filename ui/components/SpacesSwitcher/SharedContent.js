@@ -8,7 +8,12 @@ import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import MainViewsContent from './MainViewsContent';
 import { useFetchViewsQuery } from '@/rtk-query/view';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
-import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
+import {
+  SortBySelect,
+  TableListHeader,
+  UserSearchAutoComplete,
+  VisibilitySelect,
+} from './components';
 import { getDefaultFilterType } from './hooks';
 
 const SharedContent = () => {
@@ -21,6 +26,7 @@ const SharedContent = () => {
     type: getDefaultFilterType(),
     searchQuery: '',
     sortBy: 'updated_at desc',
+    author: '',
     visibility: visibilityItems,
     designsPage: 0,
     viewsPage: 0,
@@ -49,6 +55,15 @@ const SharedContent = () => {
     setFilters((prev) => ({
       ...prev,
       visibility: typeof value === 'string' ? value.split(',') : value,
+      designsPage: 0,
+      viewsPage: 0,
+    }));
+  }, []);
+
+  const handleAuthorChange = useCallback((user_id) => {
+    setFilters((prev) => ({
+      ...prev,
+      author: user_id,
       designsPage: 0,
       viewsPage: 0,
     }));
@@ -91,6 +106,7 @@ const SharedContent = () => {
       search: filters.searchQuery,
       visibility: filters.visibility,
       shared: true,
+      user_id: filters.author,
     },
     {
       skip: filters.type !== RESOURCE_TYPE.DESIGN,
@@ -108,6 +124,7 @@ const SharedContent = () => {
       order: filters.sortBy,
       visibility: filters.visibility,
       search: filters.searchQuery,
+      user_id: filters.author,
       shared: true,
     },
     {
@@ -164,6 +181,11 @@ const SharedContent = () => {
 
           <Box sx={{ minWidth: 120 }}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
+          </Box>
+          <Box sx={{ minWidth: 300 }}>
+            <FormControl fullWidth>
+              <UserSearchAutoComplete handleAuthorChange={handleAuthorChange} />
+            </FormControl>
           </Box>
           <Box sx={{ minWidth: 120 }}>
             <VisibilitySelect
