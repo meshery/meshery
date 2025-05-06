@@ -3,14 +3,10 @@
 setup() {
     load "$E2E_HELPERS_PATH/bats_libraries"
     _load_bats_libraries
-    MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
-    export TEST_IMGS_OUTPUT="tests"
-    export TEST_MODELS_OUTPUT="tests"
-    export SHEET_ID="1kldsrMSwItkvlcazw8HEMmSrgsHPJsTsKY7f1hvJNAc"
-    export FIXTURES_DIR="$MESHERYCTL_DIR/tests/e2e/006-registry/fixtures/registry-publish" 
+
+    load "$E2E_HELPERS_PATH/constants"
+    export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/registry-publish" 
     export CRED=$(base64 -w 0 $FIXTURES_DIR/cred.json)
-    export INVALID_CRED="1234567890"
-    export INVALID_SHEET="1kldsrMSwItkvlcazw8HEMmSrgsHPJsTsKY7f1hvJNA"
 }
 
 @test "mesheryctl registry publish displays usage instructions when no arguments provided" {
@@ -26,14 +22,13 @@ setup() {
 }
 
 @test "mesheryctl registry publish fails with invalid system" {
-  run $MESHERYCTL_BIN registry publish invalid-system $CRED $SHEET_ID $TEST_MODELS_OUTPUT $TEST_IMGS_OUTPUT
+  run $MESHERYCTL_BIN registry publish invalid-system $CRED $SHEET_ID $TEST_IMGS_MODELS_OUTPUT $TEST_IMGS_MODELS_OUTPUT
 
   assert_output --partial "invalid system: invalid-system"
 }
 
 @test "mesheryctl registry publish fails with invalid google credential" {
-  # This will fail because we're passing an invalid credential
-  run $MESHERYCTL_BIN registry publish remote-provider $INVALID_CRED $SHEET_ID "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT"
+  run $MESHERYCTL_BIN registry publish remote-provider $INVALID_CRED $SHEET_ID $TEST_IMGS_MODELS_OUTPUT $TEST_IMGS_MODELS_OUTPUT
   assert_failure
 
   assert_output --partial "Error: Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token."
@@ -42,7 +37,7 @@ setup() {
 
 @test "mesheryctl registry publish fails with invalid sheet ID" {
   # This will fail because we're passing an invalid sheet ID
-  run $MESHERYCTL_BIN registry publish remote-provider $CRED $INVALID_SHEET "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT"
+  run $MESHERYCTL_BIN registry publish remote-provider $CRED $INVALID_SHEET $TEST_IMGS_MODELS_OUTPUT $TEST_IMGS_MODELS_OUTPUT
   assert_failure
 
   assert_output --partial "Request to Google Spreadsheet did not succeed"
@@ -51,28 +46,28 @@ setup() {
 }
 
 @test "mesheryctl registry publish remote-provider succeeds" {
-  run $MESHERYCTL_BIN registry publish remote-provider "$CRED" "$SHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT"
+  run $MESHERYCTL_BIN registry publish remote-provider "$CRED" "$SHEET_ID" $TEST_IMGS_MODELS_OUTPUT $TEST_IMGS_MODELS_OUTPUT
   assert_success
 
-  assert [ -f "../tests/accurate/model.json" ]
+  assert_file_exist "../tests/accurate/model.json"
 }
 
 @test "mesheryctl registry publish website succeeds with md format" {
-  run $MESHERYCTL_BIN registry publish website "$CRED" "$SHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT" -o md
+  run $MESHERYCTL_BIN registry publish website "$CRED" "$SHEET_ID" $TEST_IMGS_MODELS_OUTPUT $TEST_IMGS_MODELS_OUTPUT -o md
   assert_success
 
-  assert [ -f "../tests/accurate.md" ]
+  assert_file_exist "../tests/accurate.md" 
 }
 
   @test "mesheryctl registry publish website succeeds with js format" {
-  run $MESHERYCTL_BIN registry publish website "$CRED" "$SHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT" -o js
+  run $MESHERYCTL_BIN registry publish website "$CRED" "$SHEET_ID" $TEST_IMGS_MODELS_OUTPUT $TEST_IMGS_MODELS_OUTPUT -o js
   assert_success
 
-  assert [ -f "tests/data.js" ]
+  assert_file_exist "tests/data.js"
   }
 
 @test "mesheryctl registry publish fails with invalid output format" {
-  run $MESHERYCTL_BIN registry publish website "$CRED" "$SHEET_ID" "$TEST_MODELS_OUTPUT" "$TEST_IMGS_OUTPUT" -o invalid
+  run $MESHERYCTL_BIN registry publish website "$CRED" "$SHEET_ID" $TEST_IMGS_MODELS_OUTPUT $TEST_IMGS_MODELS_OUTPUT -o invalid
   assert_failure
 
   assert_output --partial "Error: invalid output format: invalid"
