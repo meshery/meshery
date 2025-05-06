@@ -170,6 +170,8 @@
           url: guides/troubleshooting/meshery-operator-meshsync
         - title: Meshery Server
           url: guides/troubleshooting/meshery-server
+        - title: Kanvas
+          url: extensions/kanvas/troubleshooting-guide
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
