@@ -47,6 +47,7 @@ export const designsApi = api
             search: queryArg.search,
             visibility: queryArg.visibility,
             orgID: queryArg.orgId,
+            shared: queryArg.shared || false,
           });
           return `extensions/api/content/patterns?${params}`;
         },

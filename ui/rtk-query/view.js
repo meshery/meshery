@@ -47,6 +47,7 @@ export const viewsApi = api
             search: queryArg.search || '',
             order: queryArg.order || '',
             trim: queryArg.trim || false,
+            shared: queryArg.shared || false,
             user_id: queryArg.user_id,
           })}`,
 

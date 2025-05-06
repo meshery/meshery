@@ -33,6 +33,8 @@ import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import PeopleIcon from '@mui/icons-material/People';
+import SharedContent from './SharedContent';
 
 const getNavItem = (theme) => {
   return [
@@ -61,6 +63,13 @@ const getNavItem = (theme) => {
       icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
       content: <MyViewsContent />,
     },
+    // api endpoint for shared content is not available yet
+    // {
+    //   id: 'Shared-With-Me',
+    //   label: 'Shared With Me',
+    //   icon: <PeopleIcon {...iconSmall} />,
+    //   content: <SharedContent />,
+    // },
   ];
 };
 
