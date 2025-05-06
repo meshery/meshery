@@ -8,46 +8,47 @@ setup() {
   mkdir -p "$TESTDATA_DIR"
 
   export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
-
-  # Create fixtures directory for design-onboard if it doesn't exist
-  mkdir -p "$FIXTURES_DIR/design-onboard"
-
-  # Copy the nginx.yaml file from design-import to design-onboard fixtures
-  if [ ! -f "$FIXTURES_DIR/design-onboard/nginx.yaml" ]; then
-    cp "$FIXTURES_DIR/design-import/nginx.yaml" "$FIXTURES_DIR/design-onboard/nginx.yaml"
-  fi
+  export SHARED_FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/design-shared"
 }
 
-@test "mesheryctl design onboard with valid file and source type should succeed or show auth error" {
-  # Onboard the design directly from the fixtures directory
-  run $MESHERYCTL_BIN design onboard -f "$FIXTURES_DIR/design-onboard/nginx.yaml" -s "Kubernetes Manifest"
+@test "mesheryctl design onboard with valid file and source type should succeed" {
+  run $MESHERYCTL_BIN design onboard -f "$SHARED_FIXTURES_DIR/nginx.yaml" -s "Kubernetes Manifest"
 
-  # Either we get a success message or an authentication error
-  if [[ "$output" == *"Authentication token not found"* ]]; then
-    assert_output --partial "Authentication token not found"
-  else
-    assert_output --partial "design onboarded"
+  assert_success
+  assert_output --partial "design onboarded"
+}
+
+@test "mesheryctl design onboard with valid file should show auth error when not authenticated" {
+  # Temporarily move token file if it exists
+  if [ -f "$HOME/.meshery/config" ]; then
+    mv "$HOME/.meshery/config" "$HOME/.meshery/config.bak"
   fi
+
+  run $MESHERYCTL_BIN design onboard -f "$SHARED_FIXTURES_DIR/nginx.yaml" -s "Kubernetes Manifest"
+
+  # Restore token file if it was moved
+  if [ -f "$HOME/.meshery/config.bak" ]; then
+    mv "$HOME/.meshery/config.bak" "$HOME/.meshery/config"
+  fi
+
+  assert_output --partial "Authentication token not found"
 }
 
 @test "mesheryctl design onboard with an invalid file path should display an error message" {
-  # Use a non-existent file path
-  run $MESHERYCTL_BIN design onboard -f "$TESTDATA_DIR/design-onboard/nonexistent.yaml" -s "Kubernetes Manifest"
+  run $MESHERYCTL_BIN design onboard -f "$TESTDATA_DIR/nonexistent.yaml" -s "Kubernetes Manifest"
 
   assert_failure
-  assert_output --partial "Error"
+  assert_output --partial "Error: unable to read file"
 }
 
 @test "mesheryctl design onboard with invalid source type should display an error message" {
-  # Use an invalid source type
-  run $MESHERYCTL_BIN design onboard -f "$FIXTURES_DIR/design-onboard/nginx.yaml" -s "InvalidSourceType"
+  run $MESHERYCTL_BIN design onboard -f "$SHARED_FIXTURES_DIR/nginx.yaml" -s "InvalidSourceType"
 
   assert_failure
-  assert_output --partial "Error"
+  assert_output --partial "Error: invalid source type"
 }
 
 @test "mesheryctl design onboard without required flags should show appropriate error" {
-  # Run without required flags
   run $MESHERYCTL_BIN design onboard
 
   assert_failure
@@ -55,15 +56,11 @@ setup() {
 }
 
 @test "mesheryctl design onboard with existing design name should succeed" {
-  # First import a design to get its ID
-  run $MESHERYCTL_BIN design import -f "$FIXTURES_DIR/design-onboard/nginx.yaml" --source-type "Kubernetes Manifest"
+  run $MESHERYCTL_BIN design import -f "$SHARED_FIXTURES_DIR/nginx.yaml" --source-type "Kubernetes Manifest"
 
-  # Extract design name from the output
   DESIGN_NAME="nginx-deployment"
-
-  # Onboard the design using its name
   run $MESHERYCTL_BIN design onboard "$DESIGN_NAME"
 
-  # Check for expected output - success message
-  assert_output --partial "Fetching patterns"
+  assert_success
+  assert_output --partial "design onboarded"
 }
