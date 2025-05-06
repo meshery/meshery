@@ -322,7 +322,7 @@ const Navigation = ({ setHeaderInfo }) => {
             ))}
           <Divider
             sx={{
-              marginBlock: '0.25rem',
+              marginBlock: '0.5rem',
             }}
           />
           <WorkspacesSection
