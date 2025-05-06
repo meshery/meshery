@@ -43,7 +43,9 @@ function WorkspaceSwitcher({ open }) {
   const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
-  const orgId = useLegacySelector((state) => state.get('organization'))?.id;
+  const orgId = useLegacySelector((state) =>
+    state?.get ? state.get('organization') : state?.organization,
+  )?.id;
   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
     {
       page: 0,
