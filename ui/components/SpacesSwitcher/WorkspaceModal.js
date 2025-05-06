@@ -33,8 +33,6 @@ import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import PeopleIcon from '@mui/icons-material/People';
-import SharedContent from './SharedContent';
 
 const getNavItem = (theme) => {
   return [
