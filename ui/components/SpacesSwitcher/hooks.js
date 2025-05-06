@@ -1,5 +1,5 @@
 import { APP_MODE, RESOURCE_TYPE } from '@/utils/Enum';
-import { JsonParse } from '@/utils/utils';
+import { isInOperatorMode, JsonParse } from '@/utils/utils';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 
@@ -136,4 +136,11 @@ export const handleUpdateViewVisibility = async ({ value, updateView, selectedRe
   return {
     error: res.error?.error,
   };
+};
+
+export const getDefaultFilterType = () => {
+  if (isInOperatorMode()) {
+    return RESOURCE_TYPE.VIEW;
+  }
+  return RESOURCE_TYPE.DESIGN;
 };

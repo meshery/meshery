@@ -14,6 +14,7 @@ import { ShareModal as CatalogShare } from '@layer5/sistent';
 import { getShareableResourceRoute } from './hooks';
 import { JsonParse } from '@/utils/utils';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import { RESOURCE_TYPE } from '@/utils/Enum';
 
 export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose }) => {
   const resourceType = dataName === 'design' ? 'pattern' : dataName;
@@ -80,11 +81,11 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
   };
 
   const handleUpdateVisibility = (updatedVisibility) => {
-    if (dataName == 'design') {
+    if (dataName == RESOURCE_TYPE.DESIGN) {
       return handleUpdatePatternVisibility(updatedVisibility);
     }
 
-    if (dataName == 'view') {
+    if (dataName == RESOURCE_TYPE.VIEW) {
       return handleUpdateViewVisibility(updatedVisibility);
     }
   };

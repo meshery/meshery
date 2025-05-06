@@ -7,7 +7,7 @@ import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import MainViewsContent from './MainViewsContent';
 import { useFetchViewsQuery } from '@/rtk-query/view';
-import { VISIBILITY } from '@/utils/Enum';
+import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import {
   ImportButton,
   SortBySelect,
@@ -15,15 +15,15 @@ import {
   UserSearchAutoComplete,
   VisibilitySelect,
 } from './components';
+import { getDefaultFilterType } from './hooks';
 
 const RecentContent = () => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
-
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
-    type: 'design',
+    type: getDefaultFilterType(),
     searchQuery: '',
     author: '',
     sortBy: 'updated_at desc',
@@ -108,7 +108,7 @@ const RecentContent = () => {
       user_id: filters.author,
     },
     {
-      skip: filters.type !== 'design',
+      skip: filters.type !== RESOURCE_TYPE.DESIGN,
     },
   );
 
@@ -126,7 +126,7 @@ const RecentContent = () => {
       search: filters.searchQuery,
     },
     {
-      skip: filters.type !== 'view',
+      skip: filters.type !== RESOURCE_TYPE.VIEW,
     },
   );
 
@@ -141,11 +141,11 @@ const RecentContent = () => {
               backgroundColor: 'transparent',
             }}
             width="auto"
-            placeholder={filters.type === 'design' ? 'Search Designs' : 'Search Views'}
+            placeholder={filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'}
             value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              filters.type === 'design' ? (
+              filters.type === RESOURCE_TYPE.DESIGN ? (
                 <p style={{ color: theme.palette.text.default }}>
                   Total Designs: {designsData?.total_count ?? 0}
                 </p>
@@ -156,7 +156,7 @@ const RecentContent = () => {
               )
             }
           />{' '}
-          {filters.type == 'design' && <ImportButton />}
+          {filters.type == RESOURCE_TYPE.DESIGN && <ImportButton />}
         </Box>
         <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
           <Box sx={{ minWidth: 120 }}>
@@ -172,8 +172,8 @@ const RecentContent = () => {
                   },
                 }}
               >
-                {isDesignsVisible && <MenuItem value={'design'}>Design</MenuItem>}
-                {isViewVisible && <MenuItem value={'view'}>View</MenuItem>}
+                {isDesignsVisible && <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
+                {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
           </Box>
@@ -197,9 +197,9 @@ const RecentContent = () => {
         <Box minWidth={'50rem'}>
           <TableListHeader />
 
-          {filters.type == 'design' && (
+          {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
-              key={'designs'}
+              key={RESOURCE_TYPE.DESIGN}
               page={filters.designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
@@ -212,9 +212,9 @@ const RecentContent = () => {
               refetch={() => setDesignsPage(0)}
             />
           )}
-          {filters.type == 'view' && (
+          {filters.type == RESOURCE_TYPE.VIEW && (
             <MainViewsContent
-              key={'views'}
+              key={RESOURCE_TYPE.VIEW}
               page={filters.viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}

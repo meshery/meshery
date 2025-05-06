@@ -1,7 +1,7 @@
 import { trueRandom } from '../lib/trueRandom';
 import jsYaml from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
-import { EVENT_TYPES } from './Enum';
+import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
@@ -536,4 +536,12 @@ export const openViewInKanvas = (viewId, viewName, router) => {
   }
 
   router.push(`/extension/meshmap?mode=operator&type=view&id=${viewId}`);
+};
+
+export const isInOperatorMode = () => {
+  return window.location.search.includes(`mode=${APP_MODE.OPERATOR}`);
+};
+
+export const isInDesignMode = () => {
+  return window.location.search.includes(`mode=${APP_MODE.DESIGN}`);
 };

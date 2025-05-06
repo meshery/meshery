@@ -17,7 +17,7 @@ import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
-import { VISIBILITY } from '@/utils/Enum';
+import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import {
   AssignDesignViewButton,
   SortBySelect,
@@ -32,6 +32,7 @@ import {
   useUnassignDesignFromWorkspaceMutation,
   useUnassignViewFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
+import { getDefaultFilterType } from './hooks';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
@@ -40,7 +41,7 @@ const WorkspaceContent = ({ workspace }) => {
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
-    type: 'design',
+    type: getDefaultFilterType(),
     searchQuery: '',
     sortBy: 'updated_at desc',
     visibility: visibilityItems,
@@ -114,7 +115,7 @@ const WorkspaceContent = ({ workspace }) => {
       visibility: filters.visibility,
     },
     {
-      skip: filters.type !== 'design' || !workspace?.id,
+      skip: filters.type !== RESOURCE_TYPE.DESIGN || !workspace?.id,
     },
   );
 
@@ -133,7 +134,7 @@ const WorkspaceContent = ({ workspace }) => {
       order: 'updated_at desc',
     },
     {
-      skip: filters.type !== 'view' || !workspace?.id,
+      skip: filters.type !== RESOURCE_TYPE.VIEW || !workspace?.id,
     },
   );
 
@@ -162,11 +163,11 @@ const WorkspaceContent = ({ workspace }) => {
               backgroundColor: 'transparent',
             }}
             width="auto"
-            placeholder={filters.type === 'design' ? 'Search Designs' : 'Search Views'}
+            placeholder={filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'}
             value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              filters.type === 'design' ? (
+              filters.type === RESOURCE_TYPE.VIEW ? (
                 <p style={{ color: theme.palette.text.default }}>
                   Total Designs: {designsData?.total_count ?? 0}
                 </p>
@@ -181,14 +182,14 @@ const WorkspaceContent = ({ workspace }) => {
             type={filters.type}
             handleAssign={(e) => {
               e.stopPropagation();
-              if (filters.type === 'design') {
+              if (filters.type === RESOURCE_TYPE.DESIGN) {
                 designAssignment.handleAssignModal();
               } else {
                 viewAssignment.handleAssignModal();
               }
             }}
             disabled={
-              filters.type === 'design'
+              filters.type === RESOURCE_TYPE.DESIGN
                 ? !CAN(
                     keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
                     keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
@@ -214,8 +215,8 @@ const WorkspaceContent = ({ workspace }) => {
                   },
                 }}
               >
-                {isDesignsVisible && <MenuItem value={'design'}>Design</MenuItem>}
-                {isViewVisible && <MenuItem value={'view'}>View</MenuItem>}
+                {isDesignsVisible && <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
+                {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
           </Box>
@@ -234,7 +235,7 @@ const WorkspaceContent = ({ workspace }) => {
         <Box minWidth={'50rem'}>
           <TableListHeader />
 
-          {filters.type == 'design' && (
+          {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
               page={filters.designsPage}
               setPage={setDesignsPage}
@@ -247,7 +248,7 @@ const WorkspaceContent = ({ workspace }) => {
               refetch={() => setDesignsPage(0)}
             />
           )}
-          {filters.type == 'view' && (
+          {filters.type == RESOURCE_TYPE.VIEW && (
             <MainViewsContent
               page={filters.viewsPage}
               setPage={setViewsPage}

@@ -7,8 +7,9 @@ import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import MainViewsContent from './MainViewsContent';
 import { useFetchViewsQuery } from '@/rtk-query/view';
-import { VISIBILITY } from '@/utils/Enum';
+import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
+import { getDefaultFilterType } from './hooks';
 
 const SharedContent = () => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
@@ -17,7 +18,7 @@ const SharedContent = () => {
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
-    type: 'design',
+    type: getDefaultFilterType(),
     searchQuery: '',
     sortBy: 'updated_at desc',
     visibility: visibilityItems,
@@ -92,7 +93,7 @@ const SharedContent = () => {
       shared: true,
     },
     {
-      skip: filters.type !== 'design',
+      skip: filters.type !== RESOURCE_TYPE.DESIGN,
     },
   );
 
@@ -110,7 +111,7 @@ const SharedContent = () => {
       shared: true,
     },
     {
-      skip: filters.type !== 'view',
+      skip: filters.type !== RESOURCE_TYPE.VIEW,
     },
   );
 
@@ -125,11 +126,11 @@ const SharedContent = () => {
               backgroundColor: 'transparent',
             }}
             width="auto"
-            placeholder={filters.type === 'design' ? 'Search Designs' : 'Search Views'}
+            placeholder={filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'}
             value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              filters.type === 'design' ? (
+              filters.type === RESOURCE_TYPE.DESIGN ? (
                 <p style={{ color: theme.palette.text.default }}>
                   Total Designs: {designsData?.total_count ?? 0}
                 </p>
@@ -155,8 +156,8 @@ const SharedContent = () => {
                   },
                 }}
               >
-                {isDesignsVisible && <MenuItem value={'design'}>Design</MenuItem>}
-                {isViewVisible && <MenuItem value={'view'}>View</MenuItem>}
+                {isDesignsVisible && <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
+                {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
           </Box>
@@ -175,9 +176,9 @@ const SharedContent = () => {
         <Box minWidth={'50rem'}>
           <TableListHeader />
 
-          {filters.type == 'design' && (
+          {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
-              key={'designs'}
+              key={'shared-designs-content'}
               page={filters.designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
@@ -190,9 +191,9 @@ const SharedContent = () => {
               refetch={() => setDesignsPage(0)}
             />
           )}
-          {filters.type == 'view' && (
+          {filters.type == RESOURCE_TYPE.VIEW && (
             <MainViewsContent
-              key={'views'}
+              key={'shared-views-content'}
               page={filters.viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}

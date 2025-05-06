@@ -30,6 +30,7 @@ import {
 } from './styles';
 import React from 'react';
 import { iconMedium } from 'css/icons.styles';
+import { RESOURCE_TYPE } from '@/utils/Enum';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -37,7 +38,7 @@ const DesignViewListItem = ({
   MenuComponent,
   onVisibilityChange,
   canChangeVisibility,
-  type = 'design',
+  type = RESOURCE_TYPE.DESIGN,
 }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
@@ -53,7 +54,7 @@ const DesignViewListItem = ({
       >
         <StyledTextContainer>
           <StyledListIcon>
-            {type === 'design' ? (
+            {type === RESOURCE_TYPE.DESIGN ? (
               <DesignIcon />
             ) : (
               <ViewIcon {...iconMedium} fill={theme.palette.icon.brand} />
