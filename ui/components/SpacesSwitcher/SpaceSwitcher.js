@@ -235,7 +235,7 @@ function SpaceSwitcher(props) {
 const mapStateToProps = (state) => {
   const organization = state?.get ? state.get('organization') : state?.organization;
   return {
-    organization : organization || { id : "" },
+    organization: organization || { id: '' },
   };
 };
 
