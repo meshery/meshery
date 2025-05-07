@@ -50,7 +50,7 @@ import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-que
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
-import { useCurrentOrganization } from '@/utils/hooks/useCurrentOrganization';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -110,7 +110,7 @@ const Workspaces = () => {
     open: false,
     schema: {},
   });
-  const organization = useCurrentOrganization();
+  const organization = useGetCurrentOrganization();
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';
