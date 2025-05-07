@@ -76,14 +76,7 @@ mesheryctl model view [model-name]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
 		if countFlag {
-			mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-			if err != nil {
-				log.Fatalln(err, "error processing config")
-			}
-
-			baseUrl := mctlCfg.GetBaseMesheryURL()
-			url := fmt.Sprintf("%s/api/meshmodels/models?page=1", baseUrl)
-			models, err := api.Fetch[models.MeshmodelsAPIResponse](url)
+			models, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?page=1", modelsApiPath))
 
 			if err != nil {
 				return err
