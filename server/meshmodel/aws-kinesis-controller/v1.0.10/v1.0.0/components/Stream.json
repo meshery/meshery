@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Stream",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-kinesis-controller",
+    "displayName": "AWS Kinesis",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Streaming \u0026 Messaging",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#8C4FFF",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/kinesis-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-Kinesis_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Analytics\" fill=\"#8C4FFF\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9.88643387,31.1072507 L10.8907602,31.1072507 C10.8907602,27.0640447 13.5170735,22.9312582 33,22.9312582 L33,21.9247344 C12.6322621,21.9247344 9.88643387,26.566822 9.88643387,31.1072507 M12.7728677,34 L13.7771941,34 C13.7771941,30.3604101 13.7771941,24.8597577 33,24.8597577 L33,23.8532339 C14.3345952,23.8532339 12.7728677,28.8657223 12.7728677,34 M8.00432633,13.7497484 L7,13.7497484 C7,17.3047903 11.7876236,19.5604101 21.2333127,20.4994967 C11.7876236,21.4385834 7,23.6952097 7,27.2492451 L8.00432633,27.2492451 C8.00432633,24.9171295 11.2513133,21.0027586 33,21.0027586 L33,19.9962349 C11.2513133,19.9962349 8.00432633,16.0828705 8.00432633,13.7497484 M10.8907602,9.8927493 L9.88643387,9.8927493 C9.88643387,14.433178 12.6322621,19.0742591 33,19.0742591 L33,18.0677353 C13.5170735,18.0677353 10.8907602,13.9349487 10.8907602,9.8927493 M33,16.1392358 L33,17.1457596 C14.3345952,17.1457596 12.7728677,12.1332712 12.7728677,7 L13.7771941,7 C13.7771941,10.6395899 13.7771941,16.1392358 33,16.1392358\" id=\"Amazon-Kinesis_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-Kinesis_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9.88643387,31.1072507 L10.8907602,31.1072507 C10.8907602,27.0640447 13.5170735,22.9312582 33,22.9312582 L33,21.9247344 C12.6322621,21.9247344 9.88643387,26.566822 9.88643387,31.1072507 M12.7728677,34 L13.7771941,34 C13.7771941,30.3604101 13.7771941,24.8597577 33,24.8597577 L33,23.8532339 C14.3345952,23.8532339 12.7728677,28.8657223 12.7728677,34 M8.00432633,13.7497484 L7,13.7497484 C7,17.3047903 11.7876236,19.5604101 21.2333127,20.4994967 C11.7876236,21.4385834 7,23.6952097 7,27.2492451 L8.00432633,27.2492451 C8.00432633,24.9171295 11.2513133,21.0027586 33,21.0027586 L33,19.9962349 C11.2513133,19.9962349 8.00432633,16.0828705 8.00432633,13.7497484 M10.8907602,9.8927493 L9.88643387,9.8927493 C9.88643387,14.433178 12.6322621,19.0742591 33,19.0742591 L33,18.0677353 C13.5170735,18.0677353 10.8907602,13.9349487 10.8907602,9.8927493 M33,16.1392358 L33,17.1457596 C14.3345952,17.1457596 12.7728677,12.1332712 12.7728677,7 L13.7771941,7 C13.7771941,10.6395899 13.7771941,16.1392358 33,16.1392358\" id=\"Amazon-Kinesis_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.10"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#8C4FFF",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Kinesis_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Analytics\" fill=\"#8C4FFF\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M9.88643387,31.1072507 L10.8907602,31.1072507 C10.8907602,27.0640447 13.5170735,22.9312582 33,22.9312582 L33,21.9247344 C12.6322621,21.9247344 9.88643387,26.566822 9.88643387,31.1072507 M12.7728677,34 L13.7771941,34 C13.7771941,30.3604101 13.7771941,24.8597577 33,24.8597577 L33,23.8532339 C14.3345952,23.8532339 12.7728677,28.8657223 12.7728677,34 M8.00432633,13.7497484 L7,13.7497484 C7,17.3047903 11.7876236,19.5604101 21.2333127,20.4994967 C11.7876236,21.4385834 7,23.6952097 7,27.2492451 L8.00432633,27.2492451 C8.00432633,24.9171295 11.2513133,21.0027586 33,21.0027586 L33,19.9962349 C11.2513133,19.9962349 8.00432633,16.0828705 8.00432633,13.7497484 M10.8907602,9.8927493 L9.88643387,9.8927493 C9.88643387,14.433178 12.6322621,19.0742591 33,19.0742591 L33,18.0677353 C13.5170735,18.0677353 10.8907602,13.9349487 10.8907602,9.8927493 M33,16.1392358 L33,17.1457596 C14.3345952,17.1457596 12.7728677,12.1332712 12.7728677,7 L13.7771941,7 C13.7771941,10.6395899 13.7771941,16.1392358 33,16.1392358\" id=\"Amazon-Kinesis_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Kinesis_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M9.88643387,31.1072507 L10.8907602,31.1072507 C10.8907602,27.0640447 13.5170735,22.9312582 33,22.9312582 L33,21.9247344 C12.6322621,21.9247344 9.88643387,26.566822 9.88643387,31.1072507 M12.7728677,34 L13.7771941,34 C13.7771941,30.3604101 13.7771941,24.8597577 33,24.8597577 L33,23.8532339 C14.3345952,23.8532339 12.7728677,28.8657223 12.7728677,34 M8.00432633,13.7497484 L7,13.7497484 C7,17.3047903 11.7876236,19.5604101 21.2333127,20.4994967 C11.7876236,21.4385834 7,23.6952097 7,27.2492451 L8.00432633,27.2492451 C8.00432633,24.9171295 11.2513133,21.0027586 33,21.0027586 L33,19.9962349 C11.2513133,19.9962349 8.00432633,16.0828705 8.00432633,13.7497484 M10.8907602,9.8927493 L9.88643387,9.8927493 C9.88643387,14.433178 12.6322621,19.0742591 33,19.0742591 L33,18.0677353 C13.5170735,18.0677353 10.8907602,13.9349487 10.8907602,9.8927493 M33,16.1392358 L33,17.1457596 C14.3345952,17.1457596 12.7728677,12.1332712 12.7728677,7 L13.7771941,7 C13.7771941,10.6395899 13.7771941,16.1392358 33,16.1392358\" id=\"Amazon-Kinesis_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/kinesis-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "kinesis.services.k8s.aws/v1alpha1",
+    "kind": "Stream",
+    "schema": "{\n \"description\": \"Stream is the Schema for the Streams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"StreamSpec defines the desired state of Stream.\",\n   \"properties\": {\n    \"name\": {\n     \"description\": \"A name to identify the stream. The stream name is scoped to the Amazon Web\\nServices account used by the application that creates the stream. It is also\\nscoped by Amazon Web Services Region. That is, two streams in two different\\nAmazon Web Services accounts can have the same name. Two streams in the same\\nAmazon Web Services account but in two different Regions can also have the\\nsame name.\",\n     \"type\": \"string\"\n    },\n    \"shardCount\": {\n     \"description\": \"The number of shards that the stream will use. The throughput of the stream\\nis a function of the number of shards; more shards are required for greater\\nprovisioned throughput.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"streamModeDetails\": {\n     \"description\": \"Indicates the capacity mode of the data stream. Currently, in Kinesis Data\\nStreams, you can choose between an on-demand capacity mode and a provisioned\\ncapacity mode for your data streams.\",\n     \"properties\": {\n      \"streamMode\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"A set of up to 10 key-value pairs to use to create the tags.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Stream\",\n \"type\": \"object\"\n}"
+  }
+}

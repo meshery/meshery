@@ -320,7 +320,8 @@ function MesheryPatterns({
     selectedResource: {},
   });
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [viewType, setViewType] = useState('grid');
+  const { view } = router.query;
+  const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
@@ -504,6 +505,14 @@ function MesheryPatterns({
     if (viewType === 'grid') {
       setSearch('');
     }
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, view: viewType },
+      },
+      undefined,
+      { shallow: true },
+    );
   }, [viewType]);
 
   const initPatternsSubscription = (
@@ -852,11 +861,6 @@ function MesheryPatterns({
           event_type: EVENT_TYPES.ERROR,
         });
       });
-  }
-
-  // this function returns fetchPattern function with latest values so that it can be used in child components
-  function fetchPatternsCaller() {
-    return () => getPatterns();
   }
 
   const handleError = (action) => (error) => {
@@ -1629,7 +1633,7 @@ function MesheryPatterns({
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
                     currentUser={user}
-                    patternFetcher={fetchPatternsCaller}
+                    patternFetcher={getPatterns}
                     formSchema={publishSchema}
                     meshModels={meshModels}
                   />
@@ -1647,7 +1651,7 @@ function MesheryPatterns({
                 />
               )}
             {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
-              <ImportModal
+              <ImportDesignModal
                 handleClose={handleUploadImportClose}
                 handleImportDesign={handleImportDesign}
               />
@@ -1662,7 +1666,7 @@ function MesheryPatterns({
   );
 }
 
-const ImportModal = React.memo((props) => {
+export const ImportDesignModal = React.memo((props) => {
   const { handleClose, handleImportDesign } = props;
 
   return (

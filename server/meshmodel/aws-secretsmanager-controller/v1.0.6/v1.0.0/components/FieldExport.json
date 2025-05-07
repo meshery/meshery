@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Field Export",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-secretsmanager-controller",
+    "displayName": "AWS Secrets Manager",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Security \u0026 Compliance"
+    },
+    "subCategory": "Security Identity Compliance",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#DD344C",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/secretsmanager-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Secrets-Manager_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Security-Identity-Compliance\" fill=\"#DD344C\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M21.08,22.12 C21.08,21.8 20.82,21.54 20.5,21.54 C20.18,21.54 19.92,21.8 19.92,22.12 C19.92,22.44 20.18,22.7 20.5,22.7 C20.82,22.7 21.08,22.44 21.08,22.12 L21.08,22.12 Z M22.08,22.12 C22.08,22.815 21.625,23.401 21,23.611 L21,25 L20,25 L20,23.611 C19.375,23.401 18.92,22.815 18.92,22.12 C18.92,21.249 19.629,20.54 20.5,20.54 C21.371,20.54 22.08,21.249 22.08,22.12 L22.08,22.12 Z M24.909,25.984 L24.909,24.998 L23,24.998 L23,23.998 L24.909,23.998 L24.909,21.986 L23,21.986 L23,20.986 L24.909,20.986 L24.909,20.012 L16.091,20.012 L16.091,25.984 L24.909,25.984 Z M16.971,19.012 L23.989,19.012 L23.989,17 C23.989,15.728 22.662,13.954 20.502,13.954 C18.314,13.954 16.971,15.728 16.971,17 L16.971,19.012 Z M24.989,17 L24.989,19.012 L25.409,19.012 C25.685,19.012 25.909,19.235 25.909,19.512 L25.909,26.484 C25.909,26.761 25.685,26.984 25.409,26.984 L15.591,26.984 C15.314,26.984 15.091,26.761 15.091,26.484 L15.091,19.512 C15.091,19.235 15.314,19.012 15.591,19.012 L15.971,19.012 L15.971,17 C15.971,15.086 17.832,12.954 20.502,12.954 C23.146,12.954 24.989,15.086 24.989,17 L24.989,17 Z M10.461,27.766 L11.271,27.18 C9.958,25.365 9.23,23.237 9.138,21 L11,21 L11,20 L9.139,20 C9.238,17.776 9.965,15.661 11.271,13.855 L10.461,13.269 C9.03,15.246 8.239,17.564 8.139,20 L7,20 L7,21 L8.138,21 C8.231,23.449 9.023,25.78 10.461,27.766 L10.461,27.766 Z M27.161,29.746 C25.352,31.056 23.23,31.783 21,31.878 L21,30 L20,30 L20,31.879 C17.769,31.783 15.647,31.056 13.837,29.746 L13.251,30.557 C15.232,31.991 17.558,32.782 20,32.879 L20,34 L21,34 L21,32.878 C23.442,32.782 25.767,31.99 27.747,30.556 L27.161,29.746 Z M13.837,11.289 C15.647,9.979 17.769,9.253 20,9.157 L20,11 L21,11 L21,9.157 C23.23,9.253 25.352,9.98 27.161,11.289 L27.747,10.479 C25.767,9.045 23.442,8.254 21,8.157 L21,7 L20,7 L20,8.157 C17.558,8.253 15.232,9.045 13.251,10.479 L13.837,11.289 Z M32.859,20 C32.76,17.563 31.968,15.245 30.538,13.269 L29.727,13.855 C31.033,15.66 31.76,17.775 31.859,20 L30,20 L30,21 L31.86,21 C31.768,23.237 31.041,25.366 29.727,27.18 L30.538,27.766 C31.975,25.781 32.768,23.45 32.86,21 L34,21 L34,20 L32.859,20 Z M28.413,13.311 L32.192,9.531 L31.485,8.824 L27.706,12.604 L28.413,13.311 Z M12.586,27.724 L8.806,31.504 L9.513,32.211 L13.293,28.431 L12.586,27.724 Z M15.048,14.341 L7.892,7.186 L7.185,7.893 L14.341,15.048 L15.048,14.341 Z M27.355,26.649 L33.812,33.106 L33.105,33.813 L26.648,27.356 L27.355,26.649 Z\" id=\"AWS-Secrets-Manager_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Secrets-Manager_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M21.08,22.12 C21.08,21.8 20.82,21.54 20.5,21.54 C20.18,21.54 19.92,21.8 19.92,22.12 C19.92,22.44 20.18,22.7 20.5,22.7 C20.82,22.7 21.08,22.44 21.08,22.12 L21.08,22.12 Z M22.08,22.12 C22.08,22.815 21.625,23.401 21,23.611 L21,25 L20,25 L20,23.611 C19.375,23.401 18.92,22.815 18.92,22.12 C18.92,21.249 19.629,20.54 20.5,20.54 C21.371,20.54 22.08,21.249 22.08,22.12 L22.08,22.12 Z M24.909,25.984 L24.909,24.998 L23,24.998 L23,23.998 L24.909,23.998 L24.909,21.986 L23,21.986 L23,20.986 L24.909,20.986 L24.909,20.012 L16.091,20.012 L16.091,25.984 L24.909,25.984 Z M16.971,19.012 L23.989,19.012 L23.989,17 C23.989,15.728 22.662,13.954 20.502,13.954 C18.314,13.954 16.971,15.728 16.971,17 L16.971,19.012 Z M24.989,17 L24.989,19.012 L25.409,19.012 C25.685,19.012 25.909,19.235 25.909,19.512 L25.909,26.484 C25.909,26.761 25.685,26.984 25.409,26.984 L15.591,26.984 C15.314,26.984 15.091,26.761 15.091,26.484 L15.091,19.512 C15.091,19.235 15.314,19.012 15.591,19.012 L15.971,19.012 L15.971,17 C15.971,15.086 17.832,12.954 20.502,12.954 C23.146,12.954 24.989,15.086 24.989,17 L24.989,17 Z M10.461,27.766 L11.271,27.18 C9.958,25.365 9.23,23.237 9.138,21 L11,21 L11,20 L9.139,20 C9.238,17.776 9.965,15.661 11.271,13.855 L10.461,13.269 C9.03,15.246 8.239,17.564 8.139,20 L7,20 L7,21 L8.138,21 C8.231,23.449 9.023,25.78 10.461,27.766 L10.461,27.766 Z M27.161,29.746 C25.352,31.056 23.23,31.783 21,31.878 L21,30 L20,30 L20,31.879 C17.769,31.783 15.647,31.056 13.837,29.746 L13.251,30.557 C15.232,31.991 17.558,32.782 20,32.879 L20,34 L21,34 L21,32.878 C23.442,32.782 25.767,31.99 27.747,30.556 L27.161,29.746 Z M13.837,11.289 C15.647,9.979 17.769,9.253 20,9.157 L20,11 L21,11 L21,9.157 C23.23,9.253 25.352,9.98 27.161,11.289 L27.747,10.479 C25.767,9.045 23.442,8.254 21,8.157 L21,7 L20,7 L20,8.157 C17.558,8.253 15.232,9.045 13.251,10.479 L13.837,11.289 Z M32.859,20 C32.76,17.563 31.968,15.245 30.538,13.269 L29.727,13.855 C31.033,15.66 31.76,17.775 31.859,20 L30,20 L30,21 L31.86,21 C31.768,23.237 31.041,25.366 29.727,27.18 L30.538,27.766 C31.975,25.781 32.768,23.45 32.86,21 L34,21 L34,20 L32.859,20 Z M28.413,13.311 L32.192,9.531 L31.485,8.824 L27.706,12.604 L28.413,13.311 Z M12.586,27.724 L8.806,31.504 L9.513,32.211 L13.293,28.431 L12.586,27.724 Z M15.048,14.341 L7.892,7.186 L7.185,7.893 L14.341,15.048 L15.048,14.341 Z M27.355,26.649 L33.812,33.106 L33.105,33.813 L26.648,27.356 L27.355,26.649 Z\" id=\"AWS-Secrets-Manager_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.6"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#DD344C",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_AWS-Secrets-Manager_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Security-Identity-Compliance\" fill=\"#DD344C\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M21.08,22.12 C21.08,21.8 20.82,21.54 20.5,21.54 C20.18,21.54 19.92,21.8 19.92,22.12 C19.92,22.44 20.18,22.7 20.5,22.7 C20.82,22.7 21.08,22.44 21.08,22.12 L21.08,22.12 Z M22.08,22.12 C22.08,22.815 21.625,23.401 21,23.611 L21,25 L20,25 L20,23.611 C19.375,23.401 18.92,22.815 18.92,22.12 C18.92,21.249 19.629,20.54 20.5,20.54 C21.371,20.54 22.08,21.249 22.08,22.12 L22.08,22.12 Z M24.909,25.984 L24.909,24.998 L23,24.998 L23,23.998 L24.909,23.998 L24.909,21.986 L23,21.986 L23,20.986 L24.909,20.986 L24.909,20.012 L16.091,20.012 L16.091,25.984 L24.909,25.984 Z M16.971,19.012 L23.989,19.012 L23.989,17 C23.989,15.728 22.662,13.954 20.502,13.954 C18.314,13.954 16.971,15.728 16.971,17 L16.971,19.012 Z M24.989,17 L24.989,19.012 L25.409,19.012 C25.685,19.012 25.909,19.235 25.909,19.512 L25.909,26.484 C25.909,26.761 25.685,26.984 25.409,26.984 L15.591,26.984 C15.314,26.984 15.091,26.761 15.091,26.484 L15.091,19.512 C15.091,19.235 15.314,19.012 15.591,19.012 L15.971,19.012 L15.971,17 C15.971,15.086 17.832,12.954 20.502,12.954 C23.146,12.954 24.989,15.086 24.989,17 L24.989,17 Z M10.461,27.766 L11.271,27.18 C9.958,25.365 9.23,23.237 9.138,21 L11,21 L11,20 L9.139,20 C9.238,17.776 9.965,15.661 11.271,13.855 L10.461,13.269 C9.03,15.246 8.239,17.564 8.139,20 L7,20 L7,21 L8.138,21 C8.231,23.449 9.023,25.78 10.461,27.766 L10.461,27.766 Z M27.161,29.746 C25.352,31.056 23.23,31.783 21,31.878 L21,30 L20,30 L20,31.879 C17.769,31.783 15.647,31.056 13.837,29.746 L13.251,30.557 C15.232,31.991 17.558,32.782 20,32.879 L20,34 L21,34 L21,32.878 C23.442,32.782 25.767,31.99 27.747,30.556 L27.161,29.746 Z M13.837,11.289 C15.647,9.979 17.769,9.253 20,9.157 L20,11 L21,11 L21,9.157 C23.23,9.253 25.352,9.98 27.161,11.289 L27.747,10.479 C25.767,9.045 23.442,8.254 21,8.157 L21,7 L20,7 L20,8.157 C17.558,8.253 15.232,9.045 13.251,10.479 L13.837,11.289 Z M32.859,20 C32.76,17.563 31.968,15.245 30.538,13.269 L29.727,13.855 C31.033,15.66 31.76,17.775 31.859,20 L30,20 L30,21 L31.86,21 C31.768,23.237 31.041,25.366 29.727,27.18 L30.538,27.766 C31.975,25.781 32.768,23.45 32.86,21 L34,21 L34,20 L32.859,20 Z M28.413,13.311 L32.192,9.531 L31.485,8.824 L27.706,12.604 L28.413,13.311 Z M12.586,27.724 L8.806,31.504 L9.513,32.211 L13.293,28.431 L12.586,27.724 Z M15.048,14.341 L7.892,7.186 L7.185,7.893 L14.341,15.048 L15.048,14.341 Z M27.355,26.649 L33.812,33.106 L33.105,33.813 L26.648,27.356 L27.355,26.649 Z\" id=\"AWS-Secrets-Manager_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_AWS-Secrets-Manager_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M21.08,22.12 C21.08,21.8 20.82,21.54 20.5,21.54 C20.18,21.54 19.92,21.8 19.92,22.12 C19.92,22.44 20.18,22.7 20.5,22.7 C20.82,22.7 21.08,22.44 21.08,22.12 L21.08,22.12 Z M22.08,22.12 C22.08,22.815 21.625,23.401 21,23.611 L21,25 L20,25 L20,23.611 C19.375,23.401 18.92,22.815 18.92,22.12 C18.92,21.249 19.629,20.54 20.5,20.54 C21.371,20.54 22.08,21.249 22.08,22.12 L22.08,22.12 Z M24.909,25.984 L24.909,24.998 L23,24.998 L23,23.998 L24.909,23.998 L24.909,21.986 L23,21.986 L23,20.986 L24.909,20.986 L24.909,20.012 L16.091,20.012 L16.091,25.984 L24.909,25.984 Z M16.971,19.012 L23.989,19.012 L23.989,17 C23.989,15.728 22.662,13.954 20.502,13.954 C18.314,13.954 16.971,15.728 16.971,17 L16.971,19.012 Z M24.989,17 L24.989,19.012 L25.409,19.012 C25.685,19.012 25.909,19.235 25.909,19.512 L25.909,26.484 C25.909,26.761 25.685,26.984 25.409,26.984 L15.591,26.984 C15.314,26.984 15.091,26.761 15.091,26.484 L15.091,19.512 C15.091,19.235 15.314,19.012 15.591,19.012 L15.971,19.012 L15.971,17 C15.971,15.086 17.832,12.954 20.502,12.954 C23.146,12.954 24.989,15.086 24.989,17 L24.989,17 Z M10.461,27.766 L11.271,27.18 C9.958,25.365 9.23,23.237 9.138,21 L11,21 L11,20 L9.139,20 C9.238,17.776 9.965,15.661 11.271,13.855 L10.461,13.269 C9.03,15.246 8.239,17.564 8.139,20 L7,20 L7,21 L8.138,21 C8.231,23.449 9.023,25.78 10.461,27.766 L10.461,27.766 Z M27.161,29.746 C25.352,31.056 23.23,31.783 21,31.878 L21,30 L20,30 L20,31.879 C17.769,31.783 15.647,31.056 13.837,29.746 L13.251,30.557 C15.232,31.991 17.558,32.782 20,32.879 L20,34 L21,34 L21,32.878 C23.442,32.782 25.767,31.99 27.747,30.556 L27.161,29.746 Z M13.837,11.289 C15.647,9.979 17.769,9.253 20,9.157 L20,11 L21,11 L21,9.157 C23.23,9.253 25.352,9.98 27.161,11.289 L27.747,10.479 C25.767,9.045 23.442,8.254 21,8.157 L21,7 L20,7 L20,8.157 C17.558,8.253 15.232,9.045 13.251,10.479 L13.837,11.289 Z M32.859,20 C32.76,17.563 31.968,15.245 30.538,13.269 L29.727,13.855 C31.033,15.66 31.76,17.775 31.859,20 L30,20 L30,21 L31.86,21 C31.768,23.237 31.041,25.366 29.727,27.18 L30.538,27.766 C31.975,25.781 32.768,23.45 32.86,21 L34,21 L34,20 L32.859,20 Z M28.413,13.311 L32.192,9.531 L31.485,8.824 L27.706,12.604 L28.413,13.311 Z M12.586,27.724 L8.806,31.504 L9.513,32.211 L13.293,28.431 L12.586,27.724 Z M15.048,14.341 L7.892,7.186 L7.185,7.893 L14.341,15.048 L15.048,14.341 Z M27.355,26.649 L33.812,33.106 L33.105,33.813 L26.648,27.356 L27.355,26.649 Z\" id=\"AWS-Secrets-Manager_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/secretsmanager-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "services.k8s.aws/v1alpha1",
+    "kind": "FieldExport",
+    "schema": "{\n \"description\": \"FieldExport is the schema for the FieldExport API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FieldExportSpec defines the desired state of the FieldExport.\",\n   \"properties\": {\n    \"from\": {\n     \"description\": \"ResourceFieldSelector provides the values necessary to identify an individual\\nfield on an individual K8s resource.\",\n     \"properties\": {\n      \"path\": {\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"description\": \"NamespacedResource provides all the values necessary to identify an ACK\\nresource of a given type (within the same namespace as the custom resource\\ncontaining this type).\",\n       \"properties\": {\n        \"group\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"group\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\",\n      \"resource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"FieldExportTarget provides the values necessary to identify the\\noutput path for a field export.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key overrides the default value (`\\u003cnamespace\\u003e.\\u003cFieldExport-resource-name\\u003e`) for the FieldExport target\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"FieldExportOutputType represents all types that can be produced by a field\\nexport operation\",\n       \"enum\": [\n        \"configmap\",\n        \"secret\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is marked as optional, so we cannot compose `NamespacedName`\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"from\",\n    \"to\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Field Export\",\n \"type\": \"object\"\n}"
+  }
+}
