@@ -6,7 +6,6 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import ReactSelectWrapper from './ReactSelectWrapper';
 import { updateAdaptersInfo, updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -14,6 +13,12 @@ import BadgeAvatars from './CustomAvatar';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { iconMedium } from 'css/icons.styles';
+import {
+  useGetAdaptersQuery,
+  useGetAvailableAdaptersQuery,
+  useLazyPingAdapterQuery,
+  useManageAdapterMutation,
+} from '@/rtk-query/system';
 
 const WrapperStyledDiv = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -54,8 +59,6 @@ const STATUS = {
 const MeshAdapterConfigComponent = (props) => {
   const labelRef = useRef(null);
   const [meshAdapters, setMeshAdapters] = useState(props.meshAdapters);
-  const [setAdapterURLs, setSetAdapterURLs] = useState([]);
-  const [availableAdapters, setAvailableAdapters] = useState([]);
   const [ts, setTs] = useState(props.meshAdapterStates);
   const [meshLocationURLError, setMeshLocationURLError] = useState(false);
   const [selectedAvailableAdapterError, setSelectedAvailableAdapterError] = useState(false);
@@ -66,6 +69,23 @@ const MeshAdapterConfigComponent = (props) => {
   const [selectedAvailableAdapter, setSelectedAvailableAdapter] = useState();
   const { notify } = useNotification();
 
+  const { data: adapters } = useGetAdaptersQuery();
+  const { data: availableAdaptersData } = useGetAvailableAdaptersQuery();
+  const [pingAdapter] = useLazyPingAdapterQuery();
+  const [manageAdapter] = useManageAdapterMutation();
+
+  const setAdapterURLs =
+    adapters?.map((res) => ({
+      value: res.adapter_location,
+      label: res.adapter_location,
+    })) || [];
+
+  const availableAdapters =
+    availableAdaptersData?.map((res) => ({
+      value: res.adapter_location,
+      label: res.name,
+    })) || [];
+
   useEffect(() => {
     if (props.meshAdapterStates > ts) {
       setMeshAdapters(props.meshAdapters);
@@ -74,56 +94,8 @@ const MeshAdapterConfigComponent = (props) => {
   }, [props.meshAdapterStates, ts]);
 
   useEffect(() => {
-    fetchSetAdapterURLs();
-    fetchAvailableAdapters();
     setAdapterStatesFunction();
-  }, []);
-
-  const fetchSetAdapterURLs = () => {
-    updateProgress({ showProgress: true });
-
-    dataFetch(
-      '/api/system/adapters',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.adapter_location,
-          }));
-          setSetAdapterURLs(options);
-        }
-      },
-      handleError('Unable to fetch available adapters'),
-    );
-  };
-
-  const fetchAvailableAdapters = () => {
-    updateProgress({ showProgress: true });
-
-    dataFetch(
-      '/api/system/availableAdapters',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          const options = result.map((res) => ({
-            value: res.adapter_location,
-            label: res.name,
-          }));
-          setAvailableAdapters(options);
-        }
-      },
-      handleError('Unable to fetch available adapters'),
-    );
-  };
+  }, [meshAdapters]);
 
   const setAdapterStatesFunction = () => {
     const initialAdapterStates = {};
@@ -162,16 +134,6 @@ const MeshAdapterConfigComponent = (props) => {
     if (typeof newValue !== 'undefined') {
       setMeshLocationURL(newValue);
       setMeshLocationURLError(false);
-      // If this is a newly created option, add it to the adapter URLs list
-      if (newValue && newValue.__isNew__) {
-        setSetAdapterURLs((prevOptions) => [
-          ...prevOptions,
-          {
-            value: newValue.value,
-            label: newValue.value,
-          },
-        ]);
-      }
     }
   };
   const handleDeployPortChange = (newValue) => {
@@ -203,75 +165,63 @@ const MeshAdapterConfigComponent = (props) => {
 
     submitConfig();
   };
-  const submitConfig = () => {
-    const data = { meshLocationURL: meshLocationURL.value };
 
-    const params = Object.keys(data)
-      .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
-      .join('&');
+  const submitConfig = async () => {
+    props.updateProgress({ showProgress: true });
 
-    updateProgress({ showProgress: true });
+    try {
+      const result = await manageAdapter({
+        meshLocationURL: meshLocationURL.value,
+      }).unwrap();
 
-    dataFetch(
-      '/api/system/adapter/manage',
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: params,
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          // self.setState({ meshAdapters : result, meshLocationURL : "" });
-          setMeshAdapters(result);
-          setMeshLocationURL('');
+      props.updateProgress({ showProgress: false });
 
-          notify({ message: 'Adapter was configured!', event_type: EVENT_TYPES.SUCCESS });
-          updateAdaptersInfo({ meshAdapters: result });
-          fetchSetAdapterURLs();
-        }
-      },
-      handleError('Adapter was not configured due to an error'),
-    );
+      if (result) {
+        setMeshAdapters(result);
+        setMeshLocationURL('');
+        notify({ message: 'Adapter configured.', event_type: EVENT_TYPES.SUCCESS });
+        props.updateAdaptersInfo({ meshAdapters: result });
+      }
+    } catch (error) {
+      handleError('Adapter was not configured due to an error')(error);
+    }
   };
-  const handleDelete = (adapterLoc) => () => {
-    updateProgress({ showProgress: true });
 
-    dataFetch(
-      `/api/system/adapter/manage?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
+  const handleDelete = (adapterLoc) => async () => {
+    props.updateProgress({ showProgress: true });
+
+    try {
+      const result = await manageAdapter({
         method: 'DELETE',
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          setMeshAdapters(result);
-          notify({ message: 'Adapter was removed!', event_type: EVENT_TYPES.SUCCESS });
-          updateAdaptersInfo({ meshAdapters: result });
-        }
-      },
-      handleError('Adapter was not removed due to an error'),
-    );
+        adapter: adapterLoc,
+      }).unwrap();
+
+      props.updateProgress({ showProgress: false });
+
+      if (result) {
+        setMeshAdapters(result);
+        notify({ message: 'Adapter removed.', event_type: EVENT_TYPES.SUCCESS });
+        props.updateAdaptersInfo({ meshAdapters: result });
+      }
+    } catch (error) {
+      handleError('Adapter was not removed due to an error')(error);
+    }
   };
 
-  const handleClick = (adapterLoc) => () => {
-    updateProgress({ showProgress: true });
+  const handleClick = (adapterLoc) => async () => {
+    props.updateProgress({ showProgress: true });
 
-    dataFetch(
-      `/api/system/adapters?adapter=${encodeURIComponent(adapterLoc)}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          notify({ message: 'Adapter was pinged!', event_type: EVENT_TYPES.SUCCESS });
-        }
-      },
-      handleError('error'),
-    );
+    try {
+      const result = await pingAdapter(adapterLoc).unwrap();
+
+      props.updateProgress({ showProgress: false });
+
+      if (result) {
+        notify({ message: 'Adapter was pinged.', event_type: EVENT_TYPES.SUCCESS });
+      }
+    } catch (error) {
+      handleError('Error pinging adapter')(error);
+    }
   };
 
   const handleAdapterDeploy = () => {
@@ -295,7 +245,7 @@ const MeshAdapterConfigComponent = (props) => {
       return;
     }
 
-    updateProgress({ showProgress: true });
+    props.updateProgress({ showProgress: true });
 
     const variables = {
       status: 'ENABLED',
@@ -304,7 +254,7 @@ const MeshAdapterConfigComponent = (props) => {
     };
 
     changeAdapterState((response, errors) => {
-      updateProgress({ showProgress: false });
+      props.updateProgress({ showProgress: false });
 
       if (errors !== undefined) {
         handleError('Unable to Deploy adapter');
@@ -331,7 +281,7 @@ const MeshAdapterConfigComponent = (props) => {
       return;
     }
 
-    updateProgress({ showProgress: true });
+    props.updateProgress({ showProgress: true });
 
     const targetPort = (() => {
       if (!meshLocationURL.value) {
@@ -375,7 +325,7 @@ const MeshAdapterConfigComponent = (props) => {
     };
 
     changeAdapterState((response, errors) => {
-      updateProgress({ showProgress: false });
+      props.updateProgress({ showProgress: false });
 
       if (errors !== undefined) {
         console.error(errors);
@@ -399,7 +349,7 @@ const MeshAdapterConfigComponent = (props) => {
   };
 
   const handleError = (msg) => (error) => {
-    updateProgress({ showProgress: false });
+    props.updateProgress({ showProgress: false });
     notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
   };
 

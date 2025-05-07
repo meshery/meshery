@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Container Analysis Note",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "k8s-config-connector",
+    "displayName": "Google Cloud Platform",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Provisioning",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#4285F4",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/GoogleCloudPlatform/k8s-config-connector/master/crds",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M10.1893938,2 C10.3728304,2.00077434 10.5258338,2.13095973 10.5618102,2.30439506 L10.5698113,2.38112124 L10.5698113,4.33245019 L12.6188242,4.33245019 L12.6185298,2.38171121 C12.6190451,2.19767714 12.7494087,2.04435844 12.9226324,2.00831145 L12.9992416,2.00029499 L13.6211004,2 C13.8047946,2.00077434 13.9578302,2.13118557 13.9936134,2.30467737 L14.0015178,2.38141623 L14.0015178,4.33245019 L16.0505308,4.33245019 L16.0502364,2.38171121 C16.0510093,2.19767714 16.1814051,2.04458429 16.3544356,2.00859376 L16.4309482,2.00058997 L17.0525126,2.00029499 C17.2362068,2.00106932 17.3892424,2.13125471 17.42542,2.30469004 L17.4335189,2.38141623 L17.4332244,4.33245019 L19.2543403,4.33245019 C19.46215,4.33349903 19.6348304,4.48348275 19.6714654,4.68150582 L19.6786294,4.75781925 L19.6786294,6.5749298 L21.6189937,6.5749298 C21.8026879,6.57544603 21.9559489,6.70605085 21.9919857,6.87979269 L22,6.95664102 L22,7.57876539 C21.9994847,7.76305757 21.8688957,7.91663439 21.6956156,7.95254426 L21.6189937,7.9604766 L19.6786294,7.9604766 L19.6786294,10.0129856 L21.6189937,10.0129856 C21.8029455,10.0135018 21.9564642,10.1441066 21.9921668,10.3180461 L22,10.3949918 L22,11.0168212 C21.9994847,11.2008552 21.8688957,11.3543998 21.6956156,11.390108 L21.6189937,11.3979424 L19.6786294,11.3982374 L19.6786294,13.4510413 L21.6189937,13.4510413 C21.8029455,13.4515576 21.9564642,13.5823882 21.9921668,13.7559889 L22,13.8327525 L22,14.4548769 C21.9994847,14.638911 21.8688957,14.7924555 21.6956156,14.8281638 L21.6189937,14.8359982 L19.6786294,14.8362931 L19.6783349,16.6539937 C19.6775497,16.8624501 19.5276394,17.0357122 19.3299336,17.0722629 L19.2537514,17.0793627 L17.4335189,17.0793627 L17.4332244,19.0295117 C17.4329668,19.2138039 17.3024099,19.3676066 17.1289366,19.4035729 L17.0522181,19.4115179 L16.4315371,19.4115179 C16.2475853,19.4110017 16.0940666,19.280171 16.058364,19.1063727 L16.0505308,19.0295117 L16.0502364,17.0793627 L14.0015178,17.0793627 L14.0012234,19.0295117 C14.0009658,19.2138039 13.8706343,19.3673807 13.6974146,19.4034882 L13.620806,19.4115179 L12.9995361,19.4115179 C12.8155842,19.4110017 12.662291,19.280171 12.6266447,19.1063727 L12.6188242,19.0295117 L12.6182353,17.0793627 L11.606,17.079 L11.6075624,17.1291822 C11.6075624,19.7465558 9.57152078,21.8817501 7.01776046,21.9952542 L6.80378122,22 C4.15072611,22 2,19.8192606 2,17.1291822 C2,14.4391039 4.15072611,12.2583645 6.80378122,12.2583645 C6.85035544,12.2583645 6.89677486,12.2590365 6.94303054,12.2603716 L6.94200715,11.3982374 L5.00193724,11.3982374 C4.81824304,11.3977212 4.66498204,11.2671163 4.62933976,11.0935721 L4.62151983,11.0168212 L4.62122539,10.3944018 C4.62174066,10.2103677 4.75187886,10.057049 4.92504623,10.021002 L5.0016428,10.0129856 L6.94200715,10.0132806 L6.94171271,7.9604766 L5.00193724,7.9604766 C4.81824304,7.95970227 4.66520747,7.82929103 4.6294243,7.65599685 L4.62151983,7.57935536 L4.62093095,6.95605104 C4.62170386,6.77227509 4.75187426,6.61898865 4.92484841,6.58274807 L5.00134836,6.57463482 L6.94171271,6.57463482 L6.94171271,4.75752426 C6.94249788,4.54906786 7.09264084,4.37603884 7.29039837,4.33953996 L7.36659066,4.33245019 L9.18711763,4.33245019 L9.18682319,2.38171121 C9.1875961,2.19767714 9.3177665,2.04435844 9.4909379,2.00831145 L9.56753504,2.00029499 L10.1893938,2 Z M6.72943699,14.4904938 L6.00155422,15.2285341 L7.54520096,16.7942708 L4.07020096,16.7941541 L4.07020096,17.8379007 L7.54520096,17.8382708 L6.00155422,19.4020024 L6.72921198,20.1402708 L9.51619567,17.3161415 L6.72943699,14.4904938 Z M18.2467641,5.76017991 L8.37416681,5.7604749 L8.37494037,12.5248503 C9.8017631,13.0253356 10.9235874,14.1884603 11.3824464,15.6512622 L18.2458808,15.651043 L18.2467641,5.76017991 Z M15.3046241,8.28260075 C15.5126956,8.28312517 15.6856377,8.43351678 15.7219141,8.63163695 L15.7289132,8.70796981 L15.7289132,12.7038431 C15.728128,12.9122995 15.5782177,13.0857947 15.3803051,13.1223972 L15.3040353,13.1295072 L11.3158357,13.1295072 C11.1077643,13.1284583 10.9348221,12.9782415 10.898339,12.7801667 L10.8912522,12.7038431 L10.8909577,8.70796981 C10.8917429,8.4995134 11.0416532,8.32625131 11.2393591,8.28990781 L11.3155413,8.28289573 L15.3046241,8.28260075 Z\" fill=\"#4285F4\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M10.1894 2C10.3728 2.00077 10.5258 2.13096 10.5618 2.30439L10.5698 2.38112V4.33245H12.6188L12.6185 2.38171C12.619 2.19768 12.7494 2.04436 12.9226 2.00831L12.9992 2.00029L13.6211 2C13.8048 2.00077 13.9578 2.13119 13.9936 2.30468L14.0015 2.38142V4.33245H16.0505L16.0502 2.38171C16.051 2.19768 16.1814 2.04458 16.3544 2.00859L16.4309 2.00059L17.0525 2.00029C17.2362 2.00107 17.3892 2.13125 17.4254 2.30469L17.4335 2.38142L17.4332 4.33245H19.2543C19.4622 4.3335 19.6348 4.48348 19.6715 4.68151L19.6786 4.75782V6.57493H21.619C21.8027 6.57545 21.9559 6.70605 21.992 6.87979L22 6.95664V7.57877C21.9995 7.76306 21.8689 7.91663 21.6956 7.95254L21.619 7.96048H19.6786V10.013H21.619C21.8029 10.0135 21.9565 10.1441 21.9922 10.318L22 10.395V11.0168C21.9995 11.2009 21.8689 11.3544 21.6956 11.3901L21.619 11.3979L19.6786 11.3982V13.451H21.619C21.8029 13.4516 21.9565 13.5824 21.9922 13.756L22 13.8328V14.4549C21.9995 14.6389 21.8689 14.7925 21.6956 14.8282L21.619 14.836L19.6786 14.8363L19.6783 16.654C19.6775 16.8625 19.5276 17.0357 19.3299 17.0723L19.2538 17.0794H17.4335L17.4332 19.0295C17.433 19.2138 17.3024 19.3676 17.1289 19.4036L17.0522 19.4115H16.4315C16.2476 19.411 16.0941 19.2802 16.0584 19.1064L16.0505 19.0295L16.0502 17.0794H14.0015L14.0012 19.0295C14.001 19.2138 13.8706 19.3674 13.6974 19.4035L13.6208 19.4115H12.9995C12.8156 19.411 12.6623 19.2802 12.6266 19.1064L12.6188 19.0295L12.6182 17.0794L11.606 17.079L11.6076 17.1292C11.6076 19.7466 9.57152 21.8818 7.01776 21.9953L6.80378 22C4.15073 22 2 19.8193 2 17.1292C2 14.4391 4.15073 12.2584 6.80378 12.2584C6.85036 12.2584 6.89677 12.259 6.94303 12.2604L6.94201 11.3982H5.00194C4.81824 11.3977 4.66498 11.2671 4.62934 11.0936L4.62152 11.0168L4.62123 10.3944C4.62174 10.2104 4.75188 10.057 4.92505 10.021L5.00164 10.013L6.94201 10.0133L6.94171 7.96048H5.00194C4.81824 7.9597 4.66521 7.82929 4.62942 7.656L4.62152 7.57936L4.62093 6.95605C4.6217 6.77227 4.75187 6.61899 4.92485 6.58275L5.00135 6.57464H6.94171V4.75752C6.9425 4.54907 7.09264 4.37604 7.2904 4.33954L7.36659 4.33245H9.18712L9.18682 2.38171C9.1876 2.19768 9.31777 2.04436 9.49094 2.00831L9.56754 2.00029L10.1894 2ZM6.72944 14.4905L6.00155 15.2285L7.5452 16.7943L4.0702 16.7942V17.8379L7.5452 17.8383L6.00155 19.402L6.72921 20.1403L9.5162 17.3161L6.72944 14.4905ZM18.2468 5.76018L8.37417 5.76047L8.37494 12.5248C9.80176 13.0253 10.9236 14.1885 11.3824 15.6513L18.2459 15.651L18.2468 5.76018ZM15.3046 8.2826C15.5127 8.28312 15.6856 8.43352 15.7219 8.63164L15.7289 8.70797V12.7038C15.7281 12.9123 15.5782 13.0858 15.3803 13.1224L15.304 13.1295H11.3158C11.1078 13.1285 10.9348 12.9782 10.8983 12.7802L10.8913 12.7038L10.891 8.70797C10.8917 8.49951 11.0417 8.32625 11.2394 8.28991L11.3155 8.2829L15.3046 8.2826Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.131.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#4285F4",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#4285f4;}.cls-1,.cls-2,.cls-4{fill-rule:evenodd;}.cls-2{fill:#669df6;}.cls-3,.cls-4{fill:#aecbfa;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon class=\"cls-1\" points=\"14.68 13.06 19.23 15.69 19.23 16.68 14.29 13.83 14.68 13.06\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9.98 13.65 4.77 16.66 4.45 15.86 9.53 12.92 9.98 13.65\"/\u003e\u003crect class=\"cls-3\" x=\"11.55\" y=\"3.29\" width=\"0.86\" height=\"5.78\"/\u003e\u003cpath class=\"cls-4\" d=\"M3.25,7V17L12,22l8.74-5V7L12,2Zm15.63,8.89L12,19.78,5.12,15.89V8.11L12,4.22l6.87,3.89v7.78Z\"/\u003e\u003cpolygon class=\"cls-4\" points=\"11.98 11.5 15.96 9.21 11.98 6.91 8.01 9.21 11.98 11.5\"/\u003e\u003cpolygon class=\"cls-2\" points=\"11.52 12.3 7.66 10.01 7.66 14.6 11.52 16.89 11.52 12.3\"/\u003e\u003cpolygon class=\"cls-1\" points=\"12.48 12.3 12.48 16.89 16.34 14.6 16.34 10.01 12.48 12.3\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2,.cls-4{fill-rule:evenodd;}.cls-2{fill:#fff;}.cls-3,.cls-4{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon class=\"cls-1\" points=\"14.68 13.06 19.23 15.69 19.23 16.68 14.29 13.83 14.68 13.06\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9.98 13.65 4.77 16.66 4.45 15.86 9.53 12.92 9.98 13.65\"/\u003e\u003crect class=\"cls-3\" x=\"11.55\" y=\"3.29\" width=\"0.86\" height=\"5.78\"/\u003e\u003cpath class=\"cls-4\" d=\"M3.25,7V17L12,22l8.74-5V7L12,2Zm15.63,8.89L12,19.78,5.12,15.89V8.11L12,4.22l6.87,3.89v7.78Z\"/\u003e\u003cpolygon class=\"cls-4\" points=\"11.98 11.5 15.96 9.21 11.98 6.91 8.01 9.21 11.98 11.5\"/\u003e\u003cpolygon class=\"cls-2\" points=\"11.52 12.3 7.66 10.01 7.66 14.6 11.52 16.89 11.52 12.3\"/\u003e\u003cpolygon class=\"cls-1\" points=\"12.48 12.3 12.48 16.89 16.34 14.6 16.34 10.01 12.48 12.3\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/GoogleCloudPlatform/k8s-config-connector/master/crds"
+  },
+  "configuration": null,
+  "component": {
+    "version": "containeranalysis.cnrm.cloud.google.com/v1beta1",
+    "kind": "ContainerAnalysisNote",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"attestation\": {\n     \"description\": \"A note describing an attestation role.\",\n     \"properties\": {\n      \"hint\": {\n       \"description\": \"Hint hints at the purpose of the attestation authority.\",\n       \"properties\": {\n        \"humanReadableName\": {\n         \"description\": \"Required. The human readable name of this attestation authority, for example \\\"qa\\\".\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"humanReadableName\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"build\": {\n     \"description\": \"A note describing build provenance for a verifiable build.\",\n     \"properties\": {\n      \"builderVersion\": {\n       \"description\": \"Required. Immutable. Version of the builder which produced this build.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"builderVersion\"\n     ],\n     \"type\": \"object\"\n    },\n    \"deployment\": {\n     \"description\": \"A note describing something that can be deployed.\",\n     \"properties\": {\n      \"resourceUri\": {\n       \"description\": \"Required. Resource URI for the artifact being deployed.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"resourceUri\"\n     ],\n     \"type\": \"object\"\n    },\n    \"discovery\": {\n     \"description\": \"A note describing the initial analysis of a resource.\",\n     \"properties\": {\n      \"analysisKind\": {\n       \"description\": \"The kind of analysis that is handled by this discovery. Possible values: NOTE_KIND_UNSPECIFIED, VULNERABILITY, BUILD, IMAGE, PACKAGE, DEPLOYMENT, DISCOVERY, ATTESTATION, UPGRADE\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"analysisKind\"\n     ],\n     \"type\": \"object\"\n    },\n    \"expirationTime\": {\n     \"description\": \"Time of expiration for this note. Empty if note does not expire.\",\n     \"format\": \"date-time\",\n     \"type\": \"string\"\n    },\n    \"image\": {\n     \"description\": \"A note describing a base image.\",\n     \"properties\": {\n      \"fingerprint\": {\n       \"description\": \"Required. Immutable. The fingerprint of the base image.\",\n       \"properties\": {\n        \"v1Name\": {\n         \"description\": \"Required. The layer ID of the final layer in the Docker image's v1 representation.\",\n         \"type\": \"string\"\n        },\n        \"v2Blob\": {\n         \"description\": \"Required. The ordered list of v2 blobs that represent a given image.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"required\": [\n        \"v1Name\",\n        \"v2Blob\"\n       ],\n       \"type\": \"object\"\n      },\n      \"resourceUrl\": {\n       \"description\": \"Required. Immutable. The resource_url for the resource representing the basis of associated occurrence images.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"fingerprint\",\n      \"resourceUrl\"\n     ],\n     \"type\": \"object\"\n    },\n    \"longDescription\": {\n     \"description\": \"A detailed description of this note.\",\n     \"type\": \"string\"\n    },\n    \"package\": {\n     \"description\": \"Required for non-Windows OS. The package this Upgrade is for.\",\n     \"properties\": {\n      \"distribution\": {\n       \"description\": \"The various channels by which a package is distributed.\",\n       \"items\": {\n        \"properties\": {\n         \"architecture\": {\n          \"description\": \"The CPU architecture for which packages in this distribution channel were built Possible values: ARCHITECTURE_UNSPECIFIED, X86, X64\",\n          \"type\": \"string\"\n         },\n         \"cpeUri\": {\n          \"description\": \"The cpe_uri in [cpe format](https://cpe.mitre.org/specification/) denoting the package manager version distributing a package.\",\n          \"type\": \"string\"\n         },\n         \"description\": {\n          \"description\": \"The distribution channel-specific description of this package.\",\n          \"type\": \"string\"\n         },\n         \"latestVersion\": {\n          \"description\": \"The latest available version of this package in this distribution channel.\",\n          \"properties\": {\n           \"epoch\": {\n            \"description\": \"Used to correct mistakes in the version numbering scheme.\",\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"fullName\": {\n            \"description\": \"Human readable version string. This string is of the form :- and is only set when kind is NORMAL.\",\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"description\": \"Distinguish between sentinel MIN/MAX versions and normal versions. If kind is not NORMAL, then the other fields are ignored. Possible values: VERSION_KIND_UNSPECIFIED, NORMAL, MINIMUM, MAXIMUM\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"The main part of the version name.\",\n            \"type\": \"string\"\n           },\n           \"revision\": {\n            \"description\": \"The iteration of the package build from the above version.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"kind\"\n          ],\n          \"type\": \"object\"\n         },\n         \"maintainer\": {\n          \"description\": \"A freeform string denoting the maintainer of this package.\",\n          \"type\": \"string\"\n         },\n         \"url\": {\n          \"description\": \"The distribution channel-specific homepage for this package.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"cpeUri\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"name\": {\n       \"description\": \"The name of the package.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"relatedNoteNames\": {\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"required\": [\n          \"external\"\n         ]\n        },\n        \"required\": [\n         \"name\"\n        ]\n       },\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"name\"\n           ]\n          },\n          {\n           \"required\": [\n            \"namespace\"\n           ]\n          }\n         ]\n        },\n        \"required\": [\n         \"external\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"external\": {\n        \"description\": \"Allowed value: The Google Cloud resource name of a `ContainerAnalysisNote` resource (format: `projects/{{project}}/notes/{{name}}`).\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"relatedUrl\": {\n     \"description\": \"URLs associated with this note.\",\n     \"items\": {\n      \"properties\": {\n       \"label\": {\n        \"description\": \"Label to describe usage of the URL\",\n        \"type\": \"string\"\n       },\n       \"url\": {\n        \"description\": \"Specific URL to associate with the note\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"shortDescription\": {\n     \"description\": \"A one sentence description of this note.\",\n     \"type\": \"string\"\n    },\n    \"vulnerability\": {\n     \"description\": \"A note describing a package vulnerability.\",\n     \"properties\": {\n      \"cvssScore\": {\n       \"description\": \"The CVSS score of this vulnerability. CVSS score is on a scale of 0 - 10 where 0 indicates low severity and 10 indicates high severity.\",\n       \"format\": \"double\",\n       \"type\": \"number\"\n      },\n      \"cvssV3\": {\n       \"description\": \"The full description of the CVSSv3 for this vulnerability.\",\n       \"properties\": {\n        \"attackComplexity\": {\n         \"description\": \" Possible values: ATTACK_COMPLEXITY_UNSPECIFIED, ATTACK_COMPLEXITY_LOW, ATTACK_COMPLEXITY_HIGH\",\n         \"type\": \"string\"\n        },\n        \"attackVector\": {\n         \"description\": \"Base Metrics Represents the intrinsic characteristics of a vulnerability that are constant over time and across user environments. Possible values: ATTACK_VECTOR_UNSPECIFIED, ATTACK_VECTOR_NETWORK, ATTACK_VECTOR_ADJACENT, ATTACK_VECTOR_LOCAL, ATTACK_VECTOR_PHYSICAL\",\n         \"type\": \"string\"\n        },\n        \"availabilityImpact\": {\n         \"description\": \" Possible values: IMPACT_UNSPECIFIED, IMPACT_HIGH, IMPACT_LOW, IMPACT_NONE\",\n         \"type\": \"string\"\n        },\n        \"baseScore\": {\n         \"description\": \"The base score is a function of the base metric scores.\",\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"confidentialityImpact\": {\n         \"description\": \" Possible values: IMPACT_UNSPECIFIED, IMPACT_HIGH, IMPACT_LOW, IMPACT_NONE\",\n         \"type\": \"string\"\n        },\n        \"exploitabilityScore\": {\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"impactScore\": {\n         \"format\": \"double\",\n         \"type\": \"number\"\n        },\n        \"integrityImpact\": {\n         \"description\": \" Possible values: IMPACT_UNSPECIFIED, IMPACT_HIGH, IMPACT_LOW, IMPACT_NONE\",\n         \"type\": \"string\"\n        },\n        \"privilegesRequired\": {\n         \"description\": \" Possible values: PRIVILEGES_REQUIRED_UNSPECIFIED, PRIVILEGES_REQUIRED_NONE, PRIVILEGES_REQUIRED_LOW, PRIVILEGES_REQUIRED_HIGH\",\n         \"type\": \"string\"\n        },\n        \"scope\": {\n         \"description\": \" Possible values: SCOPE_UNSPECIFIED, SCOPE_UNCHANGED, SCOPE_CHANGED\",\n         \"type\": \"string\"\n        },\n        \"userInteraction\": {\n         \"description\": \" Possible values: USER_INTERACTION_UNSPECIFIED, USER_INTERACTION_NONE, USER_INTERACTION_REQUIRED\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"details\": {\n       \"description\": \"Details of all known distros and packages affected by this vulnerability.\",\n       \"items\": {\n        \"properties\": {\n         \"affectedCpeUri\": {\n          \"description\": \"Required. The (https://cpe.mitre.org/specification/) this vulnerability affects.\",\n          \"type\": \"string\"\n         },\n         \"affectedPackage\": {\n          \"description\": \"Required. The package this vulnerability affects.\",\n          \"type\": \"string\"\n         },\n         \"affectedVersionEnd\": {\n          \"description\": \"The version number at the end of an interval in which this vulnerability exists. A vulnerability can affect a package between version numbers that are disjoint sets of intervals (example: ) each of which will be represented in its own Detail. If a specific affected version is provided by a vulnerability database, affected_version_start and affected_version_end will be the same in that Detail.\",\n          \"properties\": {\n           \"epoch\": {\n            \"description\": \"Used to correct mistakes in the version numbering scheme.\",\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"fullName\": {\n            \"description\": \"Human readable version string. This string is of the form :- and is only set when kind is NORMAL.\",\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"description\": \"Required. Distinguishes between sentinel MIN/MAX versions and normal versions. Possible values: NOTE_KIND_UNSPECIFIED, VULNERABILITY, BUILD, IMAGE, PACKAGE, DEPLOYMENT, DISCOVERY, ATTESTATION, UPGRADE\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Required only when version kind is NORMAL. The main part of the version name.\",\n            \"type\": \"string\"\n           },\n           \"revision\": {\n            \"description\": \"The iteration of the package build from the above version.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"kind\"\n          ],\n          \"type\": \"object\"\n         },\n         \"affectedVersionStart\": {\n          \"description\": \"The version number at the start of an interval in which this vulnerability exists. A vulnerability can affect a package between version numbers that are disjoint sets of intervals (example: ) each of which will be represented in its own Detail. If a specific affected version is provided by a vulnerability database, affected_version_start and affected_version_end will be the same in that Detail.\",\n          \"properties\": {\n           \"epoch\": {\n            \"description\": \"Used to correct mistakes in the version numbering scheme.\",\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"fullName\": {\n            \"description\": \"Human readable version string. This string is of the form :- and is only set when kind is NORMAL.\",\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"description\": \"Required. Distinguishes between sentinel MIN/MAX versions and normal versions. Possible values: NOTE_KIND_UNSPECIFIED, VULNERABILITY, BUILD, IMAGE, PACKAGE, DEPLOYMENT, DISCOVERY, ATTESTATION, UPGRADE\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Required only when version kind is NORMAL. The main part of the version name.\",\n            \"type\": \"string\"\n           },\n           \"revision\": {\n            \"description\": \"The iteration of the package build from the above version.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"kind\"\n          ],\n          \"type\": \"object\"\n         },\n         \"description\": {\n          \"description\": \"A vendor-specific description of this vulnerability.\",\n          \"type\": \"string\"\n         },\n         \"fixedCpeUri\": {\n          \"description\": \"The distro recommended (https://cpe.mitre.org/specification/) to update to that contains a fix for this vulnerability. It is possible for this to be different from the affected_cpe_uri.\",\n          \"type\": \"string\"\n         },\n         \"fixedPackage\": {\n          \"description\": \"The distro recommended package to update to that contains a fix for this vulnerability. It is possible for this to be different from the affected_package.\",\n          \"type\": \"string\"\n         },\n         \"fixedVersion\": {\n          \"description\": \"The distro recommended version to update to that contains a fix for this vulnerability. Setting this to VersionKind.MAXIMUM means no such version is yet available.\",\n          \"properties\": {\n           \"epoch\": {\n            \"description\": \"Used to correct mistakes in the version numbering scheme.\",\n            \"format\": \"int64\",\n            \"type\": \"integer\"\n           },\n           \"fullName\": {\n            \"description\": \"Human readable version string. This string is of the form :- and is only set when kind is NORMAL.\",\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"description\": \"Required. Distinguishes between sentinel MIN/MAX versions and normal versions. Possible values: NOTE_KIND_UNSPECIFIED, VULNERABILITY, BUILD, IMAGE, PACKAGE, DEPLOYMENT, DISCOVERY, ATTESTATION, UPGRADE\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Required only when version kind is NORMAL. The main part of the version name.\",\n            \"type\": \"string\"\n           },\n           \"revision\": {\n            \"description\": \"The iteration of the package build from the above version.\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"kind\"\n          ],\n          \"type\": \"object\"\n         },\n         \"isObsolete\": {\n          \"description\": \"Whether this detail is obsolete. Occurrences are expected not to point to obsolete details.\",\n          \"type\": \"boolean\"\n         },\n         \"packageType\": {\n          \"description\": \"The type of package; whether native or non native (e.g., ruby gems, node.js packages, etc.).\",\n          \"type\": \"string\"\n         },\n         \"severityName\": {\n          \"description\": \"The distro assigned severity of this vulnerability.\",\n          \"type\": \"string\"\n         },\n         \"sourceUpdateTime\": {\n          \"description\": \"The time this information was last changed at the source. This is an upstream timestamp from the underlying information source - e.g. Ubuntu security tracker.\",\n          \"format\": \"date-time\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"affectedCpeUri\",\n         \"affectedPackage\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"severity\": {\n       \"description\": \"The note provider assigned severity of this vulnerability. Possible values: SEVERITY_UNSPECIFIED, MINIMAL, LOW, MEDIUM, HIGH, CRITICAL\",\n       \"type\": \"string\"\n      },\n      \"sourceUpdateTime\": {\n       \"description\": \"The time this information was last changed at the source. This is an upstream timestamp from the underlying information source - e.g. Ubuntu security tracker.\",\n       \"format\": \"date-time\",\n       \"type\": \"string\"\n      },\n      \"windowsDetails\": {\n       \"description\": \"Windows details get their own format because the information format and model don't match a normal detail. Specifically Windows updates are done as patches, thus Windows vulnerabilities really are a missing package, rather than a package being at an incorrect version.\",\n       \"items\": {\n        \"properties\": {\n         \"cpeUri\": {\n          \"description\": \"Required. The (https://cpe.mitre.org/specification/) this vulnerability affects.\",\n          \"type\": \"string\"\n         },\n         \"description\": {\n          \"description\": \"The description of this vulnerability.\",\n          \"type\": \"string\"\n         },\n         \"fixingKbs\": {\n          \"description\": \"Required. The names of the KBs which have hotfixes to mitigate this vulnerability. Note that there may be multiple hotfixes (and thus multiple KBs) that mitigate a given vulnerability. Currently any listed KBs presence is considered a fix.\",\n          \"items\": {\n           \"properties\": {\n            \"name\": {\n             \"description\": \"The KB name (generally of the form KB+ (e.g., KB123456)).\",\n             \"type\": \"string\"\n            },\n            \"url\": {\n             \"description\": \"A link to the KB in the (https://www.catalog.update.microsoft.com/).\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"name\": {\n          \"description\": \"Required. The name of this vulnerability.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"cpeUri\",\n         \"fixingKbs\",\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Container Analysis Note\",\n \"type\": \"object\"\n}"
+  }
+}

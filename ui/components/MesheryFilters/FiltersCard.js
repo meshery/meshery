@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useState } from 'react';
 import {
   Divider,

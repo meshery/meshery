@@ -8,7 +8,7 @@ import data.eval_rules
 import data.actions
 
 
-edge_network_policy_identifier := "generic-mutator-policy"
+edge_network_policy_identifier := "edge-non-binding"
 
 
 relationship_is_implicated_by_policy(relationship,policy_identifier) := true if {
