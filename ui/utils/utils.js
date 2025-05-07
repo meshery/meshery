@@ -8,9 +8,9 @@ import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@layer5/sistent';
 import jsyaml from 'js-yaml';
 import yaml from 'js-yaml';
-import { useLegacySelector } from '../lib/store';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { mesheryEventBus } from './eventBus';
+import { useGetCapabilitiesRegistry } from './hooks/useStateValue';
 
 /**
  * Check if an object is empty
@@ -482,9 +482,7 @@ export const isOperatorEnabled = isKanvasEnabled;
 export const isKanvasDesignerEnabled = isKanvasEnabled;
 
 export const useIsKanvasEnabled = () => {
-  const capabilitiesRegistry = useLegacySelector((state) => {
-    return state.get('capabilitiesRegistry');
-  });
+  const capabilitiesRegistry = useGetCapabilitiesRegistry();
 
   return isKanvasEnabled(capabilitiesRegistry);
 };

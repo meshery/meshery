@@ -18,16 +18,16 @@ import {
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
 import { setKeys, setOrganization } from '../../lib/store';
-import { connect, Provider } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { Provider, useDispatch } from 'react-redux';
 import { store } from '../../store';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -131,7 +131,7 @@ function OrgMenu(props) {
           <FormControl component="fieldset">
             <FormGroup>
               <FormControlLabel
-                key="SpacesPreferences"
+                key="OrgPreferences"
                 control={
                   <Grid container spacing={1} alignItems="flex-end">
                     <Grid item xs={12} data-cy="mesh-adapter-url">
@@ -196,11 +196,19 @@ function DefaultHeader({ title, isBeta }) {
   );
 }
 
-function SpaceSwitcher(props) {
+function SpaceSwitcher({ title, isBeta }) {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
+  const router = useRouter();
+  const dispatch = useDispatch();
+
+  const organization = useGetCurrentOrganization();
+
+  const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
+  const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
+
   return (
     <NoSsr>
       <Provider store={store}>
@@ -211,7 +219,13 @@ function SpaceSwitcher(props) {
           >
             <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
           </Button>
-          <OrgMenu {...props} open={orgOpen} />/
+          <OrgMenu
+            open={orgOpen}
+            organization={organization}
+            setOrganization={dispatchSetOrganization}
+            setKeys={dispatchSetKeys}
+          />
+          /
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
@@ -222,25 +236,13 @@ function SpaceSwitcher(props) {
               fill={theme.palette.common.white}
             />
           </Button>
-          <WorkspaceSwitcher {...props} open={workspaceOpen} />/
+          <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
           <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
-          {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
+          {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
         </StyledSwitcher>
       </Provider>
     </NoSsr>
   );
 }
 
-const mapStateToProps = (state) => {
-  const organization = state?.get ? state.get('organization') : state?.organization;
-  return {
-    organization: organization || { id: '' },
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
-  setKeys: bindActionCreators(setKeys, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SpaceSwitcher));
+export default SpaceSwitcher;

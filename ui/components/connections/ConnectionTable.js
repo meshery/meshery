@@ -32,7 +32,7 @@ import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { updateProgress, useLegacySelector } from '../../lib/store';
+import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
@@ -64,6 +64,7 @@ import { DeleteIcon } from '@layer5/sistent';
 
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -100,7 +101,7 @@ const ConnectionTable = ({
   updateUrlWithConnectionId,
 }) => {
   const router = useRouter();
-  const organization = useLegacySelector((state) => state.get('organization'));
+  const organization = useGetCurrentOrganization();
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
