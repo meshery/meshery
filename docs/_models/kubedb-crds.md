@@ -450,7 +450,15 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/cassandra/icons/color/cassandra-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/cassandra/icons/white/cassandra-white.svg
   description: 
-components-count: 110
+- name: ignite-version
+  colorIcon: assets/img/integrations/kubedb-crds/components/ignite-version/icons/color/ignite-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ignite-version/icons/white/ignite-version-white.svg
+  description: 
+- name: ignite
+  colorIcon: assets/img/integrations/kubedb-crds/components/ignite/icons/color/ignite-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ignite/icons/white/ignite-white.svg
+  description: 
+components-count: 112
 relationships: 
 relationship-count: 0
 featureList: [

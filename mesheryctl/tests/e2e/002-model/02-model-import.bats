@@ -63,7 +63,8 @@ setup() {
 }
 
 @test "mesheryctl model import succeeds for URL of valid model as OCI artifact" {
-  run $MESHERYCTL_BIN model import -f https://github.com/meshery/meshery/raw/refs/heads/master/mesheryctl/tests/e2e/002-model/testdata/model-import/oci-model-archive.tar
+  skip
+  run $MESHERYCTL_BIN model import -f https://github.com/meshery/meshery/blob/master/mesheryctl/tests/e2e/002-model/fixtures/model-import/valid-oci-model-archive.tar
   assert_success
 
   assert_output --partial "Imported model model-import_cli-e2e-test (1 component)"

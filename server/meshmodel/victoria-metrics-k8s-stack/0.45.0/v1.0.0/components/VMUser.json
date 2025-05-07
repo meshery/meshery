@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "VM User",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "victoria-metrics-k8s-stack",
+    "displayName": "Victoria Metrics K8S Stack",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Observability and Analysis"
+    },
+    "subCategory": "Monitoring",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#000000",
+      "secondaryColor": "#ffffff",
+      "shape": "hexagon",
+      "source_uri": "https://github.com/VictoriaMetrics/helm-charts/releases/download/victoria-metrics-k8s-stack-0.45.0/victoria-metrics-k8s-stack-0.45.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"20\" height=\"20\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#000000\" stroke=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\u0026#xA;33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\u0026#xA;-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\u0026#xA;-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\u0026#xA;-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\u0026#xA;-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"20\" height=\"20\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#ffffff\" stroke=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\u0026#xA;33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\u0026#xA;-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\u0026#xA;-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\u0026#xA;-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\u0026#xA;-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.45.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff",
+    "shape": "hexagon",
+    "svgColor": "\u003csvg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e \u003cg transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#000000\" stroke=\"none\"\u003e \u003cpath d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6 33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"/\u003e \u003cpath d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64 -7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169 -225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"/\u003e \u003cpath d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110 -90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151 -121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"/\u003e \u003c/g\u003e \u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"\n width=\"18\" height=\"18\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\n\u003cg transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\"\nfill=\"#ffffff\" stroke=\"none\"\u003e\n\u003cpath d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\n33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"/\u003e\n\u003cpath d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\n-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\n-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"/\u003e\n\u003cpath d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\n-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\n-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e\n"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/VictoriaMetrics/helm-charts/releases/download/victoria-metrics-k8s-stack-0.45.0/victoria-metrics-k8s-stack-0.45.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "operator.victoriametrics.com/v1beta1",
+    "kind": "VMUser",
+    "schema": "{\n \"description\": \"VMUser is the Schema for the vmusers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VMUserSpec defines the desired state of VMUser\",\n   \"properties\": {\n    \"bearerToken\": {\n     \"description\": \"BearerToken Authorization header value for accessing protected endpoint.\",\n     \"type\": \"string\"\n    },\n    \"default_url\": {\n     \"description\": \"DefaultURLs backend url for non-matching paths filter\\nusually used for default backend with error message\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"disable_secret_creation\": {\n     \"description\": \"DisableSecretCreation skips related secret creation for vmuser\",\n     \"type\": \"boolean\"\n    },\n    \"discover_backend_ips\": {\n     \"description\": \"DiscoverBackendIPs instructs discovering URLPrefix backend IPs via DNS.\",\n     \"type\": \"boolean\"\n    },\n    \"drop_src_path_prefix_parts\": {\n     \"description\": \"DropSrcPathPrefixParts is the number of `/`-delimited request path prefix parts to drop before proxying the request to backend.\\nSee [here](https://docs.victoriametrics.com/vmauth#dropping-request-path-prefix) for more details.\",\n     \"type\": \"integer\"\n    },\n    \"dump_request_on_errors\": {\n     \"description\": \"DumpRequestOnErrors instructs vmauth to return detailed request params to the client\\nif routing rules don't allow to forward request to the backends.\\nUseful for debugging `src_hosts` and `src_headers` based routing rules\\n\\navailable since v1.107.0 vmauth version\",\n     \"type\": \"boolean\"\n    },\n    \"generatePassword\": {\n     \"description\": \"GeneratePassword instructs operator to generate password for user\\nif spec.password if empty.\",\n     \"type\": \"boolean\"\n    },\n    \"headers\": {\n     \"description\": \"Headers represent additional http headers, that vmauth uses\\nin form of [\\\"header_key: header_value\\\"]\\nmultiple values for header key:\\n[\\\"header_key: value1,value2\\\"]\\nit's available since 1.68.0 version of vmauth\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"ip_filters\": {\n     \"description\": \"IPFilters defines per target src ip filters\\nsupported only with enterprise version of [vmauth](https://docs.victoriametrics.com/vmauth/#ip-filters)\",\n     \"properties\": {\n      \"allow_list\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"deny_list\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"load_balancing_policy\": {\n     \"description\": \"LoadBalancingPolicy defines load balancing policy to use for backend urls.\\nSupported policies: least_loaded, first_available.\\nSee [here](https://docs.victoriametrics.com/vmauth#load-balancing) for more details (default \\\"least_loaded\\\")\",\n     \"enum\": [\n      \"least_loaded\",\n      \"first_available\"\n     ],\n     \"type\": \"string\"\n    },\n    \"max_concurrent_requests\": {\n     \"description\": \"MaxConcurrentRequests defines max concurrent requests per user\\n300 is default value for vmauth\",\n     \"type\": \"integer\"\n    },\n    \"metric_labels\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"MetricLabels - additional labels for metrics exported by vmauth for given user.\",\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the VMUser object.\",\n     \"type\": \"string\"\n    },\n    \"password\": {\n     \"description\": \"Password basic auth password for accessing protected endpoint.\",\n     \"type\": \"string\"\n    },\n    \"passwordRef\": {\n     \"description\": \"PasswordRef allows fetching password from user-create secret by its name and key.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"response_headers\": {\n     \"description\": \"ResponseHeaders represent additional http headers, that vmauth adds for request response\\nin form of [\\\"header_key: header_value\\\"]\\nmultiple values for header key:\\n[\\\"header_key: value1,value2\\\"]\\nit's available since 1.93.0 version of vmauth\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"retry_status_codes\": {\n     \"description\": \"RetryStatusCodes defines http status codes in numeric format for request retries\\ne.g. [429,503]\",\n     \"items\": {\n      \"type\": \"integer\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetRefs\": {\n     \"description\": \"TargetRefs - reference to endpoints, which user may access.\",\n     \"items\": {\n      \"description\": \"TargetRef describes target for user traffic forwarding.\\none of target types can be chosen:\\ncrd or static per targetRef.\\nuser can define multiple targetRefs with different ref Types.\",\n      \"properties\": {\n       \"crd\": {\n        \"description\": \"CRD describes exist operator's CRD object,\\noperator generates access url based on CRD params.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind one of:\\nVMAgent,VMAlert, VMSingle, VMCluster/vmselect, VMCluster/vmstorage,VMCluster/vminsert  or VMAlertManager\",\n          \"enum\": [\n           \"VMAgent\",\n           \"VMAlert\",\n           \"VMSingle\",\n           \"VLogs\",\n           \"VMAlertManager\",\n           \"VMAlertmanager\",\n           \"VMCluster/vmselect\",\n           \"VMCluster/vmstorage\",\n           \"VMCluster/vminsert\"\n          ],\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name target CRD object name\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace target CRD object namespace.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"kind\",\n         \"name\",\n         \"namespace\"\n        ],\n        \"type\": \"object\"\n       },\n       \"discover_backend_ips\": {\n        \"description\": \"DiscoverBackendIPs instructs discovering URLPrefix backend IPs via DNS.\",\n        \"type\": \"boolean\"\n       },\n       \"drop_src_path_prefix_parts\": {\n        \"description\": \"DropSrcPathPrefixParts is the number of `/`-delimited request path prefix parts to drop before proxying the request to backend.\\nSee [here](https://docs.victoriametrics.com/vmauth#dropping-request-path-prefix) for more details.\",\n        \"type\": \"integer\"\n       },\n       \"headers\": {\n        \"description\": \"RequestHeaders represent additional http headers, that vmauth uses\\nin form of [\\\"header_key: header_value\\\"]\\nmultiple values for header key:\\n[\\\"header_key: value1,value2\\\"]\\nit's available since 1.68.0 version of vmauth\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"hosts\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"load_balancing_policy\": {\n        \"description\": \"LoadBalancingPolicy defines load balancing policy to use for backend urls.\\nSupported policies: least_loaded, first_available.\\nSee [here](https://docs.victoriametrics.com/vmauth#load-balancing) for more details (default \\\"least_loaded\\\")\",\n        \"enum\": [\n         \"least_loaded\",\n         \"first_available\"\n        ],\n        \"type\": \"string\"\n       },\n       \"paths\": {\n        \"description\": \"Paths - matched path to route.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"response_headers\": {\n        \"description\": \"ResponseHeaders represent additional http headers, that vmauth adds for request response\\nin form of [\\\"header_key: header_value\\\"]\\nmultiple values for header key:\\n[\\\"header_key: value1,value2\\\"]\\nit's available since 1.93.0 version of vmauth\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"retry_status_codes\": {\n        \"description\": \"RetryStatusCodes defines http status codes in numeric format for request retries\\nCan be defined per target or at VMUser.spec level\\ne.g. [429,503]\",\n        \"items\": {\n         \"type\": \"integer\"\n        },\n        \"type\": \"array\"\n       },\n       \"src_headers\": {\n        \"description\": \"SrcHeaders is an optional list of headers, which must match request headers.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"src_query_args\": {\n        \"description\": \"SrcQueryArgs is an optional list of query args, which must match request URL query args.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"static\": {\n        \"description\": \"Static - user defined url for traffic forward,\\nfor instance http://vmsingle:8429\",\n        \"properties\": {\n         \"url\": {\n          \"description\": \"URL http url for given staticRef.\",\n          \"type\": \"string\"\n         },\n         \"urls\": {\n          \"description\": \"URLs allows setting multiple urls for load-balancing at vmauth-side.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"targetRefBasicAuth\": {\n        \"description\": \"TargetRefBasicAuth allow an target endpoint to authenticate over basic authentication\",\n        \"properties\": {\n         \"password\": {\n          \"description\": \"The secret in the service scrape namespace that contains the password\\nfor authentication.\\nIt must be at them same namespace as CRD\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"default\": \"\",\n            \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"description\": \"Specify whether the Secret or its key must be defined\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"username\": {\n          \"description\": \"The secret in the service scrape namespace that contains the username\\nfor authentication.\\nIt must be at them same namespace as CRD\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"default\": \"\",\n            \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"description\": \"Specify whether the Secret or its key must be defined\",\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"password\",\n         \"username\"\n        ],\n        \"type\": \"object\"\n       },\n       \"target_path_suffix\": {\n        \"description\": \"TargetPathSuffix allows to add some suffix to the target path\\nIt allows to hide tenant configuration from user with crd as ref.\\nit also may contain any url encoded params.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tlsConfig\": {\n     \"description\": \"TLSConfig defines tls configuration for the backend connection\",\n     \"properties\": {\n      \"ca\": {\n       \"description\": \"Struct containing the CA cert to use for the targets.\",\n       \"properties\": {\n        \"configMap\": {\n         \"description\": \"ConfigMap containing data to use for the targets.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"The key to select.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"default\": \"\",\n           \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n           \"type\": \"string\"\n          },\n          \"optional\": {\n           \"description\": \"Specify whether the ConfigMap or its key must be defined\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        },\n        \"secret\": {\n         \"description\": \"Secret containing data to use for the targets.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"default\": \"\",\n           \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n           \"type\": \"string\"\n          },\n          \"optional\": {\n           \"description\": \"Specify whether the Secret or its key must be defined\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"caFile\": {\n       \"description\": \"Path to the CA cert in the container to use for the targets.\",\n       \"type\": \"string\"\n      },\n      \"cert\": {\n       \"description\": \"Struct containing the client cert file for the targets.\",\n       \"properties\": {\n        \"configMap\": {\n         \"description\": \"ConfigMap containing data to use for the targets.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"The key to select.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"default\": \"\",\n           \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n           \"type\": \"string\"\n          },\n          \"optional\": {\n           \"description\": \"Specify whether the ConfigMap or its key must be defined\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        },\n        \"secret\": {\n         \"description\": \"Secret containing data to use for the targets.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"default\": \"\",\n           \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n           \"type\": \"string\"\n          },\n          \"optional\": {\n           \"description\": \"Specify whether the Secret or its key must be defined\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\",\n         \"x-kubernetes-map-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"certFile\": {\n       \"description\": \"Path to the client cert file in the container for the targets.\",\n       \"type\": \"string\"\n      },\n      \"insecureSkipVerify\": {\n       \"description\": \"Disable target certificate validation.\",\n       \"type\": \"boolean\"\n      },\n      \"keyFile\": {\n       \"description\": \"Path to the client key file in the container for the targets.\",\n       \"type\": \"string\"\n      },\n      \"keySecret\": {\n       \"description\": \"Secret containing the client key file for the targets.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"default\": \"\",\n         \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"optional\": {\n         \"description\": \"Specify whether the Secret or its key must be defined\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"key\"\n       ],\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"serverName\": {\n       \"description\": \"Used to verify the hostname for the targets.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tokenRef\": {\n     \"description\": \"TokenRef allows fetching token from user-created secrets by its name and key.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"default\": \"\",\n       \"description\": \"Name of the referent.\\nThis field is effectively required, but due to backwards compatibility is\\nallowed to be empty. Instances of this type with an empty value here are\\nalmost certainly wrong.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"username\": {\n     \"description\": \"UserName basic auth user name for accessing protected endpoint,\\nwill be replaced with metadata.name of VMUser if omitted.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"targetRefs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"VM User\",\n \"type\": \"object\"\n}"
+  }
+}

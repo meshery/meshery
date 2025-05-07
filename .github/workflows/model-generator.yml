@@ -64,7 +64,7 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_options: "--signoff"
-          commit_message: "New Models generated and updated"
+          commit_message: "Models generated and updated"
           branch: master
 
       - name: Send Email on Workflow Failure

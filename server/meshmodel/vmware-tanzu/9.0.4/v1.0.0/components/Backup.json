@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Backup",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "vmware-tanzu",
+    "displayName": "Vmware Tanzu",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Certified Kubernetes - Distribution",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/vmware-tanzu/helm-charts/releases/download/velero-9.0.4/velero-9.0.4.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "9.0.4"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/vmware-tanzu/helm-charts/releases/download/velero-9.0.4/velero-9.0.4.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "velero.io/v1",
+    "kind": "Backup",
+    "schema": "{\n \"description\": \"Backup is a Velero resource that represents the capture of Kubernetes\\ncluster state at a point in time (API objects and associated volume state).\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BackupSpec defines the specification for a Velero backup.\",\n   \"properties\": {\n    \"csiSnapshotTimeout\": {\n     \"description\": \"CSISnapshotTimeout specifies the time used to wait for CSI VolumeSnapshot status turns to\\nReadyToUse during creation, before returning error as timeout.\\nThe default value is 10 minute.\",\n     \"type\": \"string\"\n    },\n    \"datamover\": {\n     \"description\": \"DataMover specifies the data mover to be used by the backup.\\nIf DataMover is \\\"\\\" or \\\"velero\\\", the built-in data mover will be used.\",\n     \"type\": \"string\"\n    },\n    \"defaultVolumesToFsBackup\": {\n     \"description\": \"DefaultVolumesToFsBackup specifies whether pod volume file system backup should be used\\nfor all volumes by default.\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"defaultVolumesToRestic\": {\n     \"description\": \"DefaultVolumesToRestic specifies whether restic should be used to take a\\nbackup of all pod volumes by default.\\n\\nDeprecated: this field is no longer used and will be removed entirely in future. Use DefaultVolumesToFsBackup instead.\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"excludedClusterScopedResources\": {\n     \"description\": \"ExcludedClusterScopedResources is a slice of cluster-scoped\\nresource type names to exclude from the backup.\\nIf set to \\\"*\\\", all cluster-scoped resource types are excluded.\\nThe default value is empty.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"excludedNamespaceScopedResources\": {\n     \"description\": \"ExcludedNamespaceScopedResources is a slice of namespace-scoped\\nresource type names to exclude from the backup.\\nIf set to \\\"*\\\", all namespace-scoped resource types are excluded.\\nThe default value is empty.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"excludedNamespaces\": {\n     \"description\": \"ExcludedNamespaces contains a list of namespaces that are not\\nincluded in the backup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"excludedResources\": {\n     \"description\": \"ExcludedResources is a slice of resource names that are not\\nincluded in the backup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"hooks\": {\n     \"description\": \"Hooks represent custom behaviors that should be executed at different phases of the backup.\",\n     \"properties\": {\n      \"resources\": {\n       \"description\": \"Resources are hooks that should be executed when backing up individual instances of a resource.\",\n       \"items\": {\n        \"description\": \"BackupResourceHookSpec defines one or more BackupResourceHooks that should be executed based on\\nthe rules defined for namespaces, resources, and label selector.\",\n        \"properties\": {\n         \"excludedNamespaces\": {\n          \"description\": \"ExcludedNamespaces specifies the namespaces to which this hook spec does not apply.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"excludedResources\": {\n          \"description\": \"ExcludedResources specifies the resources to which this hook spec does not apply.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"includedNamespaces\": {\n          \"description\": \"IncludedNamespaces specifies the namespaces to which this hook spec applies. If empty, it applies\\nto all namespaces.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"includedResources\": {\n          \"description\": \"IncludedResources specifies the resources to which this hook spec applies. If empty, it applies\\nto all resources.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"nullable\": true,\n          \"type\": \"array\"\n         },\n         \"labelSelector\": {\n          \"description\": \"LabelSelector, if specified, filters the resources to which this hook spec applies.\",\n          \"nullable\": true,\n          \"properties\": {\n           \"matchExpressions\": {\n            \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n            \"items\": {\n             \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n             \"properties\": {\n              \"key\": {\n               \"description\": \"key is the label key that the selector applies to.\",\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\",\n               \"x-kubernetes-list-type\": \"atomic\"\n              }\n             },\n             \"required\": [\n              \"key\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\",\n            \"x-kubernetes-list-type\": \"atomic\"\n           },\n           \"matchLabels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of this hook.\",\n          \"type\": \"string\"\n         },\n         \"post\": {\n          \"description\": \"PostHooks is a list of BackupResourceHooks to execute after storing the item in the backup.\\nThese are executed after all \\\"additional items\\\" from item actions are processed.\",\n          \"items\": {\n           \"description\": \"BackupResourceHook defines a hook for a resource.\",\n           \"properties\": {\n            \"exec\": {\n             \"description\": \"Exec defines an exec hook.\",\n             \"properties\": {\n              \"command\": {\n               \"description\": \"Command is the command and arguments to execute.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"minItems\": 1,\n               \"type\": \"array\"\n              },\n              \"container\": {\n               \"description\": \"Container is the container in the pod where the command should be executed. If not specified,\\nthe pod's first container is used.\",\n               \"type\": \"string\"\n              },\n              \"onError\": {\n               \"description\": \"OnError specifies how Velero should behave if it encounters an error executing this hook.\",\n               \"enum\": [\n                \"Continue\",\n                \"Fail\"\n               ],\n               \"type\": \"string\"\n              },\n              \"timeout\": {\n               \"description\": \"Timeout defines the maximum amount of time Velero should wait for the hook to complete before\\nconsidering the execution a failure.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"command\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"exec\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"pre\": {\n          \"description\": \"PreHooks is a list of BackupResourceHooks to execute prior to storing the item in the backup.\\nThese are executed before any \\\"additional items\\\" from item actions are processed.\",\n          \"items\": {\n           \"description\": \"BackupResourceHook defines a hook for a resource.\",\n           \"properties\": {\n            \"exec\": {\n             \"description\": \"Exec defines an exec hook.\",\n             \"properties\": {\n              \"command\": {\n               \"description\": \"Command is the command and arguments to execute.\",\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"minItems\": 1,\n               \"type\": \"array\"\n              },\n              \"container\": {\n               \"description\": \"Container is the container in the pod where the command should be executed. If not specified,\\nthe pod's first container is used.\",\n               \"type\": \"string\"\n              },\n              \"onError\": {\n               \"description\": \"OnError specifies how Velero should behave if it encounters an error executing this hook.\",\n               \"enum\": [\n                \"Continue\",\n                \"Fail\"\n               ],\n               \"type\": \"string\"\n              },\n              \"timeout\": {\n               \"description\": \"Timeout defines the maximum amount of time Velero should wait for the hook to complete before\\nconsidering the execution a failure.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"command\"\n             ],\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"exec\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"nullable\": true,\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"includeClusterResources\": {\n     \"description\": \"IncludeClusterResources specifies whether cluster-scoped resources\\nshould be included for consideration in the backup.\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"includedClusterScopedResources\": {\n     \"description\": \"IncludedClusterScopedResources is a slice of cluster-scoped\\nresource type names to include in the backup.\\nIf set to \\\"*\\\", all cluster-scoped resource types are included.\\nThe default value is empty, which means only related\\ncluster-scoped resources are included.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"includedNamespaceScopedResources\": {\n     \"description\": \"IncludedNamespaceScopedResources is a slice of namespace-scoped\\nresource type names to include in the backup.\\nThe default value is \\\"*\\\".\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"includedNamespaces\": {\n     \"description\": \"IncludedNamespaces is a slice of namespace names to include objects\\nfrom. If empty, all namespaces are included.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"includedResources\": {\n     \"description\": \"IncludedResources is a slice of resource names to include\\nin the backup. If empty, all resources are included.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"itemOperationTimeout\": {\n     \"description\": \"ItemOperationTimeout specifies the time used to wait for asynchronous BackupItemAction operations\\nThe default value is 4 hour.\",\n     \"type\": \"string\"\n    },\n    \"labelSelector\": {\n     \"description\": \"LabelSelector is a metav1.LabelSelector to filter with\\nwhen adding individual objects to the backup. If empty\\nor nil, all objects are included. Optional.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"matchExpressions\": {\n       \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n       \"items\": {\n        \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"key is the label key that the selector applies to.\",\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\",\n          \"x-kubernetes-list-type\": \"atomic\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"metadata\": {\n     \"properties\": {\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"orLabelSelectors\": {\n     \"description\": \"OrLabelSelectors is list of metav1.LabelSelector to filter with\\nwhen adding individual objects to the backup. If multiple provided\\nthey will be joined by the OR operator. LabelSelector as well as\\nOrLabelSelectors cannot co-exist in backup request, only one of them\\ncan be used.\",\n     \"items\": {\n      \"description\": \"A label selector is a label query over a set of resources. The result of matchLabels and\\nmatchExpressions are ANDed. An empty label selector matches all objects. A null\\nlabel selector matches no objects.\",\n      \"properties\": {\n       \"matchExpressions\": {\n        \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n        \"items\": {\n         \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"key is the label key that the selector applies to.\",\n           \"type\": \"string\"\n          },\n          \"operator\": {\n           \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n           \"type\": \"string\"\n          },\n          \"values\": {\n           \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\",\n           \"x-kubernetes-list-type\": \"atomic\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"operator\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-type\": \"atomic\"\n       },\n       \"matchLabels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"nullable\": true,\n     \"type\": \"array\"\n    },\n    \"orderedResources\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"OrderedResources specifies the backup order of resources of specific Kind.\\nThe map key is the resource name and value is a list of object names separated by commas.\\nEach resource name has format \\\"namespace/objectname\\\".  For cluster resources, simply use \\\"objectname\\\".\",\n     \"nullable\": true,\n     \"type\": \"object\"\n    },\n    \"resourcePolicy\": {\n     \"description\": \"ResourcePolicy specifies the referenced resource policies that backup should follow\",\n     \"properties\": {\n      \"apiGroup\": {\n       \"description\": \"APIGroup is the group for the resource being referenced.\\nIf APIGroup is not specified, the specified Kind must be in the core API group.\\nFor any other third-party types, APIGroup is required.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the type of resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"snapshotMoveData\": {\n     \"description\": \"SnapshotMoveData specifies whether snapshot data should be moved\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"snapshotVolumes\": {\n     \"description\": \"SnapshotVolumes specifies whether to take snapshots\\nof any PV's referenced in the set of objects included\\nin the Backup.\",\n     \"nullable\": true,\n     \"type\": \"boolean\"\n    },\n    \"storageLocation\": {\n     \"description\": \"StorageLocation is a string containing the name of a BackupStorageLocation where the backup should be stored.\",\n     \"type\": \"string\"\n    },\n    \"ttl\": {\n     \"description\": \"TTL is a time.Duration-parseable string describing how long\\nthe Backup should be retained for.\",\n     \"type\": \"string\"\n    },\n    \"uploaderConfig\": {\n     \"description\": \"UploaderConfig specifies the configuration for the uploader.\",\n     \"nullable\": true,\n     \"properties\": {\n      \"parallelFilesUpload\": {\n       \"description\": \"ParallelFilesUpload is the number of files parallel uploads to perform when using the uploader.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"volumeSnapshotLocations\": {\n     \"description\": \"VolumeSnapshotLocations is a list containing names of VolumeSnapshotLocations associated with this backup.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Backup\",\n \"type\": \"object\"\n}"
+  }
+}
