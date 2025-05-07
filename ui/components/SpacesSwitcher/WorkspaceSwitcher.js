@@ -6,7 +6,7 @@ import { StyledSelect } from './SpaceSwitcher';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
 import WorkspaceModal from './WorkspaceModal';
-import { useCurrentOrganization } from '@/utils/hooks/useCurrentOrganization';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -43,7 +43,7 @@ function WorkspaceSwitcher({ open }) {
   const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
-  const orgId = useCurrentOrganization()?.id;
+  const orgId = useGetCurrentOrganization()?.id;
   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
     {
       page: 0,
