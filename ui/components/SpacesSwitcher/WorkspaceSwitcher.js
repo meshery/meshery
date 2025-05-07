@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { FormControl, FormControlLabel, FormGroup, Grid, styled, MenuItem } from '@layer5/sistent';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
-import { useLegacySelector } from '../../lib/store';
 import { StyledSelect } from './SpaceSwitcher';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
 import WorkspaceModal from './WorkspaceModal';
+import { useCurrentOrganization } from '@/utils/hooks/useCurrentOrganization';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -43,9 +43,7 @@ function WorkspaceSwitcher({ open }) {
   const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
-  const orgId = useLegacySelector((state) =>
-    state?.get ? state.get('organization') : state?.organization,
-  )?.id;
+  const orgId = useCurrentOrganization()?.id;
   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
     {
       page: 0,

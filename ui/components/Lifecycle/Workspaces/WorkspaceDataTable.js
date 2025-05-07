@@ -24,12 +24,13 @@ import {
   WorkspaceEnvironmentSelection,
   WorkspaceIcon,
   Slide,
+  ErrorBoundary,
 } from '@layer5/sistent';
-import { useLegacySelector } from 'lib/store';
 import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
+import { useCurrentOrganization } from '@/utils/hooks/useCurrentOrganization';
 
 const WorkspaceDataTable = ({
   handleWorkspaceModalOpen,
@@ -58,11 +59,7 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useLegacySelector((state) => {
-    return typeof state?.get === 'function'
-      ? state.get('organization')?.id
-      : state?.organization?.id || '';
-  });
+  const org_id = useCurrentOrganization()?.id;
 
   const theme = useTheme();
 
@@ -337,40 +334,42 @@ const WorkspaceDataTable = ({
   const [tableCols, updateCols] = useState(columns);
 
   return (
-    <div key={`list-view-${viewType}`}>
-      <Slide direction="left" in={selectedWorkspace.id ? true : false}>
-        <div
-          style={{
-            marginTop: '1rem',
-          }}
-        >
-          {selectedWorkspace?.id && (
-            <WorkSpaceContentDataTable
-              workspaceId={selectedWorkspace?.id}
-              workspaceName={selectedWorkspace?.name}
-            />
-          )}
-        </div>
-      </Slide>
-      <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
-        <div
-          style={{
-            marginTop: '1rem',
-          }}
-        >
-          {!selectedWorkspace?.id && (
-            <ResponsiveDataTable
-              columns={columns}
-              data={workspacesData}
-              options={options}
-              columnVisibility={columnVisibility}
-              tableCols={tableCols}
-              updateCols={updateCols}
-            />
-          )}
-        </div>
-      </Slide>
-    </div>
+    <ErrorBoundary>
+      <div key={`list-view-${viewType}`}>
+        <Slide direction="left" in={selectedWorkspace.id ? true : false}>
+          <div
+            style={{
+              marginTop: '1rem',
+            }}
+          >
+            {selectedWorkspace?.id && (
+              <WorkSpaceContentDataTable
+                workspaceId={selectedWorkspace?.id}
+                workspaceName={selectedWorkspace?.name}
+              />
+            )}
+          </div>
+        </Slide>
+        <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
+          <div
+            style={{
+              marginTop: '1rem',
+            }}
+          >
+            {!selectedWorkspace?.id && (
+              <ResponsiveDataTable
+                columns={columns}
+                data={workspacesData}
+                options={options}
+                columnVisibility={columnVisibility}
+                tableCols={tableCols}
+                updateCols={updateCols}
+              />
+            )}
+          </div>
+        </Slide>
+      </div>
+    </ErrorBoundary>
   );
 };
 
