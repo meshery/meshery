@@ -40,11 +40,6 @@ var (
 	sourceType string // pattern file type (manifest / compose)
 )
 
-var linkDocpatternDeploy = map[string]string{
-	"link":    "![pattern-deploy-usage](/assets/img/mesheryctl/pattern-deploy.png)",
-	"caption": "Usage of mesheryctl design deploy",
-}
-
 var deployCmd = &cobra.Command{
 	Use:   "deploy",
 	Short: "Deploy design",
@@ -54,7 +49,6 @@ var deployCmd = &cobra.Command{
 mesheryctl design deploy -f [filepath] -s [source type]
 mesheryctl design deploy -f ./pattern.yml -s "Kubernetes Manifest"
 	`,
-	Annotations: linkDocpatternDeploy,
 	Args: func(_ *cobra.Command, args []string) error {
 
 		if file == "" && len(args) == 0 {
