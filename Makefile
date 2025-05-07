@@ -505,9 +505,10 @@ server-integration-tests-meshsync-cleanup:
 
 ## Runs meshsync integration tests code itself
 server-integration-tests-meshsync-run:
+	# echo "TODO"
 	RUN_INTEGRATION_TESTS=true \
-	echo "TODO"
-	# go test -v -count=1 -run Integration ./server/integration-tests/meshsync
+	PATH_TO_SQL_FILE=$(HOME)/.meshery/config/mesherydb.sql \
+	go test -v -count=1 -run Integration ./server/integration-tests/meshsync
 
 ## Runs meshsync integration tests full cycle (docker build, setup, run, cleanup)
 server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
