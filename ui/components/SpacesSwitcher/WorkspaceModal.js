@@ -16,6 +16,7 @@ import {
   Collapse,
   useMediaQuery,
   Divider,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import { WorkspacesComponent } from '../Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
@@ -34,7 +35,7 @@ import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
-import { getCurrentOrganization } from '@/utils/utils';
+import { useCurrentOrganization } from '@/utils/hooks/useCurrentOrganization';
 
 const getNavItem = (theme) => {
   return [
@@ -237,7 +238,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const currentOrganization = getCurrentOrganization();
+  const currentOrganization = useCurrentOrganization();
   const navConfig = getNavItem(theme);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
@@ -298,50 +299,54 @@ const Navigation = ({ setHeaderInfo }) => {
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', height: '100%' }}>
-      <StyledDrawer
-        variant="permanent"
-        open={open}
-        sx={{
-          '& .MuiDrawer-paper': {
-            position: 'relative',
-            height: '100%',
-          },
-        }}
-      >
-        <List>
-          {!isLocalProvider &&
-            navConfig.map((item) => (
-              <NavItem
-                key={item.id}
-                item={item}
-                open={open}
-                selectedId={selectedId}
-                onSelect={handleItemSelect}
-              />
-            ))}
-          <Divider
-            sx={{
-              marginBlock: '0.5rem',
-            }}
-          />
-          <WorkspacesSection
-            open={open}
-            selectedId={selectedId}
-            onSelect={handleItemSelect}
-            workspacesData={workspacesData}
-            isLoading={isLoading}
-          />
-        </List>
+      <ErrorBoundary>
+        <StyledDrawer
+          variant="permanent"
+          open={open}
+          sx={{
+            '& .MuiDrawer-paper': {
+              position: 'relative',
+              height: '100%',
+            },
+          }}
+        >
+          <List>
+            {!isLocalProvider &&
+              navConfig.map((item) => (
+                <NavItem
+                  key={item.id}
+                  item={item}
+                  open={open}
+                  selectedId={selectedId}
+                  onSelect={handleItemSelect}
+                />
+              ))}
+            <Divider
+              sx={{
+                marginBlock: '0.5rem',
+              }}
+            />
+            <WorkspacesSection
+              open={open}
+              selectedId={selectedId}
+              onSelect={handleItemSelect}
+              workspacesData={workspacesData}
+              isLoading={isLoading}
+            />
+          </List>
 
-        <DrawerHeader open={open}>
-          <IconButton onClick={handleDrawerToggle}>
-            {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </DrawerHeader>
-      </StyledDrawer>
-      <StyledMainContent>
-        <WorkspaceContentWrapper id={selectedId} workspacesData={workspacesData} />
-      </StyledMainContent>
+          <DrawerHeader open={open}>
+            <IconButton onClick={handleDrawerToggle}>
+              {open ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </DrawerHeader>
+        </StyledDrawer>
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <StyledMainContent>
+          <WorkspaceContentWrapper id={selectedId} workspacesData={workspacesData} />
+        </StyledMainContent>
+      </ErrorBoundary>
     </Box>
   );
 };
