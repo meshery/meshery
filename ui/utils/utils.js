@@ -1,7 +1,7 @@
 import { trueRandom } from '../lib/trueRandom';
 import jsYaml from 'js-yaml';
 import { findWorkloadByName } from './workloadFilter';
-import { EVENT_TYPES } from './Enum';
+import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
@@ -434,7 +434,7 @@ export const getComponentFromDesign = (design, componentId) => {
  * @param {object} design - The design resource
  */
 export const getDesignVersion = (design) => {
-  if (design.visibility === 'published') {
+  if (design?.visibility === 'published') {
     return design.catalog_data.published_version;
   } else {
     try {
@@ -444,6 +444,12 @@ export const getDesignVersion = (design) => {
       console.error('Version is not available for this design: ', error);
     }
   }
+};
+export const urlEncodeArrayParam = (key, array) => {
+  if (typeof array === 'string') {
+    return array;
+  }
+  return array.map((item) => `${key}=${item}`).join('&');
 };
 
 export const urlEncodeParams = (params) => {
@@ -499,11 +505,9 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
   }
 
   router.push(`/extension/meshmap?mode=operator&type=view&design_id=${designId}`);
-  // window.open(view_link, '_blank');
 };
 
 export const openDesignInKanvas = (designId, designName, router) => {
-  // disable due to bug in workspace switcher routing
   if (isExtensionOpen()) {
     mesheryEventBus.publish({
       type: 'OPEN_DESIGN_IN_KANVAS',
@@ -532,4 +536,12 @@ export const openViewInKanvas = (viewId, viewName, router) => {
   }
 
   router.push(`/extension/meshmap?mode=operator&type=view&id=${viewId}`);
+};
+
+export const isInOperatorMode = () => {
+  return window.location.search.includes(`mode=${APP_MODE.OPERATOR}`);
+};
+
+export const isInDesignMode = () => {
+  return window.location.search.includes(`mode=${APP_MODE.DESIGN}`);
 };
