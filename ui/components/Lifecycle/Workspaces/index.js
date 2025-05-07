@@ -40,7 +40,6 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
-
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
@@ -50,6 +49,7 @@ import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-que
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
+import { getCurrentOrganization } from '@/utils/utils';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -109,9 +109,7 @@ const Workspaces = () => {
     open: false,
     schema: {},
   });
-  const organization = useLegacySelector((state) => {
-    return typeof state?.get === 'function' ? state.get('organization') : state?.organization || {};
-  });
+  const organization = getCurrentOrganization();
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';

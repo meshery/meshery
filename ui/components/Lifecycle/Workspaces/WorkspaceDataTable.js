@@ -8,7 +8,7 @@ import {
 import CAN from '@/utils/can';
 import { useNotificationHandlers } from '@/utils/hooks/useNotification';
 import { keys } from '@/utils/permission_constants';
-import { getColumnValue } from '@/utils/utils';
+import { getColumnValue, getCurrentOrganization } from '@/utils/utils';
 import {
   AuthorCell,
   Box,
@@ -58,11 +58,7 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useLegacySelector((state) => {
-    return typeof state?.get === 'function'
-      ? state.get('organization')?.id
-      : state?.organization?.id || '';
-  });
+  const org_id = getCurrentOrganization()?.id;
 
   const theme = useTheme();
 

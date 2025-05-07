@@ -545,3 +545,19 @@ export const isInOperatorMode = () => {
 export const isInDesignMode = () => {
   return window.location.search.includes(`mode=${APP_MODE.DESIGN}`);
 };
+
+export const getCurrentOrganization = () => {
+  const org = useLegacySelector((state) => {
+    try {
+      if (!state) return null;
+      if (typeof state.get === 'function') {
+        return state.get('organization') || null;
+      }
+      return state.organization || null;
+    } catch (err) {
+      return null;
+    }
+  });
+
+  return org || { id: '', name: '' };
+};

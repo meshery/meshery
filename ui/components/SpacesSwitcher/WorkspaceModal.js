@@ -28,13 +28,13 @@ import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
-import { useLegacySelector } from 'lib/store';
 import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
+import { getCurrentOrganization } from '@/utils/utils';
 
 const getNavItem = (theme) => {
   return [
@@ -237,7 +237,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const currentOrganization = useLegacySelector((state) => state.get('organization'));
+  const currentOrganization = getCurrentOrganization();
   const navConfig = getNavItem(theme);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
