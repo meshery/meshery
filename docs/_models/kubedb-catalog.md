@@ -106,7 +106,11 @@ components:
   colorIcon: assets/img/integrations/kubedb-catalog/components/cassandra-version/icons/color/cassandra-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-catalog/components/cassandra-version/icons/white/cassandra-version-white.svg
   description: 
-components-count: 24
+- name: ignite-version
+  colorIcon: assets/img/integrations/kubedb-catalog/components/ignite-version/icons/color/ignite-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-catalog/components/ignite-version/icons/white/ignite-version-white.svg
+  description: 
+components-count: 25
 relationships: 
 relationship-count: 0
 featureList: [

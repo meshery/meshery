@@ -130,7 +130,6 @@ const Workspaces = () => {
     setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
   }
   const [viewType, setViewType] = useState(selectedWorkspace.id ? 'table' : 'grid');
-
   const [teamsModal, setTeamsModal] = useState({
     open: false,
     workspaceId: '',

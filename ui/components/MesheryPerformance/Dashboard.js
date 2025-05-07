@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateProgress } from '../../lib/store';
