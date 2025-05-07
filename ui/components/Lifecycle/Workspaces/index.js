@@ -1,5 +1,6 @@
 import {
   Breadcrumbs,
+  ErrorBoundary,
   NoSsr,
   WorkspaceRecentActivityModal,
   WorkspaceTeamsTable,
@@ -32,7 +33,7 @@ import {
   useUnassignTeamFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
-import { updateProgress, useLegacySelector } from '../../../lib/store';
+import { updateProgress } from '../../../lib/store';
 import { useNotification, useNotificationHandlers } from '../../../utils/hooks/useNotification';
 import { RJSFModalWrapper } from '../../Modal';
 import _PromptComponent from '../../PromptComponent';
@@ -40,7 +41,6 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
-
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
@@ -50,6 +50,7 @@ import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-que
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
+import { useCurrentOrganization } from '@/utils/hooks/useCurrentOrganization';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -109,9 +110,7 @@ const Workspaces = () => {
     open: false,
     schema: {},
   });
-  const organization = useLegacySelector((state) => {
-    return typeof state?.get === 'function' ? state.get('organization') : state?.organization || {};
-  });
+  const organization = useCurrentOrganization();
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';
@@ -130,7 +129,6 @@ const Workspaces = () => {
     setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
   }
   const [viewType, setViewType] = useState(selectedWorkspace.id ? 'table' : 'grid');
-
   const [teamsModal, setTeamsModal] = useState({
     open: false,
     workspaceId: '',
@@ -360,7 +358,7 @@ const Workspaces = () => {
   return (
     <NoSsr>
       {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
-        <>
+        <ErrorBoundary>
           <div style={{ marginBottom: '1.5rem' }}>
             <Breadcrumbs
               separator={
@@ -545,7 +543,7 @@ const Workspaces = () => {
 
           <_PromptComponent ref={ref} />
           <_PromptComponent ref={bulkDeleteRef} />
-        </>
+        </ErrorBoundary>
       ) : (
         <DefaultError />
       )}
