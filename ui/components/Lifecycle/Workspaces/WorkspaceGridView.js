@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalButtonSecondary,
   useTheme,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -71,7 +72,7 @@ const WorkspaceGridView = ({
 
   const theme = useTheme();
   return (
-    <>
+    <ErrorBoundary>
       <Grid container spacing={2} sx={{ marginTop: '-16px' }}>
         {selectedWorkspaces?.length > 0 && (
           <UserCommonBox
@@ -164,7 +165,7 @@ const WorkspaceGridView = ({
           </ModalFooter>
         </Modal>
       )}
-    </>
+    </ErrorBoundary>
   );
 };
 

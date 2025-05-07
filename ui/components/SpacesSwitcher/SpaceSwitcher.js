@@ -26,7 +26,6 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 
