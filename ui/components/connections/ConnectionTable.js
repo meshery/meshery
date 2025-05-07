@@ -106,7 +106,7 @@ const ConnectionTable = ({
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState();
-  const [sortOrder, setSortOrder] = useState('name asc');
+  const [sortOrder, setSortOrder] = useState('status asc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -1042,6 +1042,7 @@ const ConnectionTable = ({
         onClick={() => handleDeleteConnections(selected)}
         sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
         disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+        data-testid="Button-delete-connections"
       >
         <DeleteIcon style={iconMedium} fill={theme.palette.common.white} />
         Delete

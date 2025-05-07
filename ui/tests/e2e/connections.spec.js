@@ -40,7 +40,7 @@ test.describe.serial('Connection Management Tests', () => {
     }
   });
 
-  test('Add a cluster connection by uploading kubeconfig file', async ({ page }) => {
+  test('Add a cluster connection by uploading kubeconfig file', async ({ page, clusterName }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
     const addConnectionReq = page.waitForRequest(
@@ -74,13 +74,13 @@ test.describe.serial('Connection Management Tests', () => {
 
     await page.getByRole('button', { name: 'OK' }).click();
 
-    const connectedItem = page.getByRole('menuitem', { name: 'connected' }).first();
-    await connectedItem.scrollIntoViewIfNeeded();
-    await expect(connectedItem).toBeVisible();
+    const newConnectionRow = page.locator('tr', { hasText: clusterName }).first();
+    await newConnectionRow.scrollIntoViewIfNeeded();
+    await expect(newConnectionRow).toContainText('connected');
   });
 
   transitionTests.forEach((t) => {
-    test(t.name, async ({ page }) => {
+    test(t.name, async ({ page, clusterName }) => {
       const stateTransitionReq = page.waitForRequest(
         (request) =>
           request.url() ===
@@ -101,13 +101,13 @@ test.describe.serial('Connection Management Tests', () => {
           request.method() === 'GET',
       );
 
-      const firstRow = page.getByRole('menuitem', { name: 'connected' }).first();
-      await firstRow.scrollIntoViewIfNeeded();
-      await expect(firstRow).toBeVisible();
+      const connectedRow = page.locator('tr', { hasText: clusterName }).first();      
+      await connectedRow.scrollIntoViewIfNeeded();
+      await expect(connectedRow).toBeVisible();
       // ===== TRANSITIONING TO A NEW STATE =====
 
       // open state transition options dropdown
-      await firstRow.locator('span', { hasText: 'connected' }).click();
+      await connectedRow.locator('span', { hasText: 'connected' }).click();
       await page.getByRole('option', { name: t.transitionOption }).click();
 
       await expect(page.locator('#searchClick')).toBeVisible();
@@ -120,41 +120,40 @@ test.describe.serial('Connection Management Tests', () => {
       await getConnectionsReq;
       // expect new state to be shown as current state
 
-      const updatedFirstRow = page.getByRole('menuitem', { name: t.statusAfterTransition }).first();
-      await expect(updatedFirstRow).toBeVisible();
+      const updatedConnection = page.locator('tr', { hasText: clusterName }).first();     
+      await updatedConnection.scrollIntoViewIfNeeded();
+      await expect(updatedConnection).toContainText(t.statusAfterTransition);
 
       // ===== TRANSITION BACK TO "connected" STATE =====
       // open state transition options dropdown again
-      await updatedFirstRow.locator('span', { hasText: t.statusAfterTransition }).click();
+      await updatedConnection.locator('span', { hasText: t.statusAfterTransition }).click();
       await page.getByRole('option', { name: t.restorationOption }).click();
 
       await expect(page.locator('#searchClick')).toBeVisible();
       await page.getByRole('button', { name: 'Confirm' }).click();
 
       // expect the state to be restored to "connected"
-      const restoredFirstRow = page.getByRole('menuitem', { name: 'connected' }).first();
-      await expect(restoredFirstRow).toBeVisible();
+      const restoredConnection = page.locator('tr', { hasText: clusterName }).first();
+      await expect(restoredConnection).toBeVisible();
 
       await waitForSnackBar(page, 'Connection status updated');
     });
   });
 
-  test('Delete Kubernetes cluster connections', async ({ page }) => {
+  test('Delete Kubernetes cluster connections', async ({ page, clusterName }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
-    const firstRow = page
-      .locator('tr', { has: page.getByRole('menuitem', { name: 'connected' }) })
-      .first();
-    await firstRow.scrollIntoViewIfNeeded();
-    await expect(firstRow).toBeVisible();
+    const connection = page.locator('tr', { hasText: clusterName }).first();
+    await connection.scrollIntoViewIfNeeded();
+    await expect(connection).toBeVisible();
 
-    if ((await firstRow.count()) === 0) {
+    if ((await connection.count()) === 0) {
       throw new Error(
         'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
       );
     }
 
-    const checkbox = firstRow.locator('input[type="checkbox"]').first();
+    const checkbox = connection.locator('input[type="checkbox"]').first();
     await checkbox.check();
 
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
