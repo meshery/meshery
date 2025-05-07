@@ -123,10 +123,20 @@ setup() {
   echo "Submitting kubeconfig..."
   KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
   echo ""
+
+  sleep 16
+  echo "Copying sqlite dataabse file from pod..."
+  echo "TODO"
+  echo ""
+
 }
 
 cleanup() {
   echo "🧹 Cleaning up..."
+  echo ""
+
+  echo "Removing sqlite dataabse file from local..."
+  echo "TODO"
   echo ""
 
   echo "Removing tmp kubeconfig..."
