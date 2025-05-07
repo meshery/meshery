@@ -89,6 +89,7 @@
     "react-share": "^4.4.1",
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.0",
+    "rehype-sanitize": "^6.0.0",
     "relay-runtime": "^15.0.0",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "^7.8.1",

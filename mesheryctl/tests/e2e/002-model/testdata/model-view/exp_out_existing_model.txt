@@ -13,9 +13,6 @@ registrant:
   kind: artifacthub
   status: registered
   user_id: 00000000-0000-0000-0000-000000000000
-  created_at: 2025-04-25T09:17:06.846058619Z
-  updated_at: 2025-04-25T09:17:06.846058619Z
-  deleted_at: 0001-01-01T00:00:00Z
 connection_id: 82e5bc76-4468-9d29-2e5f-94ccdbabd618
 category:
   id: 639aa59e-5b2d-0c11-92c5-74c5014d41df
