@@ -70,20 +70,14 @@ setup() {
   docker image inspect --format '{{.RepoTags}}' $DOCKER_IMAGE:latest
   echo ""
 
-  # we do not need this, no standalone nats, use broker in cluster
-  # echo "Running docker compose..."
-  # docker compose -f $SCRIPT_DIR/docker-compose.yaml up -d || exit 1
-
   echo "Creating KinD cluster..."
   kind create cluster --name $CLUSTER_NAME
-  # kind create cluster --config $SCRIPT_DIR/kind-config.yaml
   echo ""
 
   echo "Creating meshery namespace..."
   kubectl create namespace $MESHERY_K8S_NAMESPACE
   echo ""
 
-  # this is not working for now, it is applying only operator, not subcharts (meshsync, broker)
   echo "Applying meshery resources..."
   kubectl apply -f $PATH_TO_CRDS_YAML
   helm install meshery-operator $PATH_TO_MESHERY_OPERATOR_CHART --namespace $MESHERY_K8S_NAMESPACE --dependency-update
@@ -116,27 +110,11 @@ setup() {
   echo "Outputing cluster resources..."
   kubectl --namespace meshery get po
 
-#  echo "Outputing cluster resources..."
-#  kubectl --namespace default get deployment
-#  kubectl --namespace default get rs
-#  kubectl --namespace default get po
-#  kubectl --namespace default get service
-#  kubectl --namespace default get configmap
-#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get deployment
-#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get rs
-#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get po
-#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get service
-#  kubectl --namespace $CUSTOM_K8S_NAMESPACE get configmap
-#  echo ""
 }
 
 cleanup() {
   echo "🧹 Cleaning up..."
   echo ""
-
-  # we do not need this
-  # echo "Stopping docker compose..."
-  # docker compose -f $SCRIPT_DIR/docker-compose.yaml down
 
   echo "Deleting KinD cluster..."
   kind delete cluster --name $CLUSTER_NAME
