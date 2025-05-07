@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Transform Job",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-sagemaker-controller",
+    "displayName": "AWS SageMaker",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Machine Learning"
+    },
+    "subCategory": "Machine Learning",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#01A88D",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.2.17"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#01A88D",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e            \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e        \u003c/g\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "sagemaker.services.k8s.aws/v1alpha1",
+    "kind": "TransformJob",
+    "schema": "{\n \"description\": \"TransformJob is the Schema for the TransformJobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TransformJobSpec defines the desired state of TransformJob.\\n\\nA batch transform job. For information about SageMaker batch transform, see\\nUse Batch Transform (https://docs.aws.amazon.com/sagemaker/latest/dg/batch-transform.html).\",\n   \"properties\": {\n    \"batchStrategy\": {\n     \"description\": \"Specifies the number of records to include in a mini-batch for an HTTP inference\\nrequest. A record is a single unit of input data that inference can be made\\non. For example, a single line in a CSV file is a record.\\n\\nTo enable the batch strategy, you must set the SplitType property to Line,\\nRecordIO, or TFRecord.\\n\\nTo use only one record when making an HTTP invocation request to a container,\\nset BatchStrategy to SingleRecord and SplitType to Line.\\n\\nTo fit as many records in a mini-batch as can fit within the MaxPayloadInMB\\nlimit, set BatchStrategy to MultiRecord and SplitType to Line.\",\n     \"type\": \"string\"\n    },\n    \"dataProcessing\": {\n     \"description\": \"The data structure used to specify the data to be used for inference in a\\nbatch transform job and to associate the data that is relevant to the prediction\\nresults in the output. The input filter provided allows you to exclude input\\ndata that is not needed for inference in a batch transform job. The output\\nfilter provided allows you to include input data relevant to interpreting\\nthe predictions in the output from the job. For more information, see Associate\\nPrediction Results with their Corresponding Input Records (https://docs.aws.amazon.com/sagemaker/latest/dg/batch-transform-data-processing.html).\",\n     \"properties\": {\n      \"inputFilter\": {\n       \"type\": \"string\"\n      },\n      \"joinSource\": {\n       \"type\": \"string\"\n      },\n      \"outputFilter\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"environment\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The environment variables to set in the Docker container. Don't include any\\nsensitive data in your environment variables. We support up to 16 key and\\nvalues entries in the map.\",\n     \"type\": \"object\"\n    },\n    \"experimentConfig\": {\n     \"description\": \"Associates a SageMaker job as a trial component with an experiment and trial.\\nSpecified when you call the following APIs:\\n\\n  - CreateProcessingJob (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateProcessingJob.html)\\n\\n  - CreateTrainingJob (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateTrainingJob.html)\\n\\n  - CreateTransformJob (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateTransformJob.html)\",\n     \"properties\": {\n      \"experimentName\": {\n       \"type\": \"string\"\n      },\n      \"trialComponentDisplayName\": {\n       \"type\": \"string\"\n      },\n      \"trialName\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"maxConcurrentTransforms\": {\n     \"description\": \"The maximum number of parallel requests that can be sent to each instance\\nin a transform job. If MaxConcurrentTransforms is set to 0 or left unset,\\nAmazon SageMaker checks the optional execution-parameters to determine the\\nsettings for your chosen algorithm. If the execution-parameters endpoint\\nis not enabled, the default value is 1. For more information on execution-parameters,\\nsee How Containers Serve Requests (https://docs.aws.amazon.com/sagemaker/latest/dg/your-algorithms-batch-code.html#your-algorithms-batch-code-how-containe-serves-requests).\\nFor built-in algorithms, you don't need to set a value for MaxConcurrentTransforms.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"maxPayloadInMB\": {\n     \"description\": \"The maximum allowed size of the payload, in MB. A payload is the data portion\\nof a record (without metadata). The value in MaxPayloadInMB must be greater\\nthan, or equal to, the size of a single record. To estimate the size of a\\nrecord in MB, divide the size of your dataset by the number of records. To\\nensure that the records fit within the maximum payload size, we recommend\\nusing a slightly larger value. The default value is 6 MB.\\n\\nThe value of MaxPayloadInMB cannot be greater than 100 MB. If you specify\\nthe MaxConcurrentTransforms parameter, the value of (MaxConcurrentTransforms\\n* MaxPayloadInMB) also cannot exceed 100 MB.\\n\\nFor cases where the payload might be arbitrarily large and is transmitted\\nusing HTTP chunked encoding, set the value to 0. This feature works only\\nin supported algorithms. Currently, Amazon SageMaker built-in algorithms\\ndo not support HTTP chunked encoding.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"modelClientConfig\": {\n     \"description\": \"Configures the timeout and maximum number of retries for processing a transform\\njob invocation.\",\n     \"properties\": {\n      \"invocationsMaxRetries\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"invocationsTimeoutInSeconds\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"modelName\": {\n     \"description\": \"The name of the model that you want to use for the transform job. ModelName\\nmust be the name of an existing Amazon SageMaker model within an Amazon Web\\nServices Region in an Amazon Web Services account.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"(Optional) An array of key-value pairs. For more information, see Using Cost\\nAllocation Tags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html#allocation-what)\\nin the Amazon Web Services Billing and Cost Management User Guide.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AddTags.html).\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"transformInput\": {\n     \"description\": \"Describes the input source and the way the transform job consumes it.\",\n     \"properties\": {\n      \"compressionType\": {\n       \"type\": \"string\"\n      },\n      \"contentType\": {\n       \"type\": \"string\"\n      },\n      \"dataSource\": {\n       \"description\": \"Describes the location of the channel data.\",\n       \"properties\": {\n        \"s3DataSource\": {\n         \"description\": \"Describes the S3 data source.\",\n         \"properties\": {\n          \"s3DataType\": {\n           \"type\": \"string\"\n          },\n          \"s3URI\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"splitType\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"transformJobName\": {\n     \"description\": \"The name of the transform job. The name must be unique within an Amazon Web\\nServices Region in an Amazon Web Services account.\",\n     \"type\": \"string\"\n    },\n    \"transformOutput\": {\n     \"description\": \"Describes the results of the transform job.\",\n     \"properties\": {\n      \"accept\": {\n       \"type\": \"string\"\n      },\n      \"assembleWith\": {\n       \"type\": \"string\"\n      },\n      \"kmsKeyID\": {\n       \"type\": \"string\"\n      },\n      \"s3OutputPath\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"transformResources\": {\n     \"description\": \"Describes the resources, including ML instance types and ML instance count,\\nto use for the transform job.\",\n     \"properties\": {\n      \"instanceCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"instanceType\": {\n       \"type\": \"string\"\n      },\n      \"volumeKMSKeyID\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"modelName\",\n    \"transformInput\",\n    \"transformJobName\",\n    \"transformOutput\",\n    \"transformResources\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Transform Job\",\n \"type\": \"object\"\n}"
+  }
+}

@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import DeleteIcon from '@mui/icons-material/Delete';

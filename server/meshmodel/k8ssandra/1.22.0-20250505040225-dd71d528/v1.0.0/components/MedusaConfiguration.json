@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Medusa Configuration",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "k8ssandra",
+    "displayName": "K8ssandra",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://helm.k8ssandra.io/stable/k8ssandra-operator-1.22.0-20250505040225-dd71d528.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.22.0-20250505040225-dd71d528"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://helm.k8ssandra.io/stable/k8ssandra-operator-1.22.0-20250505040225-dd71d528.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "medusa.k8ssandra.io/v1alpha1",
+    "kind": "MedusaConfiguration",
+    "schema": "{\n \"description\": \"MedusaConfiguration is the Schema for the medusaconfigurations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MedusaConfigurationSpec defines the desired state of MedusaConfiguration\",\n   \"properties\": {\n    \"storageProperties\": {\n     \"description\": \"StorageProperties defines the storage backend settings to use for the backups.\",\n     \"properties\": {\n      \"apiProfile\": {\n       \"description\": \"AWS Profile to use for authentication.\",\n       \"type\": \"string\"\n      },\n      \"backupGracePeriodInDays\": {\n       \"description\": \"Age after which orphan sstables can be deleted from the storage backend.\\nProtects from race conditions between purge and ongoing backups.\\nDefaults to 10 days.\",\n       \"type\": \"integer\"\n      },\n      \"bucketName\": {\n       \"description\": \"The name of the bucket to use for the backups.\",\n       \"type\": \"string\"\n      },\n      \"concurrentTransfers\": {\n       \"default\": 0,\n       \"description\": \"Number of concurrent uploads.\\nHelps maximizing the speed of uploads but puts more pressure on the network.\\nDefaults to 0.\",\n       \"type\": \"integer\"\n      },\n      \"credentialsType\": {\n       \"description\": \"Type of credentials to use for authentication.\\nCan be \\\"role-based\\\", \\\"credential-based\\\" or empty.\",\n       \"enum\": [\n        \"role-based\",\n        \"credential-based\"\n       ],\n       \"type\": \"string\"\n      },\n      \"host\": {\n       \"description\": \"Host to connect to for the storage backend.\",\n       \"type\": \"string\"\n      },\n      \"maxBackupAge\": {\n       \"default\": 0,\n       \"description\": \"Maximum backup age that the purge process should observe.\",\n       \"type\": \"integer\"\n      },\n      \"maxBackupCount\": {\n       \"default\": 0,\n       \"description\": \"Maximum number of backups to keep (used by the purge process).\\nDefault is unlimited.\",\n       \"type\": \"integer\"\n      },\n      \"multiPartUploadThreshold\": {\n       \"default\": 104857600,\n       \"description\": \"File size over which cloud specific cli tools are used for transfer.\\nDefaults to 100 MB.\",\n       \"type\": \"integer\"\n      },\n      \"podStorage\": {\n       \"description\": \"Pod storage settings for the local storage provider\",\n       \"properties\": {\n        \"accessModes\": {\n         \"description\": \"Pod local storage access modes\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"size\": {\n         \"anyOf\": [\n          {\n           \"type\": \"integer\"\n          },\n          {\n           \"type\": \"string\"\n          }\n         ],\n         \"default\": \"10Gi\",\n         \"description\": \"Size of the pod's storage in bytes.\\nDefaults to 10 GB.\",\n         \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n         \"x-kubernetes-int-or-string\": true\n        },\n        \"storageClassName\": {\n         \"description\": \"Storage class name to use for the pod's storage.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"port\": {\n       \"description\": \"Port to connect to for the storage backend.\",\n       \"type\": \"integer\"\n      },\n      \"prefix\": {\n       \"description\": \"Name of the top level folder in the backup bucket.\\nIf empty, the cluster name will be used.\",\n       \"type\": \"string\"\n      },\n      \"region\": {\n       \"description\": \"Region of the storage bucket.\\nDefaults to \\\"default\\\".\",\n       \"type\": \"string\"\n      },\n      \"secure\": {\n       \"description\": \"Whether to use SSL for the storage backend.\",\n       \"type\": \"boolean\"\n      },\n      \"sslVerify\": {\n       \"description\": \"When using SSL, whether to also verify the certificate.\",\n       \"type\": \"boolean\"\n      },\n      \"storageProvider\": {\n       \"description\": \"The storage backend to use for the backups.\",\n       \"enum\": [\n        \"google_storage\",\n        \"azure_blobs\",\n        \"s3\",\n        \"s3_compatible\",\n        \"s3_rgw\",\n        \"ibm_storage\"\n       ],\n       \"type\": \"string\"\n      },\n      \"storageSecretRef\": {\n       \"description\": \"Kubernetes Secret that stores the key file for the storage provider's API.\\nIf using 'local' storage, this value is ignored.\",\n       \"properties\": {\n        \"name\": {\n         \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"transferMaxBandwidth\": {\n       \"default\": \"50MB/s\",\n       \"description\": \"Max upload bandwidth in MB/s.\\nDefaults to 50 MB/s.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Medusa Configuration\",\n \"type\": \"object\"\n}"
+  }
+}

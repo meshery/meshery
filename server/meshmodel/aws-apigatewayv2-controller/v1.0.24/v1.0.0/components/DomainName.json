@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Domain Name",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-apigatewayv2-controller",
+    "displayName": "AWS API Gateway v2",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Proxy",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ff9900",
+      "secondaryColor": "#F4BC79",
+      "shape": "triangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}\n\u003c/style\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\u0026#xA;V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\u0026#xA;C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\u0026#xA;M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\u0026#xA;v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\u0026#xA;M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\u0026#xA;l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n.st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\u0026#xA;V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\u0026#xA;C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\u0026#xA;M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\u0026#xA;v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\u0026#xA;M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\u0026#xA;l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.24"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ff9900",
+    "secondaryColor": "#F4BC79",
+    "shape": "triangle",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FF9900;}\n\u003c/style\u003e\n\u003cg id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n        \u003cg id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n                \u003cpath id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\n                        V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\n                        C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\n                         M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\n                        v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\n                         M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\n                        l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"/\u003e\n        \u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 44 44\" style=\"enable-background:new 0 0 44 44;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill-rule:evenodd;clip-rule:evenodd;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cg id=\"Icon-Architecture_x2F_48_x2F_Arch_x5F_-Amazon-API-Gateway_x5F_48\"\u003e\n        \u003cg id=\"Icon-Service_x2F_48_x2F_Amazon-API-Gateway_x5F_48\" transform=\"translate(8.000000, 8.000000)\"\u003e\n                \u003cpath id=\"Amazon-API-Gateway_Icon_48_Squid\" class=\"st0\" d=\"M10,26h3v-2h-3V26z M15,26h3v-2h-3V26z M10,4h3V2h-3V4z M15,4h3V2h-3\n                        V4z M4-5.3L-6,0.6v27.8l10,5V-5.3z M6,2h2v2H6v20h2v2H6v9c0,0.3-0.2,0.7-0.5,0.9C5.4,36,5.2,36,5,36c-0.2,0-0.3,0-0.4-0.1l-12-6\n                        C-7.8,29.7-8,29.4-8,29V0c0-0.4,0.2-0.7,0.5-0.9l12-7c0.3-0.2,0.7-0.2,1,0C5.8-7.7,6-7.4,6-7V2z M34,0.6L24-5.3v38.6l10-5V0.6z\n                         M36,0v29c0,0.4-0.2,0.7-0.6,0.9l-12,6C23.3,36,23.2,36,23,36c-0.2,0-0.4,0-0.5-0.1C22.2,35.7,22,35.3,22,35v-9h-2v-2h2V4h-2V2h2\n                        v-9c0-0.4,0.2-0.7,0.5-0.9c0.3-0.2,0.7-0.2,1,0l12,7C35.8-0.7,36-0.4,36,0L36,0z M16.9,9.3l-1.9-0.7l-4,11l1.9,0.7L16.9,9.3z\n                         M21.7,14.7c0.4-0.4,0.4-1,0-1.4l-3-3l-1.4,1.4l2.3,2.3l-2.3,2.3l1.4,1.4L21.7,14.7z M9.3,17.7l-3-3c-0.4-0.4-0.4-1,0-1.4l3-3\n                        l1.4,1.4L8.4,14l2.3,2.3L9.3,17.7z\"/\u003e\n        \u003c/g\u003e\n\u003c/g\u003e\n\u003c/svg\u003e\n"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/apigatewayv2-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "apigatewayv2.services.k8s.aws/v1alpha1",
+    "kind": "DomainName",
+    "schema": "{\n \"description\": \"DomainName is the Schema for the DomainNames API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DomainNameSpec defines the desired state of DomainName.\\n\\nRepresents a domain name.\",\n   \"properties\": {\n    \"domainName\": {\n     \"description\": \"The domain name.\",\n     \"type\": \"string\"\n    },\n    \"domainNameConfigurations\": {\n     \"description\": \"The domain name configurations.\",\n     \"items\": {\n      \"description\": \"The domain name configuration.\",\n      \"properties\": {\n       \"certificateARN\": {\n        \"description\": \"Represents an Amazon Resource Name (ARN).\",\n        \"type\": \"string\"\n       },\n       \"certificateName\": {\n        \"description\": \"A string with a length between [1-128].\",\n        \"type\": \"string\"\n       },\n       \"endpointType\": {\n        \"description\": \"Represents an endpoint type.\",\n        \"type\": \"string\"\n       },\n       \"ownershipVerificationCertificateARN\": {\n        \"description\": \"Represents an Amazon Resource Name (ARN).\",\n        \"type\": \"string\"\n       },\n       \"securityPolicy\": {\n        \"description\": \"The Transport Layer Security (TLS) version of the security policy for this\\ndomain name. The valid values are TLS_1_0 and TLS_1_2.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"mutualTLSAuthentication\": {\n     \"description\": \"The mutual TLS authentication configuration for a custom domain name.\",\n     \"properties\": {\n      \"truststoreURI\": {\n       \"description\": \"A string representation of a URI with a length between [1-2048].\",\n       \"type\": \"string\"\n      },\n      \"truststoreVersion\": {\n       \"description\": \"A string with a length between [1-64].\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"The collection of tags associated with a domain name.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"domainName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Domain Name\",\n \"type\": \"object\"\n}"
+  }
+}

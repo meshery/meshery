@@ -73,7 +73,6 @@ const InfoModal_ = React.memo((props) => {
     meshModels = [],
     isReadOnly = false,
   } = props;
-
   const formRef = React.createRef();
   const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
@@ -157,7 +156,7 @@ const InfoModal_ = React.memo((props) => {
           message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        patternFetcher()();
+        patternFetcher && patternFetcher();
         handleInfoModalClose();
       })
       .catch((error) => {
