@@ -13,6 +13,7 @@ CUSTOM_K8S_NAMESPACE="calm-koala"
 PATH_TO_CRDS_YAML="install/kubernetes/helm/meshery-operator/crds/crds.yaml"
 PATH_TO_MESHERY_OPERATOR_CHART="install/kubernetes/helm/meshery-operator"
 PATH_TO_MESHERY_CHART="install/kubernetes/helm/meshery"
+TMP_KUBECONFIG_PATH="meshery-integration-test-meshsync-kubeconfig.yaml"
 
 check_dependencies() {
   # Check for docker
@@ -91,11 +92,11 @@ setup() {
   kubectl --namespace $CUSTOM_K8S_NAMESPACE apply -f $SCRIPT_DIR/test-deployment.yaml
   echo ""
 
-  echo "Tag image with custom tag..."
+  echo "Taging image with custom tag..."
   docker tag $DOCKER_IMAGE:latest $DOCKER_IMAGE:$DOCKER_IMAGE_TAG
   echo ""
 
-  echo "Upload image to kind..."
+  echo "Uploading image to kind..."
   kind load docker-image $DOCKER_IMAGE:$DOCKER_IMAGE_TAG --name $CLUSTER_NAME 
   echo ""
 
@@ -109,11 +110,27 @@ setup() {
   sleep 16
   echo "Outputing cluster resources..."
   kubectl --namespace meshery get po
+  echo ""
 
+  echo "Port forwarding to meshery server..."
+  echo "TODO"
+  echo ""
+
+  echo "Preparing tmp kubeconfig with current contexts..."
+  kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
+  echo ""
+
+  echo "Submitting kubeconfig..."
+  KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
+  echo ""
 }
 
 cleanup() {
   echo "🧹 Cleaning up..."
+  echo ""
+
+  echo "Removing tmp kubeconfig..."
+  echo "TODO"
   echo ""
 
   echo "Deleting KinD cluster..."
