@@ -148,9 +148,11 @@ cleanup() {
   echo "TODO"
   echo ""
 
-  echo "Removing tmp kubeconfig..."
-  echo "TODO"
-  echo ""
+  if [ -f "$TMP_KUBECONFIG_PATH" ]; then
+    echo "Removing tmp kubeconfig..."
+    rm "$TMP_KUBECONFIG_PATH"
+    echo ""
+  fi
 
   echo "Deleting KinD cluster..."
   kind delete cluster --name $CLUSTER_NAME
