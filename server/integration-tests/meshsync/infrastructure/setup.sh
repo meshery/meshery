@@ -120,7 +120,7 @@ setup() {
   PID_PORT_FORWARDING=$!
   echo "Port forwarding PID $PID_PORT_FORWARDING"
   echo ""
-  sleep 8
+  sleep 16
 
 
   echo "Preparing tmp kubeconfig with current contexts..."
