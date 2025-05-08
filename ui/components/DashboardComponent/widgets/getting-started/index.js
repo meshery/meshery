@@ -14,7 +14,7 @@ import { useGetUserOrgRolesQuery } from '@/rtk-query/orgRoles';
 import { useGetOrgsQuery } from '@/rtk-query/organization';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { useLegacySelector } from 'lib/store';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
 const GetStarted = (props) => {
   const [openModal, setOpenModal] = useState(false);
@@ -23,7 +23,7 @@ const GetStarted = (props) => {
   const { data: profileData } = useGetUserByIdQuery(currentUser?.id, {
     skip: !currentUser?.id,
   });
-  const currentOrg = useLegacySelector((state) => state.get('organization'));
+  const currentOrg = useGetCurrentOrganization();
   const { id: org_id } = currentOrg;
   return (
     <>
