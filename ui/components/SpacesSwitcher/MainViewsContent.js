@@ -20,7 +20,7 @@ import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } f
 import { downloadFileFromContent } from '@/utils/fileDownloader';
 import { getView, useDeleteViewMutation, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
-import { ViewsInfoModal } from '../ViewInfoModal';
+import { ViewInfoModal } from '../ViewInfoModal';
 import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
 import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -290,7 +290,7 @@ const MainViewsContent = ({
         />
       )}
       {infoModal && (
-        <ViewsInfoModal
+        <ViewInfoModal
           open={infoModal}
           closeModal={handleCloseInfoModal}
           view_id={selectedView?.id}

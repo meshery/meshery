@@ -51,6 +51,7 @@ import Troubleshoot from './TroubleshootingComponent';
 import TypingFilter from './TypingFilter';
 import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
+import { ViewInfoModal } from './ViewInfoModal';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -145,6 +146,7 @@ function NavigatorExtension({
           SelectDeploymentTarget: SelectDeploymentTarget,
           getComponentsinFile,
           InfoModal,
+          ViewInfoModal,
           ExportModal,
           GenericRJSFModal: Modal,
           RJSFModalWrapper: RJSFModalWrapper,
