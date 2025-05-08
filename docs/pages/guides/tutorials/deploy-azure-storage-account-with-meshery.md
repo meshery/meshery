@@ -48,10 +48,8 @@ Before you begin, ensure you have the following:
 
 If you do not already have a Service Principal (SP) for Meshery, create one using the Azure CLI:
 
-```bash
-az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
-```
-<pre class="codeblock-pre"><div class="codeblock">
+
+  <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
   </code>
   </div></pre>
