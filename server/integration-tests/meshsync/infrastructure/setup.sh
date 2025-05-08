@@ -114,7 +114,7 @@ setup() {
   echo ""
 
   echo "Port forwarding to meshery server..."
-  echo nohup kubectl --namespace $MESHERY_K8S_NAMESPACE port-forward service/meshery 9081:9081 &
+  echo kubectl --namespace $MESHERY_K8S_NAMESPACE port-forward service/meshery 9081:9081 &
   echo ""
 
   PID_PORT_FORWARDING=$!
