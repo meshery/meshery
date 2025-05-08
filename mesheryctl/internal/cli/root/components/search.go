@@ -17,10 +17,8 @@ package components
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // represents the mesheryctl component search [query-text] subcommand.
@@ -41,15 +39,6 @@ mesheryctl component search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		queryText := args[0]
-		url := fmt.Sprintf("%s/%s?search=%s&pagesize=all", baseUrl, componentApiPath, queryText)
-
-		return listComponents(cmd, url)
+		return listComponents(cmd, fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, args[0]))
 	},
 }

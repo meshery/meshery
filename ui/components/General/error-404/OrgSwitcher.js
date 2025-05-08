@@ -1,7 +1,6 @@
+//@ts-check
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
+import { useDispatch } from 'react-redux';
 import { NoSsr } from '@layer5/sistent';
 import { setOrganization, setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -21,21 +20,26 @@ import {
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useTheme } from '@layer5/sistent';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
-const OrgSwitcher = (props) => {
+const OrgSwitcher = () => {
   const {
     data: orgsResponse,
     isSuccess: isOrgsSuccess,
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
+  const organization = useGetCurrentOrganization();
+  const dispatch = useDispatch();
+  const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
+  const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
+
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization, setKeys } = props;
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
 
-  useGetCurrentAbilities(organization, setKeys, skip);
+  useGetCurrentAbilities(organization, dispatchSetKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -49,7 +53,7 @@ const OrgSwitcher = (props) => {
   const handleOrgSelect = (e) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
+    dispatchSetOrganization({ organization: selected });
     setSkip(false);
 
     setTimeout(() => {
@@ -99,31 +103,16 @@ const OrgSwitcher = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
-  setKeys: bindActionCreators(setKeys, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
-const OrgSwitcherWithErrorBoundary = (props) => {
+const OrgSwitcherWithErrorBoundary = () => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
         <Provider store={store}>
-          <OrgSwitcher {...props} />
+          <OrgSwitcher />
         </Provider>
       </ErrorBoundary>
     </NoSsr>
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(OrgSwitcherWithErrorBoundary));
+export default OrgSwitcherWithErrorBoundary;
