@@ -151,7 +151,7 @@ Layouts are defined per **screen size breakpoint** (e.g., `sm`, `xs`, `xxs`) to 
 - **static**: When `true`, the widget is locked in place — it can't be moved or resized.
 - **moved**: Used by the library to track user interactions. Leave as `false`.
 
-> Meshery uses `react-grid-layout`, where the layout is based on a 12-column CSS grid. Each widget’s position is defined in terms of this virtual grid, which helps in building a responsive and flexible dashboard layout.
+> Here layout is based on a 12-column CSS grid. Each widget’s position is defined in terms of this virtual grid, which helps in building a responsive and flexible dashboard layout.
 
 ---
 
