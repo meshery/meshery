@@ -113,22 +113,31 @@ setup() {
   echo ""
 
   echo "Port forwarding to meshery server..."
-  echo "TODO"
+  echo nohup kubectl --namespace $MESHERY_K8S_NAMESPACE port-forward service/meshery 9081:9081 &
   echo ""
+
+  PID_PORT_FORWARDING=$!
+  echo "Port forwarding PID $PID_PORT_FORWARDING"
+  echo ""
+  sleep 8
+
 
   echo "Preparing tmp kubeconfig with current contexts..."
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
   echo ""
 
-  # echo "Submitting kubeconfig..."
-  # KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
-  # echo ""
+  echo "Submitting kubeconfig..."
+  KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
+  echo ""
 
   sleep 16
   echo "Copying sqlite dataabse file from pod..."
   echo "TODO"
   echo ""
 
+  echo "Stopping port forwarding..."
+  echo kill -9 $PID_PORT_FORWARDING
+  echo ""
 }
 
 cleanup() {
