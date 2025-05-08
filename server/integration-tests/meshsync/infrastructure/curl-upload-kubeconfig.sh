@@ -1,3 +1,5 @@
+  #!/usr/bin/env bash
+
 curl -X POST 'http://localhost:9081/api/system/kubernetes' \
   -H 'Accept: */*' \
   -H 'Accept-Language: en-US,en;q=0.9,ru;q=0.8,uk;q=0.7,de;q=0.6' \
