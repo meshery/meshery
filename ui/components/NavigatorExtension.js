@@ -51,6 +51,7 @@ import Troubleshoot from './TroubleshootingComponent';
 import TypingFilter from './TypingFilter';
 import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -65,7 +66,7 @@ function NavigatorExtension({
   capabilitiesRegistry,
 }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-  const currentOrganization = useLegacySelector((state) => state.get('organization'));
+  const currentOrganization = useGetCurrentOrganization();
   const { store: legacyStore } = useContext(LegacyStoreContext);
   if (err != null) {
     return (

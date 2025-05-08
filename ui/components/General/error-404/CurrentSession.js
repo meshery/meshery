@@ -8,17 +8,16 @@ import {
   OrgNameDisabled,
   StyledTypographyDisabled,
 } from './styles';
-import { connect } from 'react-redux';
-import { withRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { NoSsr } from '@layer5/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../ErrorBoundary';
+import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
-const CurrentSessionInfo = (props) => {
-  const { organization } = props;
+const CurrentSessionInfo = () => {
+  const organization = useGetCurrentOrganization();
   const {
     data: rolesRes,
     // isSuccess: isRolesSuccess,
@@ -70,23 +69,16 @@ const CurrentSessionInfo = (props) => {
   );
 };
 
-const CurrentSessionInfoWithErrorBoundary = (props) => {
+const CurrentSessionInfoWithErrorBoundary = () => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
         <Provider store={store}>
-          <CurrentSessionInfo {...props} />
+          <CurrentSessionInfo />
         </Provider>
       </ErrorBoundary>
     </NoSsr>
   );
 };
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
-export default connect(mapStateToProps)(withRouter(CurrentSessionInfoWithErrorBoundary));
+export default CurrentSessionInfoWithErrorBoundary;
