@@ -1,11 +1,7 @@
 /* eslint-disable react/display-name */
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import {
-  useUpdateFilterFileMutation
-} from '@/rtk-query/filter';
-import {
-  useUpdatePatternFileMutation
-} from '@/rtk-query/design';
+import { useUpdateFilterFileMutation } from '@/rtk-query/filter';
+import { useUpdatePatternFileMutation } from '@/rtk-query/design';
 import TooltipButton from '@/utils/TooltipButton';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
@@ -30,7 +26,6 @@ import {
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
-import axios from 'axios';
 import yaml from 'js-yaml';
 import _ from 'lodash';
 import moment from 'moment';
@@ -38,11 +33,7 @@ import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef, useState } from 'react';
 import { Provider } from 'react-redux';
 import PatternIcon from '../../../assets/icons/Pattern';
-import {
-  FILTER_ENDPOINT,
-  MESHERY_CLOUD_PROD,
-  PATTERN_ENDPOINT,
-} from '../../../constants/endpoints';
+import { MESHERY_CLOUD_PROD } from '../../../constants/endpoints';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
@@ -88,8 +79,8 @@ const InfoModal_ = React.memo((props) => {
   const formatDate = (date) => {
     return moment(date).utc().format('MMMM Do YYYY');
   };
-  const [updatePattern] = useUpdatePatternFileMutation()
-  const [updateFilter] = useUpdateFilterFileMutation()
+  const [updatePattern] = useUpdatePatternFileMutation();
+  const [updateFilter] = useUpdateFilterFileMutation();
   const currentUserID = currentUser?.id;
   const isAdmin = currentUser?.role_names?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
@@ -186,7 +177,6 @@ const InfoModal_ = React.memo((props) => {
       }) || []
     );
   }
-
   // Function to compare objects while normalizing case in compatibility array
   function isEqualIgnoringCase(obj1, obj2) {
     // Check each property one by one
@@ -374,8 +364,9 @@ const InfoModal_ = React.memo((props) => {
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
-                      title={`Owner: ${resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
-                        }`}
+                      title={`Owner: ${
+                        resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
+                      }`}
                     >
                       <div>
                         <OwnerChip userProfile={resourceUserProfile} />
@@ -453,9 +444,9 @@ const InfoModal_ = React.memo((props) => {
                 !isPublished
                   ? false
                   : !(
-                    CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
-                    currentUser?.id === selectedResource?.user_id
-                  ) || isPublished
+                      CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) &&
+                      currentUser?.id === selectedResource?.user_id
+                    ) || isPublished
               }
             >
               {isPublished ? 'Published' : 'Publish to Catalog'}
