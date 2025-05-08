@@ -145,6 +145,9 @@ jobs:
       - name: Build meshery image
         run: make docker-build
 
+      - name: Remove dnagling images, stopped containers
+        run: docker system prune -f
+
       - name: Integration tests set up
         run: make server-integration-tests-meshsync-setup
 
