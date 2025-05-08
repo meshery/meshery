@@ -53,6 +53,10 @@ If you do not already have a Service Principal (SP) for Meshery, create one usin
 ```bash
 az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
 ```
+<pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
+  </code>
+  </div></pre>
 
 This command outputs the following credentials:
 
@@ -64,12 +68,14 @@ This command outputs the following credentials:
 
 To export them, manually enter:
 
-```bash
+<pre class="codeblock-pre"><div class="codeblock">
+<code class="clipboardjs">
 export AZURE_CLIENT_ID=<appId>
 export AZURE_CLIENT_SECRET=<password>
 export AZURE_TENANT_ID=<tenant>
 export AZURE_SUBSCRIPTION_ID=<subscriptionId>
-```
+</code>
+</div></pre>
 
 
 
@@ -77,14 +83,13 @@ export AZURE_SUBSCRIPTION_ID=<subscriptionId>
 
 If you haven’t already connected your cluster to Meshery, run:
 
-```bash
-# Configure Meshery for your cluster (example for AKS)
-mesheryctl system config aks
-# Start Meshery
+<pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">
 mesheryctl system start
-```
+  </code>
+  </div></pre>
 
-Then open the Meshery UI (default: `http://localhost:9081`) and ensure your cluster appears under **Lifecycle → Connections**.
+Then open the Meshery UI (default: [`http://localhost:9081`](http://localhost:9081)) and ensure your cluster appears under **Lifecycle → Connections**.
 
 
 
@@ -94,21 +99,25 @@ Then open the Meshery UI (default: `http://localhost:9081`) and ensure your clus
 
 Apply the official ASO operator manifest (Meshery will manage CRDs):
 
-```bash
+<pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">
 kubectl apply -f \
   https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_v2.13.0.yaml
-```
-
+  </code>
+  </div></pre>
 #### 3.2 Create Azure Credentials Secret
 
 Azure Service Operator requires a Kubernetes secret with your Azure identity:
 
-```bash
-kubectl create namespace azureserviceoperator-system || true
+<pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">kubectl create namespace azureserviceoperator-system || true
+  </code>
+  </div></pre>
 
-kubectl create secret generic azure-credentials --namespace azureserviceoperator-system --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
-```
-
+<pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">kubectl create secret generic azure-credentials --namespace azureserviceoperator-system --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
+  </code>
+  </div></pre>
 
 
 ### 4. Design and Deploy an Azure Storage Account
