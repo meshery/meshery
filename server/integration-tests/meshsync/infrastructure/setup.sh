@@ -120,9 +120,9 @@ setup() {
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
   echo ""
 
-  echo "Submitting kubeconfig..."
-  KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
-  echo ""
+  # echo "Submitting kubeconfig..."
+  # KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
+  # echo ""
 
   sleep 16
   echo "Copying sqlite dataabse file from pod..."
