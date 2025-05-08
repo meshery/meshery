@@ -357,196 +357,190 @@ const Workspaces = () => {
 
   return (
     <NoSsr>
-      {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
-        <ErrorBoundary>
-          <div style={{ marginBottom: '1.5rem' }}>
-            <Breadcrumbs
-              separator={
-                <RightArrowIcon height={20} width={20} primaryFill={theme.palette.icon.default} />
-              }
-              aria-label="breadcrumb"
-            >
-              <div
-                style={{
-                  cursor: selectedWorkspace.id ? 'pointer' : 'default',
-                  color: selectedWorkspace.id
-                    ? theme.palette.background.brand.default
-                    : theme.palette.text.default,
-                  textDecoration: 'none',
-                }}
-                onClick={() => {
-                  if (selectedWorkspace.id) {
-                    setSelectedWorkspace({ id: '', name: '' });
-                  }
-                }}
-              >
-                All Workspaces
-              </div>
-              {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
-            </Breadcrumbs>
-          </div>
-          {!selectedWorkspace.id && (
-            <ToolWrapper>
-              <CreateButtonWrapper>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
-                  sx={{
-                    backgroundColor: '#607d8b',
-                    padding: '8px',
-                    borderRadius: '5px',
-                    marginRight: '2rem',
-                  }}
-                  disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
-                  data-cy="btnResetDatabase"
-                >
-                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                  <Typography
-                    sx={{
-                      paddingLeft: '4px',
-                      marginRight: '4px',
-                      textTransform: 'none',
-                    }}
-                  >
-                    Create
-                  </Typography>
-                </Button>
-              </CreateButtonWrapper>
-              <Box display={'flex'} alignItems={'center'}>
-                {!selectedWorkspace?.id && (
-                  <>
-                    <SearchBar
-                      onSearch={(value) => {
-                        setSearch(value);
-                      }}
-                      placeholder="Search Workspaces..."
-                      expanded={isSearchExpanded}
-                      setExpanded={setIsSearchExpanded}
-                    />
-                    {viewType !== 'grid' && (
-                      <CustomColumnVisibilityControl
-                        columns={columnList}
-                        customToolsProps={{ columnVisibility, setColumnVisibility }}
-                      />
-                    )}
-                  </>
-                )}
-                <ViewSwitch
-                  view={viewType}
-                  changeView={handleViewChange}
-                  key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
-                />
-              </Box>
-            </ToolWrapper>
-          )}
-          <>
-            {workspaces.length === 0 ? (
-              <EmptyState
-                icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
-                message="No workspace available"
-                pointerLabel="Click “Create” to establish your first workspace."
-              />
-            ) : viewType === 'grid' ? (
-              <WorkspaceGridView
-                handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
-                handleWorkspaceModalOpen={handleWorkspaceModalOpen}
-                page={page}
-                setPage={setPage}
-                totalPages={Math.ceil(workspacesData?.total_count / pageSize)}
-                workspacesData={workspaces}
-                key={`grid-view-${viewType}`}
-              />
-            ) : (
-              <WorkspaceDataTable
-                handleWorkspaceModalOpen={handleWorkspaceModalOpen}
-                handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
-                handleTeamsModalOpen={handleTeamsModalOpen}
-                handleActivityModalOpen={handleActivityModalOpen}
-                columnVisibility={columnVisibility}
-                handleRowClick={handleRowClick}
-                selectedWorkspace={selectedWorkspace}
-                setColumnVisibility={setColumnVisibility}
-                search={search}
-                viewType={viewType}
-              />
-            )}
-          </>
-          {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-            ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
-            : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
-            workspaceModal.open && (
-              <Modal
-                open={workspaceModal.open}
-                closeModal={handleWorkspaceModalClose}
-                title={
-                  actionType === WORKSPACE_ACTION_TYPES.CREATE
-                    ? 'Create Workspace'
-                    : 'Edit Workspace'
-                }
-              >
-                <RJSFModalWrapper
-                  schema={workspaceModal.schema.schema}
-                  uiSchema={workspaceModal.schema.uiSchema}
-                  handleSubmit={
-                    actionType === WORKSPACE_ACTION_TYPES.CREATE
-                      ? handleCreateWorkspace
-                      : handleEditWorkspace
-                  }
-                  submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                  initialData={initialData}
-                  handleClose={handleWorkspaceModalClose}
-                />
-              </Modal>
-            )}
-          <Modal
-            maxWidth="lg"
-            open={teamsModal.open}
-            closeModal={handleTeamsModalClose}
-            title={`Manage "${teamsModal.workspaceName}" Teams`}
-            headerIcon={<TeamsIcon {...iconMedium} primaryFill={theme.palette.common.white} />}
+      <ErrorBoundary>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <Breadcrumbs
+            separator={
+              <RightArrowIcon height={20} width={20} primaryFill={theme.palette.icon.default} />
+            }
+            aria-label="breadcrumb"
           >
-            <WorkspaceTeamsTable
-              workspaceId={teamsModal.workspaceId}
-              isAssignTeamAllowed={CAN(
-                keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+            <div
+              style={{
+                cursor: selectedWorkspace.id ? 'pointer' : 'default',
+                color: selectedWorkspace.id
+                  ? theme.palette.background.brand.default
+                  : theme.palette.text.default,
+                textDecoration: 'none',
+              }}
+              onClick={() => {
+                if (selectedWorkspace.id) {
+                  setSelectedWorkspace({ id: '', name: '' });
+                }
+              }}
+            >
+              All Workspaces
+            </div>
+            {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
+          </Breadcrumbs>
+        </div>
+        {!selectedWorkspace.id && (
+          <ToolWrapper>
+            <CreateButtonWrapper>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
+                sx={{
+                  backgroundColor: '#607d8b',
+                  padding: '8px',
+                  borderRadius: '5px',
+                  marginRight: '2rem',
+                }}
+                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                data-cy="btnResetDatabase"
+              >
+                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                <Typography
+                  sx={{
+                    paddingLeft: '4px',
+                    marginRight: '4px',
+                    textTransform: 'none',
+                  }}
+                >
+                  Create
+                </Typography>
+              </Button>
+            </CreateButtonWrapper>
+            <Box display={'flex'} alignItems={'center'}>
+              {!selectedWorkspace?.id && (
+                <>
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                    placeholder="Search Workspaces..."
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                  />
+                  {viewType !== 'grid' && (
+                    <CustomColumnVisibilityControl
+                      columns={columnList}
+                      customToolsProps={{ columnVisibility, setColumnVisibility }}
+                    />
+                  )}
+                </>
               )}
-              isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
-              isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
-              isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
-              useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
-              useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
-              useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
-              workspaceName={teamsModal.workspaceName}
-              fetchTeamUsers={() => {}}
-              org_id={organization?.id}
-              useGetUsersForOrgQuery={useGetUsersForOrgQuery}
-              useNotificationHandlers={useNotificationHandlers}
-              useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
-              isRemoveTeamFromWorkspaceAllowed={CAN(
-                keys.REMOVE_TEAM_FROM_WORKSPACE.action,
-                keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
-              )}
+              <ViewSwitch
+                view={viewType}
+                changeView={handleViewChange}
+                key={`view-switch-${viewType}`} // Add key to force re-render when viewType changes
+              />
+            </Box>
+          </ToolWrapper>
+        )}
+        <>
+          {workspaces.length === 0 ? (
+            <EmptyState
+              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+              message="No workspace available"
+              pointerLabel="Click “Create” to establish your first workspace."
             />
-            <ModalFooter variant="filled"></ModalFooter>
-          </Modal>
-          <WorkspaceRecentActivityModal
-            workspaceId={activityModal.workspaceId}
-            workspaceName={activityModal.workspaceName}
-            open={activityModal.open}
-            handleClose={handleActivityModalClose}
-            useGetEventsOfWorkspaceQuery={useGetEventsOfWorkspaceQuery}
+          ) : viewType === 'grid' ? (
+            <WorkspaceGridView
+              handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+              handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+              page={page}
+              setPage={setPage}
+              totalPages={Math.ceil(workspacesData?.total_count / pageSize)}
+              workspacesData={workspaces}
+              key={`grid-view-${viewType}`}
+            />
+          ) : (
+            <WorkspaceDataTable
+              handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+              handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+              handleTeamsModalOpen={handleTeamsModalOpen}
+              handleActivityModalOpen={handleActivityModalOpen}
+              columnVisibility={columnVisibility}
+              handleRowClick={handleRowClick}
+              selectedWorkspace={selectedWorkspace}
+              setColumnVisibility={setColumnVisibility}
+              search={search}
+              viewType={viewType}
+            />
+          )}
+        </>
+        {(actionType === WORKSPACE_ACTION_TYPES.CREATE
+          ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
+          : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+          workspaceModal.open && (
+            <Modal
+              open={workspaceModal.open}
+              closeModal={handleWorkspaceModalClose}
+              title={
+                actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'
+              }
+            >
+              <RJSFModalWrapper
+                schema={workspaceModal.schema.schema}
+                uiSchema={workspaceModal.schema.uiSchema}
+                handleSubmit={
+                  actionType === WORKSPACE_ACTION_TYPES.CREATE
+                    ? handleCreateWorkspace
+                    : handleEditWorkspace
+                }
+                submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+                handleClose={handleWorkspaceModalClose}
+              />
+            </Modal>
+          )}
+        <Modal
+          maxWidth="lg"
+          open={teamsModal.open}
+          closeModal={handleTeamsModalClose}
+          title={`Manage "${teamsModal.workspaceName}" Teams`}
+          headerIcon={<TeamsIcon {...iconMedium} primaryFill={theme.palette.common.white} />}
+        >
+          <WorkspaceTeamsTable
+            workspaceId={teamsModal.workspaceId}
+            isAssignTeamAllowed={CAN(
+              keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+              keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+            )}
+            isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
+            isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
+            isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
+            useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
+            useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
+            useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
+            workspaceName={teamsModal.workspaceName}
+            fetchTeamUsers={() => {}}
+            org_id={organization?.id}
+            useGetUsersForOrgQuery={useGetUsersForOrgQuery}
+            useNotificationHandlers={useNotificationHandlers}
+            useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
+            isRemoveTeamFromWorkspaceAllowed={CAN(
+              keys.REMOVE_TEAM_FROM_WORKSPACE.action,
+              keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+            )}
           />
+          <ModalFooter variant="filled"></ModalFooter>
+        </Modal>
+        <WorkspaceRecentActivityModal
+          workspaceId={activityModal.workspaceId}
+          workspaceName={activityModal.workspaceName}
+          open={activityModal.open}
+          handleClose={handleActivityModalClose}
+          useGetEventsOfWorkspaceQuery={useGetEventsOfWorkspaceQuery}
+        />
 
-          <_PromptComponent ref={ref} />
-          <_PromptComponent ref={bulkDeleteRef} />
-        </ErrorBoundary>
-      ) : (
-        <DefaultError />
-      )}
+        <_PromptComponent ref={ref} />
+        <_PromptComponent ref={bulkDeleteRef} />
+      </ErrorBoundary>
     </NoSsr>
   );
 };
