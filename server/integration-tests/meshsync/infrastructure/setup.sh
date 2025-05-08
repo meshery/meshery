@@ -14,6 +14,7 @@ PATH_TO_CRDS_YAML="install/kubernetes/helm/meshery-operator/crds/crds.yaml"
 PATH_TO_MESHERY_OPERATOR_CHART="install/kubernetes/helm/meshery-operator"
 PATH_TO_MESHERY_CHART="install/kubernetes/helm/meshery"
 TMP_KUBECONFIG_PATH="meshery-integration-test-meshsync-kubeconfig.yaml"
+LOCAL_SQLITE_PATH="meshery-integration-test-meshsync-mesherydb.sql"
 
 check_dependencies() {
   # Check for docker
@@ -135,8 +136,12 @@ setup() {
   echo ""
 
   sleep 16
-  echo "Copying sqlite dataabse file from pod..."
-  echo "TODO"
+  echo "Copying sqlite database file from pod..."
+    NAMESPACE=$MESHERY_K8S_NAMESPACE \
+    DEPLOYMENT="meshery" \
+    REMOTE_PATH="/home/appuser/.meshery/config/mesherydb.sql" \
+    LOCAL_PATH=$LOCAL_SQLITE_PATH \
+  $SCRIPT_DIR/copy-file-from-deployment.sh
   echo ""
 }
 
@@ -144,9 +149,11 @@ cleanup() {
   echo "🧹 Cleaning up..."
   echo ""
 
-  echo "Removing sqlite dataabse file from local..."
-  echo "TODO"
-  echo ""
+  if [ -f "$LOCAL_SQLITE_PATH" ]; then
+    echo "Removing sqlite dataabse file from local..."
+    rm "$LOCAL_SQLITE_PATH"
+    echo ""
+  fi
 
   if [ -f "$TMP_KUBECONFIG_PATH" ]; then
     echo "Removing tmp kubeconfig..."
