@@ -115,31 +115,45 @@ export const getWidgets = () => ({
 
 ## 5. Adding to Default Layout
 
-To include your widget in the default dashboard layout, add it to `LOCAL_PROVIDER_LAYOUT` in:
+To include your widget in the default dashboard layout:
 
 ```bash
 /ui/components/DashboardComponent/defaultLayout.js
 ```
 
-Under each screen size key (e.g. `sm`, `xs`, `xxs`):
-
-```js
-{
-  h: 2,
-  i: 'LATEST_BLOGS',
-  moved: false,
-  static: false,
-  w: 3,
-  x: 0,
-  y: 0,
-}
-```
-
-Meshery’s dashboard uses breakpoints to adapt widget layout across devices. Each breakpoint (sm, xs, xxs) represents different screen widths. For example:
+Layouts are defined per **screen size breakpoint** (e.g., `sm`, `xs`, `xxs`) to ensure responsiveness. Each layout item is an object with grid-based properties defined by the `react-grid-layout` library.
 
     sm: tablets and desktops
     xs: large phones
     xxs: small phones
+
+### Example Layout Item:
+
+```js
+{
+  h: 2,                  // Height in grid units
+  i: 'LATEST_BLOGS',     // Widget identifier (unique string)
+  moved: false,          // Internal flag (do not change manually)
+  static: false,         // If true, the widget cannot be dragged or resized
+  w: 3,                  // Width in grid units
+  x: 0,                  // Horizontal grid position (column index)
+  y: 0,                  // Vertical grid position (row index)
+}
+```
+
+### Layout Field Descriptions:
+
+- **i**: A unique string ID for the widget. This should match the widget’s `id` used elsewhere in your code.
+- **x**: The column (starting from 0) where the widget should be placed.
+- **y**: The row (starting from 0) where the widget should be placed. Widgets with the same `y` value appear in the same row.
+- **w**: The widget's width in terms of number of grid columns it should span.
+- **h**: The widget's height in terms of number of grid rows it should span.
+- **static**: When `true`, the widget is locked in place — it can't be moved or resized.
+- **moved**: Used by the library to track user interactions. Leave as `false`.
+
+> Meshery uses `react-grid-layout`, where the layout is based on a 12-column CSS grid. Each widget’s position is defined in terms of this virtual grid, which helps in building a responsive and flexible dashboard layout.
+
+---
 
 Define the widget’s position (x, y) and size (w, h) in each breakpoint for responsive behavior. The code for it can be found [here](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/defaultLayout.js).
 
@@ -147,7 +161,7 @@ Note: Layouts for **Remote Providers** are dynamically generated based on user c
 
 Meshery stores user layout preferences either in local storage or via the provider's backend, depending on login state.
 
-This is how your widget would appear in the dashboard:
+This is how your default widget would appear in the dashboard:
 
 <a href="{{ site.baseurl }}/assets/img/dashboard-widget/dashboard-widgets.png">
 <img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/dashboard-widget/dashboard-widgets.png" />
