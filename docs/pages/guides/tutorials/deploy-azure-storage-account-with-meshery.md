@@ -44,8 +44,6 @@ Before you begin, ensure you have the following:
 5. [Verify Deployment](#5-verify-deployment)
 6. [Conclusion](#6-conclusion)
 
-
-
 ### 1. Create Azure Service Principal
 
 If you do not already have a Service Principal (SP) for Meshery, create one using the Azure CLI:
