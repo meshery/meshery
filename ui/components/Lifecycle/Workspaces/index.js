@@ -40,7 +40,6 @@ import _PromptComponent from '../../PromptComponent';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import DefaultError from '@/components/General/error-404/index';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
