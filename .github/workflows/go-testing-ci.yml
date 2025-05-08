@@ -139,14 +139,22 @@ jobs:
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
+      - name: memory value
+        run: df -h
 
         # TODO  could reuse from ui-and-server build workflow?
         #       maybe move there whole this whole job?
       - name: Build meshery image
         run: make docker-build
 
-      - name: Remove dnagling images, stopped containers
+      - name: memory value 2
+        run: df -h
+
+      - name: Remove dangling images, stopped containers
         run: docker system prune -f
+
+      - name: memory value 3
+        run: df -h
 
       - name: Integration tests set up
         run: make server-integration-tests-meshsync-setup
