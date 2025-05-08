@@ -130,13 +130,13 @@ setup() {
   KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
   echo ""
 
+  echo "Stopping port forwarding..."
+  echo kill -9 $PID_PORT_FORWARDING
+  echo ""
+
   sleep 16
   echo "Copying sqlite dataabse file from pod..."
   echo "TODO"
-  echo ""
-
-  echo "Stopping port forwarding..."
-  echo kill -9 $PID_PORT_FORWARDING
   echo ""
 }
 
