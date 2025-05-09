@@ -1,4 +1,4 @@
-import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { getUserAccessToken, getUserProfile, useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   ListItem,
   ListItemText,
@@ -9,6 +9,7 @@ import {
   PROMPT_VARIANTS,
   PromptComponent,
   useTheme,
+  useRoomActivity,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -30,6 +31,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
+import { useLegacySelector } from 'lib/store';
 
 const MainViewsContent = ({
   page,
@@ -214,6 +216,14 @@ const MainViewsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
+  const capabilitiesRegistry = useLegacySelector((state) => state.get('capabilitiesRegistry'));
+  const providerUrl = capabilitiesRegistry?.provider_url;
+  console.l;
+  const activeUsers = useRoomActivity({
+    provider_url: providerUrl,
+    getUserAccessToken: getUserAccessToken,
+    getUserProfile: getUserProfile,
+  });
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -252,6 +262,7 @@ const MainViewsContent = ({
                       })}
                     />
                   }
+                  activeUsers={activeUsers?.[view?.id]}
                 />
                 <Divider light />
               </React.Fragment>

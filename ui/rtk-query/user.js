@@ -239,6 +239,14 @@ export const userApi = api
         invalidatesTags: ['teams'],
         providesTags: ['teams'],
       }),
+      getAccessToken: builder.query({
+        query: () => ({
+          url: `/token`,
+        }),
+        transformResponse: (response) => {
+          return response?.token;
+        },
+      }),
     }),
   });
 
@@ -271,6 +279,16 @@ export const {
 export const getProviderCapabilities = async () => {
   const res = await initiateQuery(userApi.endpoints.getProviderCapabilities);
   return res;
+};
+
+export const getUserAccessToken = async () => {
+  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {}, {});
+  return accessToken;
+};
+
+export const getUserProfile = async () => {
+  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser, {}, {});
+  return userProfile;
 };
 
 export const getSystemVersion = async () => {

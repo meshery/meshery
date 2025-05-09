@@ -13,6 +13,7 @@ import {
   DesignIcon,
   ViewIcon,
   useTheme,
+  AvatarGroup,
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
@@ -22,6 +23,8 @@ import {
   StyledListIcon,
   StyledListItem,
   StyledListItemText,
+  StyledSmallAvatar,
+  StyledSmallAvatarContainer,
   StyledTextContainer,
   StyledUpdatedText,
   StyledUserDetailsContainer,
@@ -39,6 +42,7 @@ const DesignViewListItem = ({
   onVisibilityChange,
   canChangeVisibility,
   type = RESOURCE_TYPE.DESIGN,
+  activeUsers = [],
 }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
@@ -48,9 +52,23 @@ const DesignViewListItem = ({
   return (
     <>
       <StyledListItem
-        data-testid={`designs-tr-${selectedItem.id}`}
+        data-testid={`${type}-tr-${selectedItem.id}`}
         key={selectedItem.id}
         onClick={handleItemClick}
+        onMouseEnter={() => {
+          const avatarHolder = document.getElementById(`${type}-avatar-${selectedItem.id}`);
+          if (avatarHolder) {
+            avatarHolder.style.clipPath = 'polygon(0 0, 100% 0, 100% 100%, 0 100%)';
+            avatarHolder.style.transform = 'translate(0px,-100%)';
+          }
+        }}
+        onMouseLeave={() => {
+          const avatarHolder = document.getElementById(`${type}-avatar-${selectedItem.id}`);
+          if (avatarHolder) {
+            avatarHolder.style.transform = 'translate(0px,-12px)';
+            avatarHolder.style.clipPath = 'polygon(0 0, 100% 0, 100% 40%, 0 40%)';
+          }
+        }}
       >
         <StyledTextContainer>
           <StyledListIcon>
@@ -107,6 +125,38 @@ const DesignViewListItem = ({
         </StyledVisibilityContainer>
 
         <StyledActionsContainer>{MenuComponent}</StyledActionsContainer>
+        {activeUsers && (
+          <StyledSmallAvatarContainer
+            id={`${type}-avatar-${selectedItem.id}`}
+            transform="translate(0px, -12px)"
+            clipPath="polygon(0 0, 100% 0, 100% 33%, 0 33%)"
+          >
+            <AvatarGroup
+              max={3}
+              className="root"
+              componentsProps={{
+                additionalAvatar: {
+                  style: {
+                    height: '23px',
+                    width: '23px',
+                  },
+                },
+              }}
+            >
+              {activeUsers.map((user) => (
+                <CustomTooltip key={user.client_id} title={user.name}>
+                  <StyledSmallAvatar
+                    borderColor={user.color}
+                    key={user.client_id}
+                    alt={user.name}
+                    src={user.avatar_url}
+                    imgProps={{ referrerPolicy: 'no-referrer' }}
+                  />
+                </CustomTooltip>
+              ))}
+            </AvatarGroup>
+          </StyledSmallAvatarContainer>
+        )}
       </StyledListItem>
       <Divider light />
     </>
