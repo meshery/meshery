@@ -122,6 +122,7 @@ setup_cluster() {
 setup_connection() {
   echo "Preparing tmp kubeconfig with current contexts..."
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
+  sed -i.bak -E 's|^( *server: ).*|\1https://kubernetes.default.svc|' "$TMP_KUBECONFIG_PATH"
   cat $TMP_KUBECONFIG_PATH
   echo ""
 
