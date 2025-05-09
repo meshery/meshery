@@ -122,32 +122,26 @@ setup_cluster() {
 setup_connection() {
   echo "Preparing tmp kubeconfig with current contexts..."
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
+  # Replace localhost API server address with in-cluster DNS.
+  # '127.0.0.1:<port>' won't work inside pods; use 'kubernetes.default.svc' instead.
   sed -i.bak -E 's|^( *server: ).*|\1https://kubernetes.default.svc|' "$TMP_KUBECONFIG_PATH"
-  cat $TMP_KUBECONFIG_PATH
   echo ""
 
   echo "Submitting kubeconfig..." 
+  JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
   kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-curl-upload-kubeconfig-script --from-file=$SCRIPT_DIR/curl-upload-kubeconfig.sh
   kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-kubeconfig-file --from-file=kubeconfig.yaml=$TMP_KUBECONFIG_PATH
   kubectl --namespace $MESHERY_K8S_NAMESPACE apply -f $SCRIPT_DIR/curl-upload-kubeconfig-job.yaml
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/integration-test-meshsync-curl-upload-kubeconfig-job
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/$JOB_NAME
   kubectl --namespace $MESHERY_K8S_NAMESPACE get job
-
-  echo "debuging..."
-  kubectl --namespace $MESHERY_K8S_NAMESPACE describe configmaps integration-test-meshsync-kubeconfig-file
-  JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
-  NAMESPACE="$MESHERY_K8S_NAMESPACE"
-
   # Get the pod name for the job
-  POD_NAME=$(kubectl get pods -n "$NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
-
+  JOBS_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
   # Output logs from the pod
-  kubectl logs -n "$NAMESPACE" "$POD_NAME"
-  echo "end of debuging."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE logs "$POD_NAME"
 
-  # This wait is required for meshsery to receive updates from meshsymc
-  echo "Waiting to receive meshsync event..."
-  sleep 64
+  echo "Collecting meshsync events..."
+  sleep 16
+  
   echo "Copying sqlite database file from pod..."
     NAMESPACE=$MESHERY_K8S_NAMESPACE \
     DEPLOYMENT="meshery" \
