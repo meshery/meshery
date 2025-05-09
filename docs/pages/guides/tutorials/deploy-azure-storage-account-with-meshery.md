@@ -64,8 +64,7 @@ This command outputs the following credentials:
 To export them, manually enter:
 
 <pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">
-export AZURE_CLIENT_ID=&lt;appId&gt;
+<code class="clipboardjs">export AZURE_CLIENT_ID=&lt;appId&gt;
 export AZURE_CLIENT_SECRET=&lt;password&gt;
 export AZURE_TENANT_ID=&lt;tenant&gt;
 export AZURE_SUBSCRIPTION_ID=&lt;subscriptionId&gt;
@@ -78,8 +77,7 @@ export AZURE_SUBSCRIPTION_ID=&lt;subscriptionId&gt;
 If you haven’t already connected your cluster to Meshery, run:
 
 <pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">
-mesheryctl system start
+<code class="clipboardjs">mesheryctl system start
 </code>
 </div></pre>
 
@@ -95,8 +93,7 @@ Then open the Meshery UI (default: [`http://localhost:9081`](http://localhost:90
 Apply the official ASO operator manifest (Meshery will manage CRDs):
 
 <pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">
-kubectl apply -f https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_v2.13.0.yaml
+<code class="clipboardjs">kubectl apply -f https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_v2.13.0.yaml
 </code>
 </div></pre>
 
@@ -105,14 +102,7 @@ kubectl apply -f https://github.com/Azure/azure-service-operator/releases/downlo
 Azure Service Operator requires a Kubernetes secret with your Azure identity:
 
 <pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">
-kubectl create namespace azureserviceoperator-system || true
-</code>
-</div></pre>
-
-<pre class="codeblock-pre"><div class="codeblock">
-<code class="clipboardjs">
-kubectl create secret generic azure-credentials --namespace azureserviceoperator-system --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
+<code class="clipboardjs">kubectl create secret generic azure-credentials --namespace azureserviceoperator-system --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
 </code>
 </div></pre>
 
