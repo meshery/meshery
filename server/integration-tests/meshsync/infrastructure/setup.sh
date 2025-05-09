@@ -131,6 +131,7 @@ setup_connection() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/integration-test-meshsync-curl-upload-kubeconfig-job
   kubectl --namespace $MESHERY_K8S_NAMESPACE get job
 
+  # This wait is required for meshsery to receive updates from meshsymc
   sleep 16
   echo "Copying sqlite database file from pod..."
     NAMESPACE=$MESHERY_K8S_NAMESPACE \
