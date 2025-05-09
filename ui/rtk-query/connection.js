@@ -122,6 +122,22 @@ const connectionsApi = api.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
+    getGrafanaQueryRange: builder.query({
+      query: (queryArg) => ({
+        url: `${queryArg.connectionType === 'prometheus' ? 'prometheus/query_range/' : 'grafana/query_range/'}${queryArg.connectionID}`,
+        method: 'GET',
+        params: {
+          ds: queryArg.datasource,
+          query: queryArg.expr,
+          start: queryArg.start,
+          end: queryArg.end,
+          step: queryArg.step,
+          uuid: queryArg.testUUID,
+          url: queryArg.endpointURL,
+          'api-key': queryArg.endpointAPIKey,
+        },
+      }),
+    }),
   }),
 });
 
@@ -140,4 +156,6 @@ export const {
   useGetConnectionByKindQuery,
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
+  useGetGrafanaQueryRangeQuery,
+  useLazyGetGrafanaQueryRangeQuery,
 } = connectionsApi;

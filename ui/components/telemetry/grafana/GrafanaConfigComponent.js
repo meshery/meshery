@@ -6,8 +6,7 @@ import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
-import dataFetch from 'lib/data-fetch';
-
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 const Wrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
   backgroundColor: theme.palette.background.card,
@@ -37,21 +36,13 @@ function GrafanaConfigComponent({
   handleGrafanaConfigure,
   handleChangeApiKey,
 }) {
-  const [availableGrafanaConnection, setAvailableGrafanaConnection] = useState([]);
-  useEffect(() => {
-    dataFetch(
-      `/api/integrations/connections?page=0&pagesize=1&status=${encodeURIComponent(
-        JSON.stringify([CONNECTION_STATES.CONNECTED]),
-      )}&kind=${encodeURIComponent(JSON.stringify([CONNECTION_KINDS.GRAFANA]))}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (result) => {
-        setAvailableGrafanaConnection(result?.connections);
-      },
-    );
-  }, []);
+  const { data, isLoading } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 1,
+    status: JSON.stringify([CONNECTION_STATES.CONNECTED]),
+    kind: JSON.stringify([CONNECTION_KINDS.GRAFANA]),
+  });
+  const availableGrafanaConnections = data?.connections || [];
 
   return (
     <NoSsr>
@@ -62,7 +53,7 @@ function GrafanaConfigComponent({
               <InputContainer>
                 <ReactSelectWrapper
                   onChange={(select) => handleChange('grafanaURL')(select)}
-                  options={availableGrafanaConnection.map((connection) => ({
+                  options={availableGrafanaConnections.map((connection) => ({
                     value: connection?.metadata?.url,
                     label: connection?.metadata?.url,
                     ...connection,

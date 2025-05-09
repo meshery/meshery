@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import dataFetch from '../lib/data-fetch';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
