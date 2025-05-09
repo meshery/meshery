@@ -358,13 +358,11 @@ const MainDesignsContent = ({
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const capabilitiesRegistry = useLegacySelector((state) => state.get('capabilitiesRegistry'));
   const providerUrl = capabilitiesRegistry?.provider_url;
-  console.log('amit providerUrl', providerUrl);
   const activeUsers = useRoomActivity({
     provider_url: providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
-
   return (
     <>
       <DesignList data-testid="designs-list-item">
