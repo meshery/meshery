@@ -137,11 +137,11 @@ setup_connection() {
   # Get the pod name for the job
   JOBS_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
   # Output logs from the pod
-  kubectl --namespace $MESHERY_K8S_NAMESPACE logs "$POD_NAME"
+  kubectl --namespace $MESHERY_K8S_NAMESPACE logs $JOBS_POD_NAME
 
   echo "Collecting meshsync events..."
   sleep 16
-  
+
   echo "Copying sqlite database file from pod..."
     NAMESPACE=$MESHERY_K8S_NAMESPACE \
     DEPLOYMENT="meshery" \
