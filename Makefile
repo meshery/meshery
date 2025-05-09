@@ -494,14 +494,24 @@ endif
 server-integration-tests-meshsync-check-dependencies:
 	./server/integration-tests/meshsync/infrastructure/setup.sh check_dependencies
 
+server-integration-tests-meshsync-setup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_cluster
+
+server-integration-tests-meshsync-setup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_connection
+
 ## Runs meshsync integration tests set up script (runs creates a test kind cluster, deploys operator to it)
 ## docker compose exposes nats on default ports to host, so they must be available
-server-integration-tests-meshsync-setup:
-	./server/integration-tests/meshsync/infrastructure/setup.sh setup
+server-integration-tests-meshsync-setup: server-integration-tests-meshsync-setup-cluster server-integration-tests-meshsync-setup-connection
+
+server-integration-tests-meshsync-cleanup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_cluster
+
+server-integration-tests-meshsync-cleanup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_connection
 
 ## Runs meshsync integration tests clean up (stops docker compose and deletes test cluster)
-server-integration-tests-meshsync-cleanup:
-	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup
+server-integration-tests-meshsync-cleanup: server-integration-tests-meshsync-cleanup-connection server-integration-tests-meshsync-cleanup-cluster
 
 ## Runs meshsync integration tests code itself
 server-integration-tests-meshsync-run:
