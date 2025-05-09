@@ -111,9 +111,9 @@ setup_cluster() {
     --namespace $MESHERY_K8S_NAMESPACE \
     --set image.tag=$DOCKER_IMAGE_TAG \
     --set image.pullPolicy=Never
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout=60s
   echo ""
 
-  sleep 16
   echo "Outputing cluster resources..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
@@ -138,6 +138,7 @@ setup_connection() {
     REMOTE_PATH="/home/appuser/.meshery/config/mesherydb.sql" \
     LOCAL_PATH=$LOCAL_SQLITE_PATH \
   $SCRIPT_DIR/copy-file-from-deployment.sh
+  ls -la | grep "$LOCAL_SQLITE_PATH"
   echo ""
 }
 
