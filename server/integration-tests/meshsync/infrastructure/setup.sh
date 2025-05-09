@@ -122,6 +122,7 @@ setup_cluster() {
 setup_connection() {
   echo "Preparing tmp kubeconfig with current contexts..."
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
+  cat $TMP_KUBECONFIG_PATH
   echo ""
 
   echo "Submitting kubeconfig..." 
@@ -132,6 +133,7 @@ setup_connection() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE get job
 
   echo "debuging..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE describe configmaps integration-test-meshsync-kubeconfig-file
   JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
   NAMESPACE="$MESHERY_K8S_NAMESPACE"
 
