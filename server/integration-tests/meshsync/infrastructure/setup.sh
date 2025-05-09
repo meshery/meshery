@@ -54,6 +54,11 @@ check_dependencies() {
   echo ""
 }
 
+setup_all() {
+  setup_cluster
+  setup_connection  
+}
+
 # TODO
 # 1) for local set up, 
 # right now if there is a separate kind cluster with meshery-operator running
@@ -62,7 +67,7 @@ check_dependencies() {
 # and hence will not deploy meshsync and broker
 # could be fixed by set up a custom network for test cluster
 # --
-setup() {
+setup_cluster() {
   check_dependencies
   echo "🔧 Setting up..."
   echo ""
@@ -112,7 +117,9 @@ setup() {
   echo "Outputing cluster resources..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
+}
 
+setup_connection() {
   echo "Preparing tmp kubeconfig with current contexts..."
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
   echo ""
@@ -122,6 +129,7 @@ setup() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-kubeconfig-file --from-file=kubeconfig.yaml=$TMP_KUBECONFIG_PATH
   kubectl --namespace $MESHERY_K8S_NAMESPACE apply -f $SCRIPT_DIR/curl-upload-kubeconfig-job.yaml
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/integration-test-meshsync-curl-upload-kubeconfig-job
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get job
 
   sleep 16
   echo "Copying sqlite database file from pod..."
@@ -130,13 +138,18 @@ setup() {
     REMOTE_PATH="/home/appuser/.meshery/config/mesherydb.sql" \
     LOCAL_PATH=$LOCAL_SQLITE_PATH \
   $SCRIPT_DIR/copy-file-from-deployment.sh
-  echo ""  
+  echo ""
 }
 
-cleanup() {
+cleanup_all() {
   echo "🧹 Cleaning up..."
   echo ""
 
+  cleanup_connection
+  cleanup_cluster
+}
+
+cleanup_connection () {
   if [ -f "$LOCAL_SQLITE_PATH" ]; then
     echo "Removing sqlite dataabse file from local..."
     rm "$LOCAL_SQLITE_PATH"
@@ -148,7 +161,9 @@ cleanup() {
     rm "$TMP_KUBECONFIG_PATH"
     echo ""
   fi
+}
 
+cleanup_cluster () {
   echo "Deleting KinD cluster..."
   kind delete cluster --name $CLUSTER_NAME
   echo ""
@@ -160,7 +175,7 @@ cleanup() {
 }
 
 print_help() {
-  echo "Usage: $0 {check_dependencies|setup|cleanup|help}"
+  echo "Usage: $0 {check_dependencies|setup_all|setup_cluster|setup_connection|cleanup_all|cleanup_cluster|cleanup_connection|help}"
 }
 
 # Main dispatcher
@@ -168,11 +183,23 @@ case "$1" in
   check_dependencies)
     check_dependencies
     ;;
-  setup)
-    setup
+  setup_all)
+    setup_all
     ;;
-  cleanup)
-    cleanup
+  setup_cluster)
+    setup_cluster
+    ;;
+  setup_connection)
+    setup_connection
+    ;;
+  cleanup_all)
+    cleanup_all
+    ;;
+  cleanup_cluster)
+    cleanup_cluster
+    ;;
+  cleanup_connection)
+    cleanup_connection
     ;;
   help)
     print_help
