@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-echo "cat KUBE_CONFIG_FILE_PATH:"
-cat $KUBE_CONFIG_FILE_PATH
-
 curl -X POST 'http://meshery:9081/api/system/kubernetes' \
   -H 'Accept: */*' \
   -H 'Accept-Language: en-US,en;q=0.9,ru;q=0.8,uk;q=0.7,de;q=0.6' \
