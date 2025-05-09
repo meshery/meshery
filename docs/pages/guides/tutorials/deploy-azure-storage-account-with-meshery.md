@@ -48,13 +48,10 @@ Before you begin, ensure you have the following:
 
 If you do not already have a Service Principal (SP) for Meshery, create one using the Azure CLI:
 
-```bash
-az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
-```
-<!-- <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/<AZURE_SUBSCRIPTION_ID>
-  </code>
-  </div></pre> -->
+<pre class="codeblock-pre"><div class="codeblock">
+<code class="clipboardjs">az ad sp create-for-rbac -n azure-service-operator --role contributor --scopes /subscriptions/&lt;AZURE_SUBSCRIPTION_ID&gt;
+</code>
+</div></pre>
 
 This command outputs the following credentials:
 
@@ -66,36 +63,26 @@ This command outputs the following credentials:
 
 To export them, manually enter:
 
-<!-- <pre class="codeblock-pre"><div class="codeblock">
+<pre class="codeblock-pre"><div class="codeblock">
 <code class="clipboardjs">
-export AZURE_CLIENT_ID=<appId>
-export AZURE_CLIENT_SECRET=<password>
-export AZURE_TENANT_ID=<tenant>
-export AZURE_SUBSCRIPTION_ID=<subscriptionId>
+export AZURE_CLIENT_ID=&lt;appId&gt;
+export AZURE_CLIENT_SECRET=&lt;password&gt;
+export AZURE_TENANT_ID=&lt;tenant&gt;
+export AZURE_SUBSCRIPTION_ID=&lt;subscriptionId&gt;
 </code>
-</div></pre> -->
-
-```bash
-export AZURE_CLIENT_ID=<appId>
-export AZURE_CLIENT_SECRET=<password>
-export AZURE_TENANT_ID=<tenant>
-export AZURE_SUBSCRIPTION_ID=<subscriptionId>
-```
-
+</div></pre>
 
 
 ### 2. Connect Meshery to Your Cluster
 
 If you haven’t already connected your cluster to Meshery, run:
 
-<!-- <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">
+<pre class="codeblock-pre"><div class="codeblock">
+<code class="clipboardjs">
 mesheryctl system start
-  </code>
-  </div></pre> -->
-```bash
-mesheryctl system start
-```
+</code>
+</div></pre>
+
 
 Then open the Meshery UI (default: [`http://localhost:9081`](http://localhost:9081)) and ensure your cluster appears under **Lifecycle → Connections**.
 
@@ -107,22 +94,27 @@ Then open the Meshery UI (default: [`http://localhost:9081`](http://localhost:90
 
 Apply the official ASO operator manifest (Meshery will manage CRDs):
 
-```bash
-kubectl apply -f \
-  https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_v2.13.0.yaml
-```
+<pre class="codeblock-pre"><div class="codeblock">
+<code class="clipboardjs">
+kubectl apply -f https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_v2.13.0.yaml
+</code>
+</div></pre>
 
 #### 3.2 Create Azure Credentials Secret
 
 Azure Service Operator requires a Kubernetes secret with your Azure identity:
 
-```bash
+<pre class="codeblock-pre"><div class="codeblock">
+<code class="clipboardjs">
 kubectl create namespace azureserviceoperator-system || true
-```
+</code>
+</div></pre>
 
-```bash
+<pre class="codeblock-pre"><div class="codeblock">
+<code class="clipboardjs">
 kubectl create secret generic azure-credentials --namespace azureserviceoperator-system --from-literal=AZURE_CLIENT_ID=$AZURE_CLIENT_ID --from-literal=AZURE_CLIENT_SECRET=$AZURE_CLIENT_SECRET --from-literal=AZURE_TENANT_ID=$AZURE_TENANT_ID --from-literal=AZURE_SUBSCRIPTION_ID=$AZURE_SUBSCRIPTION_ID
-```
+</code>
+</div></pre>
 
 
 ### 4. Design and Deploy an Azure Storage Account
