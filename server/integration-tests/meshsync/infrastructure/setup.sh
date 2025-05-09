@@ -131,6 +131,17 @@ setup_connection() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/integration-test-meshsync-curl-upload-kubeconfig-job
   kubectl --namespace $MESHERY_K8S_NAMESPACE get job
 
+  echo "debuging..."
+  JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
+  NAMESPACE="$MESHERY_K8S_NAMESPACE"
+
+  # Get the pod name for the job
+  POD_NAME=$(kubectl get pods -n "$NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
+
+  # Output logs from the pod
+  kubectl logs -n "$NAMESPACE" "$POD_NAME"
+  echo "end of debuging."
+
   # This wait is required for meshsery to receive updates from meshsymc
   echo "Waiting to receive meshsync event..."
   sleep 64
