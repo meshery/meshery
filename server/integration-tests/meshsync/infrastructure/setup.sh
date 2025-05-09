@@ -110,30 +110,18 @@ setup() {
 
   sleep 16
   echo "Outputing cluster resources..."
-  kubectl --namespace meshery get po
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
-
-  echo "Port forwarding to meshery server..."
-  echo kubectl --namespace $MESHERY_K8S_NAMESPACE port-forward service/meshery 9081:9081 &
-  echo ""
-
-  PID_PORT_FORWARDING=$!
-  echo "Port forwarding PID $PID_PORT_FORWARDING"
-  echo ""
-  sleep 16
-
 
   echo "Preparing tmp kubeconfig with current contexts..."
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
   echo ""
 
-  echo "Submitting kubeconfig..."
-  KUBE_CONFIG_FILE_PATH=$TMP_KUBECONFIG_PATH $SCRIPT_DIR/curl-upload-kubeconfig.sh
-  echo ""
-
-  echo "Stopping port forwarding..."
-  echo kill -9 $PID_PORT_FORWARDING
-  echo ""
+  echo "Submitting kubeconfig..." 
+  kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-curl-upload-kubeconfig-script --from-file=$SCRIPT_DIR/curl-upload-kubeconfig.sh
+  kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-kubeconfig-file --from-file=kubeconfig.yaml=$TMP_KUBECONFIG_PATH
+  kubectl --namespace $MESHERY_K8S_NAMESPACE apply -f $SCRIPT_DIR/curl-upload-kubeconfig-job.yaml
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/integration-test-meshsync-curl-upload-kubeconfig-job
 
   sleep 16
   echo "Copying sqlite database file from pod..."
@@ -142,7 +130,7 @@ setup() {
     REMOTE_PATH="/home/appuser/.meshery/config/mesherydb.sql" \
     LOCAL_PATH=$LOCAL_SQLITE_PATH \
   $SCRIPT_DIR/copy-file-from-deployment.sh
-  echo ""
+  echo ""  
 }
 
 cleanup() {
