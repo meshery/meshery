@@ -7,6 +7,7 @@ import {
   ListItemIcon,
   DARK_BLUE_GRAY,
   Box,
+  Avatar,
 } from '@layer5/sistent';
 
 const DRAWER_WIDTH = 300;
@@ -194,7 +195,6 @@ export const StyledUpdatedText = styled('p')({
   color: '#647881',
   cursor: 'pointer',
 });
-
 
 export const StyledSmallAvatarContainer = styled('div')(({ transform, clipPath }) => ({
   position: 'absolute',
