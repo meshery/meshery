@@ -145,6 +145,9 @@ jobs:
 
       - name: Integration tests set up (cluster)
         run: make server-integration-tests-meshsync-setup-cluster
+      
+      - name: memory value 4
+        run: df -h
 
       - name: Integration tests set up (connection)
         run: make server-integration-tests-meshsync-setup-connection
