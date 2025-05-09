@@ -2,10 +2,13 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/viper"
 )
 
 // Generic function to fetch data from Mesehry server needs to be type of meshery data ApiResponse
@@ -14,8 +17,15 @@ func Fetch[T any](url string) (*T, error) {
 }
 
 // Send a Http request to meshery server from mesheryctl cli
-func makeRequest[T any](url string, httpMethod string, body io.Reader) (*T, error) {
-	req, err := utils.NewRequest(httpMethod, url, body)
+func makeRequest[T any](urlPath string, httpMethod string, body io.Reader) (*T, error) {
+	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+	if err != nil {
+		return nil, utils.ErrLoadConfig(err)
+	}
+
+	baseUrl := mctlCfg.GetBaseMesheryURL()
+
+	req, err := utils.NewRequest(httpMethod, fmt.Sprintf("%s/%s", baseUrl, urlPath), body)
 	if err != nil {
 		return nil, err
 	}

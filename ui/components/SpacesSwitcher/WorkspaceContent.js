@@ -167,7 +167,7 @@ const WorkspaceContent = ({ workspace }) => {
             value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              filters.type === RESOURCE_TYPE.VIEW ? (
+              filters.type === RESOURCE_TYPE.DESIGN ? (
                 <p style={{ color: theme.palette.text.default }}>
                   Total Designs: {designsData?.total_count ?? 0}
                 </p>

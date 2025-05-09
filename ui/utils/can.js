@@ -11,7 +11,7 @@ export default function CAN(action, subject) {
   return ability.can(action, _.lowerCase(subject));
 }
 
-const getCapabilitiesRegistry = () =>
+const useGetCapabilitiesRegistry = () =>
   new CapabilitiesRegistry(store.getState().capabilitiesRegistry);
 
-export const CanShow = createCanShow(getCapabilitiesRegistry, CAN, () => mesheryEventBus);
+export const CanShow = createCanShow(useGetCapabilitiesRegistry, CAN, () => mesheryEventBus);

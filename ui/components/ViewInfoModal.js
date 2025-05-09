@@ -80,9 +80,8 @@ export const ActionBox = styled(Box)(() => ({
   gap: '1rem',
 }));
 
-export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata }) => {
+export const ViewInfoModal = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
   const [formState, setFormState] = useState(metadata);
-
   const viewRes = useGetViewQuery(
     { viewId: view_id },
     {
@@ -112,6 +111,7 @@ export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata 
       .unwrap()
       .then(() => {
         setSaving(false);
+        refetch && refetch();
         closeModal();
       });
   };
@@ -184,35 +184,6 @@ export const ViewsInfoModal = ({ open, closeModal, view_id, view_name, metadata 
   );
 };
 
-export const useViewsInfoModal = () => {
-  const [data, setData] = React.useState({
-    open: false,
-    view_id: null,
-  });
-
-  const [formState, setFormState] = useState({});
-
-  const closeModal = () => {
-    setData({ open: false });
-    setFormState({});
-  };
-
-  const openViewInfo = (view) => {
-    setData({ open: true, view_id: view.id, view_name: view.name });
-    setFormState(view?.metadata);
-  };
-
-  return {
-    open: data.open,
-    view_id: data.view_id,
-    view_name: data.view_name,
-    closeModal,
-    openViewInfo,
-    formState,
-    setFormState,
-  };
-};
-
 const StyledChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
@@ -255,6 +226,13 @@ const MarkdownInput = (props) => {
   const preview = props.readonly ? 'preview' : 'edit';
   const hideToolbar = props.readonly ? true : false;
   const theme = useTheme();
+
+  const handleChange = (value) => {
+    if (props.onChange && value !== props.value) {
+      props.onChange(value);
+    }
+  };
+
   return (
     <div
       data-color-mode={theme.palette.mode}
@@ -268,8 +246,8 @@ const MarkdownInput = (props) => {
     >
       <FormLabel>{props.label}</FormLabel>
       <MDEditor
-        value={props.value}
-        onChange={props.onChange}
+        value={props.value || ''}
+        onChange={handleChange}
         preview={preview}
         hideToolbar={hideToolbar}
         previewOptions={{
