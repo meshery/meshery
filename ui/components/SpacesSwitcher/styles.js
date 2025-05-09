@@ -194,3 +194,21 @@ export const StyledUpdatedText = styled('p')({
   color: '#647881',
   cursor: 'pointer',
 });
+
+
+export const StyledSmallAvatarContainer = styled('div')(({ transform, clipPath }) => ({
+  position: 'absolute',
+  bottom: '-1.65rem',
+  left: '2rem',
+  padding: '0rem',
+  transition: 'all 0.4s ease',
+  transform: transform,
+  clipPath: clipPath,
+  zIndex: 1,
+}));
+
+export const StyledSmallAvatar = styled(Avatar)(({ borderColor }) => ({
+  height: '23px',
+  width: '23px',
+  border: borderColor ? `2px solid ${borderColor}` : undefined,
+}));
