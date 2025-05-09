@@ -164,3 +164,12 @@ jobs:
 
       - name: Integration tests clean up
         run: make server-integration-tests-meshsync-cleanup
+
+      
+      - name: Upload sqlite file
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: meshery-integration-test-meshsync-mesherydb-file
+          path: meshery-integration-test-meshsync-mesherydb.sql
+          if-no-files-found: warn
