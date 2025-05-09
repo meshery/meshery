@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# as it is mounted in volume
-KUBE_CONFIG_FILE_PATH="/configs/kubeconfig.yaml"
+echo "cat KUBE_CONFIG_FILE_PATH:"
+cat $KUBE_CONFIG_FILE_PATH
 
 curl -X POST 'http://meshery:9081/api/system/kubernetes' \
   -H 'Accept: */*' \
