@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { TextField, Grid, Button, styled } from '@layer5/sistent';
@@ -36,7 +36,7 @@ function GrafanaConfigComponent({
   handleGrafanaConfigure,
   handleChangeApiKey,
 }) {
-  const { data, isLoading } = useGetConnectionsQuery({
+  const { data } = useGetConnectionsQuery({
     page: 0,
     pagesize: 1,
     status: JSON.stringify([CONNECTION_STATES.CONNECTED]),

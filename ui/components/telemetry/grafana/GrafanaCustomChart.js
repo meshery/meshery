@@ -7,7 +7,6 @@ import moment from 'moment';
 import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
 import WarningIcon from '@mui/icons-material/Warning';
 import CachedIcon from '@mui/icons-material/Cached';
-import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
@@ -75,8 +74,7 @@ function GrafanaCustomChart(props) {
     sparkline,
   } = props;
 
-  const [triggerGetGrafanaQueryRange, { isLoading: isLoadingQuery, isError: isQueryError }] =
-    useLazyGetGrafanaQueryRangeQuery();
+  const [triggerGetGrafanaQueryRange] = useLazyGetGrafanaQueryRangeQuery();
   const chartRef = useRef(null);
   const [chart, setChart] = useState(null);
   const timeFormat = 'MM/DD/YYYY HH:mm:ss';
@@ -441,13 +439,6 @@ function GrafanaCustomChart(props) {
 
     let ds = datasource?.charAt(0).toUpperCase() + datasource?.substring(1);
 
-    let queryParams = `ds=${ds}&query=${encodeURIComponent(
-      expr,
-    )}&start=${start}&end=${end}&step=${computeStep(start, end)}`;
-    if (testUUID && testUUID.trim() !== '') {
-      queryParams += `&uuid=${encodeURIComponent(testUUID)}`; // static_chart=true ?
-    }
-
     const processReceivedData = (result) => {
       updateProgress({ showProgress: false });
 
@@ -544,7 +535,7 @@ function GrafanaCustomChart(props) {
           expr,
           start,
           end,
-          step,
+          step: computeStep(start, end),
           testUUID,
           endpointURL,
           endpointAPIKey,
