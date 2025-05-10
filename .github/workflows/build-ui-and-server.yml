@@ -8,14 +8,12 @@ on:
       - "docs/**"
       - "mesheryctl/**"
       - "*.md"
-      - "*.github/**"
   push:
     branches:
       - "master"
     paths-ignore:
       - "docs/**"
       - "*.md"
-      - "*.github/**"
   workflow_dispatch:
     inputs:
       sha:
