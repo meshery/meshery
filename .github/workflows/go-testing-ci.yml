@@ -129,22 +129,22 @@ jobs:
       - name: memory value
         run: df -h
 
-      #   # TODO  could reuse from ui-and-server build workflow?
-      #   #       maybe move there whole this whole job?
-      # - name: Build meshery image
-      #   run: make docker-build
+        # TODO  could reuse from ui-and-server build workflow?
+        #       maybe move there whole this whole job?
+      - name: Build meshery image
+        run: make docker-build
 
-      # - name: memory value 2
-      #   run: df -h
+      - name: memory value 2
+        run: df -h
 
-      # - name: Remove dangling images, stopped containers
-      #   run: docker system prune -f
+      - name: Remove dangling images, stopped containers
+        run: docker system prune -f
 
-      # because build takes 10 minutes :) 
-      - name: docker pull for now instead of build
-        run: |
-          docker pull layer5/meshery:stable-latest
-          docker tag layer5/meshery:stable-latest layer5/meshery:latest
+      # # because build takes 10 minutes :) 
+      # - name: docker pull for now instead of build
+      #   run: |
+      #     docker pull layer5/meshery:stable-latest
+      #     docker tag layer5/meshery:stable-latest layer5/meshery:latest
 
       - name: memory value 3
         run: df -h
