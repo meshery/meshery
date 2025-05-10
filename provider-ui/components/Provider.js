@@ -281,10 +281,11 @@ export default function Provider() {
                     data-cy="create_provider"
                     disableElevation
                     sx={{
-                      width: '100%',
-                      marginTop: '0.4rem'
+                      width: "100%",
+                      marginTop: "0.4rem",
                     }}
-                  >Create Your Own Provider&nbsp;
+                  >
+                    Create Your Own Provider&nbsp;
                     <img
                       src="/provider/static/img/external-link.svg"
                       onError={(e) =>
@@ -293,7 +294,7 @@ export default function Provider() {
                       width="16px"
                       alt="External link"
                       style={{
-                        filter: 'brightness(0)'
+                        filter: "brightness(0)",
                       }}
                     />
                   </Button>
