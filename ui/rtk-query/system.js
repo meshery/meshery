@@ -3,6 +3,7 @@ import { api } from './index';
 const TAGS = {
   SYSTEM: 'system',
   ADAPTERS: 'adapters',
+  KUBERNETES: 'kubernetes',
 };
 
 const systemApi = api.injectEndpoints({
@@ -67,6 +68,30 @@ const systemApi = api.injectEndpoints({
       },
       invalidatesTags: [TAGS.ADAPTERS],
     }),
+    pingKubernetes: builder.query({
+      query: (connectionId) => ({
+        url: `system/kubernetes/ping`,
+        method: 'GET',
+        params: { connection_id: connectionId },
+      }),
+      providesTags: [TAGS.KUBERNETES],
+    }),
+    getKubernetesContexts: builder.mutation({
+      query: (formData) => ({
+        url: `system/kubernetes/contexts`,
+        method: 'POST',
+        body: formData,
+      }),
+      invalidatesTags: [TAGS.KUBERNETES],
+    }),
+    configureKubernetes: builder.mutation({
+      query: (formData) => ({
+        url: `system/kubernetes`,
+        method: 'POST',
+        body: formData,
+      }),
+      invalidatesTags: [TAGS.KUBERNETES],
+    }),
   }),
 });
 
@@ -76,4 +101,8 @@ export const {
   useGetAvailableAdaptersQuery,
   useLazyPingAdapterQuery,
   useManageAdapterMutation,
+  usePingKubernetesQuery,
+  useLazyPingKubernetesQuery,
+  useGetKubernetesContextsMutation,
+  useConfigureKubernetesMutation,
 } = systemApi;

@@ -21,7 +21,6 @@ import { Search } from '@mui/icons-material';
 import { connect } from 'react-redux';
 import { setK8sContexts, updateProgress } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
-import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { useEffect, useState } from 'react';
@@ -39,7 +38,7 @@ import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
-
+import { usePingKubernetes } from '../utils/helpers/kubernetesHelpers';
 const DialogSubtitle = styled(DialogContentText)({
   overflowWrap: 'anywhere',
   textAlign: 'center',
@@ -146,6 +145,7 @@ function ConfirmationMsg(props) {
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const { notify } = useNotification();
+  const { pingKubernetes } = usePingKubernetes();
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
 
@@ -165,13 +165,13 @@ function ConfirmationMsg(props) {
   const handleKubernetesClick = (ctxID) => {
     updateProgress({ showProgress: true });
     pingKubernetes(
+      ctxID,
       successHandlerGenerator(notify, 'Kubernetes pinged', () =>
         updateProgress({ showProgress: false }),
       ),
       errorHandlerGenerator(notify, 'Kubernetes not pinged', () =>
         updateProgress({ showProgress: false }),
       ),
-      ctxID,
     );
   };
 
