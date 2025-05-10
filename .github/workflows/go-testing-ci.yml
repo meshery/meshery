@@ -155,13 +155,13 @@ jobs:
       - name: memory value 4
         run: df -h
 
-      - name: Integration tests set up (connection)
-        run: make server-integration-tests-meshsync-setup-connection
-
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.23"
+
+      - name: Integration tests set up (connection)
+        run: make server-integration-tests-meshsync-setup-connection
 
       - name: Integration tests run
         run: make server-integration-tests-meshsync-run
