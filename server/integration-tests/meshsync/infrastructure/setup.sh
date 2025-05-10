@@ -127,21 +127,42 @@ setup_connection() {
   sed -i.bak -E 's|^( *server: ).*|\1https://kubernetes.default.svc|' "$TMP_KUBECONFIG_PATH"
   echo ""
 
+  # echo "Submitting kubeconfig..." 
+  # JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
+  # kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-curl-upload-kubeconfig-script --from-file=$SCRIPT_DIR/curl-upload-kubeconfig.sh
+  # kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-kubeconfig-file --from-file=kubeconfig.yaml=$TMP_KUBECONFIG_PATH
+  # kubectl --namespace $MESHERY_K8S_NAMESPACE apply -f $SCRIPT_DIR/curl-upload-kubeconfig-job.yaml
+  # kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/$JOB_NAME
+  # kubectl --namespace $MESHERY_K8S_NAMESPACE get job
+  # # Get the pod name for the job
+  # JOBS_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
+  # # Output logs from the pod
+  # kubectl --namespace $MESHERY_K8S_NAMESPACE logs $JOBS_POD_NAME
+
   echo "Submitting kubeconfig..." 
   JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
   kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-curl-upload-kubeconfig-script --from-file=$SCRIPT_DIR/curl-upload-kubeconfig.sh
   kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-kubeconfig-file --from-file=kubeconfig.yaml=$TMP_KUBECONFIG_PATH
-  kubectl --namespace $MESHERY_K8S_NAMESPACE apply -f $SCRIPT_DIR/curl-upload-kubeconfig-job.yaml
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/$JOB_NAME
-  kubectl --namespace $MESHERY_K8S_NAMESPACE get job
-  # Get the pod name for the job
-  JOBS_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
-  # Output logs from the pod
-  kubectl --namespace $MESHERY_K8S_NAMESPACE logs $JOBS_POD_NAME
+  for i in {1..4}; do
+    echo "🔁 Run #$i"
+
+    kubectl --namespace "$MESHERY_K8S_NAMESPACE" apply -f "$SCRIPT_DIR/curl-upload-kubeconfig-job.yaml"
+    kubectl --namespace "$MESHERY_K8S_NAMESPACE" wait --for=condition=complete --timeout=60s job/$JOB_NAME
+    kubectl --namespace "$MESHERY_K8S_NAMESPACE" get job
+
+    # Get the pod name for the job
+    JOBS_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
+    # Output logs from the pod
+    kubectl --namespace "$MESHERY_K8S_NAMESPACE" logs "$JOBS_POD_NAME"
+
+    # delete job
+    kubectl --namespace "$MESHERY_K8S_NAMESPACE" delete job "$JOB_NAME"
+  done
+
 
   echo "Collecting meshsync events..."
   # TODO better way to be sure events were delivered?
-  sleep 64
+  sleep 32
 
   echo "Printing server logs..." 
   # Get the pod name for the sdeployment
