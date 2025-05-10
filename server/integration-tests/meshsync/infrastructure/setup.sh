@@ -143,6 +143,12 @@ setup_connection() {
   # TODO better way to be sure events were delivered?
   sleep 64
 
+  echo "Printing server logs..." 
+  # Get the pod name for the sdeployment
+  SERVER_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app.kubernetes.io/name="meshery" -o jsonpath='{.items[0].metadata.name}')
+  # Output logs from the pod
+  kubectl --namespace $MESHERY_K8S_NAMESPACE logs $SERVER_DEPLOYMENT_POD_NAME
+
   echo "Copying sqlite database file from pod..."
     NAMESPACE=$MESHERY_K8S_NAMESPACE \
     DEPLOYMENT="meshery" \
@@ -151,13 +157,6 @@ setup_connection() {
   $SCRIPT_DIR/copy-file-from-deployment.sh
   ls -la | grep "$LOCAL_SQLITE_PATH"
   echo ""
-
-  echo "Printing server logs..." 
-  # Get the pod name for the sdeployment
-  SERVER_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app.kubernetes.io/name="meshery" -o jsonpath='{.items[0].metadata.name}')
-  # Output logs from the pod
-  kubectl --namespace $MESHERY_K8S_NAMESPACE logs $SERVER_DEPLOYMENT_POD_NAME
-
 }
 
 cleanup_all() {
