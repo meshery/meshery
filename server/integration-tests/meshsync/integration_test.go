@@ -26,8 +26,7 @@ func TestMeshSyncIntegration(t *testing.T) {
 		"test case will be here soon...",
 		func(t *testing.T) {
 			dboptions := database.Options{
-				Engine: database.SQLITE,
-				// TODO
+				Engine:   database.SQLITE,
 				Filename: pathToSQLFile,
 			}
 			handler, errDatabaseNew := database.New(dboptions)

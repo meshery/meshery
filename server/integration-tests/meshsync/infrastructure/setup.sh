@@ -59,20 +59,20 @@ setup_all() {
   setup_connection  
 }
 
-# TODO
-# 1) for local set up, 
+# TODO (maybe) for local set up.
 # right now if there is a separate kind cluster with meshery-operator running
 # operator in test cluster will fail to retrieve resource lock:
 # error retrieving resource lock meshery/operator-981fc876-f149-4e96-a716-9cd9bfb0bd3f.meshery.io: Get "https://10.96.0.1:443/apis/coordination.k8s.io/v1/namespaces/meshery/leases/operator-981fc876-f149-4e96-a716-9cd9bfb0bd3f.meshery.io?timeout=5s": net/http: request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)
 # and hence will not deploy meshsync and broker
-# could be fixed by set up a custom network for test cluster
+# probably could be fixed by set up a custom network for test cluster.
 # --
 setup_cluster() {
   check_dependencies
   echo "🔧 Setting up..."
   echo ""
 
-  # image must be build and present with latest tag 
+  # image must be build and present with tag "latest"
+  # (docker-build make target could be used to build an image) 
   echo "Checking meshery docker image is present..."
   docker image inspect --format '{{.RepoTags}}' $DOCKER_IMAGE:latest
   echo ""
@@ -127,22 +127,13 @@ setup_connection() {
   sed -i.bak -E 's|^( *server: ).*|\1https://kubernetes.default.svc|' "$TMP_KUBECONFIG_PATH"
   echo ""
 
-  # echo "Submitting kubeconfig..." 
-  # JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
-  # kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-curl-upload-kubeconfig-script --from-file=$SCRIPT_DIR/curl-upload-kubeconfig.sh
-  # kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-kubeconfig-file --from-file=kubeconfig.yaml=$TMP_KUBECONFIG_PATH
-  # kubectl --namespace $MESHERY_K8S_NAMESPACE apply -f $SCRIPT_DIR/curl-upload-kubeconfig-job.yaml
-  # kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=complete --timeout=60s job/$JOB_NAME
-  # kubectl --namespace $MESHERY_K8S_NAMESPACE get job
-  # # Get the pod name for the job
-  # JOBS_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=job-name="$JOB_NAME" -o jsonpath='{.items[0].metadata.name}')
-  # # Output logs from the pod
-  # kubectl --namespace $MESHERY_K8S_NAMESPACE logs $JOBS_POD_NAME
-
   echo "Submitting kubeconfig..." 
   JOB_NAME="integration-test-meshsync-curl-upload-kubeconfig-job"
   kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-curl-upload-kubeconfig-script --from-file=$SCRIPT_DIR/curl-upload-kubeconfig.sh
   kubectl --namespace $MESHERY_K8S_NAMESPACE create configmap integration-test-meshsync-kubeconfig-file --from-file=kubeconfig.yaml=$TMP_KUBECONFIG_PATH
+  # sometimes server not able to register k8s connection from first api call, 
+  # sending request few times we ensure that connection is registered.
+  # TODO (maybe) implement in more clever way then loop in a cycle.
   for i in {1..4}; do
     echo "🔁 Run #$i"
 
@@ -161,7 +152,7 @@ setup_connection() {
 
 
   echo "Collecting meshsync events..."
-  # TODO better way to be sure events were delivered?
+  # TODO maybe there is a better way to be sure events are delivered?
   sleep 32
 
   echo "Printing server logs..." 
