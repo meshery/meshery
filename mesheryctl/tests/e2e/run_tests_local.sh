@@ -3,15 +3,19 @@
 # Setup up mesheryctl
 MESHERYCTL_FILE="mesheryctl"
 
-# Default flag value
+# Default build flag value
 BUILD_FLAG=false
 
+# Default bats file path value
+BATS_FILE=""
+
 # Get parsed build flag
-while getopts "b" opt; do
+while getopts "f:b" opt; do
    case "$opt" in
+      f) FILE="$OPTARG" ;;
       b) BUILD_FLAG=true ;;
       \?) 
-      echo -e "\nUsage: $0 [-b: to rebuild binary] " 
+      echo -e "\nUsage: $0 [-f filename: to specify single bat file to run] [-b: to rebuild binary] " 
       exit 1 ;;
    esac
 done
@@ -52,17 +56,12 @@ main() {
    check_bin_file
 
    export MESHERYCTL_BIN="../../$MESHERYCTL_FILE"
-
    export MESHERY_CONFIG_FILE_PATH="$HOME/.meshery/config.yaml"
-
    export MESHERY_AUTH_FILE="$HOME/.meshery/auth.json"
-
-   export SUPPORT_DESTDIR="../helpers/bats-support/load.bash"
-
-	export ASSERT_DESTDIR="../helpers/bats-assert/load.bash"
-   
-	export DETIK_DESTDIR="../helpers/bats-detik//lib/detik.bash"
-   
+   export E2E_HELPERS_PATH="$(pwd)/helpers"
+   export BATS_LIB_PATH="$(pwd)/helpers/bats-libs"
+   export BATS_TEST_DIRNAME=""
+ 
    echo -e "\nCreate temp directory for test data"
    TEMP_DATA_DIR=`mktemp -d`
    # Expose the temp directory to the following tests
@@ -73,7 +72,19 @@ main() {
    # Run tests
    # Uncomment the following line to enable junit format output
    # FORMATTER="--formatter tap"
-   bats $FORMATTER *-*/*.bats
+
+   if [[ -z "$FILE" ]]; then
+      echo "Running all E2E tests."
+      bats $FORMATTER *-*/*.bats
+   else
+      if [[ "$FILE" == *.bats && -f "$FILE" ]]; then
+         echo "Running E2E for specified file: $FILE"
+         bats $FORMATTER $FILE
+      else
+         echo "X Invalid file format or file not found"
+         exit 1
+      fi
+   fi
 
    test_result=$?
 
