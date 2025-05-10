@@ -432,7 +432,6 @@ const MesheryApp = ({
     },
     [store],
   );
-
   const setOrganization = useCallback(
     (org) => {
       store.dispatch({
