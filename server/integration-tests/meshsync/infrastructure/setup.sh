@@ -140,7 +140,7 @@ setup_connection() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE logs $JOBS_POD_NAME
 
   echo "Collecting meshsync events..."
-  sleep 16
+  sleep 32
 
   echo "Copying sqlite database file from pod..."
     NAMESPACE=$MESHERY_K8S_NAMESPACE \
