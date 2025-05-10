@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 9th 2025, 5:55:50 pm
+- Testing started at: May 10th 2025, 1:06:05 am
 
 **📦 Test Result Summary**
 
 - ✅ 66 passed
 - ❌ 2 failed
-- ⚠️ 4 flaked
+- ⚠️ 5 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 29 seconds_
+⌛ _Duration: 7 minutes and 49 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,13 +21,13 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 6 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 7 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 5 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 6 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 7 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 8 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
 | 9 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
 | 10 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
