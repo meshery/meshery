@@ -1,0 +1,35 @@
+name: Meshery Server Integration Tests
+on:
+    pull_request_target:
+      types: [opened, synchronize, reopened]
+      branches:
+        - "master"
+      paths-ignore:
+        - "docs/**"
+        - "mesheryctl/**"
+        - "*.md"
+        - "*.github/**"
+    push:
+      branches:
+        - "master"
+      paths-ignore:
+        - "docs/**"
+        - "mesheryctl/**"
+        - "*.md"
+        - "*.github/**"
+    workflow_dispatch:
+      inputs:
+        sha:
+          description: "Commit SHA to test"
+          required: true
+        pr_number:
+          description: "PR number (for commenting)"
+          required: true
+
+jobs:
+  server-integration-test-with-meshsync:
+    name: Integration test with meshsync
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Placeholder
+        run: echo "TODO"
