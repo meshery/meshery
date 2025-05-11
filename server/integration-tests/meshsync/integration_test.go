@@ -33,6 +33,14 @@ func TestBasedOnDatabaseContentMeshSyncIntegration(t *testing.T) {
 	// NOTE : didn't find how to close the handler
 
 	for _, tc := range testCaseBasedOnDatabaseContentData {
+		for _, cleanupHook := range tc.cleanupHooks {
+			defer cleanupHook()
+		}
+
+		for _, setupHook := range tc.setupHooks {
+			setupHook()
+		}
+
 		t.Run(
 			tc.name,
 			tc.run(handler),
