@@ -1,12 +1,19 @@
 package meshsync
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/layer5io/meshkit/database"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/stretchr/testify/assert"
 )
+
+const CUSTOM_K8S_NAMESPACE = "calm-koala"
+
+// as defined in infrastructure/test-deployment.yaml
+const CUSTOM_APP_NAME = "nginx-deployment"
+const CUSTOM_APP_REPLICAS_NUM = 3
 
 type testCaseBasedOnDatabaseContentStruct struct {
 	name         string
@@ -15,6 +22,7 @@ type testCaseBasedOnDatabaseContentStruct struct {
 	run          func(database.Handler) func(*testing.T)
 }
 
+// TODO add test case which checks connection for test cluster
 var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = []testCaseBasedOnDatabaseContentStruct{
 	{
 		name: "number of entries in kubernetes_resources must be greater than zero",
@@ -101,6 +109,42 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 				assert.Equal(t, 1, len(k8sResources), "must contains exactly one Broker entity")
 				assert.Equal(t, "MeshSync", k8sResources[0].Kind)
+			}
+		},
+	},
+	{
+		// deployment should be only one, as it has the defined name
+		// replica set and pods, could be more, in case it were some failures
+		name: "custom namespace must contain custom app resources",
+		run: func(handler database.Handler) func(*testing.T) {
+			return func(t0 *testing.T) {
+				t0.Run("1 deployment", func(t *testing.T) {
+					handler.Lock()
+					defer handler.Unlock()
+
+					k8sResources := make([]*meshsyncmodel.KubernetesResourceObjectMeta, 0, 8)
+
+					dbresult := handler.
+						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
+						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
+						Where("kubernetes_resources.kind = ?", "Deployment").
+						Find(&k8sResources)
+
+					if dbresult == nil {
+						t.Fatal("db result is nil")
+					}
+					if dbresult.Error != nil {
+						t.Fatalf("db result ended with an error %v", dbresult.Error)
+					}
+
+					assert.Equal(t, 1, len(k8sResources), "must contains one deployment")
+					if len(k8sResources) > 0 {
+						assert.Equal(t, CUSTOM_APP_NAME, k8sResources[0].Name, "deployment must have correct name")
+					}
+				})
+				t0.Run("at least 1 replica set", func(t *testing.T) {})
+				t0.Run(fmt.Sprintf("at least %d pods", CUSTOM_APP_REPLICAS_NUM), func(t *testing.T) {})
 			}
 		},
 	},
