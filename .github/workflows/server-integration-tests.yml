@@ -2,31 +2,12 @@
 # running from .github/workflows/go-testing-ci.yml for now
 name: Meshery Server Integration Tests
 on:
-    pull_request_target:
-      types: [opened, synchronize, reopened]
-      branches:
-        - "master"
-      paths-ignore:
-        - "docs/**"
-        - "mesheryctl/**"
-        - "*.md"
-        - "*.github/**"
-    push:
-      branches:
-        - "master"
-      paths-ignore:
-        - "docs/**"
-        - "mesheryctl/**"
-        - "*.md"
-        - "*.github/**"
-    workflow_dispatch:
-      inputs:
-        sha:
-          description: "Commit SHA to test"
-          required: true
-        pr_number:
-          description: "PR number (for commenting)"
-          required: true
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   server-integration-test-with-meshsync:
