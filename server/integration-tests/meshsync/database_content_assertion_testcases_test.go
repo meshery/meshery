@@ -48,4 +48,60 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 			}
 		},
 	},
+	{
+		name: "kubernetes_resources must contain one meshery.io/* Broker entity",
+		run: func(handler database.Handler) func(*testing.T) {
+			return func(t *testing.T) {
+				handler.Lock()
+				defer handler.Unlock()
+
+				k8sResources := make([]*meshsyncmodel.KubernetesResource, 0, 2)
+
+				// Query the database for the complete component definition
+				dbresult := handler.
+					Model(meshsyncmodel.KubernetesResource{}).
+					Where("api_version LIKE ?", "meshery.io/%").
+					Where("kind = ?", "Broker").
+					Find(&k8sResources)
+
+				if dbresult == nil {
+					t.Fatal("db result is nil")
+				}
+				if dbresult.Error != nil {
+					t.Fatalf("db result ended with an error %v", dbresult.Error)
+				}
+
+				assert.Equal(t, 1, len(k8sResources), "must contains exactly one Broker entity")
+				assert.Equal(t, "Broker", k8sResources[0].Kind)
+			}
+		},
+	},
+	{
+		name: "kubernetes_resources must contain one meshery.io/* MeshSync entity",
+		run: func(handler database.Handler) func(*testing.T) {
+			return func(t *testing.T) {
+				handler.Lock()
+				defer handler.Unlock()
+
+				k8sResources := make([]*meshsyncmodel.KubernetesResource, 0, 2)
+
+				// Query the database for the complete component definition
+				dbresult := handler.
+					Model(meshsyncmodel.KubernetesResource{}).
+					Where("api_version LIKE ?", "meshery.io/%").
+					Where("kind = ?", "MeshSync").
+					Find(&k8sResources)
+
+				if dbresult == nil {
+					t.Fatal("db result is nil")
+				}
+				if dbresult.Error != nil {
+					t.Fatalf("db result ended with an error %v", dbresult.Error)
+				}
+
+				assert.Equal(t, 1, len(k8sResources), "must contains exactly one Broker entity")
+				assert.Equal(t, "MeshSync", k8sResources[0].Kind)
+			}
+		},
+	},
 }
