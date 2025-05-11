@@ -1,1 +1,6 @@
-Tests are instantiated from Makefile with `-run Integration` option, so new tests  must have an "Integration" suffix in its Test function name.
+## Naming convension
+
+Tests are instantiated in Makefile with `-run Integration` option, so new tests  must contain 'Integration' in its Test function name, f.e. 
+- `TestBasedOnDatabaseContentMeshSyncIntegration`
+- `TestIntegrationBasedOnDatabaseContentMeshSync`
+- `TestMeshSyncIntegrationBasedOnDatabaseContent`
