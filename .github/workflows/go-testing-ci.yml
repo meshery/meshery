@@ -109,4 +109,4 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.txt
-          flags: gointegrationtests
+          flags: gointegrationtests     
