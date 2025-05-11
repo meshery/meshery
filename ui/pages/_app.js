@@ -220,7 +220,6 @@ const MesheryApp = ({
 }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const statea = useSelectorRtk((state) => state.ui);
 
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const [state, setState] = useState({
