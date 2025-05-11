@@ -168,7 +168,31 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 						assert.Contains(t, rs.Name, CUSTOM_APP_NAME, "replica set must have correct name")
 					}
 				})
-				t0.Run(fmt.Sprintf("at least %d pods", CUSTOM_APP_REPLICAS_NUM), func(t *testing.T) {})
+				t0.Run(fmt.Sprintf("at least %d pods", CUSTOM_APP_REPLICAS_NUM), func(t *testing.T) {
+					handler.Lock()
+					defer handler.Unlock()
+
+					k8sResources := make([]*meshsyncmodel.KubernetesResourceObjectMeta, 0, 8)
+
+					dbresult := handler.
+						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
+						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
+						Where("kubernetes_resources.kind = ?", "Pod").
+						Find(&k8sResources)
+
+					if dbresult == nil {
+						t.Fatal("db result is nil")
+					}
+					if dbresult.Error != nil {
+						t.Fatalf("db result ended with an error %v", dbresult.Error)
+					}
+
+					assert.GreaterOrEqual(t, len(k8sResources), CUSTOM_APP_REPLICAS_NUM, "must contains pods")
+					for _, pod := range k8sResources {
+						assert.Contains(t, pod.Name, CUSTOM_APP_NAME, "pod must have correct name")
+					}
+				})
 			}
 		},
 	},
