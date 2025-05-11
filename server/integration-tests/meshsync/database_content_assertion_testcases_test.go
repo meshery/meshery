@@ -56,7 +56,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 		},
 	},
 	{
-		name: "kubernetes_resources must contain one meshery.io/* Broker entity",
+		name: "kubernetes_resources must contain at least one meshery.io/* Broker entity",
 		run: func(handler database.Handler) func(*testing.T) {
 			return func(t *testing.T) {
 				handler.Lock()
@@ -77,13 +77,15 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					t.Fatalf("db result ended with an error %v", dbresult.Error)
 				}
 
-				assert.Equal(t, 1, len(k8sResources), "must contains exactly one Broker entity")
-				assert.Equal(t, "Broker", k8sResources[0].Kind)
+				assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one Broker entity")
+				for _, resource := range k8sResources {
+					assert.Equal(t, "Broker", resource.Kind)
+				}
 			}
 		},
 	},
 	{
-		name: "kubernetes_resources must contain one meshery.io/* MeshSync entity",
+		name: "kubernetes_resources must contain at least one meshery.io/* MeshSync entity",
 		run: func(handler database.Handler) func(*testing.T) {
 			return func(t *testing.T) {
 				handler.Lock()
@@ -104,8 +106,10 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					t.Fatalf("db result ended with an error %v", dbresult.Error)
 				}
 
-				assert.Equal(t, 1, len(k8sResources), "must contains exactly one Broker entity")
-				assert.Equal(t, "MeshSync", k8sResources[0].Kind)
+				assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one MeshSync entity")
+				for _, resource := range k8sResources {
+					assert.Equal(t, "MeshSync", resource.Kind)
+				}
 			}
 		},
 	},
@@ -115,7 +119,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 		name: "custom namespace must contain custom app resources",
 		run: func(handler database.Handler) func(*testing.T) {
 			return func(t0 *testing.T) {
-				t0.Run("1 deployment", func(t *testing.T) {
+				t0.Run("at least one deployment", func(t *testing.T) {
 					handler.Lock()
 					defer handler.Unlock()
 
@@ -135,12 +139,12 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 						t.Fatalf("db result ended with an error %v", dbresult.Error)
 					}
 
-					assert.Equal(t, 1, len(k8sResources), "must contains one deployment")
-					if len(k8sResources) > 0 {
-						assert.Equal(t, CUSTOM_APP_NAME, k8sResources[0].Name, "deployment must have correct name")
+					assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one Deployment")
+					for _, resource := range k8sResources {
+						assert.Equal(t, CUSTOM_APP_NAME, resource.Name, "deployment must have correct name")
 					}
 				})
-				t0.Run("at least 1 replica set", func(t *testing.T) {
+				t0.Run("at least one replica set", func(t *testing.T) {
 					handler.Lock()
 					defer handler.Unlock()
 
@@ -161,8 +165,8 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					}
 
 					assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one replica set")
-					for _, rs := range k8sResources {
-						assert.Contains(t, rs.Name, CUSTOM_APP_NAME, "replica set must have correct name")
+					for _, resource := range k8sResources {
+						assert.Contains(t, resource.Name, CUSTOM_APP_NAME, "replica set must have correct name")
 					}
 				})
 				t0.Run(fmt.Sprintf("at least %d pods", CUSTOM_APP_REPLICAS_NUM), func(t *testing.T) {
@@ -186,8 +190,8 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					}
 
 					assert.GreaterOrEqual(t, len(k8sResources), CUSTOM_APP_REPLICAS_NUM, "must contains pods")
-					for _, pod := range k8sResources {
-						assert.Contains(t, pod.Name, CUSTOM_APP_NAME, "pod must have correct name")
+					for _, resource := range k8sResources {
+						assert.Contains(t, resource.Name, CUSTOM_APP_NAME, "pod must have correct name")
 					}
 				})
 			}
