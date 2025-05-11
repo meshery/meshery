@@ -33,7 +33,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 				k8sResources := make([]*meshsyncmodel.KubernetesResource, 0, 256)
 
 				// Query the database for the complete component definition
-				dbresult := handler.Model(meshsyncmodel.KubernetesResource{}).Find(&k8sResources)
+				dbresult := handler.Model(&meshsyncmodel.KubernetesResource{}).Find(&k8sResources)
 
 				if dbresult == nil {
 					t.Fatal("db result is nil")
@@ -65,7 +65,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 				k8sResources := make([]*meshsyncmodel.KubernetesResource, 0, 2)
 
 				dbresult := handler.
-					Model(meshsyncmodel.KubernetesResource{}).
+					Model(&meshsyncmodel.KubernetesResource{}).
 					Where("api_version LIKE ?", "meshery.io/%").
 					Where("kind = ?", "Broker").
 					Find(&k8sResources)
@@ -94,7 +94,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 				k8sResources := make([]*meshsyncmodel.KubernetesResource, 0, 2)
 
 				dbresult := handler.
-					Model(meshsyncmodel.KubernetesResource{}).
+					Model(&meshsyncmodel.KubernetesResource{}).
 					Where("api_version LIKE ?", "meshery.io/%").
 					Where("kind = ?", "MeshSync").
 					Find(&k8sResources)
