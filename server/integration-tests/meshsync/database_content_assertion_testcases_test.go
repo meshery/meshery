@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// as defined in infrastructure/setup.sh
 const CUSTOM_K8S_NAMESPACE = "calm-koala"
 
 // as defined in infrastructure/test-deployment.yaml
