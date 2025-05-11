@@ -22,7 +22,6 @@ type testCaseBasedOnDatabaseContentStruct struct {
 	run          func(database.Handler) func(*testing.T)
 }
 
-// TODO add test case which checks connection for test cluster
 var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = []testCaseBasedOnDatabaseContentStruct{
 	{
 		name: "number of entries in kubernetes_resources must be greater than zero",
@@ -65,7 +64,6 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 				k8sResources := make([]*meshsyncmodel.KubernetesResource, 0, 2)
 
-				// Query the database for the complete component definition
 				dbresult := handler.
 					Model(meshsyncmodel.KubernetesResource{}).
 					Where("api_version LIKE ?", "meshery.io/%").
@@ -93,7 +91,6 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 				k8sResources := make([]*meshsyncmodel.KubernetesResource, 0, 2)
 
-				// Query the database for the complete component definition
 				dbresult := handler.
 					Model(meshsyncmodel.KubernetesResource{}).
 					Where("api_version LIKE ?", "meshery.io/%").
