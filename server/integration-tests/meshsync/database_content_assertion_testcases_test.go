@@ -2,6 +2,7 @@ package meshsync
 
 import (
 	"fmt"
+	"strings"
 	"testing"
 
 	"github.com/layer5io/meshkit/database"
@@ -66,8 +67,8 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 				dbresult := handler.
 					Model(&meshsyncmodel.KubernetesResource{}).
-					Where("api_version LIKE ?", "meshery.io/%").
-					Where("kind = ?", "Broker").
+					Where("lower(api_version) LIKE ?", "meshery.io/%").
+					Where("lower(kind) = ?", "broker").
 					Find(&k8sResources)
 
 				if dbresult == nil {
@@ -79,7 +80,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 				assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one Broker entity")
 				for _, resource := range k8sResources {
-					assert.Equal(t, "Broker", resource.Kind)
+					assert.Equal(t, "broker", strings.ToLower(resource.Kind))
 				}
 			}
 		},
@@ -95,8 +96,8 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 				dbresult := handler.
 					Model(&meshsyncmodel.KubernetesResource{}).
-					Where("api_version LIKE ?", "meshery.io/%").
-					Where("kind = ?", "MeshSync").
+					Where("lower(api_version) LIKE ?", "meshery.io/%").
+					Where("lower(kind) = ?", "meshsync").
 					Find(&k8sResources)
 
 				if dbresult == nil {
@@ -108,7 +109,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 
 				assert.GreaterOrEqual(t, len(k8sResources), 1, "must contains at least one MeshSync entity")
 				for _, resource := range k8sResources {
-					assert.Equal(t, "MeshSync", resource.Kind)
+					assert.Equal(t, "meshsync", strings.ToLower(resource.Kind))
 				}
 			}
 		},
@@ -129,7 +130,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
 						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
-						Where("kubernetes_resources.kind = ?", "Deployment").
+						Where("lower(kubernetes_resources.kind) = ?", "deployment").
 						Find(&k8sResources)
 
 					if dbresult == nil {
@@ -154,7 +155,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
 						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
-						Where("kubernetes_resources.kind = ?", "ReplicaSet").
+						Where("lower(kubernetes_resources.kind) = ?", "replicaset").
 						Find(&k8sResources)
 
 					if dbresult == nil {
@@ -179,7 +180,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 						Model(&meshsyncmodel.KubernetesResourceObjectMeta{}).
 						Joins("JOIN kubernetes_resources ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 						Where("namespace = ?", CUSTOM_K8S_NAMESPACE).
-						Where("kubernetes_resources.kind = ?", "Pod").
+						Where("lower(kubernetes_resources.kind) = ?", "pod").
 						Find(&k8sResources)
 
 					if dbresult == nil {
