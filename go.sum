@@ -1326,8 +1326,8 @@ github.com/layer5io/gowrk2 v0.6.1 h1:0eBj7VFYJ+QTMJt7i3PzxDJTEL+X+zWx4OP+lARWIoI
 github.com/layer5io/gowrk2 v0.6.1/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg6iYMljg=
 github.com/layer5io/meshery-operator v0.8.3 h1:HCXFif715iHdUpmTSInAqpsd+gaSFazn8M93Z1aDc+I=
 github.com/layer5io/meshery-operator v0.8.3/go.mod h1:Wi9ODHppoq8ODtzdfiplWYJXYpqsHOJfkJyTMQeNXk4=
-github.com/layer5io/meshkit v0.8.26 h1:eX6fC/h3gmLdangcUcMJhFVPfP/GxDeq1TjWkvO16/E=
-github.com/layer5io/meshkit v0.8.26/go.mod h1:lMeuC99MrbP5WIBNdzDOKokCfUOW/5a/hERcCl9YSFs=
+github.com/layer5io/meshkit v0.8.27 h1:oWupNhMeGx+H+YVlRMQ80dQO1KdF8kvOVCXyUYx5HnM=
+github.com/layer5io/meshkit v0.8.27/go.mod h1:lMeuC99MrbP5WIBNdzDOKokCfUOW/5a/hERcCl9YSFs=
 github.com/layer5io/meshsync v0.8.6 h1:rioO1LH2Ue/ZsYmszSe9DOOr2BDr6vnDraX4QIPDPLA=
 github.com/layer5io/meshsync v0.8.6/go.mod h1:FsAfvQ+9HOjbOeAutrzoHDzAohmmnWpcaDEE0ygfGyg=
 github.com/layer5io/nighthawk-go v1.0.6 h1:YMCw65FvwpbByX+M7McdNYRNDW9oOw3GQaXJ1RMDdGw=
