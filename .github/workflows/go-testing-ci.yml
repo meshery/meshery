@@ -126,26 +126,23 @@ jobs:
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
+
+      # TODO remove 
       - name: memory value
         run: df -h
 
-        # TODO  could reuse from ui-and-server build workflow?
-        #       maybe move there whole this whole job?
+        # TODO  think about if we could reuse image build from ui-and-server build workflow?
       - name: Build meshery image
         run: make docker-build
 
+        # TODO remove
       - name: memory value 2
         run: df -h
 
       - name: Remove dangling images, stopped containers
         run: docker system prune -f
 
-      # # because build takes 10 minutes :) 
-      # - name: docker pull for now instead of build
-      #   run: |
-      #     docker pull layer5/meshery:stable-latest
-      #     docker tag layer5/meshery:stable-latest layer5/meshery:latest
-
+        # TODO remove
       - name: memory value 3
         run: df -h
 
@@ -156,7 +153,8 @@ jobs:
 
       - name: Integration tests set up (cluster)
         run: make server-integration-tests-meshsync-setup-cluster
-      
+
+        # TODO remove
       - name: memory value 4
         run: df -h
 
