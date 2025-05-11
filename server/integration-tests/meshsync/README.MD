@@ -1,1 +1,1 @@
-Based on how tests are started from Makefile, new tests must have a suffix "Integration".
+Tests are instantiated from Makefile with `-run Integration` option, so new tests  must have an "Integration" suffix in its Test function name.
