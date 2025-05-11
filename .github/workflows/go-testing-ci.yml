@@ -127,23 +127,20 @@ jobs:
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
 
-      # TODO remove 
-      - name: memory value
+      - name: file system info 00
         run: df -h
 
         # TODO  think about if we could reuse image build from ui-and-server build workflow?
       - name: Build meshery image
         run: make docker-build
 
-        # TODO remove
-      - name: memory value 2
+      - name: file system info 01
         run: df -h
 
       - name: Remove dangling images, stopped containers
         run: docker system prune -f
 
-        # TODO remove
-      - name: memory value 3
+      - name: file system info 02
         run: df -h
 
       - name: Setup Go
@@ -154,8 +151,7 @@ jobs:
       - name: Integration tests set up (cluster)
         run: make server-integration-tests-meshsync-setup-cluster
 
-        # TODO remove
-      - name: memory value 4
+      - name: file system info 03
         run: df -h
 
       - name: Integration tests set up (connection)
