@@ -220,6 +220,8 @@ const MesheryApp = ({
 }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const statea = useSelectorRtk((state) => state.ui);
+
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const [state, setState] = useState({
     mobileOpen: false,
@@ -318,10 +320,8 @@ const MesheryApp = ({
 
   const initSubscriptions = useCallback(
     (contexts) => {
-      // const { k8sConfig } = useSelectorRtk((state) => state.ui);
-      console.log('amit this called in initSubscriptions', contexts, k8sConfig);
+      if (!k8sConfig?.length) return;
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
-      console.log('amit connectionIDs', connectionIDs);
       // No need to create a controller subscription if there are no connections
       if (connectionIDs.length < 1) {
         setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
@@ -648,7 +648,6 @@ const MesheryApp = ({
     }
 
     const { mesheryControllerSubscription } = state;
-    console.log('amit mesheryControllerSubscription', mesheryControllerSubscription);
     if (mesheryControllerSubscription) {
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
       mesheryControllerSubscription.updateSubscription(
