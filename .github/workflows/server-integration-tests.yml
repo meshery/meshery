@@ -1,12 +1,19 @@
 name: Meshery Server Integration Tests
-# set up some meaningful trigger condition
 on:
   push:
     branches:
       - master
+    paths:
+      - "server/**"
+      - "Makefile"
+      - ".github/workflows/server-integration-tests.yml"
   pull_request:
     branches:
       - master
+    paths:
+      - "server/**"
+      - "Makefile"
+      - ".github/workflows/server-integration-tests.yml"
 
 jobs:
   server-integration-test-with-meshsync:
