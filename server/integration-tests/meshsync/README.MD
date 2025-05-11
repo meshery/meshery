@@ -1,0 +1,1 @@
+Based on how tests are started from Makefile, new tests must have a suffix "Integration".
