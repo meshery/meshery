@@ -1,4 +1,5 @@
 name: Meshery Server Integration Tests
+# set up some meaningful trigger condition
 on:
   push:
     branches:
