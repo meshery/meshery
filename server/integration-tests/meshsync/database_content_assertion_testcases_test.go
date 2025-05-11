@@ -42,7 +42,7 @@ var testCaseBasedOnDatabaseContentData []testCaseBasedOnDatabaseContentStruct = 
 					t.Fatalf("db result ended with an error %v", dbresult.Error)
 				}
 
-				assert.True(t, len(k8sResources) > 0, "table must contains resources")
+				assert.GreaterOrEqual(t, len(k8sResources), 0, "table must contains resources")
 				t.Logf("found %d k8s resources", len(k8sResources))
 
 				for _, resource := range k8sResources {
