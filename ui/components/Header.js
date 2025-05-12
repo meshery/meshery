@@ -59,6 +59,7 @@ import {
 } from './Header.styles';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
+import { useSelectorRtk } from '@/store/hooks';
 
 async function loadActiveK8sContexts() {
   try {
@@ -384,7 +385,6 @@ function K8sContextMenu({
 const Header = ({
   title,
   onDrawerToggle,
-  isBeta,
   onDrawerCollapse,
   abilityUpdated,
   contexts,
@@ -399,7 +399,7 @@ const Header = ({
   updateExtensionType,
 }) => {
   const { notify } = useNotification;
-
+  const isBeta = useSelectorRtk((state) => state.ui.page.isBeta);
   const {
     data: providerCapabilities,
     isSuccess: isProviderCapabilitiesSuccess,
@@ -521,7 +521,6 @@ Header.propTypes = {
 const mapStateToProps = (state) => {
   return {
     title: state.get('page').get('title'),
-    isBeta: state.get('page').get('isBeta'),
     selectedK8sContexts: state.get('selectedK8sContexts'),
     k8sconfig: state.get('k8sConfig'),
     operatorState: state.get('operatorState'),

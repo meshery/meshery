@@ -8,7 +8,6 @@ import {
   updatepagepath,
   updatepagetitle,
   updateExtensionType,
-  updatebetabadge,
   updateCapabilities,
 } from '../../lib/store';
 import Head from 'next/head';
@@ -20,6 +19,8 @@ import { useRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { updateBetaBadge } from '@/store/slices/mesheryUi';
+import { useDispatchRtk } from '@/store/hooks';
 
 /**
  * getPath returns the current pathname
@@ -44,6 +45,7 @@ function RemoteExtension() {
   const [componentTitle, setComponentTitle] = useState('');
   const router = useRouter();
   const dispatch = useDispatch();
+  const rtkDispatch = useDispatchRtk();
 
   const extensionType = useSelector((state) => state.get('extensionType'));
   const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
@@ -74,7 +76,7 @@ function RemoteExtension() {
         );
         setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
         dispatch(updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
-        dispatch(updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
+        rtkDispatch(updateBetaBadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
         dispatch(updatepagepath({ path: getPath() }));
       }
     });

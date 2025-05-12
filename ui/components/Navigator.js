@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import HelpIcon from '@mui/icons-material/Help';
@@ -93,6 +93,8 @@ import {
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
+import { useDispatchRtk } from '@/store/hooks';
+import { updateBetaBadge } from '@/store/slices/mesheryUi';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -283,7 +285,7 @@ const NavigatorWrapper = (props) => {
 
 const Navigator_ = (props) => {
   const { meshAdapters: initialMeshAdapters } = props;
-
+  const dispatch = useDispatchRtk();
   const theme = useTheme();
 
   const [state, setState] = useState({
@@ -330,7 +332,8 @@ const Navigator_ = (props) => {
     const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
       if (href === path) {
         props.updatepagetitle({ title });
-        props.updatebetabadge({ isBeta });
+        dispatch(updateBetaBadge({ isBeta }));
+
         return;
       }
       if (children && children.length > 0) {
@@ -1122,7 +1125,6 @@ const Navigator_ = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
-  updatebetabadge: bindActionCreators(updatebetabadge, dispatch),
   toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
   setAdapter: bindActionCreators(setAdapter, dispatch),
   updateCapabilities: bindActionCreators(updateCapabilities, dispatch),

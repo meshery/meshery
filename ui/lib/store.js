@@ -10,7 +10,6 @@ const initialState = fromJS({
   page: {
     path: '',
     title: '',
-    isBeta: false,
   },
   user: {},
   k8sConfig: [], // k8sconfig stores kubernetes cluster configs
@@ -129,12 +128,6 @@ export const reducer = (state = initialState, action) => {
           title: action.title,
         },
       });
-    case actionTypes.UPDATE_BETA_BADGE:
-      return state.mergeDeep({
-        page: {
-          isBeta: action.isBeta,
-        },
-      });
     case actionTypes.UPDATE_USER:
       return state.mergeDeep({ user: action.user });
     case actionTypes.UPDATE_CLUSTER_CONFIG:
@@ -243,12 +236,6 @@ export const updateProgress =
   ({ showProgress }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.UPDATE_PROGRESS, showProgress });
-  };
-
-export const updatebetabadge =
-  ({ isBeta }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_BETA_BADGE, isBeta });
   };
 
 export const updateUser =
