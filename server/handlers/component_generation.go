@@ -117,7 +117,7 @@ func generateComponents(pm meshkitmodels.PackageManager) ([]component.ComponentD
 	if err != nil {
 		return components, ErrGenerateComponents(err)
 	}
-	components, err = pkg.GenerateComponents()
+	components, err = pkg.GenerateComponents("")
 	if err != nil {
 		return components, ErrGenerateComponents(err)
 	}
