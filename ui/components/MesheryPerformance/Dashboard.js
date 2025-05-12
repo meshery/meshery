@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import MesheryMetrics from '../MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
@@ -22,6 +21,7 @@ import {
   useMediaQuery,
 } from '@layer5/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useSelectorRtk } from '@/store/hooks';
 
 const StyledPaper = styled(Paper)({
   padding: '1rem',
@@ -65,12 +65,13 @@ const Separator = styled('div')(({ theme, vertical }) => ({
       }),
 }));
 
-function Dashboard({ grafana, router }) {
+function Dashboard() {
   const [profiles, setProfiles] = useState({ count: 0, profiles: [] });
   const [tests, setTests] = useState({ count: 0, tests: [] });
   const [runTest, setRunTest] = useState(false);
   const { notify } = useNotification();
-
+  const router = useRouter();
+  const { grafana } = useSelectorRtk((state) => state.telemetry);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('xs'));
   if (matches) {
@@ -264,9 +265,4 @@ function Dashboard({ grafana, router }) {
   );
 }
 
-const mapStateToProps = (st) => {
-  const grafana = st.get('grafana').toJS();
-  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
-};
-
-export default connect(mapStateToProps, null)(withRouter(Dashboard));
+export default Dashboard;

@@ -133,10 +133,12 @@ const settingsRouter = (router) => {
 
 //TODO: Tabs are hardcoded everywhere
 const MesherySettings = (props) => {
-  const { meshAdapters, grafana, prometheus, router, classes } = props;
+  const { meshAdapters, router } = props;
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
   const theme = useTheme();
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { prometheus } = useSelectorRtk((state) => state.telemetry);
+  const { grafana } = useSelectorRtk((state) => state.telemetry);
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -228,9 +230,9 @@ const MesherySettings = (props) => {
   let backToPlay = '';
   if (k8sConfig.clusterConfigured === true && meshAdapters.length > 0) {
     backToPlay = (
-      <div className={classes.backToPlay}>
+      <div>
         <Link href="/management">
-          <div className={classes.link}>
+          <div>
             <LeftArrowIcon transform="grow-4" />
             You are ready to manage cloud native infrastructure
           </div>
@@ -432,16 +434,10 @@ const MesherySettings = (props) => {
 
 const mapStateToProps = (state) => {
   const meshAdapters = state.get('meshAdapters').toJS();
-  const grafana = state.get('grafana').toJS();
-  const prometheus = state.get('prometheus').toJS();
 
   return {
     meshAdapters,
-    grafana,
-    prometheus,
   };
 };
-
-MesherySettings.propTypes = { classes: PropTypes.object };
 
 export default connect(mapStateToProps, null)(withRouter(withNotify(MesherySettings)));

@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { connect } from 'react-redux';
 import {
   createUseRemoteComponent,
   getDependencies,
@@ -52,11 +51,13 @@ import {
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-function NavigatorExtension({ grafana, prometheus, url }) {
+function NavigatorExtension({ url }) {
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
+  const { prometheus } = useSelectorRtk((state) => state.telemetry);
+  const { grafana } = useSelectorRtk((state) => state.telemetry);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelectorRtk((state) => state.ui);
   const { store: legacyStore } = useContext(LegacyStoreContext);
@@ -174,14 +175,4 @@ function NavigatorExtension({ grafana, prometheus, url }) {
   );
 }
 
-const mapStateToProps = (st) => {
-  const grafana = st.get('grafana').toJS();
-  const prometheus = st.get('prometheus').toJS();
-
-  return {
-    grafana,
-    prometheus,
-  };
-};
-
-export default connect(mapStateToProps, null)(NavigatorExtension);
+export default NavigatorExtension;

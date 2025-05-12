@@ -36,7 +36,6 @@ import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { connect } from 'react-redux';
 import dataFetch from '../lib/data-fetch';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
@@ -49,7 +48,7 @@ import { iconMedium } from '../css/icons.styles';
 import { ACTIONS } from '../utils/Enum';
 import { getModelByName } from '../api/meshmodel';
 import { EVENT_TYPES } from '../lib/event-types';
-import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { useSelectorRtk } from '@/store/hooks';
@@ -104,8 +103,9 @@ const AdapterCard = styled(Card)(() => ({
 const MesheryAdapterPlayComponent = (props) => {
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const { adapter, notify, grafana } = props;
-
+  const { adapter } = props;
+  const { notify } = useNotification();
+  const { grafana } = useSelectorRtk((state) => state.telemetry);
   const router = useRouter();
   const cmEditorAddRef = useRef(null);
   const cmEditorDelRef = useRef(null);
@@ -1188,10 +1188,4 @@ MesheryAdapterPlayComponent.propTypes = {
   adapter: PropTypes.object.isRequired,
 };
 
-const mapStateToProps = (st) => {
-  const grafana = st.get('grafana').toJS();
-
-  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
-};
-
-export default connect(mapStateToProps, null)(withNotify(MesheryAdapterPlayComponent));
+export default MesheryAdapterPlayComponent;
