@@ -17,7 +17,6 @@ import {
   WorkspaceIcon,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import { setKeys } from '../../lib/store';
 import { Provider, useDispatch } from 'react-redux';
 import { store } from '../../store';
 import { useRouter } from 'next/router';
@@ -28,7 +27,7 @@ import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
-import { setOrganization } from '@/store/slices/mesheryUi';
+import { setOrganization, setKeys } from '@/store/slices/mesheryUi';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,

@@ -1,8 +1,4 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
-import { setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
@@ -22,9 +18,9 @@ import {
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
-import { setOrganization } from '@/store/slices/mesheryUi';
+import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
-const RequestForm = (props) => {
+const RequestForm = () => {
   const {
     data: orgsResponse,
     isSuccess: isOrgsSuccess,
@@ -36,13 +32,12 @@ const RequestForm = (props) => {
   let orgs = orgsResponse?.organizations || [];
   const dispatch = useDispatchRtk();
   const { organization } = useSelectorRtk((state) => state.ui);
-
-  const { setKeys } = props;
+  const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
 
-  useGetCurrentAbilities(organization, setKeys, skip);
+  useGetCurrentAbilities(organization, dispatchSetKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -112,10 +107,6 @@ const RequestForm = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  setKeys: bindActionCreators(setKeys, dispatch),
-});
-
 const RequestFormWithErrorBoundary = (props) => {
   return (
     <NoSsr>
@@ -128,4 +119,4 @@ const RequestFormWithErrorBoundary = (props) => {
   );
 };
 
-export default connect(null, mapDispatchToProps)(withRouter(RequestFormWithErrorBoundary));
+export default RequestFormWithErrorBoundary;

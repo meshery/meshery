@@ -1,8 +1,6 @@
 //@ts-check
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { NoSsr } from '@layer5/sistent';
-import { setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
@@ -21,7 +19,7 @@ import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useTheme } from '@layer5/sistent';
 import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
-import { setOrganization } from '@/store/slices/mesheryUi';
+import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
 const OrgSwitcher = () => {
   const {
@@ -31,9 +29,8 @@ const OrgSwitcher = () => {
     error: orgsError,
   } = useGetOrgsQuery({});
   const { organization } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatch();
-  const rtkDispatch = useDispatchRtk();
-  const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
+  const dispatch = useDispatchRtk();
+  const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
   const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
 
   let orgs = orgsResponse?.organizations || [];

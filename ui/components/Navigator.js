@@ -1127,7 +1127,6 @@ const mapStateToProps = (state) => ({
   meshAdapters: state.get('meshAdapters').toJS(),
   meshAdaptersts: state.get('meshAdaptersts'),
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  keys: state.get('keys'),
   catalogVisibility: state.get('catalogVisibility'),
 });
 
