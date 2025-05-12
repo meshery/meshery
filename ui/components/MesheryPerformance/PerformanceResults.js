@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { connect } from 'react-redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import CustomToolbarSelect from '../CustomToolbarSelect';
