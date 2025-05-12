@@ -31,7 +31,7 @@ const coreSlice = createSlice({
   name: 'core',
   initialState,
   reducers: {
-    updatePage: (state, action) => {
+    updatePagePath: (state, action) => {
       state.page.path = action.payload.path;
     },
     updateTitle: (state, action) => {
@@ -100,7 +100,7 @@ const coreSlice = createSlice({
 
 // Extract the action creators and the reducer
 export const {
-  updatePage,
+  updatePagePath,
   updateTitle,
   updateBetaBadge,
   updateUser,

@@ -98,6 +98,7 @@ import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import yaml from 'js-yaml';
 import ActionPopover from './MesheryPatterns/ActionPopover';
+import { useSelectorRtk } from '@/store/hooks';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -290,7 +291,6 @@ function resetSelectedPattern() {
 
 function MesheryPatterns({
   updateProgress,
-  user,
   selectedK8sContexts,
   catalogVisibility,
   disableCreateImportDesignButton = false,
@@ -324,7 +324,7 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-
+  const { user } = useSelectorRtk((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {
@@ -1730,7 +1730,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => ({
-  user: state.get('user')?.toObject(),
   selectedK8sContexts: state.get('selectedK8sContexts'),
   catalogVisibility: state.get('catalogVisibility'),
 });

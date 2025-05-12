@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
-import { connect, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import HelpIcon from '@mui/icons-material/Help';
@@ -19,11 +19,7 @@ import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import {
-  toggleDrawer,
-  setAdapter,
-  updateCapabilities,
-} from '../lib/store';
+import { toggleDrawer, setAdapter, updateCapabilities } from '../lib/store';
 import {
   CatalogIcon,
   CustomTooltip,
@@ -1130,7 +1126,6 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (state) => ({
   meshAdapters: state.get('meshAdapters').toJS(),
   meshAdaptersts: state.get('meshAdaptersts'),
-  path: state.get('page').get('path'),
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
   organization: state.get('organization'),

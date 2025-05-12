@@ -14,6 +14,7 @@ import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@layer5/sistent';
 import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
+import { useSelectorRtk } from '@/store/hooks';
 
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
@@ -21,7 +22,6 @@ const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
 const MesheryResults = ({
   classes,
   results_selection,
-  user,
   endpoint,
   updateProgress,
   updateResultsSelection,
@@ -36,6 +36,7 @@ const MesheryResults = ({
   const [results, setResults] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const { user } = useSelectorRtk((state) => state.ui);
 
   // RTK Query hook for fetching results
   const [trigger, { isFetching, error }] = useLazyGetResultsQuery();
@@ -442,7 +443,6 @@ const mapStateToProps = (state) => ({
   startKey: state.get('results').get('startKey'),
   results: state.get('results').get('results').toArray(),
   results_selection: state.get('results_selection').toObject(),
-  user: state.get('user')?.toObject(),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryResults));

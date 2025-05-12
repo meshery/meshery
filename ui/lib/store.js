@@ -7,10 +7,6 @@ import { createDispatchHook, createSelectorHook } from 'react-redux';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
 const initialState = fromJS({
-  page: {
-    path: '',
-  },
-  user: {},
   k8sConfig: [], // k8sconfig stores kubernetes cluster configs
   selectedK8sContexts: ['all'], // The selected k8s context on which the operations should be performed
   loadTest: {
@@ -219,22 +215,11 @@ export const reducer = (state = initialState, action) => {
 };
 
 // ACTION CREATOR
-export const updatepagepath =
-  ({ path }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_PAGE, path });
-  };
 
 export const updateProgress =
   ({ showProgress }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.UPDATE_PROGRESS, showProgress });
-  };
-
-export const updateUser =
-  ({ user }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_USER, user });
   };
 
 export const updateK8SConfig =

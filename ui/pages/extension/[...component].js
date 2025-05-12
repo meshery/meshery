@@ -4,11 +4,7 @@ import ExtensionSandbox, {
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
 import { Box, CircularProgress, NoSsr } from '@layer5/sistent';
-import {
-  updatepagepath,
-  updateExtensionType,
-  updateCapabilities,
-} from '../../lib/store';
+import { updateExtensionType, updateCapabilities } from '../../lib/store';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
@@ -18,7 +14,7 @@ import { useRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { updateBetaBadge, updateTitle } from '@/store/slices/mesheryUi';
+import { updateBetaBadge, updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 import { useDispatchRtk } from '@/store/hooks';
 
 /**
@@ -76,7 +72,7 @@ function RemoteExtension() {
         setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
         rtkDispatch(updateTitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
         rtkDispatch(updateBetaBadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
-        dispatch(updatepagepath({ path: getPath() }));
+        rtkDispatch(updatePagePath({ path: getPath() }));
       }
     });
   }, [capabilitiesRegistry, dispatch]);

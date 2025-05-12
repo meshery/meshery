@@ -41,6 +41,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
+import { useSelectorRtk } from '@/store/hooks';
 
 /**
  * Type Definition for View Type
@@ -53,7 +54,7 @@ import { DefaultTableCell, SortableTableCell } from '../connections/common';
  * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
  */
 
-function PerformanceProfile({ updateProgress, user, handleDelete }) {
+function PerformanceProfile({ updateProgress, handleDelete }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -69,6 +70,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const { user } = useSelectorRtk((state) => state.ui);
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
   /**
@@ -587,11 +589,9 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
     </>
   );
 }
-const mapStateToProps = (state) => {
-  return { user: state.get('user')?.toObject() };
-};
+
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PerformanceProfile);
+export default connect(null, mapDispatchToProps)(PerformanceProfile);

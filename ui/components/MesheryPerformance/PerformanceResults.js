@@ -34,6 +34,7 @@ import {
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { clearResultsSelection, updateProgress, updateResultsSelection } from '../../lib/store';
+import { useSelectorRtk } from '@/store/hooks';
 
 const COL_MAPPING = {
   QPS: 3,
@@ -505,6 +506,7 @@ function MesheryResults({
   const [anchorEl, setAnchorEl] = useState([]);
   const [socialMessage, setSocialMessage] = useState();
   const theme = useTheme();
+  const { user } = useSelectorRtk((state) => state.ui);
 
   const searchTimeout = useRef();
   const { notify } = useNotification();
@@ -764,7 +766,6 @@ const mapStateToProps = (state) => {
   const startKey = state.get('results').get('startKey');
   const results = state.get('results').get('results').toArray();
   const results_selection = state.get('results_selection').toObject();
-  const user = state.get('user')?.toObject();
   if (typeof results !== 'undefined') {
     return {
       startKey,

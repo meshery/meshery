@@ -6,11 +6,12 @@ import { Provider, connect } from 'react-redux';
 import { store } from '../store';
 import { bindActionCreators } from 'redux';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { IconButtonAvatar } from './Header.styles';
+import { useDispatchRtk } from '@/store/hooks';
+import { updateUser } from '@/store/slices/mesheryUi';
 /**
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
@@ -20,7 +21,7 @@ const User = (props) => {
   const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
-
+  const dispatch = useDispatchRtk();
   const {
     data: userData,
     isSuccess: isGetUserSuccess,
@@ -44,7 +45,7 @@ const User = (props) => {
 
   useEffect(() => {
     if (!userLoaded && isGetUserSuccess) {
-      props.updateUser({ user: userData });
+      dispatch(updateUser({ user: userData }));
       setUserLoaded(true);
     } else if (isGetUserError) {
       notify({
@@ -106,12 +107,8 @@ const UserProvider = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateUser: bindActionCreators(updateUser, dispatch),
-});
-
 const mapStateToProps = (state) => ({
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserProvider);
+export default connect(mapStateToProps, null)(UserProvider);

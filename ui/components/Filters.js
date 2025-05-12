@@ -74,6 +74,7 @@ import {
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import { useSelectorRtk } from '@/store/hooks';
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
@@ -238,7 +239,6 @@ function resetSelectedFilter() {
 
 function MesheryFilters({
   updateProgress,
-  user,
   catalogVisibility,
   // toggleCatalogContent,
 }) {
@@ -255,6 +255,7 @@ function MesheryFilters({
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
+  const { user } = useSelectorRtk((state) => state.ui);
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -1360,7 +1361,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    user: state.get('user')?.toObject(),
     selectedK8sContexts: state.get('selectedK8sContexts'),
     catalogVisibility: state.get('catalogVisibility'),
   };

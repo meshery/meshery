@@ -1,18 +1,15 @@
 import React, { useEffect } from 'react';
 import { NoSsr } from '@layer5/sistent';
-import { updatepagepath, } from '../../../lib/store';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
 import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
 import { useDispatchRtk } from '@/store/hooks';
-import { updateTitle } from '@/store/slices/mesheryUi';
+import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 
-function DesignConfiguratorPage({ updatepagepath }) {
+function DesignConfiguratorPage() {
   const dispatch = useDispatchRtk();
   useEffect(() => {
-    updatepagepath({ path: getPath(), isBeta: false, title: 'Configure Design' });
+    dispatch(updatePagePath({ path: getPath() }));
     dispatch(updateTitle({ title: 'Configure Design' }));
   }, []);
 
@@ -26,8 +23,4 @@ function DesignConfiguratorPage({ updatepagepath }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(DesignConfiguratorPage);
+export default DesignConfiguratorPage;

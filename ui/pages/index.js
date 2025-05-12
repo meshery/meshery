@@ -1,16 +1,14 @@
 import { NoSsr } from '@layer5/sistent';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React from 'react';
 import DashboardComponent from '../components/DashboardComponent';
 import { getPath } from '../lib/path';
-import { updatepagepath } from '../lib/store';
+import { useDispatchRtk } from '@/store/hooks';
+import { updatePagePath } from '@/store/slices/mesheryUi';
 
-function Index(props) {
-  useEffect(() => {
-    props.updatepagepath({ path: getPath() });
-  }, []);
+function Index() {
+  const dispatch = useDispatchRtk();
+  dispatch(updatePagePath({ path: getPath() }));
 
   return (
     <NoSsr>
@@ -22,8 +20,4 @@ function Index(props) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(Index);
+export default Index;

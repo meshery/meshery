@@ -1,7 +1,5 @@
 import UserPreferences from '../../components/UserPreferences';
-import { updatepagepath, } from '../../lib/store';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { getPath } from '../../lib/path';
 import Head from 'next/head';
 import { promisifiedDataFetch } from '../../lib/data-fetch';
@@ -9,7 +7,7 @@ import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import { useDispatchRtk } from '@/store/hooks';
-import { updateTitle } from '@/store/slices/mesheryUi';
+import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 
 const UserPref = (props) => {
   const dispatch = useDispatchRtk();
@@ -21,7 +19,7 @@ const UserPref = (props) => {
   }, [props.selectedK8sContext]);
 
   useEffect(() => {
-    props.updatepagepath({ path: getPath() });
+    dispatch(updatePagePath({ path: getPath() }));
     dispatch(updateTitle({ title: 'User Preferences' }));
   }, []);
 
@@ -57,9 +55,6 @@ const UserPref = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-});
 const mapStateToProps = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
 
@@ -68,4 +63,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserPref);
+export default connect(mapStateToProps, null)(UserPref);

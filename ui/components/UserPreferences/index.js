@@ -37,7 +37,7 @@ import {
   FormContainerWrapper,
   FormGroupWrapper,
 } from './style';
-import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
+import {  updateProgress, toggleCatalogContent } from '../../lib/store';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
@@ -639,7 +639,6 @@ const UserPreference = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateUser: bindActionCreators(updateUser, dispatch),
   updateProgress: bindActionCreators(updateProgress, dispatch),
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
 });

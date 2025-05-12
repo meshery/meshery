@@ -400,7 +400,7 @@ const Header = ({
   const { notify } = useNotification;
   const isBeta = useSelectorRtk((state) => state.ui.page.isBeta);
   const title = useSelectorRtk((state) => state.ui.page.title);
-  
+
   const {
     data: providerCapabilities,
     isSuccess: isProviderCapabilitiesSuccess,
