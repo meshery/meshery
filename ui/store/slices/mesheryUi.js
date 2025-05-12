@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
+import { store } from '..';
 
 const initialState = {
   page: {
@@ -90,7 +91,7 @@ export const {
   updateUser,
   updateK8SConfig,
   setK8sContexts: setK8sContextsAction,
-  updateProgress,
+  updateProgress: updateProgressAction,
   toggleDrawer,
   toggleCatalogContent,
   setControllerState,
@@ -115,6 +116,9 @@ export const setK8sContexts = (payload) => (dispatch) => {
   });
 };
 
+export const updateProgress = (progressData) => {
+  store.dispatch(updateProgressAction(progressData));
+};
 // Core middleware configuration
 export const coreMiddleware = (getDefaultMiddleware) =>
   getDefaultMiddleware({

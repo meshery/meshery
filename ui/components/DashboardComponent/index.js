@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { useRouter, withRouter } from 'next/router';
-import { useNotificationHandlers, withNotify } from '../../utils/hooks/useNotification';
-import { updateProgress } from '../../lib/store';
+import { useRouter } from 'next/router';
+import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
@@ -72,7 +69,7 @@ const useDashboardRouter = () => {
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
-const DashboardComponent = ({ updateProgress }) => {
+const DashboardComponent = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
   const defaultLayout = isLoading
@@ -397,7 +394,6 @@ const DashboardComponent = ({ updateProgress }) => {
                   resource={ResourcesConfig[resource]}
                   selectedResource={selectedResource}
                   handleChangeSelectedResource={handleChangeSelectedResource}
-                  updateProgress={updateProgress}
                   k8sConfig={k8sConfig}
                   selectedK8sContexts={selectedK8sContexts}
                   CRDsKeys={CRDsKeys}
@@ -411,7 +407,6 @@ const DashboardComponent = ({ updateProgress }) => {
                   selectedK8sContexts={selectedK8sContexts}
                   resourceConfig={ResourcesConfig[resource].tableConfig}
                   menu={ResourcesConfig[resource].submenu}
-                  updateProgress={updateProgress}
                 />
               )}
             </TabPanel>
@@ -423,8 +418,4 @@ const DashboardComponent = ({ updateProgress }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(withRouter(withNotify(DashboardComponent)));
+export default DashboardComponent;

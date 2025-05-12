@@ -23,11 +23,11 @@ import { getAllUsers } from '@/rtk-query/user';
 import { FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { updateProgress } from 'lib/store';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);

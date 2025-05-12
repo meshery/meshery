@@ -1,8 +1,9 @@
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { useNotification } from '@/utils/hooks/useNotification';
 import dataFetch from 'lib/data-fetch';
 import { EVENT_TYPES } from 'lib/event-types';
-import { updateProgress } from 'lib/store';
+
 import { useDispatch } from 'react-redux';
 
 export function useTelemetryHook(connectionType) {
@@ -19,7 +20,7 @@ function PingPrometheus() {
   const dispatch = useDispatch();
 
   const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
 
     dataFetch(
       `/api/telemetry/metrics/ping/${connectionID}`,
@@ -49,7 +50,7 @@ function PingPrometheus() {
       },
     );
 
-    dispatch(updateProgress({ showProgress: false }));
+    dispatch(updateProgressAction({ showProgress: false }));
   };
   return ping;
 }
@@ -58,7 +59,7 @@ function PingGrafana() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     dataFetch(
       `/api/telemetry/metrics/grafana/ping/${connectionID}`,
       {
@@ -79,7 +80,7 @@ function PingGrafana() {
         });
       },
     );
-    dispatch(updateProgress({ showProgress: false }));
+    dispatch(updateProgressAction({ showProgress: false }));
   };
   return ping;
 }

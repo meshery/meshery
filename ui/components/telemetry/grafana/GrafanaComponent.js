@@ -9,7 +9,7 @@ import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
 // import GrafanaCharts from './GrafanaCharts';
-import { updateGrafanaConfig, updateProgress } from '../../../lib/store';
+import { updateGrafanaConfig } from '../../../lib/store';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -27,6 +27,7 @@ import {
 } from '@/rtk-query/telemetry';
 import useDebouncedCallback from '@/utils/hooks/useDebounce';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const StyledChartTitle = styled(Typography)(({ theme }) => ({
   marginLeft: theme.spacing(3),
@@ -109,11 +110,11 @@ const GrafanaComponent = (props) => {
       connectionName,
     } = state;
     if (!grafanaURL) return;
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     try {
       const result = await triggerGetGrafanaBoards({ connectionID, grafanaBoardSearch }).unwrap();
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
       if (result !== undefined) {
         setState((prev) => ({ ...prev, grafanaBoards: result }));
         props.updateGrafanaConfig({
@@ -129,7 +130,7 @@ const GrafanaComponent = (props) => {
         });
       }
     } catch (error) {
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
       console.error('Error fetching Grafana boards:', error);
     }
   }, 300);
@@ -142,12 +143,12 @@ const GrafanaComponent = (props) => {
 
     // Build URL-encoded params (using URLSearchParams for brevity)
     const params = new URLSearchParams({ grafanaURL, grafanaAPIKey }).toString();
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     try {
       const result = await configureGrafana({ params }).unwrap();
       console.log(result);
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
 
       if (result !== undefined) {
         props.notify({ message: 'Grafana was configured!', event_type: EVENT_TYPES.SUCCESS });
@@ -165,7 +166,7 @@ const GrafanaComponent = (props) => {
         debouncedFetchBoards();
       }
     } catch (error) {
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
       console.error('There was an error communicating with Grafana', error);
     }
   };
@@ -204,7 +205,7 @@ const GrafanaComponent = (props) => {
   };
 
   const handleError = (msg) => () => {
-    props.updateProgress({ showProgress: false });
+    updateProgress({ showProgress: false });
     props.notify({ message: msg, event_type: EVENT_TYPES.ERROR });
   };
 
@@ -213,7 +214,7 @@ const GrafanaComponent = (props) => {
   };
 
   const handleGrafanaChipDelete = async () => {
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
     try {
       // Here we use a mutation to update the connection status.
       // No payload is needed to reset; adjust as required by your API.
@@ -221,7 +222,7 @@ const GrafanaComponent = (props) => {
         connectionKind: CONNECTION_KINDS.GRAFANA,
         connectionPayload: {},
       }).unwrap();
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
       if (result !== undefined) {
         // Clear local Grafana configuration state
         setState((prev) => ({
@@ -244,7 +245,7 @@ const GrafanaComponent = (props) => {
         });
       }
     } catch (error) {
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
       console.error('There was an error communicating with Grafana', error);
     }
   };
@@ -274,7 +275,7 @@ const GrafanaComponent = (props) => {
   const persistBoardSelection = async (selectedBoardsConfigs) => {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, connectionID } = state;
     console.log(selectedBoardsConfigs);
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     try {
       // Trigger the mutation with the connectionID and selected boards payload
@@ -282,7 +283,7 @@ const GrafanaComponent = (props) => {
         connectionID,
         selectedBoardsConfigs: JSON.stringify(selectedBoardsConfigs),
       }).unwrap();
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
 
       if (result !== undefined) {
         // Update local state and parent configuration
@@ -302,7 +303,7 @@ const GrafanaComponent = (props) => {
         });
       }
     } catch (error) {
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
       console.error('There was an error persisting the board selection', error);
     }
   };
@@ -327,7 +328,7 @@ const GrafanaComponent = (props) => {
   useEffect(() => {
     if (!props.isMeshConfigured || grafanaConfigIsLoading || grafanaConfigIsError) return;
 
-    props.updateProgress({ showProgress: grafanaConfigIsLoading });
+    updateProgress({ showProgress: grafanaConfigIsLoading });
     if (grafanaConfigData?.grafanaURL) return;
 
     const selector = {
@@ -430,7 +431,6 @@ GrafanaComponent.propTypes = {
 
 const mapDispatchToProps = (dispatch) => ({
   updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 const mapStateToProps = (st) => {

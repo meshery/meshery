@@ -30,7 +30,6 @@ import {
   updateLoadTestData,
   updateStaticPrometheusBoardConfig,
   updateLoadTestPref,
-  updateProgress,
 } from '../../lib/store';
 import dataFetch from '../../lib/data-fetch';
 import MesheryChart from '../MesheryChart';
@@ -61,6 +60,7 @@ import {
 } from './style';
 import { getMeshModels } from '@/api/meshmodel';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -429,12 +429,12 @@ const MesheryPerformanceComponent_ = (props) => {
   };
 
   const handleProfileUpload = (body, generateNotif, cb) => {
-    if (generateNotif) props.updateProgress({ showProgress: true });
+    if (generateNotif) updateProgress({ showProgress: true });
     savePerformanceProfile({ body: body })
       .unwrap()
       .then((result) => {
         if (result) {
-          props.updateProgress({ showProgress: false });
+          updateProgress({ showProgress: false });
           setPerformanceProfileID(result.id);
           if (cb) cb(result);
           if (generateNotif) {
@@ -448,7 +448,7 @@ const MesheryPerformanceComponent_ = (props) => {
       })
       .catch((err) => {
         console.error(err);
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         const notify = props.notify;
         notify({
           message: 'Failed to create performance profile',
@@ -1312,7 +1312,6 @@ export const MesheryPerformanceComponent = (props) => {
     updateStaticPrometheusBoardConfig: (config) =>
       dispatch(updateStaticPrometheusBoardConfig(config)),
     updateLoadTestPref: (pref) => dispatch(updateLoadTestPref(pref)),
-    updateProgress: (progress) => dispatch(updateProgress(progress)),
   };
 
   return <MesheryPerformanceComponentWithStyles {...wrappedProps} />;

@@ -1,7 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
 import {
   Tab,
   Tabs,
@@ -37,7 +34,6 @@ import {
   FormContainerWrapper,
   FormGroupWrapper,
 } from './style';
-import { updateProgress } from '../../lib/store';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
@@ -57,7 +53,7 @@ import {
 import { ThemeTogglerCore } from '@/themes/hooks';
 import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
 import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
-import { toggleCatalogContent } from '@/store/slices/mesheryUi';
+import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
 const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
@@ -146,8 +142,7 @@ const UserPreference = (props) => {
   };
 
   const handleError = (name) => () => {
-    props.updateProgress({ showProgress: false });
-
+    updateProgress({ showProgress: false });
     notify({ message: name, event_type: EVENT_TYPES.ERROR });
   };
 
@@ -169,11 +164,11 @@ const UserPreference = (props) => {
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
     });
 
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
     updateUserPrefWithContext({ body: requestBody })
       .unwrap()
       .then((result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
           notify({ message: msg, event_type: val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
@@ -637,8 +632,4 @@ const UserPreference = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(withRouter(UserPreference));
+export default UserPreference;

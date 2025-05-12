@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -29,8 +30,7 @@ export const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
-  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
-    props;
+  const { k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } = props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);

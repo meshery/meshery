@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { updateResultsSelection, clearResultsSelection, updateProgress } from '../lib/store';
+import { updateResultsSelection, clearResultsSelection } from '../lib/store';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
@@ -15,6 +15,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@layer5/sistent';
 import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
@@ -23,7 +24,6 @@ const MesheryResults = ({
   classes,
   results_selection,
   endpoint,
-  updateProgress,
   updateResultsSelection,
   notify,
   customHeader,
@@ -427,7 +427,6 @@ MesheryResults.propTypes = {
   results_selection: PropTypes.object.isRequired,
   user: PropTypes.object,
   endpoint: PropTypes.string,
-  updateProgress: PropTypes.func.isRequired,
   updateResultsSelection: PropTypes.func.isRequired,
   notify: PropTypes.func.isRequired,
   customHeader: PropTypes.node,
@@ -436,7 +435,6 @@ MesheryResults.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
   clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 const mapStateToProps = (state) => ({

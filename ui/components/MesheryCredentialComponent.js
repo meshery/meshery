@@ -13,9 +13,6 @@ import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
@@ -29,6 +26,7 @@ import {
   useUpdateCredentialMutation,
 } from '@/rtk-query/credentials';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const CredentialIcon = styled('img')({
   width: '24px',
@@ -48,7 +46,7 @@ const CustomTableCell = styled(TableCell)({
 
 const schema_array = ['prometheus', 'grafana', 'kubernetes'];
 
-const MesheryCredentialComponent = ({ updateProgress }) => {
+const MesheryCredentialComponent = () => {
   const { data: credentialsData, isLoading } = useGetCredentialsQuery();
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
@@ -419,8 +417,4 @@ const MesheryCredentialComponent = ({ updateProgress }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(MesheryCredentialComponent);
+export default MesheryCredentialComponent;

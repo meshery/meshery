@@ -33,8 +33,9 @@ import {
 } from '@layer5/sistent';
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
-import { clearResultsSelection, updateProgress, updateResultsSelection } from '../../lib/store';
+import { clearResultsSelection, updateResultsSelection } from '../../lib/store';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const COL_MAPPING = {
   QPS: 3,
@@ -485,7 +486,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
  * }} props
  */
 function MesheryResults({
-  updateProgress,
   endpoint,
   updateResultsSelection,
   results_selection,
@@ -758,7 +758,6 @@ function MesheryResults({
 const mapDispatchToProps = (dispatch) => ({
   updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
   clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 const mapStateToProps = (state) => {

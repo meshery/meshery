@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import { ErrorBoundary, AppBar } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../lib/store';
 import Modal from '../Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
@@ -13,7 +10,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import { withRouter } from 'next/router';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
 
@@ -68,7 +64,7 @@ function ConnectionManagementPage(props) {
   );
 }
 function Connections(props) {
-  const { updateProgress, router } = props;
+  const { router } = props;
   const [_operatorState] = useState([]);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
@@ -152,7 +148,6 @@ function Connections(props) {
           )}
           {tab === 1 && (
             <MeshSyncTable
-              updateProgress={updateProgress}
               selectedResourceId={connectionId}
               updateUrlWithResourceId={updateUrlWithConnectionId}
             />
@@ -165,10 +160,6 @@ function Connections(props) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
 const ConnectionManagementPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
@@ -179,8 +170,4 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
   );
 };
 
-// @ts-ignore
-export default connect(
-  null,
-  mapDispatchToProps,
-)(withRouter(ConnectionManagementPageWithErrorBoundary));
+export default ConnectionManagementPageWithErrorBoundary;

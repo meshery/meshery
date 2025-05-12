@@ -1,8 +1,6 @@
 import React from 'react';
 import { Grid, List, ListItem, ListItemText, Box, styled, useTheme } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../lib/store';
+
 import {
   FormatId,
   FormatStructuredData,
@@ -314,8 +312,4 @@ const FormatConnectionMetadata = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(FormatConnectionMetadata);
+export default FormatConnectionMetadata;

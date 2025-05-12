@@ -32,6 +32,7 @@ import {
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -41,7 +42,7 @@ const ACTION_TYPES = {
 };
 
 export default function MeshSyncTable(props) {
-  const { updateProgress, selectedResourceId, updateUrlWithResourceId } = props;
+  const { selectedResourceId, updateUrlWithResourceId } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);

@@ -33,7 +33,6 @@ import {
   useUnassignTeamFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
-import { updateProgress } from '../../../lib/store';
 import { useNotification, useNotificationHandlers } from '../../../utils/hooks/useNotification';
 import { RJSFModalWrapper } from '../../Modal';
 import _PromptComponent from '../../PromptComponent';
@@ -50,6 +49,7 @@ import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',

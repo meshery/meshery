@@ -1,10 +1,11 @@
-import { connect } from 'react-redux';
 import { LinearProgress } from '@layer5/sistent';
 import React, { useEffect, useRef } from 'react';
 import { useSnackbar } from 'notistack';
+import { useSelectorRtk } from '@/store/hooks';
 
-const MesheryProgressBar = ({ showProgress }) => {
+const MesheryProgressBar = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+  const { showProgress } = useSelectorRtk((state) => state.ui);
   const snackbarKey = useRef(null);
 
   useEffect(() => {
@@ -24,6 +25,4 @@ const MesheryProgressBar = ({ showProgress }) => {
   return null;
 };
 
-const mapStateToProps = (state) => ({ showProgress: state.get('showProgress') });
-
-export default connect(mapStateToProps)(MesheryProgressBar);
+export default MesheryProgressBar;

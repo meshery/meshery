@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
-import { connect } from 'react-redux';
-import { updateProgress } from '../../lib/store';
-import { bindActionCreators } from 'redux';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import GenericModal from '../GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
@@ -13,6 +10,7 @@ import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { CalendarComponent } from './style';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const localizer = momentLocalizer(moment);
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
@@ -87,7 +85,7 @@ function generateDateRange(from, to) {
  * }} props
  * @returns
  */
-function PerformanceCalendar({ style, updateProgress }) {
+function PerformanceCalendar({ style }) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
@@ -211,8 +209,4 @@ function PerformanceCalendar({ style, updateProgress }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(PerformanceCalendar);
+export default PerformanceCalendar;

@@ -44,7 +44,6 @@ const initialState = fromJS({
     ts: new Date(-8640000000000000),
   },
   staticPrometheusBoardConfig: {},
-  showProgress: false,
   selectedAdapter: '',
 });
 
@@ -110,12 +109,6 @@ export const reducer = (state = initialState, action) => {
 };
 
 // ACTION CREATOR
-
-export const updateProgress =
-  ({ showProgress }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_PROGRESS, showProgress });
-  };
 
 export const updateLoadTestData =
   ({ loadTest }) =>

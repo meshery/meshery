@@ -3,12 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Moment from 'react-moment';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
-import { updateProgress } from '../lib/store';
 import _PromptComponent from './PromptComponent';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
@@ -75,6 +72,7 @@ import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
@@ -237,7 +235,7 @@ function resetSelectedFilter() {
   return { show: false, filter: null };
 }
 
-function MesheryFilters({ updateProgress }) {
+function MesheryFilters() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -1323,8 +1321,4 @@ const PublishModal = React.memo((props) => {
   );
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(MesheryFilters);
+export default MesheryFilters;

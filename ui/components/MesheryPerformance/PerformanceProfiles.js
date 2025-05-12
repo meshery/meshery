@@ -1,8 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -27,7 +25,6 @@ import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
-import { updateProgress } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
@@ -42,6 +39,7 @@ import { keys } from '@/utils/permission_constants';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 /**
  * Type Definition for View Type
@@ -54,7 +52,7 @@ import { useSelectorRtk } from '@/store/hooks';
  * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
  */
 
-function PerformanceProfile({ updateProgress, handleDelete }) {
+function PerformanceProfile({ handleDelete }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -590,8 +588,4 @@ function PerformanceProfile({ updateProgress, handleDelete }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(PerformanceProfile);
+export default PerformanceProfile;

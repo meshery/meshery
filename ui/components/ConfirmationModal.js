@@ -18,12 +18,10 @@ import {
   useTheme,
 } from '@layer5/sistent';
 import { Search } from '@mui/icons-material';
-import { connect } from 'react-redux';
-import { updateProgress } from '../lib/store';
+import { useLegacyDispatch } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { bindActionCreators } from 'redux';
 import { useEffect, useState } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
@@ -39,8 +37,8 @@ import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
-import { setK8sContexts } from '@/store/slices/mesheryUi';
-import { useSelectorRtk } from '@/store/hooks';
+import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 
 const DialogSubtitle = styled(DialogContentText)({
   overflowWrap: 'anywhere',
@@ -149,7 +147,7 @@ function ConfirmationMsg(props) {
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
-
+  const dispatch = useLegacyDispatch();
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
@@ -209,26 +207,25 @@ function ConfirmationMsg(props) {
   const setContextViewer = (id) => {
     if (id === 'all') {
       if (selectedK8sContexts?.includes('all')) {
-        // updateProgress({ showProgress : true })
-        setK8sContexts({ selectedK8sContexts: [] });
+        dispatch(setK8sContexts({ selectedK8sContexts: [] }));
       } else {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
       }
       return;
     }
 
     if (selectedK8sContexts?.includes(id)) {
       const filteredContexts = selectedK8sContexts.filter((cid) => cid !== id);
-      setK8sContexts({ selectedK8sContexts: filteredContexts });
+      dispatch(setK8sContexts({ selectedK8sContexts: filteredContexts }));
     } else if (selectedK8sContexts[0] === 'all') {
       const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
-      setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) });
+      dispatch(setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) }));
     } else {
       if (selectedK8sContexts.length === k8scontext.length - 1) {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
         return;
       }
-      setK8sContexts({ selectedK8sContexts: [...selectedK8sContexts, id] });
+      dispatch(setK8sContexts({ selectedK8sContexts: [...selectedK8sContexts, id] }));
     }
   };
   const theme = useTheme();
@@ -454,13 +451,10 @@ function ConfirmationMsg(props) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+export default ConfirmationMsg;
 
-export default connect(null, mapDispatchToProps)(ConfirmationMsg);
-
-export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8sContexts }) => {
+export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => {
+  const dispatch = useDispatchRtk();
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
     return operatorState !== 'DISABLED';
   });
@@ -484,26 +478,25 @@ export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8
   const setContextViewer = (id) => {
     if (id === 'all') {
       if (selectedContexts?.includes('all')) {
-        // updateProgress({ showProgress : true })
-        setK8sContexts({ selectedK8sContexts: [] });
+        dispatch(setK8sContexts({ selectedK8sContexts: [] }));
       } else {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
       }
       return;
     }
 
     if (selectedContexts?.includes(id)) {
       const filteredContexts = selectedContexts.filter((cid) => cid !== id);
-      setK8sContexts({ selectedK8sContexts: filteredContexts });
+      dispatch(setK8sContexts({ selectedK8sContexts: filteredContexts }));
     } else if (selectedContexts[0] === 'all') {
       const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
-      setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) });
+      dispatch(setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) }));
     } else {
       if (selectedContexts.length === k8scontext.length - 1) {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
         return;
       }
-      setK8sContexts({ selectedK8sContexts: [...selectedContexts, id] });
+      dispatch(setK8sContexts({ selectedK8sContexts: [...selectedContexts, id] }));
     }
   };
 
@@ -558,4 +551,4 @@ export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8
   );
 };
 
-export const SelectDeploymentTarget = connect(null, mapDispatchToProps)(SelectDeploymentTarget_);
+export const SelectDeploymentTarget = SelectDeploymentTarget_;

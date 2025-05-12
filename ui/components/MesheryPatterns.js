@@ -34,9 +34,6 @@ import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../lib/store';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -99,6 +96,7 @@ import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import yaml from 'js-yaml';
 import ActionPopover from './MesheryPatterns/ActionPopover';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -290,7 +288,6 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress,
   disableCreateImportDesignButton = false,
   disableUniversalFilter = false,
   hideVisibility = false,
@@ -1718,9 +1715,5 @@ const PublishModal = React.memo((props) => {
   );
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
 // @ts-ignore
-export default connect(null, mapDispatchToProps)(MesheryPatterns);
+export default MesheryPatterns;

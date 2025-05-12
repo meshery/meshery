@@ -24,7 +24,7 @@ import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import { updateProgress, useLegacySelector } from 'lib/store';
+import { useLegacySelector } from 'lib/store';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -44,6 +44,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const MainDesignsContent = ({
   page,

@@ -37,9 +37,7 @@ import PropTypes from 'prop-types';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
-import { updateProgress } from '../lib/store';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
@@ -55,6 +53,7 @@ import { withNotify } from '../utils/hooks/useNotification';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const AdapterChip = styled(Chip)(({ theme }) => ({
   height: '50px',
@@ -105,7 +104,7 @@ const AdapterCard = styled(Card)(() => ({
 const MesheryAdapterPlayComponent = (props) => {
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const { adapter, updateProgress, notify, grafana } = props;
+  const { adapter, notify, grafana } = props;
 
   const router = useRouter();
   const cmEditorAddRef = useRef(null);
@@ -1195,11 +1194,4 @@ const mapStateToProps = (st) => {
   return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withNotify(MesheryAdapterPlayComponent));
+export default connect(mapStateToProps, null)(withNotify(MesheryAdapterPlayComponent));

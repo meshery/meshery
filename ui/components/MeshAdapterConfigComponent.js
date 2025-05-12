@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import ReactSelectWrapper from './ReactSelectWrapper';
-import { updateAdaptersInfo, updateProgress } from '../lib/store';
+import { updateAdaptersInfo } from '../lib/store';
 import changeAdapterState from './graphql/mutations/AdapterStatusMutation';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
@@ -19,6 +19,7 @@ import {
   useLazyPingAdapterQuery,
   useManageAdapterMutation,
 } from '@/rtk-query/system';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const WrapperStyledDiv = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -167,14 +168,14 @@ const MeshAdapterConfigComponent = (props) => {
   };
 
   const submitConfig = async () => {
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     try {
       const result = await manageAdapter({
         meshLocationURL: meshLocationURL.value,
       }).unwrap();
 
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
 
       if (result) {
         setMeshAdapters(result);
@@ -188,7 +189,7 @@ const MeshAdapterConfigComponent = (props) => {
   };
 
   const handleDelete = (adapterLoc) => async () => {
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     try {
       const result = await manageAdapter({
@@ -196,7 +197,7 @@ const MeshAdapterConfigComponent = (props) => {
         adapter: adapterLoc,
       }).unwrap();
 
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
 
       if (result) {
         setMeshAdapters(result);
@@ -209,12 +210,12 @@ const MeshAdapterConfigComponent = (props) => {
   };
 
   const handleClick = (adapterLoc) => async () => {
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     try {
       const result = await pingAdapter(adapterLoc).unwrap();
 
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
 
       if (result) {
         notify({ message: 'Adapter was pinged.', event_type: EVENT_TYPES.SUCCESS });
@@ -245,7 +246,7 @@ const MeshAdapterConfigComponent = (props) => {
       return;
     }
 
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     const variables = {
       status: 'ENABLED',
@@ -254,7 +255,7 @@ const MeshAdapterConfigComponent = (props) => {
     };
 
     changeAdapterState((response, errors) => {
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
 
       if (errors !== undefined) {
         handleError('Unable to Deploy adapter');
@@ -281,7 +282,7 @@ const MeshAdapterConfigComponent = (props) => {
       return;
     }
 
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     const targetPort = (() => {
       if (!meshLocationURL.value) {
@@ -325,7 +326,7 @@ const MeshAdapterConfigComponent = (props) => {
     };
 
     changeAdapterState((response, errors) => {
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
 
       if (errors !== undefined) {
         console.error(errors);
@@ -349,7 +350,7 @@ const MeshAdapterConfigComponent = (props) => {
   };
 
   const handleError = (msg) => (error) => {
-    props.updateProgress({ showProgress: false });
+    updateProgress({ showProgress: false });
     notify({ message: msg, event_type: EVENT_TYPES.ERROR, details: error.toString() });
   };
 
@@ -499,7 +500,6 @@ const MeshAdapterConfigComponent = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 const mapStateToProps = (state) => {

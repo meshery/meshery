@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
 import PrometheusSelectionComponent from './PrometheusSelectionComponent';
 import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from '../../../lib/store';
+import { updateGrafanaConfig, updatePrometheusConfig } from '../../../lib/store';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -17,6 +17,7 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 import { useSelectorRtk } from '@/store/hooks';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   '& .buttons': {
@@ -73,7 +74,7 @@ const PrometheusComponent = (props) => {
 
   const submitPrometheusConfigure = (url) => {
     const params = new URLSearchParams({ prometheusURL: url });
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
     dataFetch(
       `/api/telemetry/metrics/config`,
       {
@@ -83,7 +84,7 @@ const PrometheusComponent = (props) => {
         body: params,
       },
       (result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         if (result) {
           props.notify({
             message: 'Prometheus was configured!',
@@ -134,7 +135,7 @@ const PrometheusComponent = (props) => {
   };
 
   const handleError = (message = 'Error communicating with Prometheus') => {
-    props.updateProgress({ showProgress: false });
+    updateProgress({ showProgress: false });
     props.notify({ message, event_type: EVENT_TYPES.ERROR });
   };
 
@@ -142,7 +143,7 @@ const PrometheusComponent = (props) => {
     e.preventDefault();
     if (!connectionID) return;
 
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
     dataFetch(
       `/api/integrations/connections/${CONNECTION_KINDS.PROMETHEUS}/status`,
       {
@@ -151,7 +152,7 @@ const PrometheusComponent = (props) => {
         body: JSON.stringify({ [connectionID]: CONNECTION_STATES.DISCOVERED }),
       },
       () => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         setPrometheusConfigSuccess(false);
         setPrometheusURL('');
         setSelectedPrometheusBoardsConfigs([]);
@@ -212,7 +213,7 @@ const PrometheusComponent = (props) => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
       },
       (result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         if (result?.prometheusURL) {
           const selector = {
             type: 'ALL_MESH',
@@ -293,7 +294,6 @@ PrometheusComponent.propTypes = {
 const mapDispatchToProps = (dispatch) => ({
   updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
   updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
 const mapStateToProps = (st) => {

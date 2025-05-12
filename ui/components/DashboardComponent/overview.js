@@ -1,14 +1,10 @@
 import React from 'react';
 import { NoSsr } from '@layer5/sistent';
-import { withRouter } from 'next/router';
-import { withNotify } from '../../utils/hooks/useNotification';
-import { connect, Provider } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from '@/store/index';
 import HoneycombComponent from './widgets/HoneyComb/HoneyCombComponent';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from 'lib/store';
 import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
 import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
@@ -92,8 +88,4 @@ const Overview = ({ isEditMode }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default withRouter(withNotify(connect(null, mapDispatchToProps)(Overview)));
+export default Overview;

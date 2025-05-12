@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { connect, Provider } from 'react-redux';
 import { NoSsr } from '@layer5/sistent';
-import { bindActionCreators } from 'redux';
 import {
   CustomTooltip,
   AppBar,
@@ -25,7 +24,6 @@ import Link from 'next/link';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
-import { updateProgress } from '../lib/store';
 import _PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './Registry/MeshModelComponent';
@@ -444,13 +442,6 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
 MesherySettings.propTypes = { classes: PropTypes.object };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(withNotify(MesherySettings)));
+export default connect(mapStateToProps, null)(withRouter(withNotify(MesherySettings)));
