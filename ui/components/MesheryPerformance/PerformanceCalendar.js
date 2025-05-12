@@ -13,7 +13,6 @@ import { CalendarComponent } from './style';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const localizer = momentLocalizer(moment);
-// const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
 
 /**
  * generateCalendarEventsFromResults takes in performance results data

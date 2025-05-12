@@ -23,9 +23,6 @@ import {
 } from '@layer5/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
-// const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
-// const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
-
 const StyledPaper = styled(Paper)({
   padding: '1rem',
 });

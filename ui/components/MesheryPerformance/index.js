@@ -435,7 +435,6 @@ const MesheryPerformanceComponent_ = (props) => {
           setPerformanceProfileID(result.id);
           if (cb) cb(result);
           if (generateNotif) {
-            const notify = props.notify;
             notify({
               message: `Performance profile ${result.name} has been created`,
               event_type: EVENT_TYPES.SUCCESS,
@@ -446,7 +445,6 @@ const MesheryPerformanceComponent_ = (props) => {
       .catch((err) => {
         console.error(err);
         updateProgress({ showProgress: false });
-        const notify = props.notify;
         notify({
           message: 'Failed to create performance profile',
           event_type: EVENT_TYPES.ERROR,
@@ -484,14 +482,13 @@ const MesheryPerformanceComponent_ = (props) => {
 
     const runURL =
       ctxUrl(`/api/user/performance/profiles/${id}/run`, selectedK8sContexts) + '&cert=true';
-    startEventStream(`${runURL}${props?.selectedK8sContexts?.length > 0 ? '&' : '?'}${params}`);
+    startEventStream(`${runURL}${selectedK8sContexts?.length > 0 ? '&' : '?'}${params}`);
     setBlockRunTest(true); // to block the button
   };
 
   function handleSuccess() {
     return (result) => {
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
-        const notify = props.notify;
         notify({
           message: 'fetched the data.',
           event_type: EVENT_TYPES.SUCCESS,
@@ -528,7 +525,6 @@ const MesheryPerformanceComponent_ = (props) => {
     eventStream.onerror = handleError(
       'Connection to the server got disconnected. Load test might be running in the background. Please check the results page in a few.',
     );
-    const notify = props.notify;
     notify({
       message: 'Load test has been submitted',
       event_type: EVENT_TYPES.SUCCESS,
@@ -536,7 +532,6 @@ const MesheryPerformanceComponent_ = (props) => {
   }
 
   function handleEvents() {
-    const notify = props.notify;
     let track = 0;
     return (e) => {
       const data = JSON.parse(e.data);
@@ -683,7 +678,6 @@ const MesheryPerformanceComponent_ = (props) => {
       if (typeof error === 'string') {
         finalMsg = `${msg}: ${error}`;
       }
-      const notify = props.notify;
       notify({
         message: finalMsg,
         event_type: EVENT_TYPES.ERROR,
@@ -1282,7 +1276,7 @@ const MesheryPerformanceComponent_ = (props) => {
   );
 };
 
-export const MesheryPerformanceComponentWithStyles = withNotify(MesheryPerformanceComponent_);
+export const MesheryPerformanceComponentWithStyles = MesheryPerformanceComponent_;
 
 export const MesheryPerformanceComponent = (props) => {
   const dispatch = useLegacyDispatch();
