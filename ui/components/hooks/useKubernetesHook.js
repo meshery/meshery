@@ -11,6 +11,7 @@ import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
 import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
 import _ from 'lodash';
+import { useSelectorRtk } from '@/store/hooks';
 
 export default function useKubernetesHook() {
   const { notify } = useNotification();
@@ -291,7 +292,7 @@ export const useControllerStatus = (controllerState) => {
 };
 
 export const useFilterK8sContexts = (k8sContexts, predicate) => {
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   return k8sContexts.filter((ctx) => {

@@ -74,6 +74,7 @@ import {
 } from '../themes/App.styles';
 import {
   setConnectionMetadata,
+  setControllerState,
   setK8sContexts,
   setOrganization,
   toggleCatalogContent,
@@ -333,10 +334,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store, extensionTy
         type: MESHERY_CONTROLLER_SUBSCRIPTION,
         connectionIDs: connectionIDs,
         callbackFunction: (data) => {
-          store.dispatch({
-            type: actionTypes.SET_CONTROLLER_STATE,
-            controllerState: data,
-          });
+          dispatch(setControllerState({ controllerState: data }));
         },
       });
 

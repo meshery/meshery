@@ -93,16 +93,11 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({
-  meshsyncControllerState,
-  selectedFilter,
-  selectedConnectionId,
-  updateUrlWithConnectionId,
-}) => {
+const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
   const router = useRouter();
   const { organization } = useSelectorRtk((state) => state.ui);
   const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
-  console.log('amit connectionMetadataState', connectionMetadataState);
+  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);

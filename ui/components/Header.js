@@ -143,10 +143,10 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
   const dispatch = useDispatchRtk();
   const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
-  
+
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',
@@ -392,7 +392,6 @@ const Header = ({
   setActiveContexts,
   searchContexts,
   operatorState,
-  meshSyncState,
   updateProgress,
   updateExtensionType,
 }) => {
@@ -477,11 +476,6 @@ const Header = ({
                       activeContexts={activeContexts}
                       setActiveContexts={setActiveContexts}
                       searchContexts={searchContexts}
-                      runningStatus={{
-                        operatorStatus: operatorState,
-                        meshSyncStatus: meshSyncState,
-                      }}
-                      updateProgress={updateProgress}
                     />
                   </UserSpan>
 
@@ -520,7 +514,6 @@ Header.propTypes = {
 const mapStateToProps = (state) => {
   return {
     operatorState: state.get('operatorState'),
-    meshSyncState: state.get('meshSyncState'),
   };
 };
 

@@ -18,7 +18,6 @@ const initialState = {
   capabilitiesRegistry: null,
   operatorState: null,
   controllerState: null,
-  meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
   workspace: null,
@@ -62,9 +61,6 @@ const coreSlice = createSlice({
     },
     setControllerState: (state, action) => {
       state.controllerState = action.payload.controllerState;
-    },
-    setMeshsyncSubscription: (state, action) => {
-      state.meshSyncState = action.payload.meshSyncState;
     },
     updateExtensionType: (state, action) => {
       state.extensionType = action.payload.extensionType;

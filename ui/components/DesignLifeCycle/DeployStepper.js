@@ -122,8 +122,8 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
 const SelectTargetStep = () => {
   const { organization } = useSelectorRtk((state) => state.ui);
   const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
-
-  const meshsyncControllerState = useLegacySelector((state) => state.get('controllerState'));
+  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
+  
   const [isEnvrionmentModalOpen, setIsEnvrionmentModalOpen] = useState(false);
   return (
     <DeploymentTargetContext.Provider

@@ -318,6 +318,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-const mapStateToProps = () => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(FormatConnectionMetadata);
+export default connect(null, mapDispatchToProps)(FormatConnectionMetadata);
