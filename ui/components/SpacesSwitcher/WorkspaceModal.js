@@ -39,7 +39,6 @@ import { useSelectorRtk } from '@/store/hooks';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
-
 const getNavItem = (theme) => {
   return [
     {
@@ -243,7 +242,6 @@ const Navigation = ({ setHeaderInfo }) => {
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
   const { organization: currentOrganization } = useSelectorRtk((state) => state.ui);
-  const currentOrganization = useGetCurrentOrganization();
   const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
