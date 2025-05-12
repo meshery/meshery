@@ -1,0 +1,5 @@
+[ Organization ID | Workspace name | Workspace description ] aren't specified
+
+Usage: 
+mesheryctl  exp workspace --orgId [Organization ID] --name [name] --description [description]
+mesheryctl  exp workspace --help' to see detailed help message

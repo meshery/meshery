@@ -1,54 +1,49 @@
 /* eslint-disable react/display-name */
-import React, { useEffect, useRef, useState } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
-import PatternIcon from '../../../assets/icons/Pattern';
-import {
-  Typography,
-  IconButton,
-  Button,
-  Grid,
-  Avatar,
-  CustomTooltip,
-  Box,
-  CircularProgress,
-} from '@layer5/sistent';
-import { ActionContainer, CreatAtContainer, CopyLinkButton, ResourceName } from './styles';
-import { iconMedium, iconSmall } from '../../../css/icons.styles';
-import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
-import moment from 'moment';
-import Application from '../../../public/static/img/drawer-icons/application_svg.js';
-import { useSnackbar } from 'notistack';
-import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
-import {
-  PATTERN_ENDPOINT,
-  FILTER_ENDPOINT,
-  MESHERY_CLOUD_PROD,
-} from '../../../constants/endpoints';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import axios from 'axios';
-import _ from 'lodash';
-import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
-import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import {
-  Modal,
-  ModalFooter,
-  ModalButtonPrimary,
-  ModalButtonSecondary,
-  ModalBody,
-  VisibilityChipMenu,
-  Link,
-  Skeleton,
-} from '@layer5/sistent';
+import { useUpdateFilterFileMutation } from '@/rtk-query/filter';
+import { useUpdatePatternFileMutation } from '@/rtk-query/design';
 import TooltipButton from '@/utils/TooltipButton';
-import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
+import { keys } from '@/utils/permission_constants';
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  CustomTooltip,
+  Grid,
+  IconButton,
+  Link,
+  Modal,
+  ModalBody,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  ModalFooter,
+  Skeleton,
+  Typography,
+  VisibilityChipMenu,
+} from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
+import CloseIcon from '@mui/icons-material/Close';
 import yaml from 'js-yaml';
+import _ from 'lodash';
+import moment from 'moment';
+import { useSnackbar } from 'notistack';
+import React, { useEffect, useRef, useState } from 'react';
+import { Provider } from 'react-redux';
+import PatternIcon from '../../../assets/icons/Pattern';
+import { MESHERY_CLOUD_PROD } from '../../../constants/endpoints';
+import { iconMedium, iconSmall } from '../../../css/icons.styles';
+import { EVENT_TYPES } from '../../../lib/event-types';
+import Application from '../../../public/static/img/drawer-icons/application_svg.js';
+import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
+import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
+import { store } from '../../../store';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
+import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
+import { ActionContainer, CopyLinkButton, CreatAtContainer, ResourceName } from './styles';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -73,7 +68,6 @@ const InfoModal_ = React.memo((props) => {
     meshModels = [],
     isReadOnly = false,
   } = props;
-
   const formRef = React.createRef();
   const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
@@ -85,6 +79,8 @@ const InfoModal_ = React.memo((props) => {
   const formatDate = (date) => {
     return moment(date).utc().format('MMMM Do YYYY');
   };
+  const [updatePattern] = useUpdatePatternFileMutation();
+  const [updateFilter] = useUpdateFilterFileMutation();
   const currentUserID = currentUser?.id;
   const isAdmin = currentUser?.role_names?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
@@ -149,15 +145,14 @@ const InfoModal_ = React.memo((props) => {
       });
     }
 
-    axios
-      .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
+    (dataName === PATTERN_PLURAL ? updatePattern : updateFilter)({ updateBody: body })
       .then(() => {
         setSaveFormLoading(false);
         notify({
           message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        patternFetcher()();
+        patternFetcher && patternFetcher();
         handleInfoModalClose();
       })
       .catch((error) => {
@@ -182,7 +177,6 @@ const InfoModal_ = React.memo((props) => {
       }) || []
     );
   }
-
   // Function to compare objects while normalizing case in compatibility array
   function isEqualIgnoringCase(obj1, obj2) {
     // Check each property one by one

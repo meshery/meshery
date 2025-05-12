@@ -1285,7 +1285,7 @@ function MesheryFilters({
                     currentUser={user}
                     formSchema={publishSchema}
                     meshModels={meshModels}
-                    patternFetcher={() => getFilters()}
+                    patternFetcher={getFilters}
                   />
                 )}
               <_PromptComponent ref={modalRef} />

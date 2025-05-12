@@ -101,6 +101,22 @@ export const userApi = api
         query: () => 'provider/capabilities',
         method: 'GET',
       }),
+      getUserProfileSummaryById: builder.query({
+        query: (queryArg) => ({
+          url: `/user/profile/${queryArg.id}`,
+        }),
+        transformResponse: (response) => {
+          // Modify the response data to keep only necessary fields
+          return {
+            id: response.id,
+            email: response?.email,
+            user_id: response?.user_id,
+            avatar_url: response?.avatar_url,
+            first_name: response?.first_name,
+            last_name: response?.last_name,
+          };
+        },
+      }),
       getExtensionsByType: builder.query({
         query: () => ({
           url: 'provider/capabilities',
@@ -168,6 +184,19 @@ export const userApi = api
         }),
         invalidatesTags: ['users'],
       }),
+      getAllUsers: builder.query({
+        query: (queryArg) => ({
+          url: `identity/users`,
+          params: {
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            search: queryArg.search,
+            order: queryArg.order,
+            filter: queryArg.filter,
+          },
+        }),
+        providesTags: ['users'],
+      }),
       getUsersForOrg: builder.query({
         query: (queryArg) => ({
           url: `extensions/api/identity/orgs/${queryArg.orgId}/users`,
@@ -210,10 +239,19 @@ export const userApi = api
         invalidatesTags: ['teams'],
         providesTags: ['teams'],
       }),
+      getAccessToken: builder.query({
+        query: () => ({
+          url: `/token`,
+        }),
+        transformResponse: (response) => {
+          return response?.token;
+        },
+      }),
     }),
   });
 
 export const {
+  useGetUserProfileSummaryByIdQuery,
   useGetExtensionsByTypeQuery,
   useLazyGetExtensionsByTypeQuery,
   useGetFullPageExtensionsQuery,
@@ -231,6 +269,7 @@ export const {
   useGetProviderCapabilitiesQuery,
   useHandleFeedbackFormSubmissionMutation,
   useGetUsersForOrgQuery,
+  useGetAllUsersQuery,
   useRemoveUserFromTeamMutation,
   useGetTeamsQuery,
   useLazyGetTeamsQuery,
@@ -242,7 +281,26 @@ export const getProviderCapabilities = async () => {
   return res;
 };
 
+export const getUserAccessToken = async () => {
+  const accessToken = await initiateQuery(userApi.endpoints.getAccessToken, {}, {});
+  return accessToken;
+};
+
+export const getUserProfile = async () => {
+  const userProfile = await initiateQuery(userApi.endpoints.getLoggedInUser, {}, {});
+  return userProfile;
+};
+
 export const getSystemVersion = async () => {
   const res = await initiateQuery(userApi.endpoints.getSystemVersion);
   return res;
+};
+
+export const getAllUsers = async ({ page, pagesize, search }) => {
+  const users = await initiateQuery(
+    userApi.endpoints.getAllUsers,
+    { page, pagesize, search },
+    { skip: !search },
+  );
+  return users;
 };
