@@ -68,12 +68,8 @@ function ConnectionManagementPage(props) {
   );
 }
 function Connections(props) {
-  const {
-    updateProgress,
-    operatorState,
-    router,
-  } = props;
-  const [_operatorState] = useState(operatorState || []);
+  const { updateProgress, router } = props;
+  const [_operatorState] = useState([]);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
 
@@ -173,14 +169,6 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  const operatorState = state.get('operatorState');
-
-  return {
-    operatorState,
-  };
-};
-
 const ConnectionManagementPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
@@ -193,6 +181,6 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
 
 // @ts-ignore
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps,
 )(withRouter(ConnectionManagementPageWithErrorBoundary));

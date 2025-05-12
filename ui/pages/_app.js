@@ -78,6 +78,7 @@ import {
   setK8sContexts,
   setOrganization,
   toggleCatalogContent,
+  updateExtensionType,
   updateK8SConfig,
 } from '@/store/slices/mesheryUi';
 
@@ -117,9 +118,7 @@ export function isExtensionOpen() {
 const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
   const theme = useTheme();
 
-  const extension = useSelector((state) => {
-    return state.get('extensionType');
-  });
+  const { extensionType: extension } = useSelectorRtk((state) => state.ui);
 
   if (extension == 'navigator') {
     return null;
@@ -208,7 +207,7 @@ const KubernetesSubscription = ({ setAppState }) => {
   return null;
 };
 
-const MesheryApp = ({ Component, pageProps, relayEnvironment, store, extensionType }) => {
+const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
@@ -421,9 +420,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store, extensionTy
     [activeContextChangeCallback],
   );
 
-  const updateExtensionType = useCallback(
+  const updateCurrentExtensionType = useCallback(
     (type) => {
-      store.dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType: type });
+      dispatch(updateExtensionType({ extensionType: type }));
     },
     [store],
   );
@@ -620,7 +619,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store, extensionTy
   }, [k8sConfig, capabilitiesRegistry]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
-
+  const { extensionType } = useSelectorRtk((state) => state.ui);
   return (
     <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
       <DynamicComponentProvider>
@@ -635,7 +634,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store, extensionTy
                       isDrawerCollapsed={isDrawerCollapsed}
                       mobileOpen={state.mobileOpen}
                       handleDrawerToggle={handleDrawerToggle}
-                      updateExtensionType={updateExtensionType}
+                      updateExtensionType={updateCurrentExtensionType}
                       canShowNav={canShowNav}
                     />
                     <StyledAppContent canShowNav={canShowNav}>
@@ -670,7 +669,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store, extensionTy
                               activeContexts={state.activeK8sContexts}
                               setActiveContexts={setActiveContexts}
                               searchContexts={searchContexts}
-                              updateExtensionType={updateExtensionType}
+                              updateExtensionType={updateCurrentExtensionType}
                               abilityUpdated={state.abilityUpdated}
                             />
                           )}
@@ -725,7 +724,6 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
 const mapStateToProps = (state) => ({
   operatorSubscription: state.get('operatorSubscription'),
   telemetryURLs: state.get('telemetryURLs'),
-  extensionType: state.get('extensionType'),
 });
 
 const MesheryWithRedux = connect(mapStateToProps, null)(MesheryApp);

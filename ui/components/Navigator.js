@@ -92,6 +92,7 @@ import {
   toggleDrawer,
   updateBetaBadge,
   updateCapabilities,
+  updateExtensionType,
   updateTitle,
 } from '@/store/slices/mesheryUi';
 
@@ -705,7 +706,10 @@ const Navigator_ = (props) => {
             height: '30px',
           }}
         >
-          <Box width="100%" onClick={() => props.updateExtensionType('navigator')}>
+          <Box
+            width="100%"
+            onClick={() => dispatch(updateExtensionType({ extensionType: 'navigator' }))}
+          >
             {content}
           </Box>
         </Link>

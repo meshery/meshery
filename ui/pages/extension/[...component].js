@@ -4,7 +4,6 @@ import ExtensionSandbox, {
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
 import { Box, CircularProgress, NoSsr } from '@layer5/sistent';
-import { updateExtensionType } from '../../lib/store';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
@@ -17,10 +16,11 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import {
   updateBetaBadge,
   updateCapabilities,
+  updateExtensionType,
   updatePagePath,
   updateTitle,
 } from '@/store/slices/mesheryUi';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 
 /**
  * getPath returns the current pathname
@@ -44,14 +44,12 @@ function matchComponentURI(extensionURI, currentURI) {
 function RemoteExtension() {
   const [componentTitle, setComponentTitle] = useState('');
   const router = useRouter();
-  const dispatch = useDispatch();
-  const rtkDispatch = useDispatchRtk();
-
-  const extensionType = useSelector((state) => state.get('extensionType'));
+  const dispatch = useDispatchRtk();
+  const { extensionType } = useSelectorRtk((state) => state.ui);
   const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
   const renderExtension = useCallback(() => {
     if (!capabilitiesRegistry?.extensions) return;
-    rtkDispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
+    dispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
 
     let extNames = [];
     for (var key of Object.keys(capabilitiesRegistry.extensions)) {
@@ -75,9 +73,9 @@ function RemoteExtension() {
           capabilitiesRegistry.extensions[ext.name],
         );
         setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
-        rtkDispatch(updateTitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
-        rtkDispatch(updateBetaBadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
-        rtkDispatch(updatePagePath({ path: getPath() }));
+        dispatch(updateTitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
+        dispatch(updateBetaBadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
+        dispatch(updatePagePath({ path: getPath() }));
       }
     });
   }, [capabilitiesRegistry, dispatch]);

@@ -16,7 +16,6 @@ const initialState = {
   catalogVisibility: true,
   extensionType: '',
   capabilitiesRegistry: null,
-  operatorState: null,
   controllerState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
@@ -56,9 +55,6 @@ const coreSlice = createSlice({
     toggleCatalogContent: (state, action) => {
       state.catalogVisibility = action.payload.catalogVisibility;
     },
-    setOperatorSubscription: (state, action) => {
-      state.operatorState = action.payload.operatorState;
-    },
     setControllerState: (state, action) => {
       state.controllerState = action.payload.controllerState;
     },
@@ -97,7 +93,6 @@ export const {
   updateProgress,
   toggleDrawer,
   toggleCatalogContent,
-  setOperatorSubscription,
   setControllerState,
   setMeshsyncSubscription,
   updateExtensionType,

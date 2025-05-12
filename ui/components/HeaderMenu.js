@@ -12,7 +12,7 @@ import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar, Popover } from '@layer5/sistent';
 import { IconButtonAvatar } from './Header.styles';
 import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
-import { updateUser } from '@/store/slices/mesheryUi';
+import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -28,7 +28,7 @@ function exportToJsonFile(jsonData, filename) {
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
  */
-const HeaderMenu = (props) => {
+const HeaderMenu = () => {
   const dispatch = useDispatchRtk();
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const [userLoaded, setUserLoaded] = useState(false);
@@ -102,7 +102,7 @@ const HeaderMenu = (props) => {
       title: item.title,
       onClick: () => {
         if (item.href) {
-          props.updateExtensionType?.(item.title);
+          dispatch(updateExtensionType({ extensionType: item.title }));
           router.push(item.href);
           handleClose();
         }

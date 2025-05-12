@@ -51,14 +51,10 @@ const initialState = fromJS({
     openEventId: null,
     showFullNotificationCenter: false,
   },
-  extensionType: '',
   telemetryURLs: {
     grafana: [],
     prometheus: [],
   },
-  // global gql-subscriptions
-  operatorState: null,
-
 });
 
 export const actionTypes = {
@@ -73,9 +69,6 @@ export const actionTypes = {
   UPDATE_PROGRESS: 'UPDATE_PROGRESS',
   TOOGLE_DRAWER: 'TOOGLE_DRAWER',
   SET_ADAPTER: 'SET_ADAPTER',
-  SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
-  SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
-  // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
   UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
   SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
@@ -121,12 +114,6 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.SET_ADAPTER:
       return state.mergeDeep({ selectedAdapter: action.selectedAdapter });
-
-    case actionTypes.SET_OPERATOR_SUBSCRIPTION:
-      return state.merge({ operatorState: action.operatorState });
-
-    case actionTypes.UPDATE_EXTENSION_TYPE:
-      return state.merge({ extensionType: action.extensionType });
 
     case actionTypes.UPDATE_TELEMETRY_URLS:
       return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
@@ -193,18 +180,6 @@ export const setAdapter =
   ({ selectedAdapter }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.SET_ADAPTER, selectedAdapter });
-  };
-
-export const setOperatorSubscription =
-  ({ operatorState }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.SET_OPERATOR_SUBSCRIPTION, operatorState });
-  };
-
-export const updateExtensionType =
-  ({ extensionType }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType });
   };
 
 export const updateTelemetryUrls =

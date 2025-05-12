@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { connect, useSelector } from 'react-redux';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import { Search } from '@mui/icons-material';
@@ -8,14 +7,12 @@ import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateProgress } from '../lib/store';
-import { bindActionCreators } from 'redux';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { useNotification, withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
@@ -391,9 +388,6 @@ const Header = ({
   activeContexts,
   setActiveContexts,
   searchContexts,
-  operatorState,
-  updateProgress,
-  updateExtensionType,
 }) => {
   const { notify } = useNotification;
   const isBeta = useSelectorRtk((state) => state.ui.page.isBeta);
@@ -492,10 +486,10 @@ const Header = ({
                   </div>
 
                   <UserSpan>
-                    <User updateExtensionType={updateExtensionType} />
+                    <User />
                   </UserSpan>
                   <UserSpan data-testid="header-menu">
-                    <HeaderMenu updateExtensionType={updateExtensionType} />
+                    <HeaderMenu />
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
@@ -511,14 +505,4 @@ Header.propTypes = {
   onDrawerToggle: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    operatorState: state.get('operatorState'),
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withNotify(Header));
+export default Header;
