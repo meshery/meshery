@@ -36,7 +36,6 @@ import { getDefaultFilterType } from './hooks';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
-  const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
 
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
@@ -215,7 +214,7 @@ const WorkspaceContent = ({ workspace }) => {
                   },
                 }}
               >
-                {isDesignsVisible && <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
+                {<MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
