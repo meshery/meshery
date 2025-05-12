@@ -30,14 +30,16 @@ const RequestForm = () => {
 
   const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
-  const dispatch = useDispatchRtk();
+
   const { organization } = useSelectorRtk((state) => state.ui);
-  const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
-  const [skip, setSkip] = React.useState(true);
-
+  const dispatch = useDispatchRtk();
+  const abilitiesResult = useGetCurrentAbilities(organization);
+  useEffect(() => {
+    if (abilitiesResult?.currentData?.keys) {
+      dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
+    }
+  }, [abilitiesResult?.currentData?.keys]);
   const { notify } = useNotification();
-
-  useGetCurrentAbilities(organization, dispatchSetKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {

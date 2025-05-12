@@ -31,14 +31,18 @@ const OrgSwitcher = () => {
   const { organization } = useSelectorRtk((state) => state.ui);
   const dispatch = useDispatchRtk();
   const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
-  const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
 
   let orgs = orgsResponse?.organizations || [];
-  const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
 
-  useGetCurrentAbilities(organization, dispatchSetKeys, skip);
+  const abilitiesResult = useGetCurrentAbilities(organization);
+
+  useEffect(() => {
+    if (abilitiesResult?.currentData?.keys) {
+      dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
+    }
+  }, [abilitiesResult?.currentData?.keys]);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -53,7 +57,6 @@ const OrgSwitcher = () => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     dispatchSetOrganization({ organization: selected });
-    setSkip(false);
 
     setTimeout(() => {
       location.reload();

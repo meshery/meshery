@@ -92,7 +92,6 @@ const UserPreference = (props) => {
   const [providerInfo, setProviderInfo] = useState({});
   const theme = useTheme();
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
-  console.log('amit capabilitiesRegistry', capabilitiesRegistry);
   const {
     data: userData,
     isSuccess: isUserDataFetched,

@@ -17,7 +17,7 @@ import {
   WorkspaceIcon,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
@@ -108,7 +108,13 @@ function OrgMenu(props) {
 
   const { organization, setOrganization, open, setKeys } = props;
   const { notify } = useNotification();
-  useGetCurrentAbilities(organization, setKeys);
+  const dispatch = useDispatchRtk();
+  const abilitiesResult = useGetCurrentAbilities(organization);
+  useEffect(() => {
+    if (abilitiesResult?.currentData?.keys) {
+      dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
+    }
+  }, [abilitiesResult?.currentData?.keys]);
   useEffect(() => {
     if (isOrgsError) {
       notify({
@@ -202,12 +208,11 @@ function SpaceSwitcher({ title, isBeta }) {
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
   const router = useRouter();
-  const dispatch = useDispatch();
   const rtkDispatch = useDispatchRtk();
   const { organization } = useSelectorRtk((state) => state.ui);
 
   const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
-  const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
+  const dispatchSetKeys = (keys) => rtkDispatch(setKeys(keys));
 
   return (
     <NoSsr>

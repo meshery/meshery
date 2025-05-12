@@ -6,6 +6,8 @@ import DefaultError from '@/components/General/error-404';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import { useSelectorRtk } from '@/store/hooks';
 
+import { useEffect } from 'react';
+
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
     {
@@ -28,17 +30,12 @@ export const useGetUserAbilities = (org, skip) => {
   };
 };
 
-export const useGetCurrentAbilities = (org, setKeys) => {
+export const useGetCurrentAbilities = (org) => {
   const shouldSkip = !org || !org.id;
-
   const res = useGetUserAbilities(org, shouldSkip);
 
   if (res?.abilities) {
     ability.update(res.abilities);
-  }
-
-  if (res?.currentData?.keys) {
-    setKeys({ keys: res.currentData.keys });
   }
 
   return res;
