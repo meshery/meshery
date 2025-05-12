@@ -20,8 +20,6 @@ import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
-  updatepagetitle,
-  updatebetabadge,
   toggleDrawer,
   setAdapter,
   updateCapabilities,
@@ -94,7 +92,7 @@ import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 import { useDispatchRtk } from '@/store/hooks';
-import { updateBetaBadge } from '@/store/slices/mesheryUi';
+import { updateBetaBadge, updateTitle } from '@/store/slices/mesheryUi';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -331,7 +329,7 @@ const Navigator_ = (props) => {
 
     const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
       if (href === path) {
-        props.updatepagetitle({ title });
+        dispatch(updateTitle({ title }));
         dispatch(updateBetaBadge({ isBeta }));
 
         return;
@@ -1124,7 +1122,6 @@ const Navigator_ = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
   toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
   setAdapter: bindActionCreators(setAdapter, dispatch),
   updateCapabilities: bindActionCreators(updateCapabilities, dispatch),

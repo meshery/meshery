@@ -6,7 +6,6 @@ import ExtensionSandbox, {
 import { Box, CircularProgress, NoSsr } from '@layer5/sistent';
 import {
   updatepagepath,
-  updatepagetitle,
   updateExtensionType,
   updateCapabilities,
 } from '../../lib/store';
@@ -19,7 +18,7 @@ import { useRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { updateBetaBadge } from '@/store/slices/mesheryUi';
+import { updateBetaBadge, updateTitle } from '@/store/slices/mesheryUi';
 import { useDispatchRtk } from '@/store/hooks';
 
 /**
@@ -75,7 +74,7 @@ function RemoteExtension() {
           capabilitiesRegistry.extensions[ext.name],
         );
         setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
-        dispatch(updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
+        rtkDispatch(updateTitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
         rtkDispatch(updateBetaBadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
         dispatch(updatepagepath({ path: getPath() }));
       }

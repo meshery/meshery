@@ -383,7 +383,6 @@ function K8sContextMenu({
 }
 
 const Header = ({
-  title,
   onDrawerToggle,
   onDrawerCollapse,
   abilityUpdated,
@@ -400,6 +399,8 @@ const Header = ({
 }) => {
   const { notify } = useNotification;
   const isBeta = useSelectorRtk((state) => state.ui.page.isBeta);
+  const title = useSelectorRtk((state) => state.ui.page.title);
+  
   const {
     data: providerCapabilities,
     isSuccess: isProviderCapabilitiesSuccess,
@@ -520,7 +521,6 @@ Header.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    title: state.get('page').get('title'),
     selectedK8sContexts: state.get('selectedK8sContexts'),
     k8sconfig: state.get('k8sConfig'),
     operatorState: state.get('operatorState'),

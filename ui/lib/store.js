@@ -9,7 +9,6 @@ import { mesheryEventBus } from '@/utils/eventBus';
 const initialState = fromJS({
   page: {
     path: '',
-    title: '',
   },
   user: {},
   k8sConfig: [], // k8sconfig stores kubernetes cluster configs
@@ -224,12 +223,6 @@ export const updatepagepath =
   ({ path }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.UPDATE_PAGE, path });
-  };
-
-export const updatepagetitle =
-  ({ path, title }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_TITLE, title });
   };
 
 export const updateProgress =
