@@ -19,7 +19,7 @@ const initialState = {
   operatorState: null,
   controllerState: null,
   meshSyncState: null,
-  connectionMetadataState: null,
+  connectionMetadataState: null, // store connection definition metadata for state and connection kind management
   organization: null,
   workspace: null,
   keys: null,

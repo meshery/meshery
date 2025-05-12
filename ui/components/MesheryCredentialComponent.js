@@ -28,6 +28,7 @@ import {
   useGetCredentialsQuery,
   useUpdateCredentialMutation,
 } from '@/rtk-query/credentials';
+import { useSelectorRtk } from '@/store/hooks';
 
 const CredentialIcon = styled('img')({
   width: '24px',
@@ -47,11 +48,13 @@ const CustomTableCell = styled(TableCell)({
 
 const schema_array = ['prometheus', 'grafana', 'kubernetes'];
 
-const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState }) => {
+const MesheryCredentialComponent = ({ updateProgress }) => {
   const { data: credentialsData, isLoading } = useGetCredentialsQuery();
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
+  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
+  
   const [formData, setFormData] = useState({});
   const [credModal, setCredModal] = useState({
     open: false,
@@ -420,10 +423,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  return {
-    connectionMetadataState: state.get('connectionMetadataState'),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryCredentialComponent);
+export default connect(null, mapDispatchToProps)(MesheryCredentialComponent);

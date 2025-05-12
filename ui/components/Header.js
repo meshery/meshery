@@ -143,10 +143,10 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
-  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
   const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
   const dispatch = useDispatchRtk();
-
+  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
+  
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',

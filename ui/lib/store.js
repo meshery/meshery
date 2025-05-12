@@ -60,7 +60,6 @@ const initialState = fromJS({
   operatorState: null,
   controllerState: null,
   meshSyncState: null,
-  connectionMetadataState: null, // store connection definition metadata for state and connection kind management
 });
 
 export const actionTypes = {
@@ -139,9 +138,6 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_TELEMETRY_URLS:
       return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
-
-    case actionTypes.SET_CONNECTION_METADATA:
-      return state.merge({ connectionMetadataState: action.connectionMetadataState });
 
     default:
       return state;
@@ -238,12 +234,6 @@ export const openEventInNotificationCenter =
       type: actionTypes.OPEN_EVENT_IN_NOTIFICATION_CENTER,
       eventId,
     });
-  };
-
-export const setConnectionMetadata =
-  ({ connectionMetadataState }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.SET_CONNECTION_METADATA, connectionMetadataState });
   };
 
 export const makeStore = (initialState, options) => {

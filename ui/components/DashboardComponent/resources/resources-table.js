@@ -20,6 +20,7 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
+import { useSelectorRtk } from '@/store/hooks';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -46,7 +47,7 @@ const ResourcesTable = (props) => {
   const [view, setView] = useState(ALL_VIEW);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { width } = useWindowDimensions();
-  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
+  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
   const handleApplyFilter = () => {
     const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
     setNamespaceFilter(namespaceFilter);

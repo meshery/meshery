@@ -71,7 +71,6 @@ function Connections(props) {
   const {
     updateProgress,
     operatorState,
-    connectionMetadataState,
     meshsyncControllerState,
     router,
   } = props;
@@ -153,7 +152,6 @@ function Connections(props) {
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable
               meshsyncControllerState={meshsyncControllerState}
-              connectionMetadataState={connectionMetadataState}
               selectedConnectionId={connectionId}
               updateUrlWithConnectionId={updateUrlWithConnectionId}
             />
@@ -179,12 +177,10 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   const operatorState = state.get('operatorState');
-  const connectionMetadataState = state.get('connectionMetadataState');
   const meshsyncControllerState = state.get('controllerState');
 
   return {
     operatorState,
-    connectionMetadataState,
     meshsyncControllerState,
   };
 };

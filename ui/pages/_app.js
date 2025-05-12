@@ -24,16 +24,10 @@ import { GQLSubscription } from '../components/subscription/subscriptionhandler'
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import {
-  actionTypes,
-  makeStore,
-  setConnectionMetadata,
-  LegacyStoreContext,
-} from '../lib/store';
+import { actionTypes, makeStore, LegacyStoreContext } from '../lib/store';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
-import { bindActionCreators } from 'redux';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
@@ -78,7 +72,13 @@ import {
   StyledRoot,
   ThemeResponsiveSnackbar,
 } from '../themes/App.styles';
-import { setK8sContexts, setOrganization, toggleCatalogContent, updateK8SConfig } from '@/store/slices/mesheryUi';
+import {
+  setConnectionMetadata,
+  setK8sContexts,
+  setOrganization,
+  toggleCatalogContent,
+  updateK8SConfig,
+} from '@/store/slices/mesheryUi';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -207,14 +207,7 @@ const KubernetesSubscription = ({ setAppState }) => {
   return null;
 };
 
-const MesheryApp = ({
-  Component,
-  pageProps,
-  relayEnvironment,
-  store,
-  setConnectionMetadata,
-  extensionType,
-}) => {
+const MesheryApp = ({ Component, pageProps, relayEnvironment, store, extensionType }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
@@ -298,22 +291,33 @@ const MesheryApp = ({
     });
   }, []);
 
-  const loadMeshModelComponent = useCallback(() => {
+  const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
-    CONNECTION_KINDS_DEF.map(async (kind) => {
-      const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-      if (res?.components) {
-        connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res?.components[0].metadata.transitions,
-          icon: res?.components[0].styles.svgColor,
-        };
+
+    const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
+      try {
+        const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
+        if (res?.components) {
+          connectionDef[CONNECTION_KINDS[kind]] = {
+            transitions: res?.components[0].metadata.transitions,
+            icon: res?.components[0].styles.svgColor,
+          };
+        }
+      } catch (error) {
+        console.error(`Error fetching component for ${kind}:`, error);
       }
-      setState((prevState) => ({ ...prevState, connectionMetadata: connectionDef }));
     });
-    setConnectionMetadata({
-      connectionMetadataState: connectionDef,
-    });
-  }, [setConnectionMetadata]);
+
+    await Promise.all(promises);
+
+    setState((prevState) => ({ ...prevState, connectionMetadata: connectionDef }));
+
+    dispatch(
+      setConnectionMetadata({
+        connectionMetadataState: connectionDef,
+      }),
+    );
+  }, [dispatch]);
 
   const initSubscriptions = useCallback(
     (contexts) => {
@@ -573,9 +577,11 @@ const MesheryApp = ({
       },
       (result) => {
         if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-          dispatch(toggleCatalogContent({
-            catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-          }));
+          dispatch(
+            toggleCatalogContent({
+              catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
+            }),
+          );
         }
       },
       (err) => console.error(err),
@@ -721,15 +727,10 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
 const mapStateToProps = (state) => ({
   operatorSubscription: state.get('operatorSubscription'),
   telemetryURLs: state.get('telemetryURLs'),
-  connectionMetadata: state.get('connectionMetadata'),
   extensionType: state.get('extensionType'),
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
-});
-
-const MesheryWithRedux = connect(mapStateToProps, mapDispatchToProps)(MesheryApp);
+const MesheryWithRedux = connect(mapStateToProps, null)(MesheryApp);
 
 const MesheryThemeProvider = ({ children }) => {
   const themePref = useThemePreference();
