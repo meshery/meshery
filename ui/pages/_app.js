@@ -183,6 +183,7 @@ const KubernetesSubscription = ({ setAppState }) => {
           k8sContexts: result.k8sContext,
           activeK8sContexts: allContexts,
         });
+
         dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
       },
       {
@@ -317,7 +318,8 @@ const MesheryApp = ({
 
   const initSubscriptions = useCallback(
     (contexts) => {
-      console.log('amit this called in initSubscriptions', contexts);
+      // const { k8sConfig } = useSelectorRtk((state) => state.ui);
+      console.log('amit this called in initSubscriptions', contexts, k8sConfig);
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
       console.log('amit connectionIDs', connectionIDs);
       // No need to create a controller subscription if there are no connections
@@ -339,7 +341,7 @@ const MesheryApp = ({
 
       setState((prevState) => ({ ...prevState, mesheryControllerSubscription }));
     },
-    [k8sConfig, store],
+    [k8sConfig],
   );
 
   const handleDrawerToggle = useCallback(() => {

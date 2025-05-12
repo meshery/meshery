@@ -44,6 +44,7 @@ const coreSlice = createSlice({
       state.user = action.payload.user;
     },
     updateK8SConfig: (state, action) => {
+      console.log('amit inside updateK8SConfig', action.payload.k8sConfig);
       state.k8sConfig = action.payload.k8sConfig;
     },
     setK8sContexts: (state, action) => {
