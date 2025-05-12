@@ -58,10 +58,11 @@ import {
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed }) {
+function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url }) {
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelectorRtk((state) => state.ui);
   const { store: legacyStore } = useContext(LegacyStoreContext);
@@ -183,12 +184,10 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
 const mapStateToProps = (st) => {
   const grafana = st.get('grafana').toJS();
   const prometheus = st.get('prometheus').toJS();
-  const isDrawerCollapsed = st.get('isDrawerCollapsed');
 
   return {
     grafana,
     prometheus,
-    isDrawerCollapsed,
   };
 };
 

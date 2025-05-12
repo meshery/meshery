@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
 import { connect } from 'react-redux';
@@ -19,7 +19,7 @@ import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { toggleDrawer, setAdapter } from '../lib/store';
+import { setAdapter } from '../lib/store';
 import {
   CatalogIcon,
   CustomTooltip,
@@ -88,7 +88,12 @@ import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
-import { updateBetaBadge, updateCapabilities, updateTitle } from '@/store/slices/mesheryUi';
+import {
+  toggleDrawer,
+  updateBetaBadge,
+  updateCapabilities,
+  updateTitle,
+} from '@/store/slices/mesheryUi';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -267,10 +272,11 @@ const getNavigatorComponents = (
 
 const NavigatorWrapper = (props) => {
   const isMobile = useMediaQuery('(max-width:599px)');
-
+  const dispatch = useDispatchRtk();
+  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
   useEffect(() => {
-    if (isMobile && !props.isDrawerCollapsed) {
-      props.toggleDrawer({ isDrawerCollapsed: true });
+    if (isMobile && !isDrawerCollapsed) {
+      dispatch(toggleDrawer({ isDrawerCollapsed: true }));
     }
   }, [isMobile]);
 
@@ -439,8 +445,7 @@ const Navigator_ = (props) => {
   };
 
   const toggleMiniDrawer = () => {
-    const { toggleDrawer, isDrawerCollapsed } = props;
-    toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
+    dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
   };
 
   const toggleSpacing = () => {
@@ -621,7 +626,6 @@ const Navigator_ = (props) => {
   };
 
   const renderNavigatorExtensions = (children, depth) => {
-    const { isDrawerCollapsed } = props;
     const { path } = state;
     if (children && children.length > 0) {
       return (
@@ -712,7 +716,6 @@ const Navigator_ = (props) => {
   };
 
   const renderChildren = (idname, children, depth) => {
-    const { isDrawerCollapsed } = props;
     const { path } = state;
     updatenavigatorComponentsMenus();
     if (idname != LIFECYCLE && children && children.length > 0) {
@@ -846,7 +849,7 @@ const Navigator_ = (props) => {
     }
     return linkContent;
   };
-
+  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
   const Title = (
     <div
       style={
@@ -861,7 +864,7 @@ const Navigator_ = (props) => {
           onClick={handleTitleClick}
           disableLogo={!state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])}
         >
-          {props.isDrawerCollapsed ? (
+          {isDrawerCollapsed ? (
             <>
               <MainLogoCollapsed src="/static/img/meshery-logo.png" onClick={handleTitleClick} />
               <MainLogoTextCollapsed
@@ -907,7 +910,7 @@ const Navigator_ = (props) => {
                   isShow={!show}
                   onClick={() => toggleItemCollapse(childId)}
                   onMouseOver={() =>
-                    props.isDrawerCollapsed ? updateState({ hoveredId: childId }) : null
+                    isDrawerCollapsed ? updateState({ hoveredId: childId }) : null
                   }
                   onMouseLeave={() =>
                     !submenu || !state.openItems.includes(childId)
@@ -921,12 +924,12 @@ const Navigator_ = (props) => {
                       <CustomTooltip
                         title={childId}
                         placement="right"
-                        disableFocusListener={!props.isDrawerCollapsed}
+                        disableFocusListener={!isDrawerCollapsed}
                         disableHoverListener={true}
-                        disableTouchListener={!props.isDrawerCollapsed}
+                        disableTouchListener={!isDrawerCollapsed}
                         TransitionComponent={Zoom}
                       >
-                        {props.isDrawerCollapsed &&
+                        {isDrawerCollapsed &&
                         (state.hoveredId === childId ||
                           (state.openItems.includes(childId) && submenu)) ? (
                           <div>
@@ -947,13 +950,13 @@ const Navigator_ = (props) => {
                           <MainListIcon>{icon}</MainListIcon>
                         )}
                       </CustomTooltip>
-                      <SideBarText drawerCollapsed={props.isDrawerCollapsed}>{title}</SideBarText>
+                      <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </Link>
                   <ExpandMore
                     onClick={() => toggleItemCollapse(childId)}
                     isCollapsed={state.openItems.includes(childId)}
-                    isDrawerCollapsed={props.isDrawerCollapsed}
+                    isDrawerCollapsed={isDrawerCollapsed}
                     theme={theme}
                     hasChildren={!!children}
                   />
@@ -982,18 +985,18 @@ const Navigator_ = (props) => {
   const HelpIcons = (
     <>
       <NavigatorHelpIcons
-        isCollapsed={props.isDrawerCollapsed}
+        isCollapsed={isDrawerCollapsed}
         size="large"
-        orientation={props.isDrawerCollapsed ? 'vertical' : 'horizontal'}
+        orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
         {externlinks.map(({ id, icon, title, href }, index) => {
           return (
             <HelpListItem
               key={id}
-              style={props.isDrawerCollapsed && !state.showHelperButton ? { display: 'none' } : {}}
+              style={isDrawerCollapsed && !state.showHelperButton ? { display: 'none' } : {}}
             >
               <Grow
-                in={state.showHelperButton || !props.isDrawerCollapsed}
+                in={state.showHelperButton || !isDrawerCollapsed}
                 timeout={{ enter: 600 - index * 200, exit: 100 * index }}
               >
                 <a
@@ -1001,15 +1004,12 @@ const Navigator_ = (props) => {
                   target="_blank"
                   rel="noreferrer"
                   style={
-                    props.isDrawerCollapsed
+                    isDrawerCollapsed
                       ? { display: 'flex', alignItems: 'center', justifyContent: 'center' }
                       : {}
                   }
                 >
-                  <CustomTextTooltip
-                    title={title}
-                    placement={props.isDrawerCollapsed ? 'right' : 'top'}
-                  >
+                  <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
                     <ListIconSide>{icon}</ListIconSide>
                   </CustomTextTooltip>
                 </a>
@@ -1017,9 +1017,9 @@ const Navigator_ = (props) => {
             </HelpListItem>
           );
         })}
-        <ListItem style={{ display: props.isDrawerCollapsed ? 'inherit' : 'none' }}>
-          <CustomTextTooltip title="Help" placement={props.isDrawerCollapsed ? 'right' : 'top'}>
-            <HelpButton isCollapsed={props.isDrawerCollapsed} onClick={toggleSpacing}>
+        <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+          <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
+            <HelpButton isCollapsed={isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpIcon
                 style={{
                   fontSize: '1.45rem',
@@ -1054,11 +1054,11 @@ const Navigator_ = (props) => {
         fontSize: '0.75rem',
       }}
     >
-      {props.isDrawerCollapsed ? (
+      {isDrawerCollapsed ? (
         <div style={{ textAlign: 'center', width: '100%' }}>{state.versionDetail.build}</div>
       ) : (
         <Grow
-          in={!props.isDrawerCollapsed}
+          in={!isDrawerCollapsed}
           timeout={{ enter: 800, exit: 100 }}
           style={{ textAlign: 'center', width: '100%' }}
         >
@@ -1074,7 +1074,7 @@ const Navigator_ = (props) => {
 
   const Chevron = (
     <ChevronButtonWrapper
-      isCollapsed={props.isDrawerCollapsed}
+      isCollapsed={isDrawerCollapsed}
       style={
         state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
           ? {}
@@ -1106,7 +1106,7 @@ const Navigator_ = (props) => {
 
   return (
     <NoSsr>
-      <SidebarDrawer isCollapsed={props.isDrawerCollapsed} variant="permanent">
+      <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
         {Title}
         {Menu}
         <FixedSidebarFooter>
@@ -1120,14 +1120,12 @@ const Navigator_ = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
   setAdapter: bindActionCreators(setAdapter, dispatch),
 });
 
 const mapStateToProps = (state) => ({
   meshAdapters: state.get('meshAdapters').toJS(),
   meshAdaptersts: state.get('meshAdaptersts'),
-  isDrawerCollapsed: state.get('isDrawerCollapsed'),
 });
 
 export const NavigatorWithRedux = connect(

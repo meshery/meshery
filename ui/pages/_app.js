@@ -210,7 +210,6 @@ const KubernetesSubscription = ({ setAppState }) => {
 const MesheryApp = ({
   Component,
   pageProps,
-  isDrawerCollapsed,
   relayEnvironment,
   store,
   setConnectionMetadata,
@@ -219,6 +218,7 @@ const MesheryApp = ({
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
   const dispatch = useDispatchRtk();
   const [state, setState] = useState({
     mobileOpen: false,
@@ -719,7 +719,6 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
 };
 
 const mapStateToProps = (state) => ({
-  isDrawerCollapsed: state.get('isDrawerCollapsed'),
   operatorSubscription: state.get('operatorSubscription'),
   telemetryURLs: state.get('telemetryURLs'),
   connectionMetadata: state.get('connectionMetadata'),
@@ -765,7 +764,6 @@ const NavigationBar = ({
   isDrawerCollapsed,
   mobileOpen,
   handleDrawerToggle,
-
   updateExtensionType,
   canShowNav,
 }) => {

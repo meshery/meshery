@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { toggleDrawer } from '../lib/store';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import normalizeURI from '../utils/normalizeURI';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -9,7 +8,8 @@ import {
   useLazyGetExtensionsByTypeQuery,
   useLazyGetFullPageExtensionsQuery,
 } from '@/rtk-query/user';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { toggleDrawer } from '@/store/slices/mesheryUi';
 /**
  * getPath returns the current pathname
  * @returns {string}
@@ -289,13 +289,16 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
 const ExtensionSandbox = React.memo(
-  function MemoizedExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) {
+  function MemoizedExtensionSandbox({ type, Extension }) {
     const [extension, setExtension] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+    const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
+    const dispatch = useDispatchRtk();
+
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
-        toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
+        dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
       }
 
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
@@ -361,12 +364,4 @@ const ExtensionSandbox = React.memo(
     prevProps.capabilitiesRegistry === nextProps.capabilitiesRegistry,
 );
 
-const mapDispatchToProps = (dispatch) => ({
-  toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  isDrawerCollapsed: state.get('isDrawerCollapsed'),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);
+export default ExtensionSandbox;

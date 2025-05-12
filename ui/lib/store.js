@@ -45,7 +45,6 @@ const initialState = fromJS({
   },
   staticPrometheusBoardConfig: {},
   showProgress: false,
-  isDrawerCollapsed: false,
   selectedAdapter: '',
   events: [],
   notificationCenter: {
@@ -122,9 +121,6 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.UPDATE_PROGRESS:
       return state.mergeDeep({ showProgress: action.showProgress });
-
-    case actionTypes.TOOGLE_DRAWER:
-      return state.mergeDeep({ isDrawerCollapsed: action.isDrawerCollapsed });
 
     case actionTypes.SET_ADAPTER:
       return state.mergeDeep({ selectedAdapter: action.selectedAdapter });
@@ -203,12 +199,6 @@ export const updateStaticPrometheusBoardConfig =
   ({ staticPrometheusBoardConfig }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.UPDATE_STATIC_BOARD_CONFIG, staticPrometheusBoardConfig });
-  };
-
-export const toggleDrawer =
-  ({ isDrawerCollapsed }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.TOOGLE_DRAWER, isDrawerCollapsed });
   };
 
 export const setAdapter =
