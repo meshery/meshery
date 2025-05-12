@@ -37,7 +37,7 @@ import {
   FormContainerWrapper,
   FormGroupWrapper,
 } from './style';
-import { updateProgress, toggleCatalogContent } from '../../lib/store';
+import { updateProgress } from '../../lib/store';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
@@ -56,7 +56,8 @@ import {
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
 const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
@@ -91,6 +92,7 @@ const UserPreference = (props) => {
   const [value, setValue] = useState(0);
   const [providerInfo, setProviderInfo] = useState({});
   const theme = useTheme();
+  const dispatch = useDispatchRtk();
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const {
     data: userData,
@@ -112,8 +114,7 @@ const UserPreference = (props) => {
   };
 
   const handleCatalogContentToggle = () => {
-    props.toggleCatalogContent({ catalogVisibility: !catalogContent });
-
+    dispatch(toggleCatalogContent({ catalogVisibility: !catalogContent }));
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
   };
@@ -638,15 +639,7 @@ const UserPreference = (props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  const catalogVisibility = state.get('catalogVisibility');
 
-  return {
-    catalogVisibility,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference));
+export default connect(null, mapDispatchToProps)(withRouter(UserPreference));

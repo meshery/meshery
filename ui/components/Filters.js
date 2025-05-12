@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import Moment from 'react-moment';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
-import { toggleCatalogContent, updateProgress } from '../lib/store';
+import { updateProgress } from '../lib/store';
 import _PromptComponent from './PromptComponent';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
@@ -237,11 +237,7 @@ function resetSelectedFilter() {
   return { show: false, filter: null };
 }
 
-function MesheryFilters({
-  updateProgress,
-  catalogVisibility,
-  // toggleCatalogContent,
-}) {
+function MesheryFilters({ updateProgress }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -283,7 +279,7 @@ function MesheryFilters({
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
-
+  const { catalogVisibility } = useSelectorRtk((state) => state.ui);
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const {
@@ -470,33 +466,6 @@ function MesheryFilters({
   useEffect(() => {
     if (viewType === 'grid') setSearch('');
   }, [viewType]);
-
-  // const handleCatalogPreference = (catalogPref) => {
-  //   let body = Object.assign({}, extensionPreferences);
-  //   body['catalogContent'] = catalogPref;
-
-  //   dataFetch(
-  //     '/api/user/prefs',
-  //     {
-  //       method: 'POST',
-  //       credentials: 'include',
-  //       body: JSON.stringify({ usersExtensionPreferences: body }),
-  //     },
-  //     () => {
-  //       notify({
-  //         message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
-  //         event_type: EVENT_TYPES.SUCCESS,
-  //       });
-  //     },
-  //     (err) => console.error(err),
-  //   );
-  // };
-
-  // const handleCatalogVisibility = () => {
-  //   handleCatalogPreference(!catalogVisibilityRef.current);
-  //   catalogVisibilityRef.current = !catalogVisibility;
-  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  // };
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
@@ -1356,13 +1325,6 @@ const PublishModal = React.memo((props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  return {
-    catalogVisibility: state.get('catalogVisibility'),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryFilters);
+export default connect(null, mapDispatchToProps)(MesheryFilters);

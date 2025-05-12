@@ -27,7 +27,6 @@ import 'react-resizable/css/styles.css';
 import {
   actionTypes,
   makeStore,
-  toggleCatalogContent,
   setConnectionMetadata,
   LegacyStoreContext,
 } from '../lib/store';
@@ -79,7 +78,7 @@ import {
   StyledRoot,
   ThemeResponsiveSnackbar,
 } from '../themes/App.styles';
-import { setK8sContexts, setOrganization, updateK8SConfig } from '@/store/slices/mesheryUi';
+import { setK8sContexts, setOrganization, toggleCatalogContent, updateK8SConfig } from '@/store/slices/mesheryUi';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -214,7 +213,6 @@ const MesheryApp = ({
   isDrawerCollapsed,
   relayEnvironment,
   store,
-  toggleCatalogContent,
   setConnectionMetadata,
   extensionType,
 }) => {
@@ -575,9 +573,9 @@ const MesheryApp = ({
       },
       (result) => {
         if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-          toggleCatalogContent({
+          dispatch(toggleCatalogContent({
             catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-          });
+          }));
         }
       },
       (err) => console.error(err),
@@ -729,7 +727,6 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
   setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
 });
 

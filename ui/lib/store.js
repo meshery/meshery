@@ -48,12 +48,10 @@ const initialState = fromJS({
   isDrawerCollapsed: false,
   selectedAdapter: '',
   events: [],
-
   notificationCenter: {
     openEventId: null,
     showFullNotificationCenter: false,
   },
-  catalogVisibility: true,
   extensionType: '',
   telemetryURLs: {
     grafana: [],
@@ -78,7 +76,6 @@ export const actionTypes = {
   UPDATE_PROGRESS: 'UPDATE_PROGRESS',
   TOOGLE_DRAWER: 'TOOGLE_DRAWER',
   SET_ADAPTER: 'SET_ADAPTER',
-  SET_CATALOG_CONTENT: 'SET_CATALOG_CONTENT',
   SET_OPERATOR_SUBSCRIPTION: 'SET_OPERATOR_SUBSCRIPTION',
   SET_CONTROLLER_STATE: 'SET_CONTROLLER_STATE',
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
@@ -131,9 +128,6 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.SET_ADAPTER:
       return state.mergeDeep({ selectedAdapter: action.selectedAdapter });
-
-    case actionTypes.SET_CATALOG_CONTENT:
-      return state.mergeDeep({ catalogVisibility: action.catalogVisibility });
 
     case actionTypes.SET_OPERATOR_SUBSCRIPTION:
       return state.merge({ operatorState: action.operatorState });
@@ -221,12 +215,6 @@ export const setAdapter =
   ({ selectedAdapter }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.SET_ADAPTER, selectedAdapter });
-  };
-
-export const toggleCatalogContent =
-  ({ catalogVisibility }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.SET_CATALOG_CONTENT, catalogVisibility });
   };
 
 export const setOperatorSubscription =

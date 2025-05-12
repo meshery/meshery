@@ -6,7 +6,6 @@ import { Button, CatalogIcon, Grid, Switch, Typography, useTheme } from '@layer5
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters } from '../components/extensions';
 import DefaultError from '@/components/General/error-404';
-import { toggleCatalogContent } from '../lib/store';
 import { EVENT_TYPES } from '../lib/event-types';
 import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -14,7 +13,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
@@ -327,12 +327,13 @@ export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
 export const WrappedMesheryHelmKanvasExtension = MesheryHelmKanvasExtension;
 
-const Extensions = ({ toggleCatalogContent }) => {
+const Extensions = () => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false);
   const { notify } = useNotification();
   const [updateUserPref] = useUpdateUserPrefMutation();
+  const dispatch = useDispatchRtk();
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const {
     data: userData,
@@ -342,7 +343,7 @@ const Extensions = ({ toggleCatalogContent }) => {
   } = useGetUserPrefQuery();
 
   const handleToggle = () => {
-    toggleCatalogContent({ catalogVisibility: !catalogContent });
+    dispatch(toggleCatalogContent({ catalogVisibility: !catalogContent }));
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
   };
@@ -478,12 +479,4 @@ const Extensions = ({ toggleCatalogContent }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  catalogVisibility: state.get('catalogVisibility'),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Extensions);
+export default Extensions;

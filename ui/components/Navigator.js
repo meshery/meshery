@@ -281,6 +281,7 @@ const Navigator_ = (props) => {
   const { meshAdapters: initialMeshAdapters } = props;
   const dispatch = useDispatchRtk();
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const { catalogVisibility } = useSelectorRtk((state) => state.ui);
   const theme = useTheme();
 
   const [state, setState] = useState({
@@ -494,7 +495,7 @@ const Navigator_ = (props) => {
       if (cat.id === CONFIGURATION) {
         cat.children?.forEach((ch) => {
           if (ch.id === CATALOG) {
-            ch.show = props.catalogVisibility;
+            ch.show = catalogVisibility;
           }
         });
       }
@@ -1127,7 +1128,6 @@ const mapStateToProps = (state) => ({
   meshAdapters: state.get('meshAdapters').toJS(),
   meshAdaptersts: state.get('meshAdaptersts'),
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  catalogVisibility: state.get('catalogVisibility'),
 });
 
 export const NavigatorWithRedux = connect(

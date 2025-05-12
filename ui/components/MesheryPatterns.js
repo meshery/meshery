@@ -36,7 +36,7 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { toggleCatalogContent, updateProgress } from '../lib/store';
+import {  updateProgress } from '../lib/store';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -291,7 +291,6 @@ function resetSelectedPattern() {
 
 function MesheryPatterns({
   updateProgress,
-  catalogVisibility,
   disableCreateImportDesignButton = false,
   disableUniversalFilter = false,
   hideVisibility = false,
@@ -324,6 +323,7 @@ function MesheryPatterns({
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const { catalogVisibility } = useSelectorRtk((state) => state.ui);
   const { user } = useSelectorRtk((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
@@ -560,11 +560,6 @@ function MesheryPatterns({
     disposeConfSubscriptionRef.current = configurationSubscription;
   };
 
-  // const handleCatalogVisibility = () => {
-  //   handleCatalogPreference(!catalogVisibilityRef.current);
-  //   catalogVisibilityRef.current = !catalogVisibility;
-  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  // };
 
   useEffect(async () => {
     try {
@@ -1726,12 +1721,8 @@ const PublishModal = React.memo((props) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
 });
 
-const mapStateToProps = (state) => ({
-  catalogVisibility: state.get('catalogVisibility'),
-});
 
 // @ts-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns);
+export default connect(null, mapDispatchToProps)(MesheryPatterns);

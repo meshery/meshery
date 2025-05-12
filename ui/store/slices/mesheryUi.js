@@ -98,7 +98,6 @@ export const {
   updateUser,
   updateK8SConfig,
   setK8sContexts: setK8sContextsAction,
-
   updateProgress,
   toggleDrawer,
   toggleCatalogContent,
