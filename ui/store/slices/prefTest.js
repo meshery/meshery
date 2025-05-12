@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   loadTest: {
@@ -17,6 +17,11 @@ const initialState = {
     gen: 'fortio',
     ts: new Date(),
   },
+  results_selection: {}, // format - { page: {index: content}}
+  results: {
+    startKey: '',
+    results: [],
+  },
 };
 
 const prefTestSlice = createSlice({
@@ -29,9 +34,20 @@ const prefTestSlice = createSlice({
     updateLoadTest: (state, action) => {
       state.loadTest = action.payload.loadTest;
     },
+    updateResultsSelection: (state, action) => {
+      if (Object.keys(action.payload.results).length > 0) {
+        state.results_selection[action.payload.page] = action.payload.results;
+      } else {
+        delete state.results_selection[action.payload.page];
+      }
+    },
+    clearResultsSelection: (state) => {
+      state.results_selection = {};
+    },
   },
 });
 
-export const { updateLoadTestPref, updateLoadTest } = prefTestSlice.actions;
+export const { updateLoadTestPref, updateLoadTest, updateResultsSelection, clearResultsSelection } =
+  prefTestSlice.actions;
 
 export default prefTestSlice.reducer;

@@ -1,33 +1,24 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import { updateResultsSelection, clearResultsSelection } from '../lib/store';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryResultDialog from './MesheryResultDialog';
-import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@layer5/sistent';
 import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { updateResultsSelection } from '@/store/slices/prefTest';
 
 const DEFAULT_PAGE_SIZE = 10;
 const ROWS_PER_PAGE_OPTIONS = [10, 20, 25];
 
-const MesheryResults = ({
-  classes,
-  results_selection,
-  endpoint,
-  updateResultsSelection,
-  notify,
-  customHeader,
-}) => {
+const MesheryResults = () => {
+  const { notify } = useNotification();
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -37,7 +28,8 @@ const MesheryResults = ({
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
   const { user } = useSelectorRtk((state) => state.ui);
-
+  const dispatch = useDispatchRtk();
+  const { results_selection } = useSelectorRtk((state) => state.prefTest);
   // RTK Query hook for fetching results
   const [trigger, { isFetching, error }] = useLazyGetResultsQuery();
 
@@ -48,7 +40,6 @@ const MesheryResults = ({
 
       try {
         const result = await trigger({
-          endpoint,
           page,
           pagesize: pageSize,
           search,
@@ -282,7 +273,7 @@ const MesheryResults = ({
           selectedResults[dataIndex] = results[dataIndex];
         }
       });
-      updateResultsSelection({ page, results: selectedResults });
+      dispatch(updateResultsSelection({ page, results: selectedResults }));
     },
     [page, pageSize, results, updateResultsSelection],
   );
@@ -348,12 +339,7 @@ const MesheryResults = ({
       onRowsSelect: handleRowSelection,
       onTableChange: handleTableChange,
       customToolbarSelect: (selectedRows, displayData, setSelectedRows) => (
-        <CustomToolbarSelect
-          selectedRows={selectedRows}
-          displayData={displayData}
-          setSelectedRows={setSelectedRows}
-          results={results}
-        />
+        <CustomToolbarSelect setSelectedRows={setSelectedRows} />
       ),
       expandableRows: true,
       renderExpandableRow: (rowData, rowMeta) => {
@@ -367,7 +353,7 @@ const MesheryResults = ({
         return (
           <TableRow>
             <TableCell colSpan={colSpan}>
-              <div className={classes.chartContent}>
+              <div>
                 <MesheryChart rawdata={[results[rowMeta.dataIndex]]} data={[row]} hideTitle />
               </div>
               {boardConfig && Object.keys(boardConfig).length > 0 && (
@@ -397,7 +383,6 @@ const MesheryResults = ({
       handleRowSelection,
       handleTableChange,
       results,
-      classes.chartContent,
     ],
   );
 
@@ -408,11 +393,9 @@ const MesheryResults = ({
       )}
       <MUIDataTable
         title={
-          customHeader || (
-            <Box fontWeight="bolder" fontSize="18">
-              Performance Test Results
-            </Box>
-          )
+          <Box fontWeight="bolder" fontSize="18">
+            Performance Test Results
+          </Box>
         }
         data={resultsForDisplay}
         columns={columns}
@@ -422,25 +405,4 @@ const MesheryResults = ({
   );
 };
 
-MesheryResults.propTypes = {
-  classes: PropTypes.object.isRequired,
-  results_selection: PropTypes.object.isRequired,
-  user: PropTypes.object,
-  endpoint: PropTypes.string,
-  updateResultsSelection: PropTypes.func.isRequired,
-  notify: PropTypes.func.isRequired,
-  customHeader: PropTypes.node,
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
-  clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  startKey: state.get('results').get('startKey'),
-  results: state.get('results').get('results').toArray(),
-  results_selection: state.get('results_selection').toObject(),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryResults));
+export default MesheryResults;

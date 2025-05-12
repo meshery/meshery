@@ -9,11 +9,6 @@ import { createDispatchHook, createSelectorHook } from 'react-redux';
 const initialState = fromJS({
   meshAdapters: [],
   meshAdaptersts: new Date(),
-  results: {
-    startKey: '',
-    results: [],
-  },
-  results_selection: {}, // format - { page: {index: content}}
   grafana: {
     grafanaURL: '',
     grafanaAPIKey: '',
@@ -33,8 +28,6 @@ const initialState = fromJS({
 
 export const actionTypes = {
   UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
-  UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
-  CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
   UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
   UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
   UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
@@ -45,18 +38,11 @@ export const actionTypes = {
 // REDUCERS
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.UPDATE_USER:
-      return state.mergeDeep({ user: action.user });
     case actionTypes.UPDATE_ADAPTERS_INFO:
       state = state.updateIn(['meshAdapters'], (val) => fromJS([]));
       state = state.updateIn(['meshAdaptersts'], (val) => fromJS(new Date()));
       return state.mergeDeep({ meshAdapters: action.meshAdapters });
-    case actionTypes.UPDATE_RESULTS_SELECTION:
-      if (Object.keys(action.results).length > 0) {
-        return state.updateIn(['results_selection', action.page], (val) => action.results);
-      } else {
-        return state.deleteIn(['results_selection', action.page]);
-      }
+
     case actionTypes.UPDATE_GRAFANA_CONFIG:
       action.grafana.ts = new Date();
       return state.updateIn(['grafana'], (val) => fromJS(action.grafana));
@@ -69,12 +55,6 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['staticPrometheusBoardConfig'], (val) =>
         fromJS(action.staticPrometheusBoardConfig),
       );
-    case actionTypes.CLEAR_RESULTS_SELECTION:
-      state = state.deleteIn(['results_selection']);
-      return state.mergeDeep({ results_selection: fromJS({}) });
-
-    case actionTypes.UPDATE_PROGRESS:
-      return state.mergeDeep({ showProgress: action.showProgress });
 
     case actionTypes.SET_ADAPTER:
       return state.mergeDeep({ selectedAdapter: action.selectedAdapter });
@@ -92,15 +72,6 @@ export const updateAdaptersInfo =
     return dispatch({ type: actionTypes.UPDATE_ADAPTERS_INFO, meshAdapters });
   };
 
-export const updateResultsSelection =
-  ({ page, results }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_RESULTS_SELECTION, page, results });
-  };
-
-export const clearResultsSelection = () => (dispatch) => {
-  return dispatch({ type: actionTypes.CLEAR_RESULTS_SELECTION });
-};
 export const updateGrafanaConfig =
   ({ grafana }) =>
   (dispatch) => {
