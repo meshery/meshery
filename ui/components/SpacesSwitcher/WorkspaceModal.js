@@ -36,6 +36,8 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
 import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
 
 const getNavItem = (theme) => {
   return [
@@ -62,6 +64,7 @@ const getNavItem = (theme) => {
       id: 'My-Views',
       label: 'My Views',
       icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
+      enabled: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
       content: <MyViewsContent />,
     },
     {
@@ -239,7 +242,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
   const currentOrganization = useGetCurrentOrganization();
-  const navConfig = getNavItem(theme);
+  const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
     {
