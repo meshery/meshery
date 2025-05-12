@@ -11,7 +11,6 @@ import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
-import { useDispatch, useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import {
   updateBetaBadge,

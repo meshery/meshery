@@ -436,12 +436,11 @@ const mapStateToProps = (state) => {
   const meshAdapters = state.get('meshAdapters').toJS();
   const grafana = state.get('grafana').toJS();
   const prometheus = state.get('prometheus').toJS();
-  const telemetryUrls = state.get('telemetryURLs').toJS();
+
   return {
     meshAdapters,
     grafana,
     prometheus,
-    telemetryUrls,
   };
 };
 

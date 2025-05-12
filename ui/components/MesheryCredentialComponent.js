@@ -54,7 +54,7 @@ const MesheryCredentialComponent = ({ updateProgress }) => {
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
   const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
-  
+
   const [formData, setFormData] = useState({});
   const [credModal, setCredModal] = useState({
     open: false,

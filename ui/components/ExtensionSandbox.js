@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import normalizeURI from '../utils/normalizeURI';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import LoadingScreen from './LoadingComponents/LoadingComponent';

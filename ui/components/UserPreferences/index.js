@@ -641,5 +641,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-
 export default connect(null, mapDispatchToProps)(withRouter(UserPreference));

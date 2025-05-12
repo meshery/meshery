@@ -46,15 +46,6 @@ const initialState = fromJS({
   staticPrometheusBoardConfig: {},
   showProgress: false,
   selectedAdapter: '',
-  events: [],
-  notificationCenter: {
-    openEventId: null,
-    showFullNotificationCenter: false,
-  },
-  telemetryURLs: {
-    grafana: [],
-    prometheus: [],
-  },
 });
 
 export const actionTypes = {
@@ -67,10 +58,8 @@ export const actionTypes = {
   UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
   UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
   UPDATE_PROGRESS: 'UPDATE_PROGRESS',
-  TOOGLE_DRAWER: 'TOOGLE_DRAWER',
   SET_ADAPTER: 'SET_ADAPTER',
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
-  UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
   SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
 };
 
@@ -114,9 +103,6 @@ export const reducer = (state = initialState, action) => {
 
     case actionTypes.SET_ADAPTER:
       return state.mergeDeep({ selectedAdapter: action.selectedAdapter });
-
-    case actionTypes.UPDATE_TELEMETRY_URLS:
-      return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
 
     default:
       return state;
@@ -182,20 +168,6 @@ export const setAdapter =
     return dispatch({ type: actionTypes.SET_ADAPTER, selectedAdapter });
   };
 
-export const updateTelemetryUrls =
-  ({ telemetryURLs }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_TELEMETRY_URLS, telemetryURLs });
-  };
-
-export const openEventInNotificationCenter =
-  ({ eventId }) =>
-  (dispatch) => {
-    return dispatch({
-      type: actionTypes.OPEN_EVENT_IN_NOTIFICATION_CENTER,
-      eventId,
-    });
-  };
 
 export const makeStore = (initialState, options) => {
   return createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunkMiddleware)));

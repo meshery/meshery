@@ -14,7 +14,7 @@ import withRedux from 'next-redux-wrapper';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
-import { connect, Provider, useSelector } from 'react-redux';
+import { Provider } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -220,7 +220,6 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
     isLoading: true,
     k8sContexts: [],
     activeK8sContexts: [],
-    operatorSubscription: null,
     mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
     theme: 'light',
@@ -721,12 +720,7 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
   return { pageProps };
 };
 
-const mapStateToProps = (state) => ({
-  operatorSubscription: state.get('operatorSubscription'),
-  telemetryURLs: state.get('telemetryURLs'),
-});
-
-const MesheryWithRedux = connect(mapStateToProps, null)(MesheryApp);
+const MesheryWithRedux = MesheryApp;
 
 const MesheryThemeProvider = ({ children }) => {
   const themePref = useThemePreference();

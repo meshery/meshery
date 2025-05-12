@@ -30,10 +30,10 @@ const RequestForm = () => {
 
   const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
-
   const { organization } = useSelectorRtk((state) => state.ui);
   const dispatch = useDispatchRtk();
   const abilitiesResult = useGetCurrentAbilities(organization);
+
   useEffect(() => {
     if (abilitiesResult?.currentData?.keys) {
       dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
@@ -54,7 +54,6 @@ const RequestForm = () => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     dispatch(setOrganization({ organization: selected }));
-    setSkip(false);
   };
 
   return (

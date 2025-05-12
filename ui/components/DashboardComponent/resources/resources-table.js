@@ -15,7 +15,6 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import { useSelector } from 'react-redux';
 
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';

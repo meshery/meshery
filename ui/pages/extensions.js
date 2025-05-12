@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { Button, CatalogIcon, Grid, Switch, Typography, useTheme } from '@layer5/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters } from '../components/extensions';

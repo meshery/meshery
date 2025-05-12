@@ -36,7 +36,7 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import {  updateProgress } from '../lib/store';
+import { updateProgress } from '../lib/store';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -559,7 +559,6 @@ function MesheryPatterns({
     );
     disposeConfSubscriptionRef.current = configurationSubscription;
   };
-
 
   useEffect(async () => {
     try {
@@ -1722,7 +1721,6 @@ const PublishModal = React.memo((props) => {
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
-
 
 // @ts-ignore
 export default connect(null, mapDispatchToProps)(MesheryPatterns);

@@ -15,7 +15,6 @@ import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
-import { useLegacySelector } from 'lib/store';
 import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeploymentTarget';
 import { FinalizeDeployment } from './finalizeDeployment';
 import { selectAllSelectedK8sConnections } from '@/store/slices/globalEnvironmentContext';
@@ -123,7 +122,7 @@ const SelectTargetStep = () => {
   const { organization } = useSelectorRtk((state) => state.ui);
   const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
   const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
-  
+
   const [isEnvrionmentModalOpen, setIsEnvrionmentModalOpen] = useState(false);
   return (
     <DeploymentTargetContext.Provider

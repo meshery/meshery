@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
 import { connect } from 'react-redux';
