@@ -2,14 +2,10 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { Typography, Box, styled, useTheme } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';
 import GrafanaDisplaySelection from './GrafanaDisplaySelection';
-// import GrafanaCharts from './GrafanaCharts';
-import { updateGrafanaConfig } from '../../../lib/store';
 import GrafanaCustomCharts from './GrafanaCustomCharts';
 import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -26,8 +22,9 @@ import {
   useUpdateGrafanaBoardsMutation,
 } from '@/rtk-query/telemetry';
 import useDebouncedCallback from '@/utils/hooks/useDebounce';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { updateGrafanaConfig } from '@/store/slices/telemetry';
 
 const StyledChartTitle = styled(Typography)(({ theme }) => ({
   marginLeft: theme.spacing(3),
@@ -45,17 +42,18 @@ const GrafanaChartsWrapper = styled(Box)(() => {
 });
 
 const GrafanaComponent = (props) => {
+  const { grafana } = useSelectorRtk((state) => state.telemetry);
   const [state, setState] = useState({
     urlError: false,
-    grafanaConfigSuccess: props.grafana.grafanaURL !== '',
+    grafanaConfigSuccess: grafana.grafanaURL !== '',
     grafanaBoardSearch: '',
-    grafanaURL: props.grafana.grafanaURL,
-    grafanaAPIKey: props.grafana.grafanaAPIKey,
-    grafanaBoards: props.grafana.grafanaBoards,
-    connectionID: props.grafana.connectionID,
-    connectionName: props.grafana.connectionName,
-    selectedBoardsConfigs: props.grafana.selectedBoardsConfigs,
-    ts: props.grafana.ts,
+    grafanaURL: grafana.grafanaURL,
+    grafanaAPIKey: grafana.grafanaAPIKey,
+    grafanaBoards: grafana.grafanaBoards,
+    connectionID: grafana.connectionID,
+    connectionName: grafana.connectionName,
+    selectedBoardsConfigs: grafana.selectedBoardsConfigs,
+    ts: grafana.ts,
   });
 
   //RTK Queries: Loading the Grafana configuration on component mount
@@ -78,7 +76,7 @@ const GrafanaComponent = (props) => {
   };
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-
+  const dispatch = useDispatchRtk();
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
@@ -117,17 +115,19 @@ const GrafanaComponent = (props) => {
       updateProgress({ showProgress: false });
       if (result !== undefined) {
         setState((prev) => ({ ...prev, grafanaBoards: result }));
-        props.updateGrafanaConfig({
-          grafana: {
-            grafanaURL,
-            grafanaAPIKey,
-            grafanaBoardSearch,
-            grafanaBoards: result,
-            selectedBoardsConfigs,
-            connectionName,
-            connectionID,
-          },
-        });
+        dispatch(
+          updateGrafanaConfig({
+            grafana: {
+              grafanaURL,
+              grafanaAPIKey,
+              grafanaBoardSearch,
+              grafanaBoards: result,
+              selectedBoardsConfigs,
+              connectionName,
+              connectionID,
+            },
+          }),
+        );
       }
     } catch (error) {
       updateProgress({ showProgress: false });
@@ -153,15 +153,17 @@ const GrafanaComponent = (props) => {
       if (result !== undefined) {
         props.notify({ message: 'Grafana was configured!', event_type: EVENT_TYPES.SUCCESS });
         updateState({ grafanaConfigSuccess: true });
-        props.updateGrafanaConfig({
-          grafana: {
-            grafanaURL,
-            grafanaAPIKey,
-            grafanaBoardSearch,
-            grafanaBoards,
-            selectedBoardsConfigs,
-          },
-        });
+        dispatch(
+          updateGrafanaConfig({
+            grafana: {
+              grafanaURL,
+              grafanaAPIKey,
+              grafanaBoardSearch,
+              grafanaBoards,
+              selectedBoardsConfigs,
+            },
+          }),
+        );
         // Fetch boards using debounced callback
         debouncedFetchBoards();
       }
@@ -198,7 +200,7 @@ const GrafanaComponent = (props) => {
         connectionID: grafanaConnectionObj?.id,
         connectionName: grafanaConnectionObj?.name,
       };
-      props.updateGrafanaConfig({ grafana: grafanaCfg });
+      dispatch(updateGrafanaConfig({ grafana: grafanaCfg }));
     } catch (error) {
       console.error('Error fetching credential by ID:', error);
     }
@@ -234,15 +236,17 @@ const GrafanaComponent = (props) => {
           grafanaBoards: [],
           selectedBoardsConfigs: [],
         }));
-        props.updateGrafanaConfig({
-          grafana: {
-            grafanaURL: '',
-            grafanaAPIKey: '',
-            grafanaBoardSearch: '',
-            grafanaBoards: [],
-            selectedBoardsConfigs: [],
-          },
-        });
+        dispatch(
+          updateGrafanaConfig({
+            grafana: {
+              grafanaURL: '',
+              grafanaAPIKey: '',
+              grafanaBoardSearch: '',
+              grafanaBoards: [],
+              selectedBoardsConfigs: [],
+            },
+          }),
+        );
       }
     } catch (error) {
       updateProgress({ showProgress: false });
@@ -288,15 +292,17 @@ const GrafanaComponent = (props) => {
       if (result !== undefined) {
         // Update local state and parent configuration
         updateState((prev) => ({ ...prev, selectedBoardsConfigs }));
-        props.updateGrafanaConfig({
-          grafana: {
-            grafanaURL,
-            grafanaAPIKey,
-            grafanaBoardSearch,
-            grafanaBoards,
-            selectedBoardsConfigs,
-          },
-        });
+        dispatch(
+          updateGrafanaConfig({
+            grafana: {
+              grafanaURL,
+              grafanaAPIKey,
+              grafanaBoardSearch,
+              grafanaBoards,
+              selectedBoardsConfigs,
+            },
+          }),
+        );
         props.notify({
           message: 'Grafana board selection updated.',
           event_type: EVENT_TYPES.SUCCESS,
@@ -310,8 +316,8 @@ const GrafanaComponent = (props) => {
 
   useEffect(() => {
     const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs, connectionID, connectionName, ts } =
-      props.grafana;
-    if (props.grafana.ts > state.ts) {
+      grafana;
+    if (grafana.ts > state.ts) {
       updateState({
         grafanaURL,
         grafanaAPIKey,
@@ -323,7 +329,7 @@ const GrafanaComponent = (props) => {
       });
       debouncedFetchBoards();
     }
-  }, [props.grafana.grafanaAPIKey, props.grafana.grafanaURL]);
+  }, [grafana.grafanaAPIKey, grafana.grafanaURL]);
 
   useEffect(() => {
     if (!props.isMeshConfigured || grafanaConfigIsLoading || grafanaConfigIsError) return;
@@ -429,16 +435,4 @@ GrafanaComponent.propTypes = {
   scannedGrafana: PropTypes.array.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-});
-
-const mapStateToProps = (st) => {
-  const grafana = st.get('grafana').toJS();
-  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withTelemetryHook(withNotify(GrafanaComponent), CONNECTION_KINDS.GRAFANA));
+export default withTelemetryHook(withNotify(GrafanaComponent), CONNECTION_KINDS.GRAFANA);

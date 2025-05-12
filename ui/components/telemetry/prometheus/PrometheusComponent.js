@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { Typography, styled, Box } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
 import PrometheusSelectionComponent from './PrometheusSelectionComponent';
 import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
-import { updateGrafanaConfig, updatePrometheusConfig } from '../../../lib/store';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -16,8 +13,9 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { updatePrometheusConfig } from '@/store/slices/telemetry';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   '& .buttons': {
@@ -54,7 +52,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const PrometheusComponent = (props) => {
-  const { prometheus: initialPrometheus } = props;
+  const { prometheus: initialPrometheus } = useSelectorRtk((state) => state.telemetry);
   const [urlError, setUrlError] = useState(false);
   const [prometheusConfigSuccess, setPrometheusConfigSuccess] = useState(
     initialPrometheus.prometheusURL !== '',
@@ -67,6 +65,7 @@ const PrometheusComponent = (props) => {
   const [connectionName, setConnectionName] = useState(initialPrometheus.connectionName);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatchRtk();
 
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
@@ -91,9 +90,11 @@ const PrometheusComponent = (props) => {
             event_type: EVENT_TYPES.SUCCESS,
           });
           setPrometheusConfigSuccess(true);
-          props.updatePrometheusConfig({
-            prometheus: { prometheusURL: url, selectedPrometheusBoardsConfigs: [] },
-          });
+          dispatch(
+            updatePrometheusConfig({
+              prometheus: { prometheusURL: url, selectedPrometheusBoardsConfigs: [] },
+            }),
+          );
         }
       },
       handleError,
@@ -115,14 +116,16 @@ const PrometheusComponent = (props) => {
       console.log('Data:', data);
 
       setPrometheusURL(newURL);
-      props.updatePrometheusConfig({
-        prometheus: {
-          prometheusURL: newURL,
-          selectedPrometheusBoardsConfigs: data?.metadata?.prometheus_boards || [],
-          connectionID: data?.id,
-          connectionName: data?.name,
-        },
-      });
+      dispatch(
+        updatePrometheusConfig({
+          prometheus: {
+            prometheusURL: newURL,
+            selectedPrometheusBoardsConfigs: data?.metadata?.prometheus_boards || [],
+            connectionID: data?.id,
+            connectionName: data?.name,
+          },
+        }),
+      );
     }
   };
 
@@ -156,9 +159,11 @@ const PrometheusComponent = (props) => {
         setPrometheusConfigSuccess(false);
         setPrometheusURL('');
         setSelectedPrometheusBoardsConfigs([]);
-        props.updatePrometheusConfig({
-          prometheus: { prometheusURL: '', selectedPrometheusBoardsConfigs: [] },
-        });
+        dispatch(
+          updatePrometheusConfig({
+            prometheus: { prometheusURL: '', selectedPrometheusBoardsConfigs: [] },
+          }),
+        );
         props.notify({
           message: `Connection "${connectionID}" transitioned to discovered state`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -176,9 +181,11 @@ const PrometheusComponent = (props) => {
     if (boardsSelection?.panels?.length) {
       const newConfigs = [...selectedPrometheusBoardsConfigs, boardsSelection];
       setSelectedPrometheusBoardsConfigs(newConfigs);
-      props.updatePrometheusConfig({
-        prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
-      });
+      dispatch(
+        updatePrometheusConfig({
+          prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
+        }),
+      );
     }
   };
 
@@ -186,21 +193,22 @@ const PrometheusComponent = (props) => {
     const newConfigs = [...selectedPrometheusBoardsConfigs];
     indexes.sort((a, b) => b - a).forEach((i) => newConfigs.splice(i, 1));
     setSelectedPrometheusBoardsConfigs(newConfigs);
-    props.updatePrometheusConfig({
-      prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
-    });
+    dispatch(
+      updatePrometheusConfig({
+        prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
+      }),
+    );
   };
 
   useEffect(() => {
-    const { prometheus } = props;
-    if (prometheus.prometheusURL !== prometheusURL) {
-      setPrometheusConfigSuccess(prometheus.prometheusURL !== '');
-      setPrometheusURL(prometheus.prometheusURL);
-      setSelectedPrometheusBoardsConfigs(prometheus.selectedPrometheusBoardsConfigs || []);
-      setConnectionID(prometheus.connectionID);
-      setConnectionName(prometheus.connectionName);
+    if (initialPrometheus.prometheusURL !== prometheusURL) {
+      setPrometheusConfigSuccess(initialPrometheus.prometheusURL !== '');
+      setPrometheusURL(initialPrometheus.prometheusURL);
+      setSelectedPrometheusBoardsConfigs(initialPrometheus.selectedPrometheusBoardsConfigs || []);
+      setConnectionID(initialPrometheus.connectionID);
+      setConnectionName(initialPrometheus.connectionName);
     }
-  }, [props.prometheus]);
+  }, [initialPrometheus]);
 
   useEffect(() => {
     if (!props.isMeshConfigured) return;
@@ -287,23 +295,7 @@ const PrometheusComponent = (props) => {
 };
 
 PrometheusComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   scannedPrometheus: PropTypes.array.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-});
-
-const mapStateToProps = (st) => {
-  const grafana = st.get('grafana').toJS();
-  const prometheus = st.get('prometheus').toJS();
-
-  return { grafana, prometheus };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withTelemetryHook(withNotify(PrometheusComponent), CONNECTION_KINDS.PROMETHEUS));
+export default withTelemetryHook(withNotify(PrometheusComponent), CONNECTION_KINDS.PROMETHEUS);

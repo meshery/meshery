@@ -26,7 +26,6 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { updateStaticPrometheusBoardConfig } from '../../lib/store';
 import dataFetch from '../../lib/data-fetch';
 import MesheryChart from '../MesheryChart';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
@@ -35,7 +34,7 @@ import { durationOptions } from '../../lib/prePopulatedOptions';
 import fetchControlPlanes from '../graphql/queries/ControlPlanesQuery';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { iconMedium } from '../../css/icons.styles';
-import { useNotification, withNotify } from '../../utils/hooks/useNotification';
+import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
@@ -45,7 +44,6 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
-import { useLegacySelector, useLegacyDispatch } from '../../lib/store';
 import { ArrowBack } from '@mui/icons-material';
 import {
   CenterTimer,
@@ -58,6 +56,7 @@ import { getMeshModels } from '@/api/meshmodel';
 import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTest } from '@/store/slices/prefTest';
+import { updateStaticPrometheusBoardConfig } from '@/store/slices/telemetry';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -152,7 +151,6 @@ const MesheryPerformanceComponent_ = (props) => {
     qps = '0',
     c = '0',
     t = '30s',
-    staticPrometheusBoardConfig,
     performanceProfileID,
     profileName,
     loadGenerator,
@@ -211,6 +209,7 @@ const MesheryPerformanceComponent_ = (props) => {
   );
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { staticPrometheusBoardConfig } = useSelectorRtk((state) => state.telemetry);
   const { notify } = useNotification();
   const dispatch = useDispatchRtk();
   const { data: userData, isSuccess: isUserDataFetched } =
@@ -582,7 +581,7 @@ const MesheryPerformanceComponent_ = (props) => {
     if (
       (staticPrometheusBoardConfig &&
         staticPrometheusBoardConfig !== null &&
-        Object.keys(props.staticPrometheusBoardConfig).length > 0) ||
+        Object.keys(staticPrometheusBoardConfig).length > 0) ||
       (staticPrometheusBoardConfigState &&
         staticPrometheusBoardConfigState !== null &&
         Object.keys(staticPrometheusBoardConfigState).length > 0)
@@ -602,9 +601,11 @@ const MesheryPerformanceComponent_ = (props) => {
           typeof result.node.panels !== 'undefined' &&
           result.node.panels.length > 0
         ) {
-          props.updateStaticPrometheusBoardConfig({
-            staticPrometheusBoardConfig: result, // will contain both the cluster and node keys for the respective boards
-          });
+          dispatch(
+            updateStaticPrometheusBoardConfig({
+              staticPrometheusBoardConfig: result, // will contain both the cluster and node keys for the respective boards
+            }),
+          );
           setStaticPrometheusBoardConfig(result);
         }
       },
@@ -721,14 +722,15 @@ const MesheryPerformanceComponent_ = (props) => {
   const handleTimerDialogClose = () => {
     setTimerDialogOpen(false);
   };
-  const { grafana, prometheus } = props;
+  const { grafana } = useSelectorRtk((state) => state.telemetry);
+  const { prometheus } = useSelectorRtk((state) => state.telemetry);
   let localStaticPrometheusBoardConfig;
   if (
-    props.staticPrometheusBoardConfig &&
-    props.staticPrometheusBoardConfig != null &&
-    Object.keys(props.staticPrometheusBoardConfig).length > 0
+    staticPrometheusBoardConfig &&
+    staticPrometheusBoardConfig != null &&
+    Object.keys(staticPrometheusBoardConfig).length > 0
   ) {
-    localStaticPrometheusBoardConfig = props.staticPrometheusBoardConfig;
+    localStaticPrometheusBoardConfig = staticPrometheusBoardConfig;
   } else {
     localStaticPrometheusBoardConfig = staticPrometheusBoardConfigState;
   }
@@ -1279,33 +1281,7 @@ const MesheryPerformanceComponent_ = (props) => {
 export const MesheryPerformanceComponentWithStyles = MesheryPerformanceComponent_;
 
 export const MesheryPerformanceComponent = (props) => {
-  const dispatch = useLegacyDispatch();
-
-  // Gather all required Redux states
-  const grafana = useLegacySelector((state) =>
-    state.get('grafana')?.toJS ? state.get('grafana').toJS() : state.get('grafana'),
-  );
-  const prometheus = useLegacySelector((state) =>
-    state.get('prometheus')?.toJS ? state.get('prometheus').toJS() : state.get('prometheus'),
-  );
-  const staticPrometheusBoardConfig = useLegacySelector((state) =>
-    state.get('staticPrometheusBoardConfig')?.toJS
-      ? state.get('staticPrometheusBoardConfig').toJS()
-      : state.get('staticPrometheusBoardConfig'),
-  );
-  // Create dispatch methods matching the original connect mapping
-  const wrappedProps = {
-    ...props,
-    grafana,
-    prometheus,
-    staticPrometheusBoardConfig,
-
-    // Wrap dispatch actions to match original connect behavior
-    updateStaticPrometheusBoardConfig: (config) =>
-      dispatch(updateStaticPrometheusBoardConfig(config)),
-  };
-
-  return <MesheryPerformanceComponentWithStyles {...wrappedProps} />;
+  return <MesheryPerformanceComponentWithStyles {...props} />;
 };
 
 export default MesheryPerformanceComponent;

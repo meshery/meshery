@@ -82,6 +82,7 @@ import {
   updateK8SConfig,
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
+import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -263,7 +264,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
               connectionName: connection?.name,
             };
 
-            store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
+            dispatch(updatePrometheusConfig({ prometheus: promCfg }));
           } else {
             const credentialID = connection?.credential_id;
 
@@ -277,7 +278,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
                 connectionID: connection?.id,
                 connectionName: connection?.name,
               };
-              store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: grafanaCfg });
+              dispatch(updateGrafanaConfig({ grafana: grafanaCfg }));
             });
           }
         });
