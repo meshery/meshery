@@ -5,9 +5,7 @@ import thunkMiddleware from 'redux-thunk';
 import { fromJS } from 'immutable';
 import { createContext } from 'react';
 import { createDispatchHook, createSelectorHook } from 'react-redux';
-import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
-import { mesheryEventBus } from '@/utils/eventBus';
-import { selectK8sConfig } from '@/store/slices/mesheryUi';
+
 const initialState = fromJS({
   loadTest: {
     testName: '',
@@ -46,8 +44,6 @@ const initialState = fromJS({
     ts: new Date(-8640000000000000),
   },
   staticPrometheusBoardConfig: {},
-  anonymousUsageStats: true,
-  anonymousPerfResults: true,
   showProgress: false,
   isDrawerCollapsed: false,
   selectedAdapter: '',
@@ -79,8 +75,6 @@ export const actionTypes = {
   UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
   UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
   UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
-  UPDATE_ANONYMOUS_USAGE_STATS: 'UPDATE_ANONYMOUS_USAGE_STATS',
-  UPDATE_ANONYMOUS_PERFORMANCE_RESULTS: 'UPDATE_ANONYMOUS_PERFORMANCE_RESULTS',
   UPDATE_PROGRESS: 'UPDATE_PROGRESS',
   TOOGLE_DRAWER: 'TOOGLE_DRAWER',
   SET_ADAPTER: 'SET_ADAPTER',
@@ -103,10 +97,6 @@ export const reducer = (state = initialState, action) => {
       return state.updateIn(['loadTest'], (val) => fromJS(action.loadTest));
     case actionTypes.UPDATE_LOAD_GEN_CONFIG:
       return state.mergeDeep({ loadTestPref: action.loadTestPref });
-    case actionTypes.UPDATE_ANONYMOUS_USAGE_STATS:
-      return state.mergeDeep({ anonymousUsageStats: action.anonymousUsageStats });
-    case actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS:
-      return state.mergeDeep({ anonymousPerfResults: action.anonymousPerfResults });
     case actionTypes.UPDATE_ADAPTERS_INFO:
       state = state.updateIn(['meshAdapters'], (val) => fromJS([]));
       state = state.updateIn(['meshAdaptersts'], (val) => fromJS(new Date()));
@@ -186,19 +176,6 @@ export const updateLoadTestPref =
   ({ loadTestPref }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
-  };
-export const updateAnonymousUsageStats =
-  ({ anonymousUsageStats }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS, anonymousUsageStats });
-  };
-export const updateAnonymousPerformanceResults =
-  ({ anonymousPerfResults }) =>
-  (dispatch) => {
-    return dispatch({
-      type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS,
-      anonymousPerfResults,
-    });
   };
 
 export const updateAdaptersInfo =
@@ -308,17 +285,6 @@ export const resultsMerge = (arr1, arr2) => {
   arr2.map(compareAndAdd);
   return arr;
 };
-
-// export const selectSelectedK8sClusters = (state) => {
-//   const selectedK8sContexts = state.get('selectedK8sContexts');
-//   const contexts = selectedK8sContexts?.toJS?.() || selectedK8sContexts;
-//   return getK8sClusterIdsFromCtxId(contexts, selectK8sConfig(state));
-// };
-
-// export const selectK8sConfig = (state) => {
-//   const k8scontext = state.get('k8sConfig');
-//   return k8scontext?.toJS?.() || k8scontext;
-// };
 
 export const LegacyStoreContext = createContext(null);
 

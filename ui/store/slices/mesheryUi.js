@@ -11,8 +11,6 @@ const initialState = {
   user: {},
   k8sConfig: [], // k8sconfig stores kubernetes cluster configs
   selectedK8sContexts: ['all'], // The selected k8s context on which the operations should be performed
-  anonymousUsageStats: true,
-  anonymousPerfResults: true,
   showProgress: false,
   isDrawerCollapsed: false,
   catalogVisibility: true,
@@ -49,12 +47,6 @@ const coreSlice = createSlice({
     setK8sContexts: (state, action) => {
       state.selectedK8sContexts = action.payload.selectedK8sContexts;
       // Note: Event bus publication would be handled in the thunk action
-    },
-    updateAnonymousUsageStats: (state, action) => {
-      state.anonymousUsageStats = action.payload.anonymousUsageStats;
-    },
-    updateAnonymousPerformanceResults: (state, action) => {
-      state.anonymousPerfResults = action.payload.anonymousPerfResults;
     },
     updateProgress: (state, action) => {
       state.showProgress = action.payload.showProgress;
@@ -106,8 +98,7 @@ export const {
   updateUser,
   updateK8SConfig,
   setK8sContexts: setK8sContextsAction,
-  updateAnonymousUsageStats,
-  updateAnonymousPerformanceResults,
+
   updateProgress,
   toggleDrawer,
   toggleCatalogContent,
