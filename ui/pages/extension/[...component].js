@@ -4,7 +4,7 @@ import ExtensionSandbox, {
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
 import { Box, CircularProgress, NoSsr } from '@layer5/sistent';
-import { updateExtensionType, updateCapabilities } from '../../lib/store';
+import { updateExtensionType } from '../../lib/store';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
@@ -14,7 +14,12 @@ import { useRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { updateBetaBadge, updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
+import {
+  updateBetaBadge,
+  updateCapabilities,
+  updatePagePath,
+  updateTitle,
+} from '@/store/slices/mesheryUi';
 import { useDispatchRtk } from '@/store/hooks';
 
 /**
@@ -46,7 +51,7 @@ function RemoteExtension() {
   const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
   const renderExtension = useCallback(() => {
     if (!capabilitiesRegistry?.extensions) return;
-    dispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
+    rtkDispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
 
     let extNames = [];
     for (var key of Object.keys(capabilitiesRegistry.extensions)) {

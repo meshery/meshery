@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
-import { Provider, connect } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from '../store';
-import { bindActionCreators } from 'redux';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -12,7 +11,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar, Popover } from '@layer5/sistent';
 import { IconButtonAvatar } from './Header.styles';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updateUser } from '@/store/slices/mesheryUi';
 
 function exportToJsonFile(jsonData, filename) {
@@ -31,6 +30,7 @@ function exportToJsonFile(jsonData, filename) {
  */
 const HeaderMenu = (props) => {
   const dispatch = useDispatchRtk();
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
@@ -46,8 +46,6 @@ const HeaderMenu = (props) => {
   } = useGetLoggedInUserQuery();
 
   const [triggerGetToken, { isError: isTokenError, error: tokenError }] = useLazyGetTokenQuery();
-
-  const { capabilitiesRegistry } = props;
 
   const handleLogout = () => {
     window.location = '/user/logout';
@@ -200,9 +198,4 @@ const MenuProvider = (props) => (
   </Provider>
 );
 
-
-const mapStateToProps = (state) => ({
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
-
-export default connect(mapStateToProps, null)(MenuProvider);
+export default MenuProvider;

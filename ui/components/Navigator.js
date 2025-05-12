@@ -19,7 +19,7 @@ import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { toggleDrawer, setAdapter, updateCapabilities } from '../lib/store';
+import { toggleDrawer, setAdapter } from '../lib/store';
 import {
   CatalogIcon,
   CustomTooltip,
@@ -87,8 +87,8 @@ import {
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
-import { useDispatchRtk } from '@/store/hooks';
-import { updateBetaBadge, updateTitle } from '@/store/slices/mesheryUi';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { updateBetaBadge, updateCapabilities, updateTitle } from '@/store/slices/mesheryUi';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -280,6 +280,7 @@ const NavigatorWrapper = (props) => {
 const Navigator_ = (props) => {
   const { meshAdapters: initialMeshAdapters } = props;
   const dispatch = useDispatchRtk();
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const theme = useTheme();
 
   const [state, setState] = useState({
@@ -397,7 +398,7 @@ const Navigator_ = (props) => {
         capabilitiesRegistryObj,
         navigatorComponents,
       });
-      props.updateCapabilities({ capabilitiesRegistry: result });
+      dispatch(updateCapabilities({ capabilitiesRegistry: result }));
     }
     if (isError) {
       console.error('Error fetching capabilities', error);
@@ -476,7 +477,7 @@ const Navigator_ = (props) => {
         let show = false;
         cat.children?.forEach((ch) => {
           if (ch.id === 'Designs') {
-            const idx = props.capabilitiesRegistry?.capabilities?.findIndex(
+            const idx = capabilitiesRegistry?.capabilities?.findIndex(
               (cap) => cap.feature === 'persist-meshery-patterns',
             );
             if (idx != -1) {
@@ -1120,14 +1121,12 @@ const Navigator_ = (props) => {
 const mapDispatchToProps = (dispatch) => ({
   toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
   setAdapter: bindActionCreators(setAdapter, dispatch),
-  updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
 });
 
 const mapStateToProps = (state) => ({
   meshAdapters: state.get('meshAdapters').toJS(),
   meshAdaptersts: state.get('meshAdaptersts'),
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
   organization: state.get('organization'),
   keys: state.get('keys'),
   catalogVisibility: state.get('catalogVisibility'),

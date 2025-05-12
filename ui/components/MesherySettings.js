@@ -54,6 +54,7 @@ import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
+import { useSelectorRtk } from '@/store/hooks';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -134,12 +135,11 @@ const settingsRouter = (router) => {
 
 //TODO: Tabs are hardcoded everywhere
 const MesherySettings = (props) => {
-  const { k8sconfig, meshAdapters, grafana, prometheus, router, classes } = props;
+  const { meshAdapters, grafana, prometheus, router, classes } = props;
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
   const theme = useTheme();
-
+  const { k8sconfig } = useSelectorRtk((state) => state.ui);
   const [state, setState] = useState({
-    k8sconfig,
     meshAdapters,
     grafana,
     prometheus,
@@ -433,18 +433,14 @@ const MesherySettings = (props) => {
 };
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
   const meshAdapters = state.get('meshAdapters').toJS();
   const grafana = state.get('grafana').toJS();
   const prometheus = state.get('prometheus').toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
   const telemetryUrls = state.get('telemetryURLs').toJS();
   return {
-    k8sconfig,
     meshAdapters,
     grafana,
     prometheus,
-    selectedK8sContexts,
     telemetryUrls,
   };
 };

@@ -8,7 +8,7 @@ import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
+import { updateProgress } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
@@ -59,7 +59,8 @@ import {
 } from './Header.styles';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { updateCapabilities, updateK8SConfig } from '@/store/slices/mesheryUi';
 
 async function loadActiveK8sContexts() {
   try {
@@ -134,7 +135,6 @@ export const K8sContextConnectionChip = K8sContextConnectionChip_;
 function K8sContextMenu({
   contexts = {},
   activeContexts = [],
-  updateK8SConfig,
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
@@ -145,6 +145,7 @@ function K8sContextMenu({
   const { notify } = useNotification();
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
   const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const dispatch = useDispatchRtk();
 
   const styleSlider = {
     position: 'absolute',
@@ -202,7 +203,7 @@ function K8sContextMenu({
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts();
         if (Array.isArray(updatedConfig)) {
-          updateK8SConfig({ k8sConfig: updatedConfig });
+          dispatch(updateK8SConfig({ k8sConfig: updatedConfig }));
         }
       };
       deleteKubernetesConfig(
@@ -392,15 +393,13 @@ const Header = ({
   searchContexts,
   operatorState,
   meshSyncState,
-  updateK8SConfig,
   updateProgress,
-  updateCapabilities,
   updateExtensionType,
 }) => {
   const { notify } = useNotification;
   const isBeta = useSelectorRtk((state) => state.ui.page.isBeta);
   const title = useSelectorRtk((state) => state.ui.page.title);
-
+  const dispatch = useDispatchRtk();
   const {
     data: providerCapabilities,
     isSuccess: isProviderCapabilitiesSuccess,
@@ -410,7 +409,7 @@ const Header = ({
 
   const collaboratorExt = () => {
     if (isProviderCapabilitiesSuccess) {
-      updateCapabilities({ capabilitiesRegistry: providerCapabilities });
+      dispatch(updateCapabilities({ capabilitiesRegistry: providerCapabilities }));
       return ExtensionPointSchemaValidator('collaborator')(
         providerCapabilities?.extensions?.collaborator,
       );
@@ -482,7 +481,6 @@ const Header = ({
                         operatorStatus: operatorState,
                         meshSyncStatus: meshSyncState,
                       }}
-                      updateK8SConfig={updateK8SConfig}
                       updateProgress={updateProgress}
                     />
                   </UserSpan>
@@ -521,18 +519,13 @@ Header.propTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-    k8sconfig: state.get('k8sConfig'),
     operatorState: state.get('operatorState'),
     meshSyncState: state.get('meshSyncState'),
-    capabilitiesRegistry: state.get('capabilitiesRegistry'),
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(withNotify(Header));

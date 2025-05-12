@@ -31,6 +31,7 @@ import {
 } from '@/rtk-query/meshsync';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
+import { useSelectorRtk } from '@/store/hooks';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -40,13 +41,7 @@ const ACTION_TYPES = {
 };
 
 export default function MeshSyncTable(props) {
-  const {
-    updateProgress,
-    selectedK8sContexts,
-    k8sconfig,
-    selectedResourceId,
-    updateUrlWithResourceId,
-  } = props;
+  const { updateProgress, selectedResourceId, updateUrlWithResourceId } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -58,6 +53,8 @@ export default function MeshSyncTable(props) {
   const [kindFilter, setKindFilter] = useState();
   const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const { k8sconfig } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const [selectedFilters, setSelectedFilters] = useState({
     kind: 'All',
     model: 'All',

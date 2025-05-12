@@ -16,6 +16,7 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
+import { useSelectorRtk } from '@/store/hooks';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   '& .buttons': {
@@ -63,9 +64,11 @@ const PrometheusComponent = (props) => {
   const [prometheusURL, setPrometheusURL] = useState(initialPrometheus.prometheusURL);
   const [connectionID, setConnectionID] = useState(initialPrometheus.connectionID);
   const [connectionName, setConnectionName] = useState(initialPrometheus.connectionName);
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
 
   const getK8sClusterIds = () => {
-    return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
+    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
   const submitPrometheusConfigure = (url) => {
@@ -296,10 +299,8 @@ const mapDispatchToProps = (dispatch) => ({
 const mapStateToProps = (st) => {
   const grafana = st.get('grafana').toJS();
   const prometheus = st.get('prometheus').toJS();
-  const selectedK8sContexts = st.get('selectedK8sContexts');
-  const k8sconfig = st.get('k8sConfig');
 
-  return { grafana, prometheus, selectedK8sContexts, k8sconfig };
+  return { grafana, prometheus };
 };
 
 export default connect(

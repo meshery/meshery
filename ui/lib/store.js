@@ -1,3 +1,4 @@
+//@ts-check
 import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import thunkMiddleware from 'redux-thunk';
@@ -6,9 +7,8 @@ import { createContext } from 'react';
 import { createDispatchHook, createSelectorHook } from 'react-redux';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { mesheryEventBus } from '@/utils/eventBus';
+import { selectK8sConfig } from '@/store/slices/mesheryUi';
 const initialState = fromJS({
-  k8sConfig: [], // k8sconfig stores kubernetes cluster configs
-  selectedK8sContexts: ['all'], // The selected k8s context on which the operations should be performed
   loadTest: {
     testName: '',
     meshName: '',
@@ -59,7 +59,6 @@ const initialState = fromJS({
   },
   catalogVisibility: true,
   extensionType: '',
-  capabilitiesRegistry: null,
   telemetryURLs: {
     grafana: [],
     prometheus: [],
@@ -75,13 +74,7 @@ const initialState = fromJS({
 });
 
 export const actionTypes = {
-  UPDATE_PAGE: 'UPDATE_PAGE',
   SET_WORKSPACE: 'SET_WORKSPACE',
-  UPDATE_TITLE: 'UPDATE_TITLE',
-  UPDATE_USER: 'UPDATE_USER',
-  UPDATE_BETA_BADGE: 'UPDATE_BETA_BADGE',
-  UPDATE_CLUSTER_CONFIG: 'UPDATE_CLUSTER_CONFIG',
-  SET_K8S_CONTEXT: 'SET_K8S_CONTEXT',
   UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
   UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
   UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
@@ -101,7 +94,6 @@ export const actionTypes = {
   SET_MESHSYNC_SUBSCRIPTION: 'SET_MESHSYNC_SUBSCRIPTION',
   // UPDATE_SMI_RESULT: 'UPDATE_SMI_RESULT',
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
-  UPDATE_CAPABILITY_REGISTRY: 'UPDATE_CAPABILITY_REGISTRY',
   UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
   SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
   SET_ORGANIZATION: 'SET_ORGANIZATION',
@@ -111,24 +103,8 @@ export const actionTypes = {
 // REDUCERS
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case actionTypes.UPDATE_PAGE:
-      return state.mergeDeep({
-        page: {
-          path: action.path,
-        },
-      });
-    case actionTypes.UPDATE_TITLE:
-      return state.mergeDeep({
-        page: {
-          title: action.title,
-        },
-      });
     case actionTypes.UPDATE_USER:
       return state.mergeDeep({ user: action.user });
-    case actionTypes.UPDATE_CLUSTER_CONFIG:
-      return state.merge({ k8sConfig: action.k8sConfig });
-    case actionTypes.SET_K8S_CONTEXT:
-      return state.merge({ selectedK8sContexts: action.selectedK8sContexts });
     case actionTypes.UPDATE_LOAD_TEST_DATA:
       return state.updateIn(['loadTest'], (val) => fromJS(action.loadTest));
     case actionTypes.UPDATE_LOAD_GEN_CONFIG:
@@ -187,9 +163,6 @@ export const reducer = (state = initialState, action) => {
     case actionTypes.UPDATE_EXTENSION_TYPE:
       return state.merge({ extensionType: action.extensionType });
 
-    case actionTypes.UPDATE_CAPABILITY_REGISTRY:
-      return state.merge({ capabilitiesRegistry: action.capabilitiesRegistry });
-
     case actionTypes.UPDATE_TELEMETRY_URLS:
       return state.updateIn(['telemetryURLs'], (val) => fromJS(action.telemetryURLs));
 
@@ -220,26 +193,6 @@ export const updateProgress =
   ({ showProgress }) =>
   (dispatch) => {
     return dispatch({ type: actionTypes.UPDATE_PROGRESS, showProgress });
-  };
-
-export const updateK8SConfig =
-  ({ k8sConfig }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_CLUSTER_CONFIG, k8sConfig });
-  };
-
-export const setK8sContexts =
-  ({ selectedK8sContexts }) =>
-  (dispatch) => {
-    const result = dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
-
-    mesheryEventBus.publish({
-      type: 'K8S_CONTEXTS_UPDATED',
-      data: {
-        selectedK8sContexts: selectedK8sContexts,
-      },
-    });
-    return result;
   };
 
 export const updateLoadTestData =
@@ -336,12 +289,6 @@ export const updateExtensionType =
     return dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType });
   };
 
-export const updateCapabilities =
-  ({ capabilitiesRegistry }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_CAPABILITY_REGISTRY, capabilitiesRegistry });
-  };
-
 export const updateTelemetryUrls =
   ({ telemetryURLs }) =>
   (dispatch) => {
@@ -397,16 +344,16 @@ export const resultsMerge = (arr1, arr2) => {
   return arr;
 };
 
-export const selectSelectedK8sClusters = (state) => {
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const contexts = selectedK8sContexts?.toJS?.() || selectedK8sContexts;
-  return getK8sClusterIdsFromCtxId(contexts, selectK8sConfig(state));
-};
+// export const selectSelectedK8sClusters = (state) => {
+//   const selectedK8sContexts = state.get('selectedK8sContexts');
+//   const contexts = selectedK8sContexts?.toJS?.() || selectedK8sContexts;
+//   return getK8sClusterIdsFromCtxId(contexts, selectK8sConfig(state));
+// };
 
-export const selectK8sConfig = (state) => {
-  const k8scontext = state.get('k8sConfig');
-  return k8scontext?.toJS?.() || k8scontext;
-};
+// export const selectK8sConfig = (state) => {
+//   const k8scontext = state.get('k8sConfig');
+//   return k8scontext?.toJS?.() || k8scontext;
+// };
 
 export const LegacyStoreContext = createContext(null);
 

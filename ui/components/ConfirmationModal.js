@@ -19,7 +19,7 @@ import {
 } from '@layer5/sistent';
 import { Search } from '@mui/icons-material';
 import { connect } from 'react-redux';
-import { setK8sContexts, updateProgress } from '../lib/store';
+import { updateProgress } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
@@ -39,6 +39,8 @@ import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
+import { setK8sContexts } from '@/store/slices/mesheryUi';
+import { useSelectorRtk } from '@/store/hooks';
 
 const DialogSubtitle = styled(DialogContentText)({
   overflowWrap: 'anywhere',
@@ -131,11 +133,9 @@ function ConfirmationMsg(props) {
     open,
     handleClose,
     submit,
-    selectedK8sContexts,
     k8scontext,
     title,
     validationBody,
-    setK8sContexts,
     componentCount,
     tab,
     errors,
@@ -146,6 +146,7 @@ function ConfirmationMsg(props) {
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const { notify } = useNotification();
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
 
@@ -453,19 +454,11 @@ function ConfirmationMsg(props) {
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-    k8scontext: state.get('k8sConfig'),
-  };
-};
-
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ConfirmationMsg);
+export default connect(null, mapDispatchToProps)(ConfirmationMsg);
 
 export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8sContexts }) => {
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
@@ -565,7 +558,4 @@ export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8
   );
 };
 
-export const SelectDeploymentTarget = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SelectDeploymentTarget_);
+export const SelectDeploymentTarget = connect(null, mapDispatchToProps)(SelectDeploymentTarget_);

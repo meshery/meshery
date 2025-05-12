@@ -371,7 +371,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => ({
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);

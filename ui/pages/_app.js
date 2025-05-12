@@ -30,7 +30,6 @@ import {
   toggleCatalogContent,
   setConnectionMetadata,
   LegacyStoreContext,
-  setK8sContexts,
 } from '../lib/store';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
@@ -53,7 +52,7 @@ import CAN, { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { store } from '../store';
-import { RTKContext } from '@/store/hooks';
+import { RTKContext, useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
 import {
@@ -80,6 +79,7 @@ import {
   StyledRoot,
   ThemeResponsiveSnackbar,
 } from '../themes/App.styles';
+import { setK8sContexts, updateK8SConfig } from '@/store/slices/mesheryUi';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -161,7 +161,8 @@ const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
   );
 };
 
-const KubernetesSubscription = ({ store, setAppState }) => {
+const KubernetesSubscription = ({ setAppState }) => {
+  const dispatch = useDispatchRtk();
   const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
     // Don't fetch k8s contexts if user doesn't have permission
     if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
@@ -182,11 +183,7 @@ const KubernetesSubscription = ({ store, setAppState }) => {
           k8sContexts: result.k8sContext,
           activeK8sContexts: allContexts,
         });
-
-        store.dispatch({
-          type: actionTypes.UPDATE_CLUSTER_CONFIG,
-          k8sConfig: result.k8sContext.contexts,
-        });
+        dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
       },
       {
         selector: {
@@ -218,12 +215,11 @@ const MesheryApp = ({
   store,
   toggleCatalogContent,
   setConnectionMetadata,
-  k8sConfig,
-  capabilitiesRegistry,
   extensionType,
 }) => {
   const pageContext = useMemo(() => getPageContext(), []);
-
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const [state, setState] = useState({
     mobileOpen: false,
     isDrawerCollapsed: false,
@@ -321,8 +317,9 @@ const MesheryApp = ({
 
   const initSubscriptions = useCallback(
     (contexts) => {
+      console.log('amit this called in initSubscriptions', contexts);
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
-
+      console.log('amit connectionIDs', connectionIDs);
       // No need to create a controller subscription if there are no connections
       if (connectionIDs.length < 1) {
         setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
@@ -331,7 +328,7 @@ const MesheryApp = ({
 
       const mesheryControllerSubscription = new GQLSubscription({
         type: MESHERY_CONTROLLER_SUBSCRIPTION,
-        connectionIDs: getConnectionIDsFromContextIds(contexts, k8sConfig),
+        connectionIDs: connectionIDs,
         callbackFunction: (data) => {
           store.dispatch({
             type: actionTypes.SET_CONTROLLER_STATE,
@@ -357,15 +354,12 @@ const MesheryApp = ({
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  const activeContextChangeCallback = useCallback(
-    (activeK8sContexts) => {
-      if (activeK8sContexts.includes('all')) {
-        activeK8sContexts = ['all'];
-      }
-      store.dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
-    },
-    [store],
-  );
+  const activeContextChangeCallback = useCallback((activeK8sContexts) => {
+    if (activeK8sContexts.includes('all')) {
+      activeK8sContexts = ['all'];
+    }
+    setK8sContexts({ selectedK8sContexts: activeK8sContexts });
+  }, []);
 
   const setActiveContexts = useCallback(
     (id) => {
@@ -652,6 +646,7 @@ const MesheryApp = ({
     }
 
     const { mesheryControllerSubscription } = state;
+    console.log('amit mesheryControllerSubscription', mesheryControllerSubscription);
     if (mesheryControllerSubscription) {
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
       mesheryControllerSubscription.updateSubscription(
@@ -703,7 +698,7 @@ const MesheryApp = ({
                       >
                         <NotificationCenterProvider>
                           <MesheryProgressBar />
-                          <KubernetesSubscription store={store} setAppState={setAppState} />
+                          <KubernetesSubscription setAppState={setAppState} />
                           {!state.isFullScreenMode && (
                             <Header
                               onDrawerToggle={handleDrawerToggle}
@@ -766,9 +761,7 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
 
 const mapStateToProps = (state) => ({
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  k8sConfig: state.get('k8sConfig'),
   operatorSubscription: state.get('operatorSubscription'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
   telemetryURLs: state.get('telemetryURLs'),
   connectionMetadata: state.get('connectionMetadata'),
   extensionType: state.get('extensionType'),

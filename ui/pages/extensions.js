@@ -14,6 +14,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
+import { useSelectorRtk } from '@/store/hooks';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
@@ -326,13 +327,13 @@ export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
 export const WrappedMesheryHelmKanvasExtension = MesheryHelmKanvasExtension;
 
-const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
+const Extensions = ({ toggleCatalogContent }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false);
   const { notify } = useNotification();
   const [updateUserPref] = useUpdateUserPrefMutation();
-
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const {
     data: userData,
     isSuccess: userDataFetched,
@@ -479,7 +480,6 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
 
 const mapStateToProps = (state) => ({
   catalogVisibility: state.get('catalogVisibility'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
 });
 
 const mapDispatchToProps = (dispatch) => ({

@@ -8,12 +8,9 @@ import {
 import { bindActionCreators } from 'redux';
 import {
   updateLoadTestData,
-  setK8sContexts,
   useLegacySelector,
   LegacyStoreContext,
   actionTypes,
-  selectSelectedK8sClusters,
-  selectK8sConfig,
 } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
@@ -53,22 +50,24 @@ import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
 import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { RTKContext, useSelectorRtk } from '@/store/hooks';
+import {
+  selectK8sConfig,
+  selectSelectedK8sClusters,
+  setK8sContexts,
+} from '@/store/slices/mesheryUi';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-function NavigatorExtension({
-  grafana,
-  prometheus,
-  updateLoadTestData,
-  url,
-  isDrawerCollapsed,
-  selectedK8sContexts,
-  k8sconfig,
-  capabilitiesRegistry,
-}) {
+function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDrawerCollapsed }) {
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const currentOrganization = useGetCurrentOrganization();
   const { store: legacyStore } = useContext(LegacyStoreContext);
+  const { store: rtkStore } = useContext(RTKContext);
+
   if (err != null) {
     return (
       <div role="alert">
@@ -92,7 +91,7 @@ function NavigatorExtension({
   }
 
   const getSelectedK8sClusters = () => {
-    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
+    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
   const extensionExposedMesheryStore = {
@@ -103,12 +102,12 @@ function NavigatorExtension({
       useCurrentOrg: () => useLegacySelector((state) => state.organization),
     },
     selectedK8sClusters: {
-      get: () => selectSelectedK8sClusters(legacyStore.getState()),
-      useSelectedK8sClusters: () => useLegacySelector(selectSelectedK8sClusters),
+      get: () => selectSelectedK8sClusters(rtkStore.getState()),
+      useSelectedK8sClusters: () => useSelectorRtk(selectSelectedK8sClusters),
     },
-    k8sconfig: {
-      get: () => selectK8sConfig(legacyStore.getState()),
-      useK8sConfig: () => useLegacySelector(selectK8sConfig),
+    k8sConfig: {
+      get: () => selectK8sConfig(rtkStore.getState()),
+      useK8sConfig: () => useSelectorRtk(selectK8sConfig),
     },
   };
 
@@ -135,7 +134,7 @@ function NavigatorExtension({
           getSelectedK8sClusters,
           selectedK8sContexts,
           setK8sContexts,
-          k8sconfig,
+          k8sconfig: k8sConfig,
           resolver: {
             query: {},
             mutation: {},
@@ -186,23 +185,16 @@ const mapStateToProps = (st) => {
   const grafana = st.get('grafana').toJS();
   const prometheus = st.get('prometheus').toJS();
   const isDrawerCollapsed = st.get('isDrawerCollapsed');
-  const selectedK8sContexts = st.get('selectedK8sContexts');
-  const k8sconfig = st.get('k8sConfig');
-  const capabilitiesRegistry = st.get('capabilitiesRegistry');
 
   return {
     grafana,
     prometheus,
     isDrawerCollapsed,
-    selectedK8sContexts,
-    k8sconfig,
-    capabilitiesRegistry,
   };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
-  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(NavigatorExtension);

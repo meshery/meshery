@@ -1361,7 +1361,6 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   return {
-    selectedK8sContexts: state.get('selectedK8sContexts'),
     catalogVisibility: state.get('catalogVisibility'),
   };
 };

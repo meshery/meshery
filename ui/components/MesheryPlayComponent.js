@@ -250,11 +250,10 @@ MesheryPlayComponent.propTypes = {
 };
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
   const meshAdapters = state.get('meshAdapters');
   const meshAdaptersts = state.get('meshAdaptersts');
   const selectedAdapter = state.get('selectedAdapter');
-  return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
+  return { meshAdapters, meshAdaptersts, selectedAdapter };
 };
 
 const mapDispatchToProps = (dispatch) => ({

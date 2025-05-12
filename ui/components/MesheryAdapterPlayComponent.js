@@ -39,7 +39,7 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
-import { setK8sContexts, updateProgress } from '../lib/store';
+import { updateProgress } from '../lib/store';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
@@ -54,6 +54,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import { withNotify } from '../utils/hooks/useNotification';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
+import { useSelectorRtk } from '@/store/hooks';
 
 export const AdapterChip = styled(Chip)(({ theme }) => ({
   height: '50px',
@@ -102,7 +103,9 @@ const AdapterCard = styled(Card)(() => ({
 }));
 
 const MesheryAdapterPlayComponent = (props) => {
-  const { adapter, updateProgress, notify, selectedK8sContexts, k8sconfig, grafana } = props;
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const { adapter, updateProgress, notify, grafana } = props;
 
   const router = useRouter();
   const cmEditorAddRef = useRef(null);
@@ -167,7 +170,7 @@ const MesheryAdapterPlayComponent = (props) => {
     if (selectedK8sContexts) {
       if (selectedK8sContexts.includes('all')) {
         let active = [];
-        k8sconfig.forEach((ctx) => {
+        k8sConfig.forEach((ctx) => {
           active.push(ctx.contextID);
         });
         setActiveContexts(active);
@@ -191,11 +194,11 @@ const MesheryAdapterPlayComponent = (props) => {
 
   // Equivalent to componentDidUpdate for selectedK8sContexts
   useEffect(() => {
-    if (props.selectedK8sContexts) {
+    if (selectedK8sContexts) {
       disposeSubscriptions();
       initSubscription();
     }
-  }, [props.selectedK8sContexts]);
+  }, [selectedK8sContexts]);
 
   // Equivalent to componentDidUpdate for adapter.name
   useEffect(() => {
@@ -238,7 +241,7 @@ const MesheryAdapterPlayComponent = (props) => {
   };
 
   const getK8sClusterIds = () => {
-    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
+    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
   const mapAdapterNameToMeshName = (name) => {
@@ -534,16 +537,6 @@ const MesheryAdapterPlayComponent = (props) => {
       });
     };
   };
-
-  // const activeContextChangeCallback = (activeK8sContexts) => {
-  //   if (activeK8sContexts.includes('all')) {
-  //     activeK8sContexts = ['all'];
-  //   }
-  //   setK8sContexts({
-  //     type: actionTypes.SET_K8S_CONTEXT,
-  //     selectedK8sContexts: activeK8sContexts,
-  //   });
-  // };
 
   const addDelHandleClick = (cat, isDelete) => () => {
     const newMenuState = { ...menuState };
@@ -1198,15 +1191,12 @@ MesheryAdapterPlayComponent.propTypes = {
 
 const mapStateToProps = (st) => {
   const grafana = st.get('grafana').toJS();
-  const k8sconfig = st.get('k8sConfig');
-  const selectedK8sContexts = st.get('selectedK8sContexts');
 
-  return { grafana: { ...grafana, ts: new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
+  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
 };
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
 export default connect(

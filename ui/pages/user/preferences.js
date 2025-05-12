@@ -1,22 +1,22 @@
 import UserPreferences from '../../components/UserPreferences';
-import { connect } from 'react-redux';
 import { getPath } from '../../lib/path';
 import Head from 'next/head';
 import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
 import { NoSsr } from '@layer5/sistent';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 
-const UserPref = (props) => {
+const UserPref = () => {
   const dispatch = useDispatchRtk();
   const [anonymousStats, setAnonymousStats] = useState(undefined);
   const [perfResultStats, setPerfResultStats] = useState(undefined);
+  const { selectedK8sContext } = useSelectorRtk((state) => state.ui);
 
   useEffect(() => {
-    handleFetchData(props.selectedK8sContexts);
-  }, [props.selectedK8sContext]);
+    handleFetchData(selectedK8sContext);
+  }, [selectedK8sContext]);
 
   useEffect(() => {
     dispatch(updatePagePath({ path: getPath() }));
@@ -55,12 +55,4 @@ const UserPref = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-
-  return {
-    selectedK8sContexts,
-  };
-};
-
-export default connect(mapStateToProps, null)(UserPref);
+export default UserPref;

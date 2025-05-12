@@ -60,6 +60,7 @@ import {
   RadioButton,
 } from './style';
 import { getMeshModels } from '@/api/meshmodel';
+import { useSelectorRtk } from '@/store/hooks';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -211,12 +212,12 @@ const MesheryPerformanceComponent_ = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
-
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { notify } = useNotification();
 
-  const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
-    props?.selectedK8sContexts,
-  );
+  const { data: userData, isSuccess: isUserDataFetched } =
+    useGetUserPrefWithContextQuery(selectedK8sContexts);
 
   const [savePerformanceProfile] = useSavePerformanceProfileMutation();
   const {
@@ -485,7 +486,7 @@ const MesheryPerformanceComponent_ = (props) => {
       .join('&');
 
     const runURL =
-      ctxUrl(`/api/user/performance/profiles/${id}/run`, props?.selectedK8sContexts) + '&cert=true';
+      ctxUrl(`/api/user/performance/profiles/${id}/run`, selectedK8sContexts) + '&cert=true';
     startEventStream(`${runURL}${props?.selectedK8sContexts?.length > 0 ? '&' : '?'}${params}`);
     setBlockRunTest(true); // to block the button
   };
@@ -622,11 +623,11 @@ const MesheryPerformanceComponent_ = (props) => {
   };
 
   const getK8sClusterIds = () => {
-    return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
+    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
   const scanForMeshes = () => {
-    if (typeof props.k8sConfig === 'undefined' || !props.k8sConfig.clusterConfigured) {
+    if (typeof k8sConfig === 'undefined' || !k8sConfig.clusterConfigured) {
       return;
     }
     /**
@@ -1282,32 +1283,6 @@ const MesheryPerformanceComponent_ = (props) => {
   );
 };
 
-// const mapDispatchToProps = (dispatch) => ({
-//   updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
-//   updateStaticPrometheusBoardConfig: bindActionCreators(
-//     updateStaticPrometheusBoardConfig,
-//     dispatch,
-//   ),
-//   updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
-//   updateProgress: bindActionCreators(updateProgress, dispatch),
-// });
-
-// const mapStateToProps = (state) => {
-//   const grafana = state.get('grafana').toJS();
-//   const prometheus = state.get('prometheus').toJS();
-//   const k8sConfig = state.get('k8sConfig');
-//   const staticPrometheusBoardConfig = state.get('staticPrometheusBoardConfig').toJS();
-//   const selectedK8sContexts = state.get('selectedK8sContexts');
-
-//   return {
-//     grafana,
-//     prometheus,
-//     staticPrometheusBoardConfig,
-//     k8sConfig,
-//     selectedK8sContexts,
-//   };
-// };
-
 export const MesheryPerformanceComponentWithStyles = withNotify(MesheryPerformanceComponent_);
 
 export const MesheryPerformanceComponent = (props) => {
@@ -1320,26 +1295,17 @@ export const MesheryPerformanceComponent = (props) => {
   const prometheus = useLegacySelector((state) =>
     state.get('prometheus')?.toJS ? state.get('prometheus').toJS() : state.get('prometheus'),
   );
-  const k8sConfig = useLegacySelector((state) => state.k8sConfig);
   const staticPrometheusBoardConfig = useLegacySelector((state) =>
     state.get('staticPrometheusBoardConfig')?.toJS
       ? state.get('staticPrometheusBoardConfig').toJS()
       : state.get('staticPrometheusBoardConfig'),
   );
-  const selectedK8sContexts = useLegacySelector((state) =>
-    state.get('selectedK8sContexts').toJS
-      ? state.get('selectedK8sContexts').toJS()
-      : state.get('selectedK8sContexts'),
-  );
-
   // Create dispatch methods matching the original connect mapping
   const wrappedProps = {
     ...props,
     grafana,
     prometheus,
-    k8sConfig,
     staticPrometheusBoardConfig,
-    selectedK8sContexts,
 
     // Wrap dispatch actions to match original connect behavior
     updateLoadTestData: (data) => dispatch(updateLoadTestData(data)),

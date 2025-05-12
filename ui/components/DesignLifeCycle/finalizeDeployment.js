@@ -1,6 +1,5 @@
 import { useSelectorRtk } from '@/store/hooks';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
-import { useLegacySelector } from 'lib/store';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
 import { isOperatorEnabled } from '@/utils/utils';
@@ -24,9 +23,7 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
 
-  const capabilitiesRegistry = useLegacySelector((state) => {
-    return state.get('capabilitiesRegistry');
-  });
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
 
   const visualizerEnabled = isOperatorEnabled(capabilitiesRegistry);
   const theme = useTheme();

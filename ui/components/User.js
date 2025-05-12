@@ -2,15 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Avatar, Button } from '@layer5/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
-import { Provider, connect } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from '../store';
-import { bindActionCreators } from 'redux';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { IconButtonAvatar } from './Header.styles';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updateUser } from '@/store/slices/mesheryUi';
 /**
  * Extension Point: Avatar behavior for User Modes
@@ -22,14 +21,13 @@ const User = (props) => {
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatchRtk();
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const {
     data: userData,
     isSuccess: isGetUserSuccess,
     isError: isGetUserError,
     error: getUserError,
   } = useGetLoggedInUserQuery();
-
-  const { capabilitiesRegistry } = props;
 
   const getProfileUrl = () => {
     return (account || [])?.find((item) => item.title === 'Cloud Account')?.href;
@@ -107,8 +105,4 @@ const UserProvider = (props) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
-
-export default connect(mapStateToProps, null)(UserProvider);
+export default UserProvider;

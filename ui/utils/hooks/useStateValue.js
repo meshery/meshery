@@ -23,7 +23,3 @@ export const useStateValue = (stateName) => {
 export const useGetCurrentOrganization = () => {
   return useStateValue('organization');
 };
-
-export const useGetCapabilitiesRegistry = () => {
-  return useStateValue('capabilitiesRegistry');
-};

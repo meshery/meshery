@@ -71,8 +71,6 @@ function Connections(props) {
   const {
     updateProgress,
     operatorState,
-    selectedK8sContexts,
-    k8sconfig,
     connectionMetadataState,
     meshsyncControllerState,
     router,
@@ -163,8 +161,6 @@ function Connections(props) {
           {tab === 1 && (
             <MeshSyncTable
               updateProgress={updateProgress}
-              selectedK8sContexts={selectedK8sContexts}
-              k8sconfig={k8sconfig}
               selectedResourceId={connectionId}
               updateUrlWithResourceId={updateUrlWithConnectionId}
             />
@@ -182,15 +178,11 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const selectedK8sContexts = state.get('selectedK8sContexts');
   const operatorState = state.get('operatorState');
   const connectionMetadataState = state.get('connectionMetadataState');
   const meshsyncControllerState = state.get('controllerState');
 
   return {
-    k8sconfig,
-    selectedK8sContexts,
     operatorState,
     connectionMetadataState,
     meshsyncControllerState,

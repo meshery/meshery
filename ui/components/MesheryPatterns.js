@@ -291,7 +291,6 @@ function resetSelectedPattern() {
 
 function MesheryPatterns({
   updateProgress,
-  selectedK8sContexts,
   catalogVisibility,
   disableCreateImportDesignButton = false,
   disableUniversalFilter = false,
@@ -324,6 +323,7 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const { user } = useSelectorRtk((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
@@ -1730,7 +1730,6 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => ({
-  selectedK8sContexts: state.get('selectedK8sContexts'),
   catalogVisibility: state.get('catalogVisibility'),
 });
 

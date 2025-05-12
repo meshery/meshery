@@ -26,6 +26,7 @@ import {
   useUpdateGrafanaBoardsMutation,
 } from '@/rtk-query/telemetry';
 import useDebouncedCallback from '@/utils/hooks/useDebounce';
+import { useSelectorRtk } from '@/store/hooks';
 
 const StyledChartTitle = styled(Typography)(({ theme }) => ({
   marginLeft: theme.spacing(3),
@@ -74,9 +75,11 @@ const GrafanaComponent = (props) => {
   const updateState = (newState) => {
     setState((prev) => ({ ...prev, ...newState }));
   };
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
 
   const getK8sClusterIds = () => {
-    return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
+    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
   const isValidGrafanaURL = (url) =>
@@ -432,9 +435,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (st) => {
   const grafana = st.get('grafana').toJS();
-  const selectedK8sContexts = st.get('selectedK8sContexts');
-  const k8sconfig = st.get('k8sConfig');
-  return { grafana: { ...grafana, ts: new Date(grafana.ts) }, selectedK8sContexts, k8sconfig };
+  return { grafana: { ...grafana, ts: new Date(grafana.ts) } };
 };
 
 export default connect(

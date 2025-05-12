@@ -26,6 +26,7 @@ import {
   Radio,
 } from '@layer5/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
+import { useSelectorRtk } from '@/store/hooks';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
@@ -35,12 +36,11 @@ const FormControlWrapper = styled(FormControl)({
 });
 
 const MesherySettingsPerformanceComponent = (props) => {
-  const { classes, notify } = props;
+  const { notify } = props;
   const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = props;
+  const {selectedK8sContexts} = useSelectorRtk((state) => state.ui);
 
-  const { selectedK8sContexts } = props;
-
-  const { data: loadTestPrefs, isLoading: isLoadingPrefs } =
+  const { data: loadTestPrefs } =
     useGetLoadTestPrefsQuery(selectedK8sContexts);
   const [updateLoadTestPrefs, { isLoading: isSaving }] = useUpdateLoadTestPrefsMutation();
   const [qps, setQps] = useState(initialQps);
@@ -261,11 +261,9 @@ const mapDispatchToProps = (dispatch) => ({
 
 const mapStateToProps = (state) => {
   const loadTestPref = state.get('loadTestPref').toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
 
   return {
     ...loadTestPref,
-    selectedK8sContexts,
   };
 };
 

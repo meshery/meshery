@@ -37,7 +37,7 @@ import {
   FormContainerWrapper,
   FormGroupWrapper,
 } from './style';
-import {  updateProgress, toggleCatalogContent } from '../../lib/store';
+import { updateProgress, toggleCatalogContent } from '../../lib/store';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
@@ -57,6 +57,7 @@ import {
 import { ThemeTogglerCore } from '@/themes/hooks';
 
 import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
+import { useSelectorRtk } from '@/store/hooks';
 
 const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
@@ -91,7 +92,7 @@ const UserPreference = (props) => {
   const [value, setValue] = useState(0);
   const [providerInfo, setProviderInfo] = useState({});
   const theme = useTheme();
-
+  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
@@ -187,16 +188,14 @@ const UserPreference = (props) => {
   };
 
   useEffect(() => {
-    if (props.capabilitiesRegistry && !capabilitiesLoaded) {
+    if (capabilitiesRegistry && !capabilitiesLoaded) {
       setCapabilitiesLoaded(true); // to prevent re-compute
       setUserPrefs(
-        ExtensionPointSchemaValidator('user_prefs')(
-          props.capabilitiesRegistry?.extensions?.user_prefs,
-        ),
+        ExtensionPointSchemaValidator('user_prefs')(capabilitiesRegistry?.extensions?.user_prefs),
       );
-      setProviderType(props.capabilitiesRegistry?.provider_type);
+      setProviderType(capabilitiesRegistry?.provider_type);
     }
-  }, [props.capabilitiesRegistry]);
+  }, [capabilitiesRegistry]);
 
   useEffect(() => {
     if (isUserDataFetched && userData) {
@@ -644,13 +643,10 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const mapStateToProps = (state) => {
-  const selectedK8sContexts = state.get('selectedK8sContexts');
   const catalogVisibility = state.get('catalogVisibility');
-  const capabilitiesRegistry = state.get('capabilitiesRegistry');
+
   return {
-    selectedK8sContexts,
     catalogVisibility,
-    capabilitiesRegistry,
   };
 };
 

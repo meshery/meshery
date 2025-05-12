@@ -489,7 +489,6 @@ function MesheryResults({
   endpoint,
   updateResultsSelection,
   results_selection,
-  user,
   CustomHeader = <div />,
   elevation = 4,
 }) {
@@ -771,10 +770,9 @@ const mapStateToProps = (state) => {
       startKey,
       results,
       results_selection,
-      user,
     };
   }
-  return { results_selection, user };
+  return { results_selection };
 };
 
 // @ts-ignore
