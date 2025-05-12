@@ -26,11 +26,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import {
-  updateLoadTestData,
-  updateStaticPrometheusBoardConfig,
-  updateLoadTestPref,
-} from '../../lib/store';
+import { updateStaticPrometheusBoardConfig } from '../../lib/store';
 import dataFetch from '../../lib/data-fetch';
 import MesheryChart from '../MesheryChart';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
@@ -59,8 +55,9 @@ import {
   RadioButton,
 } from './style';
 import { getMeshModels } from '@/api/meshmodel';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { updateLoadTest } from '@/store/slices/prefTest';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -215,7 +212,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { notify } = useNotification();
-
+  const dispatch = useDispatchRtk();
   const { data: userData, isSuccess: isUserDataFetched } =
     useGetUserPrefWithContextQuery(selectedK8sContexts);
 
@@ -500,18 +497,20 @@ const MesheryPerformanceComponent_ = (props) => {
           event_type: EVENT_TYPES.SUCCESS,
           dataTestID: 'notify-fetch-data',
         });
-        props.updateLoadTestData({
-          loadTest: {
-            testName: testNameState,
-            meshName: meshNameState,
-            url: urlState,
-            qps: qpsState,
-            c: cState,
-            t: tState,
-            loadGenerator: loadGeneratorState,
-            result: result,
-          },
-        });
+        dispatch(
+          updateLoadTest({
+            loadTest: {
+              testName: testNameState,
+              meshName: meshNameState,
+              url: urlState,
+              qps: qpsState,
+              c: cState,
+              t: tState,
+              loadGenerator: loadGeneratorState,
+              result: result,
+            },
+          }),
+        );
         setTestUUID(generateUUID());
 
         setTestResultsOpen(true);
@@ -1308,10 +1307,8 @@ export const MesheryPerformanceComponent = (props) => {
     staticPrometheusBoardConfig,
 
     // Wrap dispatch actions to match original connect behavior
-    updateLoadTestData: (data) => dispatch(updateLoadTestData(data)),
     updateStaticPrometheusBoardConfig: (config) =>
       dispatch(updateStaticPrometheusBoardConfig(config)),
-    updateLoadTestPref: (pref) => dispatch(updateLoadTestPref(pref)),
   };
 
   return <MesheryPerformanceComponentWithStyles {...wrappedProps} />;

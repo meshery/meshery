@@ -81,6 +81,7 @@ import {
   updateExtensionType,
   updateK8SConfig,
 } from '@/store/slices/mesheryUi';
+import { updateLoadTestPref } from '@/store/slices/prefTest';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -537,7 +538,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
               },
               result.loadTestPrefs,
             );
-            store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
+            dispatch(updateLoadTestPref({ loadTestPref }));
           }
           if (typeof result.anonymousUsageStats !== 'undefined') {
             store.dispatch({

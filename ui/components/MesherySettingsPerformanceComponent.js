@@ -3,10 +3,8 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateLoadTestPref } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
-import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import {
   FormControl,
@@ -26,6 +24,8 @@ import {
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
 import { useSelectorRtk } from '@/store/hooks';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useGetDesignQuery } from '@/rtk-query/design';
+import { updateLoadTestPref } from '@/store/slices/prefTest';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
@@ -35,7 +35,7 @@ const FormControlWrapper = styled(FormControl)({
 });
 
 const MesherySettingsPerformanceComponent = (props) => {
-  const { notify } = props;
+  const { notify } = useNotification();
   const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = props;
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
 
@@ -47,6 +47,7 @@ const MesherySettingsPerformanceComponent = (props) => {
   const [tValue, setTValue] = useState(initialT);
   const [gen, setGen] = useState(initialGen);
   const [tError, setTError] = useState('');
+  const dispatch = useGetDesignQuery();
 
   useEffect(() => {
     if (loadTestPrefs) {
@@ -108,7 +109,7 @@ const MesherySettingsPerformanceComponent = (props) => {
 
       updateProgress({ showProgress: false });
       notify({ message: 'Preferences saved', event_type: EVENT_TYPES.SUCCESS });
-      props.updateLoadTestPref({ loadTestPref: { qps, c, t, gen } });
+      dispatch(updateLoadTestPref({ loadTestPref: { qps, c, t, gen } }));
     } catch (error) {
       handleError('There was an error saving your preferences')(error);
     }
@@ -247,23 +248,4 @@ const MesherySettingsPerformanceComponent = (props) => {
   );
 };
 
-MesherySettingsPerformanceComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const loadTestPref = state.get('loadTestPref').toJS();
-
-  return {
-    ...loadTestPref,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withNotify(MesherySettingsPerformanceComponent));
+export default MesherySettingsPerformanceComponent;

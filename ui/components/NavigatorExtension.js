@@ -5,13 +5,7 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import { bindActionCreators } from 'redux';
-import {
-  updateLoadTestData,
-  useLegacySelector,
-  LegacyStoreContext,
-  actionTypes,
-} from '../lib/store';
+import { useLegacySelector, LegacyStoreContext, actionTypes } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -58,7 +52,7 @@ import {
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url }) {
+function NavigatorExtension({ grafana, prometheus, url }) {
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
@@ -118,7 +112,6 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url }) {
       <RemoteComponent
         injectProps={{
           GrafanaCustomCharts,
-          updateLoadTestData,
           PatternServiceForm,
           RJSFWrapper,
           PatternServiceFormCore,
@@ -191,8 +184,4 @@ const mapStateToProps = (st) => {
   };
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(NavigatorExtension);
+export default connect(mapStateToProps, null)(NavigatorExtension);

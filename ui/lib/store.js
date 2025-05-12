@@ -7,22 +7,6 @@ import { createContext } from 'react';
 import { createDispatchHook, createSelectorHook } from 'react-redux';
 
 const initialState = fromJS({
-  loadTest: {
-    testName: '',
-    meshName: '',
-    url: '',
-    qps: 0,
-    c: 0,
-    t: '30s',
-    result: {},
-  },
-  loadTestPref: {
-    qps: 0,
-    t: '30s',
-    c: 0,
-    gen: 'fortio',
-    ts: new Date(),
-  },
   meshAdapters: [],
   meshAdaptersts: new Date(),
   results: {
@@ -48,17 +32,13 @@ const initialState = fromJS({
 });
 
 export const actionTypes = {
-  UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
   UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
   UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
   CLEAR_RESULTS_SELECTION: 'CLEAR_RESULTS_SELECTION',
   UPDATE_GRAFANA_CONFIG: 'UPDATE_GRAFANA_CONFIG',
   UPDATE_PROMETHEUS_CONFIG: 'UPDATE_PROMETHEUS_CONFIG',
   UPDATE_STATIC_BOARD_CONFIG: 'UPDATE_STATIC_BOARD_CONFIG',
-  UPDATE_LOAD_GEN_CONFIG: 'UPDATE_LOAD_GEN_CONFIG',
-  UPDATE_PROGRESS: 'UPDATE_PROGRESS',
   SET_ADAPTER: 'SET_ADAPTER',
-  UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
   SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
 };
 
@@ -67,10 +47,6 @@ export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.UPDATE_USER:
       return state.mergeDeep({ user: action.user });
-    case actionTypes.UPDATE_LOAD_TEST_DATA:
-      return state.updateIn(['loadTest'], (val) => fromJS(action.loadTest));
-    case actionTypes.UPDATE_LOAD_GEN_CONFIG:
-      return state.mergeDeep({ loadTestPref: action.loadTestPref });
     case actionTypes.UPDATE_ADAPTERS_INFO:
       state = state.updateIn(['meshAdapters'], (val) => fromJS([]));
       state = state.updateIn(['meshAdaptersts'], (val) => fromJS(new Date()));
@@ -110,18 +86,6 @@ export const reducer = (state = initialState, action) => {
 
 // ACTION CREATOR
 
-export const updateLoadTestData =
-  ({ loadTest }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_LOAD_TEST_DATA, loadTest });
-  };
-
-export const updateLoadTestPref =
-  ({ loadTestPref }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
-  };
-
 export const updateAdaptersInfo =
   ({ meshAdapters }) =>
   (dispatch) => {
@@ -160,7 +124,6 @@ export const setAdapter =
   (dispatch) => {
     return dispatch({ type: actionTypes.SET_ADAPTER, selectedAdapter });
   };
-
 
 export const makeStore = (initialState, options) => {
   return createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunkMiddleware)));

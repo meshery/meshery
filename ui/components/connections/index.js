@@ -12,6 +12,7 @@ import DefaultError from '../General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
+import { useRouter } from 'next/router';
 
 /**
  * Parent Component for Connection Component
@@ -63,8 +64,8 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections(props) {
-  const { router } = props;
+function Connections() {
+  const router = useRouter();
   const [_operatorState] = useState([]);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
