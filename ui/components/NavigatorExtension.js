@@ -49,7 +49,6 @@ import TypingFilter from './TypingFilter';
 import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 import { RTKContext, useSelectorRtk } from '@/store/hooks';
 import {
   selectK8sConfig,
@@ -64,7 +63,7 @@ function NavigatorExtension({ grafana, prometheus, updateLoadTestData, url, isDr
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-  const currentOrganization = useGetCurrentOrganization();
+  const { organization: currentOrganization } = useSelectorRtk((state) => state.ui);
   const { store: legacyStore } = useContext(LegacyStoreContext);
   const { store: rtkStore } = useContext(RTKContext);
 

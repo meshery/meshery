@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { setOrganization, setKeys } from 'lib/store';
+import { setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
@@ -21,6 +21,8 @@ import {
 } from './styles';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { setOrganization } from '@/store/slices/mesheryUi';
 
 const RequestForm = (props) => {
   const {
@@ -29,9 +31,13 @@ const RequestForm = (props) => {
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
+
   const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization, setKeys } = props;
+  const dispatch = useDispatchRtk();
+  const { organization } = useSelectorRtk((state) => state.ui);
+
+  const { setKeys } = props;
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
@@ -50,7 +56,7 @@ const RequestForm = (props) => {
   const handleOrgSelect = (e) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
+    dispatch(setOrganization({ organization: selected }));
     setSkip(false);
   };
 
@@ -107,16 +113,8 @@ const RequestForm = (props) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
   setKeys: bindActionCreators(setKeys, dispatch),
 });
-
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
 
 const RequestFormWithErrorBoundary = (props) => {
   return (
@@ -130,7 +128,4 @@ const RequestFormWithErrorBoundary = (props) => {
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(RequestFormWithErrorBoundary));
+export default connect(null, mapDispatchToProps)(withRouter(RequestFormWithErrorBoundary));

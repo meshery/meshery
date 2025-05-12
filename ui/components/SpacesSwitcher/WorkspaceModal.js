@@ -35,7 +35,7 @@ import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelectorRtk } from '@/store/hooks';
 
 const getNavItem = (theme) => {
   return [
@@ -238,7 +238,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const currentOrganization = useGetCurrentOrganization();
+  const { organization: currentOrganization } = useSelectorRtk((state) => state.ui);
   const navConfig = getNavItem(theme);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(

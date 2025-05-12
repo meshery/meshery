@@ -46,7 +46,7 @@ import {
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelectorRtk } from '@/store/hooks';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -54,7 +54,7 @@ const ACTION_TYPES = {
 };
 
 const Environments = () => {
-  const organization = useGetCurrentOrganization();
+  const { organization } = useSelectorRtk((state) => state.ui);
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},

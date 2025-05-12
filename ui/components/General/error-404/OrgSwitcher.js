@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { NoSsr } from '@layer5/sistent';
-import { setOrganization, setKeys } from 'lib/store';
+import { setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
@@ -20,7 +20,8 @@ import {
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useTheme } from '@layer5/sistent';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { setOrganization } from '@/store/slices/mesheryUi';
 
 const OrgSwitcher = () => {
   const {
@@ -29,9 +30,10 @@ const OrgSwitcher = () => {
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
-  const organization = useGetCurrentOrganization();
+  const { organization } = useSelectorRtk((state) => state.ui);
   const dispatch = useDispatch();
-  const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
+  const rtkDispatch = useDispatchRtk();
+  const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
   const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
 
   let orgs = orgsResponse?.organizations || [];

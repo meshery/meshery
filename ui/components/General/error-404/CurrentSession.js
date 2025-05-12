@@ -14,10 +14,10 @@ import { NoSsr } from '@layer5/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../ErrorBoundary';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelectorRtk } from '@/store/hooks';
 
 const CurrentSessionInfo = () => {
-  const organization = useGetCurrentOrganization();
+  const { organization } = useSelectorRtk((state) => state.ui);
   const {
     data: rolesRes,
     // isSuccess: isRolesSuccess,

@@ -68,13 +68,10 @@ const initialState = fromJS({
   controllerState: null,
   meshSyncState: null,
   connectionMetadataState: null, // store connection definition metadata for state and connection kind management
-  organization: null,
-  workspace: null,
   keys: null,
 });
 
 export const actionTypes = {
-  SET_WORKSPACE: 'SET_WORKSPACE',
   UPDATE_LOAD_TEST_DATA: 'UPDATE_LOAD_TEST_DATA',
   UPDATE_ADAPTERS_INFO: 'UPDATE_ADAPTERS_INFO',
   UPDATE_RESULTS_SELECTION: 'UPDATE_RESULTS_SELECTION',
@@ -96,7 +93,6 @@ export const actionTypes = {
   UPDATE_EXTENSION_TYPE: 'UPDATE_EXTENSION_TYPE',
   UPDATE_TELEMETRY_URLS: 'UPDATE_TELEMETRY_URLS',
   SET_CONNECTION_METADATA: 'SET_CONNECTION_METADATA',
-  SET_ORGANIZATION: 'SET_ORGANIZATION',
   SET_KEYS: 'SET_KEYS',
 };
 
@@ -174,14 +170,6 @@ export const reducer = (state = initialState, action) => {
       sessionStorage.setItem('keys', JSON.stringify(action.keys));
       return updatedKeyState;
 
-    case actionTypes.SET_ORGANIZATION:
-      const updatedOrgState = state.mergeDeep({ organization: action.organization });
-      sessionStorage.setItem('currentOrg', JSON.stringify(action.organization));
-      return updatedOrgState;
-    case actionTypes.SET_WORKSPACE:
-      const updatedWorkspaceState = state.mergeDeep({ workspace: action.workspace });
-      sessionStorage.setItem('currentWorkspace', JSON.stringify(action.workspace));
-      return updatedWorkspaceState;
     default:
       return state;
   }
@@ -310,16 +298,6 @@ export const setConnectionMetadata =
     return dispatch({ type: actionTypes.SET_CONNECTION_METADATA, connectionMetadataState });
   };
 
-export const setOrganization =
-  ({ organization }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.SET_ORGANIZATION, organization });
-  };
-export const setWorkspace =
-  ({ workspace }) =>
-  (dispatch) => {
-    return dispatch({ type: actionTypes.SET_WORKSPACE, workspace });
-  };
 export const setKeys =
   ({ keys }) =>
   (dispatch) => {

@@ -17,7 +17,7 @@ import {
   WorkspaceIcon,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import { setKeys, setOrganization } from '../../lib/store';
+import { setKeys } from '../../lib/store';
 import { Provider, useDispatch } from 'react-redux';
 import { store } from '../../store';
 import { useRouter } from 'next/router';
@@ -27,7 +27,8 @@ import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { setOrganization } from '@/store/slices/mesheryUi';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -203,10 +204,10 @@ function SpaceSwitcher({ title, isBeta }) {
   const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
+  const rtkDispatch = useDispatchRtk();
+  const { organization } = useSelectorRtk((state) => state.ui);
 
-  const organization = useGetCurrentOrganization();
-
-  const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
+  const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
   const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
 
   return (

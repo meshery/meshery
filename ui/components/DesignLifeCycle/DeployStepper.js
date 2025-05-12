@@ -120,7 +120,7 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
 };
 
 const SelectTargetStep = () => {
-  const organization = useLegacySelector((state) => state.get('organization'));
+  const { organization } = useSelectorRtk((state) => state.ui);
   const connectionMetadataState = useLegacySelector((state) =>
     state.get('connectionMetadataState'),
   );

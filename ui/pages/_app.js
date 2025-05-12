@@ -79,7 +79,7 @@ import {
   StyledRoot,
   ThemeResponsiveSnackbar,
 } from '../themes/App.styles';
-import { setK8sContexts, updateK8SConfig } from '@/store/slices/mesheryUi';
+import { setK8sContexts, setOrganization, updateK8SConfig } from '@/store/slices/mesheryUi';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -427,22 +427,9 @@ const MesheryApp = ({
     },
     [store],
   );
-  const setOrganization = useCallback(
+  const setCurrentOrganization = useCallback(
     (org) => {
-      store.dispatch({
-        type: actionTypes.SET_ORGANIZATION,
-        organization: org,
-      });
-    },
-    [store],
-  );
-
-  const setWorkspace = useCallback(
-    (workspace) => {
-      store.dispatch({
-        type: actionTypes.SET_WORKSPACE,
-        workspace: workspace,
-      });
+      dispatch(setOrganization({ organization: org }));
     },
     [store],
   );
@@ -484,29 +471,6 @@ const MesheryApp = ({
     [store, updateAbility],
   );
 
-  const loadWorkspace = useCallback(
-    async (orgId) => {
-      const currentWorkspace = sessionStorage.getItem('currentWorkspace');
-      if (currentWorkspace && currentWorkspace !== 'undefined') {
-        let workspace = JSON.parse(currentWorkspace);
-        setWorkspace(workspace);
-      } else {
-        dataFetch(
-          `/api/workspaces?search=&order=&page=0&pagesize=10&orgID=${orgId}`,
-          {
-            method: 'GET',
-            credentials: 'include',
-          },
-          async (result) => {
-            setWorkspace(result.workspaces[0]);
-          },
-          (err) => console.log('There was an error fetching workspaces:', err),
-        );
-      }
-    },
-    [setWorkspace],
-  );
-
   const loadOrg = useCallback(async () => {
     const currentOrg = sessionStorage.getItem('currentOrg');
     let reFetchKeys = false;
@@ -514,8 +478,7 @@ const MesheryApp = ({
     if (currentOrg && currentOrg !== 'undefined') {
       let org = JSON.parse(currentOrg);
       await loadAbility(org.id, reFetchKeys);
-      setOrganization(org);
-      await loadWorkspace(org.id);
+      setCurrentOrganization(org);
     }
 
     dataFetch(
@@ -534,20 +497,18 @@ const MesheryApp = ({
             organizationToSet = result.organizations[0];
             reFetchKeys = true;
             await loadAbility(organizationToSet.id, reFetchKeys);
-            await loadWorkspace(organizationToSet.id);
-            setOrganization(organizationToSet);
+            setCurrentOrganization(organizationToSet);
           }
         } else {
           organizationToSet = result.organizations[0];
           reFetchKeys = true;
-          await loadWorkspace(organizationToSet.id);
           await loadAbility(organizationToSet.id, reFetchKeys);
-          setOrganization(organizationToSet);
+          setCurrentOrganization(organizationToSet);
         }
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
-  }, [loadAbility, loadWorkspace, setOrganization]);
+  }, [loadAbility, setCurrentOrganization]);
 
   const loadConfigFromServer = useCallback(async () => {
     dataFetch(
@@ -765,7 +726,6 @@ const mapStateToProps = (state) => ({
   telemetryURLs: state.get('telemetryURLs'),
   connectionMetadata: state.get('connectionMetadata'),
   extensionType: state.get('extensionType'),
-  organization: state.get('organization'),
 });
 
 const mapDispatchToProps = (dispatch) => ({
