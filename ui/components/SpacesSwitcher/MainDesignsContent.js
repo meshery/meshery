@@ -4,7 +4,7 @@ import {
   usePublishPatternMutation,
   useUpdatePatternFileMutation,
 } from '@/rtk-query/design';
-import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { getUserAccessToken, getUserProfile, useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   ListItem,
   ListItemText,
@@ -16,6 +16,7 @@ import {
   Modal,
   ShareIcon,
   useTheme,
+  useRoomActivity,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -23,7 +24,7 @@ import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import { updateProgress } from 'lib/store';
+import { updateProgress, useLegacySelector } from 'lib/store';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -355,6 +356,13 @@ const MainDesignsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
+  const capabilitiesRegistry = useLegacySelector((state) => state.get('capabilitiesRegistry'));
+  const providerUrl = capabilitiesRegistry?.provider_url;
+  const activeUsers = useRoomActivity({
+    provider_url: providerUrl,
+    getUserAccessToken: getUserAccessToken,
+    getUserProfile: getUserProfile,
+  });
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -367,6 +375,7 @@ const MainDesignsContent = ({
             return (
               <React.Fragment key={`${design?.id}-${design?.name}`}>
                 <DesignViewListItem
+                  activeUsers={activeUsers?.[design?.id]}
                   type="design"
                   selectedItem={design}
                   handleItemClick={() => {
