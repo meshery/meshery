@@ -138,7 +138,7 @@ const MesherySettings = (props) => {
   const { meshAdapters, grafana, prometheus, router, classes } = props;
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
   const theme = useTheme();
-  const { k8sconfig } = useSelectorRtk((state) => state.ui);
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -149,7 +149,7 @@ const MesherySettings = (props) => {
     componentsCount: 0,
     relationshipsCount: 0,
     registrantCount: 0,
-    isMeshConfigured: k8sconfig.clusterConfigured,
+    isMeshConfigured: k8sConfig.clusterConfigured,
     scannedPrometheus: [],
     scannedGrafana: [],
   });
@@ -228,7 +228,7 @@ const MesherySettings = (props) => {
 
   const { tabVal, subTabVal } = state;
   let backToPlay = '';
-  if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
+  if (k8sConfig.clusterConfigured === true && meshAdapters.length > 0) {
     backToPlay = (
       <div className={classes.backToPlay}>
         <Link href="/management">

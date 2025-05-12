@@ -53,7 +53,7 @@ export default function MeshSyncTable(props) {
   const [kindFilter, setKindFilter] = useState();
   const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const { k8sconfig } = useSelectorRtk((state) => state.ui);
+  const { k8sConfig } = useSelectorRtk((state) => state.ui);
   const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
   const [selectedFilters, setSelectedFilters] = useState({
     kind: 'All',
@@ -84,7 +84,7 @@ export default function MeshSyncTable(props) {
     kind: kindFilter,
     model: modelFilter,
     namespace: namespaceFilter,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
   });
   if (isError) {
     if (isError) {
@@ -100,7 +100,7 @@ export default function MeshSyncTable(props) {
     pagesize: 'all',
     search: search,
     order: sortOrder,
-    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig),
+    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
   });
   const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
   const availableModels = [

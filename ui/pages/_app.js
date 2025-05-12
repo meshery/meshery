@@ -220,8 +220,8 @@ const MesheryApp = ({
 }) => {
   const pageContext = useMemo(() => getPageContext(), []);
   const { k8sConfig } = useSelectorRtk((state) => state.ui);
-
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatchRtk();
   const [state, setState] = useState({
     mobileOpen: false,
     isDrawerCollapsed: false,
@@ -359,7 +359,7 @@ const MesheryApp = ({
     if (activeK8sContexts.includes('all')) {
       activeK8sContexts = ['all'];
     }
-    setK8sContexts({ selectedK8sContexts: activeK8sContexts });
+    dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
   }, []);
 
   const setActiveContexts = useCallback(

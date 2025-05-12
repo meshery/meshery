@@ -55,7 +55,6 @@ import {
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
-
 import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
 import { useSelectorRtk } from '@/store/hooks';
 
@@ -93,6 +92,7 @@ const UserPreference = (props) => {
   const [providerInfo, setProviderInfo] = useState({});
   const theme = useTheme();
   const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  console.log('amit capabilitiesRegistry', capabilitiesRegistry);
   const {
     data: userData,
     isSuccess: isUserDataFetched,

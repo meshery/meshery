@@ -9,6 +9,7 @@ import {
   useLazyGetExtensionsByTypeQuery,
   useLazyGetFullPageExtensionsQuery,
 } from '@/rtk-query/user';
+import { useSelectorRtk } from '@/store/hooks';
 /**
  * getPath returns the current pathname
  * @returns {string}
@@ -288,15 +289,10 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
 const ExtensionSandbox = React.memo(
-  function MemoizedExtensionSandbox({
-    type,
-    Extension,
-    isDrawerCollapsed,
-    toggleDrawer,
-    capabilitiesRegistry,
-  }) {
+  function MemoizedExtensionSandbox({ type, Extension, isDrawerCollapsed, toggleDrawer }) {
     const [extension, setExtension] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
         toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
