@@ -43,6 +43,7 @@ test.describe.serial('Connection Management Tests', () => {
   test('Add a cluster connection by uploading kubeconfig file', async ({
     page,
     clusterMetaData,
+    provider,
   }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
@@ -73,7 +74,9 @@ test.describe.serial('Connection Management Tests', () => {
     await addConnectionReq;
     await addConnectionRes;
 
-    await page.getByRole('button', { name: 'OK' }).click();
+    if (provider === 'None') {
+       await page.getByRole('button', { name: 'OK' }).click();
+    }
   
 
     // Search for the newly added cluster
