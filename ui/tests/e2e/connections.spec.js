@@ -72,12 +72,9 @@ test.describe.serial('Connection Management Tests', () => {
 
     await addConnectionReq;
     await addConnectionRes;
-    
-    const importConfirmation = page.getByRole('button', { name: 'OK' });
-    await importConfirmation.waitFor();
-    if (await importConfirmation.isVisible()) {
-      await importConfirmation.click();
-    }
+
+    await page.getByRole('button', { name: 'OK' }).click();
+  
 
     // Search for the newly added cluster
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
