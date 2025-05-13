@@ -6,8 +6,6 @@ import DefaultError from '@/components/General/error-404';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import { useSelector } from 'react-redux';
 
-import { useEffect } from 'react';
-
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
     {
