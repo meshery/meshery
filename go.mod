@@ -2,8 +2,6 @@ module github.com/layer5io/meshery
 
 go 1.23.8
 
-toolchain go1.24.1
-
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
 replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api v0.0.0-20230704153349-abb98ff04d03
