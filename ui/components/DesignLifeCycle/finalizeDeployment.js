@@ -1,4 +1,4 @@
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
@@ -20,10 +20,10 @@ const StyledEnvironment = styled(Box)(({ theme }) => ({
 
 export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualizer }) => {
   const { configurableComponents } = processDesign(design);
-  const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
+  const selectedEnvironments = useSelector(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
 
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
 
   const visualizerEnabled = isOperatorEnabled(capabilitiesRegistry);
   const theme = useTheme();

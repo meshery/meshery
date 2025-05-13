@@ -1,10 +1,9 @@
+import { useDispatch } from 'react-redux';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { useNotification } from '@/utils/hooks/useNotification';
 import dataFetch from 'lib/data-fetch';
 import { EVENT_TYPES } from 'lib/event-types';
-
-import { useDispatch } from 'react-redux';
 
 export function useTelemetryHook(connectionType) {
   switch (connectionType) {

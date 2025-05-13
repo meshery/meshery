@@ -3,8 +3,6 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
 import { ErrorBoundary, FormControl, FormGroup, MenuItem, useTheme, NoSsr } from '@layer5/sistent';
 import {
   OrgName,
@@ -17,7 +15,7 @@ import {
 } from './styles';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
 const RequestForm = () => {
@@ -30,8 +28,8 @@ const RequestForm = () => {
 
   const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
-  const { organization } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatchRtk();
+  const { organization } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
   const abilitiesResult = useGetCurrentAbilities(organization);
 
   useEffect(() => {
@@ -112,9 +110,7 @@ const RequestFormWithErrorBoundary = (props) => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <RequestForm {...props} />
-        </Provider>
+        <RequestForm {...props} />
       </ErrorBoundary>
     </NoSsr>
   );

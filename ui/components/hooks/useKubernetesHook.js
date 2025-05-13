@@ -1,5 +1,3 @@
-import { useDispatch } from 'react-redux';
-
 import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../../utils/helpers/common';
 import { pingKubernetes } from '../../utils/helpers/kubernetesHelpers';
@@ -11,7 +9,7 @@ import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
 import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
 import _ from 'lodash';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProgressAction } from '@/store/slices/mesheryUi';
 
 export default function useKubernetesHook() {
@@ -293,7 +291,7 @@ export const useControllerStatus = (controllerState) => {
 };
 
 export const useFilterK8sContexts = (k8sContexts, predicate) => {
-  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   return k8sContexts.filter((ctx) => {

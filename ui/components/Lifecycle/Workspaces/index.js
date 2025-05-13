@@ -48,7 +48,7 @@ import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-que
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const WORKSPACE_ACTION_TYPES = {
@@ -109,7 +109,7 @@ const Workspaces = () => {
     open: false,
     schema: {},
   });
-  const { organization } = useSelectorRtk((state) => state.ui);
+  const { organization } = useSelector((state) => state.ui);
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';

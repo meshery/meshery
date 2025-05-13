@@ -19,7 +19,7 @@ import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const ACTION_TYPES = {
@@ -46,7 +46,7 @@ const ResourcesTable = (props) => {
   const [view, setView] = useState(ALL_VIEW);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const { width } = useWindowDimensions();
-  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state) => state.ui);
   const handleApplyFilter = () => {
     const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
     setNamespaceFilter(namespaceFilter);

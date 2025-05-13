@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { WorkspaceActivityCard } from '@layer5/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 
 const WorkspaceActivityWidget = () => {
-  const { organization: currentOrg } = useSelectorRtk((state) => state.ui);
+  const { organization: currentOrg } = useSelector((state) => state.ui);
   const { data: workspaces } = useGetWorkspacesQuery({
     orgId: currentOrg?.id,
   });

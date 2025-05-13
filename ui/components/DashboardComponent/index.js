@@ -33,7 +33,7 @@ import Popup from '../Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -102,8 +102,8 @@ const DashboardComponent = () => {
   };
 
   const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
   const WIDGETS = getWidgets({ iconsProps, isEditMode });
   const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];

@@ -45,7 +45,7 @@ import {
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
@@ -54,7 +54,7 @@ const ACTION_TYPES = {
 };
 
 const Environments = () => {
-  const { organization } = useSelectorRtk((state) => state.ui);
+  const { organization } = useSelector((state) => state.ui);
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},

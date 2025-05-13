@@ -22,7 +22,7 @@ import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
 } from 'machines/validator/designValidator';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { styled } from '@layer5/sistent';
 import { useTheme } from '@layer5/sistent';
 import { EnvironmentIcon } from '@layer5/sistent';
@@ -119,9 +119,9 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
 };
 
 const SelectTargetStep = () => {
-  const { organization } = useSelectorRtk((state) => state.ui);
-  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
-  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
+  const { organization } = useSelector((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
 
   const [isEnvrionmentModalOpen, setIsEnvrionmentModalOpen] = useState(false);
   return (
@@ -199,7 +199,7 @@ export const UpdateDeploymentStepper = ({
   const isDryRunning = useIsValidatingDryRun(validationMachine);
   const theme = useTheme();
 
-  const selectedK8sConnections = useSelectorRtk(selectAllSelectedK8sConnections);
+  const selectedK8sConnections = useSelector(selectAllSelectedK8sConnections);
   const selectedDeployableK8scontextIds = selectedK8sConnections.map(
     (k8sConnection) => k8sConnection.metadata.id,
   );
