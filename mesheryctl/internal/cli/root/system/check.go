@@ -128,9 +128,11 @@ mesheryctl system check
 // Run Pre-mesh deployment checks (Docker and Kubernetes)
 mesheryctl system check --preflight
 
+// Run Pre-mesh deployment checks (Docker and Kubernetes)
+mesheryctl system check --pre
+
 // Run checks on specific mesh adapter
 mesheryctl system check --adapter meshery-istio:10000
-// or
 mesheryctl system check --adapter meshery-istio
 
 // Run checks for all the mesh adapters
@@ -647,7 +649,8 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
-		return fmt.Errorf("!! Invalid adapter name provided")
+		log.Info("- No components configured in current context")
+		return nil
 	}
 	for _, adapter := range adapters {
 		name := adapter.Location
