@@ -15,26 +15,15 @@ import {
   selectSelectedK8sClusters,
   selectK8sConfig,
 } from '../lib/store';
-import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
-import dataFetch from '../lib/data-fetch';
-import PatternServiceForm from './MesheryMeshInterface/PatternServiceForm';
 import PatternServiceFormCore from './MesheryMeshInterface/PatternServiceFormCore';
-import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { createRelayEnvironment, subscriptionClient } from '../lib/relayEnvironment';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
-import usePreventUserFromLeavingPage from '../utils/hooks/usePreventUserFromLeavingPage';
-import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
-import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
-import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
-import Modal, { RJSFModalWrapper } from './Modal';
+import Modal from './Modal';
 import ExportModal from './ExportModal';
-import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
@@ -56,16 +45,7 @@ import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-function NavigatorExtension({
-  grafana,
-  prometheus,
-  updateLoadTestData,
-  url,
-  isDrawerCollapsed,
-  selectedK8sContexts,
-  k8sconfig,
-  capabilitiesRegistry,
-}) {
+function NavigatorExtension({ url, selectedK8sContexts, capabilitiesRegistry }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const currentOrganization = useGetCurrentOrganization();
   const { store: legacyStore } = useContext(LegacyStoreContext);
@@ -91,10 +71,6 @@ function NavigatorExtension({
     // <div>Unknown Error: {err.toString()}</div>;
   }
 
-  const getSelectedK8sClusters = () => {
-    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
-  };
-
   const extensionExposedMesheryStore = {
     currentOrganization: {
       set: (organization) =>
@@ -118,24 +94,9 @@ function NavigatorExtension({
     <DynamicFullScrrenLoader isLoading={loading}>
       <RemoteComponent
         injectProps={{
-          GrafanaCustomCharts,
-          updateLoadTestData,
-          PatternServiceForm,
-          RJSFWrapper,
           PatternServiceFormCore,
-          grafana,
-          prometheus,
           MesheryPerformanceComponent: PerformanceTestComponent,
-          dataFetch,
-          createRelayEnvironment,
-          subscriptionClient,
-          isDrawerCollapsed,
-          LoadingScreen,
-          preventLeavingHook: usePreventUserFromLeavingPage,
-          getSelectedK8sClusters,
           selectedK8sContexts,
-          setK8sContexts,
-          k8sconfig,
           resolver: {
             query: {},
             mutation: {},
@@ -143,21 +104,15 @@ function NavigatorExtension({
               ConfigurationSubscription,
             },
           },
-          ConfirmationModal,
-          SelectDeploymentTarget: SelectDeploymentTarget,
-          getComponentsinFile,
           InfoModal,
           ViewInfoModal,
           ExportModal,
           GenericRJSFModal: Modal,
-          RJSFModalWrapper: RJSFModalWrapper,
           _PromptComponent,
-          generateValidatePayload,
           capabilitiesRegistry,
           CapabilitiesRegistryClass: CapabilitiesRegistry,
           TypingFilter: TypingFilter,
           useNotificationHook: useNotification,
-          MDEditor: MDEditor,
           StructuredDataFormatter: FormatStructuredData,
           CreateModelModal: CreateModelModal,
           ImportModelModal: ImportModelModal,
@@ -183,19 +138,11 @@ function NavigatorExtension({
 }
 
 const mapStateToProps = (st) => {
-  const grafana = st.get('grafana').toJS();
-  const prometheus = st.get('prometheus').toJS();
-  const isDrawerCollapsed = st.get('isDrawerCollapsed');
   const selectedK8sContexts = st.get('selectedK8sContexts');
-  const k8sconfig = st.get('k8sConfig');
   const capabilitiesRegistry = st.get('capabilitiesRegistry');
 
   return {
-    grafana,
-    prometheus,
-    isDrawerCollapsed,
     selectedK8sContexts,
-    k8sconfig,
     capabilitiesRegistry,
   };
 };
