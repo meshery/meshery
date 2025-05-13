@@ -73,7 +73,12 @@ test.describe.serial('Connection Management Tests', () => {
     await addConnectionReq;
     await addConnectionRes;
     
-    await page.getByRole('button', { name: 'OK' }).click();
+    const importConfirmation = page.getByRole('button', { name: 'OK' });
+    await importConfirmation.waitFor();
+    if (await importConfirmation.isVisible()) {
+      await importConfirmation.click();
+    }
+
     // Search for the newly added cluster
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
@@ -145,9 +150,7 @@ test.describe.serial('Connection Management Tests', () => {
     });
   });
 
-  test.afterAll('Delete Kubernetes cluster connections', async ({ page, clusterMetaData }) => {
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Lifecycle' }).click();
+  test('Delete Kubernetes cluster connections', async ({ page, clusterMetaData }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
