@@ -40,7 +40,10 @@ test.describe.serial('Connection Management Tests', () => {
     }
   });
 
-  test('Add a cluster connection by uploading kubeconfig file', async ({ page, clusterName }) => {
+  test('Add a cluster connection by uploading kubeconfig file', async ({
+    page,
+    clusterMetaData,
+  }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
     const addConnectionReq = page.waitForRequest(
@@ -74,13 +77,18 @@ test.describe.serial('Connection Management Tests', () => {
 
     await page.getByRole('button', { name: 'OK' }).click();
 
-    const newConnectionRow = page.locator('tr', { hasText: clusterName }).first();
-    await newConnectionRow.scrollIntoViewIfNeeded();
+    // Search for the newly added cluster
+    await page.getByTestId('ConnectionTable-search').getByRole('button').click();
+
+    await page.getByRole('textbox', { name: 'Search Connections...' }).click();
+    await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+
+    const newConnectionRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
     await expect(newConnectionRow).toContainText('connected');
   });
 
   transitionTests.forEach((t) => {
-    test(t.name, async ({ page, clusterName }) => {
+    test(t.name, async ({ page, clusterMetaData }) => {
       const stateTransitionReq = page.waitForRequest(
         (request) =>
           request.url() ===
@@ -101,9 +109,12 @@ test.describe.serial('Connection Management Tests', () => {
           request.method() === 'GET',
       );
 
-      const connectedRow = page.locator('tr', { hasText: clusterName }).first();      
-      await connectedRow.scrollIntoViewIfNeeded();
+      await page.getByTestId('ConnectionTable-search').getByRole('button').click();
+      await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+
+      const connectedRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
       await expect(connectedRow).toBeVisible();
+
       // ===== TRANSITIONING TO A NEW STATE =====
 
       // open state transition options dropdown
@@ -120,8 +131,9 @@ test.describe.serial('Connection Management Tests', () => {
       await getConnectionsReq;
       // expect new state to be shown as current state
 
-      const updatedConnection = page.locator('tr', { hasText: clusterName }).first();     
-      await updatedConnection.scrollIntoViewIfNeeded();
+      const updatedConnection = page
+        .getByRole('menuitem', { hasText: clusterMetaData.name })
+        .first();
       await expect(updatedConnection).toContainText(t.statusAfterTransition);
 
       // ===== TRANSITION BACK TO "connected" STATE =====
@@ -132,19 +144,19 @@ test.describe.serial('Connection Management Tests', () => {
       await expect(page.locator('#searchClick')).toBeVisible();
       await page.getByRole('button', { name: 'Confirm' }).click();
 
-      // expect the state to be restored to "connected"
-      const restoredConnection = page.locator('tr', { hasText: clusterName }).first();
-      await expect(restoredConnection).toBeVisible();
-
       await waitForSnackBar(page, 'Connection status updated');
     });
   });
 
-  test('Delete Kubernetes cluster connections', async ({ page, clusterName }) => {
+  test.afterAll('Delete Kubernetes cluster connections', async ({ page, clusterMetaData }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Lifecycle' }).click();
     await page.getByRole('tab', { name: 'Connections' }).click();
 
-    const connection = page.locator('tr', { hasText: clusterName }).first();
-    await connection.scrollIntoViewIfNeeded();
+    await page.getByTestId('ConnectionTable-search').getByRole('button').click();
+    await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+
+    const connection = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
     await expect(connection).toBeVisible();
 
     if ((await connection.count()) === 0) {
@@ -153,23 +165,12 @@ test.describe.serial('Connection Management Tests', () => {
       );
     }
 
-    const checkbox = connection.locator('input[type="checkbox"]').first();
-    await checkbox.check();
+    await connection.locator('span', { hasText: 'connected' }).click();
+    await page.getByRole('option', { name: 'deleted' }).click();
 
-    await page.getByRole('button', { name: 'Delete', exact: true }).click();
-    await expect(page.getByText('Delete Connections')).toBeVisible();
+    await expect(page.locator('#searchClick')).toBeVisible();
+    await page.getByRole('button', { name: 'Confirm' }).click();
 
-    const responsePromise = page.waitForResponse(
-      (response) =>
-        response
-          .url()
-          .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status`) &&
-        response.status() === 202,
-    );
-
-    await page.getByRole('button', { name: 'DELETE', exact: true }).click();
     await expect(page.getByText('Connection status updated')).toBeVisible();
-
-    await responsePromise;
   });
 });

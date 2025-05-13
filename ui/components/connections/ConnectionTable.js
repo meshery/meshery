@@ -107,7 +107,7 @@ const ConnectionTable = ({
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState();
-  const [sortOrder, setSortOrder] = useState('status asc');
+  const [sortOrder, setSortOrder] = useState('created_at desc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -224,12 +224,7 @@ const ConnectionTable = ({
         nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
         kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
       }));
-  }, [
-    connectionData,
-    isConnectionLoading,
-    isConnectionFetching,
-    Object.keys(connectionMetadataState).length,
-  ]);
+  }, [connectionData, isConnectionLoading, isConnectionFetching, connectionMetadataState]);
 
   const filteredConnections = enhancedConnections?.filter(({ status, kind }) => {
     const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
@@ -1166,14 +1161,16 @@ const ConnectionTable = ({
             justifyContent: 'flex-end',
           }}
         >
-          <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
-            }}
-            placeholder="Search Connections..."
-            expanded={isSearchExpanded}
-            setExpanded={setIsSearchExpanded}
-          />
+          <div data-testid="ConnectionTable-search">
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+              }}
+              placeholder="Search Connections..."
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+            />
+          </div>
 
           <UniversalFilter
             id="ref"
