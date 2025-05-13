@@ -10,7 +10,7 @@ import jsyaml from 'js-yaml';
 import yaml from 'js-yaml';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { mesheryEventBus } from './eventBus';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 
 /**
  * Check if an object is empty
@@ -482,7 +482,7 @@ export const isOperatorEnabled = isKanvasEnabled;
 export const isKanvasDesignerEnabled = isKanvasEnabled;
 
 export const useIsKanvasEnabled = () => {
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
 
   return isKanvasEnabled(capabilitiesRegistry);
 };

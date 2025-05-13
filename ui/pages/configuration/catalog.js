@@ -7,11 +7,11 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404';
 import MesheryPatterns from '@/components/MesheryPatterns';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatch } from 'react-redux';
 import { updatePagePath } from '@/store/slices/mesheryUi';
 
 function CatalogPage() {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   dispatch(updatePagePath({ path: getPath() }));
 
   return (

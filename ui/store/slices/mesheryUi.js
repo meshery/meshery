@@ -146,4 +146,7 @@ export const selectK8sConfig = (state) => {
   return state.k8sConfig;
 };
 
+export const selectedOrg = (state) => {
+  return state.organization;
+};
 export default coreSlice.reducer;

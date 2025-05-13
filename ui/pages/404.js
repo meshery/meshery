@@ -3,11 +3,11 @@ import CustomErrorMessage from '../components/ErrorPage';
 import { NoSsr } from '@layer5/sistent';
 import { getPath } from '../lib/path';
 import Head from 'next/head';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatch } from 'react-redux';
 import { updatePagePath } from '@/store/slices/mesheryUi';
 
 const Error = () => {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   dispatch(updatePagePath({ path: getPath() }));
 
   return (

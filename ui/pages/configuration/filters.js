@@ -4,11 +4,11 @@ import MesheryFilters from '../../components/Filters';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { Box } from '@layer5/sistent';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatch } from 'react-redux';
 import { updatePagePath } from '@/store/slices/mesheryUi';
 
 function NewFilters() {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   dispatch(updatePagePath({ path: getPath() }));
   return (
     <NoSsr>

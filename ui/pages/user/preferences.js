@@ -5,14 +5,14 @@ import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
 import { NoSsr } from '@layer5/sistent';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 
 const UserPref = () => {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   const [anonymousStats, setAnonymousStats] = useState(undefined);
   const [perfResultStats, setPerfResultStats] = useState(undefined);
-  const { selectedK8sContext } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContext } = useSelector((state) => state.ui);
 
   useEffect(() => {
     handleFetchData(selectedK8sContext);

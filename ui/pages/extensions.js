@@ -11,7 +11,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent } from '@/store/slices/mesheryUi';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
@@ -331,8 +331,8 @@ const Extensions = () => {
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false);
   const { notify } = useNotification();
   const [updateUserPref] = useUpdateUserPrefMutation();
-  const dispatch = useDispatchRtk();
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatch();
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const {
     data: userData,
     isSuccess: userDataFetched,

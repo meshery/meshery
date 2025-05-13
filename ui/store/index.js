@@ -5,6 +5,7 @@ import { api } from '../rtk-query/index';
 import mesheryUiReducer from './slices/mesheryUi';
 import prefTestReducer from './slices/prefTest';
 import telemetryReducer from './slices/telemetry';
+import adapterReducer from './slices/adapter';
 
 export const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
     ui: mesheryUiReducer,
     prefTest: prefTestReducer,
     telemetry: telemetryReducer,
+    adapter: adapterReducer,
     [api.reducerPath]: api.reducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),

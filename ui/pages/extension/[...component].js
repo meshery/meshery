@@ -19,7 +19,7 @@ import {
   updatePagePath,
   updateTitle,
 } from '@/store/slices/mesheryUi';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * getPath returns the current pathname
@@ -43,8 +43,8 @@ function matchComponentURI(extensionURI, currentURI) {
 function RemoteExtension() {
   const [componentTitle, setComponentTitle] = useState('');
   const router = useRouter();
-  const dispatch = useDispatchRtk();
-  const { extensionType } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatch();
+  const { extensionType } = useSelector((state) => state.ui);
   const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
   const renderExtension = useCallback(() => {
     if (!capabilitiesRegistry?.extensions) return;

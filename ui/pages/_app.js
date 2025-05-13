@@ -8,13 +8,11 @@ import 'codemirror/addon/lint/lint.css';
 // link clicks, hence attempting to add them here
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
-import { fromJS } from 'immutable';
 import _ from 'lodash';
-import withRedux from 'next-redux-wrapper';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
-import { Provider } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -24,7 +22,6 @@ import { GQLSubscription } from '../components/subscription/subscriptionhandler'
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import { actionTypes, makeStore, LegacyStoreContext } from '../lib/store';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
@@ -45,7 +42,6 @@ import CAN, { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { store } from '../store';
-import { RTKContext, useDispatchRtk, useSelectorRtk } from '@/store/hooks';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
 import {
@@ -76,6 +72,7 @@ import {
   setConnectionMetadata,
   setControllerState,
   setK8sContexts,
+  setKeys,
   setOrganization,
   toggleCatalogContent,
   updateExtensionType,
@@ -83,6 +80,7 @@ import {
 } from '@/store/slices/mesheryUi';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
 import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
+import { updateAdaptersInfo } from '@/store/slices/adapter';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -120,7 +118,7 @@ export function isExtensionOpen() {
 const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
   const theme = useTheme();
 
-  const { extensionType: extension } = useSelectorRtk((state) => state.ui);
+  const { extensionType: extension } = useSelector((state) => state.ui);
 
   if (extension == 'navigator') {
     return null;
@@ -163,7 +161,7 @@ const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
 };
 
 const KubernetesSubscription = ({ setAppState }) => {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
     // Don't fetch k8s contexts if user doesn't have permission
     if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
@@ -209,12 +207,12 @@ const KubernetesSubscription = ({ setAppState }) => {
   return null;
 };
 
-const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
+const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const pageContext = useMemo(() => getPageContext(), []);
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
-  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatchRtk();
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
   const [state, setState] = useState({
     mobileOpen: false,
     isDrawerCollapsed: false,
@@ -284,7 +282,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
         });
       },
     );
-  }, [store]);
+  }, [dispatch]);
 
   const fullScreenChanged = useCallback(() => {
     setState((prevState) => {
@@ -425,13 +423,13 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
     (type) => {
       dispatch(updateExtensionType({ extensionType: type }));
     },
-    [store],
+    [dispatch],
   );
   const setCurrentOrganization = useCallback(
     (org) => {
       dispatch(setOrganization({ organization: org }));
     },
-    [store],
+    [dispatch],
   );
 
   const updateAbility = useCallback(() => {
@@ -457,10 +455,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
           (result) => {
             if (result) {
               setState((prevState) => ({ ...prevState, keys: result.keys }));
-              store.dispatch({
-                type: actionTypes.SET_KEYS,
-                keys: result.keys,
-              });
+              dispatch(setKeys({ keys: result.keys }));
               updateAbility();
             }
           },
@@ -468,7 +463,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
         );
       }
     },
-    [store, updateAbility],
+    [dispatch, updateAbility],
   );
 
   const loadOrg = useCallback(async () => {
@@ -524,10 +519,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
             result.meshAdapters !== null &&
             result.meshAdapters.length > 0
           ) {
-            store.dispatch({
-              type: actionTypes.UPDATE_ADAPTERS_INFO,
-              meshAdapters: result.meshAdapters,
-            });
+            dispatch(updateAdaptersInfo({ meshAdapters: result.meshAdapters }));
           }
           if (result.loadTestPrefs) {
             const loadTestPref = Object.assign(
@@ -541,25 +533,13 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
             );
             dispatch(updateLoadTestPref({ loadTestPref }));
           }
-          if (typeof result.anonymousUsageStats !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS,
-              anonymousUsageStats: result.anonymousUsageStats,
-            });
-          }
-          if (typeof result.anonymousPerfResults !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS,
-              anonymousPerfResults: result.anonymousPerfResults,
-            });
-          }
         }
       },
       (error) => {
         console.log(`there was an error fetching user config data: ${error}`);
       },
     );
-  }, [store]);
+  }, [dispatch]);
 
   useEffect(() => {
     loadConfigFromServer();
@@ -620,7 +600,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment, store }) => {
   }, [k8sConfig, capabilitiesRegistry]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
-  const { extensionType } = useSelectorRtk((state) => state.ui);
+  const { extensionType } = useSelector((state) => state.ui);
   return (
     <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
       <DynamicComponentProvider>
@@ -722,8 +702,6 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
   return { pageProps };
 };
 
-const MesheryWithRedux = MesheryApp;
-
 const MesheryThemeProvider = ({ children }) => {
   const themePref = useThemePreference();
   const mode = themePref?.data?.mode || 'dark';
@@ -732,26 +710,19 @@ const MesheryThemeProvider = ({ children }) => {
 
 const MesheryAppWrapper = (props) => {
   return (
-    <Provider store={store} context={RTKContext}>
-      <Provider store={props.store} context={LegacyStoreContext}>
-        <Provider store={props.store}>
-          <Head>
-            <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
-            <title>Meshery</title>
-          </Head>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <MesheryWithRedux {...props} />
-          </LocalizationProvider>
-        </Provider>
-      </Provider>
+    <Provider store={store}>
+      <Head>
+        <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
+        <title>Meshery</title>
+      </Head>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <MesheryApp {...props} />
+      </LocalizationProvider>
     </Provider>
   );
 };
 
-export default withRedux(makeStore, {
-  serializeState: (state) => state.toJS(),
-  deserializeState: (state) => fromJS(state),
-})(MesheryAppWrapper);
+export default MesheryAppWrapper;
 
 const NavigationBar = ({
   isDrawerCollapsed,

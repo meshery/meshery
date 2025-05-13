@@ -3,11 +3,11 @@ import { NoSsr } from '@layer5/sistent';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
 import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatch } from 'react-redux';
 import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 
 function DesignConfiguratorPage() {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   useEffect(() => {
     dispatch(updatePagePath({ path: getPath() }));
     dispatch(updateTitle({ title: 'Configure Design' }));

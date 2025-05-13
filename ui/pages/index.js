@@ -3,11 +3,11 @@ import Head from 'next/head';
 import React from 'react';
 import DashboardComponent from '../components/DashboardComponent';
 import { getPath } from '../lib/path';
-import { useDispatchRtk } from '@/store/hooks';
+import { useDispatch } from 'react-redux';
 import { updatePagePath } from '@/store/slices/mesheryUi';
 
 function Index() {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   dispatch(updatePagePath({ path: getPath() }));
 
   return (
@@ -19,5 +19,9 @@ function Index() {
     </NoSsr>
   );
 }
+
+Index.getInitialProps = async () => {
+  return {};
+};
 
 export default Index;
