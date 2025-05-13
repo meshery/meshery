@@ -200,7 +200,7 @@ function DefaultHeader({ title, isBeta }) {
   );
 }
 
-function SpaceSwitcher({ title, isBeta }) {
+function SpaceSwitcher() {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
@@ -208,7 +208,8 @@ function SpaceSwitcher({ title, isBeta }) {
   const router = useRouter();
   const rtkDispatch = useDispatch();
   const { organization } = useSelector((state) => state.ui);
-
+  const { isBeta } = useSelector((state) => state.ui.page);
+  const { title } = useSelector((state) => state.ui.page);
   const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
   const dispatchSetKeys = (keys) => rtkDispatch(setKeys(keys));
 

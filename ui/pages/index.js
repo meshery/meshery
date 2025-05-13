@@ -4,12 +4,12 @@ import React from 'react';
 import DashboardComponent from '../components/DashboardComponent';
 import { getPath } from '../lib/path';
 import { useDispatch } from 'react-redux';
-import { updatePagePath } from '@/store/slices/mesheryUi';
+import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 
 function Index() {
   const dispatch = useDispatch();
   dispatch(updatePagePath({ path: getPath() }));
-
+  dispatch(updateTitle({ title: 'Dashboard' }));
   return (
     <NoSsr>
       <Head>

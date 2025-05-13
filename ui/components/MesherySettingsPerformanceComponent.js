@@ -34,9 +34,10 @@ const FormControlWrapper = styled(FormControl)({
   margin: '10px',
 });
 
-const MesherySettingsPerformanceComponent = (props) => {
+const MesherySettingsPerformanceComponent = () => {
   const { notify } = useNotification();
-  const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = props;
+  const { loadTestPref } = useSelector((state) => state.prefTest);
+  const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = loadTestPref;
   const { selectedK8sContexts } = useSelector((state) => state.ui);
 
   const { data: loadTestPrefs } = useGetLoadTestPrefsQuery(selectedK8sContexts);

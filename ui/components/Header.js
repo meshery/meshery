@@ -390,8 +390,7 @@ const Header = ({
   searchContexts,
 }) => {
   const { notify } = useNotification;
-  const isBeta = useSelector((state) => state.ui.page.isBeta);
-  const title = useSelector((state) => state.ui.page.title);
+
   const dispatch = useDispatch();
   const {
     data: providerCapabilities,
@@ -445,7 +444,7 @@ const Header = ({
                     justifyContent: 'center',
                   }}
                 ></div>
-                <SpaceSwitcher title={title} isBeta={isBeta} />
+                <SpaceSwitcher />
               </Grid>
               <Box
                 component={UserContainer}
