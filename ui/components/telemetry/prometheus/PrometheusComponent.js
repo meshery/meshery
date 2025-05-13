@@ -13,7 +13,7 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updatePrometheusConfig } from '@/store/slices/telemetry';
 
@@ -52,7 +52,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const PrometheusComponent = (props) => {
-  const { prometheus: initialPrometheus } = useSelectorRtk((state) => state.telemetry);
+  const { prometheus: initialPrometheus } = useSelector((state) => state.telemetry);
   const [urlError, setUrlError] = useState(false);
   const [prometheusConfigSuccess, setPrometheusConfigSuccess] = useState(
     initialPrometheus.prometheusURL !== '',
@@ -63,9 +63,9 @@ const PrometheusComponent = (props) => {
   const [prometheusURL, setPrometheusURL] = useState(initialPrometheus.prometheusURL);
   const [connectionID, setConnectionID] = useState(initialPrometheus.connectionID);
   const [connectionName, setConnectionName] = useState(initialPrometheus.connectionName);
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatchRtk();
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
 
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);

@@ -52,7 +52,7 @@ import {
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
 const ThemeToggler = ({ handleUpdateUserPref }) => {
@@ -88,8 +88,8 @@ const UserPreference = (props) => {
   const [value, setValue] = useState(0);
   const [providerInfo, setProviderInfo] = useState({});
   const theme = useTheme();
-  const dispatch = useDispatchRtk();
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatch();
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
