@@ -1,7 +1,6 @@
 module github.com/layer5io/meshery
 
 go 1.23.4
-toolchain go1.24.1
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
