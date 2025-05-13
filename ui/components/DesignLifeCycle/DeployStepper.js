@@ -200,6 +200,7 @@ export const UpdateDeploymentStepper = ({
   const theme = useTheme();
 
   const selectedK8sConnections = useSelector(selectAllSelectedK8sConnections);
+
   const selectedDeployableK8scontextIds = selectedK8sConnections.map(
     (k8sConnection) => k8sConnection.metadata.id,
   );

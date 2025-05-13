@@ -59,7 +59,7 @@ const MesheryPlayComponent = () => {
   const { meshAdapters } = useSelector((state) => state.adapter);
   // Initialize state
   const [adapter, setAdapterState] = useState(() => {
-    if (meshAdapters && meshAdapters.size > 0) {
+    if (meshAdapters && meshAdapters.length > 0) {
       return meshAdapters[0];
     }
     return {};
@@ -74,8 +74,8 @@ const MesheryPlayComponent = () => {
       if (selectedAdapter) {
         setAdapterState(selectedAdapter);
       }
-    } else if (meshAdapters.size > 0) {
-      setAdapterState(meshAdapters.get(0));
+    } else if (meshAdapters.length > 0) {
+      setAdapterState(meshAdapters[0]);
     }
   };
 
@@ -88,10 +88,10 @@ const MesheryPlayComponent = () => {
   }, [router.events]);
 
   useEffect(() => {
-    if (meshAdapters?.size > 0) {
+    if (meshAdapters?.length > 0) {
       handleRouteChange();
     }
-  }, [meshAdapters?.size]);
+  }, [meshAdapters?.length]);
 
   const handleConfigure = () => {
     router.push('/settings?settingsCategory=Adapters');
@@ -114,8 +114,8 @@ const MesheryPlayComponent = () => {
           ({ adapter_location }) => adapter_location === event.target.value,
         );
         if (selectedAdapter && selectedAdapter.size === 1) {
-          setAdapterState(selectedAdapter.get(0));
-          dispatch(setAdapter({ selectedAdapter: selectedAdapter.get(0).name }));
+          setAdapterState(selectedAdapter[0]);
+          dispatch(setAdapter({ selectedAdapter: selectedAdapter[0].name }));
         }
       }
     };
@@ -147,7 +147,7 @@ const MesheryPlayComponent = () => {
     return '';
   };
 
-  if (meshAdapters.size === 0) {
+  if (meshAdapters.length === 0) {
     return (
       <NoSsr>
         <>

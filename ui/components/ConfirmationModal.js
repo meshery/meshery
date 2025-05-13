@@ -130,7 +130,6 @@ function ConfirmationMsg(props) {
     open,
     handleClose,
     submit,
-    k8scontext,
     title,
     validationBody,
     componentCount,
@@ -144,6 +143,8 @@ function ConfirmationMsg(props) {
   const [context, setContexts] = useState([]);
   const { notify } = useNotification();
   const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig: k8scontext } = useSelector((state) => state.ui);
+
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
   const dispatch = useDispatch();

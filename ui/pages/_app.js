@@ -262,7 +262,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
               connectionName: connection?.name,
             };
 
-            dispatch(updatePrometheusConfig({ prometheus: promCfg }));
+            dispatch(updatePrometheusConfig(promCfg));
           } else {
             const credentialID = connection?.credential_id;
 
@@ -276,7 +276,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
                 connectionID: connection?.id,
                 connectionName: connection?.name,
               };
-              dispatch(updateGrafanaConfig({ grafana: grafanaCfg }));
+              dispatch(updateGrafanaConfig(grafanaCfg));
             });
           }
         });

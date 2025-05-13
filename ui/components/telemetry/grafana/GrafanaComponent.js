@@ -89,7 +89,7 @@ const GrafanaComponent = (props) => {
   const handleGrafanaConfigure = () => {
     const { grafanaURL } = state;
     // Validate URL with regex
-    if (!isValidGrafanaURL(grafanaURL)) {
+    if (!isValidGrafanaURL(grafanaURL.value)) {
       updateState({ urlError: true });
       return;
     }
@@ -117,15 +117,13 @@ const GrafanaComponent = (props) => {
         setState((prev) => ({ ...prev, grafanaBoards: result }));
         dispatch(
           updateGrafanaConfig({
-            grafana: {
-              grafanaURL,
-              grafanaAPIKey,
-              grafanaBoardSearch,
-              grafanaBoards: result,
-              selectedBoardsConfigs,
-              connectionName,
-              connectionID,
-            },
+            grafanaURL,
+            grafanaAPIKey,
+            grafanaBoardSearch,
+            grafanaBoards: result,
+            selectedBoardsConfigs,
+            connectionName,
+            connectionID,
           }),
         );
       }
@@ -142,7 +140,7 @@ const GrafanaComponent = (props) => {
     if (!grafanaURL) return;
 
     // Build URL-encoded params (using URLSearchParams for brevity)
-    const params = new URLSearchParams({ grafanaURL, grafanaAPIKey }).toString();
+    const params = new URLSearchParams({ grafanaURL: grafanaURL.value, grafanaAPIKey }).toString();
     updateProgress({ showProgress: true });
 
     try {
@@ -155,13 +153,11 @@ const GrafanaComponent = (props) => {
         updateState({ grafanaConfigSuccess: true });
         dispatch(
           updateGrafanaConfig({
-            grafana: {
-              grafanaURL,
-              grafanaAPIKey,
-              grafanaBoardSearch,
-              grafanaBoards,
-              selectedBoardsConfigs,
-            },
+            grafanaURL,
+            grafanaAPIKey,
+            grafanaBoardSearch,
+            grafanaBoards,
+            selectedBoardsConfigs,
           }),
         );
         // Fetch boards using debounced callback
@@ -200,7 +196,7 @@ const GrafanaComponent = (props) => {
         connectionID: grafanaConnectionObj?.id,
         connectionName: grafanaConnectionObj?.name,
       };
-      dispatch(updateGrafanaConfig({ grafana: grafanaCfg }));
+      dispatch(updateGrafanaConfig(grafanaCfg));
     } catch (error) {
       console.error('Error fetching credential by ID:', error);
     }
@@ -238,13 +234,11 @@ const GrafanaComponent = (props) => {
         }));
         dispatch(
           updateGrafanaConfig({
-            grafana: {
-              grafanaURL: '',
-              grafanaAPIKey: '',
-              grafanaBoardSearch: '',
-              grafanaBoards: [],
-              selectedBoardsConfigs: [],
-            },
+            grafanaURL: '',
+            grafanaAPIKey: '',
+            grafanaBoardSearch: '',
+            grafanaBoards: [],
+            selectedBoardsConfigs: [],
           }),
         );
       }

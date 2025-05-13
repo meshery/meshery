@@ -92,7 +92,8 @@ const PrometheusComponent = (props) => {
           setPrometheusConfigSuccess(true);
           dispatch(
             updatePrometheusConfig({
-              prometheus: { prometheusURL: url, selectedPrometheusBoardsConfigs: [] },
+              prometheusURL: url,
+              selectedPrometheusBoardsConfigs: [],
             }),
           );
         }
@@ -113,17 +114,13 @@ const PrometheusComponent = (props) => {
         return;
       }
 
-      console.log('Data:', data);
-
       setPrometheusURL(newURL);
       dispatch(
         updatePrometheusConfig({
-          prometheus: {
-            prometheusURL: newURL,
-            selectedPrometheusBoardsConfigs: data?.metadata?.prometheus_boards || [],
-            connectionID: data?.id,
-            connectionName: data?.name,
-          },
+          prometheusURL: newURL,
+          selectedPrometheusBoardsConfigs: data?.metadata?.prometheus_boards || [],
+          connectionID: data?.id,
+          connectionName: data?.name,
         }),
       );
     }
@@ -161,7 +158,8 @@ const PrometheusComponent = (props) => {
         setSelectedPrometheusBoardsConfigs([]);
         dispatch(
           updatePrometheusConfig({
-            prometheus: { prometheusURL: '', selectedPrometheusBoardsConfigs: [] },
+            prometheusURL: '',
+            selectedPrometheusBoardsConfigs: [],
           }),
         );
         props.notify({
@@ -183,7 +181,8 @@ const PrometheusComponent = (props) => {
       setSelectedPrometheusBoardsConfigs(newConfigs);
       dispatch(
         updatePrometheusConfig({
-          prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
+          prometheusURL,
+          selectedPrometheusBoardsConfigs: newConfigs,
         }),
       );
     }
@@ -195,7 +194,8 @@ const PrometheusComponent = (props) => {
     setSelectedPrometheusBoardsConfigs(newConfigs);
     dispatch(
       updatePrometheusConfig({
-        prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
+        prometheusURL,
+        selectedPrometheusBoardsConfigs: newConfigs,
       }),
     );
   };
