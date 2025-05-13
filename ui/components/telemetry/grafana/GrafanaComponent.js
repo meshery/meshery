@@ -79,10 +79,13 @@ const GrafanaComponent = (props) => {
     return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
   };
 
-  const isValidGrafanaURL = (url) =>
-    Boolean(url) &&
-    (url.toLowerCase().startsWith('http://') || url.toLowerCase().startsWith('https://'));
-
+  const isValidGrafanaURL = (url) => {
+    const urlStr = typeof url === 'string' ? url : url?.value || '';
+    return (
+      Boolean(urlStr) &&
+      (urlStr.toLowerCase().startsWith('http://') || urlStr.toLowerCase().startsWith('https://'))
+    );
+  };
   // Validates the URL and triggers configuration submission
   const handleGrafanaConfigure = () => {
     const { grafanaURL } = state;
@@ -135,10 +138,11 @@ const GrafanaComponent = (props) => {
   const submitGrafanaConfigure = async () => {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } =
       state;
-    if (!grafanaURL) return;
+    const urlStr = typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value || '';
+    if (!urlStr) return;
 
     // Build URL-encoded params (using URLSearchParams for brevity)
-    const params = new URLSearchParams({ grafanaURL, grafanaAPIKey }).toString();
+    const params = new URLSearchParams({ grafanaURL: urlStr, grafanaAPIKey }).toString();
     props.updateProgress({ showProgress: true });
 
     try {
@@ -151,7 +155,7 @@ const GrafanaComponent = (props) => {
         updateState({ grafanaConfigSuccess: true });
         props.updateGrafanaConfig({
           grafana: {
-            grafanaURL,
+            grafanaURL: urlStr,
             grafanaAPIKey,
             grafanaBoardSearch,
             grafanaBoards,
@@ -391,7 +395,7 @@ const GrafanaComponent = (props) => {
       <NoSsr>
         <>
           <GrafanaSelectionComponent
-            grafanaURL={grafanaURL}
+            grafanaURL={typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value || ''}
             grafanaBoards={grafanaBoards}
             grafanaBoardSearch={grafanaBoardSearch}
             handleGrafanaBoardSearchChange={handleChange}

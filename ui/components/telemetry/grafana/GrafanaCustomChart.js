@@ -235,7 +235,6 @@ function GrafanaCustomChart(props) {
   const handleError = (error) => {
     updateProgress({ showProgress: false });
     if (error) {
-      setError(error.message && error.message !== '' ? error.message : error !== '' ? error : '');
       setErrorCount((prevCount) => prevCount + 1);
     }
   };
