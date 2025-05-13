@@ -72,6 +72,8 @@ test.describe.serial('Connection Management Tests', () => {
 
     await addConnectionReq;
     await addConnectionRes;
+    
+    await page.getByRole('button', { name: 'OK' }).click();
     // Search for the newly added cluster
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
