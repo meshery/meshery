@@ -38,7 +38,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 /**
@@ -68,7 +68,7 @@ function PerformanceProfile({ handleDelete }) {
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const { user } = useSelectorRtk((state) => state.ui);
+  const { user } = useSelector((state) => state.ui);
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
   /**

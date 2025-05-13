@@ -31,7 +31,7 @@ import {
 } from '@layer5/sistent';
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
 
@@ -497,9 +497,9 @@ function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const [anchorEl, setAnchorEl] = useState([]);
   const [socialMessage, setSocialMessage] = useState();
   const theme = useTheme();
-  const { user } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatchRtk();
-  const { results_selection } = useSelectorRtk((state) => state.prefTest);
+  const { user } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const { results_selection } = useSelector((state) => state.prefTest);
   const searchTimeout = useRef();
   const { notify } = useNotification();
 

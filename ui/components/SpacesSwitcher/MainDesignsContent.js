@@ -24,7 +24,6 @@ import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import { useLegacySelector } from 'lib/store';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -45,6 +44,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { useSelector } from 'react-redux';
 
 const MainDesignsContent = ({
   page,
@@ -357,7 +357,7 @@ const MainDesignsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
-  const capabilitiesRegistry = useLegacySelector((state) => state.get('capabilitiesRegistry'));
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const activeUsers = useRoomActivity({
     provider_url: providerUrl,

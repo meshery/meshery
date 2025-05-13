@@ -22,7 +22,7 @@ import {
   useUpdateGrafanaBoardsMutation,
 } from '@/rtk-query/telemetry';
 import useDebouncedCallback from '@/utils/hooks/useDebounce';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateGrafanaConfig } from '@/store/slices/telemetry';
 
@@ -42,7 +42,7 @@ const GrafanaChartsWrapper = styled(Box)(() => {
 });
 
 const GrafanaComponent = (props) => {
-  const { grafana } = useSelectorRtk((state) => state.telemetry);
+  const { grafana } = useSelector((state) => state.telemetry);
   const [state, setState] = useState({
     urlError: false,
     grafanaConfigSuccess: grafana.grafanaURL !== '',
@@ -74,9 +74,9 @@ const GrafanaComponent = (props) => {
   const updateState = (newState) => {
     setState((prev) => ({ ...prev, ...newState }));
   };
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatchRtk();
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };

@@ -35,7 +35,7 @@ import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -241,7 +241,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const { organization: currentOrganization } = useSelectorRtk((state) => state.ui);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
   const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(

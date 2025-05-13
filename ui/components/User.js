@@ -2,14 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Avatar, Button } from '@layer5/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
-import { Provider } from 'react-redux';
-import { store } from '../store';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { IconButtonAvatar } from './Header.styles';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '@/store/slices/mesheryUi';
 /**
  * Extension Point: Avatar behavior for User Modes
@@ -20,8 +18,8 @@ const User = (props) => {
   const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
-  const dispatch = useDispatchRtk();
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatch();
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const {
     data: userData,
     isSuccess: isGetUserSuccess,
@@ -98,11 +96,7 @@ const User = (props) => {
 };
 
 const UserProvider = (props) => {
-  return (
-    <Provider store={store}>
-      <User {...props} />
-    </Provider>
-  );
+  return <User {...props} />;
 };
 
 export default UserProvider;

@@ -63,7 +63,7 @@ import { DeleteIcon } from '@layer5/sistent';
 
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
@@ -95,9 +95,9 @@ const ACTION_TYPES = {
 
 const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
   const router = useRouter();
-  const { organization } = useSelectorRtk((state) => state.ui);
-  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
-  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
+  const { organization } = useSelector((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);

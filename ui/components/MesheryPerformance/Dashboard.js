@@ -21,7 +21,7 @@ import {
   useMediaQuery,
 } from '@layer5/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 
 const StyledPaper = styled(Paper)({
   padding: '1rem',
@@ -71,7 +71,7 @@ function Dashboard() {
   const [runTest, setRunTest] = useState(false);
   const { notify } = useNotification();
   const router = useRouter();
-  const { grafana } = useSelectorRtk((state) => state.telemetry);
+  const { grafana } = useSelector((state) => state.telemetry);
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('xs'));
   if (matches) {

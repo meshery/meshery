@@ -17,8 +17,6 @@ import {
   WorkspaceIcon,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import { Provider } from 'react-redux';
-import { store } from '../../store';
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
@@ -26,7 +24,7 @@ import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { setOrganization, setKeys } from '@/store/slices/mesheryUi';
 
 export const SlideInMenu = styled('div')(() => ({
@@ -108,7 +106,7 @@ function OrgMenu(props) {
 
   const { organization, setOrganization, open, setKeys } = props;
   const { notify } = useNotification();
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   const abilitiesResult = useGetCurrentAbilities(organization);
   useEffect(() => {
     if (abilitiesResult?.currentData?.keys) {
@@ -208,44 +206,42 @@ function SpaceSwitcher({ title, isBeta }) {
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
   const router = useRouter();
-  const rtkDispatch = useDispatchRtk();
-  const { organization } = useSelectorRtk((state) => state.ui);
+  const rtkDispatch = useDispatch();
+  const { organization } = useSelector((state) => state.ui);
 
   const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
   const dispatchSetKeys = (keys) => rtkDispatch(setKeys(keys));
 
   return (
     <NoSsr>
-      <Provider store={store}>
-        <StyledSwitcher>
-          <Button
-            onClick={() => setOrgOpen(!orgOpen)}
-            style={{ marginRight: orgOpen ? '1rem' : '0' }}
-          >
-            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-          </Button>
-          <OrgMenu
-            open={orgOpen}
-            organization={organization}
-            setOrganization={dispatchSetOrganization}
-            setKeys={dispatchSetKeys}
+      <StyledSwitcher>
+        <Button
+          onClick={() => setOrgOpen(!orgOpen)}
+          style={{ marginRight: orgOpen ? '1rem' : '0' }}
+        >
+          <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+        </Button>
+        <OrgMenu
+          open={orgOpen}
+          organization={organization}
+          setOrganization={dispatchSetOrganization}
+          setKeys={dispatchSetKeys}
+        />
+        /
+        <Button
+          onClick={() => setWorkspaceOpen(!workspaceOpen)}
+          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+        >
+          <WorkspaceIcon
+            {...iconLarge}
+            secondaryFill={theme.palette.common.white}
+            fill={theme.palette.common.white}
           />
-          /
-          <Button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-          >
-            <WorkspaceIcon
-              {...iconLarge}
-              secondaryFill={theme.palette.common.white}
-              fill={theme.palette.common.white}
-            />
-          </Button>
-          <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
-          <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
-          {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
-        </StyledSwitcher>
-      </Provider>
+        </Button>
+        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
+      </StyledSwitcher>
     </NoSsr>
   );
 }

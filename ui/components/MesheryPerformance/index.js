@@ -53,7 +53,7 @@ import {
   RadioButton,
 } from './style';
 import { getMeshModels } from '@/api/meshmodel';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTest } from '@/store/slices/prefTest';
 import { updateStaticPrometheusBoardConfig } from '@/store/slices/telemetry';
@@ -207,11 +207,11 @@ const MesheryPerformanceComponent_ = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const { staticPrometheusBoardConfig } = useSelectorRtk((state) => state.telemetry);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { staticPrometheusBoardConfig } = useSelector((state) => state.telemetry);
   const { notify } = useNotification();
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   const { data: userData, isSuccess: isUserDataFetched } =
     useGetUserPrefWithContextQuery(selectedK8sContexts);
 
@@ -722,8 +722,8 @@ const MesheryPerformanceComponent_ = (props) => {
   const handleTimerDialogClose = () => {
     setTimerDialogOpen(false);
   };
-  const { grafana } = useSelectorRtk((state) => state.telemetry);
-  const { prometheus } = useSelectorRtk((state) => state.telemetry);
+  const { grafana } = useSelector((state) => state.telemetry);
+  const { prometheus } = useSelector((state) => state.telemetry);
   let localStaticPrometheusBoardConfig;
   if (
     staticPrometheusBoardConfig &&
