@@ -4,26 +4,15 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
-import dataFetch from '../lib/data-fetch';
-import PatternServiceForm from './MesheryMeshInterface/PatternServiceForm';
 import PatternServiceFormCore from './MesheryMeshInterface/PatternServiceFormCore';
-import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { createRelayEnvironment, subscriptionClient } from '../lib/relayEnvironment';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
-import usePreventUserFromLeavingPage from '../utils/hooks/usePreventUserFromLeavingPage';
-import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
-import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
-import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
-import Modal, { RJSFModalWrapper } from './Modal';
+import Modal from './Modal';
 import ExportModal from './ExportModal';
-import { MDEditor } from './Markdown';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
@@ -54,6 +43,7 @@ import { store } from '../store';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
+
 function NavigatorExtension({ url }) {
   const { k8sConfig } = useSelector((state) => state.ui);
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
@@ -61,6 +51,7 @@ function NavigatorExtension({ url }) {
   const { isDrawerCollapsed } = useSelector((state) => state.ui);
   const { prometheus } = useSelector((state) => state.telemetry);
   const { grafana } = useSelector((state) => state.telemetry);
+  
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
@@ -87,9 +78,6 @@ function NavigatorExtension({ url }) {
     // <div>Unknown Error: {err.toString()}</div>;
   }
 
-  const getSelectedK8sClusters = () => {
-    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
-  };
   const extensionExposedMesheryStore = {
     currentOrganization: {
       set: (organization) => dispatch(setOrganization({ organization })),
@@ -112,23 +100,9 @@ function NavigatorExtension({ url }) {
     <DynamicFullScrrenLoader isLoading={loading}>
       <RemoteComponent
         injectProps={{
-          GrafanaCustomCharts,
-          PatternServiceForm,
-          RJSFWrapper,
           PatternServiceFormCore,
-          grafana,
-          prometheus,
           MesheryPerformanceComponent: PerformanceTestComponent,
-          dataFetch,
-          createRelayEnvironment,
-          subscriptionClient,
-          isDrawerCollapsed,
-          LoadingScreen,
-          preventLeavingHook: usePreventUserFromLeavingPage,
-          getSelectedK8sClusters,
           selectedK8sContexts,
-          setK8sContexts,
-          k8sconfig: k8sConfig,
           resolver: {
             query: {},
             mutation: {},
@@ -136,21 +110,15 @@ function NavigatorExtension({ url }) {
               ConfigurationSubscription,
             },
           },
-          ConfirmationModal,
-          SelectDeploymentTarget: SelectDeploymentTarget,
-          getComponentsinFile,
           InfoModal,
           ViewInfoModal,
           ExportModal,
           GenericRJSFModal: Modal,
-          RJSFModalWrapper: RJSFModalWrapper,
           _PromptComponent,
-          generateValidatePayload,
           capabilitiesRegistry,
           CapabilitiesRegistryClass: CapabilitiesRegistry,
           TypingFilter: TypingFilter,
           useNotificationHook: useNotification,
-          MDEditor: MDEditor,
           StructuredDataFormatter: FormatStructuredData,
           CreateModelModal: CreateModelModal,
           ImportModelModal: ImportModelModal,
