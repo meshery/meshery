@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {
   createUseRemoteComponent,
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import { useLegacySelector, LegacyStoreContext, actionTypes } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -42,26 +41,29 @@ import TypingFilter from './TypingFilter';
 import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
-import { RTKContext, useSelectorRtk } from '@/store/hooks';
+
 import {
+  selectedOrg,
   selectK8sConfig,
   selectSelectedK8sClusters,
   setK8sContexts,
+  setOrganization,
 } from '@/store/slices/mesheryUi';
+import { useDispatch, useSelector } from 'react-redux';
+import { store } from '../store';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 function NavigatorExtension({ url }) {
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
-  const { prometheus } = useSelectorRtk((state) => state.telemetry);
-  const { grafana } = useSelectorRtk((state) => state.telemetry);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const { prometheus } = useSelector((state) => state.telemetry);
+  const { grafana } = useSelector((state) => state.telemetry);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-  const { organization: currentOrganization } = useSelectorRtk((state) => state.ui);
-  const { store: legacyStore } = useContext(LegacyStoreContext);
-  const { store: rtkStore } = useContext(RTKContext);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
 
   if (err != null) {
     return (
@@ -88,21 +90,19 @@ function NavigatorExtension({ url }) {
   const getSelectedK8sClusters = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
-
   const extensionExposedMesheryStore = {
     currentOrganization: {
-      set: (organization) =>
-        legacyStore.dispatch({ type: actionTypes.SET_ORGANIZATION, organization }),
-      get: () => legacyStore.getState().organization,
-      useCurrentOrg: () => useLegacySelector((state) => state.organization),
+      set: (organization) => dispatch(setOrganization({ organization })),
+      get: () => selectedOrg(store.getState()),
+      useCurrentOrg: () => useSelector((state) => state.ui.organization),
     },
     selectedK8sClusters: {
-      get: () => selectSelectedK8sClusters(rtkStore.getState()),
-      useSelectedK8sClusters: () => useSelectorRtk(selectSelectedK8sClusters),
+      get: () => selectSelectedK8sClusters(store.getState()),
+      useSelectedK8sClusters: () => useSelector(selectSelectedK8sClusters),
     },
     k8sConfig: {
-      get: () => selectK8sConfig(rtkStore.getState()),
-      useK8sConfig: () => useSelectorRtk(selectK8sConfig),
+      get: () => selectK8sConfig(store.getState()),
+      useK8sConfig: () => useSelector(selectK8sConfig),
     },
   };
 

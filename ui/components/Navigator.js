@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
 import HelpIcon from '@mui/icons-material/Help';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
@@ -19,7 +16,6 @@ import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import { setAdapter } from '../lib/store';
 import {
   CatalogIcon,
   CustomTooltip,
@@ -87,7 +83,7 @@ import {
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
 import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   toggleDrawer,
   updateBetaBadge,
@@ -95,6 +91,8 @@ import {
   updateExtensionType,
   updateTitle,
 } from '@/store/slices/mesheryUi';
+import { useRouter } from 'next/router';
+import { setAdapter } from '@/store/slices/adapter';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -271,29 +269,30 @@ const getNavigatorComponents = (
   },
 ];
 
-const NavigatorWrapper = (props) => {
+const NavigatorWrapper = () => {
   const isMobile = useMediaQuery('(max-width:599px)');
-  const dispatch = useDispatchRtk();
-  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatch();
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
   useEffect(() => {
     if (isMobile && !isDrawerCollapsed) {
       dispatch(toggleDrawer({ isDrawerCollapsed: true }));
     }
   }, [isMobile]);
 
-  return <Navigator_ {...props} />;
+  return <Navigator_ />;
 };
 
-const Navigator_ = (props) => {
-  const { meshAdapters: initialMeshAdapters } = props;
-  const dispatch = useDispatchRtk();
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
-  const { catalogVisibility } = useSelectorRtk((state) => state.ui);
+const Navigator_ = () => {
+  const { meshAdapters } = useSelector((state) => state.adapter);
+  const { meshAdaptersts } = useSelector((state) => state.adapter);
+  const dispatch = useDispatch();
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { catalogVisibility } = useSelector((state) => state.ui);
   const theme = useTheme();
-
+  const router = useRouter();
   const [state, setState] = useState({
     path: '',
-    meshAdapters: initialMeshAdapters,
+    meshAdapters,
     mts: new Date(),
     navigator: ExtensionPointSchemaValidator('navigator')(),
     showHelperButton: false,
@@ -323,7 +322,6 @@ const Navigator_ = (props) => {
   }, []);
 
   useEffect(() => {
-    const { meshAdapters, meshAdaptersts } = props;
     const path = window.location.pathname;
     if (meshAdaptersts > state.mts) {
       updateState({
@@ -350,7 +348,7 @@ const Navigator_ = (props) => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
     updateState({ path });
-  }, [props.meshAdapters, props.meshAdaptersts, window.location.pathname]);
+  }, [meshAdapters, meshAdaptersts, window.location.pathname]);
 
   const ExternalLinkIcon = (
     <IconExternalLink
@@ -435,13 +433,13 @@ const Navigator_ = (props) => {
   };
 
   const handleTitleClick = () => {
-    props.router.push('/');
+    router.push('/');
   };
 
   const handleAdapterClick = (id, link) => {
-    props.setAdapter({ selectedAdapter: id });
+    dispatch(setAdapter({ selectedAdapter: id }));
     if (id != -1 && !link) {
-      props.router.push('/management');
+      router.push('/management');
     }
   };
 
@@ -751,7 +749,7 @@ const Navigator_ = (props) => {
                       isActive={isActive}
                       onClick={() => {
                         if (linkc && hrefc) {
-                          props.router.push(hrefc);
+                          router.push(hrefc);
                         }
                       }}
                       disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
@@ -802,7 +800,7 @@ const Navigator_ = (props) => {
                         onClick={() => {
                           handleAdapterClick(idc, linkc);
                           if (linkc && hrefc) {
-                            props.router.push(hrefc);
+                            router.push(hrefc);
                           }
                         }}
                         disabled={
@@ -853,7 +851,7 @@ const Navigator_ = (props) => {
     }
     return linkContent;
   };
-  const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
   const Title = (
     <div
       style={
@@ -1123,20 +1121,6 @@ const Navigator_ = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  setAdapter: bindActionCreators(setAdapter, dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  meshAdapters: state.get('meshAdapters').toJS(),
-  meshAdaptersts: state.get('meshAdaptersts'),
-});
-
-export const NavigatorWithRedux = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(NavigatorWrapper));
-
-export const Navigator = NavigatorWithRedux;
+export const Navigator = NavigatorWrapper;
 
 export default Navigator;

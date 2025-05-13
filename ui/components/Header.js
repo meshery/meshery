@@ -56,7 +56,7 @@ import {
 } from './Header.styles';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateCapabilities, updateK8SConfig } from '@/store/slices/mesheryUi';
 
 async function loadActiveK8sContexts() {
@@ -140,9 +140,9 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
-  const { controllerState: meshsyncControllerState } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatchRtk();
-  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const { connectionMetadataState } = useSelector((state) => state.ui);
 
   const styleSlider = {
     position: 'absolute',
@@ -390,9 +390,9 @@ const Header = ({
   searchContexts,
 }) => {
   const { notify } = useNotification;
-  const isBeta = useSelectorRtk((state) => state.ui.page.isBeta);
-  const title = useSelectorRtk((state) => state.ui.page.title);
-  const dispatch = useDispatchRtk();
+  const isBeta = useSelector((state) => state.ui.page.isBeta);
+  const title = useSelector((state) => state.ui.page.title);
+  const dispatch = useDispatch();
   const {
     data: providerCapabilities,
     isSuccess: isProviderCapabilitiesSuccess,

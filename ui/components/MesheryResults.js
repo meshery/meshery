@@ -10,7 +10,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@layer5/sistent';
 import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateResultsSelection } from '@/store/slices/prefTest';
 
@@ -27,9 +27,9 @@ const MesheryResults = () => {
   const [results, setResults] = useState([]);
   const [selectedRowData, setSelectedRowData] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
-  const { user } = useSelectorRtk((state) => state.ui);
-  const dispatch = useDispatchRtk();
-  const { results_selection } = useSelectorRtk((state) => state.prefTest);
+  const { user } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const { results_selection } = useSelector((state) => state.prefTest);
   // RTK Query hook for fetching results
   const [trigger, { isFetching, error }] = useLazyGetResultsQuery();
 

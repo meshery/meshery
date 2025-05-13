@@ -6,7 +6,7 @@ import Cookies from 'universal-cookie';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { Colors } from '@/themes/app';
 import { EXTENSION_NAMES, EXTENSIONS } from '@/utils/Enum';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 
 const StyledPaper = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -68,7 +68,7 @@ const isMesheryExtensionRegisteredUser = (capabilitiesRegistry) => {
 };
 
 export function MesheryExtensionEarlyAccessCardPopup() {
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const [isOpen, setIsOpen] = useState(false);
   const cookies = new Cookies('registered');
 

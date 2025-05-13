@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
-import { Provider } from 'react-redux';
-import { store } from '../store';
 import { useGetLoggedInUserQuery, useLazyGetTokenQuery } from '@/rtk-query/user';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -11,7 +9,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar, Popover } from '@layer5/sistent';
 import { IconButtonAvatar } from './Header.styles';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
 
 function exportToJsonFile(jsonData, filename) {
@@ -29,8 +27,8 @@ function exportToJsonFile(jsonData, filename) {
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
  */
 const HeaderMenu = () => {
-  const dispatch = useDispatchRtk();
-  const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
+  const dispatch = useDispatch();
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const [userLoaded, setUserLoaded] = useState(false);
   const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
@@ -192,10 +190,6 @@ const HeaderMenu = () => {
   );
 };
 
-const MenuProvider = (props) => (
-  <Provider store={store}>
-    <HeaderMenu {...props} />
-  </Provider>
-);
+const MenuProvider = (props) => <HeaderMenu {...props} />;
 
 export default MenuProvider;

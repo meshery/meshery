@@ -95,7 +95,7 @@ import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import yaml from 'js-yaml';
 import ActionPopover from './MesheryPatterns/ActionPopover';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const genericClickHandler = (ev, fn) => {
@@ -319,9 +319,9 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
-  const { catalogVisibility } = useSelectorRtk((state) => state.ui);
-  const { user } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { catalogVisibility } = useSelector((state) => state.ui);
+  const { user } = useSelector((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {

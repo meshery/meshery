@@ -6,7 +6,7 @@ import {
   useLazyGetExtensionsByTypeQuery,
   useLazyGetFullPageExtensionsQuery,
 } from '@/rtk-query/user';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { toggleDrawer } from '@/store/slices/mesheryUi';
 /**
  * getPath returns the current pathname
@@ -290,9 +290,9 @@ const ExtensionSandbox = React.memo(
   function MemoizedExtensionSandbox({ type, Extension }) {
     const [extension, setExtension] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const { capabilitiesRegistry } = useSelectorRtk((state) => state.ui);
-    const { isDrawerCollapsed } = useSelectorRtk((state) => state.ui);
-    const dispatch = useDispatchRtk();
+    const { capabilitiesRegistry } = useSelector((state) => state.ui);
+    const { isDrawerCollapsed } = useSelector((state) => state.ui);
+    const dispatch = useDispatch();
 
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {

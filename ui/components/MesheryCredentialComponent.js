@@ -25,7 +25,7 @@ import {
   useGetCredentialsQuery,
   useUpdateCredentialMutation,
 } from '@/rtk-query/credentials';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const CredentialIcon = styled('img')({
@@ -51,7 +51,7 @@ const MesheryCredentialComponent = () => {
   const [createCredential] = useCreateCredentialMutation();
   const [updateCredential] = useUpdateCredentialMutation();
   const [deleteCredential] = useDeleteCredentialMutation();
-  const { connectionMetadataState } = useSelectorRtk((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state) => state.ui);
 
   const [formData, setFormData] = useState({});
   const [credModal, setCredModal] = useState({

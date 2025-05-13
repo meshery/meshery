@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'next/router';
-import { connect, Provider } from 'react-redux';
+import { useRouter } from 'next/router';
 import { NoSsr } from '@layer5/sistent';
 import {
   CustomTooltip,
@@ -34,7 +33,6 @@ import {
   getRelationshipsDetail,
   getMeshModelRegistrants,
 } from '../api/meshmodel';
-import { withNotify } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import {
@@ -48,11 +46,10 @@ import {
 } from '@/constants/navigator';
 import { removeDuplicateVersions } from './Registry/helper';
 import DefaultError from './General/error-404';
-import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -132,13 +129,14 @@ const settingsRouter = (router) => {
 };
 
 //TODO: Tabs are hardcoded everywhere
-const MesherySettings = (props) => {
-  const { meshAdapters, router } = props;
+const MesherySettings = () => {
+  const router = useRouter();
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
   const theme = useTheme();
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const { prometheus } = useSelectorRtk((state) => state.telemetry);
-  const { grafana } = useSelectorRtk((state) => state.telemetry);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { prometheus } = useSelector((state) => state.telemetry);
+  const { grafana } = useSelector((state) => state.telemetry);
+  const { meshAdapters } = useSelector((state) => state.adapter);
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -198,7 +196,7 @@ const MesherySettings = (props) => {
       handleChangeSettingsCategory,
       handleChangeSelectedTab,
       handleChangeSelectedTabCustomCategory,
-    } = settingsRouter(props.router);
+    } = settingsRouter(router);
 
     return (event, newVal) => {
       if (val === 'tabVal') {
@@ -327,19 +325,17 @@ const MesherySettings = (props) => {
             {tabVal === OVERVIEW && (
               <TabContainer>
                 <NoSsr>
-                  <Provider store={store}>
-                    <RootClass>
-                      <DashboardMeshModelGraph />
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                          <ConnectionStatsChart />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <MesheryConfigurationChart />
-                        </Grid>
+                  <RootClass>
+                    <DashboardMeshModelGraph />
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <ConnectionStatsChart />
                       </Grid>
-                    </RootClass>
-                  </Provider>
+                      <Grid item xs={12} md={6}>
+                        <MesheryConfigurationChart />
+                      </Grid>
+                    </Grid>
+                  </RootClass>
                 </NoSsr>
               </TabContainer>
             )}
@@ -432,12 +428,4 @@ const MesherySettings = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  const meshAdapters = state.get('meshAdapters').toJS();
-
-  return {
-    meshAdapters,
-  };
-};
-
-export default connect(mapStateToProps, null)(withRouter(withNotify(MesherySettings)));
+export default MesherySettings;

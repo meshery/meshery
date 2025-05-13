@@ -1,11 +1,11 @@
 import { LinearProgress } from '@layer5/sistent';
 import React, { useEffect, useRef } from 'react';
 import { useSnackbar } from 'notistack';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 
 const MesheryProgressBar = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const { showProgress } = useSelectorRtk((state) => state.ui);
+  const { showProgress } = useSelector((state) => state.ui);
   const snackbarKey = useRef(null);
 
   useEffect(() => {

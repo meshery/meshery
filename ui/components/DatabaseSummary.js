@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button, Typography, ResponsiveDataTable } from '@layer5/sistent';
-import { Provider } from 'react-redux';
 import PropTypes from 'prop-types';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
@@ -8,7 +7,6 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -179,11 +177,7 @@ DatabaseSummary.propTypes = {
 };
 
 const DatabaseSummaryTable = (props) => {
-  return (
-    <Provider store={store}>
-      <DatabaseSummary {...props} />
-    </Provider>
-  );
+  return <DatabaseSummary {...props} />;
 };
 
 export default DatabaseSummaryTable;

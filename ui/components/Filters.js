@@ -71,7 +71,7 @@ import {
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const CreateButton = styled(Button)(() => ({
@@ -249,7 +249,7 @@ function MesheryFilters() {
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
-  const { user } = useSelectorRtk((state) => state.ui);
+  const { user } = useSelector((state) => state.ui);
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -277,7 +277,7 @@ function MesheryFilters() {
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
-  const { catalogVisibility } = useSelectorRtk((state) => state.ui);
+  const { catalogVisibility } = useSelector((state) => state.ui);
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const {

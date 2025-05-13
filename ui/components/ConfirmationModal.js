@@ -18,7 +18,6 @@ import {
   useTheme,
 } from '@layer5/sistent';
 import { Search } from '@mui/icons-material';
-import { useLegacyDispatch } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
@@ -38,7 +37,7 @@ import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
 import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 
 const DialogSubtitle = styled(DialogContentText)({
   overflowWrap: 'anywhere',
@@ -144,10 +143,10 @@ function ConfirmationMsg(props) {
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const { notify } = useNotification();
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
-  const dispatch = useLegacyDispatch();
+  const dispatch = useDispatch();
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
@@ -454,7 +453,7 @@ function ConfirmationMsg(props) {
 export default ConfirmationMsg;
 
 export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => {
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
     return operatorState !== 'DISABLED';
   });

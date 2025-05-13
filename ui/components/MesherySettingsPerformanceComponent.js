@@ -22,7 +22,7 @@ import {
   Radio,
 } from '@layer5/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useGetDesignQuery } from '@/rtk-query/design';
 import { updateLoadTestPref } from '@/store/slices/prefTest';
@@ -37,7 +37,7 @@ const FormControlWrapper = styled(FormControl)({
 const MesherySettingsPerformanceComponent = (props) => {
   const { notify } = useNotification();
   const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = props;
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
 
   const { data: loadTestPrefs } = useGetLoadTestPrefsQuery(selectedK8sContexts);
   const [updateLoadTestPrefs, { isLoading: isSaving }] = useUpdateLoadTestPrefsMutation();

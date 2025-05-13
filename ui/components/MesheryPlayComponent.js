@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import {
   Button,
   Divider,
@@ -13,12 +12,11 @@ import {
   charcoal,
   NoSsr,
 } from '@layer5/sistent';
-import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
-import { bindActionCreators } from 'redux';
-import { setAdapter } from '../lib/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAdapter } from '@/store/slices/adapter';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -55,10 +53,10 @@ const AlreadyConfigured = styled('div')({
   flexDirection: 'column',
 });
 
-const MesheryPlayComponent = (props) => {
-  const { meshAdapters } = props;
+const MesheryPlayComponent = () => {
   const router = useRouter();
-
+  const dispatch = useDispatch();
+  const { meshAdapters } = useSelector((state) => state.adapter);
   // Initialize state
   const [adapter, setAdapterState] = useState(() => {
     if (meshAdapters && meshAdapters.size > 0) {
@@ -111,14 +109,13 @@ const MesheryPlayComponent = (props) => {
 
   const handleAdapterChange = () => {
     return (event) => {
-      const { setAdapter } = props;
       if (event.target.value !== '') {
         const selectedAdapter = meshAdapters.filter(
           ({ adapter_location }) => adapter_location === event.target.value,
         );
         if (selectedAdapter && selectedAdapter.size === 1) {
           setAdapterState(selectedAdapter.get(0));
-          setAdapter({ selectedAdapter: selectedAdapter.get(0).name });
+          dispatch(setAdapter({ selectedAdapter: selectedAdapter.get(0).name }));
         }
       }
     };
@@ -128,7 +125,7 @@ const MesheryPlayComponent = (props) => {
     let adapCount = 0;
     let adapter;
     meshAdapters.forEach((adap) => {
-      if (adap.adapter_location === props.adapter) {
+      if (adap.adapter_location === adapter) {
         adapter = adap;
         meshAdapters.forEach((ad) => {
           if (ad.name == adap.name) adapCount += 1;
@@ -172,7 +169,7 @@ const MesheryPlayComponent = (props) => {
     );
   }
 
-  if (props.adapter && props.adapter !== '') {
+  if (adapter && adapter !== '') {
     const indContent = renderIndividualAdapter();
     if (indContent !== '') {
       return indContent;
@@ -243,21 +240,4 @@ const MesheryPlayComponent = (props) => {
   );
 };
 
-MesheryPlayComponent.propTypes = {
-  meshAdapters: PropTypes.object.isRequired,
-  setAdapter: PropTypes.func.isRequired,
-  adapter: PropTypes.string,
-};
-
-const mapStateToProps = (state) => {
-  const meshAdapters = state.get('meshAdapters');
-  const meshAdaptersts = state.get('meshAdaptersts');
-  const selectedAdapter = state.get('selectedAdapter');
-  return { meshAdapters, meshAdaptersts, selectedAdapter };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  setAdapter: bindActionCreators(setAdapter, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryPlayComponent);
+export default MesheryPlayComponent;

@@ -6,7 +6,7 @@ import { NoSsr } from '@layer5/sistent';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
-import { useDispatchRtk, useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { clearResultsSelection } from '@/store/slices/prefTest';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -28,8 +28,8 @@ function CustomToolbarSelect({ setSelectedRows }) {
   const [data, setData] = useState([]);
   const [, setChartCompare] = useState([]);
   const fullData = [];
-  const dispatch = useDispatchRtk();
-  const { results_selection } = useSelectorRtk((state) => state.prefTest);
+  const dispatch = useDispatch();
+  const { results_selection } = useSelector((state) => state.prefTest);
   const handleDialogClose = () => {
     setDialogOpen(false);
   };

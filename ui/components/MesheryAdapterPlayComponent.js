@@ -51,7 +51,7 @@ import { EVENT_TYPES } from '../lib/event-types';
 import { useNotification } from '../utils/hooks/useNotification';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const AdapterChip = styled(Chip)(({ theme }) => ({
@@ -101,11 +101,11 @@ const AdapterCard = styled(Card)(() => ({
 }));
 
 const MesheryAdapterPlayComponent = (props) => {
-  const { k8sConfig } = useSelectorRtk((state) => state.ui);
-  const { selectedK8sContexts } = useSelectorRtk((state) => state.ui);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
   const { adapter } = props;
   const { notify } = useNotification();
-  const { grafana } = useSelectorRtk((state) => state.telemetry);
+  const { grafana } = useSelector((state) => state.telemetry);
   const router = useRouter();
   const cmEditorAddRef = useRef(null);
   const cmEditorDelRef = useRef(null);
