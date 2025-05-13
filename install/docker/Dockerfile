@@ -49,7 +49,7 @@ RUN npm run build
 # RUN git config --global user.name "meshery"
 # RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.21.3 as seed_content
+FROM alpine:3.21.3 AS seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
