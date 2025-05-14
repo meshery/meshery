@@ -228,7 +228,7 @@
             - title: Working with Tags
               url: extensions/working-with-tags
         - title: Kanvas Snapshot
-          url: extensions/kanvas-snapshot 
+          url: extensions/kanvas-snapshot
 
 - title: 🧑‍💻 Contributing & Community
   url: project
@@ -289,6 +289,9 @@
               url: project/contributing/contributing-relationships
         - title: Schemas
           url: project/contributing/contributing-schemas
+          grandchildren:
+            - title: Schema-Driven UI in Meshery
+              url: project/contributing/contributing-schemas-ui
         - title: Dev Setup on Windows
           url: project/contributing/meshery-windows
 
