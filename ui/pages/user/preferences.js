@@ -19,8 +19,7 @@ const UserPref = () => {
   }, [selectedK8sContext]);
 
   useEffect(() => {
-    dispatch(updatePagePath({ path: getPath() }));
-    dispatch(updateTitle({ title: 'User Preferences' }));
+    dispatch(updatePage({ path: getPath(), title: 'User Preferences' }));
   }, []);
 
   const handleFetchData = async (selectedK8sContexts) => {

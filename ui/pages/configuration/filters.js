@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import MesheryFilters from '../../components/Filters';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { Box } from '@layer5/sistent';
 import { useDispatch } from 'react-redux';
-import { updatePagePath } from '@/store/slices/mesheryUi';
+import { updatePage } from '@/store/slices/mesheryUi';
 
 function NewFilters() {
   const dispatch = useDispatch();
-  dispatch(updatePagePath({ path: getPath() }));
+
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Filters' }));
+  }, []);
   return (
     <NoSsr>
       <Head>

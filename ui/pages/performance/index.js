@@ -4,11 +4,15 @@ import MesheryPerformanceComponent from '../../components/MesheryPerformance/Das
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { useDispatch } from 'react-redux';
-import { updatePagePath } from '@/store/slices/mesheryUi';
+import { updatePage } from '@/store/slices/mesheryUi';
+import { useEffect } from 'react';
 
 function Performance() {
   const dispatch = useDispatch();
-  dispatch(updatePagePath({ path: getPath() }));
+
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Performance' }));
+  }, []);
 
   return (
     <NoSsr>

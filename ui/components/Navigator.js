@@ -348,7 +348,7 @@ const Navigator_ = () => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
     updateState({ path });
-  }, [meshAdapters, meshAdaptersts, window.location.pathname]);
+  }, [meshAdapters, meshAdaptersts, window.location.pathname, dispatch]);
 
   const ExternalLinkIcon = (
     <IconExternalLink

@@ -416,7 +416,7 @@ const Header = ({
       details: providerCapabilitiesError?.data,
     });
   }
-
+  
   const loaderType = 'circular';
   const theme = useTheme();
   return (

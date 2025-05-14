@@ -14,6 +14,7 @@ import {
   NoSsr,
   TachometerIcon,
   useTheme,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
@@ -234,91 +235,92 @@ const UserPreference = (props) => {
 
     return (
       <NoSsr>
-        <>
+        <ErrorBoundary>
           <RootContainer>
             <Typography variant="h5">Provider Information</Typography>
-            <Grid container spacing={2}>
+            <ErrorBoundary>
+              <Grid container spacing={2}>
+                {providerInfo &&
+                  Object.entries(providerInfo).map(
+                    ([providerName, provider], index) =>
+                      (index < 2 || index === 3) && (
+                        <Grid key={index} item md={4} xs={12}>
+                          <ProviderCard>
+                            <CardHeader
+                              title={
+                                <Typography
+                                  variant="h6"
+                                  style={{
+                                    textDecoration: 'underline',
+                                    textDecorationColor: 'rgba(116,147,161,0.5)',
+                                    textUnderlineOffset: 10,
+                                  }}
+                                >
+                                  {convertToTitleCase(providerName)}
+                                </Typography>
+                              }
+                            />
+                            <CardContent>
+                              {' '}
+                              <BoxWrapper>
+                                <Typography
+                                  variant="body1"
+                                  component={HideScrollbar}
+                                  style={{ marginRight: '20px' }}
+                                >
+                                  {provider}
+                                </Typography>
+                              </BoxWrapper>
+                            </CardContent>
+                          </ProviderCard>
+                        </Grid>
+                      ),
+                  )}
+              </Grid>
               {providerInfo &&
                 Object.entries(providerInfo).map(
                   ([providerName, provider], index) =>
-                    (index < 2 || index === 3) && (
-                      <Grid key={index} item md={4} xs={12}>
-                        <ProviderCard>
-                          <CardHeader
-                            title={
-                              <Typography
-                                variant="h6"
-                                style={{
-                                  textDecoration: 'underline',
-                                  textDecorationColor: 'rgba(116,147,161,0.5)',
-                                  textUnderlineOffset: 10,
-                                }}
+                    (index === 2 || index === 5) && (
+                      <ProviderCard key={index} sx={{ margin: '20px' }}>
+                        <CardHeader
+                          title={
+                            <Typography
+                              variant="h6"
+                              style={{
+                                textDecoration: 'underline',
+                                textDecorationColor: 'rgba(116,147,161,0.5)',
+                                textUnderlineOffset: 10,
+                              }}
+                            >
+                              {convertToTitleCase(providerName)}
+                            </Typography>
+                          }
+                        />
+                        <CardContent>
+                          {' '}
+                          <BoxWrapper>
+                            <Typography
+                              variant="body1"
+                              component={HideScrollbar}
+                              style={{ marginRight: '20px' }}
+                            >
+                              {provider}
+                            </Typography>
+
+                            <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                              <IconButton
+                                onClick={() => copyToClipboard(provider)}
+                                style={{ padding: '0.25rem', float: 'right' }}
                               >
-                                {convertToTitleCase(providerName)}
-                              </Typography>
-                            }
-                          />
-                          <CardContent>
-                            {' '}
-                            <BoxWrapper>
-                              <Typography
-                                variant="body1"
-                                component={HideScrollbar}
-                                style={{ marginRight: '20px' }}
-                              >
-                                {provider}
-                              </Typography>
-                            </BoxWrapper>
-                          </CardContent>
-                        </ProviderCard>
-                      </Grid>
+                                <CopyIcon />
+                              </IconButton>
+                            </CustomTooltip>
+                          </BoxWrapper>
+                        </CardContent>
+                      </ProviderCard>
                     ),
                 )}
-            </Grid>
-            {providerInfo &&
-              Object.entries(providerInfo).map(
-                ([providerName, provider], index) =>
-                  (index === 2 || index === 5) && (
-                    <ProviderCard key={index} sx={{ margin: '20px' }}>
-                      <CardHeader
-                        title={
-                          <Typography
-                            variant="h6"
-                            style={{
-                              textDecoration: 'underline',
-                              textDecorationColor: 'rgba(116,147,161,0.5)',
-                              textUnderlineOffset: 10,
-                            }}
-                          >
-                            {convertToTitleCase(providerName)}
-                          </Typography>
-                        }
-                      />
-                      <CardContent>
-                        {' '}
-                        <BoxWrapper>
-                          <Typography
-                            variant="body1"
-                            component={HideScrollbar}
-                            style={{ marginRight: '20px' }}
-                          >
-                            {provider}
-                          </Typography>
-
-                          <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
-                            <IconButton
-                              onClick={() => copyToClipboard(provider)}
-                              style={{ padding: '0.25rem', float: 'right' }}
-                            >
-                              <CopyIcon />
-                            </IconButton>
-                          </CustomTooltip>
-                        </BoxWrapper>
-                      </CardContent>
-                    </ProviderCard>
-                  ),
-              )}
-
+            </ErrorBoundary>
             <ProviderCard>
               <CardHeader
                 title={
@@ -478,7 +480,7 @@ const UserPreference = (props) => {
                 </div>
               ))}
           </RootContainer>
-        </>
+        </ErrorBoundary>
       </NoSsr>
     );
   };

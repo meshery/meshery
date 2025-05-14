@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NoSsr, styled } from '@layer5/sistent';
 import Head from 'next/head';
 import MesheryConnections from '../../components/connections';
+import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
+import { getPath } from 'lib/path';
 
 const StyledPageWrapperDiv = styled('div')({
   paper: {
@@ -12,6 +15,11 @@ const StyledPageWrapperDiv = styled('div')({
 });
 
 const Connections = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Connections' }));
+  }, []);
+  
   return (
     <NoSsr>
       <Head>

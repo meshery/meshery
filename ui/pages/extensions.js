@@ -12,7 +12,8 @@ import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleCatalogContent } from '@/store/slices/mesheryUi';
+import { toggleCatalogContent, updatePage } from '@/store/slices/mesheryUi';
+import { getPath } from 'lib/path';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
@@ -332,7 +333,13 @@ const Extensions = () => {
   const { notify } = useNotification();
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Extensions' }));
+  }, []);
+
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
+
   const {
     data: userData,
     isSuccess: userDataFetched,
