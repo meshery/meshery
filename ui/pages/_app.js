@@ -12,7 +12,7 @@ import _ from 'lodash';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -41,7 +41,6 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../ut
 import CAN, { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
-import { store } from '../store';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
 import {
@@ -81,6 +80,7 @@ import {
 import { updateLoadTestPref } from '@/store/slices/prefTest';
 import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
 import { updateAdaptersInfo } from '@/store/slices/adapter';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -710,7 +710,7 @@ const MesheryThemeProvider = ({ children }) => {
 
 const MesheryAppWrapper = (props) => {
   return (
-    <Provider store={store}>
+    <ProviderStoreWrapper>
       <Head>
         <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
         <title>Meshery</title>
@@ -718,7 +718,7 @@ const MesheryAppWrapper = (props) => {
       <LocalizationProvider dateAdapter={AdapterMoment}>
         <MesheryApp {...props} />
       </LocalizationProvider>
-    </Provider>
+    </ProviderStoreWrapper>
   );
 };
 

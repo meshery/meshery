@@ -37,6 +37,7 @@ import { SEVERITY } from '../NotificationCenter/constants';
 import EnvironmentModal from '../Modals/EnvironmentModal';
 import { openViewScopedToDesignInOperator } from '@/utils/utils';
 import { useRouter } from 'next/router';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 export const ValidateContent = {
   btnText: 'Next',
@@ -364,21 +365,25 @@ export const UpdateDeploymentStepper = ({
 };
 
 export const DeployStepper = ({ handleClose, design, validationMachine, handleDeploy }) => (
-  <UpdateDeploymentStepper
-    handleClose={handleClose}
-    design={design}
-    handlePerformDeployment={handleDeploy}
-    validationMachine={validationMachine}
-    deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-  />
+  <ProviderStoreWrapper>
+    <UpdateDeploymentStepper
+      handleClose={handleClose}
+      design={design}
+      handlePerformDeployment={handleDeploy}
+      validationMachine={validationMachine}
+      deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+    />
+  </ProviderStoreWrapper>
 );
 
 export const UnDeployStepper = ({ handleClose, design, handleUndeploy, validationMachine }) => (
-  <UpdateDeploymentStepper
-    handleClose={handleClose}
-    design={design}
-    handlePerformDeployment={handleUndeploy}
-    validationMachine={validationMachine}
-    deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
-  />
+  <ProviderStoreWrapper>
+    <UpdateDeploymentStepper
+      handleClose={handleClose}
+      design={design}
+      handlePerformDeployment={handleUndeploy}
+      validationMachine={validationMachine}
+      deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
+    />
+  </ProviderStoreWrapper>
 );

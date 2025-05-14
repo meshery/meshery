@@ -146,14 +146,14 @@ export const coreMiddleware = (getDefaultMiddleware) =>
 
 // Selectors
 export const selectSelectedK8sClusters = (state) => {
-  return getK8sClusterIdsFromCtxId(state.selectedK8sContexts, state.k8sConfig);
+  return getK8sClusterIdsFromCtxId(state.ui?.selectedK8sContexts, state.ui?.k8sConfig);
 };
 
 export const selectK8sConfig = (state) => {
-  return state.k8sConfig;
+  return state.ui.k8sConfig;
 };
 
 export const selectedOrg = (state) => {
-  return state.organization;
+  return state.ui.organization;
 };
 export default coreSlice.reducer;

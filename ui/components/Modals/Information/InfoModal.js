@@ -42,6 +42,7 @@ import { useNotification } from '../../../utils/hooks/useNotification';
 import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ActionContainer, CopyLinkButton, CreatAtContainer, ResourceName } from './styles';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -492,7 +493,11 @@ const OwnerChip = ({ userProfile }) => {
 };
 
 const InfoModal = (props) => {
-  return <InfoModal_ {...props} />;
+  return (
+    <ProviderStoreWrapper>
+      <InfoModal_ {...props} />
+    </ProviderStoreWrapper>
+  );
 };
 
 export default InfoModal;

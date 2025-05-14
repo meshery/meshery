@@ -30,14 +30,10 @@ import TypingFilter from './TypingFilter';
 import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
-import {
-  selectedOrg,
-  selectK8sConfig,
-  selectSelectedK8sClusters,
-  setOrganization,
-} from '@/store/slices/mesheryUi';
-import { useDispatch, useSelector } from 'react-redux';
-import { store } from '../store';
+import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/mesheryUi';
+import { useSelector } from 'react-redux';
+import { createStoreWithMiddleware, injectReducer, store } from '../store';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -47,7 +43,6 @@ function NavigatorExtension({ url }) {
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
-  const dispatch = useDispatch();
 
   if (err != null) {
     return (
@@ -68,26 +63,21 @@ function NavigatorExtension({ url }) {
         </div>
       </div>
     );
-    // <div>Unknown Error: {err.toString()}</div>;
   }
-
   const extensionExposedMesheryStore = {
-    currentOrganization: {
-      set: (organization) => dispatch(setOrganization({ organization })),
-      get: () => selectedOrg(store.getState()),
-      useCurrentOrg: () => useSelector((state) => state.ui.organization),
-    },
     selectedK8sClusters: {
       get: () => selectSelectedK8sClusters(store.getState()),
-      useSelectedK8sClusters: () => useSelector(selectSelectedK8sClusters),
     },
     k8sConfig: {
       get: () => selectK8sConfig(store.getState()),
-      useK8sConfig: () => useSelector(selectK8sConfig),
     },
   };
 
-  const PerformanceTestComponent = (props) => <MesheryPerformanceComponent {...props} />;
+  const PerformanceTestComponent = (props) => (
+    <ProviderStoreWrapper>
+      <MesheryPerformanceComponent {...props} />
+    </ProviderStoreWrapper>
+  );
 
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
