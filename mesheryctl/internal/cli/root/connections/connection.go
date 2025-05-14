@@ -26,12 +26,14 @@ var ConnectionsCmd = &cobra.Command{
 	Long: `View and manage your Meshery connection.
 Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection`,
 	Example: `
+// Display total count of all available connections
+mesheryctl exp connection --count
+
 // List all the connection
 mesheryctl exp connection list
 
 // Delete a connection
 mesheryctl exp connection delete [connection_id]
-
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		countFlag, _ := cmd.Flags().GetBool("count")
