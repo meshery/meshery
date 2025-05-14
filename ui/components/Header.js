@@ -4,7 +4,7 @@ import { connect, useSelector } from 'react-redux';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import { Search } from '@mui/icons-material';
-import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
+import { useDeleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
@@ -144,7 +144,7 @@ function K8sContextMenu({
   const { notify } = useNotification();
   const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
   const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
-
+  const { deleteKubernetesConfig } = useDeleteKubernetesConfig();
   const styleSlider = {
     position: 'absolute',
     left: '-7rem',
