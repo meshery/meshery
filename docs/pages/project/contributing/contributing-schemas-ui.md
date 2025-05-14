@@ -45,7 +45,7 @@ schemas/
 
 - **`<construct>.json`**: Defines structure (noun) — e.g., what a `Design` looks like.
 - **`openapi.yml`**: Describes operations (verbs) — e.g., how to `GET`, `POST`, or `DELETE` a design.
-- **Templates**: Valid, default-filled, resolved objects from the schema.
+- **`Templates`**: Valid, default-filled, resolved objects from the schema.
 
 ## Schema-Driven UI Development Workflow
 
@@ -92,7 +92,7 @@ This will:
 
 ---
 
-### 📦 Step 3: Build and Export Types/Schema Objects
+### Step 3: Build and Export Types/Schema Objects
 
 After generation:
 
@@ -113,7 +113,7 @@ After generation:
 
 ---
 
-### 🔗 Step 4: Use Schema Package in UI
+### Step 4: Use Schema Package in UI
 
 To consume the schema in the UI:
 
@@ -244,12 +244,3 @@ const DesignCard = ({ design }: { design: DesignTypes }) => (
   </div>
 );
 ```
-
----
-
-## 🔗 Related Docs
-
-- [Contributing to Meshery Schemas](https://docs.meshery.io/project/contributing/contributing-schemas)
-- [Meshery Contributing Guide](https://docs.meshery.io/project/contributing/contributing-ui)
-
----
