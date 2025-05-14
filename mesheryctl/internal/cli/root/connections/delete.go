@@ -13,7 +13,7 @@ import (
 var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
-	Long: `Delete a connection prviding the connection ID.
+	Long: `Delete a connection providing the connection ID.
 Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/delete`,
 
 	Example: `
