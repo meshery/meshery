@@ -4,6 +4,8 @@ const TAGS = {
   SYSTEM: 'system',
   ADAPTERS: 'adapters',
   KUBERNETES: 'kubernetes',
+  CONFIG: 'config',
+  CONTEXTS: 'contexts',
 };
 
 const systemApi = api.injectEndpoints({
@@ -92,6 +94,24 @@ const systemApi = api.injectEndpoints({
       }),
       invalidatesTags: [TAGS.KUBERNETES],
     }),
+    getSystemConfig: builder.query({
+      query: () => ({
+        url: 'system/sync',
+        method: 'GET',
+      }),
+      providesTags: [TAGS.CONFIG],
+    }),
+    getKubernetesContexts: builder.query({
+      query: ({ pagesize = 10, search = '' }) => ({
+        url: `system/kubernetes/contexts`,
+        method: 'GET',
+        params: {
+          pagesize,
+          search: encodeURIComponent(search),
+        },
+      }),
+      providesTags: [TAGS.CONTEXTS],
+    }),
   }),
 });
 
@@ -105,4 +125,8 @@ export const {
   useLazyPingKubernetesQuery,
   useGetKubernetesContextsMutation,
   useConfigureKubernetesMutation,
+  useGetSystemConfigQuery,
+  useLazyGetSystemConfigQuery,
+  useGetKubernetesContextsQuery,
+  useLazyGetKubernetesContextsQuery,
 } = systemApi;

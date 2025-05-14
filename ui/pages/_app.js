@@ -21,7 +21,6 @@ import Navigator from '../components/Navigator';
 import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
-import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 import {
@@ -80,7 +79,14 @@ import {
   StyledRoot,
   ThemeResponsiveSnackbar,
 } from '../themes/App.styles';
-
+import { useLazyGetSystemConfigQuery, useLazyGetKubernetesContextsQuery } from '@/rtk-query/system';
+import { useLazyGetUserPrefQuery } from '@/rtk-query/user';
+import {
+  useLazyGetOrganizationsQuery,
+  useLazyGetUserKeysQuery,
+  useLazyGetWorkspacesQuery,
+} from '@/rtk-query/identity';
+import { useLazyGetConnectionsQuery } from '@/rtk-query/connection';
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
   require('codemirror/mode/javascript/javascript');
@@ -97,9 +103,7 @@ if (typeof window !== 'undefined') {
 }
 
 async function fetchContexts(number = 10, search = '') {
-  return await promisifiedDataFetch(
-    `/api/system/kubernetes/contexts?pagesize=${number}&search=${encodeURIComponent(search)}`,
-  );
+  return null;
 }
 
 export const mesheryExtensionRoute = '/extension/meshmap';
@@ -224,6 +228,14 @@ const MesheryApp = ({
 }) => {
   const pageContext = useMemo(() => getPageContext(), []);
 
+  const [triggerGetSystemConfig] = useLazyGetSystemConfigQuery();
+  const [triggerGetUserPrefs] = useLazyGetUserPrefQuery();
+  const [triggerGetOrgs] = useLazyGetOrganizationsQuery();
+  const [triggerGetUserKeys] = useLazyGetUserKeysQuery();
+  const [triggerGetWorkspaces] = useLazyGetWorkspacesQuery();
+  const [triggerGetKubernetesContexts] = useLazyGetKubernetesContextsQuery();
+  const [triggerGetConnections] = useLazyGetConnectionsQuery();
+
   const [state, setState] = useState({
     mobileOpen: false,
     isDrawerCollapsed: false,
@@ -254,17 +266,14 @@ const MesheryApp = ({
   }, []);
 
   const loadPromGrafanaConnection = useCallback(() => {
-    dataFetch(
-      `/api/integrations/connections?page=0&pagesize=2&status=${encodeURIComponent(
-        JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
-      )}&kind=${encodeURIComponent(
-        JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
-      )}`,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
+    triggerGetConnections({
+      page: 0,
+      pagesize: 2,
+      status: JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
+      kind: JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
+    })
+      .unwrap()
+      .then((res) => {
         res?.connections?.forEach((connection) => {
           if (connection.kind == CONNECTION_KINDS.PROMETHEUS) {
             const promCfg = {
@@ -292,9 +301,8 @@ const MesheryApp = ({
             });
           }
         });
-      },
-    );
-  }, [store]);
+      });
+  }, [triggerGetConnections, store]);
 
   const fullScreenChanged = useCallback(() => {
     setState((prevState) => {
@@ -412,7 +420,11 @@ const MesheryApp = ({
 
   const searchContexts = useCallback(
     (search = '') => {
-      fetchContexts(10, search)
+      triggerGetKubernetesContexts({
+        pagesize: 10,
+        search,
+      })
+        .unwrap()
         .then((ctx) => {
           setState((prevState) => ({ ...prevState, k8sContexts: ctx }));
           const active = ctx?.contexts?.find((c) => c.is_current_context === true);
@@ -423,7 +435,7 @@ const MesheryApp = ({
         })
         .catch((err) => console.error(err));
     },
-    [activeContextChangeCallback],
+    [activeContextChangeCallback, triggerGetKubernetesContexts],
   );
 
   const updateExtensionType = useCallback(
@@ -467,13 +479,9 @@ const MesheryApp = ({
         setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }));
         updateAbility();
       } else {
-        dataFetch(
-          `/api/identity/orgs/${orgID}/users/keys`,
-          {
-            method: 'GET',
-            credentials: 'include',
-          },
-          (result) => {
+        triggerGetUserKeys(orgID)
+          .unwrap()
+          .then((result) => {
             if (result) {
               setState((prevState) => ({ ...prevState, keys: result.keys }));
               store.dispatch({
@@ -482,12 +490,11 @@ const MesheryApp = ({
               });
               updateAbility();
             }
-          },
-          (err) => console.log('There was an error fetching available orgs:', err),
-        );
+          })
+          .catch((err) => console.log('There was an error fetching available orgs:', err));
       }
     },
-    [store, updateAbility],
+    [triggerGetUserKeys, store, updateAbility],
   );
 
   const loadWorkspace = useCallback(
@@ -497,20 +504,21 @@ const MesheryApp = ({
         let workspace = JSON.parse(currentWorkspace);
         setWorkspace(workspace);
       } else {
-        dataFetch(
-          `/api/workspaces?search=&order=&page=0&pagesize=10&orgID=${orgId}`,
-          {
-            method: 'GET',
-            credentials: 'include',
-          },
-          async (result) => {
+        triggerGetWorkspaces({
+          search: '',
+          order: '',
+          page: 0,
+          pagesize: 10,
+          orgID: orgId,
+        })
+          .unwrap()
+          .then((result) => {
             setWorkspace(result.workspaces[0]);
-          },
-          (err) => console.log('There was an error fetching workspaces:', err),
-        );
+          })
+          .catch((err) => console.log('There was an error fetching workspaces:', err));
       }
     },
-    [setWorkspace],
+    [triggerGetWorkspaces, setWorkspace],
   );
 
   const loadOrg = useCallback(async () => {
@@ -524,13 +532,9 @@ const MesheryApp = ({
       await loadWorkspace(org.id);
     }
 
-    dataFetch(
-      '/api/identity/orgs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
+    triggerGetOrgs()
+      .unwrap()
+      .then(async (result) => {
         let organizationToSet;
         const sessionOrg = currentOrg ? JSON.parse(currentOrg) : null;
 
@@ -550,60 +554,56 @@ const MesheryApp = ({
           await loadAbility(organizationToSet.id, reFetchKeys);
           setOrganization(organizationToSet);
         }
-      },
-      (err) => console.log('There was an error fetching available orgs:', err),
-    );
+      })
+      .catch((err) => console.log('There was an error fetching available orgs:', err));
   }, [loadAbility, loadWorkspace, setOrganization]);
 
   const loadConfigFromServer = useCallback(async () => {
-    dataFetch(
-      '/api/system/sync',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          if (
-            result.meshAdapters &&
-            result.meshAdapters !== null &&
-            result.meshAdapters.length > 0
-          ) {
-            store.dispatch({
-              type: actionTypes.UPDATE_ADAPTERS_INFO,
-              meshAdapters: result.meshAdapters,
-            });
+    triggerGetSystemConfig()
+      .unwrap()
+      .then(
+        (result) => {
+          if (result) {
+            if (
+              result.meshAdapters &&
+              result.meshAdapters !== null &&
+              result.meshAdapters.length > 0
+            ) {
+              store.dispatch({
+                type: actionTypes.UPDATE_ADAPTERS_INFO,
+                meshAdapters: result.meshAdapters,
+              });
+            }
+            if (result.loadTestPrefs) {
+              const loadTestPref = Object.assign(
+                {
+                  c: 0,
+                  qps: 0,
+                  t: 0,
+                  gen: 0,
+                },
+                result.loadTestPrefs,
+              );
+              store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
+            }
+            if (typeof result.anonymousUsageStats !== 'undefined') {
+              store.dispatch({
+                type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS,
+                anonymousUsageStats: result.anonymousUsageStats,
+              });
+            }
+            if (typeof result.anonymousPerfResults !== 'undefined') {
+              store.dispatch({
+                type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS,
+                anonymousPerfResults: result.anonymousPerfResults,
+              });
+            }
           }
-          if (result.loadTestPrefs) {
-            const loadTestPref = Object.assign(
-              {
-                c: 0,
-                qps: 0,
-                t: 0,
-                gen: 0,
-              },
-              result.loadTestPrefs,
-            );
-            store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
-          }
-          if (typeof result.anonymousUsageStats !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS,
-              anonymousUsageStats: result.anonymousUsageStats,
-            });
-          }
-          if (typeof result.anonymousPerfResults !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS,
-              anonymousPerfResults: result.anonymousPerfResults,
-            });
-          }
-        }
-      },
-      (error) => {
-        console.log(`there was an error fetching user config data: ${error}`);
-      },
-    );
+        },
+        (error) => {
+          console.log(`there was an error fetching user config data: ${error}`);
+        },
+      );
   }, [store]);
 
   useEffect(() => {
@@ -612,21 +612,16 @@ const MesheryApp = ({
     loadOrg();
     initSubscriptions([]);
 
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
+    triggerGetUserPrefs()
+      .unwrap()
+      .then((result) => {
         if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
           toggleCatalogContent({
             catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
           });
         }
-      },
-      (err) => console.error(err),
-    );
+      })
+      .catch((err) => console.error(err));
 
     document.addEventListener('fullscreenchange', fullScreenChanged);
     loadMeshModelComponent();

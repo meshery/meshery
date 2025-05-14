@@ -46,6 +46,32 @@ const telemetryApi = api.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: TAGS.GRAFANA }],
     }),
+    getGrafanaTemplateVars: builder.query({
+      query: ({
+        connectionID,
+        templateVarQuery,
+        datasourceId,
+        selectedVars,
+        startTime,
+        endTime,
+      }) => {
+        let url = `telemetry/metrics/grafana/query/${connectionID}?query=${encodeURIComponent(templateVarQuery)}&dsid=${datasourceId}`;
+
+        if (selectedVars && selectedVars.length > 0) {
+          selectedVars.forEach(({ name, value }) => {
+            if (value) {
+              url += `&${name}=${encodeURIComponent(value)}`;
+            }
+          });
+        }
+
+        if (startTime && endTime) {
+          url += `&start=${startTime}&end=${endTime}`;
+        }
+
+        return { url };
+      },
+    }),
   }),
 });
 
@@ -55,4 +81,6 @@ export const {
   useGetGrafanaConfigQuery,
   useUpdateGrafanaBoardsMutation,
   useConfigureGrafanaMutation,
+  useGetGrafanaTemplateVarsQuery,
+  useLazyGetGrafanaTemplateVarsQuery,
 } = telemetryApi;

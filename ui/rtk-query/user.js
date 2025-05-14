@@ -49,8 +49,10 @@ export const userApi = api
         method: 'GET',
       }),
       getUserPref: builder.query({
-        query: () => 'user/prefs',
-        method: 'GET',
+        query: () => ({
+          url: 'user/prefs',
+          method: 'GET',
+        }),
         providesTags: [Tags.USER_PREF],
       }),
       updateUserPref: builder.mutation({
@@ -225,6 +227,7 @@ export const {
   useGetUserByIdQuery,
   useLazyGetTokenQuery,
   useGetUserPrefQuery,
+  useLazyGetUserPrefQuery,
   useUpdateUserPrefMutation,
   useGetUserPrefWithContextQuery,
   useUpdateUserPrefWithContextMutation,

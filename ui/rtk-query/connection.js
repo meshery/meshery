@@ -146,6 +146,7 @@ export const {
   useVerifyAndRegisterConnectionMutation,
   useConnectToConnectionMutation,
   useGetConnectionsQuery,
+  useLazyGetConnectionsQuery,
   useGetConnectionStatusQuery,
   useLazyGetConnectionDetailsQuery,
   useVerifyConnectionURLMutation,

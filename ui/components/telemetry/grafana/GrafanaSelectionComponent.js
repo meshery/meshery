@@ -4,9 +4,9 @@ import { NoSsr } from '@layer5/sistent';
 import { TextField, Grid, Button, Chip, MenuItem, useTheme, styled, Box } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
+import { useLazyGetGrafanaTemplateVarsQuery } from '@/rtk-query/telemetry';
 
 const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
@@ -70,6 +70,7 @@ function GrafanaSelectionComponent(props) {
   const [selectedPanels, setSelectedPanels] = useState([]);
   const [selectedTemplateVars, setSelectedTemplateVars] = useState([]); // will contain the selected val at the respective index: [v1, v3]
 
+  const [getTemplateVars] = useLazyGetGrafanaTemplateVarsQuery();
   useEffect(() => {
     if (
       JSON.stringify([...grafanaBoards].sort()) !== JSON.stringify([...propGrafanaBoards].sort())
@@ -125,12 +126,17 @@ function GrafanaSelectionComponent(props) {
 
   const queryTemplateVars = (ind) => {
     if (templateVars.length > 0) {
-      let queryURL = `/api/telemetry/metrics/grafana/query/${connectionID}?query=${encodeURIComponent(
-        templateVars[ind].query,
-      )}&dsid=${templateVars[ind].datasource.id}`;
-      for (let i = ind; i > 0; i--) {
-        queryURL += `&${templateVars[i - 1].name}=${selectedTemplateVars[i - 1]}`;
+      const selectedVars = [];
+      for (let i = 0; i < ind; i++) {
+        if (selectedTemplateVars[i]) {
+          selectedVars.push({
+            name: templateVars[i].name,
+            value: selectedTemplateVars[i],
+          });
+        }
       }
+
+      let startTime, endTime;
       if (
         templateVars[ind].query.startsWith('label_values') &&
         templateVars[ind].query.indexOf(',') > -1
@@ -142,15 +148,20 @@ function GrafanaSelectionComponent(props) {
         const ed = new Date();
         const sd = new Date();
         sd.setDate(sd.getDate() - 1);
-        queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(
-          ed.getTime() / 1000,
-        )}`;
+        startTime = Math.floor(sd.getTime() / 1000);
+        endTime = Math.floor(ed.getTime() / 1000);
       }
       updateProgress({ showProgress: true });
-      dataFetch(
-        queryURL,
-        { credentials: 'include' },
-        (result) => {
+      getTemplateVars({
+        connectionID,
+        templateVarQuery: templateVars[ind].query,
+        datasourceId: templateVars[ind].datasource.id,
+        selectedVars,
+        startTime,
+        endTime,
+      })
+        .unwrap()
+        .then((result) => {
           updateProgress({ showProgress: false });
           if (typeof result !== 'undefined') {
             let tmpVarOpts = [];
@@ -188,16 +199,16 @@ function GrafanaSelectionComponent(props) {
               return newOptions;
             });
           }
-        },
-        (error) => {
+        })
+        .catch((error) => {
+          updateProgress({ showProgress: false });
           setTemplateVarOptions((prev) => {
             const newOptions = [...prev];
             newOptions[ind] = [templateVars[ind].Value];
             return newOptions;
           });
           handleError(error);
-        },
-      );
+        });
     }
   };
 
