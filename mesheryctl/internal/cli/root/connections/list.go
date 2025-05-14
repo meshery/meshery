@@ -20,6 +20,9 @@ mesheryctl exp connection list
 
 // List all the connections with page number
 mesheryctl exp connection list --page [page-number]
+
+// Display total count of all available connections
+mesheryctl exp connection list --count
 `,
 
 	Args: func(_ *cobra.Command, args []string) error {
