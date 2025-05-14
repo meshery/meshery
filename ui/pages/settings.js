@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { getPath } from '../lib/path';
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
 
 function Settings() {
   const dispatch = useDispatch();

@@ -11,7 +11,7 @@ const Environments = () => {
   useEffect(() => {
     dispatch(updatePage({ path: getPath(), title: 'Environments' }));
   }, []);
-  
+
   return (
     <NoSsr>
       <Head>

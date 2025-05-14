@@ -4,6 +4,7 @@ import PerformanceProfiles from '../../components/MesheryPerformance/Performance
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
 
 function Results() {
   const dispatch = useDispatch();

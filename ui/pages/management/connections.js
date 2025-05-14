@@ -19,7 +19,7 @@ const Connections = () => {
   useEffect(() => {
     dispatch(updatePage({ path: getPath(), title: 'Connections' }));
   }, []);
-  
+
   return (
     <NoSsr>
       <Head>

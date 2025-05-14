@@ -6,7 +6,7 @@ import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import { useDispatch, useSelector } from 'react-redux';
-import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
+import { updatePage } from '@/store/slices/mesheryUi';
 
 const UserPref = () => {
   const dispatch = useDispatch();
