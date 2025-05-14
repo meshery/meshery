@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Function",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-lambda-controller",
+    "displayName": "AWS Lambda",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Serverless",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ED7100",
+      "shape": "circle",
+      "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.6.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ED7100",
+    "shape": "circle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "lambda.services.k8s.aws/v1alpha1",
+    "kind": "Function",
+    "schema": "{\n \"description\": \"Function is the Schema for the Functions API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FunctionSpec defines the desired state of Function.\",\n   \"properties\": {\n    \"architectures\": {\n     \"description\": \"The instruction set architecture that the function supports. Enter a string\\narray with one of the valid values (arm64 or x86_64). The default value is\\nx86_64.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"code\": {\n     \"description\": \"The code for the function.\",\n     \"properties\": {\n      \"imageURI\": {\n       \"type\": \"string\"\n      },\n      \"s3Bucket\": {\n       \"type\": \"string\"\n      },\n      \"s3BucketRef\": {\n       \"description\": \"Reference field for S3Bucket\",\n       \"properties\": {\n        \"from\": {\n         \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"s3Key\": {\n       \"type\": \"string\"\n      },\n      \"s3ObjectVersion\": {\n       \"type\": \"string\"\n      },\n      \"sha256\": {\n       \"type\": \"string\"\n      },\n      \"zipFile\": {\n       \"format\": \"byte\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"codeSigningConfigARN\": {\n     \"description\": \"To enable code signing for this function, specify the ARN of a code-signing\\nconfiguration. A code-signing configurationincludes a set of signing profiles,\\nwhich define the trusted publishers for this function.\",\n     \"type\": \"string\"\n    },\n    \"deadLetterConfig\": {\n     \"description\": \"A dead-letter queue configuration that specifies the queue or topic where\\nLambda sends asynchronous events when they fail processing. For more information,\\nsee Dead-letter queues (https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#invocation-dlq).\",\n     \"properties\": {\n      \"targetARN\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"A description of the function.\",\n     \"type\": \"string\"\n    },\n    \"environment\": {\n     \"description\": \"Environment variables that are accessible from function code during execution.\",\n     \"properties\": {\n      \"variables\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"ephemeralStorage\": {\n     \"description\": \"The size of the function's /tmp directory in MB. The default value is 512,\\nbut can be any whole number between 512 and 10,240 MB. For more information,\\nsee Configuring ephemeral storage (console) (https://docs.aws.amazon.com/lambda/latest/dg/configuration-function-common.html#configuration-ephemeral-storage).\",\n     \"properties\": {\n      \"size\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"fileSystemConfigs\": {\n     \"description\": \"Connection settings for an Amazon EFS file system.\",\n     \"items\": {\n      \"description\": \"Details about the connection between a Lambda function and an Amazon EFS\\nfile system (https://docs.aws.amazon.com/lambda/latest/dg/configuration-filesystem.html).\",\n      \"properties\": {\n       \"arn\": {\n        \"type\": \"string\"\n       },\n       \"localMountPath\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"functionEventInvokeConfig\": {\n     \"description\": \"Configures options for asynchronous invocation on a function.\\n\\n- DestinationConfig\\nA destination for events after they have been sent to a function for processing.\\n\\nTypes of Destinations:\\nFunction - The Amazon Resource Name (ARN) of a Lambda function.\\nQueue - The ARN of a standard SQS queue.\\nTopic - The ARN of a standard SNS topic.\\nEvent Bus - The ARN of an Amazon EventBridge event bus.\\n\\n- MaximumEventAgeInSeconds\\nThe maximum age of a request that Lambda sends to a function for processing.\\n\\n- MaximumRetryAttempts\\nThe maximum number of times to retry when the function returns an error.\",\n     \"properties\": {\n      \"destinationConfig\": {\n       \"description\": \"A configuration object that specifies the destination of an event after Lambda\\nprocesses it.\",\n       \"properties\": {\n        \"onFailure\": {\n         \"description\": \"A destination for events that failed processing.\",\n         \"properties\": {\n          \"destination\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"onSuccess\": {\n         \"description\": \"A destination for events that were processed successfully.\\n\\nTo retain records of successful asynchronous invocations (https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#invocation-async-destinations),\\nyou can configure an Amazon SNS topic, Amazon SQS queue, Lambda function,\\nor Amazon EventBridge event bus as the destination.\",\n         \"properties\": {\n          \"destination\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"functionName\": {\n       \"type\": \"string\"\n      },\n      \"maximumEventAgeInSeconds\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"maximumRetryAttempts\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"qualifier\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"handler\": {\n     \"description\": \"The name of the method within your code that Lambda calls to run your function.\\nHandler is required if the deployment package is a .zip file archive. The\\nformat includes the file name. It can also include namespaces and other qualifiers,\\ndepending on the runtime. For more information, see Lambda programming model\\n(https://docs.aws.amazon.com/lambda/latest/dg/foundation-progmodel.html).\",\n     \"type\": \"string\"\n    },\n    \"imageConfig\": {\n     \"description\": \"Container image configuration values (https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-parms)\\nthat override the values in the container image Dockerfile.\",\n     \"properties\": {\n      \"command\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"entryPoint\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"workingDirectory\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kmsKeyARN\": {\n     \"description\": \"The ARN of the Key Management Service (KMS) customer managed key that's used\\nto encrypt the following resources:\\n\\n  - The function's environment variables (https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html#configuration-envvars-encryption).\\n\\n  - The function's Lambda SnapStart (https://docs.aws.amazon.com/lambda/latest/dg/snapstart-security.html)\\n    snapshots.\\n\\n  - When used with SourceKMSKeyArn, the unzipped version of the .zip deployment\\n    package that's used for function invocations. For more information, see\\n    Specifying a customer managed key for Lambda (https://docs.aws.amazon.com/lambda/latest/dg/encrypt-zip-package.html#enable-zip-custom-encryption).\\n\\n  - The optimized version of the container image that's used for function\\n    invocations. Note that this is not the same key that's used to protect\\n    your container image in the Amazon Elastic Container Registry (Amazon\\n    ECR). For more information, see Function lifecycle (https://docs.aws.amazon.com/lambda/latest/dg/images-create.html#images-lifecycle).\\n\\nIf you don't provide a customer managed key, Lambda uses an Amazon Web Services\\nowned key (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)\\nor an Amazon Web Services managed key (https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-managed-cmk).\",\n     \"type\": \"string\"\n    },\n    \"kmsKeyRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"layers\": {\n     \"description\": \"A list of function layers (https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html)\\nto add to the function's execution environment. Specify each layer by its\\nARN, including the version.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"memorySize\": {\n     \"description\": \"The amount of memory available to the function (https://docs.aws.amazon.com/lambda/latest/dg/configuration-function-common.html#configuration-memory-console)\\nat runtime. Increasing the function memory also increases its CPU allocation.\\nThe default value is 128 MB. The value can be any multiple of 1 MB.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"name\": {\n     \"description\": \"The name or ARN of the Lambda function.\\n\\nName formats\\n\\n  - Function name – my-function.\\n\\n  - Function ARN – arn:aws:lambda:us-west-2:123456789012:function:my-function.\\n\\n  - Partial ARN – 123456789012:function:my-function.\\n\\nThe length constraint applies only to the full ARN. If you specify only the\\nfunction name, it is limited to 64 characters in length.\",\n     \"type\": \"string\"\n    },\n    \"packageType\": {\n     \"description\": \"The type of deployment package. Set to Image for container image and set\\nto Zip for .zip file archive.\",\n     \"type\": \"string\"\n    },\n    \"publish\": {\n     \"description\": \"Set to true to publish the first version of the function during creation.\",\n     \"type\": \"boolean\"\n    },\n    \"reservedConcurrentExecutions\": {\n     \"description\": \"The number of simultaneous executions to reserve for the function.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"role\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the function's execution role.\",\n     \"type\": \"string\"\n    },\n    \"roleRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"runtime\": {\n     \"description\": \"The identifier of the function's runtime (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html).\\nRuntime is required if the deployment package is a .zip file archive. Specifying\\na runtime results in an error if you're deploying a function using a container\\nimage.\\n\\nThe following list includes deprecated runtimes. Lambda blocks creating new\\nfunctions and updating existing functions shortly after each runtime is deprecated.\\nFor more information, see Runtime use after deprecation (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html#runtime-deprecation-levels).\\n\\nFor a list of all currently supported runtimes, see Supported runtimes (https://docs.aws.amazon.com/lambda/latest/dg/lambda-runtimes.html#runtimes-supported).\",\n     \"type\": \"string\"\n    },\n    \"snapStart\": {\n     \"description\": \"The function's SnapStart (https://docs.aws.amazon.com/lambda/latest/dg/snapstart.html)\\nsetting.\",\n     \"properties\": {\n      \"applyOn\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"A list of tags (https://docs.aws.amazon.com/lambda/latest/dg/tagging.html)\\nto apply to the function.\",\n     \"type\": \"object\"\n    },\n    \"timeout\": {\n     \"description\": \"The amount of time (in seconds) that Lambda allows a function to run before\\nstopping it. The default is 3 seconds. The maximum allowed value is 900 seconds.\\nFor more information, see Lambda execution environment (https://docs.aws.amazon.com/lambda/latest/dg/runtimes-context.html).\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"tracingConfig\": {\n     \"description\": \"Set Mode to Active to sample and trace a subset of incoming requests withX-Ray\\n(https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html).\",\n     \"properties\": {\n      \"mode\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"vpcConfig\": {\n     \"description\": \"For network connectivity to Amazon Web Services resources in a VPC, specify\\na list of security groups and subnets in the VPC. When you connect a function\\nto a VPC, it can access resources and the internet only through that VPC.\\nFor more information, see Configuring a Lambda function to access resources\\nin a VPC (https://docs.aws.amazon.com/lambda/latest/dg/configuration-vpc.html).\",\n     \"properties\": {\n      \"securityGroupIDs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"securityGroupRefs\": {\n       \"description\": \"Reference field for SecurityGroupIDs\",\n       \"items\": {\n        \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n        \"properties\": {\n         \"from\": {\n          \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"namespace\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"subnetIDs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"subnetRefs\": {\n       \"description\": \"Reference field for SubnetIDs\",\n       \"items\": {\n        \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n        \"properties\": {\n         \"from\": {\n          \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n          \"properties\": {\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"namespace\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"code\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Function\",\n \"type\": \"object\"\n}"
+  }
+}

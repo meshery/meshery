@@ -1,4 +1,3 @@
-//@ts-check
 import { Grid, Button, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';

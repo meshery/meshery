@@ -185,8 +185,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
 		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
-			"LongDescription":      fmt.Sprintf("One or more entities failed to register. The import process for registrant, %s, encountered the following issue: %s.", hostname, failedMsg),
-			"SuggestedRemediation": fmt.Sprintf("Open Meshery Error Reference with error code %s", "https://docs.meshery.io/reference/error-codes"),
+			"Long_Description":      fmt.Sprintf("One or more entities failed to register. The import process for registrant, %s, encountered the following issue: %s.", hostname, failedMsg),
 			"DownloadLink":         filePath,
 			"ViewLink":             filePath,
 		})

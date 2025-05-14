@@ -51,6 +51,10 @@ Contexts configure Meshery deployments (server, adapters, operator and so on), w
 
 The following template is used to create a config file from scratch. Not all of the following variables are required to be included. Some of the variables may have a null value or may be excluded (e.g. “adapters”).
 
+#### Question: What is the importance of --config flag?
+
+The `--config` flag is a global option that applies to all `mesheryctl` commands. It allows you to specify the location of a custom meshconfig file, overriding the default configuration. This config file is used to set up the `mesheryctl` context, which defines the configuration for a particular Meshery deployment.
+
 ```
 contexts:
     <context1-name>:

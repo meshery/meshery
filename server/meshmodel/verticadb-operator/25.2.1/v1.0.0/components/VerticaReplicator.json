@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Vertica Replicator",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "verticadb-operator",
+    "displayName": "Verticadb Operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/vertica/vertica-kubernetes/releases/download/v25.2.1-0/verticadb-operator-25.2.1-0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "25.2.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/vertica/vertica-kubernetes/releases/download/v25.2.1-0/verticadb-operator-25.2.1-0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "vertica.com/v1beta1",
+    "kind": "VerticaReplicator",
+    "schema": "{\n \"description\": \"VerticaReplicator is the Schema for the verticareplicators API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VerticaReplicatorSpec defines the desired state of VerticaReplicator\",\n   \"properties\": {\n    \"mode\": {\n     \"default\": \"async\",\n     \"description\": \"Determines how replication is done. Available options: async, sync\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"Information of the source Vertica database to replicate from\",\n     \"properties\": {\n      \"excludePattern\": {\n       \"description\": \"A string containing a wildcard pattern of the schemas and/or tables to exclude from the set of tables matched\\nby the include pattern. Namespace names must be front-qualified with a period.\",\n       \"type\": \"string\"\n      },\n      \"includePattern\": {\n       \"description\": \"A string containing a wildcard pattern of the schemas and/or tables to include in the replication.\\nNamespace names must be front-qualified with a period.\",\n       \"type\": \"string\"\n      },\n      \"objectName\": {\n       \"description\": \"The object name we want to copy from the source side. The available types are: namespace, schema, table.\\nIf this is omitted, the operator will replicate all namespaces in the source database.\",\n       \"type\": \"string\"\n      },\n      \"passwordSecret\": {\n       \"description\": \"The password secret for the given UserName is stored in this field. If\\nthis field and UserName are omitted, the default is set to the superuser\\npassword secret found in the VerticaDB. An empty value indicates the\\nabsence of a password.\\n\\n\\nThe secret is assumed to be a Kubernetes (k8s) secret unless a secret\\npath reference is specified. In the latter case, the secret is retrieved\\nfrom an external secret storage manager.\",\n       \"type\": \"string\"\n      },\n      \"sandboxName\": {\n       \"description\": \"Specify the sandbox name to establish a connection. If no sandbox name is\\nprovided, the system assumes the main cluster of the database.\",\n       \"type\": \"string\"\n      },\n      \"serviceName\": {\n       \"description\": \"This field allows you to specify the name of the service object that will\\nbe used to connect to the database. If you do not specify a name, the\\nservice object for the first primary subcluster will be used.\",\n       \"type\": \"string\"\n      },\n      \"userName\": {\n       \"description\": \"The username to connect to Vertica with. If no username is specified, the\\ndatabase's superuser will be assumed. Custom username for source database\\nis not supported yet.\",\n       \"type\": \"string\"\n      },\n      \"verticaDB\": {\n       \"description\": \"Name of an existing VerticaDB\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"verticaDB\"\n     ],\n     \"type\": \"object\"\n    },\n    \"target\": {\n     \"description\": \"Information of the target Vertica database to replicate to\",\n     \"properties\": {\n      \"namespace\": {\n       \"description\": \"Namespace in the target database to which objects are replicated. The target namespace must have the same shard\\ncount as the source namespace in the source cluster. If you do not specify a target namespace, objects are\\nreplicated to a namespace with the same name as the source namespace. If no such namespace exists in the target\\ncluster, it is created with the same name and shard count as the source namespace. You can only replicate tables\\nin the public schema to the default_namespace in the target cluster.\",\n       \"type\": \"string\"\n      },\n      \"passwordSecret\": {\n       \"description\": \"The password secret for the given UserName is stored in this field. If\\nthis field and UserName are omitted, the default is set to the superuser\\npassword secret found in the VerticaDB. An empty value indicates the\\nabsence of a password.\\n\\n\\nThe secret is assumed to be a Kubernetes (k8s) secret unless a secret\\npath reference is specified. In the latter case, the secret is retrieved\\nfrom an external secret storage manager.\",\n       \"type\": \"string\"\n      },\n      \"sandboxName\": {\n       \"description\": \"Specify the sandbox name to establish a connection. If no sandbox name is\\nprovided, the system assumes the main cluster of the database.\",\n       \"type\": \"string\"\n      },\n      \"serviceName\": {\n       \"description\": \"This field allows you to specify the name of the service object that will\\nbe used to connect to the database. If you do not specify a name, the\\nservice object for the first primary subcluster will be used.\",\n       \"type\": \"string\"\n      },\n      \"userName\": {\n       \"description\": \"The username to connect to Vertica with. If no username is specified, the\\ndatabase's superuser will be assumed. Custom username for source database\\nis not supported yet.\",\n       \"type\": \"string\"\n      },\n      \"verticaDB\": {\n       \"description\": \"Name of an existing VerticaDB\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"verticaDB\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tlsConfig\": {\n     \"description\": \"Optional TLS configuration to use when connecting from the source\\ndatabase to the target database.\\nIt refers to an existing TLS config that already exists in the source.\\nUsing TLS configuration for target database authentication requires the\\nsame username to be used for both source and target databases. It also\\nrequires security config parameter EnableConnectCredentialForwarding to\\nbe enabled on the source database. Custom username for source and target\\ndatabases is not supported yet when TLS configuration is used.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"source\",\n    \"target\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vertica Replicator\",\n \"type\": \"object\"\n}"
+  }
+}

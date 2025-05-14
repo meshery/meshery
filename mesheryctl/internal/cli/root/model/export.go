@@ -103,11 +103,13 @@ func export(modelName string, url string, output *outputDetail) error {
 	}
 
 	var exportedModelPath string
+
 	if output.Type != "oci" {
-		exportedModelPath = filepath.Join(output.Path, modelName+"."+"tar.gz")
+		exportedModelPath = filepath.Join(output.Path, modelName+".tar.gz")
 	} else {
-		exportedModelPath = output.Path + modelName + ".tar"
+		exportedModelPath = filepath.Join(output.Path, modelName+".tar")
 	}
+
 	err = os.WriteFile(exportedModelPath, data, 0644)
 	if err != nil {
 		utils.LogError.Error(err)

@@ -55,6 +55,7 @@
             "id": null,
             "kind": "Gateway",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -98,6 +99,7 @@
             "id": null,
             "kind": "VirtualService",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",

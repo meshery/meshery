@@ -1,0 +1,45 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "submariner",
+  "displayName": "Submariner",
+  "status": "enabled",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "github",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Runtime"
+  },
+  "subCategory": "Cloud Native Network",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#2bdfc4",
+    "secondaryColor": "#40e2ca",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#2bdfc4;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M76.48263,103.73116v31.34008H224.93675a26.46864,26.46864,0,0,1,26.43878,26.43945v38.1769a26.46851,26.46851,0,0,1-26.4388,26.43879H4v11.92916A30.78477,30.78477,0,0,0,34.69457,268.75H263.30542A30.78478,30.78478,0,0,0,294,238.05554V103.73116Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M221.51806,196.26885V164.92871H73.06389A26.46915,26.46915,0,0,1,46.6251,138.48924V100.31248A26.469,26.469,0,0,1,73.06389,73.87369H294V61.94456A30.78479,30.78479,0,0,0,263.30542,31.25H34.69457A30.78477,30.78477,0,0,0,4,61.9445V196.26885Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 300 300\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M76.48263,103.73116v31.34008H224.93675a26.46864,26.46864,0,0,1,26.43878,26.43945v38.1769a26.46851,26.46851,0,0,1-26.4388,26.43879H4v11.92916A30.78477,30.78477,0,0,0,34.69457,268.75H263.30542A30.78478,30.78478,0,0,0,294,238.05554V103.73116Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M221.51806,196.26885V164.92871H73.06389A26.46915,26.46915,0,0,1,46.6251,138.48924V100.31248A26.469,26.469,0,0,1,73.06389,73.87369H294V61.94456A30.78479,30.78479,0,0,0,263.30542,31.25H34.69457A30.78477,30.78477,0,0,0,4,61.9445V196.26885Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "v0.21.0-m2"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

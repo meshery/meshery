@@ -149,7 +149,7 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
       const newFilter = {
         type: option.type,
         value: option.value,
-        label: `${filterSchema[option.type].value}: ${option.value}`,
+        label: `${filterSchema[option.type]?.value}: ${option.value}`,
       };
 
       const existingFilterIndex = selectedFilters.findIndex(
@@ -252,27 +252,29 @@ const TypingFilter = ({ filterSchema, placeholder, handleFilter, defaultFilters 
             </React.Fragment>
           );
         }}
-        renderTags={(value, getTagProps) =>
-          value.map((option, index) => (
-            <Chip
-              {...getTagProps({ index })}
-              key={`${option.type}-${option.value}-${index}`}
-              label={`${filterSchema[option.type].value}: ${option.value}`}
-              style={{ margin: '0.15rem', maxWidth: '80%', height: 'auto' }}
-              size="small"
-              sx={{
-                height: 'auto',
-                '& .MuiChip-label': {
-                  display: 'block',
-                  whiteSpace: 'normal',
-                  lineHeight: '1.5rem',
-                  fontSize: '0.75rem',
-                  marginBlock: '0.1rem',
-                },
-              }}
-            />
-          ))
-        }
+        renderTags={(value, getTagProps) => {
+          return value
+            .filter((option) => filterSchema[option?.type]?.value)
+            .map((option, index) => (
+              <Chip
+                {...getTagProps({ index })}
+                key={`${option.type}-${option.value}-${index}`}
+                label={`${filterSchema[option?.type]?.value}: ${option.value}`}
+                style={{ margin: '0.15rem', maxWidth: '80%', height: 'auto' }}
+                size="small"
+                sx={{
+                  height: 'auto',
+                  '& .MuiChip-label': {
+                    display: 'block',
+                    whiteSpace: 'normal',
+                    lineHeight: '1.5rem',
+                    fontSize: '0.75rem',
+                    marginBlock: '0.1rem',
+                  },
+                }}
+              />
+            ));
+        }}
         clearIcon={
           <CrossCircleIcon
             fill={theme.palette.icon.default}

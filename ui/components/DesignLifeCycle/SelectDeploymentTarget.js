@@ -24,10 +24,10 @@ import {
   toggleConnection,
   selectSelectedK8sConnections,
 } from '@/store/slices/globalEnvironmentContext';
-import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
 import { Button } from '@layer5/sistent';
 import { AddIcon } from '@layer5/sistent';
 import { Edit } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const DeploymentTargetContext = createContext({
   meshsyncControllerState: null,
@@ -53,10 +53,10 @@ const StyledEnvironmentHeader = styled(Box)(({ theme }) => ({
 
 const K8sContextConnection = ({ connection, environment }) => {
   const { meshsyncControllerState, connectionMetadataState } = useContext(DeploymentTargetContext);
-  const isSelected = useSelectorRtk((state) =>
+  const isSelected = useSelector((state) =>
     selectIsConnectionSelected(state, environment.id, connection.id),
   );
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   const toggleK8sConnection = () => dispatch(toggleConnection(environment, connection));
   return (
     <K8sContextConnectionChip
@@ -89,12 +89,12 @@ const EnvironmentCard = ({ environment }) => {
   const { data, isLoading } = useGetEnvironmentConnectionsQuery({
     environmentId: environment.id,
   });
-  const dispatch = useDispatchRtk();
+  const dispatch = useDispatch();
   const connections =
     data?.connections?.filter((connection) => connection.kind == 'kubernetes') || [];
 
-  const isEnvSelected = useSelectorRtk((state) => selectIsEnvSelected(state, environment.id));
-  const selectedConnections = useSelectorRtk((state) =>
+  const isEnvSelected = useSelector((state) => selectIsEnvSelected(state, environment.id));
+  const selectedConnections = useSelector((state) =>
     selectSelectedK8sConnections(state, environment.id),
   );
   const selectedConnectionsCount = selectedConnections.length;

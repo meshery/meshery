@@ -139,3 +139,19 @@ export const EXTENSIONS = {
     name: 'Performance Analysis',
   },
 };
+export const RESOURCE_TYPE = {
+  FILTER: 'filter',
+  DESIGN: 'design',
+  CATALOG: 'catalog',
+  VIEW: 'view',
+};
+
+export const APP_MODE = {
+  DESIGN: 'design',
+  OPERATOR: 'operator',
+};
+
+export const VIEW_VISIBILITY = {
+  PUBLIC: 'public',
+  PRIVATE: 'private',
+};

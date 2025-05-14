@@ -55,6 +55,7 @@
             "id": null,
             "kind": "HTTPEndpoint",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -105,6 +106,7 @@
             "id": null,
             "kind": "Resiliency",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -155,6 +157,7 @@
             "id": null,
             "kind": "Configuration",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -204,6 +207,7 @@
             "id": null,
             "kind": "Subscription",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -261,6 +265,7 @@
             "id": null,
             "kind": "Container",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",

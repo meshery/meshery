@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useLegacySelector } from 'lib/store';
 import { WorkspaceActivityCard } from '@layer5/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
+import { useSelector } from 'react-redux';
 
 const WorkspaceActivityWidget = () => {
-  const currentOrg = useLegacySelector((state) => state.get('organization'));
+  const { organization: currentOrg } = useSelector((state) => state.ui);
   const { data: workspaces } = useGetWorkspacesQuery({
     orgId: currentOrg?.id,
   });

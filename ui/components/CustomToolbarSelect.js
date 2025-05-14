@@ -3,12 +3,11 @@ import { IconButton, Tooltip, styled } from '@layer5/sistent';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { NoSsr } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
-import { clearResultsSelection } from '../lib/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { clearResultsSelection } from '@/store/slices/prefTest';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
   marginRight: theme.spacing(3),
@@ -24,12 +23,13 @@ const StyledIcon = styled('span')(({ theme }) => ({
       : theme.palette.text.default,
 }));
 
-function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsSelection }) {
+function CustomToolbarSelect({ setSelectedRows }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [data, setData] = useState([]);
   const [, setChartCompare] = useState([]);
   const fullData = [];
-
+  const dispatch = useDispatch();
+  const { results_selection } = useSelector((state) => state.prefTest);
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
@@ -41,7 +41,7 @@ function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsS
 
   const handleClickDeselectAll = () => {
     setSelectedRows([]);
-    clearResultsSelection();
+    dispatch(clearResultsSelection());
   };
 
   const handleCompareSelected = () => {
@@ -137,13 +137,4 @@ function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsS
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const results_selection = state.get('results_selection').toObject();
-  return { results_selection };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CustomToolbarSelect);
+export default CustomToolbarSelect;

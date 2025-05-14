@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Trail",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-cloudtrail-controller",
+    "displayName": "AWS CloudTrail",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Observability and Analysis"
+    },
+    "subCategory": "Logging",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#E7157B",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/cloudtrail-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-CloudTrail_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Management-Governance\" fill=\"#E7157B\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.0269476,24.1310926 L18.0404214,24.1310926 L18.0404214,23.1604686 L14.0269476,23.1604686 L14.0269476,24.1310926 Z M29.9855228,18.8217791 C29.8751523,17.34546 29.1396832,16.2612729 27.9687522,15.8827295 C27.0416398,15.5808655 26.0111804,15.7992559 25.2225328,16.4194846 C24.7389092,15.5012743 24.0114671,14.5985939 23.4104494,14.0239845 C21.4037125,12.1089433 18.8501398,11.5168626 16.4009174,12.4020717 C14.1433384,13.2173959 11.5185265,15.9720269 11.5185265,18.3015246 L11.5185265,18.3306433 C10.0445782,18.6985099 9.01411883,20.6057861 9.01411883,21.6472657 L10.0174873,21.6472657 C10.0174873,20.8950321 10.9857378,19.2391474 12.0202107,19.2391474 C12.2971404,19.2391474 12.5218949,19.0226983 12.5218949,18.7538354 L12.5218949,18.3015246 C12.5218949,16.4359852 14.847703,13.9987483 16.7520963,13.3115465 C19.5785853,12.29045 21.6956927,13.7522098 22.7050813,14.7150688 C23.3562675,15.3352976 24.2241812,16.4534565 24.591414,17.4396105 C24.6546262,17.6075284 24.8071382,17.7288564 24.9897513,17.7560339 C25.1693543,17.7802995 25.3539741,17.709444 25.4643446,17.5677329 C26.0121838,16.8640304 26.8881244,16.5582839 27.6506844,16.8028811 C28.5065577,17.079509 28.9972049,17.959865 28.9972049,19.2168231 C28.9972049,19.454626 29.1748011,19.6565158 29.4166129,19.6953407 C30.6547696,19.8943187 32.9966315,20.9755938 32.9966315,23.6457806 C32.9966315,26.9662854 29.6403641,27.0284053 29.4988891,27.029376 L18.0404214,27.029376 L18.0404214,28 L29.4998925,28 C31.0571203,27.9970881 34,27.0837309 34,23.6457806 C34,20.5989917 31.5678349,19.2187643 29.9855228,18.8217791 L29.9855228,18.8217791 Z M16.0336845,26.0655463 L23.0572637,26.0655463 L23.0572637,25.0949223 L16.0336845,25.0949223 L16.0336845,26.0655463 Z M13.0235792,28 L16.0336845,28 L16.0336845,27.029376 L13.0235792,27.029376 L13.0235792,28 Z M12.0202107,26.0655463 L14.0269476,26.0655463 L14.0269476,25.0949223 L12.0202107,25.0949223 L12.0202107,26.0655463 Z M7.00336845,24.1310926 L12.0202107,24.1310926 L12.0202107,23.1604686 L7.00336845,23.1604686 L7.00336845,24.1310926 Z M6,26.0655463 L11.0168423,26.0655463 L11.0168423,25.0949223 L6,25.0949223 L6,26.0655463 Z M8.0067369,28 L11.0168423,28 L11.0168423,27.029376 L8.0067369,27.029376 L8.0067369,28 Z\" id=\"AWS-CloudTrail_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-CloudTrail_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.0269476,24.1310926 L18.0404214,24.1310926 L18.0404214,23.1604686 L14.0269476,23.1604686 L14.0269476,24.1310926 Z M29.9855228,18.8217791 C29.8751523,17.34546 29.1396832,16.2612729 27.9687522,15.8827295 C27.0416398,15.5808655 26.0111804,15.7992559 25.2225328,16.4194846 C24.7389092,15.5012743 24.0114671,14.5985939 23.4104494,14.0239845 C21.4037125,12.1089433 18.8501398,11.5168626 16.4009174,12.4020717 C14.1433384,13.2173959 11.5185265,15.9720269 11.5185265,18.3015246 L11.5185265,18.3306433 C10.0445782,18.6985099 9.01411883,20.6057861 9.01411883,21.6472657 L10.0174873,21.6472657 C10.0174873,20.8950321 10.9857378,19.2391474 12.0202107,19.2391474 C12.2971404,19.2391474 12.5218949,19.0226983 12.5218949,18.7538354 L12.5218949,18.3015246 C12.5218949,16.4359852 14.847703,13.9987483 16.7520963,13.3115465 C19.5785853,12.29045 21.6956927,13.7522098 22.7050813,14.7150688 C23.3562675,15.3352976 24.2241812,16.4534565 24.591414,17.4396105 C24.6546262,17.6075284 24.8071382,17.7288564 24.9897513,17.7560339 C25.1693543,17.7802995 25.3539741,17.709444 25.4643446,17.5677329 C26.0121838,16.8640304 26.8881244,16.5582839 27.6506844,16.8028811 C28.5065577,17.079509 28.9972049,17.959865 28.9972049,19.2168231 C28.9972049,19.454626 29.1748011,19.6565158 29.4166129,19.6953407 C30.6547696,19.8943187 32.9966315,20.9755938 32.9966315,23.6457806 C32.9966315,26.9662854 29.6403641,27.0284053 29.4988891,27.029376 L18.0404214,27.029376 L18.0404214,28 L29.4998925,28 C31.0571203,27.9970881 34,27.0837309 34,23.6457806 C34,20.5989917 31.5678349,19.2187643 29.9855228,18.8217791 L29.9855228,18.8217791 Z M16.0336845,26.0655463 L23.0572637,26.0655463 L23.0572637,25.0949223 L16.0336845,25.0949223 L16.0336845,26.0655463 Z M13.0235792,28 L16.0336845,28 L16.0336845,27.029376 L13.0235792,27.029376 L13.0235792,28 Z M12.0202107,26.0655463 L14.0269476,26.0655463 L14.0269476,25.0949223 L12.0202107,25.0949223 L12.0202107,26.0655463 Z M7.00336845,24.1310926 L12.0202107,24.1310926 L12.0202107,23.1604686 L7.00336845,23.1604686 L7.00336845,24.1310926 Z M6,26.0655463 L11.0168423,26.0655463 L11.0168423,25.0949223 L6,25.0949223 L6,26.0655463 Z M8.0067369,28 L11.0168423,28 L11.0168423,27.029376 L8.0067369,27.029376 L8.0067369,28 Z\" id=\"AWS-CloudTrail_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.22"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#E7157B",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_AWS-CloudTrail_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Management-Governance\" fill=\"#E7157B\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M14.0269476,24.1310926 L18.0404214,24.1310926 L18.0404214,23.1604686 L14.0269476,23.1604686 L14.0269476,24.1310926 Z M29.9855228,18.8217791 C29.8751523,17.34546 29.1396832,16.2612729 27.9687522,15.8827295 C27.0416398,15.5808655 26.0111804,15.7992559 25.2225328,16.4194846 C24.7389092,15.5012743 24.0114671,14.5985939 23.4104494,14.0239845 C21.4037125,12.1089433 18.8501398,11.5168626 16.4009174,12.4020717 C14.1433384,13.2173959 11.5185265,15.9720269 11.5185265,18.3015246 L11.5185265,18.3306433 C10.0445782,18.6985099 9.01411883,20.6057861 9.01411883,21.6472657 L10.0174873,21.6472657 C10.0174873,20.8950321 10.9857378,19.2391474 12.0202107,19.2391474 C12.2971404,19.2391474 12.5218949,19.0226983 12.5218949,18.7538354 L12.5218949,18.3015246 C12.5218949,16.4359852 14.847703,13.9987483 16.7520963,13.3115465 C19.5785853,12.29045 21.6956927,13.7522098 22.7050813,14.7150688 C23.3562675,15.3352976 24.2241812,16.4534565 24.591414,17.4396105 C24.6546262,17.6075284 24.8071382,17.7288564 24.9897513,17.7560339 C25.1693543,17.7802995 25.3539741,17.709444 25.4643446,17.5677329 C26.0121838,16.8640304 26.8881244,16.5582839 27.6506844,16.8028811 C28.5065577,17.079509 28.9972049,17.959865 28.9972049,19.2168231 C28.9972049,19.454626 29.1748011,19.6565158 29.4166129,19.6953407 C30.6547696,19.8943187 32.9966315,20.9755938 32.9966315,23.6457806 C32.9966315,26.9662854 29.6403641,27.0284053 29.4988891,27.029376 L18.0404214,27.029376 L18.0404214,28 L29.4998925,28 C31.0571203,27.9970881 34,27.0837309 34,23.6457806 C34,20.5989917 31.5678349,19.2187643 29.9855228,18.8217791 L29.9855228,18.8217791 Z M16.0336845,26.0655463 L23.0572637,26.0655463 L23.0572637,25.0949223 L16.0336845,25.0949223 L16.0336845,26.0655463 Z M13.0235792,28 L16.0336845,28 L16.0336845,27.029376 L13.0235792,27.029376 L13.0235792,28 Z M12.0202107,26.0655463 L14.0269476,26.0655463 L14.0269476,25.0949223 L12.0202107,25.0949223 L12.0202107,26.0655463 Z M7.00336845,24.1310926 L12.0202107,24.1310926 L12.0202107,23.1604686 L7.00336845,23.1604686 L7.00336845,24.1310926 Z M6,26.0655463 L11.0168423,26.0655463 L11.0168423,25.0949223 L6,25.0949223 L6,26.0655463 Z M8.0067369,28 L11.0168423,28 L11.0168423,27.029376 L8.0067369,27.029376 L8.0067369,28 Z\" id=\"AWS-CloudTrail_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_AWS-CloudTrail_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M14.0269476,24.1310926 L18.0404214,24.1310926 L18.0404214,23.1604686 L14.0269476,23.1604686 L14.0269476,24.1310926 Z M29.9855228,18.8217791 C29.8751523,17.34546 29.1396832,16.2612729 27.9687522,15.8827295 C27.0416398,15.5808655 26.0111804,15.7992559 25.2225328,16.4194846 C24.7389092,15.5012743 24.0114671,14.5985939 23.4104494,14.0239845 C21.4037125,12.1089433 18.8501398,11.5168626 16.4009174,12.4020717 C14.1433384,13.2173959 11.5185265,15.9720269 11.5185265,18.3015246 L11.5185265,18.3306433 C10.0445782,18.6985099 9.01411883,20.6057861 9.01411883,21.6472657 L10.0174873,21.6472657 C10.0174873,20.8950321 10.9857378,19.2391474 12.0202107,19.2391474 C12.2971404,19.2391474 12.5218949,19.0226983 12.5218949,18.7538354 L12.5218949,18.3015246 C12.5218949,16.4359852 14.847703,13.9987483 16.7520963,13.3115465 C19.5785853,12.29045 21.6956927,13.7522098 22.7050813,14.7150688 C23.3562675,15.3352976 24.2241812,16.4534565 24.591414,17.4396105 C24.6546262,17.6075284 24.8071382,17.7288564 24.9897513,17.7560339 C25.1693543,17.7802995 25.3539741,17.709444 25.4643446,17.5677329 C26.0121838,16.8640304 26.8881244,16.5582839 27.6506844,16.8028811 C28.5065577,17.079509 28.9972049,17.959865 28.9972049,19.2168231 C28.9972049,19.454626 29.1748011,19.6565158 29.4166129,19.6953407 C30.6547696,19.8943187 32.9966315,20.9755938 32.9966315,23.6457806 C32.9966315,26.9662854 29.6403641,27.0284053 29.4988891,27.029376 L18.0404214,27.029376 L18.0404214,28 L29.4998925,28 C31.0571203,27.9970881 34,27.0837309 34,23.6457806 C34,20.5989917 31.5678349,19.2187643 29.9855228,18.8217791 L29.9855228,18.8217791 Z M16.0336845,26.0655463 L23.0572637,26.0655463 L23.0572637,25.0949223 L16.0336845,25.0949223 L16.0336845,26.0655463 Z M13.0235792,28 L16.0336845,28 L16.0336845,27.029376 L13.0235792,27.029376 L13.0235792,28 Z M12.0202107,26.0655463 L14.0269476,26.0655463 L14.0269476,25.0949223 L12.0202107,25.0949223 L12.0202107,26.0655463 Z M7.00336845,24.1310926 L12.0202107,24.1310926 L12.0202107,23.1604686 L7.00336845,23.1604686 L7.00336845,24.1310926 Z M6,26.0655463 L11.0168423,26.0655463 L11.0168423,25.0949223 L6,25.0949223 L6,26.0655463 Z M8.0067369,28 L11.0168423,28 L11.0168423,27.029376 L8.0067369,27.029376 L8.0067369,28 Z\" id=\"AWS-CloudTrail_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/cloudtrail-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "cloudtrail.services.k8s.aws/v1alpha1",
+    "kind": "Trail",
+    "schema": "{\n \"description\": \"Trail is the Schema for the Trails API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TrailSpec defines the desired state of Trail.\\n\\nThe settings for a trail.\",\n   \"properties\": {\n    \"cloudWatchLogsLogGroupARN\": {\n     \"description\": \"Specifies a log group name using an Amazon Resource Name (ARN), a unique\\nidentifier that represents the log group to which CloudTrail logs will be\\ndelivered. You must use a log group that exists in your account.\\n\\nNot required unless you specify CloudWatchLogsRoleArn.\",\n     \"type\": \"string\"\n    },\n    \"cloudWatchLogsRoleARN\": {\n     \"description\": \"Specifies the role for the CloudWatch Logs endpoint to assume to write to\\na user's log group. You must use a role that exists in your account.\",\n     \"type\": \"string\"\n    },\n    \"enableLogFileValidation\": {\n     \"description\": \"Specifies whether log file integrity validation is enabled. The default is\\nfalse.\\n\\nWhen you disable log file integrity validation, the chain of digest files\\nis broken after one hour. CloudTrail does not create digest files for log\\nfiles that were delivered during a period in which log file integrity validation\\nwas disabled. For example, if you enable log file integrity validation at\\nnoon on January 1, disable it at noon on January 2, and re-enable it at noon\\non January 10, digest files will not be created for the log files delivered\\nfrom noon on January 2 to noon on January 10. The same applies whenever you\\nstop CloudTrail logging or delete a trail.\",\n     \"type\": \"boolean\"\n    },\n    \"includeGlobalServiceEvents\": {\n     \"description\": \"Specifies whether the trail is publishing events from global services such\\nas IAM to the log files.\",\n     \"type\": \"boolean\"\n    },\n    \"isMultiRegionTrail\": {\n     \"description\": \"Specifies whether the trail is created in the current Region or in all Regions.\\nThe default is false, which creates a trail only in the Region where you\\nare signed in. As a best practice, consider creating trails that log events\\nin all Regions.\",\n     \"type\": \"boolean\"\n    },\n    \"isOrganizationTrail\": {\n     \"description\": \"Specifies whether the trail is created for all accounts in an organization\\nin Organizations, or only for the current Amazon Web Services account. The\\ndefault is false, and cannot be true unless the call is made on behalf of\\nan Amazon Web Services account that is the management account or delegated\\nadministrator account for an organization in Organizations.\",\n     \"type\": \"boolean\"\n    },\n    \"kmsKeyID\": {\n     \"description\": \"Specifies the KMS key ID to use to encrypt the logs delivered by CloudTrail.\\nThe value can be an alias name prefixed by alias/, a fully specified ARN\\nto an alias, a fully specified ARN to a key, or a globally unique identifier.\\n\\nCloudTrail also supports KMS multi-Region keys. For more information about\\nmulti-Region keys, see Using multi-Region keys (https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)\\nin the Key Management Service Developer Guide.\\n\\nExamples:\\n\\n  - alias/MyAliasName\\n\\n  - arn:aws:kms:us-east-2:123456789012:alias/MyAliasName\\n\\n  - arn:aws:kms:us-east-2:123456789012:key/12345678-1234-1234-1234-123456789012\\n\\n  - 12345678-1234-1234-1234-123456789012\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Specifies the name of the trail. The name must meet the following requirements:\\n\\n  - Contain only ASCII letters (a-z, A-Z), numbers (0-9), periods (.), underscores\\n    (_), or dashes (-)\\n\\n  - Start with a letter or number, and end with a letter or number\\n\\n  - Be between 3 and 128 characters\\n\\n  - Have no adjacent periods, underscores or dashes. Names like my-_namespace\\n    and my--namespace are not valid.\\n\\n  - Not be in IP address format (for example, 192.168.5.4)\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"s3BucketName\": {\n     \"description\": \"Specifies the name of the Amazon S3 bucket designated for publishing log\\nfiles. For information about bucket naming rules, see Bucket naming rules\\n(https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html)\\nin the Amazon Simple Storage Service User Guide.\",\n     \"type\": \"string\"\n    },\n    \"s3KeyPrefix\": {\n     \"description\": \"Specifies the Amazon S3 key prefix that comes after the name of the bucket\\nyou have designated for log file delivery. For more information, see Finding\\nYour CloudTrail Log Files (https://docs.aws.amazon.com/awscloudtrail/latest/userguide/get-and-view-cloudtrail-log-files.html#cloudtrail-find-log-files).\\nThe maximum length is 200 characters.\",\n     \"type\": \"string\"\n    },\n    \"snsTopicName\": {\n     \"description\": \"Specifies the name of the Amazon SNS topic defined for notification of log\\nfile delivery. The maximum length is 256 characters.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"items\": {\n      \"description\": \"A custom key-value pair associated with a resource such as a CloudTrail trail,\\nevent data store, dashboard, or channel.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"s3BucketName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Trail\",\n \"type\": \"object\"\n}"
+  }
+}

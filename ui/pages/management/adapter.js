@@ -1,25 +1,25 @@
 import { NoSsr } from '@layer5/sistent';
 import Head from 'next/head';
-import { withRouter } from 'next/router';
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import React, { useEffect } from 'react';
 import MesheryPlayComponent from '../../components/MesheryPlayComponent';
-import { updatepagepath } from '../../lib/store';
+import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
+import { getPath } from 'lib/path';
 
 const Manage = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Adapter' }));
+  }, []);
+
   return (
     <NoSsr>
       <Head>
-        <title>Management | Meshery </title>
+        <title>Adapter | Meshery </title>
       </Head>
       <MesheryPlayComponent />
     </NoSsr>
   );
 };
 
-const mapDispatchToProps = (dispatch) => {
-  return { updatepagepath: bindActionCreators(updatepagepath, dispatch) };
-};
-
-export default connect(null, mapDispatchToProps)(withRouter(Manage));
+export default Manage;

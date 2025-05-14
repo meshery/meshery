@@ -34,6 +34,22 @@ func TestList(t *testing.T) {
 			ExpectedResponse: "list.relationship.output.golden",
 			ExpectError:      false,
 		},
+		{
+			Name:             "Display count of registered relationships empty result",
+			Args:             []string{"list", "--count"},
+			URL:              "/api/meshmodels/relationships",
+			Fixture:          "list.relationship.api.empty.response.golden",
+			ExpectedResponse: "list.count.relationship.empty.output.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "Display count of registered relationships",
+			Args:             []string{"list", "--count"},
+			URL:              "/api/meshmodels/relationships",
+			Fixture:          "list.relationship.api.response.golden",
+			ExpectedResponse: "list.count.relationship.output.golden",
+			ExpectError:      false,
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")

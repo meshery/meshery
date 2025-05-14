@@ -31,7 +31,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 function GrafanaConfigComponent({
-  grafanaURL,
   grafanaAPIKey,
   urlError,
   handleChange,
@@ -68,7 +67,6 @@ function GrafanaConfigComponent({
                     label: connection?.metadata?.url,
                     ...connection,
                   }))}
-                  value={grafanaURL}
                   label="Grafana Base URL"
                   data-testid="grafana-base-url"
                   error={urlError}

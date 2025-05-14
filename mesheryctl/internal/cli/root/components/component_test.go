@@ -24,20 +24,20 @@ func TestComponent(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "display components count",
-			Args:             []string{"--count"},
-			URL:              fmt.Sprintf("/%s", componentApiPath),
-			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.list.count.output.golden",
-			ExpectError:      false,
-		},
-		{
 			Name:             "launch component with invalid subcommand name",
 			Args:             []string{"invalidCommand"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
 			ExpectedResponse: "components.invalid.subcommand.output.golden",
 			ExpectError:      true,
+		},
+		{
+			Name:             "display components count",
+			Args:             []string{"--count"},
+			URL:              fmt.Sprintf("/%s", componentApiPath),
+			Fixture:          "components.api.response.golden",
+			ExpectedResponse: "components.list.count.output.golden",
+			ExpectError:      false,
 		},
 	}
 

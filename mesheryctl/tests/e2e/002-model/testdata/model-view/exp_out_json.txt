@@ -1,0 +1,41 @@
+{
+  "id": "a69a64c4-227e-c270-e6fa-09a8c0051c39",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "amd-gpu",
+  "displayName": "AMD GPU",
+  "status": "enabled",
+  "registrant": {
+    "id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+    "name": "Artifact Hub",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "artifacthub",
+    "status": "registered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+  },
+  "connection_id": "82e5bc76-4468-9d29-2e5f-94ccdbabd618",
+  "category": {
+    "id": "639aa59e-5b2d-0c11-92c5-74c5014d41df",
+    "name": "Provisioning"
+  },
+  "subCategory": "Automation & Configuration",
+  "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#000",
+    "secondaryColor": "#fff",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "ui/public/static/img/meshmodels/amd-gpu/color/amd-gpu-color.svg",
+    "svgComplete": "",
+    "svgWhite": "ui/public/static/img/meshmodels/amd-gpu/white/amd-gpu-white.svg"
+  },
+  "model": {
+    "version": "0.19.0"
+  },
+  "components_count": 3,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

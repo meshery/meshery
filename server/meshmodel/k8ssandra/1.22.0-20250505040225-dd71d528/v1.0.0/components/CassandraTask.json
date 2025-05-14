@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Cassandra Task",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "k8ssandra",
+    "displayName": "K8ssandra",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://helm.k8ssandra.io/stable/k8ssandra-operator-1.22.0-20250505040225-dd71d528.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.22.0-20250505040225-dd71d528"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://helm.k8ssandra.io/stable/k8ssandra-operator-1.22.0-20250505040225-dd71d528.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "control.k8ssandra.io/v1alpha1",
+    "kind": "CassandraTask",
+    "schema": "{\n \"description\": \"CassandraTask is the Schema for the cassandrajobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CassandraTaskSpec defines the desired state of CassandraTask\",\n   \"properties\": {\n    \"concurrencyPolicy\": {\n     \"description\": \"Specifics if this task can be run concurrently with other active tasks. Valid values are:\\n- \\\"Allow\\\": allows multiple Tasks to run concurrently on Cassandra cluster\\n- \\\"Forbid\\\" (default): only a single task is executed at once\\nThe \\\"Allow\\\" property is only valid if all the other active Tasks have \\\"Allow\\\" as well.\",\n     \"type\": \"string\"\n    },\n    \"datacenter\": {\n     \"description\": \"Which datacenter this task is targetting. Note, this must be a datacenter which the current cass-operator\\ncan access\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"API version of the referent.\",\n       \"type\": \"string\"\n      },\n      \"fieldPath\": {\n       \"description\": \"If referring to a piece of an object instead of an entire object, this string\\nshould contain a valid JSON/Go field access statement, such as desiredState.manifest.containers[2].\\nFor example, if the object reference is to a container within a pod, this would take on a value like:\\n\\\"spec.containers{name}\\\" (where \\\"name\\\" refers to the name of the container that triggered\\nthe event) or if no container name is specified \\\"spec.containers[2]\\\" (container with\\nindex 2 in this pod). This syntax is chosen only to have some well-defined way of\\nreferencing a part of an object.\\nTODO: this design is not final and this field is subject to change in the future.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      },\n      \"resourceVersion\": {\n       \"description\": \"Specific resourceVersion to which this reference is made, if any.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency\",\n       \"type\": \"string\"\n      },\n      \"uid\": {\n       \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#uids\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"jobs\": {\n     \"description\": \"Jobs defines the jobs this task will execute (and their order)\",\n     \"items\": {\n      \"properties\": {\n       \"args\": {\n        \"description\": \"Arguments are additional parameters for the command\",\n        \"properties\": {\n         \"end_token\": {\n          \"type\": \"string\"\n         },\n         \"jobs\": {\n          \"type\": \"integer\"\n         },\n         \"keyspace_name\": {\n          \"type\": \"string\"\n         },\n         \"new_tokens\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"NewTokens is a map of pod names to their newly-assigned tokens. Required for the move\\ncommand, ignored otherwise. Pods referenced in this map must exist; any existing pod not\\nreferenced in this map will not be moved.\",\n          \"type\": \"object\"\n         },\n         \"no_snapshot\": {\n          \"type\": \"boolean\"\n         },\n         \"no_validate\": {\n          \"description\": \"Scrub arguments\",\n          \"type\": \"boolean\"\n         },\n         \"pod_name\": {\n          \"type\": \"string\"\n         },\n         \"rack\": {\n          \"type\": \"string\"\n         },\n         \"skip_corrupted\": {\n          \"type\": \"boolean\"\n         },\n         \"source_datacenter\": {\n          \"type\": \"string\"\n         },\n         \"split_output\": {\n          \"description\": \"Compaction arguments\",\n          \"type\": \"boolean\"\n         },\n         \"start_token\": {\n          \"type\": \"string\"\n         },\n         \"tables\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"command\": {\n        \"description\": \"Command defines what is run against Cassandra pods\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"command\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"restartPolicy\": {\n     \"description\": \"RestartPolicy indicates the behavior n case of failure. Default is Never.\",\n     \"type\": \"string\"\n    },\n    \"scheduledTime\": {\n     \"description\": \"ScheduledTime indicates the earliest possible time this task is executed. This does not necessarily\\nequal to the time it is actually executed (if other tasks are blocking for example). If not set,\\nthe task will be executed immediately.\",\n     \"format\": \"date-time\",\n     \"type\": \"string\"\n    },\n    \"ttlSecondsAfterFinished\": {\n     \"description\": \"TTLSecondsAfterFinished defines how long the completed job will kept before being cleaned up. If set to 0\\nthe task will not be cleaned up by the cass-operator. If unset, the default time (86400s) is used.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cassandra Task\",\n \"type\": \"object\"\n}"
+  }
+}

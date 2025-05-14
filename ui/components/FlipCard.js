@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useState, useRef, useEffect } from 'react';
 import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
 

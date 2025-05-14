@@ -65,7 +65,7 @@ match resources using label selectors and wildcards.",
 "
 ]
 howItWorks: "Block non-conformant resources"
-howItWorksDetails: "Using MeshMap, apply best practice design templates for admission control over non-conformant resources."
+howItWorksDetails: "Using Kanvas, apply best practice design templates for admission control over non-conformant resources."
 language: en
 list: include
 type: extensibility

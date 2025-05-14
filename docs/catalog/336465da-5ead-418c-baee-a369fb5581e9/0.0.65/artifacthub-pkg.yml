@@ -1,0 +1,24 @@
+version: 0.0.65
+name: kubernetes-service-design
+displayName: Kubernetes-service Design
+createdAt: "2025-04-21T19:06:54Z"
+description: Kubernetes-service Design
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/336465da-5ead-418c-baee-a369fb5581e9/0.0.65/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e0f8127d-6d28-4d08-956c-7ac3c729e1f0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/336465da-5ead-418c-baee-a369fb5581e9-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/336465da-5ead-418c-baee-a369fb5581e9-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

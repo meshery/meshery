@@ -1,21 +1,17 @@
-import { CustomTooltip, ToggleButton, useTheme } from '@layer5/sistent';
+import { CustomTooltip, IconButton, useTheme } from '@layer5/sistent';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import TableChartIcon from '@mui/icons-material/TableChart';
 
 function ViewSwitch({ view, changeView }) {
   const theme = useTheme();
   return (
-    <ToggleButton
-      style={{ border: 'none' }}
+    <IconButton
       size="small"
       value={view}
-      onChange={() => {
+      onClick={() => {
         changeView(view === 'grid' ? 'table' : 'grid');
       }}
       aria-label="Switch View"
-      sx={{
-        border: 'none',
-      }}
     >
       {view === 'grid' ? (
         <CustomTooltip title="Grid View">
@@ -30,7 +26,7 @@ function ViewSwitch({ view, changeView }) {
           </div>
         </CustomTooltip>
       )}
-    </ToggleButton>
+    </IconButton>
   );
 }
 

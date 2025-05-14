@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Instance",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-ec2-controller",
+    "displayName": "AWS EC2",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Provisioning"
+    },
+    "subCategory": "Compute",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ED7100",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.4.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ED7100",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "ec2.services.k8s.aws/v1alpha1",
+    "kind": "Instance",
+    "schema": "{\n \"description\": \"Instance is the Schema for the Instances API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"InstanceSpec defines the desired state of Instance.\\n\\nDescribes an instance.\",\n   \"properties\": {\n    \"blockDeviceMappings\": {\n     \"description\": \"The block device mapping, which defines the EBS volumes and instance store\\nvolumes to attach to the instance at launch. For more information, see Block\\ndevice mappings (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/block-device-mapping-concepts.html)\\nin the Amazon EC2 User Guide.\",\n     \"items\": {\n      \"description\": \"Describes a block device mapping, which defines the EBS volumes and instance\\nstore volumes to attach to an instance at launch.\",\n      \"properties\": {\n       \"deviceName\": {\n        \"type\": \"string\"\n       },\n       \"ebs\": {\n        \"description\": \"Describes a block device for an EBS volume.\",\n        \"properties\": {\n         \"deleteOnTermination\": {\n          \"type\": \"boolean\"\n         },\n         \"encrypted\": {\n          \"type\": \"boolean\"\n         },\n         \"iops\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"kmsKeyID\": {\n          \"type\": \"string\"\n         },\n         \"outpostARN\": {\n          \"type\": \"string\"\n         },\n         \"snapshotID\": {\n          \"type\": \"string\"\n         },\n         \"throughput\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"volumeSize\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"volumeType\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"noDevice\": {\n        \"type\": \"string\"\n       },\n       \"virtualName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"capacityReservationSpecification\": {\n     \"description\": \"Information about the Capacity Reservation targeting option. If you do not\\nspecify this parameter, the instance's Capacity Reservation preference defaults\\nto open, which enables it to run in any open Capacity Reservation that has\\nmatching attributes (instance type, platform, Availability Zone, and tenancy).\",\n     \"properties\": {\n      \"capacityReservationPreference\": {\n       \"type\": \"string\"\n      },\n      \"capacityReservationTarget\": {\n       \"description\": \"Describes a target Capacity Reservation or Capacity Reservation group.\",\n       \"properties\": {\n        \"capacityReservationID\": {\n         \"type\": \"string\"\n        },\n        \"capacityReservationResourceGroupARN\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"cpuOptions\": {\n     \"description\": \"The CPU options for the instance. For more information, see Optimize CPU\\noptions (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-optimize-cpu.html)\\nin the Amazon EC2 User Guide.\",\n     \"properties\": {\n      \"coreCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"threadsPerCore\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"creditSpecification\": {\n     \"description\": \"The credit option for CPU usage of the burstable performance instance. Valid\\nvalues are standard and unlimited. To change this attribute after launch,\\nuse ModifyInstanceCreditSpecification (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceCreditSpecification.html).\\nFor more information, see Burstable performance instances (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/burstable-performance-instances.html)\\nin the Amazon EC2 User Guide.\\n\\nDefault: standard (T2 instances) or unlimited (T3/T3a/T4g instances)\\n\\nFor T3 instances with host tenancy, only standard is supported.\",\n     \"properties\": {\n      \"cpuCredits\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"disableAPIStop\": {\n     \"description\": \"Indicates whether an instance is enabled for stop protection. For more information,\\nsee Stop protection (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Stop_Start.html#Using_StopProtection).\",\n     \"type\": \"boolean\"\n    },\n    \"disableAPITermination\": {\n     \"description\": \"If you set this parameter to true, you can't terminate the instance using\\nthe Amazon EC2 console, CLI, or API; otherwise, you can. To change this attribute\\nafter launch, use ModifyInstanceAttribute (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ModifyInstanceAttribute.html).\\nAlternatively, if you set InstanceInitiatedShutdownBehavior to terminate,\\nyou can terminate the instance by running the shutdown command from the instance.\\n\\nDefault: false\",\n     \"type\": \"boolean\"\n    },\n    \"ebsOptimized\": {\n     \"description\": \"Indicates whether the instance is optimized for Amazon EBS I/O. This optimization\\nprovides dedicated throughput to Amazon EBS and an optimized configuration\\nstack to provide optimal Amazon EBS I/O performance. This optimization isn't\\navailable with all instance types. Additional usage charges apply when using\\nan EBS-optimized instance.\\n\\nDefault: false\",\n     \"type\": \"boolean\"\n    },\n    \"elasticGPUSpecification\": {\n     \"description\": \"An elastic GPU to associate with the instance.\\n\\nAmazon Elastic Graphics reached end of life on January 8, 2024.\",\n     \"items\": {\n      \"description\": \"Amazon Elastic Graphics reached end of life on January 8, 2024.\\n\\nA specification for an Elastic Graphics accelerator.\",\n      \"properties\": {\n       \"type\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"elasticInferenceAccelerators\": {\n     \"description\": \"An elastic inference accelerator to associate with the instance.\\n\\nAmazon Elastic Inference is no longer available.\",\n     \"items\": {\n      \"description\": \"Amazon Elastic Inference is no longer available.\\n\\nDescribes an elastic inference accelerator.\",\n      \"properties\": {\n       \"count\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"type_\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"enclaveOptions\": {\n     \"description\": \"Indicates whether the instance is enabled for Amazon Web Services Nitro Enclaves.\\nFor more information, see What is Amazon Web Services Nitro Enclaves? (https://docs.aws.amazon.com/enclaves/latest/user/nitro-enclave.html)\\nin the Amazon Web Services Nitro Enclaves User Guide.\\n\\nYou can't enable Amazon Web Services Nitro Enclaves and hibernation on the\\nsame instance.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"hibernationOptions\": {\n     \"description\": \"Indicates whether an instance is enabled for hibernation. This parameter\\nis valid only if the instance meets the hibernation prerequisites (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/hibernating-prerequisites.html).\\nFor more information, see Hibernate your Amazon EC2 instance (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Hibernate.html)\\nin the Amazon EC2 User Guide.\\n\\nYou can't enable hibernation and Amazon Web Services Nitro Enclaves on the\\nsame instance.\",\n     \"properties\": {\n      \"configured\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"iamInstanceProfile\": {\n     \"description\": \"The name or Amazon Resource Name (ARN) of an IAM instance profile.\",\n     \"properties\": {\n      \"arn\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"imageID\": {\n     \"description\": \"The ID of the AMI. An AMI ID is required to launch an instance and must be\\nspecified here or in a launch template.\",\n     \"type\": \"string\"\n    },\n    \"instanceInitiatedShutdownBehavior\": {\n     \"description\": \"Indicates whether an instance stops or terminates when you initiate shutdown\\nfrom the instance (using the operating system command for system shutdown).\\n\\nDefault: stop\",\n     \"type\": \"string\"\n    },\n    \"instanceMarketOptions\": {\n     \"description\": \"The market (purchasing) option for the instances.\\n\\nFor RunInstances, persistent Spot Instance requests are only supported when\\nInstanceInterruptionBehavior is set to either hibernate or stop.\",\n     \"properties\": {\n      \"marketType\": {\n       \"type\": \"string\"\n      },\n      \"spotOptions\": {\n       \"description\": \"The options for Spot Instances.\",\n       \"properties\": {\n        \"blockDurationMinutes\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"instanceInterruptionBehavior\": {\n         \"type\": \"string\"\n        },\n        \"maxPrice\": {\n         \"type\": \"string\"\n        },\n        \"spotInstanceType\": {\n         \"type\": \"string\"\n        },\n        \"validUntil\": {\n         \"format\": \"date-time\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"instanceType\": {\n     \"description\": \"The instance type. For more information, see Amazon EC2 instance types (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html)\\nin the Amazon EC2 User Guide.\",\n     \"type\": \"string\"\n    },\n    \"ipv6AddressCount\": {\n     \"description\": \"The number of IPv6 addresses to associate with the primary network interface.\\nAmazon EC2 chooses the IPv6 addresses from the range of your subnet. You\\ncannot specify this option and the option to assign specific IPv6 addresses\\nin the same request. You can specify this option if you've specified a minimum\\nnumber of instances to launch.\\n\\nYou cannot specify this option and the network interfaces option in the same\\nrequest.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"ipv6Addresses\": {\n     \"description\": \"The IPv6 addresses from the range of the subnet to associate with the primary\\nnetwork interface. You cannot specify this option and the option to assign\\na number of IPv6 addresses in the same request. You cannot specify this option\\nif you've specified a minimum number of instances to launch.\\n\\nYou cannot specify this option and the network interfaces option in the same\\nrequest.\",\n     \"items\": {\n      \"description\": \"Describes an IPv6 address.\",\n      \"properties\": {\n       \"ipv6Address\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"kernelID\": {\n     \"description\": \"The ID of the kernel.\\n\\nWe recommend that you use PV-GRUB instead of kernels and RAM disks. For more\\ninformation, see PV-GRUB (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/UserProvidedkernels.html)\\nin the Amazon EC2 User Guide.\",\n     \"type\": \"string\"\n    },\n    \"keyName\": {\n     \"description\": \"The name of the key pair. You can create a key pair using CreateKeyPair (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateKeyPair.html)\\nor ImportKeyPair (https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ImportKeyPair.html).\\n\\nIf you do not specify a key pair, you can't connect to the instance unless\\nyou choose an AMI that is configured to allow users another way to log in.\",\n     \"type\": \"string\"\n    },\n    \"launchTemplate\": {\n     \"description\": \"The launch template. Any additional parameters that you specify for the new\\ninstance overwrite the corresponding parameters included in the launch template.\",\n     \"properties\": {\n      \"launchTemplateID\": {\n       \"type\": \"string\"\n      },\n      \"launchTemplateName\": {\n       \"type\": \"string\"\n      },\n      \"launchTemplateRef\": {\n       \"description\": \"Reference field for LaunchTemplateID\",\n       \"properties\": {\n        \"from\": {\n         \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n         \"properties\": {\n          \"name\": {\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"licenseSpecifications\": {\n     \"description\": \"The license configurations.\",\n     \"items\": {\n      \"description\": \"Describes a license configuration.\",\n      \"properties\": {\n       \"licenseConfigurationARN\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"maintenanceOptions\": {\n     \"description\": \"The maintenance and recovery options for the instance.\",\n     \"properties\": {\n      \"autoRecovery\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"maxCount\": {\n     \"description\": \"The maximum number of instances to launch. If you specify a value that is\\nmore capacity than Amazon EC2 can launch in the target Availability Zone,\\nAmazon EC2 launches the largest possible number of instances above the specified\\nminimum count.\\n\\nConstraints: Between 1 and the quota for the specified instance type for\\nyour account for this Region. For more information, see Amazon EC2 instance\\ntype quotas (https://docs.aws.amazon.com/ec2/latest/instancetypes/ec2-instance-quotas.html).\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"metadataOptions\": {\n     \"description\": \"The metadata options for the instance. For more information, see Instance\\nmetadata and user data (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html).\",\n     \"properties\": {\n      \"httpEndpoint\": {\n       \"type\": \"string\"\n      },\n      \"httpProtocolIPv6\": {\n       \"type\": \"string\"\n      },\n      \"httpPutResponseHopLimit\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"httpTokens\": {\n       \"type\": \"string\"\n      },\n      \"instanceMetadataTags\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"minCount\": {\n     \"description\": \"The minimum number of instances to launch. If you specify a value that is\\nmore capacity than Amazon EC2 can provide in the target Availability Zone,\\nAmazon EC2 does not launch any instances.\\n\\nConstraints: Between 1 and the quota for the specified instance type for\\nyour account for this Region. For more information, see Amazon EC2 instance\\ntype quotas (https://docs.aws.amazon.com/ec2/latest/instancetypes/ec2-instance-quotas.html).\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"monitoring\": {\n     \"description\": \"Specifies whether detailed monitoring is enabled for the instance.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"networkInterfaces\": {\n     \"description\": \"The network interfaces to associate with the instance.\",\n     \"items\": {\n      \"description\": \"Describes a network interface.\",\n      \"properties\": {\n       \"associateCarrierIPAddress\": {\n        \"type\": \"boolean\"\n       },\n       \"associatePublicIPAddress\": {\n        \"type\": \"boolean\"\n       },\n       \"deleteOnTermination\": {\n        \"type\": \"boolean\"\n       },\n       \"description\": {\n        \"type\": \"string\"\n       },\n       \"deviceIndex\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"interfaceType\": {\n        \"type\": \"string\"\n       },\n       \"ipv4PrefixCount\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"ipv4Prefixes\": {\n        \"items\": {\n         \"description\": \"Describes the IPv4 prefix option for a network interface.\",\n         \"properties\": {\n          \"ipv4Prefix\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"ipv6AddressCount\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"ipv6Addresses\": {\n        \"items\": {\n         \"description\": \"Describes an IPv6 address.\",\n         \"properties\": {\n          \"ipv6Address\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"ipv6PrefixCount\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"ipv6Prefixes\": {\n        \"items\": {\n         \"description\": \"Describes the IPv4 prefix option for a network interface.\",\n         \"properties\": {\n          \"ipv6Prefix\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"networkCardIndex\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"networkInterfaceID\": {\n        \"type\": \"string\"\n       },\n       \"privateIPAddress\": {\n        \"type\": \"string\"\n       },\n       \"privateIPAddresses\": {\n        \"items\": {\n         \"description\": \"Describes a secondary private IPv4 address for a network interface.\",\n         \"properties\": {\n          \"primary\": {\n           \"type\": \"boolean\"\n          },\n          \"privateIPAddress\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"secondaryPrivateIPAddressCount\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"subnetID\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"placement\": {\n     \"description\": \"The placement for the instance.\",\n     \"properties\": {\n      \"affinity\": {\n       \"type\": \"string\"\n      },\n      \"availabilityZone\": {\n       \"type\": \"string\"\n      },\n      \"groupName\": {\n       \"type\": \"string\"\n      },\n      \"hostID\": {\n       \"type\": \"string\"\n      },\n      \"hostResourceGroupARN\": {\n       \"type\": \"string\"\n      },\n      \"partitionNumber\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"spreadDomain\": {\n       \"type\": \"string\"\n      },\n      \"tenancy\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"privateDNSNameOptions\": {\n     \"description\": \"The options for the instance hostname. The default values are inherited from\\nthe subnet. Applies only if creating a network interface, not attaching an\\nexisting one.\",\n     \"properties\": {\n      \"enableResourceNameDNSAAAARecord\": {\n       \"type\": \"boolean\"\n      },\n      \"enableResourceNameDNSARecord\": {\n       \"type\": \"boolean\"\n      },\n      \"hostnameType\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"privateIPAddress\": {\n     \"description\": \"The primary IPv4 address. You must specify a value from the IPv4 address\\nrange of the subnet.\\n\\nOnly one private IP address can be designated as primary. You can't specify\\nthis option if you've specified the option to designate a private IP address\\nas the primary IP address in a network interface specification. You cannot\\nspecify this option if you're launching more than one instance in the request.\\n\\nYou cannot specify this option and the network interfaces option in the same\\nrequest.\",\n     \"type\": \"string\"\n    },\n    \"ramDiskID\": {\n     \"description\": \"The ID of the RAM disk to select. Some kernels require additional drivers\\nat launch. Check the kernel requirements for information about whether you\\nneed to specify a RAM disk. To find kernel requirements, go to the Amazon\\nWeb Services Resource Center and search for the kernel ID.\\n\\nWe recommend that you use PV-GRUB instead of kernels and RAM disks. For more\\ninformation, see PV-GRUB (https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/UserProvidedkernels.html)\\nin the Amazon EC2 User Guide.\",\n     \"type\": \"string\"\n    },\n    \"securityGroupIDs\": {\n     \"description\": \"The IDs of the security groups. You can create a security group using CreateSecurityGroup\\n(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_CreateSecurityGroup.html).\\n\\nIf you specify a network interface, you must specify any security groups\\nas part of the network interface instead of using this parameter.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"securityGroups\": {\n     \"description\": \"[Default VPC] The names of the security groups.\\n\\nIf you specify a network interface, you must specify any security groups\\nas part of the network interface instead of using this parameter.\\n\\nDefault: Amazon EC2 uses the default security group.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetID\": {\n     \"description\": \"The ID of the subnet to launch the instance into.\\n\\nIf you specify a network interface, you must specify any subnets as part\\nof the network interface instead of using this parameter.\",\n     \"type\": \"string\"\n    },\n    \"subnetRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"The tags. The value parameter is required, but if you don't want the tag\\nto have a value, specify the parameter with no value, and we set the value\\nto an empty string.\",\n     \"items\": {\n      \"description\": \"Describes a tag.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"userData\": {\n     \"description\": \"The user data to make available to the instance. User data must be base64-encoded.\\nDepending on the tool or SDK that you're using, the base64-encoding might\\nbe performed for you. For more information, see Work with instance user data\\n(https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-add-user-data.html).\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Instance\",\n \"type\": \"object\"\n}"
+  }
+}

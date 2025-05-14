@@ -21,6 +21,7 @@ import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -33,7 +34,7 @@ const MuiRJSFForm = withTheme(MaterialUITheme);
  * @param {*} props
  * @returns
  */
-function RJSFForm({
+function RJSFForm_({
   schema,
   jsonSchema,
   data,
@@ -127,4 +128,7 @@ function RJSFForm({
   );
 }
 
+const RJSFForm = (props) => {
+  return <ProviderStoreWrapper>{<RJSFForm_ {...props} />}</ProviderStoreWrapper>;
+};
 export default RJSFForm;

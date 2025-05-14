@@ -13,6 +13,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
@@ -374,7 +375,11 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    		h.log.Error(err)
+	}
+
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
@@ -403,7 +408,10 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/telemetry/metrics/static-board PrometheusAPI idGetPrometheusStaticBoard

@@ -1,9 +1,6 @@
 import React from 'react';
 import { IconButton, CustomTooltip } from '@layer5/sistent';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { clearResultsSelection } from '../../lib/store';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -47,13 +44,4 @@ const CustomToolbarSelect = ({
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const results_selection = state.get('results_selection').toObject();
-  return { results_selection };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(CustomToolbarSelect);
+export default CustomToolbarSelect;

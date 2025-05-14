@@ -2,12 +2,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { Typography, styled, Box } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
 import PrometheusSelectionComponent from './PrometheusSelectionComponent';
 import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
-import { updateGrafanaConfig, updateProgress, updatePrometheusConfig } from '../../../lib/store';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';
 import PrometheusConfigComponent from './PrometheusConfigComponent';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -16,6 +13,9 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
+import { updatePrometheusConfig } from '@/store/slices/telemetry';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   '& .buttons': {
@@ -52,7 +52,7 @@ const StyledBox = styled(Box)(({ theme }) => ({
 }));
 
 const PrometheusComponent = (props) => {
-  const { prometheus: initialPrometheus } = props;
+  const { prometheus: initialPrometheus } = useSelector((state) => state.telemetry);
   const [urlError, setUrlError] = useState(false);
   const [prometheusConfigSuccess, setPrometheusConfigSuccess] = useState(
     initialPrometheus.prometheusURL !== '',
@@ -63,14 +63,17 @@ const PrometheusComponent = (props) => {
   const [prometheusURL, setPrometheusURL] = useState(initialPrometheus.prometheusURL);
   const [connectionID, setConnectionID] = useState(initialPrometheus.connectionID);
   const [connectionName, setConnectionName] = useState(initialPrometheus.connectionName);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
 
   const getK8sClusterIds = () => {
-    return getK8sClusterIdsFromCtxId(props.selectedK8sContexts, props.k8sconfig);
+    return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
   const submitPrometheusConfigure = (url) => {
     const params = new URLSearchParams({ prometheusURL: url });
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
     dataFetch(
       `/api/telemetry/metrics/config`,
       {
@@ -80,16 +83,19 @@ const PrometheusComponent = (props) => {
         body: params,
       },
       (result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         if (result) {
           props.notify({
             message: 'Prometheus was configured!',
             event_type: EVENT_TYPES.SUCCESS,
           });
           setPrometheusConfigSuccess(true);
-          props.updatePrometheusConfig({
-            prometheus: { prometheusURL: url, selectedPrometheusBoardsConfigs: [] },
-          });
+          dispatch(
+            updatePrometheusConfig({
+              prometheusURL: url,
+              selectedPrometheusBoardsConfigs: [],
+            }),
+          );
         }
       },
       handleError,
@@ -108,17 +114,15 @@ const PrometheusComponent = (props) => {
         return;
       }
 
-      console.log('Data:', data);
-
       setPrometheusURL(newURL);
-      props.updatePrometheusConfig({
-        prometheus: {
+      dispatch(
+        updatePrometheusConfig({
           prometheusURL: newURL,
           selectedPrometheusBoardsConfigs: data?.metadata?.prometheus_boards || [],
           connectionID: data?.id,
           connectionName: data?.name,
-        },
-      });
+        }),
+      );
     }
   };
 
@@ -131,7 +135,7 @@ const PrometheusComponent = (props) => {
   };
 
   const handleError = (message = 'Error communicating with Prometheus') => {
-    props.updateProgress({ showProgress: false });
+    updateProgress({ showProgress: false });
     props.notify({ message, event_type: EVENT_TYPES.ERROR });
   };
 
@@ -139,7 +143,7 @@ const PrometheusComponent = (props) => {
     e.preventDefault();
     if (!connectionID) return;
 
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
     dataFetch(
       `/api/integrations/connections/${CONNECTION_KINDS.PROMETHEUS}/status`,
       {
@@ -148,13 +152,16 @@ const PrometheusComponent = (props) => {
         body: JSON.stringify({ [connectionID]: CONNECTION_STATES.DISCOVERED }),
       },
       () => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         setPrometheusConfigSuccess(false);
         setPrometheusURL('');
         setSelectedPrometheusBoardsConfigs([]);
-        props.updatePrometheusConfig({
-          prometheus: { prometheusURL: '', selectedPrometheusBoardsConfigs: [] },
-        });
+        dispatch(
+          updatePrometheusConfig({
+            prometheusURL: '',
+            selectedPrometheusBoardsConfigs: [],
+          }),
+        );
         props.notify({
           message: `Connection "${connectionID}" transitioned to discovered state`,
           event_type: EVENT_TYPES.SUCCESS,
@@ -172,9 +179,12 @@ const PrometheusComponent = (props) => {
     if (boardsSelection?.panels?.length) {
       const newConfigs = [...selectedPrometheusBoardsConfigs, boardsSelection];
       setSelectedPrometheusBoardsConfigs(newConfigs);
-      props.updatePrometheusConfig({
-        prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
-      });
+      dispatch(
+        updatePrometheusConfig({
+          prometheusURL,
+          selectedPrometheusBoardsConfigs: newConfigs,
+        }),
+      );
     }
   };
 
@@ -182,21 +192,23 @@ const PrometheusComponent = (props) => {
     const newConfigs = [...selectedPrometheusBoardsConfigs];
     indexes.sort((a, b) => b - a).forEach((i) => newConfigs.splice(i, 1));
     setSelectedPrometheusBoardsConfigs(newConfigs);
-    props.updatePrometheusConfig({
-      prometheus: { prometheusURL, selectedPrometheusBoardsConfigs: newConfigs },
-    });
+    dispatch(
+      updatePrometheusConfig({
+        prometheusURL,
+        selectedPrometheusBoardsConfigs: newConfigs,
+      }),
+    );
   };
 
   useEffect(() => {
-    const { prometheus } = props;
-    if (prometheus.prometheusURL !== prometheusURL) {
-      setPrometheusConfigSuccess(prometheus.prometheusURL !== '');
-      setPrometheusURL(prometheus.prometheusURL);
-      setSelectedPrometheusBoardsConfigs(prometheus.selectedPrometheusBoardsConfigs || []);
-      setConnectionID(prometheus.connectionID);
-      setConnectionName(prometheus.connectionName);
+    if (initialPrometheus.prometheusURL !== prometheusURL) {
+      setPrometheusConfigSuccess(initialPrometheus.prometheusURL !== '');
+      setPrometheusURL(initialPrometheus.prometheusURL);
+      setSelectedPrometheusBoardsConfigs(initialPrometheus.selectedPrometheusBoardsConfigs || []);
+      setConnectionID(initialPrometheus.connectionID);
+      setConnectionName(initialPrometheus.connectionName);
     }
-  }, [props.prometheus]);
+  }, [initialPrometheus]);
 
   useEffect(() => {
     if (!props.isMeshConfigured) return;
@@ -209,7 +221,7 @@ const PrometheusComponent = (props) => {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
       },
       (result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         if (result?.prometheusURL) {
           const selector = {
             type: 'ALL_MESH',
@@ -283,26 +295,7 @@ const PrometheusComponent = (props) => {
 };
 
 PrometheusComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   scannedPrometheus: PropTypes.array.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateGrafanaConfig: bindActionCreators(updateGrafanaConfig, dispatch),
-  updatePrometheusConfig: bindActionCreators(updatePrometheusConfig, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (st) => {
-  const grafana = st.get('grafana').toJS();
-  const prometheus = st.get('prometheus').toJS();
-  const selectedK8sContexts = st.get('selectedK8sContexts');
-  const k8sconfig = st.get('k8sConfig');
-
-  return { grafana, prometheus, selectedK8sContexts, k8sconfig };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withTelemetryHook(withNotify(PrometheusComponent), CONNECTION_KINDS.PROMETHEUS));
+export default withTelemetryHook(withNotify(PrometheusComponent), CONNECTION_KINDS.PROMETHEUS);

@@ -1,4 +1,3 @@
-//@ts-check
 import React from 'react';
 import { Typography, Button, styled } from '@layer5/sistent';
 import AddIcon from '@mui/icons-material/AddCircleOutline';

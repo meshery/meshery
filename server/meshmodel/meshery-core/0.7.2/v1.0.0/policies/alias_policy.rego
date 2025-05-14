@@ -111,10 +111,16 @@ relationship_side_effects(relationship,design_file,policy_identifier) := side_ef
 		some selector in relationship.selectors
 		some from in selector.allow.from
 
+
+		path := from.patch.mutatorRef[0]
+		length := count(path)
+		displayName  := sprintf("%s.%s",[path[length-2],path[length-1]])
+
 		component := {
 			"id": from.id,
 			"component": {"kind": from.kind},
 			"model": from.model,
+			"displayName": displayName,
 			"metadata": {
 				"isAnnotation":true
 			}

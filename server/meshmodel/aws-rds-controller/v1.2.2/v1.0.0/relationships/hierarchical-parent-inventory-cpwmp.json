@@ -55,6 +55,7 @@
             "id": null,
             "kind": "DBCluster",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -106,6 +107,7 @@
             "id": null,
             "kind": "DBInstance",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",

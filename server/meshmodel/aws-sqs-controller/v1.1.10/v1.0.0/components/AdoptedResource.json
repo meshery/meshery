@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Adopted Resource",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-sqs-controller",
+    "displayName": "AWS Simple Queuing Service",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Streaming \u0026 Messaging",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#7AA116",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/sqs-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 64.386 62.635\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m18.112 62.241c-.58208-.2097-1.0825-.38307-1.1121-.38526-.05964-.004-6.9703-8.5523-8.016-9.9151-.3638-.47411-1.8521-2.3244-3.3073-4.1118-6.169-7.5771-5.7671-6.894-5.6043-9.525.07652-1.2369.2681-2.6062.42574-3.0427.15763-.43656.88408-3.4726 1.6143-6.7469s1.4423-6.4294 1.5822-7.0115c.13998-.58209.49521-2.1299.78941-3.4396 1.3414-5.9718 1.3876-6.0514 4.3737-7.5406 1.313-.65484 3.9324-1.927 5.8208-2.8269 1.8885-.89995 6.3475-3.0258 9.9091-4.7242 7.7798-3.7099 7.4615-3.6736 12.178-1.3871 1.6735.81137 4.531 2.1853 6.35 3.0532 1.819.86788 4.4384 2.1189 5.8208 2.78 1.3824.66112 3.7644 1.7868 5.2931 2.5015 2.9983 1.4017 4.0296 2.3189 4.4852 3.9889.24392.89408.61395 2.4653 2.1314 9.0501.28504 1.2369.86914 3.7372 1.298 5.5562s.97374 4.2003 1.2108 5.2917c.2371 1.0914.56563 2.4425.73006 3.0024.50213 1.7098.37232 3.363-.34938 4.4494-.35422.53325-2.549 3.3137-4.8774 6.1788-2.3283 2.8651-4.531 5.6016-4.8948 6.0813-3.5052 4.6213-6.5923 8.1362-7.558 8.6052-1.0278.49922-1.6581.52197-14.155.51087-10.7-.01-13.272-.081-14.138-.39289zm14.42-14.853c1.993-.65861 4.1321-1.8055 5.208-2.7923l.57777-.52995.15829 1.0218c.37804 2.4404.25325 2.3447 3.0582 2.3447h2.5072v-12.965c0-14.742.01357-14.637-2.1954-17.096-2.2207-2.4725-5.3026-3.3183-11.157-3.0616-3.7392.16395-6.9101.77913-9.2875 1.8019l-1.3054.56157v2.2164c0 1.219.0817 2.2164.18156 2.2164s1.0226-.23473 2.0505-.52163c2.4182-.67492 6.8343-1.3304 8.9629-1.3304 2.0099.0 4.3168.63112 5.1681 1.4139 1.22 1.1218 1.459 1.9649 1.5795 5.5722.10844 3.2453.08971 3.4049-.37858 3.2252-.27096-.10398-1.6251-.35976-3.0091-.56841-6.4942-.979-10.999.005-14.067 3.0735-2.0011 2.0011-2.4548 3.2402-2.4641 6.7305-.0065 2.4258.08634 3.1141.55768 4.1334 1.179 2.5499 3.2925 4.2534 5.9416 4.9794 2.3169.63499 5.0434.52227 7.9127-.42589zm-5.3603-4.4174c-1.3419-.50246-1.7811-.90498-2.3487-2.1529-.96238-2.1156-.37837-5.1724 1.2299-6.4375 1.6643-1.3091 6.0181-1.7402 10.183-1.0084l1.7198.30217v6.6092l-1.4496.86623c-3.1522 1.8836-7.1071 2.6552-9.3347 1.8212z\" stroke-width=\".26458\" style=\"fill:#212529\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" style=\"fill:none;stroke-width:.271169\" d=\"m97.026736 181.42372c-11.841729-2.08439-21.332462-9.10215-26.093859-19.29466-1.998022-4.27707-2.054194-4.6839-2.055098-14.88419-841e-6-9.49243.144169-11.16725 1.267846-14.64314 1.712817-5.29828 6.177554-10.936 12.299033-15.53024 2.542552-1.90822 7.390509-4.53026 10.594967-5.73033 8.933335-3.34556 20.674605-4.18152 34.409895-2.44995 4.41785.55695 12.65266 1.97363 14.19738 2.44244 1.76241.53489 1.85502.50959 2.22367-.60744.24279-.73566.28029-2.73516.14369-7.66053-.44788-16.149002-1.23751-19.911778-5.02917-23.965076-1.80821-1.932978-3.56225-2.973051-7.11557-4.219231-5.30124-1.859191-12.26098-2.569875-19.19872-1.960452-10.49153.921594-19.993865 2.573896-30.430988 5.291456l-5.619006 1.463045-.198978-.992725C76.31239 78.136699 76.217381 74.401849 76.210696 70.38303l-.01215-7.306943 3.356503-1.444983c10.517529-4.527823 21.216871-6.656502 37.293351-7.419665 12.51101-.593907 22.76653.582675 29.54824 3.389974 4.64166 1.921419 7.46417 3.920688 11.49419 8.14168 5.92808 6.208991 7.10885 9.292714 7.94906 20.759878.20234 2.761617.35353 19.385439.44083 48.471489l.13286 44.26837-6.87266-.008c-7.35796-.009-10.40797-.26157-11.45694-.94889-1.06894-.70039-1.56607-2.17132-2.37024-7.01314-.41845-2.51943-.81979-4.63975-.89185-4.71182-.0721-.0721-.94053.61073-1.92991 1.51732-2.61666 2.39769-6.17638 4.67392-11.10375 7.10019-7.00303 3.44832-13.15672 5.41292-19.90153 6.35366-4.14851.57862-11.25229.52696-14.85996-.10807zM117.9586 163.14859c7.66738-1.41157 14.24402-3.97835 21.89691-8.5461l3.72858-2.22546v-12.58107c0-11.74762-.0314-12.59038-.47455-12.72168-1.42309-.42168-10.77757-1.80215-14.1221-2.08405-4.68265-.39467-14.28993-.18758-17.80807.38387-8.70887 1.41459-13.028171 3.55254-15.811026 7.82606-2.230704 3.42561-3.30745 7.4555-3.304504 12.36763.0032 5.38208 1.685615 10.33001 4.555689 13.39835 1.872987 2.00238 6.082191 3.96008 9.779001 4.54822 2.10281.33454 8.92935.11855 11.56007-.36577z\" transform=\"scale(0.26458333)\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 64.386 62.635\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m18.112 62.241c-.58208-.2097-1.0825-.38307-1.1121-.38526-.05964-.004-6.9703-8.5523-8.016-9.9151-.3638-.47411-1.8521-2.3244-3.3073-4.1118-6.169-7.5771-5.7671-6.894-5.6043-9.525.07652-1.2369.2681-2.6062.42574-3.0427.15763-.43656.88408-3.4726 1.6143-6.7469s1.4423-6.4294 1.5822-7.0115c.13998-.58209.49521-2.1299.78941-3.4396 1.3414-5.9718 1.3876-6.0514 4.3737-7.5406 1.313-.65484 3.9324-1.927 5.8208-2.8269 1.8885-.89995 6.3475-3.0258 9.9091-4.7242 7.7798-3.7099 7.4615-3.6736 12.178-1.3871 1.6735.81137 4.531 2.1853 6.35 3.0532 1.819.86788 4.4384 2.1189 5.8208 2.78 1.3824.66112 3.7644 1.7868 5.2931 2.5015 2.9983 1.4017 4.0296 2.3189 4.4852 3.9889.24392.89408.61395 2.4653 2.1314 9.0501.28504 1.2369.86914 3.7372 1.298 5.5562s.97374 4.2003 1.2108 5.2917c.2371 1.0914.56563 2.4425.73006 3.0024.50213 1.7098.37232 3.363-.34938 4.4494-.35422.53325-2.549 3.3137-4.8774 6.1788-2.3283 2.8651-4.531 5.6016-4.8948 6.0813-3.5052 4.6213-6.5923 8.1362-7.558 8.6052-1.0278.49922-1.6581.52197-14.155.51087-10.7-.01-13.272-.081-14.138-.39289zm14.42-14.853c1.993-.65861 4.1321-1.8055 5.208-2.7923l.57777-.52995.15829 1.0218c.37804 2.4404.25325 2.3447 3.0582 2.3447h2.5072v-12.965c0-14.742.01357-14.637-2.1954-17.096-2.2207-2.4725-5.3026-3.3183-11.157-3.0616-3.7392.16395-6.9101.77913-9.2875 1.8019l-1.3054.56157v2.2164c0 1.219.0817 2.2164.18156 2.2164s1.0226-.23473 2.0505-.52163c2.4182-.67492 6.8343-1.3304 8.9629-1.3304 2.0099.0 4.3168.63112 5.1681 1.4139 1.22 1.1218 1.459 1.9649 1.5795 5.5722.10844 3.2453.08971 3.4049-.37858 3.2252-.27096-.10398-1.6251-.35976-3.0091-.56841-6.4942-.979-10.999.005-14.067 3.0735-2.0011 2.0011-2.4548 3.2402-2.4641 6.7305-.0065 2.4258.08634 3.1141.55768 4.1334 1.179 2.5499 3.2925 4.2534 5.9416 4.9794 2.3169.63499 5.0434.52227 7.9127-.42589zm-5.3603-4.4174c-1.3419-.50246-1.7811-.90498-2.3487-2.1529-.96238-2.1156-.37837-5.1724 1.2299-6.4375 1.6643-1.3091 6.0181-1.7402 10.183-1.0084l1.7198.30217v6.6092l-1.4496.86623c-3.1522 1.8836-7.1071 2.6552-9.3347 1.8212z\" stroke-width=\".26458\" style=\"fill:#fff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" style=\"fill:none;stroke-width:.271169\" d=\"m97.026736 181.42372c-11.841729-2.08439-21.332462-9.10215-26.093859-19.29466-1.998022-4.27707-2.054194-4.6839-2.055098-14.88419-841e-6-9.49243.144169-11.16725 1.267846-14.64314 1.712817-5.29828 6.177554-10.936 12.299033-15.53024 2.542552-1.90822 7.390509-4.53026 10.594967-5.73033 8.933335-3.34556 20.674605-4.18152 34.409895-2.44995 4.41785.55695 12.65266 1.97363 14.19738 2.44244 1.76241.53489 1.85502.50959 2.22367-.60744.24279-.73566.28029-2.73516.14369-7.66053-.44788-16.149002-1.23751-19.911778-5.02917-23.965076-1.80821-1.932978-3.56225-2.973051-7.11557-4.219231-5.30124-1.859191-12.26098-2.569875-19.19872-1.960452-10.49153.921594-19.993865 2.573896-30.430988 5.291456l-5.619006 1.463045-.198978-.992725C76.31239 78.136699 76.217381 74.401849 76.210696 70.38303l-.01215-7.306943 3.356503-1.444983c10.517529-4.527823 21.216871-6.656502 37.293351-7.419665 12.51101-.593907 22.76653.582675 29.54824 3.389974 4.64166 1.921419 7.46417 3.920688 11.49419 8.14168 5.92808 6.208991 7.10885 9.292714 7.94906 20.759878.20234 2.761617.35353 19.385439.44083 48.471489l.13286 44.26837-6.87266-.008c-7.35796-.009-10.40797-.26157-11.45694-.94889-1.06894-.70039-1.56607-2.17132-2.37024-7.01314-.41845-2.51943-.81979-4.63975-.89185-4.71182-.0721-.0721-.94053.61073-1.92991 1.51732-2.61666 2.39769-6.17638 4.67392-11.10375 7.10019-7.00303 3.44832-13.15672 5.41292-19.90153 6.35366-4.14851.57862-11.25229.52696-14.85996-.10807zM117.9586 163.14859c7.66738-1.41157 14.24402-3.97835 21.89691-8.5461l3.72858-2.22546v-12.58107c0-11.74762-.0314-12.59038-.47455-12.72168-1.42309-.42168-10.77757-1.80215-14.1221-2.08405-4.68265-.39467-14.28993-.18758-17.80807.38387-8.70887 1.41459-13.028171 3.55254-15.811026 7.82606-2.230704 3.42561-3.30745 7.4555-3.304504 12.36763.0032 5.38208 1.685615 10.33001 4.555689 13.39835 1.872987 2.00238 6.082191 3.96008 9.779001 4.54822 2.10281.33454 8.92935.11855 11.56007-.36577z\" transform=\"scale(0.26458333)\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.1.10"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#E7157B",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_23295_2989)\"\u003e\n\u003cpath d=\"M40 0H0V40H40V0Z\" fill=\"#E7157B\" fill-opacity=\"0.12\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M14.3422 22.3494L15.8467 20.9061C15.9428 20.8142 15.9969 20.6872 15.9999 20.5553C16.0019 20.4224 15.9518 20.2934 15.8597 20.1985L14.3552 18.6432L13.635 19.3379L14.3112 20.0375H11.9913V21.037H14.2651L13.6481 21.6287L14.3422 22.3494ZM26.3579 22.3534L27.9075 20.9001C28.0067 20.8082 28.0627 20.6792 28.0647 20.5443C28.0668 20.4094 28.0137 20.2784 27.9185 20.1835L26.369 18.6373L25.6608 19.3439L26.3549 20.0375H24.0111V21.037H26.2988L25.6718 21.6247L26.3579 22.3534ZM17.5875 23.3609C18.3388 23.057 19.1621 22.8941 20.0045 22.8941C20.8469 22.8941 21.6702 23.057 22.4215 23.3609C21.7524 21.5898 21.7524 19.3899 22.4215 17.6188C20.919 18.2265 19.09 18.2265 17.5875 17.6188C18.2566 19.3899 18.2566 21.5898 17.5875 23.3609ZM15.6443 25.3409C15.5462 25.2439 15.4971 25.116 15.4971 24.988C15.4971 24.8601 15.5462 24.7322 15.6443 24.6342C17.5845 22.6982 17.5845 18.2824 15.6443 16.3454C15.5462 16.2485 15.4971 16.1205 15.4971 15.9926C15.4971 15.8647 15.5462 15.7367 15.6443 15.6388C15.8397 15.4439 16.1572 15.4439 16.3525 15.6388C17.274 16.5583 18.6052 17.086 20.0045 17.086C21.4048 17.086 22.736 16.5583 23.6575 15.6388C23.8528 15.4439 24.1704 15.4439 24.3657 15.6388C24.4628 15.7367 24.5119 15.8647 24.5119 15.9926C24.5119 16.1205 24.4628 16.2485 24.3657 16.3454C22.4245 18.2824 22.4245 22.6982 24.3657 24.6342C24.4628 24.7322 24.5119 24.8601 24.5119 24.988C24.5119 25.116 24.4628 25.2439 24.3657 25.3409C24.2675 25.4388 24.1393 25.4878 24.0111 25.4878C23.8829 25.4878 23.7547 25.4388 23.6575 25.3409C22.736 24.4213 21.4048 23.8936 20.0045 23.8936C18.6052 23.8936 17.274 24.4213 16.3525 25.3409C16.1572 25.5358 15.8397 25.5358 15.6443 25.3409ZM32.5421 19.4359C32.2366 19.132 31.8369 18.9801 31.4363 18.9801C31.0366 18.9801 30.637 19.132 30.3315 19.4359C29.7215 20.0445 29.7215 21.034 30.3315 21.6417C30.9415 22.2504 31.9321 22.2504 32.5421 21.6417C33.1511 21.034 33.1511 20.0445 32.5421 19.4359ZM33.2503 22.3494C32.7504 22.8481 32.0934 23.098 31.4363 23.098C30.7802 23.098 30.1231 22.8481 29.6233 22.3494C28.6237 21.3509 28.6237 19.7277 29.6233 18.7292C30.623 17.7317 32.2506 17.7317 33.2503 18.7292C34.2499 19.7277 34.2499 21.3509 33.2503 22.3494ZM9.66853 19.4468C9.36302 19.143 8.96337 18.9911 8.56271 18.9911C8.16305 18.9911 7.7634 19.143 7.4579 19.4468C6.84889 20.0555 6.84889 21.045 7.4579 21.6527C8.0679 22.2614 9.05852 22.2614 9.66853 21.6527C10.2775 21.045 10.2775 20.0555 9.66853 19.4468ZM10.3767 22.3594C9.87687 22.8581 9.21979 23.108 8.56271 23.108C7.90663 23.108 7.24955 22.8581 6.74973 22.3594C5.75009 21.3619 5.75009 19.7387 6.74973 18.7402C7.74937 17.7427 9.37705 17.7427 10.3767 18.7402C11.3763 19.7387 11.3763 21.3619 10.3767 22.3594ZM27.4337 28.9101C25.4364 30.9031 22.7821 32.0005 19.9574 32.0005C17.1328 32.0005 14.4784 30.9031 12.4821 28.9101C11.166 27.5977 10.4077 26.4693 9.94498 25.136L8.99843 25.4628C9.50726 26.9291 10.3627 28.2104 11.774 29.6167C13.9586 31.7986 16.8664 33 19.9574 33C23.0495 33 25.9563 31.7986 28.1419 29.6167C29.2828 28.4783 30.4206 27.1869 31.0116 25.4608L30.064 25.138C29.5392 26.6702 28.4894 27.8566 27.4337 28.9101ZM9.94498 15.8597L8.99843 15.5318C9.51027 14.0646 10.3657 12.7832 11.776 11.3759C16.2864 6.87519 23.6265 6.87419 28.1379 11.3759C29.2186 12.4534 30.4036 13.7897 31.0116 15.5318L30.064 15.8597C29.5241 14.3094 28.4293 13.0801 27.4297 12.0826C25.4344 10.0916 22.7811 8.99612 19.9574 8.99612C17.1338 8.99612 14.4804 10.0916 12.4852 12.0826C11.187 13.3779 10.4037 14.5423 9.94498 15.8597Z\" fill=\"#E7157B\"/\u003e\n\u003c/g\u003e\n\u003crect x=\"0.5\" y=\"0.5\" width=\"39\" height=\"39\" stroke=\"#E7157B\"/\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_23295_2989\"\u003e\n\u003crect width=\"40\" height=\"40\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"40\" height=\"40\"  viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Simple-Queue-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M14.3422051,22.3493786 L15.8466767,20.9061074 C15.9428347,20.8141539 15.9969235,20.687218 15.9999285,20.5552846 C16.0019317,20.4223517 15.9518495,20.2934168 15.8596981,20.1984648 L14.3552264,18.6432502 L13.6350433,19.3378994 L14.311154,20.037546 L11.9913429,20.037546 L11.9913429,21.0370413 L14.2650783,21.0370413 L13.6480647,21.6287425 L14.3422051,22.3493786 Z M26.3579452,22.3533765 L27.9074909,20.9001104 C28.0066538,20.8081569 28.0627459,20.679222 28.0647492,20.5442901 C28.0667525,20.4093583 28.0136653,20.2784244 27.918509,20.1834724 L26.3689633,18.6372532 L25.6607999,19.3438963 L26.3549403,20.037546 L24.0110896,20.037546 L24.0110896,21.0370413 L26.2988481,21.0370413 L25.671818,21.6247445 L26.3579452,22.3533765 Z M17.5875367,23.3608678 C18.3387708,23.0570212 19.1621235,22.8941035 20.0045074,22.8941035 C20.8468913,22.8941035 21.670244,23.0570212 22.4214781,23.3608678 C21.7523789,21.5897622 21.7523789,19.3898731 22.4214781,17.6187675 C20.9190098,18.2264606 19.090005,18.2264606 17.5875367,17.6187675 C18.2566359,19.3898731 18.2566359,21.5897622 17.5875367,23.3608678 L17.5875367,23.3608678 Z M15.6443443,25.3408679 C15.546183,25.2439168 15.4971024,25.1159814 15.4971024,24.988046 C15.4971024,24.8601106 15.546183,24.7321753 15.6443443,24.6342247 C17.5845317,22.6982024 17.5845317,18.2824324 15.6443443,16.3454106 C15.546183,16.2484595 15.4971024,16.1205241 15.4971024,15.9925912 C15.4971024,15.8646534 15.546183,15.736718 15.6443443,15.6387674 C15.8396652,15.4438659 16.1571868,15.4438659 16.3525077,15.6387674 C17.2740216,16.5583031 18.6052086,17.0860366 20.0045074,17.0860366 C21.4048079,17.0860366 22.7359948,16.5583031 23.6575088,15.6387674 C23.8528296,15.4438659 24.1703513,15.4438659 24.3656722,15.6387674 C24.4628318,15.736718 24.5119124,15.8646534 24.5119124,15.9925912 C24.5119124,16.1205241 24.4628318,16.2484595 24.3656722,16.3454106 C22.4244831,18.2824324 22.4244831,22.6982024 24.3656722,24.6342247 C24.4628318,24.7321753 24.5119124,24.8601106 24.5119124,24.988046 C24.5119124,25.1159814 24.4628318,25.2439168 24.3656722,25.3408679 C24.2675109,25.4388184 24.1393003,25.4877937 24.0110896,25.4877937 C23.882879,25.4877937 23.7546684,25.4388184 23.6575088,25.3408679 C22.7359948,24.4213322 21.4048079,23.8935987 20.0045074,23.8935987 C18.6052086,23.8935987 17.2740216,24.4213322 16.3525077,25.3408679 C16.1571868,25.5357694 15.8396652,25.5357694 15.6443443,25.3408679 L15.6443443,25.3408679 Z M32.5421049,19.4358499 C32.236603,19.1320033 31.8369464,18.9800801 31.4362882,18.9800801 C31.0366316,18.9800801 30.636975,19.1320033 30.3314731,19.4358499 C29.721471,20.0445425 29.721471,21.0340428 30.3314731,21.6417359 C30.9414753,22.2504285 31.9321027,22.2504285 32.5421049,21.6417359 C33.1511054,21.0340428 33.1511054,20.0445425 32.5421049,19.4358499 L32.5421049,19.4358499 Z M33.2502683,22.3493786 C32.7504472,22.8481267 32.0933677,23.0980005 31.4362882,23.0980005 C30.7802103,23.0980005 30.1231309,22.8481267 29.6233097,22.3493786 C28.6236675,21.3508828 28.6236675,19.7277025 29.6233097,18.7292068 C30.622952,17.7317105 32.250626,17.7317105 33.2502683,18.7292068 C34.2499106,19.7277025 34.2499106,21.3508828 33.2502683,22.3493786 L33.2502683,22.3493786 Z M9.66852687,19.4468443 C9.36302497,19.1429978 8.96336839,18.9910745 8.56271017,18.9910745 C8.16305359,18.9910745 7.76339701,19.1429978 7.45789511,19.4468443 C6.84889461,20.055537 6.84889461,21.0450373 7.45789511,21.6527304 C8.06789726,22.261423 9.05852472,22.261423 9.66852687,21.6527304 C10.2775274,21.0450373 10.2775274,20.055537 9.66852687,19.4468443 L9.66852687,19.4468443 Z M10.3766903,22.3593735 C9.87686914,22.8581217 9.21978965,23.1079955 8.56271017,23.1079955 C7.90663232,23.1079955 7.24955284,22.8581217 6.7497317,22.3593735 C5.75008943,21.3618773 5.75008943,19.738697 6.7497317,18.7402012 C7.74937397,17.7427049 9.37704801,17.7427049 10.3766903,18.7402012 C11.3763325,19.738697 11.3763325,21.3618773 10.3766903,22.3593735 L10.3766903,22.3593735 Z M27.4337125,28.9100654 C25.4364313,30.903059 22.7820705,32.0005047 19.9574301,32.0005047 C17.1327896,32.0005047 14.4784288,30.903059 12.4821492,28.9100654 C11.165987,27.5977281 10.4077413,26.469298 9.94498104,25.1359713 L8.99842599,25.4628063 C9.50726193,26.9290658 10.3626672,28.2104187 11.7739858,29.6167086 C13.9585748,31.7986067 16.8663519,33 19.9574301,33 C23.0495099,33 25.9562853,31.7986067 28.1418759,29.6167086 C29.2827502,28.4782835 30.4206196,27.1869356 31.0115905,25.4608073 L30.0640338,25.1379703 C29.5391715,26.6701966 28.4894469,27.8565974 27.4337125,28.9100654 L27.4337125,28.9100654 Z M9.94498104,15.8596559 L8.99842599,15.5318214 C9.51026687,14.0645624 10.3656722,12.7832095 11.7759891,11.3759202 C16.2863991,6.87519304 23.6264578,6.87419354 28.1378694,11.3759202 C29.2186449,12.4533761 30.4035916,13.7897012 31.0115905,15.5318214 L30.0640338,15.8596559 C29.5241468,14.3094387 28.4293482,13.0800596 27.4297059,12.0825633 C25.434428,10.0915688 22.7810689,8.99612197 19.9574301,8.99612197 C17.1337912,8.99612197 14.4804321,10.0915688 12.4851542,12.0825633 C11.1870215,13.3779092 10.4037347,14.5423211 9.94498104,15.8596559 L9.94498104,15.8596559 Z\" id=\"AWS-Simple-Queue-Service_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/sqs-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "services.k8s.aws/v1alpha1",
+    "kind": "AdoptedResource",
+    "schema": "{\n \"description\": \"AdoptedResource is the schema for the AdoptedResource API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AdoptedResourceSpec defines the desired state of the AdoptedResource.\",\n   \"properties\": {\n    \"aws\": {\n     \"description\": \"AWSIdentifiers provide all unique ways to reference an AWS resource.\",\n     \"properties\": {\n      \"additionalKeys\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"AdditionalKeys represents any additional arbitrary identifiers used when\\ndescribing the target resource.\",\n       \"type\": \"object\"\n      },\n      \"arn\": {\n       \"description\": \"ARN is the AWS Resource Name for the resource. It is a globally\\nunique identifier.\",\n       \"type\": \"string\"\n      },\n      \"nameOrID\": {\n       \"description\": \"NameOrId is a user-supplied string identifier for the resource. It may\\nor may not be globally unique, depending on the type of resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubernetes\": {\n     \"description\": \"ResourceWithMetadata provides the values necessary to create a\\nKubernetes resource and override any of its metadata values.\",\n     \"properties\": {\n      \"group\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"metadata\": {\n       \"description\": \"ObjectMeta is metadata that all persisted resources must have, which includes all objects\\nusers must create.\\nIt is not possible to use `metav1.ObjectMeta` inside spec, as the controller-gen\\nautomatically converts this to an arbitrary string-string map.\\nhttps://github.com/kubernetes-sigs/controller-tools/issues/385\\n\\nActive discussion about inclusion of this field in the spec is happening in this PR:\\nhttps://github.com/kubernetes-sigs/controller-tools/pull/395\\n\\nUntil this is allowed, or if it never is, we will produce a subset of the object meta\\nthat contains only the fields which the user is allowed to modify in the metadata.\",\n       \"properties\": {\n        \"annotations\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Annotations is an unstructured key value map stored with a resource that may be\\nset by external tools to store and retrieve arbitrary metadata. They are not\\nqueryable and should be preserved when modifying objects.\\nMore info: http://kubernetes.io/docs/user-guide/annotations\",\n         \"type\": \"object\"\n        },\n        \"generateName\": {\n         \"description\": \"GenerateName is an optional prefix, used by the server, to generate a unique\\nname ONLY IF the Name field has not been provided.\\nIf this field is used, the name returned to the client will be different\\nthan the name passed. This value will also be combined with a unique suffix.\\nThe provided value has the same validation rules as the Name field,\\nand may be truncated by the length of the suffix required to make the value\\nunique on the server.\\n\\nIf this field is specified and the generated name exists, the server will\\nNOT return a 409 - instead, it will either return 201 Created or 500 with Reason\\nServerTimeout indicating a unique name could not be found in the time allotted, and the client\\nshould retry (optionally after the time indicated in the Retry-After header).\\n\\nApplied only if Name is not specified.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency\",\n         \"type\": \"string\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Map of string keys and values that can be used to organize and categorize\\n(scope and select) objects. May match selectors of replication controllers\\nand services.\\nMore info: http://kubernetes.io/docs/user-guide/labels\",\n         \"type\": \"object\"\n        },\n        \"name\": {\n         \"description\": \"Name must be unique within a namespace. Is required when creating resources, although\\nsome resources may allow a client to request the generation of an appropriate name\\nautomatically. Name is primarily intended for creation idempotence and configuration\\ndefinition.\\nCannot be updated.\\nMore info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace defines the space within each name must be unique. An empty namespace is\\nequivalent to the \\\"default\\\" namespace, but \\\"default\\\" is the canonical representation.\\nNot all objects are required to be scoped to a namespace - the value of this field for\\nthose objects will be empty.\\n\\nMust be a DNS_LABEL.\\nCannot be updated.\\nMore info: http://kubernetes.io/docs/user-guide/namespaces\",\n         \"type\": \"string\"\n        },\n        \"ownerReferences\": {\n         \"description\": \"List of objects depended by this object. If ALL objects in the list have\\nbeen deleted, this object will be garbage collected. If this object is managed by a controller,\\nthen an entry in this list will point to this controller, with the controller field set to true.\\nThere cannot be more than one managing controller.\",\n         \"items\": {\n          \"description\": \"OwnerReference contains enough information to let you identify an owning\\nobject. An owning object must be in the same namespace as the dependent, or\\nbe cluster-scoped, so there is no namespace field.\",\n          \"properties\": {\n           \"apiVersion\": {\n            \"description\": \"API version of the referent.\",\n            \"type\": \"string\"\n           },\n           \"blockOwnerDeletion\": {\n            \"description\": \"If true, AND if the owner has the \\\"foregroundDeletion\\\" finalizer, then\\nthe owner cannot be deleted from the key-value store until this\\nreference is removed.\\nSee https://kubernetes.io/docs/concepts/architecture/garbage-collection/#foreground-deletion\\nfor how the garbage collector interacts with this field and enforces the foreground deletion.\\nDefaults to false.\\nTo set this field, a user needs \\\"delete\\\" permission of the owner,\\notherwise 422 (Unprocessable Entity) will be returned.\",\n            \"type\": \"boolean\"\n           },\n           \"controller\": {\n            \"description\": \"If true, this reference points to the managing controller.\",\n            \"type\": \"boolean\"\n           },\n           \"kind\": {\n            \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names\",\n            \"type\": \"string\"\n           },\n           \"uid\": {\n            \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"apiVersion\",\n           \"kind\",\n           \"name\",\n           \"uid\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"aws\",\n    \"kubernetes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Adopted Resource\",\n \"type\": \"object\"\n}"
+  }
+}

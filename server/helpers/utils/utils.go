@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"html/template"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -533,4 +535,13 @@ func copyFile(src, dst string) error {
 		return err
 	}
 	return os.Chmod(dst, srcInfo.Mode())
+}
+
+func WriteEscaped(w http.ResponseWriter, data []byte, contentType string) (int, error) {
+	if contentType == "" {
+		contentType = "text/plain; charset=utf-8"
+	}
+	w.Header().Set("Content-Type", contentType)
+	escaped := template.HTMLEscapeString(string(data))
+	return w.Write([]byte(escaped))
 }

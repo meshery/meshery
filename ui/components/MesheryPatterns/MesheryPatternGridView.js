@@ -11,9 +11,6 @@ import {
   GridPaginationStyles,
 } from './Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../lib/store';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -292,9 +289,4 @@ function MesheryPatternGrid({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-// @ts-ignore
-export default connect(mapDispatchToProps)(MesheryPatternGrid);
+export default MesheryPatternGrid;

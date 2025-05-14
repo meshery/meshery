@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Adopted Resource",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-cloudfront-controller",
+    "displayName": "AWS CloudFront",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Networking Content Delivery",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#8C4FFF",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/cloudfront-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.6694852 25,26.4968343 C25,27.3241834 25.673,27.9974675 26.5,27.9974675 C27.327,27.9974675 28,27.3241834 28,26.4968343 L28,26.4968343 Z M29,26.4968343 C29,27.875416 27.879,28.9978895 26.5,28.9978895 C25.121,28.9978895 24,27.875416 24,26.4968343 C24,25.1182527 25.121,23.9957791 26.5,23.9957791 C27.879,23.9957791 29,25.1182527 29,26.4968343 L29,26.4968343 Z M15,18.4934576 C15,17.6661085 14.327,16.9928244 13.5,16.9928244 C12.673,16.9928244 12,17.6661085 12,18.4934576 C12,19.3208067 12.673,19.9940907 13.5,19.9940907 C14.327,19.9940907 15,19.3208067 15,18.4934576 L15,18.4934576 Z M16,18.4934576 C16,19.8720392 14.879,20.9945128 13.5,20.9945128 C12.121,20.9945128 11,19.8720392 11,18.4934576 C11,17.1148759 12.121,15.9924024 13.5,15.9924024 C14.879,15.9924024 16,17.1148759 16,18.4934576 L16,18.4934576 Z M20,10.4900808 C20,11.3174299 20.673,11.990714 21.5,11.990714 C22.327,11.990714 23,11.3174299 23,10.4900808 C23,9.66273178 22.327,8.98944771 21.5,8.98944771 C20.673,8.98944771 20,9.66273178 20,10.4900808 L20,10.4900808 Z M19,10.4900808 C19,9.11149921 20.121,7.98902562 21.5,7.98902562 C22.879,7.98902562 24,9.11149921 24,10.4900808 C24,11.8686625 22.879,12.9911361 21.5,12.9911361 C20.121,12.9911361 19,11.8686625 19,10.4900808 L19,10.4900808 Z M33,19.9940907 C33,15.3561339 30.515,11.0643231 26.506,8.74334388 C25.785,8.8894055 25.09,9.0884895 24.226,9.40062119 L23.886,8.46022442 C24.332,8.29915647 24.732,8.16810117 25.119,8.0560539 C23.512,7.36376181 21.771,6.98860353 20,6.98860353 C19.156,6.98860353 18.325,7.07564025 17.513,7.23470736 C18.1,7.57785214 18.621,7.92099692 19.128,8.30615942 L18.524,9.10349583 C17.809,8.56026663 17.067,8.10207332 16.098,7.59385889 C11.188,9.1385106 7.652,13.4703383 7.091,18.5564842 C8.121,18.3483964 9.109,18.2353487 10.207,18.2073369 L10.232,19.207759 C9.081,19.2367712 8.094,19.3588227 7.014,19.5959227 C7.01,19.7279784 7,19.8630354 7,19.9940907 C7,24.3289196 9.146,28.3246055 12.676,30.7296202 C12.049,28.8608317 11.726,27.0920855 11.726,25.3693586 C11.726,24.3849433 11.895,23.5766022 12.073,22.7212413 L12.197,22.1189872 L13.178,22.3120687 L13.053,22.9263279 C12.877,23.7646816 12.726,24.4879868 12.726,25.3693586 C12.726,27.3211821 13.158,29.3420347 14.028,31.53496 C15.889,32.5003673 17.895,32.9995779 20,32.9995779 C21.379,32.9995779 22.724,32.7784846 24.006,32.3563065 C24.508,31.3668891 24.881,30.4294936 25.195,29.3470369 L26.156,29.6261546 C25.928,30.4144872 25.666,31.1277882 25.355,31.8370874 C26.159,31.4759351 26.919,31.027746 27.634,30.5065261 C27.461,30.0813467 27.284,29.6571677 27.08,29.2469946 L27.975,28.8008064 C28.146,29.1439512 28.288,29.5021023 28.438,29.8552513 C31.335,27.3772058 33,23.8287086 33,19.9940907 L33,19.9940907 Z M34,19.9940907 C34,24.3589323 32.018,28.3966359 28.56,31.072765 C27.34,32.0211651 25.98,32.7534741 24.518,33.2456817 C23.078,33.7458928 21.557,34 20,34 C17.7,34 15.416,33.4267581 13.394,32.3413002 C8.833,29.9002703 6,25.1692742 6,19.9940907 C6,19.7099708 6.007,19.4268514 6.029,19.1487341 C6.37,13.3032678 10.377,8.24513368 16,6.57142752 C19.527,5.50797883 23.589,5.93916075 26.842,7.77893698 C31.257,10.2519804 34,14.9329554 34,19.9940907 L34,19.9940907 Z M18.657,12.7220225 L17.999,11.9687047 C16.879,12.9471175 16.007,13.9855556 14.989,15.5552179 L15.827,16.0994475 C16.792,14.6138207 17.611,13.6354079 18.657,12.7220225 L18.657,12.7220225 Z M16.812,20.1531578 C19.108,20.9414904 21.111,22.2000214 23.117,24.1138289 L23.807,23.3905237 C21.694,21.3726724 19.574,20.0441118 17.137,19.2067585 L16.812,20.1531578 Z M23.823,13.3252771 C25.699,16.1874847 26.756,19.3298104 26.963,22.6642173 L25.965,22.7262435 C25.769,19.5679109 24.767,16.5896543 22.987,13.8735084 L23.823,13.3252771 Z\" id=\"Amazon-CloudFront_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.6694852 25,26.4968343 C25,27.3241834 25.673,27.9974675 26.5,27.9974675 C27.327,27.9974675 28,27.3241834 28,26.4968343 L28,26.4968343 Z M29,26.4968343 C29,27.875416 27.879,28.9978895 26.5,28.9978895 C25.121,28.9978895 24,27.875416 24,26.4968343 C24,25.1182527 25.121,23.9957791 26.5,23.9957791 C27.879,23.9957791 29,25.1182527 29,26.4968343 L29,26.4968343 Z M15,18.4934576 C15,17.6661085 14.327,16.9928244 13.5,16.9928244 C12.673,16.9928244 12,17.6661085 12,18.4934576 C12,19.3208067 12.673,19.9940907 13.5,19.9940907 C14.327,19.9940907 15,19.3208067 15,18.4934576 L15,18.4934576 Z M16,18.4934576 C16,19.8720392 14.879,20.9945128 13.5,20.9945128 C12.121,20.9945128 11,19.8720392 11,18.4934576 C11,17.1148759 12.121,15.9924024 13.5,15.9924024 C14.879,15.9924024 16,17.1148759 16,18.4934576 L16,18.4934576 Z M20,10.4900808 C20,11.3174299 20.673,11.990714 21.5,11.990714 C22.327,11.990714 23,11.3174299 23,10.4900808 C23,9.66273178 22.327,8.98944771 21.5,8.98944771 C20.673,8.98944771 20,9.66273178 20,10.4900808 L20,10.4900808 Z M19,10.4900808 C19,9.11149921 20.121,7.98902562 21.5,7.98902562 C22.879,7.98902562 24,9.11149921 24,10.4900808 C24,11.8686625 22.879,12.9911361 21.5,12.9911361 C20.121,12.9911361 19,11.8686625 19,10.4900808 L19,10.4900808 Z M33,19.9940907 C33,15.3561339 30.515,11.0643231 26.506,8.74334388 C25.785,8.8894055 25.09,9.0884895 24.226,9.40062119 L23.886,8.46022442 C24.332,8.29915647 24.732,8.16810117 25.119,8.0560539 C23.512,7.36376181 21.771,6.98860353 20,6.98860353 C19.156,6.98860353 18.325,7.07564025 17.513,7.23470736 C18.1,7.57785214 18.621,7.92099692 19.128,8.30615942 L18.524,9.10349583 C17.809,8.56026663 17.067,8.10207332 16.098,7.59385889 C11.188,9.1385106 7.652,13.4703383 7.091,18.5564842 C8.121,18.3483964 9.109,18.2353487 10.207,18.2073369 L10.232,19.207759 C9.081,19.2367712 8.094,19.3588227 7.014,19.5959227 C7.01,19.7279784 7,19.8630354 7,19.9940907 C7,24.3289196 9.146,28.3246055 12.676,30.7296202 C12.049,28.8608317 11.726,27.0920855 11.726,25.3693586 C11.726,24.3849433 11.895,23.5766022 12.073,22.7212413 L12.197,22.1189872 L13.178,22.3120687 L13.053,22.9263279 C12.877,23.7646816 12.726,24.4879868 12.726,25.3693586 C12.726,27.3211821 13.158,29.3420347 14.028,31.53496 C15.889,32.5003673 17.895,32.9995779 20,32.9995779 C21.379,32.9995779 22.724,32.7784846 24.006,32.3563065 C24.508,31.3668891 24.881,30.4294936 25.195,29.3470369 L26.156,29.6261546 C25.928,30.4144872 25.666,31.1277882 25.355,31.8370874 C26.159,31.4759351 26.919,31.027746 27.634,30.5065261 C27.461,30.0813467 27.284,29.6571677 27.08,29.2469946 L27.975,28.8008064 C28.146,29.1439512 28.288,29.5021023 28.438,29.8552513 C31.335,27.3772058 33,23.8287086 33,19.9940907 L33,19.9940907 Z M34,19.9940907 C34,24.3589323 32.018,28.3966359 28.56,31.072765 C27.34,32.0211651 25.98,32.7534741 24.518,33.2456817 C23.078,33.7458928 21.557,34 20,34 C17.7,34 15.416,33.4267581 13.394,32.3413002 C8.833,29.9002703 6,25.1692742 6,19.9940907 C6,19.7099708 6.007,19.4268514 6.029,19.1487341 C6.37,13.3032678 10.377,8.24513368 16,6.57142752 C19.527,5.50797883 23.589,5.93916075 26.842,7.77893698 C31.257,10.2519804 34,14.9329554 34,19.9940907 L34,19.9940907 Z M18.657,12.7220225 L17.999,11.9687047 C16.879,12.9471175 16.007,13.9855556 14.989,15.5552179 L15.827,16.0994475 C16.792,14.6138207 17.611,13.6354079 18.657,12.7220225 L18.657,12.7220225 Z M16.812,20.1531578 C19.108,20.9414904 21.111,22.2000214 23.117,24.1138289 L23.807,23.3905237 C21.694,21.3726724 19.574,20.0441118 17.137,19.2067585 L16.812,20.1531578 Z M23.823,13.3252771 C25.699,16.1874847 26.756,19.3298104 26.963,22.6642173 L25.965,22.7262435 C25.769,19.5679109 24.767,16.5896543 22.987,13.8735084 L23.823,13.3252771 Z\" id=\"Amazon-CloudFront_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.10"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#8C4FFF",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Networking-Content-Delivery\" fill=\"#8C4FFF\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.6694852 25,26.4968343 C25,27.3241834 25.673,27.9974675 26.5,27.9974675 C27.327,27.9974675 28,27.3241834 28,26.4968343 L28,26.4968343 Z M29,26.4968343 C29,27.875416 27.879,28.9978895 26.5,28.9978895 C25.121,28.9978895 24,27.875416 24,26.4968343 C24,25.1182527 25.121,23.9957791 26.5,23.9957791 C27.879,23.9957791 29,25.1182527 29,26.4968343 L29,26.4968343 Z M15,18.4934576 C15,17.6661085 14.327,16.9928244 13.5,16.9928244 C12.673,16.9928244 12,17.6661085 12,18.4934576 C12,19.3208067 12.673,19.9940907 13.5,19.9940907 C14.327,19.9940907 15,19.3208067 15,18.4934576 L15,18.4934576 Z M16,18.4934576 C16,19.8720392 14.879,20.9945128 13.5,20.9945128 C12.121,20.9945128 11,19.8720392 11,18.4934576 C11,17.1148759 12.121,15.9924024 13.5,15.9924024 C14.879,15.9924024 16,17.1148759 16,18.4934576 L16,18.4934576 Z M20,10.4900808 C20,11.3174299 20.673,11.990714 21.5,11.990714 C22.327,11.990714 23,11.3174299 23,10.4900808 C23,9.66273178 22.327,8.98944771 21.5,8.98944771 C20.673,8.98944771 20,9.66273178 20,10.4900808 L20,10.4900808 Z M19,10.4900808 C19,9.11149921 20.121,7.98902562 21.5,7.98902562 C22.879,7.98902562 24,9.11149921 24,10.4900808 C24,11.8686625 22.879,12.9911361 21.5,12.9911361 C20.121,12.9911361 19,11.8686625 19,10.4900808 L19,10.4900808 Z M33,19.9940907 C33,15.3561339 30.515,11.0643231 26.506,8.74334388 C25.785,8.8894055 25.09,9.0884895 24.226,9.40062119 L23.886,8.46022442 C24.332,8.29915647 24.732,8.16810117 25.119,8.0560539 C23.512,7.36376181 21.771,6.98860353 20,6.98860353 C19.156,6.98860353 18.325,7.07564025 17.513,7.23470736 C18.1,7.57785214 18.621,7.92099692 19.128,8.30615942 L18.524,9.10349583 C17.809,8.56026663 17.067,8.10207332 16.098,7.59385889 C11.188,9.1385106 7.652,13.4703383 7.091,18.5564842 C8.121,18.3483964 9.109,18.2353487 10.207,18.2073369 L10.232,19.207759 C9.081,19.2367712 8.094,19.3588227 7.014,19.5959227 C7.01,19.7279784 7,19.8630354 7,19.9940907 C7,24.3289196 9.146,28.3246055 12.676,30.7296202 C12.049,28.8608317 11.726,27.0920855 11.726,25.3693586 C11.726,24.3849433 11.895,23.5766022 12.073,22.7212413 L12.197,22.1189872 L13.178,22.3120687 L13.053,22.9263279 C12.877,23.7646816 12.726,24.4879868 12.726,25.3693586 C12.726,27.3211821 13.158,29.3420347 14.028,31.53496 C15.889,32.5003673 17.895,32.9995779 20,32.9995779 C21.379,32.9995779 22.724,32.7784846 24.006,32.3563065 C24.508,31.3668891 24.881,30.4294936 25.195,29.3470369 L26.156,29.6261546 C25.928,30.4144872 25.666,31.1277882 25.355,31.8370874 C26.159,31.4759351 26.919,31.027746 27.634,30.5065261 C27.461,30.0813467 27.284,29.6571677 27.08,29.2469946 L27.975,28.8008064 C28.146,29.1439512 28.288,29.5021023 28.438,29.8552513 C31.335,27.3772058 33,23.8287086 33,19.9940907 L33,19.9940907 Z M34,19.9940907 C34,24.3589323 32.018,28.3966359 28.56,31.072765 C27.34,32.0211651 25.98,32.7534741 24.518,33.2456817 C23.078,33.7458928 21.557,34 20,34 C17.7,34 15.416,33.4267581 13.394,32.3413002 C8.833,29.9002703 6,25.1692742 6,19.9940907 C6,19.7099708 6.007,19.4268514 6.029,19.1487341 C6.37,13.3032678 10.377,8.24513368 16,6.57142752 C19.527,5.50797883 23.589,5.93916075 26.842,7.77893698 C31.257,10.2519804 34,14.9329554 34,19.9940907 L34,19.9940907 Z M18.657,12.7220225 L17.999,11.9687047 C16.879,12.9471175 16.007,13.9855556 14.989,15.5552179 L15.827,16.0994475 C16.792,14.6138207 17.611,13.6354079 18.657,12.7220225 L18.657,12.7220225 Z M16.812,20.1531578 C19.108,20.9414904 21.111,22.2000214 23.117,24.1138289 L23.807,23.3905237 C21.694,21.3726724 19.574,20.0441118 17.137,19.2067585 L16.812,20.1531578 Z M23.823,13.3252771 C25.699,16.1874847 26.756,19.3298104 26.963,22.6642173 L25.965,22.7262435 C25.769,19.5679109 24.767,16.5896543 22.987,13.8735084 L23.823,13.3252771 Z\" id=\"Amazon-CloudFront_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-CloudFront_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M28,26.4968343 C28,25.6694852 27.327,24.9962012 26.5,24.9962012 C25.673,24.9962012 25,25.6694852 25,26.4968343 C25,27.3241834 25.673,27.9974675 26.5,27.9974675 C27.327,27.9974675 28,27.3241834 28,26.4968343 L28,26.4968343 Z M29,26.4968343 C29,27.875416 27.879,28.9978895 26.5,28.9978895 C25.121,28.9978895 24,27.875416 24,26.4968343 C24,25.1182527 25.121,23.9957791 26.5,23.9957791 C27.879,23.9957791 29,25.1182527 29,26.4968343 L29,26.4968343 Z M15,18.4934576 C15,17.6661085 14.327,16.9928244 13.5,16.9928244 C12.673,16.9928244 12,17.6661085 12,18.4934576 C12,19.3208067 12.673,19.9940907 13.5,19.9940907 C14.327,19.9940907 15,19.3208067 15,18.4934576 L15,18.4934576 Z M16,18.4934576 C16,19.8720392 14.879,20.9945128 13.5,20.9945128 C12.121,20.9945128 11,19.8720392 11,18.4934576 C11,17.1148759 12.121,15.9924024 13.5,15.9924024 C14.879,15.9924024 16,17.1148759 16,18.4934576 L16,18.4934576 Z M20,10.4900808 C20,11.3174299 20.673,11.990714 21.5,11.990714 C22.327,11.990714 23,11.3174299 23,10.4900808 C23,9.66273178 22.327,8.98944771 21.5,8.98944771 C20.673,8.98944771 20,9.66273178 20,10.4900808 L20,10.4900808 Z M19,10.4900808 C19,9.11149921 20.121,7.98902562 21.5,7.98902562 C22.879,7.98902562 24,9.11149921 24,10.4900808 C24,11.8686625 22.879,12.9911361 21.5,12.9911361 C20.121,12.9911361 19,11.8686625 19,10.4900808 L19,10.4900808 Z M33,19.9940907 C33,15.3561339 30.515,11.0643231 26.506,8.74334388 C25.785,8.8894055 25.09,9.0884895 24.226,9.40062119 L23.886,8.46022442 C24.332,8.29915647 24.732,8.16810117 25.119,8.0560539 C23.512,7.36376181 21.771,6.98860353 20,6.98860353 C19.156,6.98860353 18.325,7.07564025 17.513,7.23470736 C18.1,7.57785214 18.621,7.92099692 19.128,8.30615942 L18.524,9.10349583 C17.809,8.56026663 17.067,8.10207332 16.098,7.59385889 C11.188,9.1385106 7.652,13.4703383 7.091,18.5564842 C8.121,18.3483964 9.109,18.2353487 10.207,18.2073369 L10.232,19.207759 C9.081,19.2367712 8.094,19.3588227 7.014,19.5959227 C7.01,19.7279784 7,19.8630354 7,19.9940907 C7,24.3289196 9.146,28.3246055 12.676,30.7296202 C12.049,28.8608317 11.726,27.0920855 11.726,25.3693586 C11.726,24.3849433 11.895,23.5766022 12.073,22.7212413 L12.197,22.1189872 L13.178,22.3120687 L13.053,22.9263279 C12.877,23.7646816 12.726,24.4879868 12.726,25.3693586 C12.726,27.3211821 13.158,29.3420347 14.028,31.53496 C15.889,32.5003673 17.895,32.9995779 20,32.9995779 C21.379,32.9995779 22.724,32.7784846 24.006,32.3563065 C24.508,31.3668891 24.881,30.4294936 25.195,29.3470369 L26.156,29.6261546 C25.928,30.4144872 25.666,31.1277882 25.355,31.8370874 C26.159,31.4759351 26.919,31.027746 27.634,30.5065261 C27.461,30.0813467 27.284,29.6571677 27.08,29.2469946 L27.975,28.8008064 C28.146,29.1439512 28.288,29.5021023 28.438,29.8552513 C31.335,27.3772058 33,23.8287086 33,19.9940907 L33,19.9940907 Z M34,19.9940907 C34,24.3589323 32.018,28.3966359 28.56,31.072765 C27.34,32.0211651 25.98,32.7534741 24.518,33.2456817 C23.078,33.7458928 21.557,34 20,34 C17.7,34 15.416,33.4267581 13.394,32.3413002 C8.833,29.9002703 6,25.1692742 6,19.9940907 C6,19.7099708 6.007,19.4268514 6.029,19.1487341 C6.37,13.3032678 10.377,8.24513368 16,6.57142752 C19.527,5.50797883 23.589,5.93916075 26.842,7.77893698 C31.257,10.2519804 34,14.9329554 34,19.9940907 L34,19.9940907 Z M18.657,12.7220225 L17.999,11.9687047 C16.879,12.9471175 16.007,13.9855556 14.989,15.5552179 L15.827,16.0994475 C16.792,14.6138207 17.611,13.6354079 18.657,12.7220225 L18.657,12.7220225 Z M16.812,20.1531578 C19.108,20.9414904 21.111,22.2000214 23.117,24.1138289 L23.807,23.3905237 C21.694,21.3726724 19.574,20.0441118 17.137,19.2067585 L16.812,20.1531578 Z M23.823,13.3252771 C25.699,16.1874847 26.756,19.3298104 26.963,22.6642173 L25.965,22.7262435 C25.769,19.5679109 24.767,16.5896543 22.987,13.8735084 L23.823,13.3252771 Z\" id=\"Amazon-CloudFront_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/cloudfront-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "services.k8s.aws/v1alpha1",
+    "kind": "AdoptedResource",
+    "schema": "{\n \"description\": \"AdoptedResource is the schema for the AdoptedResource API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AdoptedResourceSpec defines the desired state of the AdoptedResource.\",\n   \"properties\": {\n    \"aws\": {\n     \"description\": \"AWSIdentifiers provide all unique ways to reference an AWS resource.\",\n     \"properties\": {\n      \"additionalKeys\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"AdditionalKeys represents any additional arbitrary identifiers used when\\ndescribing the target resource.\",\n       \"type\": \"object\"\n      },\n      \"arn\": {\n       \"description\": \"ARN is the AWS Resource Name for the resource. It is a globally\\nunique identifier.\",\n       \"type\": \"string\"\n      },\n      \"nameOrID\": {\n       \"description\": \"NameOrId is a user-supplied string identifier for the resource. It may\\nor may not be globally unique, depending on the type of resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"kubernetes\": {\n     \"description\": \"ResourceWithMetadata provides the values necessary to create a\\nKubernetes resource and override any of its metadata values.\",\n     \"properties\": {\n      \"group\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"type\": \"string\"\n      },\n      \"metadata\": {\n       \"description\": \"ObjectMeta is metadata that all persisted resources must have, which includes all objects\\nusers must create.\\nIt is not possible to use `metav1.ObjectMeta` inside spec, as the controller-gen\\nautomatically converts this to an arbitrary string-string map.\\nhttps://github.com/kubernetes-sigs/controller-tools/issues/385\\n\\nActive discussion about inclusion of this field in the spec is happening in this PR:\\nhttps://github.com/kubernetes-sigs/controller-tools/pull/395\\n\\nUntil this is allowed, or if it never is, we will produce a subset of the object meta\\nthat contains only the fields which the user is allowed to modify in the metadata.\",\n       \"properties\": {\n        \"annotations\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Annotations is an unstructured key value map stored with a resource that may be\\nset by external tools to store and retrieve arbitrary metadata. They are not\\nqueryable and should be preserved when modifying objects.\\nMore info: http://kubernetes.io/docs/user-guide/annotations\",\n         \"type\": \"object\"\n        },\n        \"generateName\": {\n         \"description\": \"GenerateName is an optional prefix, used by the server, to generate a unique\\nname ONLY IF the Name field has not been provided.\\nIf this field is used, the name returned to the client will be different\\nthan the name passed. This value will also be combined with a unique suffix.\\nThe provided value has the same validation rules as the Name field,\\nand may be truncated by the length of the suffix required to make the value\\nunique on the server.\\n\\nIf this field is specified and the generated name exists, the server will\\nNOT return a 409 - instead, it will either return 201 Created or 500 with Reason\\nServerTimeout indicating a unique name could not be found in the time allotted, and the client\\nshould retry (optionally after the time indicated in the Retry-After header).\\n\\nApplied only if Name is not specified.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency\",\n         \"type\": \"string\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Map of string keys and values that can be used to organize and categorize\\n(scope and select) objects. May match selectors of replication controllers\\nand services.\\nMore info: http://kubernetes.io/docs/user-guide/labels\",\n         \"type\": \"object\"\n        },\n        \"name\": {\n         \"description\": \"Name must be unique within a namespace. Is required when creating resources, although\\nsome resources may allow a client to request the generation of an appropriate name\\nautomatically. Name is primarily intended for creation idempotence and configuration\\ndefinition.\\nCannot be updated.\\nMore info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace defines the space within each name must be unique. An empty namespace is\\nequivalent to the \\\"default\\\" namespace, but \\\"default\\\" is the canonical representation.\\nNot all objects are required to be scoped to a namespace - the value of this field for\\nthose objects will be empty.\\n\\nMust be a DNS_LABEL.\\nCannot be updated.\\nMore info: http://kubernetes.io/docs/user-guide/namespaces\",\n         \"type\": \"string\"\n        },\n        \"ownerReferences\": {\n         \"description\": \"List of objects depended by this object. If ALL objects in the list have\\nbeen deleted, this object will be garbage collected. If this object is managed by a controller,\\nthen an entry in this list will point to this controller, with the controller field set to true.\\nThere cannot be more than one managing controller.\",\n         \"items\": {\n          \"description\": \"OwnerReference contains enough information to let you identify an owning\\nobject. An owning object must be in the same namespace as the dependent, or\\nbe cluster-scoped, so there is no namespace field.\",\n          \"properties\": {\n           \"apiVersion\": {\n            \"description\": \"API version of the referent.\",\n            \"type\": \"string\"\n           },\n           \"blockOwnerDeletion\": {\n            \"description\": \"If true, AND if the owner has the \\\"foregroundDeletion\\\" finalizer, then\\nthe owner cannot be deleted from the key-value store until this\\nreference is removed.\\nSee https://kubernetes.io/docs/concepts/architecture/garbage-collection/#foreground-deletion\\nfor how the garbage collector interacts with this field and enforces the foreground deletion.\\nDefaults to false.\\nTo set this field, a user needs \\\"delete\\\" permission of the owner,\\notherwise 422 (Unprocessable Entity) will be returned.\",\n            \"type\": \"boolean\"\n           },\n           \"controller\": {\n            \"description\": \"If true, this reference points to the managing controller.\",\n            \"type\": \"boolean\"\n           },\n           \"kind\": {\n            \"description\": \"Kind of the referent.\\nMore info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names\",\n            \"type\": \"string\"\n           },\n           \"uid\": {\n            \"description\": \"UID of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"apiVersion\",\n           \"kind\",\n           \"name\",\n           \"uid\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"aws\",\n    \"kubernetes\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Adopted Resource\",\n \"type\": \"object\"\n}"
+  }
+}

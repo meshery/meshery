@@ -17,10 +17,8 @@ package components
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // represents the mesheryctl component list command
@@ -40,15 +38,7 @@ mesheryctl component list --page [page-number]
 mesheryctl component list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/%s?%s", baseUrl, componentApiPath, utils.GetPageQueryParameter(cmd, pageNumberFlag))
-
-		return listComponents(cmd, url)
+		return listComponents(cmd, fmt.Sprintf("%s?%s", componentApiPath, utils.GetPageQueryParameter(cmd, pageNumberFlag)))
 	},
 }
 

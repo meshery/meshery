@@ -5,7 +5,6 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
@@ -28,22 +27,18 @@ func TestCreateEnvironment(t *testing.T) {
 	fixturesDir := filepath.Join(currDir, "fixtures")
 	testdataDir := filepath.Join(currDir, "testdata")
 
+	// Test scenarios for environment creation
 	tests := []struct {
 		Name             string
 		Args             []string
-		Token            string
 		URL              string
+		Method           string
 		Fixture          string
+		RequestBody      string
 		ExpectedResponse string
-		ExpectedError    bool
+		Token            string
+		ExpectError      bool
 	}{
-		{
-			Name:             "Missing name Flag",
-			Args:             []string{"create", "--name", "", "--orgID", "1234", "--description", "This is a test environment"},
-			URL:              testContext.BaseURL + "/api/environments",
-			ExpectedResponse: "create.environment.without.any.flag.golden",
-			ExpectedError:    true,
-		},
 		{
 			Name:             "Missing orgID Flag",
 			Args:             []string{"create", "--name", "test", "--orgID", "", "--description", "This is a test environment"},

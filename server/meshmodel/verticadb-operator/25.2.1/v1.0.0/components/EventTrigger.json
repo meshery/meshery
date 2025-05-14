@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Event Trigger",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "verticadb-operator",
+    "displayName": "Verticadb Operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/vertica/vertica-kubernetes/releases/download/v25.2.1-0/verticadb-operator-25.2.1-0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "25.2.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/vertica/vertica-kubernetes/releases/download/v25.2.1-0/verticadb-operator-25.2.1-0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "vertica.com/v1beta1",
+    "kind": "EventTrigger",
+    "schema": "{\n \"description\": \"EventTrigger is the Schema for the eventtriggers API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EventTriggerSpec defines how to find objects that apply, what the match\\ncondition and a job template spec that gets created when a match occurs.\",\n   \"properties\": {\n    \"matches\": {\n     \"description\": \"List of things that must be matched in order for the Job to be\\ncreated. Multiple matches are combined with AND logic.\",\n     \"items\": {\n      \"description\": \"ETMatch defines a condition to match that will trigger job creation.\",\n      \"properties\": {\n       \"condition\": {\n        \"description\": \"Details about a status condition that must match.\",\n        \"properties\": {\n         \"status\": {\n          \"description\": \"The expected value of the status condition when a match occurs.\",\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"description\": \"The name of the status condition to check.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"status\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"references\": {\n     \"description\": \"Objects that this event trigger will apply too.\",\n     \"items\": {\n      \"description\": \"ETReference is a way to identify an object or set of objects that will be\\nwatched.\",\n      \"properties\": {\n       \"object\": {\n        \"description\": \"A single object, given by GVK + namespace + name, that this event trigger\\nwill apply too.\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"The API version of the reference object\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"The kind of the reference object\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"The name of the reference object. This doesn't have to exist prior to\\ncreating the CR.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"The namespace that the reference object exists in.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"apiVersion\",\n         \"kind\",\n         \"name\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"template\": {\n     \"description\": \"A template of a Job that will get created when the conditions are met for\\nany reference object.\",\n     \"properties\": {\n      \"metadata\": {\n       \"description\": \"The job's object meta data. At a minimum, the name or generateName must\\nbe set.\",\n       \"properties\": {\n        \"annotations\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Annotations is an unstructured key value map stored with a resource that may be\\nset by external tools to store and retrieve arbitrary metadata. They are not\\nqueryable and should be preserved when modifying objects.\",\n         \"type\": \"object\"\n        },\n        \"generateName\": {\n         \"description\": \"GenerateName is an optional prefix, used by the server, to generate a unique\\nname ONLY IF the Name field has not been provided.\",\n         \"type\": \"string\"\n        },\n        \"labels\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Map of string keys and values that can be used to organize and categorize\\n(scope and select) objects.\",\n         \"type\": \"object\"\n        },\n        \"name\": {\n         \"description\": \"Name must be unique within a namespace. Can be omitted if GenerateName is provided.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"spec\": {\n       \"description\": \"Specification of the desired behavior of the job.\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"metadata\",\n      \"spec\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"matches\",\n    \"references\",\n    \"template\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Event Trigger\",\n \"type\": \"object\"\n}"
+  }
+}

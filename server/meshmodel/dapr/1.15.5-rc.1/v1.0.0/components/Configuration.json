@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Configuration",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "dapr",
+    "displayName": "Dapr",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Serverless"
+    },
+    "subCategory": "Framework",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#0d2192",
+      "secondaryColor": "#5266D7",
+      "shape": "circle",
+      "source_uri": "https://dapr.github.io/helm-charts/dapr-1.15.5-rc.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 480 255.60879\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"\u003e\u003c/rect\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "1.15.5-rc.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#0d2192",
+    "secondaryColor": "#5266D7",
+    "shape": "circle",
+    "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#0d2192;}.cls-2{fill:#fff;isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 480 255.60879\" width='480' height='255.60879'\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1,.cls-2{fill:#fff;}.cls-2{isolation:isolate;opacity:0.08;}\u003c/style\u003e\u003c/defs\u003e\u003crect id=\"Rectangle-4\" class=\"cls-1\" x=\"99.78042\" y=\"11.18938\" width=\"282.15168\" height=\"198.57274\" rx=\"5.49347\"/\u003e\u003crect id=\"Rectangle-4-2\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"99.78042\" y=\"11.18938\" width=\"104.36936\" height=\"198.57274\"/\u003e\u003crect id=\"Rectangle-3\" class=\"cls-1\" x=\"10.67987\" y=\"196.95093\" width=\"456.64027\" height=\"47.65952\" rx=\"10.21827\"/\u003e\u003crect id=\"Rectangle-4-3\" data-name=\"Rectangle-4\" class=\"cls-2\" x=\"10.67987\" y=\"196.95093\" width=\"141.28521\" height=\"58.65786\"/\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://dapr.github.io/helm-charts/dapr-1.15.5-rc.1.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "dapr.io/v1alpha1",
+    "kind": "Configuration",
+    "schema": "{\n \"description\": \"Configuration describes an Dapr configuration setting.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ConfigurationSpec is the spec for a configuration.\",\n   \"properties\": {\n    \"accessControl\": {\n     \"description\": \"AccessControlSpec is the spec object in ConfigurationSpec.\",\n     \"properties\": {\n      \"defaultAction\": {\n       \"type\": \"string\"\n      },\n      \"policies\": {\n       \"items\": {\n        \"description\": \"AppPolicySpec defines the policy data structure for each app.\",\n        \"properties\": {\n         \"appId\": {\n          \"type\": \"string\"\n         },\n         \"defaultAction\": {\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"type\": \"string\"\n         },\n         \"operations\": {\n          \"items\": {\n           \"description\": \"AppOperationAction defines the data structure for each app operation.\",\n           \"properties\": {\n            \"action\": {\n             \"type\": \"string\"\n            },\n            \"httpVerb\": {\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"action\",\n            \"name\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"trustDomain\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"appId\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"trustDomain\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"api\": {\n     \"description\": \"APISpec describes the configuration for Dapr APIs.\",\n     \"properties\": {\n      \"allowed\": {\n       \"description\": \"List of allowed APIs. Can be used in conjunction with denied.\",\n       \"items\": {\n        \"description\": \"APIAccessRule describes an access rule for allowing or denying a Dapr API.\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"protocol\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"version\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"denied\": {\n       \"description\": \"List of denied APIs. Can be used in conjunction with allowed.\",\n       \"items\": {\n        \"description\": \"APIAccessRule describes an access rule for allowing or denying a Dapr API.\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"protocol\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"version\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"appHttpPipeline\": {\n     \"description\": \"PipelineSpec defines the middleware pipeline.\",\n     \"properties\": {\n      \"handlers\": {\n       \"items\": {\n        \"description\": \"HandlerSpec defines a request handlers.\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"selector\": {\n          \"description\": \"SelectorSpec selects target services to which the handler is to be applied.\",\n          \"properties\": {\n           \"fields\": {\n            \"items\": {\n             \"description\": \"SelectorField defines a selector fields.\",\n             \"properties\": {\n              \"field\": {\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"field\",\n              \"value\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"fields\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"handlers\"\n     ],\n     \"type\": \"object\"\n    },\n    \"components\": {\n     \"description\": \"ComponentsSpec describes the configuration for Dapr components\",\n     \"properties\": {\n      \"deny\": {\n       \"description\": \"Denylist of component types that cannot be instantiated\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"features\": {\n     \"items\": {\n      \"description\": \"FeatureSpec defines the features that are enabled/disabled.\",\n      \"properties\": {\n       \"enabled\": {\n        \"type\": \"boolean\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"enabled\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"httpPipeline\": {\n     \"description\": \"PipelineSpec defines the middleware pipeline.\",\n     \"properties\": {\n      \"handlers\": {\n       \"items\": {\n        \"description\": \"HandlerSpec defines a request handlers.\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"selector\": {\n          \"description\": \"SelectorSpec selects target services to which the handler is to be applied.\",\n          \"properties\": {\n           \"fields\": {\n            \"items\": {\n             \"description\": \"SelectorField defines a selector fields.\",\n             \"properties\": {\n              \"field\": {\n               \"type\": \"string\"\n              },\n              \"value\": {\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"field\",\n              \"value\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"required\": [\n           \"fields\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"handlers\"\n     ],\n     \"type\": \"object\"\n    },\n    \"logging\": {\n     \"description\": \"LoggingSpec defines the configuration for logging.\",\n     \"properties\": {\n      \"apiLogging\": {\n       \"description\": \"Configure API logging.\",\n       \"properties\": {\n        \"enabled\": {\n         \"description\": \"Default value for enabling API logging. Sidecars can always override this by setting `--enable-api-logging` to true or false explicitly.\\nThe default value is false.\",\n         \"type\": \"boolean\"\n        },\n        \"obfuscateURLs\": {\n         \"description\": \"When enabled, obfuscates the values of URLs in HTTP API logs, logging the route name rather than the full path being invoked, which could contain PII.\\nDefault: false.\\nThis option has no effect if API logging is disabled.\",\n         \"type\": \"boolean\"\n        },\n        \"omitHealthChecks\": {\n         \"description\": \"If true, health checks are not reported in API logs. Default: false.\\nThis option has no effect if API logging is disabled.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"metric\": {\n     \"default\": {\n      \"enabled\": true\n     },\n     \"description\": \"MetricSpec defines metrics configuration.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"http\": {\n       \"description\": \"MetricHTTP defines configuration for metrics for the HTTP server\",\n       \"properties\": {\n        \"excludeVerbs\": {\n         \"description\": \"If true (default is false) HTTP verbs (e.g., GET, POST) are excluded from the metrics.\",\n         \"type\": \"boolean\"\n        },\n        \"increasedCardinality\": {\n         \"description\": \"If false, metrics for the HTTP server are collected with increased cardinality.\\nThe default is true in Dapr 1.13, but will be changed to false in 1.15+\",\n         \"type\": \"boolean\"\n        },\n        \"pathMatching\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"latencyDistributionBuckets\": {\n       \"description\": \"The LatencyDistributionBuckets variable specifies the latency distribution buckets (in milliseconds) used for\\nhistograms in the application. If this variable is not set or left empty, the application will default to using the standard histogram buckets.\\nThe default histogram latency buckets (in milliseconds) are as follows:\\n   1, 2, 3, 4, 5, 6, 8, 10, 13, 16, 20, 25, 30, 40, 50, 65, 80, 100, 130, 160, 200, 250, 300, 400, 500, 650, 800, 1,000, 2,000, 5,000, 10,000, 20,000, 50,000, 100,000.\",\n       \"items\": {\n        \"type\": \"integer\"\n       },\n       \"type\": \"array\"\n      },\n      \"recordErrorCodes\": {\n       \"type\": \"boolean\"\n      },\n      \"rules\": {\n       \"items\": {\n        \"description\": \"MetricsRule defines configuration options for a metric.\",\n        \"properties\": {\n         \"labels\": {\n          \"items\": {\n           \"description\": \"MetricsLabel defines an object that allows to set regex expressions for a label.\",\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"regex\": {\n             \"additionalProperties\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"regex\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"labels\",\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"metrics\": {\n     \"default\": {\n      \"enabled\": true\n     },\n     \"description\": \"MetricSpec defines metrics configuration.\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"http\": {\n       \"description\": \"MetricHTTP defines configuration for metrics for the HTTP server\",\n       \"properties\": {\n        \"excludeVerbs\": {\n         \"description\": \"If true (default is false) HTTP verbs (e.g., GET, POST) are excluded from the metrics.\",\n         \"type\": \"boolean\"\n        },\n        \"increasedCardinality\": {\n         \"description\": \"If false, metrics for the HTTP server are collected with increased cardinality.\\nThe default is true in Dapr 1.13, but will be changed to false in 1.15+\",\n         \"type\": \"boolean\"\n        },\n        \"pathMatching\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"latencyDistributionBuckets\": {\n       \"description\": \"The LatencyDistributionBuckets variable specifies the latency distribution buckets (in milliseconds) used for\\nhistograms in the application. If this variable is not set or left empty, the application will default to using the standard histogram buckets.\\nThe default histogram latency buckets (in milliseconds) are as follows:\\n   1, 2, 3, 4, 5, 6, 8, 10, 13, 16, 20, 25, 30, 40, 50, 65, 80, 100, 130, 160, 200, 250, 300, 400, 500, 650, 800, 1,000, 2,000, 5,000, 10,000, 20,000, 50,000, 100,000.\",\n       \"items\": {\n        \"type\": \"integer\"\n       },\n       \"type\": \"array\"\n      },\n      \"recordErrorCodes\": {\n       \"type\": \"boolean\"\n      },\n      \"rules\": {\n       \"items\": {\n        \"description\": \"MetricsRule defines configuration options for a metric.\",\n        \"properties\": {\n         \"labels\": {\n          \"items\": {\n           \"description\": \"MetricsLabel defines an object that allows to set regex expressions for a label.\",\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"regex\": {\n             \"additionalProperties\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"regex\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"name\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"labels\",\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"mtls\": {\n     \"description\": \"MTLSSpec defines mTLS configuration.\",\n     \"properties\": {\n      \"allowedClockSkew\": {\n       \"type\": \"string\"\n      },\n      \"controlPlaneTrustDomain\": {\n       \"type\": \"string\"\n      },\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"sentryAddress\": {\n       \"type\": \"string\"\n      },\n      \"tokenValidators\": {\n       \"description\": \"Additional token validators to use.\\nWhen Dapr is running in Kubernetes mode, this is in addition to the built-in \\\"kubernetes\\\" validator.\\nIn self-hosted mode, enabling a custom validator will disable the built-in \\\"insecure\\\" validator.\",\n       \"items\": {\n        \"description\": \"ValidatorSpec contains additional token validators to use.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name of the validator\",\n          \"enum\": [\n           \"jwks\"\n          ],\n          \"type\": \"string\"\n         },\n         \"options\": {\n          \"description\": \"Options for the validator, if any\",\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"workloadCertTTL\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"controlPlaneTrustDomain\",\n      \"enabled\",\n      \"sentryAddress\"\n     ],\n     \"type\": \"object\"\n    },\n    \"nameResolution\": {\n     \"description\": \"NameResolutionSpec is the spec for name resolution configuration.\",\n     \"properties\": {\n      \"component\": {\n       \"type\": \"string\"\n      },\n      \"configuration\": {\n       \"description\": \"DynamicValue is a dynamic value struct for the component.metadata pair value.\",\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"component\",\n      \"configuration\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"secrets\": {\n     \"description\": \"SecretsSpec is the spec for secrets configuration.\",\n     \"properties\": {\n      \"scopes\": {\n       \"items\": {\n        \"description\": \"SecretsScope defines the scope for secrets.\",\n        \"properties\": {\n         \"allowedSecrets\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"defaultAccess\": {\n          \"type\": \"string\"\n         },\n         \"deniedSecrets\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"storeName\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"storeName\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"scopes\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tracing\": {\n     \"description\": \"TracingSpec defines distributed tracing configuration.\",\n     \"properties\": {\n      \"otel\": {\n       \"description\": \"OtelSpec defines Otel exporter configurations.\",\n       \"properties\": {\n        \"endpointAddress\": {\n         \"type\": \"string\"\n        },\n        \"isSecure\": {\n         \"type\": \"boolean\"\n        },\n        \"protocol\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"endpointAddress\",\n        \"isSecure\",\n        \"protocol\"\n       ],\n       \"type\": \"object\"\n      },\n      \"samplingRate\": {\n       \"type\": \"string\"\n      },\n      \"stdout\": {\n       \"type\": \"boolean\"\n      },\n      \"zipkin\": {\n       \"description\": \"ZipkinSpec defines Zipkin trace configurations.\",\n       \"properties\": {\n        \"endpointAddress\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"endpointAddress\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"samplingRate\"\n     ],\n     \"type\": \"object\"\n    },\n    \"wasm\": {\n     \"description\": \"WasmSpec describes the security profile for all Dapr Wasm components.\",\n     \"properties\": {\n      \"strictSandbox\": {\n       \"description\": \"Force enabling strict sandbox mode for all WASM components.\\nWhen this is enabled, WASM components always run in strict mode regardless of their configuration.\\nStrict mode enhances security of the WASM sandbox by limiting access to certain capabilities such as real-time clocks and random number generators.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workflow\": {\n     \"description\": \"WorkflowSpec defines the configuration for Dapr workflows.\",\n     \"properties\": {\n      \"maxConcurrentActivityInvocations\": {\n       \"description\": \"maxConcurrentActivityInvocations is the maximum number of concurrent activities that can be processed by a single Dapr instance.\\nAttempted invocations beyond this will be queued until the number of concurrent invocations drops below this value.\\nIf omitted, the default value of 100 will be used.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      },\n      \"maxConcurrentWorkflowInvocations\": {\n       \"description\": \"maxConcurrentWorkflowInvocations is the maximum number of concurrent workflow invocations that can be scheduled by a single Dapr instance.\\nAttempted invocations beyond this will be queued until the number of concurrent invocations drops below this value.\\nIf omitted, the default value of 100 will be used.\",\n       \"format\": \"int32\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Configuration\",\n \"type\": \"object\"\n}"
+  }
+}

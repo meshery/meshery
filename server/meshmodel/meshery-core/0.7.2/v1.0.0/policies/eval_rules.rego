@@ -99,28 +99,78 @@ relationship_already_exists(design_file, relationship) := true if {
 
 
 
+## Matching
+#  Match supports multiple strategies
+#  equal : complete equality of numbers,strigns,arrays,objects
+#  equal_as_strings : coerses values to strings before equality
+#  to_contains_from : checks if from is a superset of to ( for objects and arrays)
+#  not_null : checks if both values are not nulll
+#
+#  These strategies can be grouped into a list to check if the values at mutator/mutated path match
+#  And the the arrays can be grouped into a match_strategy to form a ordered list of strategies for each path
+
+match_values(from_value,to_value,strategy) := true if {
+    strategy == "equal"
+    from_value == to_value
+}
+
+
+match_values(from_value,to_value,strategy) := true if {
+    strategy == "equal_as_strings"
+    s1 := sprintf("%v",[from_value])
+    s2 :=  sprintf("%v",[to_value])
+
+    s1 == s2
+}
+
+
+match_values(from_value,to_value,strategy) := true if {
+    strategy == "to_contains_from"
+    object.subset(to_value,from_value)
+}
+
+match_values(from_value,to_value,strategy) := true if {
+    strategy == "not_null"
+    from_value != null
+    to_value != null
+}
+
+match_values_with_strategies(from_value,to_value,strategies) := true if {
+    every strategy in strategies {
+        match_values(from_value,to_value,strategy)
+    }
+}
+
+
+
+get_match_strategy_for_selector(from_clause) := strategy if {
+    strategy := from_clause.match_strategy_matrix
+    strategy != null
+}else := []
+
+# if no strategies are specified for a path fallback to ["equal"]
+get_strategy_for_value_at(strategies,index) := strategy if{
+  strategy := strategies[index]
+  strategy != null
+}else := ["equal"]
 
 matching_mutators(component_from , component_to , from_clause,to_clause,design_file) := matching_selectors if  {
-
+     match_strategy_matrix := get_match_strategy_for_selector(from_clause)
+     # print("match_strategy",match_strategy_matrix)
      mutatorCount := count(from_clause.patch.mutatorRef)
 
-#     print("mutator count", mutatorCount)
-
-     # any matching not null mutator makes the relationship valid ( which is kind of wierd as we dont have proper
-     # control to specific which ones can be null or not)
-     some i in numbers.range(0, mutatorCount - 1)
+     every i in numbers.range(0, mutatorCount - 1) {
          mutatorPath := from_clause.patch.mutatorRef[i]
          mutatedPath := to_clause.patch.mutatedRef[i]
 
          mutatorValue := core_utils.configuration_for_component_at_path(mutatorPath, component_from, design_file)
          mutatedValue := core_utils.configuration_for_component_at_path(mutatedPath, component_to, design_file)
 
-#         print("mutator value", mutatorValue, "mutated value", mutatedValue)
-         mutatorValue != null
-         mutatedValue != null
+         strategies := get_strategy_for_value_at(match_strategy_matrix,i)
+   
+         matching := match_values_with_strategies(mutatorValue,mutatedValue,strategies)
 
-
-         mutatorValue == mutatedValue
+    }
 
     matching_selectors := {
         "from": [from_clause],

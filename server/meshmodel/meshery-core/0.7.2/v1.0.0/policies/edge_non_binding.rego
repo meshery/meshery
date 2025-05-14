@@ -8,7 +8,7 @@ import data.eval_rules
 import data.actions
 
 
-edge_network_policy_identifier := "generic-mutator-policy"
+edge_network_policy_identifier := "edge-non-binding"
 
 
 relationship_is_implicated_by_policy(relationship,policy_identifier) := true if {
@@ -35,19 +35,3 @@ relationship_side_effects(relationship,design_file,policy_identifier) := actions
    actions := eval_rules.patch_mutators_action(relationship, design_file)
 }
 
-### Action Phase
-# action_phase(design_file, relationship_policy_identifier) := result if {
-# 	relationship_policy_identifier == edge_network_policy_identifier
-# 	implicable_relationships := edge_network_implicable_relationships(design_file.relationships)
-    
-# 	relationships_to_add := eval_rules.approve_identified_relationships_action(implicable_relationships, 100)
-
-# 	rels_to_delete := eval_rules.cleanup_deleted_relationships_actions(implicable_relationships)
-	
-#     components_to_update := union({actions |
-#         some relationship in implicable_relationships
-#         actions := eval_rules.patch_mutators_action(relationship, design_file)
-#     })
-
-# 	result := ( relationships_to_add | components_to_update) | rels_to_delete
-# }

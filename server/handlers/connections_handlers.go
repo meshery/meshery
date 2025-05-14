@@ -383,7 +383,11 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			}
 
 			event := eventBuilder.WithSeverity(events.Informational).
-				WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).Build()
+				WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).
+				WithMetadata(map[string]interface{}{
+					"connectionName": k8scontext.Name,
+				}).
+				Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
 

@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { updateProgress } from '../lib/store';
 import { Button, Typography, ResponsiveDataTable } from '@layer5/sistent';
-import { Provider, connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
@@ -10,11 +7,11 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import SearchBar from '../utils/custom-search';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@layer5/sistent';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const DatabaseSummary = (props) => {
   const [page, setPage] = useState(0);
@@ -25,7 +22,7 @@ const DatabaseSummary = (props) => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
-    props.updateProgress({ showProgress: false });
+    updateProgress({ showProgress: false });
     notify({
       message: `${msg}: ${error}`,
       event_type: EVENT_TYPES.ERROR,
@@ -49,7 +46,7 @@ const DatabaseSummary = (props) => {
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (responseOfResetDatabase === 'RESET') {
-        props.updateProgress({ showProgress: true });
+        updateProgress({ showProgress: true });
         resetDatabase({
           selector: {
             clearDB: 'true',
@@ -59,7 +56,7 @@ const DatabaseSummary = (props) => {
           k8scontextID: '',
         }).subscribe({
           next: (res) => {
-            props.updateProgress({ showProgress: false });
+            updateProgress({ showProgress: false });
             if (res.resetStatus === 'PROCESSING') {
               notify({ message: 'Database reset successful.', event_type: EVENT_TYPES.SUCCESS });
               refetch();
@@ -175,22 +172,12 @@ const DatabaseSummary = (props) => {
   );
 };
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
 DatabaseSummary.propTypes = {
   promptRef: PropTypes.object.isRequired,
 };
 
 const DatabaseSummaryTable = (props) => {
-  return (
-    <Provider store={store}>
-      <DatabaseSummary {...props} />
-    </Provider>
-  );
+  return <DatabaseSummary {...props} />;
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(DatabaseSummaryTable);
+export default DatabaseSummaryTable;

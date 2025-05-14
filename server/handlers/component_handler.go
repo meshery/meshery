@@ -1412,7 +1412,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 
 		//Component generation starts here
-		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
+		lengthofComps, _, err := meshkitRegistryUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef, model.Group)
 		if err != nil {
 			h.handleError(rw, err, "Error generating components")
 			h.sendErrorEvent(userID, provider, "Error generating components", err)

@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
 import { CustomTooltip, NoSsr } from '@layer5/sistent';
 import {
   Divider,
@@ -24,7 +23,6 @@ import {
   STATUS_STYLE,
 } from './constants';
 import Notification from './notification';
-import { store } from '../../store';
 import {
   Container,
   DarkBackdrop,
@@ -63,7 +61,7 @@ import DeleteIcon from '../../assets/icons/DeleteIcon';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
@@ -129,7 +127,6 @@ const NavbarNotificationIcon = () => {
   const { data, error, isLoading } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-
   if (error || (!data && !isLoading)) {
     console.log(
       '[NavbarNotificationIcon] Error fetching notification summary for NotificationIconCount',
@@ -337,8 +334,11 @@ const BulkActions = () => {
         padding: '0.15rem',
       }}
     >
-      <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
+        <Typography variant="body2">
+          {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
+        </Typography>
       </Box>
       <Collapse in={checkedEvents.length > 0}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -399,11 +399,13 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
 
   return (
     <>
-      {events.map((event, idx) => (
-        <div key={event.id + idx}>
-          <Notification eventData={event} event_id={event.id} />
-        </div>
-      ))}
+      {events.map((event, idx) => {
+        return (
+          <div key={event.id + idx}>
+            <Notification eventData={event} event_id={event.id} />
+          </div>
+        );
+      })}
 
       {events.length === 0 && <EmptyState />}
 
@@ -537,15 +539,11 @@ const NotificationDrawerButton_ = () => {
 };
 
 export const NotificationDrawerButton = () => {
-  return (
-    <Provider store={store}>
-      <NotificationDrawerButton_ />
-    </Provider>
-  );
+  return <NotificationDrawerButton_ />;
 };
 
 const NotificationCenter = (props) => {
-  const isOpen = useSelectorRtk((state) => state.events.isNotificationCenterOpen);
+  const isOpen = useSelector((state) => state.events.isNotificationCenterOpen);
 
   if (!isOpen) {
     return null;
@@ -554,9 +552,7 @@ const NotificationCenter = (props) => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <NotificationCenterDrawer {...props} />
-        </Provider>
+        <NotificationCenterDrawer {...props} />
       </ErrorBoundary>
     </NoSsr>
   );

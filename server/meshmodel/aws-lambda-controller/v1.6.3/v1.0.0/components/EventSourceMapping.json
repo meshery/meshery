@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Event Source Mapping",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-lambda-controller",
+    "displayName": "AWS Lambda",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Serverless",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ED7100",
+      "shape": "circle",
+      "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.6.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ED7100",
+    "shape": "circle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_AWS-Lambda_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M14.3863762,33 L8.26957323,33 L15.032628,18.574 L18.0969223,25.014 L14.3863762,33 Z M15.4706649,17.202 C15.3891468,17.03 15.2172714,16.92 15.0286994,16.92 L15.0267351,16.92 C14.8391453,16.921 14.6672698,17.032 14.5857517,17.205 L7.04778408,33.285 C6.9751053,33.439 6.9859089,33.622 7.0762663,33.767 C7.16564155,33.912 7.32278485,34 7.49073175,34 L14.6967342,34 C14.8872704,34 15.0601281,33.889 15.1416462,33.714 L19.085943,25.225 C19.1497824,25.088 19.1488003,24.929 19.0839787,24.793 L15.4706649,17.202 Z M32.0178544,33 L26.1357842,33 L16.6669183,12.289 C16.5863824,12.113 16.4125426,12 16.2220063,12 L12.3700312,12 L12.3749419,7 L19.9237132,7 L29.3483826,27.71 C29.4289185,27.887 29.6037404,28 29.7942767,28 L32.0178544,28 L32.0178544,33 Z M32.5089272,27 L30.1085633,27 L20.6829118,6.29 C20.6023758,6.113 20.4275539,6 20.2370176,6 L11.8838691,6 C11.6127969,6 11.3927963,6.224 11.3927963,6.5 L11.3869034,12.5 C11.3869034,12.632 11.4389572,12.759 11.5312788,12.854 C11.6236005,12.947 11.7473509,13 11.8779762,13 L15.909684,13 L25.3775678,33.711 C25.4581038,33.887 25.6319435,34 25.8234619,34 L32.5089272,34 C32.7809815,34 33,33.776 33,33.5 L33,27.5 C33,27.224 32.7809815,27 32.5089272,27 L32.5089272,27 Z\" id=\"AWS-Lambda_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/lambda-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "lambda.services.k8s.aws/v1alpha1",
+    "kind": "EventSourceMapping",
+    "schema": "{\n \"description\": \"EventSourceMapping is the Schema for the EventSourceMappings API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"EventSourceMappingSpec defines the desired state of EventSourceMapping.\",\n   \"properties\": {\n    \"amazonManagedKafkaEventSourceConfig\": {\n     \"description\": \"Specific configuration settings for an Amazon Managed Streaming for Apache\\nKafka (Amazon MSK) event source.\",\n     \"properties\": {\n      \"consumerGroupID\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"batchSize\": {\n     \"description\": \"The maximum number of records in each batch that Lambda pulls from your stream\\nor queue and sends to your function. Lambda passes all of the records in\\nthe batch to the function in a single call, up to the payload limit for synchronous\\ninvocation (6 MB).\\n\\n  - Amazon Kinesis – Default 100. Max 10,000.\\n\\n  - Amazon DynamoDB Streams – Default 100. Max 10,000.\\n\\n  - Amazon Simple Queue Service – Default 10. For standard queues the\\n    max is 10,000. For FIFO queues the max is 10.\\n\\n  - Amazon Managed Streaming for Apache Kafka – Default 100. Max 10,000.\\n\\n  - Self-managed Apache Kafka – Default 100. Max 10,000.\\n\\n  - Amazon MQ (ActiveMQ and RabbitMQ) – Default 100. Max 10,000.\\n\\n  - DocumentDB – Default 100. Max 10,000.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"bisectBatchOnFunctionError\": {\n     \"description\": \"(Kinesis and DynamoDB Streams only) If the function returns an error, split\\nthe batch in two and retry.\",\n     \"type\": \"boolean\"\n    },\n    \"destinationConfig\": {\n     \"description\": \"(Kinesis, DynamoDB Streams, Amazon MSK, and self-managed Kafka only) A configuration\\nobject that specifies the destination of an event after Lambda processes\\nit.\",\n     \"properties\": {\n      \"onFailure\": {\n       \"description\": \"A destination for events that failed processing.\",\n       \"properties\": {\n        \"destination\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"onSuccess\": {\n       \"description\": \"A destination for events that were processed successfully.\\n\\nTo retain records of successful asynchronous invocations (https://docs.aws.amazon.com/lambda/latest/dg/invocation-async.html#invocation-async-destinations),\\nyou can configure an Amazon SNS topic, Amazon SQS queue, Lambda function,\\nor Amazon EventBridge event bus as the destination.\",\n       \"properties\": {\n        \"destination\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"enabled\": {\n     \"description\": \"When true, the event source mapping is active. When false, Lambda pauses\\npolling and invocation.\\n\\nDefault: True\",\n     \"type\": \"boolean\"\n    },\n    \"eventSourceARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the event source.\\n\\n  - Amazon Kinesis – The ARN of the data stream or a stream consumer.\\n\\n  - Amazon DynamoDB Streams – The ARN of the stream.\\n\\n  - Amazon Simple Queue Service – The ARN of the queue.\\n\\n  - Amazon Managed Streaming for Apache Kafka – The ARN of the cluster\\n    or the ARN of the VPC connection (for cross-account event source mappings\\n    (https://docs.aws.amazon.com/lambda/latest/dg/with-msk.html#msk-multi-vpc)).\\n\\n  - Amazon MQ – The ARN of the broker.\\n\\n  - Amazon DocumentDB – The ARN of the DocumentDB change stream.\",\n     \"type\": \"string\"\n    },\n    \"eventSourceRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"filterCriteria\": {\n     \"description\": \"An object that defines the filter criteria that determine whether Lambda\\nshould process an event. For more information, see Lambda event filtering\\n(https://docs.aws.amazon.com/lambda/latest/dg/invocation-eventfiltering.html).\",\n     \"properties\": {\n      \"filters\": {\n       \"items\": {\n        \"description\": \"A structure within a FilterCriteria object that defines an event filtering\\npattern.\",\n        \"properties\": {\n         \"pattern\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"functionName\": {\n     \"description\": \"The name or ARN of the Lambda function.\\n\\nName formats\\n\\n  - Function name – MyFunction.\\n\\n  - Function ARN – arn:aws:lambda:us-west-2:123456789012:function:MyFunction.\\n\\n  - Version or Alias ARN – arn:aws:lambda:us-west-2:123456789012:function:MyFunction:PROD.\\n\\n  - Partial ARN – 123456789012:function:MyFunction.\\n\\nThe length constraint applies only to the full ARN. If you specify only the\\nfunction name, it's limited to 64 characters in length.\",\n     \"type\": \"string\"\n    },\n    \"functionRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"functionResponseTypes\": {\n     \"description\": \"(Kinesis, DynamoDB Streams, and Amazon SQS) A list of current response type\\nenums applied to the event source mapping.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"maximumBatchingWindowInSeconds\": {\n     \"description\": \"The maximum amount of time, in seconds, that Lambda spends gathering records\\nbefore invoking the function. You can configure MaximumBatchingWindowInSeconds\\nto any value from 0 seconds to 300 seconds in increments of seconds.\\n\\nFor Kinesis, DynamoDB, and Amazon SQS event sources, the default batching\\nwindow is 0 seconds. For Amazon MSK, Self-managed Apache Kafka, Amazon MQ,\\nand DocumentDB event sources, the default batching window is 500 ms. Note\\nthat because you can only change MaximumBatchingWindowInSeconds in increments\\nof seconds, you cannot revert back to the 500 ms default batching window\\nafter you have changed it. To restore the default batching window, you must\\ncreate a new event source mapping.\\n\\nRelated setting: For Kinesis, DynamoDB, and Amazon SQS event sources, when\\nyou set BatchSize to a value greater than 10, you must set MaximumBatchingWindowInSeconds\\nto at least 1.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"maximumRecordAgeInSeconds\": {\n     \"description\": \"(Kinesis and DynamoDB Streams only) Discard records older than the specified\\nage. The default value is infinite (-1).\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"maximumRetryAttempts\": {\n     \"description\": \"(Kinesis and DynamoDB Streams only) Discard records after the specified number\\nof retries. The default value is infinite (-1). When set to infinite (-1),\\nfailed records are retried until the record expires.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"parallelizationFactor\": {\n     \"description\": \"(Kinesis and DynamoDB Streams only) The number of batches to process from\\neach shard concurrently.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"queueRefs\": {\n     \"items\": {\n      \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n      \"properties\": {\n       \"from\": {\n        \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"queues\": {\n     \"description\": \"(MQ) The name of the Amazon MQ broker destination queue to consume.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"scalingConfig\": {\n     \"description\": \"(Amazon SQS only) The scaling configuration for the event source. For more\\ninformation, see Configuring maximum concurrency for Amazon SQS event sources\\n(https://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html#events-sqs-max-concurrency).\",\n     \"properties\": {\n      \"maximumConcurrency\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selfManagedEventSource\": {\n     \"description\": \"The self-managed Apache Kafka cluster to receive records from.\",\n     \"properties\": {\n      \"endpoints\": {\n       \"additionalProperties\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selfManagedKafkaEventSourceConfig\": {\n     \"description\": \"Specific configuration settings for a self-managed Apache Kafka event source.\",\n     \"properties\": {\n      \"consumerGroupID\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sourceAccessConfigurations\": {\n     \"description\": \"An array of authentication protocols or VPC components required to secure\\nyour event source.\",\n     \"items\": {\n      \"description\": \"To secure and define access to your event source, you can specify the authentication\\nprotocol, VPC components, or virtual host.\",\n      \"properties\": {\n       \"type_\": {\n        \"type\": \"string\"\n       },\n       \"uRI\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"startingPosition\": {\n     \"description\": \"The position in a stream from which to start reading. Required for Amazon\\nKinesis and Amazon DynamoDB Stream event sources. AT_TIMESTAMP is supported\\nonly for Amazon Kinesis streams, Amazon DocumentDB, Amazon MSK, and self-managed\\nApache Kafka.\",\n     \"type\": \"string\"\n    },\n    \"startingPositionTimestamp\": {\n     \"description\": \"With StartingPosition set to AT_TIMESTAMP, the time from which to start reading.\\nStartingPositionTimestamp cannot be in the future.\",\n     \"format\": \"date-time\",\n     \"type\": \"string\"\n    },\n    \"topics\": {\n     \"description\": \"The name of the Kafka topic.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"tumblingWindowInSeconds\": {\n     \"description\": \"(Kinesis and DynamoDB Streams only) The duration in seconds of a processing\\nwindow for DynamoDB and Kinesis Streams event sources. A value of 0 seconds\\nindicates no tumbling window.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Event Source Mapping\",\n \"type\": \"object\"\n}"
+  }
+}

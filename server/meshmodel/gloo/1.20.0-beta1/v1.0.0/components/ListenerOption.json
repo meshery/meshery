@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Listener Option",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "gloo",
+    "displayName": "Gloo",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "API Gateway",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://storage.googleapis.com/solo-public-helm/charts/gloo-1.20.0-beta1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.20.0-beta1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://storage.googleapis.com/solo-public-helm/charts/gloo-1.20.0-beta1.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "gateway.solo.io/v1",
+    "kind": "ListenerOption",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"namespacedStatuses\": {\n     \"properties\": {\n      \"statuses\": {\n       \"additionalProperties\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"options\": {\n     \"properties\": {\n      \"accessLoggingService\": {\n       \"properties\": {\n        \"accessLog\": {\n         \"items\": {\n          \"properties\": {\n           \"fileSink\": {\n            \"properties\": {\n             \"jsonFormat\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"path\": {\n              \"type\": \"string\"\n             },\n             \"stringFormat\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"filter\": {\n            \"properties\": {\n             \"andFilter\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"durationFilter\": {\n              \"properties\": {\n               \"comparison\": {\n                \"properties\": {\n                 \"op\": {\n                  \"type\": \"string\",\n                  \"x-kubernetes-int-or-string\": true\n                 },\n                 \"value\": {\n                  \"properties\": {\n                   \"defaultValue\": {\n                    \"maximum\": 4294967295,\n                    \"minimum\": 0,\n                    \"type\": \"integer\"\n                   },\n                   \"runtimeKey\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"grpcStatusFilter\": {\n              \"properties\": {\n               \"exclude\": {\n                \"type\": \"boolean\"\n               },\n               \"statuses\": {\n                \"items\": {\n                 \"type\": \"string\",\n                 \"x-kubernetes-int-or-string\": true\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"headerFilter\": {\n              \"properties\": {\n               \"header\": {\n                \"properties\": {\n                 \"exactMatch\": {\n                  \"type\": \"string\"\n                 },\n                 \"invertMatch\": {\n                  \"type\": \"boolean\"\n                 },\n                 \"name\": {\n                  \"type\": \"string\"\n                 },\n                 \"prefixMatch\": {\n                  \"type\": \"string\"\n                 },\n                 \"presentMatch\": {\n                  \"type\": \"boolean\"\n                 },\n                 \"rangeMatch\": {\n                  \"properties\": {\n                   \"end\": {\n                    \"format\": \"int64\",\n                    \"type\": \"integer\",\n                    \"x-kubernetes-int-or-string\": true\n                   },\n                   \"start\": {\n                    \"format\": \"int64\",\n                    \"type\": \"integer\",\n                    \"x-kubernetes-int-or-string\": true\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"safeRegexMatch\": {\n                  \"properties\": {\n                   \"googleRe2\": {\n                    \"properties\": {\n                     \"maxProgramSize\": {\n                      \"maximum\": 4294967295,\n                      \"minimum\": 0,\n                      \"nullable\": true,\n                      \"type\": \"integer\"\n                     }\n                    },\n                    \"type\": \"object\"\n                   },\n                   \"regex\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"suffixMatch\": {\n                  \"type\": \"string\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"notHealthCheckFilter\": {\n              \"type\": \"object\"\n             },\n             \"orFilter\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"responseFlagFilter\": {\n              \"properties\": {\n               \"flags\": {\n                \"items\": {\n                 \"type\": \"string\"\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"runtimeFilter\": {\n              \"properties\": {\n               \"percentSampled\": {\n                \"properties\": {\n                 \"denominator\": {\n                  \"type\": \"string\",\n                  \"x-kubernetes-int-or-string\": true\n                 },\n                 \"numerator\": {\n                  \"maximum\": 4294967295,\n                  \"minimum\": 0,\n                  \"type\": \"integer\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"runtimeKey\": {\n                \"type\": \"string\"\n               },\n               \"useIndependentRandomness\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"statusCodeFilter\": {\n              \"properties\": {\n               \"comparison\": {\n                \"properties\": {\n                 \"op\": {\n                  \"type\": \"string\",\n                  \"x-kubernetes-int-or-string\": true\n                 },\n                 \"value\": {\n                  \"properties\": {\n                   \"defaultValue\": {\n                    \"maximum\": 4294967295,\n                    \"minimum\": 0,\n                    \"type\": \"integer\"\n                   },\n                   \"runtimeKey\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"traceableFilter\": {\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"grpcService\": {\n            \"properties\": {\n             \"additionalRequestHeadersToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"additionalResponseHeadersToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"additionalResponseTrailersToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"filterStateObjectsToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"logName\": {\n              \"type\": \"string\"\n             },\n             \"staticClusterName\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"openTelemetryService\": {\n            \"properties\": {\n             \"attributes\": {\n              \"properties\": {\n               \"values\": {\n                \"items\": {\n                 \"properties\": {\n                  \"key\": {\n                   \"type\": \"string\"\n                  },\n                  \"value\": {\n                   \"format\": \"textarea\",\n                   \"type\": \"string\"\n                  }\n                 },\n                 \"type\": \"object\"\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"body\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"collector\": {\n              \"properties\": {\n               \"authority\": {\n                \"type\": \"string\"\n               },\n               \"endpoint\": {\n                \"type\": \"string\"\n               },\n               \"headers\": {\n                \"additionalProperties\": {\n                 \"type\": \"string\"\n                },\n                \"type\": \"object\"\n               },\n               \"insecure\": {\n                \"type\": \"boolean\"\n               },\n               \"sslConfig\": {\n                \"properties\": {\n                 \"allowRenegotiation\": {\n                  \"nullable\": true,\n                  \"type\": \"boolean\"\n                 },\n                 \"alpnProtocols\": {\n                  \"items\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"array\"\n                 },\n                 \"oneWayTls\": {\n                  \"nullable\": true,\n                  \"type\": \"boolean\"\n                 },\n                 \"parameters\": {\n                  \"properties\": {\n                   \"cipherSuites\": {\n                    \"items\": {\n                     \"type\": \"string\"\n                    },\n                    \"type\": \"array\"\n                   },\n                   \"ecdhCurves\": {\n                    \"items\": {\n                     \"type\": \"string\"\n                    },\n                    \"type\": \"array\"\n                   },\n                   \"maximumProtocolVersion\": {\n                    \"type\": \"string\",\n                    \"x-kubernetes-int-or-string\": true\n                   },\n                   \"minimumProtocolVersion\": {\n                    \"type\": \"string\",\n                    \"x-kubernetes-int-or-string\": true\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"sds\": {\n                  \"properties\": {\n                   \"callCredentials\": {\n                    \"properties\": {\n                     \"fileCredentialSource\": {\n                      \"properties\": {\n                       \"header\": {\n                        \"type\": \"string\"\n                       },\n                       \"tokenFileName\": {\n                        \"type\": \"string\"\n                       }\n                      },\n                      \"type\": \"object\"\n                     }\n                    },\n                    \"type\": \"object\"\n                   },\n                   \"certificatesSecretName\": {\n                    \"type\": \"string\"\n                   },\n                   \"clusterName\": {\n                    \"type\": \"string\"\n                   },\n                   \"targetUri\": {\n                    \"type\": \"string\"\n                   },\n                   \"validationContextName\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"secretRef\": {\n                  \"properties\": {\n                   \"name\": {\n                    \"type\": \"string\"\n                   },\n                   \"namespace\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"sni\": {\n                  \"type\": \"string\"\n                 },\n                 \"sslFiles\": {\n                  \"properties\": {\n                   \"ocspStaple\": {\n                    \"type\": \"string\"\n                   },\n                   \"rootCa\": {\n                    \"type\": \"string\"\n                   },\n                   \"tlsCert\": {\n                    \"type\": \"string\"\n                   },\n                   \"tlsKey\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"verifySubjectAltName\": {\n                  \"items\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"array\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"timeout\": {\n                \"type\": \"string\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"disableBuiltinLabels\": {\n              \"type\": \"boolean\"\n             },\n             \"filterStateObjectsToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"logName\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"connectionBalanceConfig\": {\n       \"properties\": {\n        \"exactBalance\": {\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"extensions\": {\n       \"properties\": {\n        \"configs\": {\n         \"additionalProperties\": {\n          \"format\": \"textarea\",\n          \"type\": \"string\"\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"listenerAccessLoggingService\": {\n       \"properties\": {\n        \"accessLog\": {\n         \"items\": {\n          \"properties\": {\n           \"fileSink\": {\n            \"properties\": {\n             \"jsonFormat\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"path\": {\n              \"type\": \"string\"\n             },\n             \"stringFormat\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"filter\": {\n            \"properties\": {\n             \"andFilter\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"durationFilter\": {\n              \"properties\": {\n               \"comparison\": {\n                \"properties\": {\n                 \"op\": {\n                  \"type\": \"string\",\n                  \"x-kubernetes-int-or-string\": true\n                 },\n                 \"value\": {\n                  \"properties\": {\n                   \"defaultValue\": {\n                    \"maximum\": 4294967295,\n                    \"minimum\": 0,\n                    \"type\": \"integer\"\n                   },\n                   \"runtimeKey\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"grpcStatusFilter\": {\n              \"properties\": {\n               \"exclude\": {\n                \"type\": \"boolean\"\n               },\n               \"statuses\": {\n                \"items\": {\n                 \"type\": \"string\",\n                 \"x-kubernetes-int-or-string\": true\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"headerFilter\": {\n              \"properties\": {\n               \"header\": {\n                \"properties\": {\n                 \"exactMatch\": {\n                  \"type\": \"string\"\n                 },\n                 \"invertMatch\": {\n                  \"type\": \"boolean\"\n                 },\n                 \"name\": {\n                  \"type\": \"string\"\n                 },\n                 \"prefixMatch\": {\n                  \"type\": \"string\"\n                 },\n                 \"presentMatch\": {\n                  \"type\": \"boolean\"\n                 },\n                 \"rangeMatch\": {\n                  \"properties\": {\n                   \"end\": {\n                    \"format\": \"int64\",\n                    \"type\": \"integer\",\n                    \"x-kubernetes-int-or-string\": true\n                   },\n                   \"start\": {\n                    \"format\": \"int64\",\n                    \"type\": \"integer\",\n                    \"x-kubernetes-int-or-string\": true\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"safeRegexMatch\": {\n                  \"properties\": {\n                   \"googleRe2\": {\n                    \"properties\": {\n                     \"maxProgramSize\": {\n                      \"maximum\": 4294967295,\n                      \"minimum\": 0,\n                      \"nullable\": true,\n                      \"type\": \"integer\"\n                     }\n                    },\n                    \"type\": \"object\"\n                   },\n                   \"regex\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"suffixMatch\": {\n                  \"type\": \"string\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"notHealthCheckFilter\": {\n              \"type\": \"object\"\n             },\n             \"orFilter\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"responseFlagFilter\": {\n              \"properties\": {\n               \"flags\": {\n                \"items\": {\n                 \"type\": \"string\"\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"runtimeFilter\": {\n              \"properties\": {\n               \"percentSampled\": {\n                \"properties\": {\n                 \"denominator\": {\n                  \"type\": \"string\",\n                  \"x-kubernetes-int-or-string\": true\n                 },\n                 \"numerator\": {\n                  \"maximum\": 4294967295,\n                  \"minimum\": 0,\n                  \"type\": \"integer\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"runtimeKey\": {\n                \"type\": \"string\"\n               },\n               \"useIndependentRandomness\": {\n                \"type\": \"boolean\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"statusCodeFilter\": {\n              \"properties\": {\n               \"comparison\": {\n                \"properties\": {\n                 \"op\": {\n                  \"type\": \"string\",\n                  \"x-kubernetes-int-or-string\": true\n                 },\n                 \"value\": {\n                  \"properties\": {\n                   \"defaultValue\": {\n                    \"maximum\": 4294967295,\n                    \"minimum\": 0,\n                    \"type\": \"integer\"\n                   },\n                   \"runtimeKey\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"traceableFilter\": {\n              \"type\": \"object\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"grpcService\": {\n            \"properties\": {\n             \"additionalRequestHeadersToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"additionalResponseHeadersToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"additionalResponseTrailersToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"filterStateObjectsToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"logName\": {\n              \"type\": \"string\"\n             },\n             \"staticClusterName\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"openTelemetryService\": {\n            \"properties\": {\n             \"attributes\": {\n              \"properties\": {\n               \"values\": {\n                \"items\": {\n                 \"properties\": {\n                  \"key\": {\n                   \"type\": \"string\"\n                  },\n                  \"value\": {\n                   \"format\": \"textarea\",\n                   \"type\": \"string\"\n                  }\n                 },\n                 \"type\": \"object\"\n                },\n                \"type\": \"array\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"body\": {\n              \"format\": \"textarea\",\n              \"type\": \"string\"\n             },\n             \"collector\": {\n              \"properties\": {\n               \"authority\": {\n                \"type\": \"string\"\n               },\n               \"endpoint\": {\n                \"type\": \"string\"\n               },\n               \"headers\": {\n                \"additionalProperties\": {\n                 \"type\": \"string\"\n                },\n                \"type\": \"object\"\n               },\n               \"insecure\": {\n                \"type\": \"boolean\"\n               },\n               \"sslConfig\": {\n                \"properties\": {\n                 \"allowRenegotiation\": {\n                  \"nullable\": true,\n                  \"type\": \"boolean\"\n                 },\n                 \"alpnProtocols\": {\n                  \"items\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"array\"\n                 },\n                 \"oneWayTls\": {\n                  \"nullable\": true,\n                  \"type\": \"boolean\"\n                 },\n                 \"parameters\": {\n                  \"properties\": {\n                   \"cipherSuites\": {\n                    \"items\": {\n                     \"type\": \"string\"\n                    },\n                    \"type\": \"array\"\n                   },\n                   \"ecdhCurves\": {\n                    \"items\": {\n                     \"type\": \"string\"\n                    },\n                    \"type\": \"array\"\n                   },\n                   \"maximumProtocolVersion\": {\n                    \"type\": \"string\",\n                    \"x-kubernetes-int-or-string\": true\n                   },\n                   \"minimumProtocolVersion\": {\n                    \"type\": \"string\",\n                    \"x-kubernetes-int-or-string\": true\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"sds\": {\n                  \"properties\": {\n                   \"callCredentials\": {\n                    \"properties\": {\n                     \"fileCredentialSource\": {\n                      \"properties\": {\n                       \"header\": {\n                        \"type\": \"string\"\n                       },\n                       \"tokenFileName\": {\n                        \"type\": \"string\"\n                       }\n                      },\n                      \"type\": \"object\"\n                     }\n                    },\n                    \"type\": \"object\"\n                   },\n                   \"certificatesSecretName\": {\n                    \"type\": \"string\"\n                   },\n                   \"clusterName\": {\n                    \"type\": \"string\"\n                   },\n                   \"targetUri\": {\n                    \"type\": \"string\"\n                   },\n                   \"validationContextName\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"secretRef\": {\n                  \"properties\": {\n                   \"name\": {\n                    \"type\": \"string\"\n                   },\n                   \"namespace\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"sni\": {\n                  \"type\": \"string\"\n                 },\n                 \"sslFiles\": {\n                  \"properties\": {\n                   \"ocspStaple\": {\n                    \"type\": \"string\"\n                   },\n                   \"rootCa\": {\n                    \"type\": \"string\"\n                   },\n                   \"tlsCert\": {\n                    \"type\": \"string\"\n                   },\n                   \"tlsKey\": {\n                    \"type\": \"string\"\n                   }\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"verifySubjectAltName\": {\n                  \"items\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"array\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"timeout\": {\n                \"type\": \"string\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"disableBuiltinLabels\": {\n              \"type\": \"boolean\"\n             },\n             \"filterStateObjectsToLog\": {\n              \"items\": {\n               \"type\": \"string\"\n              },\n              \"type\": \"array\"\n             },\n             \"logName\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"perConnectionBufferLimitBytes\": {\n       \"maximum\": 4294967295,\n       \"minimum\": 0,\n       \"nullable\": true,\n       \"type\": \"integer\"\n      },\n      \"proxyProtocol\": {\n       \"properties\": {\n        \"allowRequestsWithoutProxyProtocol\": {\n         \"type\": \"boolean\"\n        },\n        \"rules\": {\n         \"items\": {\n          \"properties\": {\n           \"onTlvPresent\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"metadataNamespace\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"tlvType\": {\n            \"maximum\": 4294967295,\n            \"minimum\": 0,\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"socketOptions\": {\n       \"items\": {\n        \"properties\": {\n         \"bufValue\": {\n          \"format\": \"byte\",\n          \"type\": \"string\"\n         },\n         \"description\": {\n          \"type\": \"string\"\n         },\n         \"intValue\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"level\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"name\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"state\": {\n          \"type\": \"string\",\n          \"x-kubernetes-int-or-string\": true\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"tcpStats\": {\n       \"nullable\": true,\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"targetRefs\": {\n     \"items\": {\n      \"properties\": {\n       \"group\": {\n        \"type\": \"string\"\n       },\n       \"kind\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"nullable\": true,\n        \"type\": \"string\"\n       },\n       \"sectionName\": {\n        \"nullable\": true,\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Listener Option\",\n \"type\": \"object\"\n}"
+  }
+}

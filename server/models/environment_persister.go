@@ -10,7 +10,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"gorm.io/gorm"
 )
 
@@ -37,7 +37,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 		order = "updated_at desc"
 	}
 
-	query := ep.DB.Model(&v1beta1.Environment{})
+	query := ep.DB.Model(&environment.Environment{})
 
 	// Filter by organization ID
 	if orgID != "" {
@@ -57,7 +57,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	count := int64(0)
 	query.Table("environments").Count(&count)
 
-	environmentsFetched := []v1beta1.Environment{}
+	environmentsFetched := []environment.Environment{}
 
 	if page == "" {
 		page = "0"
@@ -86,7 +86,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	}
 
 	// Prepare the response
-	environmentsPage := &v1beta1.EnvironmentPage{
+	environmentsPage := &environment.EnvironmentPage{
 		Page:         int(pageUint),
 		PageSize:     len(environmentsFetched),
 		TotalCount:   int(count),
@@ -102,7 +102,7 @@ func (ep *EnvironmentPersister) GetEnvironments(orgID, search, order, page, page
 	return envJSON, nil
 }
 
-func (ep *EnvironmentPersister) SaveEnvironment(environment *v1beta1.Environment) ([]byte, error) {
+func (ep *EnvironmentPersister) SaveEnvironment(environment *environment.Environment) ([]byte, error) {
 	if environment.ID == uuid.Nil {
 		id, err := uuid.NewV4()
 		if err != nil {
@@ -123,7 +123,7 @@ func (ep *EnvironmentPersister) SaveEnvironment(environment *v1beta1.Environment
 	return envJSON, nil
 }
 
-func (ep *EnvironmentPersister) DeleteEnvironment(environment *v1beta1.Environment) ([]byte, error) {
+func (ep *EnvironmentPersister) DeleteEnvironment(environment *environment.Environment) ([]byte, error) {
 	err := ep.DB.Model(&environment).Find(&environment).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -144,23 +144,23 @@ func (ep *EnvironmentPersister) DeleteEnvironment(environment *v1beta1.Environme
 	return envJSON, nil
 }
 
-func (ep *EnvironmentPersister) UpdateEnvironmentByID(environment *v1beta1.Environment) (*v1beta1.Environment, error) {
-	err := ep.DB.Save(environment).Error
+func (ep *EnvironmentPersister) UpdateEnvironmentByID(env *environment.Environment) (*environment.Environment, error) {
+	err := ep.DB.Save(env).Error
 	if err != nil {
 		return nil, ErrDBPut(err)
 	}
 
-	updatedEnvironment := v1beta1.Environment{}
-	err = ep.DB.Model(&updatedEnvironment).Where("id = ?", environment.ID).First(&updatedEnvironment).Error
+	updatedEnvironment := environment.Environment{}
+	err = ep.DB.Model(&updatedEnvironment).Where("id = ?", env.ID).First(&updatedEnvironment).Error
 	if err != nil {
 		return nil, ErrDBRead(err)
 	}
-	return environment, nil
+	return env, nil
 }
 
 // Get environment by ID
-func (ep *EnvironmentPersister) GetEnvironment(id uuid.UUID) (*v1beta1.Environment, error) {
-	environment := v1beta1.Environment{}
+func (ep *EnvironmentPersister) GetEnvironment(id uuid.UUID) (*environment.Environment, error) {
+	environment := environment.Environment{}
 	query := ep.DB.Where("id = ?", id)
 	err := query.First(&environment).Error
 	return &environment, err
@@ -182,7 +182,7 @@ func (ep *EnvironmentPersister) GetEnvironmentByID(environmentID uuid.UUID) ([]b
 }
 
 // UpdateEnvironmentByID updates a single environment by ID
-func (ep *EnvironmentPersister) UpdateEnvironment(environmentID uuid.UUID, payload *v1beta1.EnvironmentPayload) (*v1beta1.Environment, error) {
+func (ep *EnvironmentPersister) UpdateEnvironment(environmentID uuid.UUID, payload *environment.EnvironmentPayload) (*environment.Environment, error) {
 	env, err := ep.GetEnvironment(environmentID)
 	if err != nil {
 		return nil, err
@@ -207,7 +207,7 @@ func (ep *EnvironmentPersister) DeleteEnvironmentByID(environmentID uuid.UUID) (
 
 // AddConnectionToEnvironment adds a connection to an environment
 func (ep *EnvironmentPersister) AddConnectionToEnvironment(environmentID, connectionID uuid.UUID) ([]byte, error) {
-	envConMapping := v1beta1.EnvironmentConnectionMapping{
+	envConMapping := environment.EnvironmentConnectionMapping{
 		ConnectionId:  connectionID,
 		EnvironmentId: environmentID,
 		CreatedAt:     time.Now(),
@@ -318,7 +318,7 @@ func (ep *EnvironmentPersister) GetEnvironmentConnections(environmentID uuid.UUI
 
 // DeleteConnectionFromEnvironment deletes a connection from an environment
 func (ep *EnvironmentPersister) DeleteConnectionFromEnvironment(environmentID, connectionID uuid.UUID) ([]byte, error) {
-	var envConMapping v1beta1.EnvironmentConnectionMapping
+	var envConMapping environment.EnvironmentConnectionMapping
 
 	// Find the specific connection mapping
 	if err := ep.DB.Where("environment_id = ? AND connection_id = ?", environmentID, connectionID).First(&envConMapping).Error; err != nil {

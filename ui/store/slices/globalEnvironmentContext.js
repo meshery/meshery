@@ -1,4 +1,5 @@
 const { createSlice } = require('@reduxjs/toolkit');
+
 export const globalEnvironmentContextSlice = createSlice({
   name: 'globalEnvironmentContext',
   initialState: {

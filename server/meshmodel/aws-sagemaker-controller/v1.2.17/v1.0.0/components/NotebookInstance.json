@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Notebook Instance",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-sagemaker-controller",
+    "displayName": "AWS SageMaker",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Machine Learning"
+    },
+    "subCategory": "Machine Learning",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#01A88D",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.2.17"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#01A88D",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e            \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e        \u003c/g\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "sagemaker.services.k8s.aws/v1alpha1",
+    "kind": "NotebookInstance",
+    "schema": "{\n \"description\": \"NotebookInstance is the Schema for the NotebookInstances API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NotebookInstanceSpec defines the desired state of NotebookInstance.\",\n   \"properties\": {\n    \"acceleratorTypes\": {\n     \"description\": \"This parameter is no longer supported. Elastic Inference (EI) is no longer\\navailable.\\n\\nThis parameter was used to specify a list of EI instance types to associate\\nwith this notebook instance.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"additionalCodeRepositories\": {\n     \"description\": \"An array of up to three Git repositories to associate with the notebook instance.\\nThese can be either the names of Git repositories stored as resources in\\nyour account, or the URL of Git repositories in Amazon Web Services CodeCommit\\n(https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html) or\\nin any other Git repository. These repositories are cloned at the same level\\nas the default repository of your notebook instance. For more information,\\nsee Associating Git Repositories with SageMaker Notebook Instances (https://docs.aws.amazon.com/sagemaker/latest/dg/nbi-git-repo.html).\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultCodeRepository\": {\n     \"description\": \"A Git repository to associate with the notebook instance as its default code\\nrepository. This can be either the name of a Git repository stored as a resource\\nin your account, or the URL of a Git repository in Amazon Web Services CodeCommit\\n(https://docs.aws.amazon.com/codecommit/latest/userguide/welcome.html) or\\nin any other Git repository. When you open a notebook instance, it opens\\nin the directory that contains this repository. For more information, see\\nAssociating Git Repositories with SageMaker Notebook Instances (https://docs.aws.amazon.com/sagemaker/latest/dg/nbi-git-repo.html).\",\n     \"type\": \"string\"\n    },\n    \"directInternetAccess\": {\n     \"description\": \"Sets whether SageMaker provides internet access to the notebook instance.\\nIf you set this to Disabled this notebook instance is able to access resources\\nonly in your VPC, and is not be able to connect to SageMaker training and\\nendpoint services unless you configure a NAT Gateway in your VPC.\\n\\nFor more information, see Notebook Instances Are Internet-Enabled by Default\\n(https://docs.aws.amazon.com/sagemaker/latest/dg/appendix-additional-considerations.html#appendix-notebook-and-internet-access).\\nYou can set the value of this parameter to Disabled only if you set a value\\nfor the SubnetId parameter.\",\n     \"type\": \"string\"\n    },\n    \"instanceType\": {\n     \"description\": \"The type of ML compute instance to launch for the notebook instance.\",\n     \"type\": \"string\"\n    },\n    \"kmsKeyID\": {\n     \"description\": \"The Amazon Resource Name (ARN) of a Amazon Web Services Key Management Service\\nkey that SageMaker uses to encrypt data on the storage volume attached to\\nyour notebook instance. The KMS key you provide must be enabled. For information,\\nsee Enabling and Disabling Keys (https://docs.aws.amazon.com/kms/latest/developerguide/enabling-keys.html)\\nin the Amazon Web Services Key Management Service Developer Guide.\",\n     \"type\": \"string\"\n    },\n    \"lifecycleConfigName\": {\n     \"description\": \"The name of a lifecycle configuration to associate with the notebook instance.\\nFor information about lifestyle configurations, see Step 2.1: (Optional)\\nCustomize a Notebook Instance (https://docs.aws.amazon.com/sagemaker/latest/dg/notebook-lifecycle-config.html).\",\n     \"type\": \"string\"\n    },\n    \"notebookInstanceName\": {\n     \"description\": \"The name of the new notebook instance.\",\n     \"type\": \"string\"\n    },\n    \"platformIdentifier\": {\n     \"description\": \"The platform identifier of the notebook instance runtime environment.\",\n     \"type\": \"string\"\n    },\n    \"roleARN\": {\n     \"description\": \"When you send any requests to Amazon Web Services resources from the notebook\\ninstance, SageMaker assumes this role to perform tasks on your behalf. You\\nmust grant this role necessary permissions so SageMaker can perform these\\ntasks. The policy must allow the SageMaker service principal (sagemaker.amazonaws.com)\\npermissions to assume this role. For more information, see SageMaker Roles\\n(https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html).\\n\\nTo be able to pass this role to SageMaker, the caller of this API must have\\nthe iam:PassRole permission.\",\n     \"type\": \"string\"\n    },\n    \"rootAccess\": {\n     \"description\": \"Whether root access is enabled or disabled for users of the notebook instance.\\nThe default value is Enabled.\\n\\nLifecycle configurations need root access to be able to set up a notebook\\ninstance. Because of this, lifecycle configurations associated with a notebook\\ninstance always run with root access even if you disable root access for\\nusers.\",\n     \"type\": \"string\"\n    },\n    \"securityGroupIDs\": {\n     \"description\": \"The VPC security group IDs, in the form sg-xxxxxxxx. The security groups\\nmust be for the same VPC as specified in the subnet.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"subnetID\": {\n     \"description\": \"The ID of the subnet in a VPC to which you would like to have a connectivity\\nfrom your ML compute instance.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"description\": \"An array of key-value pairs. You can use tags to categorize your Amazon Web\\nServices resources in different ways, for example, by purpose, owner, or\\nenvironment. For more information, see Tagging Amazon Web Services Resources\\n(https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AddTags.html).\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"volumeSizeInGB\": {\n     \"description\": \"The size, in GB, of the ML storage volume to attach to the notebook instance.\\nThe default value is 5 GB.\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"instanceType\",\n    \"notebookInstanceName\",\n    \"roleARN\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Notebook Instance\",\n \"type\": \"object\"\n}"
+  }
+}
