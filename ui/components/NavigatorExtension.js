@@ -30,12 +30,10 @@ import TypingFilter from './TypingFilter';
 import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
-
 import {
   selectedOrg,
   selectK8sConfig,
   selectSelectedK8sClusters,
-  setK8sContexts,
   setOrganization,
 } from '@/store/slices/mesheryUi';
 import { useDispatch, useSelector } from 'react-redux';
@@ -45,13 +43,8 @@ const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
 
 function NavigatorExtension({ url }) {
-  const { k8sConfig } = useSelector((state) => state.ui);
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const { selectedK8sContexts } = useSelector((state) => state.ui);
-  const { isDrawerCollapsed } = useSelector((state) => state.ui);
-  const { prometheus } = useSelector((state) => state.telemetry);
-  const { grafana } = useSelector((state) => state.telemetry);
-  
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
