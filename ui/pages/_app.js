@@ -302,21 +302,21 @@ const MesheryApp = ({
     });
   }, []);
 
-  const loadMeshModelComponent = useCallback(() => {
+  const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
-    CONNECTION_KINDS_DEF.map(async (kind) => {
+
+    const connectionPromises = CONNECTION_KINDS_DEF.map(async (kind) => {
       const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-      if (res?.components) {
+      if (res?.components?.[0]) {
         connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res?.components[0].metadata.transitions,
-          icon: res?.components[0].styles.svgColor,
+          transitions: res.components[0]?.metadata?.transitions,
+          icon: res.components[0]?.styles?.svgColor,
         };
       }
-      setState((prevState) => ({ ...prevState, connectionMetadata: connectionDef }));
     });
-    setConnectionMetadata({
-      connectionMetadataState: connectionDef,
-    });
+
+    await Promise.all(connectionPromises);
+    setConnectionMetadata({ connectionMetadataState: connectionDef });
   }, [setConnectionMetadata]);
 
   const initSubscriptions = useCallback(
@@ -555,7 +555,7 @@ const MesheryApp = ({
     );
   }, [loadAbility, loadWorkspace, setOrganization]);
 
-  const loadConfigFromServer = useCallback(async () => {
+  const loadConfigFromServer = useCallback(() => {
     dataFetch(
       '/api/system/sync',
       {
@@ -607,32 +607,39 @@ const MesheryApp = ({
   }, [store]);
 
   useEffect(() => {
-    loadConfigFromServer();
-    loadPromGrafanaConnection();
-    loadOrg();
-    initSubscriptions([]);
+    // todo further refactoring required for data fetch
+    const loadAll = async () => {
+      loadConfigFromServer();
+      loadPromGrafanaConnection();
+      await loadOrg();
 
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-          toggleCatalogContent({
-            catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-          });
-        }
-      },
-      (err) => console.error(err),
-    );
+      initSubscriptions([]);
 
-    document.addEventListener('fullscreenchange', fullScreenChanged);
-    loadMeshModelComponent();
-    setState((prevState) => ({ ...prevState, isLoading: false }));
+      dataFetch(
+        '/api/user/prefs',
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+        (result) => {
+          if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
+            toggleCatalogContent({
+              catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
+            });
+          }
+        },
+        (err) => console.error(err),
+      );
 
-    // Cleanup
+      document.addEventListener('fullscreenchange', fullScreenChanged);
+
+      await loadMeshModelComponent();
+
+      setState((prevState) => ({ ...prevState, isLoading: false }));
+    };
+
+    loadAll();
+
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
       if (state.disposeK8sContextSubscription) {
