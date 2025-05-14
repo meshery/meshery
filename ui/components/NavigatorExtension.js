@@ -1,20 +1,9 @@
-import React, { useContext } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import {
   createUseRemoteComponent,
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import { bindActionCreators } from 'redux';
-import {
-  updateLoadTestData,
-  setK8sContexts,
-  useLegacySelector,
-  LegacyStoreContext,
-  actionTypes,
-  selectSelectedK8sClusters,
-  selectK8sConfig,
-} from '../lib/store';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import PatternServiceFormCore from './MesheryMeshInterface/PatternServiceFormCore';
 import InfoModal from '../components/Modals/Information/InfoModal';
@@ -41,14 +30,20 @@ import TypingFilter from './TypingFilter';
 import CreateModelModal from './Registry/CreateModelModal';
 import ImportModelModal from './Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/mesheryUi';
+import { useSelector } from 'react-redux';
+import { store } from '../store';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
-function NavigatorExtension({ url, selectedK8sContexts, capabilitiesRegistry }) {
+
+function NavigatorExtension({ url }) {
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-  const currentOrganization = useGetCurrentOrganization();
-  const { store: legacyStore } = useContext(LegacyStoreContext);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
+
   if (err != null) {
     return (
       <div role="alert">
@@ -68,27 +63,21 @@ function NavigatorExtension({ url, selectedK8sContexts, capabilitiesRegistry }) 
         </div>
       </div>
     );
-    // <div>Unknown Error: {err.toString()}</div>;
   }
-
   const extensionExposedMesheryStore = {
-    currentOrganization: {
-      set: (organization) =>
-        legacyStore.dispatch({ type: actionTypes.SET_ORGANIZATION, organization }),
-      get: () => legacyStore.getState().organization,
-      useCurrentOrg: () => useLegacySelector((state) => state.organization),
-    },
     selectedK8sClusters: {
-      get: () => selectSelectedK8sClusters(legacyStore.getState()),
-      useSelectedK8sClusters: () => useLegacySelector(selectSelectedK8sClusters),
+      get: () => selectSelectedK8sClusters(store.getState()),
     },
-    k8sconfig: {
-      get: () => selectK8sConfig(legacyStore.getState()),
-      useK8sConfig: () => useLegacySelector(selectK8sConfig),
+    k8sConfig: {
+      get: () => selectK8sConfig(store.getState()),
     },
   };
 
-  const PerformanceTestComponent = (props) => <MesheryPerformanceComponent {...props} />;
+  const PerformanceTestComponent = (props) => (
+    <ProviderStoreWrapper>
+      <MesheryPerformanceComponent {...props} />
+    </ProviderStoreWrapper>
+  );
 
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
@@ -137,19 +126,4 @@ function NavigatorExtension({ url, selectedK8sContexts, capabilitiesRegistry }) 
   );
 }
 
-const mapStateToProps = (st) => {
-  const selectedK8sContexts = st.get('selectedK8sContexts');
-  const capabilitiesRegistry = st.get('capabilitiesRegistry');
-
-  return {
-    selectedK8sContexts,
-    capabilitiesRegistry,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
-  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(NavigatorExtension);
+export default NavigatorExtension;

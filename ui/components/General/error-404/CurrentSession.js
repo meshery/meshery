@@ -8,16 +8,14 @@ import {
   OrgNameDisabled,
   StyledTypographyDisabled,
 } from './styles';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
 import { NoSsr } from '@layer5/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../ErrorBoundary';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelector } from 'react-redux';
 
 const CurrentSessionInfo = () => {
-  const organization = useGetCurrentOrganization();
+  const { organization } = useSelector((state) => state.ui);
   const {
     data: rolesRes,
     // isSuccess: isRolesSuccess,
@@ -73,9 +71,7 @@ const CurrentSessionInfoWithErrorBoundary = () => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <CurrentSessionInfo />
-        </Provider>
+        <CurrentSessionInfo />
       </ErrorBoundary>
     </NoSsr>
   );
