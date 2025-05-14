@@ -32,7 +32,7 @@ import ImportModelModal from './Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
 import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
-import { createStoreWithMiddleware, injectReducer, store } from '../store';
+import { store } from '../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const requires = createRequires(getDependencies);
