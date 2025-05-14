@@ -32,7 +32,6 @@ import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
@@ -64,7 +63,8 @@ import { DeleteIcon } from '@layer5/sistent';
 
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -93,15 +93,11 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({
-  meshsyncControllerState,
-  connectionMetadataState,
-  selectedFilter,
-  selectedConnectionId,
-  updateUrlWithConnectionId,
-}) => {
+const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
   const router = useRouter();
-  const organization = useGetCurrentOrganization();
+  const { organization } = useSelector((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);

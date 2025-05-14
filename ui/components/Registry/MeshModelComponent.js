@@ -13,8 +13,6 @@ import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
 import { useRouter } from 'next/router';
-import { Provider } from 'react-redux';
-import { store } from '../../store';
 import {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
@@ -464,9 +462,7 @@ const TabCard = ({ label, count, active, onClick }) => {
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
-      <Provider store={store}>
-        <MeshModelComponent_ {...props} />
-      </Provider>
+      <MeshModelComponent_ {...props} />
     </NoSsr>
   );
 };

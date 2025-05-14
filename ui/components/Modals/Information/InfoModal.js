@@ -31,7 +31,6 @@ import _ from 'lodash';
 import moment from 'moment';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef, useState } from 'react';
-import { Provider } from 'react-redux';
 import PatternIcon from '../../../assets/icons/Pattern';
 import { MESHERY_CLOUD_PROD } from '../../../constants/endpoints';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
@@ -39,11 +38,11 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
-import { store } from '../../../store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ActionContainer, CopyLinkButton, CreatAtContainer, ResourceName } from './styles';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -495,9 +494,9 @@ const OwnerChip = ({ userProfile }) => {
 
 const InfoModal = (props) => {
   return (
-    <Provider store={store}>
+    <ProviderStoreWrapper>
       <InfoModal_ {...props} />
-    </Provider>
+    </ProviderStoreWrapper>
   );
 };
 

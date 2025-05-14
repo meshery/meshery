@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useGetUserPrefQuery, useUpdateUserPrefWithContextMutation } from '@/rtk-query/user';
 import { useState } from 'react';
 import _ from 'lodash/fp';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 export const useGetSystemTheme = () => {
   const [theme, setTheme] = React.useState('dark');
@@ -25,7 +26,7 @@ export const useThemePreference = () => {
   };
 };
 
-export const ThemeTogglerCore = ({ Component }) => {
+const ThemeTogglerCore_ = ({ Component }) => {
   const themePref = useThemePreference();
   const [handleUpdateUserPref] = useUpdateUserPrefWithContextMutation();
   const { data: userPrefs } = useGetUserPrefQuery();
@@ -45,5 +46,17 @@ export const ThemeTogglerCore = ({ Component }) => {
     });
   };
 
-  return <Component mode={mode} toggleTheme={toggleTheme} />;
+  return (
+    <ProviderStoreWrapper>
+      <Component mode={mode} toggleTheme={toggleTheme} />
+    </ProviderStoreWrapper>
+  );
+};
+
+export const ThemeTogglerCore = (props) => {
+  return (
+    <ProviderStoreWrapper>
+      <ThemeTogglerCore_ {...props} />
+    </ProviderStoreWrapper>
+  );
 };

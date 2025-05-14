@@ -2,13 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import dataFetch from '../lib/data-fetch';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateLoadTestPref, updateProgress } from '../lib/store';
 import { durationOptions } from '../lib/prePopulatedOptions';
-import { ctxUrl } from '../utils/multi-ctx';
-import { withNotify } from '../utils/hooks/useNotification';
+import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import {
   FormControl,
@@ -26,6 +22,10 @@ import {
   Radio,
 } from '@layer5/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
+import { useGetDesignQuery } from '@/rtk-query/design';
+import { updateLoadTestPref } from '@/store/slices/prefTest';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
@@ -34,14 +34,13 @@ const FormControlWrapper = styled(FormControl)({
   margin: '10px',
 });
 
-const MesherySettingsPerformanceComponent = (props) => {
-  const { classes, notify } = props;
-  const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = props;
+const MesherySettingsPerformanceComponent = () => {
+  const { notify } = useNotification();
+  const { loadTestPref } = useSelector((state) => state.prefTest);
+  const { qps: initialQps, c: initialC, t: initialT, gen: initialGen } = loadTestPref;
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
 
-  const { selectedK8sContexts } = props;
-
-  const { data: loadTestPrefs, isLoading: isLoadingPrefs } =
-    useGetLoadTestPrefsQuery(selectedK8sContexts);
+  const { data: loadTestPrefs } = useGetLoadTestPrefsQuery(selectedK8sContexts);
   const [updateLoadTestPrefs, { isLoading: isSaving }] = useUpdateLoadTestPrefsMutation();
   const [qps, setQps] = useState(initialQps);
   const [c, setC] = useState(initialC);
@@ -49,6 +48,7 @@ const MesherySettingsPerformanceComponent = (props) => {
   const [tValue, setTValue] = useState(initialT);
   const [gen, setGen] = useState(initialGen);
   const [tError, setTError] = useState('');
+  const dispatch = useGetDesignQuery();
 
   useEffect(() => {
     if (loadTestPrefs) {
@@ -100,8 +100,7 @@ const MesherySettingsPerformanceComponent = (props) => {
 
   const submitPerfPreference = async () => {
     const loadTestPrefs = { qps, c, t, gen };
-
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     try {
       await updateLoadTestPrefs({
@@ -109,9 +108,9 @@ const MesherySettingsPerformanceComponent = (props) => {
         loadTestPrefs,
       }).unwrap();
 
-      props.updateProgress({ showProgress: false });
+      updateProgress({ showProgress: false });
       notify({ message: 'Preferences saved', event_type: EVENT_TYPES.SUCCESS });
-      props.updateLoadTestPref({ loadTestPref: { qps, c, t, gen } });
+      dispatch(updateLoadTestPref({ loadTestPref: { qps, c, t, gen } }));
     } catch (error) {
       handleError('There was an error saving your preferences')(error);
     }
@@ -250,26 +249,4 @@ const MesherySettingsPerformanceComponent = (props) => {
   );
 };
 
-MesherySettingsPerformanceComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const loadTestPref = state.get('loadTestPref').toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-
-  return {
-    ...loadTestPref,
-    selectedK8sContexts,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withNotify(MesherySettingsPerformanceComponent));
+export default MesherySettingsPerformanceComponent;

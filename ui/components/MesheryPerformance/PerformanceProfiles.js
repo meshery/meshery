@@ -1,8 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -27,7 +25,6 @@ import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
-import { updateProgress } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
@@ -41,6 +38,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 /**
  * Type Definition for View Type
@@ -53,7 +52,7 @@ import { DefaultTableCell, SortableTableCell } from '../connections/common';
  * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
  */
 
-function PerformanceProfile({ updateProgress, user, handleDelete }) {
+function PerformanceProfile({ handleDelete }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -69,6 +68,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const { user } = useSelector((state) => state.ui);
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
   /**
@@ -587,11 +587,5 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
     </>
   );
 }
-const mapStateToProps = (state) => {
-  return { user: state.get('user')?.toObject() };
-};
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
 
-export default connect(mapStateToProps, mapDispatchToProps)(PerformanceProfile);
+export default PerformanceProfile;

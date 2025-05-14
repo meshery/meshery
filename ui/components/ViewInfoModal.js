@@ -26,6 +26,7 @@ import { ModalButtonPrimary } from '@layer5/sistent';
 import rehypeSanitize from 'rehype-sanitize';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const Row = styled('div')(({ justifyContent = 'space-between' }) => ({
   display: 'flex',
@@ -80,7 +81,7 @@ export const ActionBox = styled(Box)(() => ({
   gap: '1rem',
 }));
 
-export const ViewInfoModal = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
+export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
   const [formState, setFormState] = useState(metadata);
   const viewRes = useGetViewQuery(
     { viewId: view_id },
@@ -184,6 +185,13 @@ export const ViewInfoModal = ({ open, closeModal, view_id, view_name, metadata, 
   );
 };
 
+export const ViewInfoModal = (props) => {
+  return (
+    <ProviderStoreWrapper>
+      <ViewInfoModal_ {...props} />
+    </ProviderStoreWrapper>
+  );
+};
 const StyledChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
