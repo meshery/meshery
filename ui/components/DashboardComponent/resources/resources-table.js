@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -15,11 +14,12 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
+import { api } from '@/rtk-query/index';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -29,6 +29,7 @@ export const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
+  const dispatch = useDispatch();
   const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
     props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
@@ -100,7 +101,7 @@ const ResourcesTable = (props) => {
 
   const { notify } = useNotification();
 
-  const getMeshsyncResources = (page, pageSize, search, sortOrder) => {
+  const getMeshsyncResources = async (page, pageSize, search, sortOrder) => {
     setLoading(true);
     const { query } = router;
     const resourceName =
@@ -115,32 +116,39 @@ const ResourcesTable = (props) => {
     if (!resourceName) search = '';
     if (!sortOrder) sortOrder = '';
 
-    let apiUrl = `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${encodedClusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-      resourceName,
-    )}&order=${encodeURIComponent(sortOrder)}`;
+    const queryParams = {};
+    queryParams.kind = resourceCategory;
+    queryParams.status = true;
+    queryParams.spec = true;
+    queryParams.annotations = true;
+    queryParams.labels = true;
+    queryParams.clusterIds = encodedClusterIds;
+    queryParams.page = page;
+    queryParams.pagesize = pageSize;
+    queryParams.search = encodeURIComponent(resourceName);
+    queryParams.order = encodeURIComponent(sortOrder);
 
     if (namespaceFilter) {
-      apiUrl += `&namespace=${encodeURIComponent(namespaceFilter)}`;
+      queryParams.namespace = encodeURIComponent(namespaceFilter);
     }
 
-    dataFetch(
-      apiUrl,
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (res) => {
-        setMeshSyncResources(res?.resources || []);
-        setPage(res?.page || 0);
-        setCount(res?.total_count || 0);
-        setPageSize(res?.page_size || 0);
-        setLoading(false);
-        if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
-          switchView(SINGLE_VIEW, res?.resources[0]);
-        }
-      },
-      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
-    );
+    try {
+      const result = await dispatch(
+        api.endpoints.getMeshSyncResources.initiate(queryParams),
+      ).unwrap();
+
+      setMeshSyncResources(result?.resources || []);
+      setPage(result?.page || 0);
+      setCount(result?.total_count || 0);
+      setPageSize(result?.page_size || 0);
+      setLoading(false);
+
+      if (query.resourceCategory && query.resourceName && result?.resources.length === 1) {
+        switchView(SINGLE_VIEW, result?.resources[0]);
+      }
+    } catch (error) {
+      handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(error);
+    }
   };
 
   const [tableCols, updateCols] = useState(tableConfig.columns);
