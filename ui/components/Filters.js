@@ -73,6 +73,7 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import YamlEditor from './YamlEditor';
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
@@ -114,120 +115,6 @@ function TooltipIcon({ children, onClick, title }) {
         </div>
       </CustomTooltip>
     </>
-  );
-}
-
-function YAMLEditor({ filter, onClose, onSubmit }) {
-  const [fullScreen, setFullScreen] = useState(false);
-
-  const toggleFullScreen = () => {
-    setFullScreen(!fullScreen);
-  };
-
-  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
-    height: '100%',
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: fullScreen ? '80vh' : '100%',
-    },
-  }));
-
-  let resourceData;
-  try {
-    resourceData = JSON.parse(filter.filter_resource);
-  } catch (error) {
-    // Handling the error or provide a default value
-    console.error('Error parsing JSON:', error);
-    resourceData = {}; // Setting a default value if parsing fails
-  }
-
-  const config = resourceData?.settings?.config || '';
-  const [yaml, setYaml] = useState(config);
-
-  return (
-    <Dialog
-      onClose={onClose}
-      aria-labelledby="filter-dialog-title"
-      open
-      maxWidth="md"
-      fullScreen={fullScreen}
-      fullWidth={!fullScreen}
-    >
-      <YmlDialogTitle>
-        <DialogTitle
-          disableTypography
-          id="filter-dialog-title"
-          style={{ width: '100%', display: 'flex' }}
-        >
-          <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
-          <TooltipIcon
-            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            onClick={toggleFullScreen}
-          >
-            {fullScreen ? (
-              <FullscreenExitIcon style={iconMedium} />
-            ) : (
-              <FullscreenIcon style={iconMedium} />
-            )}
-          </TooltipIcon>
-          <TooltipIcon title="Exit" onClick={onClose}>
-            <CloseIcon style={iconMedium} />
-          </TooltipIcon>
-        </DialogTitle>
-      </YmlDialogTitle>
-      <Divider variant="fullWidth" light />
-      <FullScreenCodeMirrorWrapper>
-        <CodeMirror
-          value={config}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            lint: true,
-            mode: 'text/x-yaml',
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
-      </FullScreenCodeMirrorWrapper>
-      <Divider variant="fullWidth" light />
-      <DialogActions>
-        <CustomTooltip title="Update Filter">
-          <IconButton
-            aria-label="Update"
-            disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: filter.id,
-                name: filter.name,
-                type: FILE_OPS.UPDATE,
-                catalog_data: filter.catalog_data,
-              })
-            }
-          >
-            <SaveIcon style={iconMedium} />
-          </IconButton>
-        </CustomTooltip>
-        <CustomTooltip title="Delete Filter">
-          <IconButton
-            aria-label="Delete"
-            disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: filter.id,
-                name: filter.name,
-                type: FILE_OPS.DELETE,
-                catalog_data: filter.catalog_data,
-              })
-            }
-          >
-            <DeleteIcon style={iconMedium} />
-          </IconButton>
-        </CustomTooltip>
-      </DialogActions>
-    </Dialog>
   );
 }
 
@@ -893,9 +780,8 @@ function MesheryFilters() {
   async function showmodal(count) {
     let response = await modalRef.current.show({
       title: `Delete ${count ? count : ''} Filter${count > 1 ? 's' : ''}?`,
-      subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
-        count ? count : ''
-      } filter${count > 1 ? 's' : ''}?`,
+      subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${count ? count : ''
+        } filter${count > 1 ? 's' : ''}?`,
       primaryOption: 'Delete',
       variant: PROMPT_VARIANTS.DANGER,
     });
@@ -1089,14 +975,14 @@ function MesheryFilters() {
       //if catalog content is enabled, then show all filters including published otherwise only show public and private filters
       options: catalogVisibility
         ? [
-            { label: 'Public', value: 'public' },
-            { label: 'Private', value: 'private' },
-            { label: 'Published', value: 'published' },
-          ]
+          { label: 'Public', value: 'public' },
+          { label: 'Private', value: 'private' },
+          { label: 'Published', value: 'published' },
+        ]
         : [
-            { label: 'Public', value: 'public' },
-            { label: 'Private', value: 'private' },
-          ],
+          { label: 'Public', value: 'public' },
+          { label: 'Private', value: 'private' },
+        ],
     },
   };
 
@@ -1124,10 +1010,22 @@ function MesheryFilters() {
           {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
             <>
               {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-                <YAMLEditor
-                  filter={selectedRowData}
+                <YamlEditor
+                  title={selectedRowData.name}
+                  content={(() => {
+                    try {
+                      const resourceData = JSON.parse(selectedRowData.filter_resource || '{}');
+                      return resourceData?.settings?.config || '';
+                    } catch (error) {
+                      console.error('Error parsing filter resource JSON:', error);
+                      return ''; // Return empty string if parsing fails
+                    }
+                  })()}
                   onClose={resetSelectedRowData()}
                   onSubmit={handleSubmit}
+                  id={selectedRowData.id}
+                  resourceType="filter"
+                  metadata={{ catalog_data: selectedRowData.catalog_data }}
                 />
               )}
               <ToolWrapper>
