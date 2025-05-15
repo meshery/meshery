@@ -20,7 +20,7 @@ import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { api } from '@/rtk-query/index';
-import { initiateQuery } from "@/rtk-query/utils"
+import { initiateQuery } from '@/rtk-query/utils';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -81,21 +81,21 @@ const ResourcesTable = (props) => {
 
   const tableConfig = submenu
     ? resourceConfig(
-      switchView,
-      meshSyncResources,
-      k8sConfig,
-      connectionMetadataState,
-      workloadType,
-      selectedK8sContexts,
-    )[workloadType]
+        switchView,
+        meshSyncResources,
+        k8sConfig,
+        connectionMetadataState,
+        workloadType,
+        selectedK8sContexts,
+      )[workloadType]
     : resourceConfig(
-      switchView,
-      meshSyncResources,
-      k8sConfig,
-      connectionMetadataState,
-      workloadType,
-      selectedK8sContexts,
-    );
+        switchView,
+        meshSyncResources,
+        k8sConfig,
+        connectionMetadataState,
+        workloadType,
+        selectedK8sContexts,
+      );
 
   const encodedClusterIds = encodeURIComponent(JSON.stringify(clusterIds));
 
