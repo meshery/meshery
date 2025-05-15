@@ -14,7 +14,7 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
@@ -30,7 +30,6 @@ export const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
-  const dispatch = useDispatch();
   const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
     props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
