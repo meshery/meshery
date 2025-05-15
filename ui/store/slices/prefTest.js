@@ -15,9 +15,9 @@ const initialState = {
     t: '30s',
     c: 0,
     gen: 'fortio',
-    ts: new Date(),
+    ts: Date.now(),
   },
-  results_selection: {}, // format - { page: {index: content}}
+  results_selection: {},
   results: {
     startKey: '',
     results: [],
@@ -29,7 +29,11 @@ const prefTestSlice = createSlice({
   initialState,
   reducers: {
     updateLoadTestPref: (state, action) => {
-      state.loadTestPref = action.payload.loadTestPref;
+      const payload = action.payload.loadTestPref;
+      if (payload.ts && payload.ts instanceof Date) {
+        payload.ts = payload.ts.getTime();
+      }
+      state.loadTestPref = payload;
     },
     updateLoadTest: (state, action) => {
       state.loadTest = action.payload.loadTest;
