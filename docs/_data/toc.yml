@@ -274,6 +274,8 @@
               url: project/contributing/contributing-ui-tests
             - title: Dashboard Widgets
               url: project/contributing/contributing-ui-widgets
+            - title: Schema-Driven UI in Meshery
+              url: project/contributing/contributing-schemas-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Policies
@@ -289,9 +291,6 @@
               url: project/contributing/contributing-relationships
         - title: Schemas
           url: project/contributing/contributing-schemas
-          grandchildren:
-            - title: Schema-Driven UI in Meshery
-              url: project/contributing/contributing-schemas-ui
         - title: Dev Setup on Windows
           url: project/contributing/meshery-windows
 
