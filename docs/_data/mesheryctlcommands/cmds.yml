@@ -713,37 +713,37 @@ design:
           usage: mesheryctl design export --output [directory-path]
           example: mesheryctl design export --output ./exports
 
-    offboard:
-      name: offboard
-      description: Offboard application
-      usage: mesheryctl design offboard [app-name] [flags]
+    undeploy:
+      name: undeploy
+      description: Undeploy application
+      usage: mesheryctl design undeploy [app-name] [flags]
       flags:
         file:
           name: --file, -f
-          description: Offboard application with an application file
-          usage: mesheryctl design offboard -f [filepath]
-          example: mesheryctl design offboard -f "bookInfo.yaml"
+          description: Undeploy application with an application file
+          usage: mesheryctl design undeploy -f [filepath]
+          example: mesheryctl design undeploy -f "bookInfo.yaml"
 
-    onboard:
-      name: onboard
-      description: Onboard application
-      usage: mesheryctl design onboard [app name] [flags]
+    deploy:
+      name: deploy
+      description: Deploy application
+      usage: mesheryctl design deploy [app name] [flags]
       flags:
         file:
           name: --file, -f
-          description: Onboard application with application file
-          usage: mesheryctl design onboard --file [filepath]
-          example: mesheryctl design onboard -f "bookInfo.yaml"
+          description: Deploy application with application file
+          usage: mesheryctl design deploy --file [filepath]
+          example: mesheryctl design deploy -f "bookInfo.yaml"
         skip-save:
           name: --skip-save
           description: Skip saving an application
-          usage: mesheryctl design onboard --file [filepath] --skip-save
-          example: mesheryctl design onboard -f "bookInfo.yaml" --skip-save
+          usage: mesheryctl design deploy --file [filepath] --skip-save
+          example: mesheryctl design deploy -f "bookInfo.yaml" --skip-save
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl design onboard mesheryctl design onboard --file [filepath] --source-type manifest
-          example: mesheryctl mesheryctl design onboard -f "bookInfo.yaml" --source-type manifest
+          usage: mesheryctl design deploy mesheryctl design deploy --file [filepath] --source-type manifest
+          example: mesheryctl mesheryctl design deploy -f "bookInfo.yaml" --source-type manifest
 
 filter:
   name: filter
