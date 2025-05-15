@@ -1,14 +1,10 @@
 //@ts-check
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { NoSsr } from '@layer5/sistent';
-import { setOrganization, setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
 import { ErrorBoundary, FormControl, FormGroup, MenuItem } from '@layer5/sistent';
 import {
   OrgName,
@@ -20,7 +16,8 @@ import {
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useTheme } from '@layer5/sistent';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useDispatch, useSelector } from 'react-redux';
+import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
 const OrgSwitcher = () => {
   const {
@@ -29,17 +26,21 @@ const OrgSwitcher = () => {
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
-  const organization = useGetCurrentOrganization();
+  const { organization } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const dispatchSetOrganization = (org) => dispatch(setOrganization(org));
-  const dispatchSetKeys = (keys) => dispatch(setKeys(keys));
 
   let orgs = orgsResponse?.organizations || [];
-  const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
 
-  useGetCurrentAbilities(organization, dispatchSetKeys, skip);
+  const abilitiesResult = useGetCurrentAbilities(organization);
+
+  useEffect(() => {
+    if (abilitiesResult?.currentData?.keys) {
+      dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
+    }
+  }, [abilitiesResult?.currentData?.keys]);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -54,7 +55,6 @@ const OrgSwitcher = () => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     dispatchSetOrganization({ organization: selected });
-    setSkip(false);
 
     setTimeout(() => {
       location.reload();
@@ -107,9 +107,7 @@ const OrgSwitcherWithErrorBoundary = () => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <OrgSwitcher />
-        </Provider>
+        <OrgSwitcher />
       </ErrorBoundary>
     </NoSsr>
   );

@@ -1,0 +1,1 @@
+Hey everyone! I'm Amit—a backend engineer transitioning full-time into DevOps and cloud-native infrastructure. I’ve worked at early-stage startups building scalable systems, and recently I’ve been deep-diving into Kubernetes, CI/CD, and automation. I’m here to contribute, learn from the community, and grow through meaningful open-source work. Excited to be part of Meshery!

@@ -31,7 +31,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
-import { useLegacySelector } from 'lib/store';
+import { useSelector } from 'react-redux';
 
 const MainViewsContent = ({
   page,
@@ -216,7 +216,7 @@ const MainViewsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
-  const capabilitiesRegistry = useLegacySelector((state) => state.get('capabilitiesRegistry'));
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   console.l;
   const activeUsers = useRoomActivity({

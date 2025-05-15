@@ -7,7 +7,7 @@ permalink: extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 registrant: meshery
 components: 
 - name: wasm-filter
