@@ -2,4 +2,4 @@
 
 - **GitHub:** [entuziaz](https://github.com/entuziaz)
 
-- **LinkedIn:** [https://linkedin.com/in/jekayinoluwa](#) 
+- **LinkedIn:** [jekayinoluwa](https://linkedin.com/in/jekayinoluwa)
