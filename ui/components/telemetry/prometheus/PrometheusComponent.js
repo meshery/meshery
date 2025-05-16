@@ -80,7 +80,7 @@ const PrometheusComponent = (props) => {
   const submitPrometheusConfigure = async (url) => {
     updateProgress({ showProgress: true });
     try {
-      const result = await configurePrometheus({
+      await configurePrometheus({
         connectionKind: CONNECTION_KINDS.PROMETHEUS,
         body: { prometheusURL: url },
       }).unwrap();
@@ -116,6 +116,9 @@ const PrometheusComponent = (props) => {
       }
 
       setPrometheusURL(newURL);
+      setConnectionID(data?.id);
+      setConnectionName(data?.name);
+
       dispatch(
         updatePrometheusConfig({
           prometheusURL: newURL,
@@ -237,7 +240,15 @@ const PrometheusComponent = (props) => {
       },
       error: (err) => console.error('Error registering Prometheus:', err),
     });
-  }, [isPrometheusConfigLoaded, prometheusConfig, props.isMeshConfigured]);
+  }, [
+    isPrometheusConfigLoaded,
+    prometheusConfig,
+    props.isMeshConfigured,
+    prometheusURL,
+    submitPrometheusConfigure,
+    selectedK8sContexts,
+    k8sConfig,
+  ]);
 
   if (prometheusConfigSuccess) {
     const displaySelec = selectedPrometheusBoardsConfigs.length > 0 && (
