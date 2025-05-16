@@ -559,22 +559,20 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
         (result) => {
           if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
             dispatch(
-            toggleCatalogContent({
+              toggleCatalogContent({
                 catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
               }),
-          );
+            );
           }
         },
         (err) => console.error(err),
       );
-    
 
-    document.addEventListener('fullscreenchange', fullScreenChanged);
-
-    setState((prevState) => ({ ...prevState, isLoading: false }));
-    await loadMeshModelComponent();
-  };
-  loadAll();
+      document.addEventListener('fullscreenchange', fullScreenChanged);
+      await loadMeshModelComponent();
+      setState((prevState) => ({ ...prevState, isLoading: false }));
+    };
+    loadAll();
 
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
