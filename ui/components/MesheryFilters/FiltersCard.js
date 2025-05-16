@@ -34,8 +34,6 @@ import TooltipButton from '../../utils/TooltipButton.js';
 import { VISIBILITY } from '../../utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Provider } from 'react-redux';
-import { store } from '../../store';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
@@ -320,12 +318,7 @@ function FiltersCard_({
 }
 
 export const FiltersCard = (props) => {
-  return (
-    <Provider store={store}>
-      <FiltersCard_ {...props} />
-    </Provider>
-  );
+  return <FiltersCard_ {...props} />;
 };
 
-// @ts-ignore
 export default FiltersCard;

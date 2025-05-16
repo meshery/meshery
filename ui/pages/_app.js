@@ -8,13 +8,11 @@ import 'codemirror/addon/lint/lint.css';
 // link clicks, hence attempting to add them here
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
-import { fromJS } from 'immutable';
 import _ from 'lodash';
-import withRedux from 'next-redux-wrapper';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
 import React, { useEffect, useMemo, useCallback, useState } from 'react';
-import { connect, Provider, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -24,18 +22,9 @@ import { GQLSubscription } from '../components/subscription/subscriptionhandler'
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
-import {
-  actionTypes,
-  makeStore,
-  toggleCatalogContent,
-  setConnectionMetadata,
-  LegacyStoreContext,
-  setK8sContexts,
-} from '../lib/store';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
-import { bindActionCreators } from 'redux';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
@@ -52,8 +41,6 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../ut
 import CAN, { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
-import { store } from '../store';
-import { RTKContext } from '@/store/hooks';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
 import {
@@ -80,6 +67,20 @@ import {
   StyledRoot,
   ThemeResponsiveSnackbar,
 } from '../themes/App.styles';
+import {
+  setConnectionMetadata,
+  setControllerState,
+  setK8sContexts,
+  setKeys,
+  setOrganization,
+  toggleCatalogContent,
+  updateExtensionType,
+  updateK8SConfig,
+} from '@/store/slices/mesheryUi';
+import { updateLoadTestPref } from '@/store/slices/prefTest';
+import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
+import { updateAdaptersInfo } from '@/store/slices/adapter';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -117,9 +118,7 @@ export function isExtensionOpen() {
 const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
   const theme = useTheme();
 
-  const extension = useSelector((state) => {
-    return state.get('extensionType');
-  });
+  const { extensionType: extension } = useSelector((state) => state.ui);
 
   if (extension == 'navigator') {
     return null;
@@ -161,7 +160,8 @@ const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
   );
 };
 
-const KubernetesSubscription = ({ store, setAppState }) => {
+const KubernetesSubscription = ({ setAppState }) => {
+  const dispatch = useDispatch();
   const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
     // Don't fetch k8s contexts if user doesn't have permission
     if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
@@ -183,10 +183,7 @@ const KubernetesSubscription = ({ store, setAppState }) => {
           activeK8sContexts: allContexts,
         });
 
-        store.dispatch({
-          type: actionTypes.UPDATE_CLUSTER_CONFIG,
-          k8sConfig: result.k8sContext.contexts,
-        });
+        dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
       },
       {
         selector: {
@@ -210,20 +207,12 @@ const KubernetesSubscription = ({ store, setAppState }) => {
   return null;
 };
 
-const MesheryApp = ({
-  Component,
-  pageProps,
-  isDrawerCollapsed,
-  relayEnvironment,
-  store,
-  toggleCatalogContent,
-  setConnectionMetadata,
-  k8sConfig,
-  capabilitiesRegistry,
-  extensionType,
-}) => {
+const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   const pageContext = useMemo(() => getPageContext(), []);
-
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
   const [state, setState] = useState({
     mobileOpen: false,
     isDrawerCollapsed: false,
@@ -231,7 +220,6 @@ const MesheryApp = ({
     isLoading: true,
     k8sContexts: [],
     activeK8sContexts: [],
-    operatorSubscription: null,
     mesheryControllerSubscription: null,
     disposeK8sContextSubscription: null,
     theme: 'light',
@@ -274,7 +262,7 @@ const MesheryApp = ({
               connectionName: connection?.name,
             };
 
-            store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
+            dispatch(updatePrometheusConfig(promCfg));
           } else {
             const credentialID = connection?.credential_id;
 
@@ -288,13 +276,13 @@ const MesheryApp = ({
                 connectionID: connection?.id,
                 connectionName: connection?.name,
               };
-              store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: grafanaCfg });
+              dispatch(updateGrafanaConfig(grafanaCfg));
             });
           }
         });
       },
     );
-  }, [store]);
+  }, [dispatch]);
 
   const fullScreenChanged = useCallback(() => {
     setState((prevState) => {
@@ -305,24 +293,35 @@ const MesheryApp = ({
   const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
 
-    const connectionPromises = CONNECTION_KINDS_DEF.map(async (kind) => {
-      const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-      if (res?.components?.[0]) {
-        connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res.components[0]?.metadata?.transitions,
-          icon: res.components[0]?.styles?.svgColor,
-        };
+    const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
+      try {
+        const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
+        if (res?.components) {
+          connectionDef[CONNECTION_KINDS[kind]] = {
+            transitions: res?.components[0].metadata.transitions,
+            icon: res?.components[0].styles.svgColor,
+          };
+        }
+      } catch (error) {
+        console.error(`Error fetching component for ${kind}:`, error);
       }
     });
 
-    await Promise.all(connectionPromises);
-    setConnectionMetadata({ connectionMetadataState: connectionDef });
-  }, [setConnectionMetadata]);
+    await Promise.all(promises);
+
+    setState((prevState) => ({ ...prevState, connectionMetadata: connectionDef }));
+
+    dispatch(
+      setConnectionMetadata({
+        connectionMetadataState: connectionDef,
+      }),
+    );
+  }, [dispatch]);
 
   const initSubscriptions = useCallback(
     (contexts) => {
+      if (!k8sConfig?.length) return;
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
-
       // No need to create a controller subscription if there are no connections
       if (connectionIDs.length < 1) {
         setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
@@ -331,18 +330,15 @@ const MesheryApp = ({
 
       const mesheryControllerSubscription = new GQLSubscription({
         type: MESHERY_CONTROLLER_SUBSCRIPTION,
-        connectionIDs: getConnectionIDsFromContextIds(contexts, k8sConfig),
+        connectionIDs: connectionIDs,
         callbackFunction: (data) => {
-          store.dispatch({
-            type: actionTypes.SET_CONTROLLER_STATE,
-            controllerState: data,
-          });
+          dispatch(setControllerState({ controllerState: data }));
         },
       });
 
       setState((prevState) => ({ ...prevState, mesheryControllerSubscription }));
     },
-    [k8sConfig, store],
+    [k8sConfig],
   );
 
   const handleDrawerToggle = useCallback(() => {
@@ -357,15 +353,12 @@ const MesheryApp = ({
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  const activeContextChangeCallback = useCallback(
-    (activeK8sContexts) => {
-      if (activeK8sContexts.includes('all')) {
-        activeK8sContexts = ['all'];
-      }
-      store.dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
-    },
-    [store],
-  );
+  const activeContextChangeCallback = useCallback((activeK8sContexts) => {
+    if (activeK8sContexts.includes('all')) {
+      activeK8sContexts = ['all'];
+    }
+    dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
+  }, []);
 
   const setActiveContexts = useCallback(
     (id) => {
@@ -426,31 +419,17 @@ const MesheryApp = ({
     [activeContextChangeCallback],
   );
 
-  const updateExtensionType = useCallback(
+  const updateCurrentExtensionType = useCallback(
     (type) => {
-      store.dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType: type });
+      dispatch(updateExtensionType({ extensionType: type }));
     },
-    [store],
+    [dispatch],
   );
-
-  const setOrganization = useCallback(
+  const setCurrentOrganization = useCallback(
     (org) => {
-      store.dispatch({
-        type: actionTypes.SET_ORGANIZATION,
-        organization: org,
-      });
+      dispatch(setOrganization({ organization: org }));
     },
-    [store],
-  );
-
-  const setWorkspace = useCallback(
-    (workspace) => {
-      store.dispatch({
-        type: actionTypes.SET_WORKSPACE,
-        workspace: workspace,
-      });
-    },
-    [store],
+    [dispatch],
   );
 
   const updateAbility = useCallback(() => {
@@ -476,10 +455,7 @@ const MesheryApp = ({
           (result) => {
             if (result) {
               setState((prevState) => ({ ...prevState, keys: result.keys }));
-              store.dispatch({
-                type: actionTypes.SET_KEYS,
-                keys: result.keys,
-              });
+              dispatch(setKeys({ keys: result.keys }));
               updateAbility();
             }
           },
@@ -487,30 +463,7 @@ const MesheryApp = ({
         );
       }
     },
-    [store, updateAbility],
-  );
-
-  const loadWorkspace = useCallback(
-    async (orgId) => {
-      const currentWorkspace = sessionStorage.getItem('currentWorkspace');
-      if (currentWorkspace && currentWorkspace !== 'undefined') {
-        let workspace = JSON.parse(currentWorkspace);
-        setWorkspace(workspace);
-      } else {
-        dataFetch(
-          `/api/workspaces?search=&order=&page=0&pagesize=10&orgID=${orgId}`,
-          {
-            method: 'GET',
-            credentials: 'include',
-          },
-          async (result) => {
-            setWorkspace(result.workspaces[0]);
-          },
-          (err) => console.log('There was an error fetching workspaces:', err),
-        );
-      }
-    },
-    [setWorkspace],
+    [dispatch, updateAbility],
   );
 
   const loadOrg = useCallback(async () => {
@@ -520,8 +473,7 @@ const MesheryApp = ({
     if (currentOrg && currentOrg !== 'undefined') {
       let org = JSON.parse(currentOrg);
       await loadAbility(org.id, reFetchKeys);
-      setOrganization(org);
-      await loadWorkspace(org.id);
+      setCurrentOrganization(org);
     }
 
     dataFetch(
@@ -540,20 +492,18 @@ const MesheryApp = ({
             organizationToSet = result.organizations[0];
             reFetchKeys = true;
             await loadAbility(organizationToSet.id, reFetchKeys);
-            await loadWorkspace(organizationToSet.id);
-            setOrganization(organizationToSet);
+            setCurrentOrganization(organizationToSet);
           }
         } else {
           organizationToSet = result.organizations[0];
           reFetchKeys = true;
-          await loadWorkspace(organizationToSet.id);
           await loadAbility(organizationToSet.id, reFetchKeys);
-          setOrganization(organizationToSet);
+          setCurrentOrganization(organizationToSet);
         }
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
-  }, [loadAbility, loadWorkspace, setOrganization]);
+  }, [loadAbility, setCurrentOrganization]);
 
   const loadConfigFromServer = useCallback(() => {
     dataFetch(
@@ -569,10 +519,7 @@ const MesheryApp = ({
             result.meshAdapters !== null &&
             result.meshAdapters.length > 0
           ) {
-            store.dispatch({
-              type: actionTypes.UPDATE_ADAPTERS_INFO,
-              meshAdapters: result.meshAdapters,
-            });
+            dispatch(updateAdaptersInfo({ meshAdapters: result.meshAdapters }));
           }
           if (result.loadTestPrefs) {
             const loadTestPref = Object.assign(
@@ -584,19 +531,7 @@ const MesheryApp = ({
               },
               result.loadTestPrefs,
             );
-            store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
-          }
-          if (typeof result.anonymousUsageStats !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS,
-              anonymousUsageStats: result.anonymousUsageStats,
-            });
-          }
-          if (typeof result.anonymousPerfResults !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS,
-              anonymousPerfResults: result.anonymousPerfResults,
-            });
+            dispatch(updateLoadTestPref({ loadTestPref }));
           }
         }
       },
@@ -604,7 +539,7 @@ const MesheryApp = ({
         console.log(`there was an error fetching user config data: ${error}`);
       },
     );
-  }, [store]);
+  }, [dispatch]);
 
   useEffect(() => {
     // todo further refactoring required for data fetch
@@ -623,22 +558,23 @@ const MesheryApp = ({
         },
         (result) => {
           if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
+            dispatch(
             toggleCatalogContent({
-              catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-            });
+                catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
+              }),
+          );
           }
         },
         (err) => console.error(err),
       );
+    
 
-      document.addEventListener('fullscreenchange', fullScreenChanged);
+    document.addEventListener('fullscreenchange', fullScreenChanged);
 
-      await loadMeshModelComponent();
-
-      setState((prevState) => ({ ...prevState, isLoading: false }));
-    };
-
-    loadAll();
+    setState((prevState) => ({ ...prevState, isLoading: false }));
+    await loadMeshModelComponent();
+  };
+  loadAll();
 
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
@@ -670,7 +606,7 @@ const MesheryApp = ({
   }, [k8sConfig, capabilitiesRegistry]);
 
   const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
-
+  const { extensionType } = useSelector((state) => state.ui);
   return (
     <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
       <DynamicComponentProvider>
@@ -685,7 +621,7 @@ const MesheryApp = ({
                       isDrawerCollapsed={isDrawerCollapsed}
                       mobileOpen={state.mobileOpen}
                       handleDrawerToggle={handleDrawerToggle}
-                      updateExtensionType={updateExtensionType}
+                      updateExtensionType={updateCurrentExtensionType}
                       canShowNav={canShowNav}
                     />
                     <StyledAppContent canShowNav={canShowNav}>
@@ -711,7 +647,7 @@ const MesheryApp = ({
                       >
                         <NotificationCenterProvider>
                           <MesheryProgressBar />
-                          <KubernetesSubscription store={store} setAppState={setAppState} />
+                          <KubernetesSubscription setAppState={setAppState} />
                           {!state.isFullScreenMode && (
                             <Header
                               onDrawerToggle={handleDrawerToggle}
@@ -720,7 +656,7 @@ const MesheryApp = ({
                               activeContexts={state.activeK8sContexts}
                               setActiveContexts={setActiveContexts}
                               searchContexts={searchContexts}
-                              updateExtensionType={updateExtensionType}
+                              updateExtensionType={updateCurrentExtensionType}
                               abilityUpdated={state.abilityUpdated}
                             />
                           )}
@@ -772,24 +708,6 @@ MesheryApp.getInitialProps = async ({ Component, ctx }) => {
   return { pageProps };
 };
 
-const mapStateToProps = (state) => ({
-  isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  k8sConfig: state.get('k8sConfig'),
-  operatorSubscription: state.get('operatorSubscription'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-  telemetryURLs: state.get('telemetryURLs'),
-  connectionMetadata: state.get('connectionMetadata'),
-  extensionType: state.get('extensionType'),
-  organization: state.get('organization'),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-  setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
-});
-
-const MesheryWithRedux = connect(mapStateToProps, mapDispatchToProps)(MesheryApp);
-
 const MesheryThemeProvider = ({ children }) => {
   const themePref = useThemePreference();
   const mode = themePref?.data?.mode || 'dark';
@@ -798,32 +716,24 @@ const MesheryThemeProvider = ({ children }) => {
 
 const MesheryAppWrapper = (props) => {
   return (
-    <Provider store={store} context={RTKContext}>
-      <Provider store={props.store} context={LegacyStoreContext}>
-        <Provider store={props.store}>
-          <Head>
-            <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
-            <title>Meshery</title>
-          </Head>
-          <LocalizationProvider dateAdapter={AdapterMoment}>
-            <MesheryWithRedux {...props} />
-          </LocalizationProvider>
-        </Provider>
-      </Provider>
-    </Provider>
+    <ProviderStoreWrapper>
+      <Head>
+        <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
+        <title>Meshery</title>
+      </Head>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <MesheryApp {...props} />
+      </LocalizationProvider>
+    </ProviderStoreWrapper>
   );
 };
 
-export default withRedux(makeStore, {
-  serializeState: (state) => state.toJS(),
-  deserializeState: (state) => fromJS(state),
-})(MesheryAppWrapper);
+export default MesheryAppWrapper;
 
 const NavigationBar = ({
   isDrawerCollapsed,
   mobileOpen,
   handleDrawerToggle,
-
   updateExtensionType,
   canShowNav,
 }) => {

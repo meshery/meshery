@@ -30,7 +30,7 @@ import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelector } from 'react-redux';
 
 const WorkspaceDataTable = ({
   handleWorkspaceModalOpen,
@@ -59,7 +59,8 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useGetCurrentOrganization()?.id;
+  const { organization } = useSelector((state) => state.ui);
+  const { id: org_id } = organization;
 
   const theme = useTheme();
 
