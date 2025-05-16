@@ -1,0 +1,24 @@
+version: 0.0.1
+name: my-first-k8s-app
+displayName: My first k8s app
+createdAt: "2023-12-04T12:15:31Z"
+description: This is a simple kubernetes workflow application that has deployment, pods and service. This is first design used for eexploring Meshery Cloud platform
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6a0492fd-73b2-496d-9c5f-278c00d3a5ca/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats; Free to reuse \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 777357e1-3bb4-4014-9790-50484c9596d6
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6a0492fd-73b2-496d-9c5f-278c00d3a5ca-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6a0492fd-73b2-496d-9c5f-278c00d3a5ca-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

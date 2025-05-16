@@ -1,26 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  TableCell,
-  Tooltip,
-  TableContainer,
-  Table,
-  Grid,
-  TableRow,
-  FormControl,
-  Select,
-  MenuItem,
-  Chip,
-} from '@material-ui/core';
-import Moment from 'react-moment';
+import { Tooltip, Grid, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { ResponsiveDataTable } from '@layer5/sistent';
-import CustomColumnVisibilityControl from '../../../utils/custom-column';
-import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
+import {
+  CustomColumnVisibilityControl,
+  ResponsiveDataTable,
+  SearchBar,
+  UniversalFilter,
+  TableCell,
+  TableRow,
+} from '@layer5/sistent';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   JsonParse,
   camelcaseToSnakecase,
@@ -28,11 +21,7 @@ import {
   getVisibilityColums,
 } from '../../../utils/utils';
 import RegisterConnectionModal from './RegisterConnectionModal';
-import classNames from 'classnames';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
-import UniversalFilter from '../../../utils/custom-filter';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { FormatId } from '../../DataFormatter';
@@ -40,6 +29,10 @@ import {
   useGetMeshSyncResourceKindsQuery,
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
+import { ConnectionStateChip } from '../ConnectionChip';
+import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -49,29 +42,30 @@ const ACTION_TYPES = {
 };
 
 export default function MeshSyncTable(props) {
-  const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const { selectedResourceId, updateUrlWithResourceId } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('creation_timestamp desc');
   const [rowsExpanded, setRowsExpanded] = useState([]);
-  const [selectedKind, setSelectedKind] = useState('');
-
+  const [modelFilter, setModeFilter] = useState();
+  const [kindFilter, setKindFilter] = useState();
+  const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState({ kind: 'All' });
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const [selectedFilters, setSelectedFilters] = useState({
+    kind: 'All',
+    model: 'All',
+    namespace: 'All',
+  });
   const [registerConnection, setRegisterConnection] = useState({
     metadata: {},
     kind: '',
   });
-  const StyleClass = useStyles();
   const { width } = useWindowDimensions();
-
-  const icons = {
-    [MESHSYNC_STATES.REGISTER]: () => <AssignmentTurnedInIcon />,
-    [MESHSYNC_STATES.DISCOVERED]: () => <ExploreIcon />,
-  };
 
   const { notify } = useNotification();
 
@@ -88,8 +82,10 @@ export default function MeshSyncTable(props) {
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    kind: selectedKind,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+    kind: kindFilter,
+    model: modelFilter,
+    namespace: namespaceFilter,
+    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
   });
   if (isError) {
     if (isError) {
@@ -100,21 +96,26 @@ export default function MeshSyncTable(props) {
       });
     }
   }
-  const { data: allKinds } = useGetMeshSyncResourceKindsQuery({
+  const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
     page: page,
     pagesize: 'all',
     search: search,
     order: sortOrder,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
   });
-  const availableKinds = allKinds?.kinds || [];
-
+  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
+  const availableModels = [
+    ...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean)),
+  ];
+  const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];
 
   let colViews = [
     ['metadata.name', 'xs'],
-    ['apiVersion', 'xs'],
+    ['apiVersion', 'na'],
     ['kind', 'm'],
+    ['model', 'm'],
+    ['metadata.namespace', 'xs'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],
     ['metadata.creationTimestamp', 'l'],
@@ -125,10 +126,21 @@ export default function MeshSyncTable(props) {
   const columns = [
     {
       name: 'metadata.name',
+      sortName: 'name',
       label: 'Name',
       options: {
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        sort: true,
+        sortThirdClickReset: true,
+        sortName: 'name',
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={{ ...column, name: 'name' }}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
         },
         customBodyRender: (value) => {
           const maxCharLength = 30;
@@ -179,6 +191,43 @@ export default function MeshSyncTable(props) {
             <SortableTableCell
               index={index}
               columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'model',
+      label: 'Model',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'metadata.namespace',
+      sortName: 'namespace',
+      label: 'Namespace',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={{ ...column, name: 'namespace' }}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
             />
@@ -244,26 +293,24 @@ export default function MeshSyncTable(props) {
     },
     {
       name: 'metadata.creationTimestamp',
+      sortName: 'creation_timestamp',
       label: 'Discovered At',
       options: {
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        sort: true,
+        sortThirdClickReset: true,
+        sortName: 'creation_timestamp',
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={{ ...column, name: 'creation_timestamp' }}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
         },
         customBodyRender: function CustomBody(value) {
-          return (
-            <Tooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              arrow
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </Tooltip>
-          );
+          return <FormattedTime date={value} />;
         },
       },
     },
@@ -292,66 +339,59 @@ export default function MeshSyncTable(props) {
               ? false
               : true;
           return (
-            <>
-              <FormControl className={classes.chipFormControl}>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  defaultValue={MESHSYNC_STATES.DISCOVERED}
-                  disabled={disabled}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const clickedValue = e.target.value;
-                    if (clickedValue !== MESHSYNC_STATES.DISCOVERED && clickedValue !== value) {
-                      setRegistrationModal((open) => !open);
+            <FormControl>
+              <ConnectionStyledSelect
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                defaultValue={MESHSYNC_STATES.DISCOVERED}
+                disabled={disabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const clickedValue = e.target.value;
+                  if (clickedValue !== MESHSYNC_STATES.DISCOVERED && clickedValue !== value) {
+                    setRegistrationModal((open) => !open);
+                  }
+                }}
+                onChange={() => {
+                  callbackRef?.current?.(tableMeta);
+                  setRegisterConnection({
+                    capabilities: componentMetadata?.capabilities,
+                    metadata: JsonParse(componentMetadata.metadata),
+                    resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
+                  });
+                }}
+                disableUnderline
+                MenuProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  getContentAnchorEl: null,
+                  MenuListProps: { disablePadding: true },
+                  PaperProps: { square: true },
+                }}
+              >
+                {Object.keys(meshSyncStates).map((s) => (
+                  <MenuItem
+                    disabled={
+                      meshSyncStates[s] === value ||
+                      meshSyncStates[s] === CONNECTION_STATES.REGISTERED
+                        ? true
+                        : false
                     }
-                  }}
-                  onChange={() => {
-                    callbackRef?.current?.(tableMeta);
-                    setRegisterConnection({
-                      capabilities: componentMetadata?.capabilities,
-                      metadata: JsonParse(componentMetadata.metadata),
-                      resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
-                    });
-                  }}
-                  className={classes.statusSelect}
-                  disableUnderline
-                  MenuProps={{
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                    MenuListProps: { disablePadding: true },
-                    PaperProps: { square: true },
-                  }}
-                >
-                  {Object.keys(meshSyncStates).map((s) => (
-                    <MenuItem
-                      disabled={
-                        meshSyncStates[s] === value ||
-                        meshSyncStates[s] === CONNECTION_STATES.REGISTERED
-                          ? true
-                          : false
-                      }
-                      value={meshSyncStates[s]}
-                      key={meshSyncStates[s]}
-                      style={{ padding: '0' }}
-                    >
-                      <Chip
-                        className={classNames(classes.statusChip, classes[meshSyncStates[s]])}
-                        avatar={icons[meshSyncStates[s]]()}
-                        label={meshSyncStates[s]}
-                      />
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </>
+                    value={meshSyncStates[s]}
+                    key={meshSyncStates[s]}
+                    style={{ padding: '0' }}
+                  >
+                    <ConnectionStateChip status={meshSyncStates[s]} />
+                  </MenuItem>
+                ))}
+              </ConnectionStyledSelect>
+            </FormControl>
           );
         },
       },
@@ -384,7 +424,6 @@ export default function MeshSyncTable(props) {
     viewColumns: false,
     search: false,
     responsive: 'standard',
-    // resizableColumns: true,
     serverSide: true,
     selectableRows: 'none',
     count: meshSyncData?.total_count,
@@ -393,32 +432,21 @@ export default function MeshSyncTable(props) {
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: sortOrder.split(' ')[0].replace('metadata.', ''),
+      direction: sortOrder.split(' ')[1],
+    },
     textLabels: {
       selectedRows: {
         text: 'connection(s) selected',
       },
     },
-    // customToolbarSelect: (selected) => (
-    //   <Button
-    //     variant="contained"
-    //     color="primary"
-    //     size="large"
-    //     // @ts-ignore
-    //     // onClick={() => handleDeleteConnections(selected)}
-    //     style={{ background: '#8F1F00', marginRight: '10px' }}
-    //   >
-    //     <DeleteForeverIcon style={iconMedium} />
-    //     Delete
-    //   </Button>
-    // ),
     enableNestedDataAccess: '.',
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      const columnName = camelcaseToSnakecase(columns[tableState.activeColumn]?.name);
-      if (tableState.activeColumn) {
-        order = `${columnName} desc`;
-      }
+      const activeColumn = columns[tableState.activeColumn];
+
       switch (action) {
         case 'changePage':
           setPage(tableState.page.toString());
@@ -428,14 +456,12 @@ export default function MeshSyncTable(props) {
           break;
         case 'sort':
           if (sortInfo.length == 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columnName} asc`;
-            } else {
-              order = `${columnName} desc`;
+            const columnName = activeColumn?.sortName || camelcaseToSnakecase(activeColumn?.name);
+            const direction = sortInfo[1] === 'ascending' ? 'asc' : 'desc';
+            order = `${columnName} ${direction}`;
+            if (order !== sortOrder) {
+              setSortOrder(order);
             }
-          }
-          if (order !== sortOrder) {
-            setSortOrder(order);
           }
           break;
       }
@@ -448,8 +474,28 @@ export default function MeshSyncTable(props) {
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-      // setShowMore(false);
+      if (expansionFlags.current.isUrlExpansion) return;
+
+      expansionFlags.current.isHandlingExpansion = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && meshSyncResources) {
+        const index = expandedRows[0].index;
+        const resource = meshSyncResources[index];
+
+        if (
+          resource &&
+          updateUrlWithResourceId &&
+          (!expansionFlags.current.isInitialLoad || resource.id !== selectedResourceId)
+        ) {
+          updateUrlWithResourceId(resource.id);
+        }
+      } else if (updateUrlWithResourceId && !expansionFlags.current.isInitialLoad) {
+        updateUrlWithResourceId('');
+      }
+
+      expansionFlags.current.isHandlingExpansion = false;
     },
     renderExpandableRow: (rowData) => {
       const colSpan = rowData.length;
@@ -460,35 +506,30 @@ export default function MeshSyncTable(props) {
       const metadata = rowData[columnIndex];
 
       return (
-        <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
-          <TableContainer className={classes.innerTableContainer}>
+        <TableCell colSpan={colSpan}>
+          <InnerTableContainer>
             <Table>
-              <TableRow className={classes.noGutter}>
-                <TableCell style={{ padding: '20px 0' }}>
-                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                    <Grid item xs={12} md={12} className={classes.contentContainer}>
-                      <Grid container spacing={1}>
-                        <Grid
-                          item
-                          xs={12}
-                          md={12}
-                          style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            padding: '0 20px',
-                            gap: 30,
-                          }}
-                          className={classes.contentContainer}
-                        >
-                          <MeshSyncDataFormatter metadata={metadata} />
-                        </Grid>
-                      </Grid>
-                    </Grid>
+              <TableRow>
+                <TableCell>
+                  <Grid container style={{ textTransform: 'lowercase' }}>
+                    <ContentContainer
+                      item
+                      xs={12}
+                      md={12}
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        padding: '0 20px',
+                        gap: 30,
+                      }}
+                    >
+                      <MeshSyncDataFormatter metadata={metadata} />
+                    </ContentContainer>
                   </Grid>
                 </TableCell>
               </TableRow>
             </Table>
-          </TableContainer>
+          </InnerTableContainer>
         </TableCell>
       );
     },
@@ -509,6 +550,34 @@ export default function MeshSyncTable(props) {
     }
   }, [meshSyncError]);
 
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
+
+  // Find and expand the selected resource when it becomes available
+  useEffect(() => {
+    if (!selectedResourceId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedResourceId) return;
+    if (meshSyncResources && meshSyncResources.length > 0) {
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedResourceId;
+
+      const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithResourceId('');
+      }
+
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
+    }
+  }, [selectedResourceId, meshSyncResources]);
+
   const filters = {
     kind: {
       name: 'Kind',
@@ -519,15 +588,34 @@ export default function MeshSyncTable(props) {
         })),
       ],
     },
+    model: {
+      name: 'Model',
+      options: [
+        ...availableModels.map((model) => ({
+          value: model,
+          label: model,
+        })),
+      ],
+    },
+    namespace: {
+      name: 'Namespace',
+      options: [
+        ...availableNamespaces.map((ns) => ({
+          value: ns,
+          label: ns,
+        })),
+      ],
+    },
   };
 
   const handleApplyFilter = () => {
-    const columnName = Object.keys(selectedFilters)[0];
-    const columnValue = selectedFilters[columnName];
+    const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
+    const modelFilter = selectedFilters.model === 'All' ? null : selectedFilters.model;
+    const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
 
-    // Check if the selected value is "All"
-    const newSelectedKind = columnValue === 'All' ? '' : columnValue;
-    setSelectedKind(newSelectedKind);
+    setKindFilter(kindFilter);
+    setModeFilter(modelFilter);
+    setNamespaceFilter(namespaceFilter);
   };
 
   const [tableCols, updateCols] = useState(columns);
@@ -542,19 +630,15 @@ export default function MeshSyncTable(props) {
     return initialVisibility;
   });
 
-  useEffect(() => {
-    updateCols(columns);
-  }, []);
-
   return (
     <>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
-        <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
+      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div
-          className={classes.searchAndView}
           style={{
             display: 'flex',
             borderRadius: '0.5rem 0.5rem 0 0',
+            width: '100%',
+            justifyContent: 'end',
           }}
         >
           <SearchBar
@@ -563,7 +647,7 @@ export default function MeshSyncTable(props) {
             }}
             expanded={isSearchExpanded}
             setExpanded={setIsSearchExpanded}
-            placeholder="Search connections..."
+            placeholder="Search Connections..."
           />
 
           <UniversalFilter
@@ -580,12 +664,11 @@ export default function MeshSyncTable(props) {
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
         </div>
-      </div>
+      </ToolWrapper>
       <ResponsiveDataTable
         data={meshSyncResources}
         columns={columns}
         options={options}
-        className={classes.muiRow}
         tableCols={tableCols}
         updateCols={updateCols}
         columnVisibility={columnVisibility}

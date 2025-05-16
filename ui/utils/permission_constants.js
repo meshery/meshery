@@ -4,6 +4,10 @@
  */
 
 export const keys = {
+  EDIT_ORGANIZATION: {
+    subject: 'Edit Organization',
+    action: 'd39a34fb-0ccf-4c80-8a6c-b545c8db869a',
+  },
   VIEW_ALL_ORGANIZATIONS: {
     subject: 'View All Organizations',
     action: 'e996c998-a50f-4cb8-ae7b-f2f1b523c971',
@@ -88,6 +92,42 @@ export const keys = {
     subject: 'Remove team from workspace',
     action: 'c4ed82f5-783d-4451-9b34-44f50cae71df',
   },
+  ASSIGN_DESIGNS_TO_WORKSPACE: {
+    subject: 'Assign designs to workspaces',
+    action: '64a1bad5-30f1-431a-aea0-8073d14a0262',
+  },
+  REMOVE_DESIGNS_FROM_WORKSPACE: {
+    subject: 'Remove designs from workspaces',
+    action: '076515f1-f696-4211-ae27-58d5463a229e',
+  },
+  ASSIGN_VIEWS_TO_WORKSPACE: {
+    subject: 'Assign views to workspace',
+    action: '5a26b21b-bf15-4622-9681-d907fc5154fd',
+  },
+  REMOVE_VIEWS_FROM_WORKSPACE: {
+    subject: 'Remove views from workspace',
+    action: '5b48eded-15d8-4c51-9ac4-b11097dbdd75',
+  },
+  VIEW_TEAMS: {
+    subject: 'View Teams',
+    action: '6ecbbe79-c392-43bd-b7b6-ecdec019e24c', // not seeded
+  },
+  DELETE_TEAM: {
+    subject: 'Delete Team',
+    action: 'bbb691b6-8664-44c7-8ea7-9c46b1ca1e8b',
+  },
+  CREATE_TEAM: {
+    subject: 'Create Team',
+    action: '41a9eb36-b99b-4715-8140-780f97d3c6a0',
+  },
+  EDIT_TEAM: {
+    subject: 'Edit Team',
+    action: '6cf69881-0be0-4723-b5f0-031b7847509a',
+  },
+  LEAVE_TEAM: {
+    subject: 'Leave Team',
+    action: '680b9fcb-6d8d-448d-8012-4b792d71c52e',
+  },
   ASSIGN_ENVIRONMENT_TO_WORKSPACE: {
     subject: 'Assign environment to workspace',
     action: 'f421fc20-c14a-4282-b526-776c6cacfd99',
@@ -151,6 +191,10 @@ export const keys = {
   CLONE_DESIGN: {
     subject: 'Clone Design',
     action: '94a12f80-3c45-4a1f-afb2-a68b909d0d7f',
+  },
+  DOWNLOAD_DESIGN: {
+    subject: 'Download a Design', // not seeded
+    action: '64de96b7-60db-4aab-b311-afc64066b2c4',
   },
   OPEN_IN_PLAYGROUND: {
     subject: 'Open in Playground', // not seeded
@@ -277,6 +321,10 @@ export const keys = {
     subject: 'View Meshery User Preferences',
     action: 'cdec6212-bbbf-4cab-b10d-76d12bee7e56',
   },
+  ASSIGN_USER_ROLES: {
+    subject: 'Assign User Roles',
+    action: '9a84a76a-0a16-11ee-be56-0242ac120002',
+  },
   VIEW_SETTINGS: {
     subject: 'View Settings',
     action: 'fdc038e3-1fdf-403a-af8a-53c0de8d7820',
@@ -333,14 +381,6 @@ export const keys = {
     subject: 'Edit View',
     action: 'f2e04b59-42ee-4af6-b488-7bc7047fc01b',
   },
-  ASSIGN_VIEWS_TO_WORKSPACE: {
-    subject: 'Assign views to workspace',
-    action: '5a26b21b-bf15-4622-9681-d907fc5154fd',
-  },
-  REMOVE_VIEWS_FROM_WORKSPACE: {
-    subject: 'Remove views from workspace',
-    action: '5b48eded-15d8-4c51-9ac4-b11097dbdd75',
-  },
   INVITE_COLLABORATORS_PUBLIC_DESIGNS: {
     subject: 'Invite any Meshery Cloud user, or all Meshery users',
     action: 'ccc4bc8d-f484-42b3-8a62-2667284605c3',
@@ -366,36 +406,36 @@ export const keys = {
     subject: 'Create and collaborate in online designs in real-time',
     action: 'd5267c04-b3ee-43fe-8b97-2a3321eb7f8e',
   },
-  MANAGE_SERVICE_MESH_LIFE_CYCLE: {
-    subject: 'Manage service mesh life cycle',
+  MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_LIFE_CYCLE: {
+    subject: 'Manage cloud native infrastructure life cycle',
     action: '255fd148-e3fd-4408-a48c-0d157a57d4d9',
   },
-  MANAGE_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Manage service mesh configuration',
+  MANAGE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: {
+    subject: 'Manage cloud native infrastructure configuration',
     action: '0eb0558d-9b21-4e50-b4c6-bd8e9e3414f5',
   },
-  APPLY_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Apply service mesh configuration',
+  APPLY_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: {
+    subject: 'Apply cloud native infrastructure configuration',
     action: '3f20a106-24f5-4da6-a8eb-6eddaad50944',
   },
-  VALIDATE_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Validate service mesh configuration',
+  VALIDATE_CLOUD_NATIVE_INFRASTRUCTURE_CONFIGURATION: {
+    subject: 'Validate cloud native infrastructure configuration',
     action: '8bb93f97-fcfb-4827-9fed-f931fdca7b95',
   },
-  APPLY_CUSTOM_SERVICE_MESH_CONFIGURATION: {
-    subject: 'Apply custom service mesh configuration',
+  APPLY_CUSTOM_CLOUD_NATIVE_CONFIGURATION: {
+    subject: 'Apply custom cloud native configuration',
     action: '2f4e2300-4c7e-4d48-95aa-74614a4826fe',
   },
-  DEPLOY_SERVICE_MESH: {
-    subject: 'Deploy service mesh',
+  DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE: {
+    subject: 'Deploy cloud native infrastructure',
     action: 'f7e70ffb-333d-43b3-a76e-0e6c63b9fbfa',
   },
-  UNDEPLOY_SERVICE_MESH: {
-    subject: 'Undeploy service mesh',
+  UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE: {
+    subject: 'Undeploy cloud native infrastructure',
     action: '6e7f6f4f-4321-4e42-9eff-6a8323f32e84',
   },
-  VIEW_SERVICE_MESH: {
-    subject: 'View service mesh',
+  VIEW_CLOUD_NATIVE_INFRASTRUCTURE: {
+    subject: 'View cloud native infrastructure',
     action: 'fdc485dc-f68b-405c-9e54-7b9a7254c282',
   },
   VIEW_ALL_KUBERNETES_CLUSTERS: {
@@ -405,5 +445,9 @@ export const keys = {
   VIEW_PERFORMANCE_PROFILES: {
     subject: 'View performance profiles',
     action: '6593ac26-820b-4e87-be32-64ee740ea204',
+  },
+  RESET_DATABASE: {
+    subject: 'Reset database',
+    action: '84fc402c-f33e-4a21-a0e3-e14f9e20b125',
   },
 };

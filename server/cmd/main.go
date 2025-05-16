@@ -20,8 +20,8 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/machines"
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
 	"github.com/layer5io/meshery/server/router"
 	"github.com/layer5io/meshkit/broker/nats"
@@ -34,6 +34,8 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
 )
 
@@ -46,8 +48,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://meshery.layer5.io"
-	PoliciesPath       = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
+	DefaultProviderURL = "https://cloud.layer5.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -82,7 +83,7 @@ func main() {
 	}
 
 	viper.OnConfigChange(func(event fsnotify.Event) {
-		logrus.Info("received change for", event.Name)
+		log.Info("received change for", event.Name)
 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
 	})
 
@@ -134,6 +135,20 @@ func main() {
 		log.Error(ErrCreatingUserDataDirectory(viper.GetString("USER_DATA_FOLDER")))
 		os.Exit(1)
 	}
+	logDir := path.Join(home, ".meshery", "logs", "registry")
+	errDir = os.MkdirAll(logDir, 0755)
+	if errDir != nil {
+		logrus.Fatalf("Error creating user data directory: %v", err)
+	}
+
+	// Create or open the log file
+	logFilePath := path.Join(logDir, "registry-logs.log")
+	logFile, err := os.Create(logFilePath)
+	if err != nil {
+		logrus.Fatalf("Could not create log file: %v", err)
+	}
+	defer logFile.Close()
+	viper.Set("REGISTRY_LOG_FILE", logFilePath)
 
 	log.Info("Meshery Database is at: ", viper.GetString("USER_DATA_FOLDER"))
 	if viper.GetString("KUBECONFIG_FOLDER") == "" {
@@ -144,7 +159,7 @@ func main() {
 		viper.SetDefault("KUBECONFIG_FOLDER", path.Join(home, ".kube"))
 	}
 	log.Info("Using kubeconfig at: ", viper.GetString("KUBECONFIG_FOLDER"))
-	logrus.Info("Log level: ", log.GetLevel())
+	log.Info("Log level: ", log.GetLevel())
 
 	adapterURLs := viper.GetStringSlice("ADAPTER_URLS")
 
@@ -187,11 +202,18 @@ func main() {
 		&models.PatternResource{},
 		&models.MesheryApplication{},
 		&models.UserPreference{},
+		&models.UserCapabilities{},
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
 		models.Organization{},
 		models.Key{},
+		connections.Connection{},
+		environment.Environment{},
+		environment.EnvironmentConnectionMapping{},
+		workspace.Workspace{},
+		workspace.WorkspacesEnvironmentsMapping{},
+		workspace.WorkspacesDesignsMapping{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -202,6 +224,7 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
+		UserCapabilitiesPersister:       &models.UserCapabilitiesPersister{DB: dbHandler},
 		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
 		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
 		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
@@ -212,11 +235,16 @@ func main() {
 		MesheryPatternResourcePersister: &models.PatternResourcePersister{DB: dbHandler},
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
+		ConnectionPersister:             &models.ConnectionPersister{DB: dbHandler},
+		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
+		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
 	}
+
+	// Local remote provider is initalized here.
 	lProv.Initialize()
 
 	hc := &models.HandlerConfig{
@@ -229,16 +257,15 @@ func main() {
 
 		KubeConfigFolder: viper.GetString("KUBECONFIG_FOLDER"),
 
-		GrafanaClient:         models.NewGrafanaClient(),
-		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		GrafanaClient:         models.NewGrafanaClient(&log),
+		GrafanaClientForQuery: models.NewGrafanaClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
-		PrometheusClient:         models.NewPrometheusClient(),
-		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}),
+		PrometheusClient:         models.NewPrometheusClient(&log),
+		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
-		ApplicationChannel:        models.NewBroadcaster(),
-		PatternChannel:            models.NewBroadcaster(),
-		FilterChannel:             models.NewBroadcaster(),
-		EventBroadcaster:          models.NewBroadcaster(),
+		PatternChannel:            models.NewBroadcaster("Patterns"),
+		FilterChannel:             models.NewBroadcaster("Filters"),
+		EventBroadcaster:          models.NewBroadcaster("Events"),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
@@ -251,14 +278,17 @@ func main() {
 		os.Exit(1)
 	}
 	//seed the local meshmodel components
-	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	rego := policies.Rego{}
+
 	go func() {
-		ch.SeedComponents()
-		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
-		rego = *r
+		// This is where models are seeded from meshmodel directory to registry
+		models.SeedComponents(log, hc, regManager)
+		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
+		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
-			logrus.Warn("error creating rego instance, policies will not be evaluated")
+			log.Warn(handlers.ErrCreatingOPAInstance(err))
+		} else {
+			rego = *r
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
@@ -282,6 +312,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
+			UserCapabilitiesPersister:  &models.UserCapabilitiesPersister{DB: dbHandler},
 			ProviderVersion:            version,
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
@@ -315,7 +346,9 @@ func main() {
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
+	policies.SyncRelationship.Lock()
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
+	policies.SyncRelationship.Unlock()
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

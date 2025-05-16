@@ -23,7 +23,7 @@ Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for
 The Meshery project is community-built and welcomes collaboration! <a href="https://github.com/meshery/meshery"><i class="fab fa-github"></i> Fork Meshery</a>
 
 * Join any of the [community meetings](https://meshery.io/calendar). 
-* Watch [meeting recordings](https://www.youtube.com/@Layer5io?sub_confirmation=1) and subscribe to the [community calendar](https://meshery.io/calendar).
+* Subscribe to the [community calendar](https://meshery.io/calendar).
 * Fill-in a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
 
 ## Talking about Meshery?

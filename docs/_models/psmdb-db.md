@@ -1,22 +1,41 @@
 ---
 layout: integration
 title: Percona Server for MongoDB
-subtitle: Collaborative and visual infrastructure as code for Percona Server for MongoDB
+subtitle: Collaborative and visual infrastructure as design for Percona Server for MongoDB
 image: /assets/img/integrations/psmdb-db/icons/color/psmdb-db-color.svg
 permalink: extensibility/integrations/psmdb-db
 docURL: https://docs.meshery.io/extensibility/integrations/psmdb-db
 description: 
 integrations-category: Database
 integrations-subcategory: App Definition and Development
-registrant: Artifact Hub
+registrant: Github
 components: 
+- name: percona-server-mongo-db-backup
+  colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-backup/icons/color/percona-server-mongo-db-backup-color.svg
+  whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-backup/icons/white/percona-server-mongo-db-backup-white.svg
+  description: 
+- name: percona-server-mongo-db-restore
+  colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-restore/icons/color/percona-server-mongo-db-restore-color.svg
+  whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-restore/icons/white/percona-server-mongo-db-restore-white.svg
+  description: 
+- name: percona-server-mongo-db
+  colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
+  whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
+  description: 
+- name: percona-server-mongo-db
+  colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
+  whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
+  description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "High-performance MongoDB database",
+  "Enhanced security and monitoring features",
+  "Enterprise-grade support"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates Percona Server for MongoDB"
+howItWorksDetails: "Streamlined MongoDB management within Kubernetes"
 language: en
 list: include
 type: extensibility

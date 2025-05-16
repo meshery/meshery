@@ -1,22 +1,29 @@
 ---
 layout: integration
 title: Kubevirt
-subtitle: Collaborative and visual infrastructure as code for Kubevirt
+subtitle: Collaborative and visual infrastructure as design for Kubevirt
 image: /assets/img/integrations/kubevirt/icons/color/kubevirt-color.svg
 permalink: extensibility/integrations/kubevirt
 docURL: https://docs.meshery.io/extensibility/integrations/kubevirt
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: Artifact Hub
+registrant: Github
 components: 
+- name: ssp
+  colorIcon: assets/img/integrations/kubevirt/components/ssp/icons/color/ssp-color.svg
+  whiteIcon: assets/img/integrations/kubevirt/components/ssp/icons/white/ssp-white.svg
+  description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Runs VMs alongside containers in Kubernetes",
+  "Leverages Kubernetes for VM orchestration",
+  "Supports various guest OSs and VM images"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages KubeVirt virtual machines"
+howItWorksDetails: "Unified management of VMs and containers in Kubernetes"
 language: en
 list: include
 type: extensibility

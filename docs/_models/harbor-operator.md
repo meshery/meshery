@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Harbor Operator
-subtitle: Collaborative and visual infrastructure as code for Harbor Operator
+subtitle: Collaborative and visual infrastructure as design for Harbor Operator
 image: /assets/img/integrations/harbor-operator/icons/color/harbor-operator-color.svg
 permalink: extensibility/integrations/harbor-operator
 docURL: https://docs.meshery.io/extensibility/integrations/harbor-operator
@@ -34,12 +34,15 @@ components:
   colorIcon: assets/img/integrations/harbor-operator/components/user/icons/color/user-color.svg
   whiteIcon: assets/img/integrations/harbor-operator/components/user/icons/white/user-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Content signing and validation",
   "Security and vulnerability analysis",
   "Replication across many registries, including Harbor"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: OpenEBS
-subtitle: Collaborative and visual infrastructure as code for OpenEBS
+subtitle: Collaborative and visual infrastructure as design for OpenEBS
 image: /assets/img/integrations/openebs/icons/color/openebs-color.svg
 permalink: extensibility/integrations/openebs
 docURL: https://docs.meshery.io/extensibility/integrations/openebs
@@ -106,13 +106,64 @@ components:
   colorIcon: assets/img/integrations/openebs/components/jiva-volume/icons/color/jiva-volume-color.svg
   whiteIcon: assets/img/integrations/openebs/components/jiva-volume/icons/white/jiva-volume-white.svg
   description: 
+- name: volume-snapshot-class
+  colorIcon: assets/img/integrations/openebs/components/volume-snapshot-class/icons/color/volume-snapshot-class-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/volume-snapshot-class/icons/white/volume-snapshot-class-white.svg
+  description: 
+- name: volume-snapshot-content
+  colorIcon: assets/img/integrations/openebs/components/volume-snapshot-content/icons/color/volume-snapshot-content-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/volume-snapshot-content/icons/white/volume-snapshot-content-white.svg
+  description: 
+- name: volume-snapshot
+  colorIcon: assets/img/integrations/openebs/components/volume-snapshot/icons/color/volume-snapshot-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/volume-snapshot/icons/white/volume-snapshot-white.svg
+  description: 
+- name: jaeger
+  colorIcon: assets/img/integrations/openebs/components/jaeger/icons/color/jaeger-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/jaeger/icons/white/jaeger-white.svg
+  description: 
+- name: pod-monitor
+  colorIcon: assets/img/integrations/openebs/components/pod-monitor/icons/color/pod-monitor-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/pod-monitor/icons/white/pod-monitor-white.svg
+  description: 
+- name: probe
+  colorIcon: assets/img/integrations/openebs/components/probe/icons/color/probe-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/probe/icons/white/probe-white.svg
+  description: 
+- name: service-monitor
+  colorIcon: assets/img/integrations/openebs/components/service-monitor/icons/color/service-monitor-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/service-monitor/icons/white/service-monitor-white.svg
+  description: 
+- name: grafana-agent
+  colorIcon: assets/img/integrations/openebs/components/grafana-agent/icons/color/grafana-agent-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/grafana-agent/icons/white/grafana-agent-white.svg
+  description: 
+- name: integration
+  colorIcon: assets/img/integrations/openebs/components/integration/icons/color/integration-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/integration/icons/white/integration-white.svg
+  description: 
+- name: logs-instance
+  colorIcon: assets/img/integrations/openebs/components/logs-instance/icons/color/logs-instance-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/logs-instance/icons/white/logs-instance-white.svg
+  description: 
+- name: metrics-instance
+  colorIcon: assets/img/integrations/openebs/components/metrics-instance/icons/color/metrics-instance-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/metrics-instance/icons/white/metrics-instance-white.svg
+  description: 
+- name: pod-logs
+  colorIcon: assets/img/integrations/openebs/components/pod-logs/icons/color/pod-logs-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/pod-logs/icons/white/pod-logs-white.svg
+  description: 
+components-count: 36
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Dynamic provisioning of persistent volumes",
+  "Containerized storage controllers",
+  "Supports various storage backends"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates OpenEBS storage"
+howItWorksDetails: "Simplified and scalable storage management in Kubernetes"
 language: en
 list: include
 type: extensibility

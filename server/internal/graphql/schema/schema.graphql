@@ -76,7 +76,7 @@ enum MesheryControllerStatus {
 
 type MesheryControllersStatusListItem {
     connectionID: String!
-    controller: MesheryController! 
+    controller: MesheryController!
     status: MesheryControllerStatus!
     version: String!
   }
@@ -226,7 +226,7 @@ type Container_Port {
 input ServiceMeshFilter {
   # Filter by Service Mesh
   type: MeshType
-  k8sClusterIDs: [String!] 
+  k8sClusterIDs: [String!]
 }
 
 # Control Plane data for a particular Mesh
@@ -270,7 +270,7 @@ enum MeshSyncEventType {
 input OperatorStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
-  
+
   contextID: String!
 }
 
@@ -319,7 +319,7 @@ type K8sContext {
 
 type K8sContextsPage {
   total_count: Int!,
-  contexts: [K8sContext]! 
+  contexts: [K8sContext]!
 }
 
 # ================= Configuration ===================
@@ -388,7 +388,7 @@ type CatalogFilter {
   visibility: String!
   catalog_data: Map
   created_at: String
-  updated_at: String 
+  updated_at: String
 }
 
 # ============== Patterns =================================
@@ -498,6 +498,7 @@ input PageFilter {
   updated_after: String
   visibility: [String!]
   metrics: String
+  populate: [String]
 }
 
 # ============== CATALOG =============================
@@ -508,9 +509,16 @@ input CatalogSelector {
   search: String!
   order: String!
   metrics: String
+  populate: [String]
+  class: [String]
+  technology: [String]
+  patternType: [String]
+  userid: [String]
+  orgID: [String]
+  workspaceID: [String]
 }
 
-# ================ TELEMETRY ==================== 
+# ================ TELEMETRY ====================
 
 
 type TelemetryComp {
@@ -612,7 +620,7 @@ type Query {
   # Query for fetching all patterns with selector
   fetchPatterns(selector: PageFilter!): PatternPageResult!
 
-  # Query for getting kubectl describe details with meshkit 
+  # Query for getting kubectl describe details with meshkit
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
   # Query for getting Pattern Catalog from remote provider
@@ -637,7 +645,7 @@ type Query {
 input AdapterStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
-  
+
   # The port on which adapter will be deployed
   targetPort: String!
 
@@ -667,10 +675,10 @@ type Subscription {
 
   # Listen to the events that MeshSync is sending through Meshery Broker.
   # Note: It does not listen to the changes in meshery database, but to meshsync events
-  subscribeMeshSyncEvents(
-    connectionIDs: [String!]
-    eventTypes: [MeshSyncEventType!]
-  ) : MeshSyncEvent! @KubernetesMiddleware
+  # subscribeMeshSyncEvents(
+  #  connectionIDs: [String!]
+  #  eventTypes: [MeshSyncEventType!]
+  #) : MeshSyncEvent! @KubernetesMiddleware
 
   subscribeConfiguration( patternSelector: PageFilter!, filterSelector: PageFilter!) : ConfigurationPage!
 
@@ -685,15 +693,6 @@ type Subscription {
 
   # Publish events to user
   subscribeEvents : Event!
-}
-
-type OAMCapability {
-  oam_definition: Any
-  id: String
-  oam_ref_schema: String
-  host: String
-  restricted: Boolean
-  metadata: Any
 }
 
 type KctlDescribeDetails {

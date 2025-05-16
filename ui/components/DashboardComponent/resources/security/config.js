@@ -3,7 +3,7 @@ import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
-import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
@@ -14,6 +14,7 @@ export const SecurityTypesConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -22,7 +23,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -47,12 +48,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -95,7 +92,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -129,7 +126,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -139,6 +136,9 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -154,12 +154,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -233,7 +229,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -267,7 +263,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -277,6 +273,9 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -292,12 +291,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -340,7 +335,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -374,7 +369,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -384,6 +379,9 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -399,12 +397,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -447,7 +441,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -481,7 +475,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -491,6 +485,9 @@ export const SecurityTypesConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -506,12 +503,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -554,7 +547,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState

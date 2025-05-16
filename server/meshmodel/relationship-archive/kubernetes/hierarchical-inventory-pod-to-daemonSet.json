@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "model": {
+      "version": "v1.25.2"
+    },
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Pod",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec"
+                ]
+              ],
+              "description": "A Pod is the basic execution unit of a Kubernetes application, representing a single instance of a running process in a cluster."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "DaemonSet",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec"
+                ]
+              ],
+              "description": "DaemonSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the DaemonSet, the pod specification becomes part of the DaemonSet."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

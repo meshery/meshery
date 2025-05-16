@@ -7,7 +7,7 @@ on:
         - '$GITHUB_WORKSPACE/install/playground/playground-cleanup.sh'
 jobs:
     update_script:
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
     
         steps:
         - name: Update Script in VM

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Tikv Operator
-subtitle: Collaborative and visual infrastructure as code for Tikv Operator
+subtitle: Collaborative and visual infrastructure as design for Tikv Operator
 image: /assets/img/integrations/tikv-operator/icons/color/tikv-operator-color.svg
 permalink: extensibility/integrations/tikv-operator
 docURL: https://docs.meshery.io/extensibility/integrations/tikv-operator
@@ -10,12 +10,15 @@ integrations-category: App Definition and Development
 integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

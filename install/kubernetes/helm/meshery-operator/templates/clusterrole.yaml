@@ -19,7 +19,7 @@ metadata:
 {{- include "meshery-operator.labels" . | nindent 4 }}
 rules:
 - apiGroups:
-  - meshery.layer5.io
+  - meshery.io
   resources:
   - brokers
   verbs:
@@ -31,7 +31,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - meshery.layer5.io
+  - meshery.io
   resources:
   - brokers/status
   verbs:

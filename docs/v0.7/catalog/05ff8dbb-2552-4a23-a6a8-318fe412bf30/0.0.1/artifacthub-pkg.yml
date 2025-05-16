@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-resource-request
+displayName: Pod Resource Request
+createdAt: "2024-01-17T05:23:20Z"
+description: This design focuses on specifying the minimum CPU and memory requirements for Kubernetes Pods. By setting resource requests, this design ensures optimal resource allocation within Kubernetes clusters, thereby enhancing workload performance and maintaining stability across various applications and services. This feature is essential for fine-tuning resource utilization, preventing resource contention, and supporting efficient scaling and management of containerized workloads in cloud-native environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/05ff8dbb-2552-4a23-a6a8-318fe412bf30/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

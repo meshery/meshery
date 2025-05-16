@@ -18,11 +18,9 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
 
-	"github.com/fatih/color"
 	"github.com/manifoldco/promptui"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -30,50 +28,25 @@ import (
 )
 
 var (
-	name          string
-	description   string
-	orgID         string
-	outFormatFlag string
-	saveFlag      bool
-
-	maxRowsPerPage       = 25
-	whiteBoardPrinter    = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
 )
 
 var EnvironmentCmd = &cobra.Command{
 	Use:   "environment",
 	Short: "View list of environments and detail of environments",
-	Long:  "View list of environments and detailed information of a specific environments",
+	Long: `View list of environments and detailed information of a specific environments
+Documentation for environment can be found at https://docs.meshery.io/concepts/logical/environments
+	`,
 	Example: `
 // To view a list environments
-mesheryctl exp environment list --orgID [orgId]
-// To create a environment
-mesheryctl exp environment create --orgID [orgId] --name [name] --description [description]
-// Documentation for environment can be found at:
-https://docs.layer5.io/cloud/spaces/environments/
-	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
+mesheryctl environment list --orgID [orgID]
 
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
+// To view a particular environment
+mesheryctl environment view --orgID [orgID]
+
+// To create a environment
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			if err := cmd.Usage(); err != nil {
@@ -85,7 +58,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl exp environment --help' to display usage guide.'\n", args[0]), "environment")))
+			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl environment --help' to display usage guide", args[0]), "environment")))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -100,12 +73,6 @@ https://docs.layer5.io/cloud/spaces/environments/
 }
 
 func init() {
-	listEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	viewEnvironmentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewEnvironmentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
-	createEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
-	createEnvironmentCmd.Flags().StringVarP(&name, "name", "n", "", "Name of the environment")
-	createEnvironmentCmd.Flags().StringVarP(&description, "description", "d", "", "Description of the environment")
 	EnvironmentCmd.AddCommand(availableSubcommands...)
 }
 

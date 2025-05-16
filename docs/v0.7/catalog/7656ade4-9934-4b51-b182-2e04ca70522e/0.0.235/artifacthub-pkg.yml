@@ -1,0 +1,26 @@
+version: 0.0.235
+name: adobe-flex-in-a-box-architecture
+displayName: Adobe Flex-in-a-Box Architecture
+createdAt: "2024-12-16T14:53:21Z"
+description: |-
+    Adobe's architecture diagram illustrates their sophisticated GitOps-based service delivery foundation called Flex, which orchestrates the journey of code from development to deployment. The system begins with Git Corp, where developers store their code templates, and uses a GitHub app to forward events through a redirect service. This redirect service then intelligently distributes these events between two Flexbox instances - redundant processing units that contain essential components like Argo CD for continuous delivery, a provisioner for resource management, and various Argo tools for handling events, workflows, and observability.
+    The architecture demonstrates Adobe's focus on scalability and reliability through its dual-Flexbox approach, where each Flexbox can communicate with target clusters and remote namespaces. The system includes a two-way "Relocation" capability between Flexboxes, allowing for workload redistribution when needed. The right side of the diagram shows how everything connects to their developer portal through a Flex backend, creating a comprehensive CI/CD system that manages deployments across their infrastructure while maintaining a clear developer experience through their CI/CD interface plugin.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7656ade4-9934-4b51-b182-2e04ca70522e/0.0.235/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Substantial infrastructure investment is required, including multiple Kubernetes clusters, robust cloud resources, and high-availability components for critical services like the Redirect Service.\n2. Custom development is necessary for several components (Provisioner, observability tools, and developer portal integrations), requiring significant engineering resources and expertise in GitOps, Kubernetes, and the Argo project suite.\n3. Operational complexity increases dramatically with multiple Flexboxes, demanding sophisticated monitoring systems and clear procedures for service migration and disaster recovery.\n4. Cost implications are significant due to multiple control planes, cross-cluster communication, storage requirements, and the need for dedicated platform engineering teams.\n5. Security and maintenance overhead must be carefully considered, including multi-tenant isolation, secrets management across clusters, regular upgrades, and comprehensive disaster recovery procedures. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7656ade4-9934-4b51-b182-2e04ca70522e-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7656ade4-9934-4b51-b182-2e04ca70522e-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

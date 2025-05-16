@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Reference Permissions
+title: Permission Keys Reference 
 permalink: reference/permissions
 language: en
 type: Reference

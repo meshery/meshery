@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS SageMaker
-subtitle: Collaborative and visual infrastructure as code for AWS SageMaker
+subtitle: Collaborative and visual infrastructure as design for AWS SageMaker
 image: /assets/img/integrations/aws-sagemaker-controller/icons/color/aws-sagemaker-controller-color.svg
 permalink: extensibility/integrations/aws-sagemaker-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sagemaker-controller
@@ -110,12 +110,15 @@ components:
   colorIcon: assets/img/integrations/aws-sagemaker-controller/components/inference-component/icons/color/inference-component-color.svg
   whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/inference-component/icons/white/inference-component-white.svg
   description: 
+components-count: 25
+relationships: 
+relationship-count: 0
 featureList: [
   "Choice of ML tools",
   "Repeatable and responsible ML workflows",
   "Human-in-the-loop"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -12,11 +12,13 @@ subcommand: relationship
 
 # mesheryctl exp relationship
 
-View list of relationships and details of relationship
+Manage relationships
 
 ## Synopsis
 
-Meshery uses relationships to define how interconnected components interact. View list of relationships and detailed information of a specific relationship
+Generate, list, search and view relationship(s) and detailed information
+Meshery uses relationships to define how interconnected components interact.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship [flags]
@@ -26,18 +28,42 @@ mesheryctl exp relationship [flags]
 
 ## Examples
 
-To view list of relationships
+Display number of available relationships in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationships list
+mesheryctl relationship --count
 
 </div>
 </pre> 
 
-To view a specific relationship
+Generate a relationship documentation 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationships view [model-name]
+mesheryctl exp relationship generate [flags]
+
+</div>
+</pre> 
+
+List available relationship(s)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship list [flags]
+
+</div>
+</pre> 
+
+Search for a specific relationship
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship search [flags] [query-text]
+
+</div>
+</pre> 
+
+View a specific relationship
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship view [model-name]
 
 </div>
 </pre> 
@@ -46,7 +72,8 @@ mesheryctl exp relationships view [model-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for relationship
+  -c, --count   (optional) Get the number of relationship(s) in total
+  -h, --help    help for relationship
 
 </div>
 </pre>
@@ -62,5 +89,10 @@ mesheryctl exp relationships view [model-name]
 </pre>
 
 ## See Also
+
+* [mesheryctl exp relationship generate](/reference/mesheryctl/exp/relationship/generate)
+* [mesheryctl exp relationship list](/reference/mesheryctl/exp/relationship/list)
+* [mesheryctl exp relationship search](/reference/mesheryctl/exp/relationship/search)
+* [mesheryctl exp relationship view](/reference/mesheryctl/exp/relationship/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

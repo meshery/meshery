@@ -1,38 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, TextField, Grid, Button } from '@material-ui/core';
+import { NoSsr } from '@layer5/sistent';
+import { TextField, Grid, Button, styled } from '@layer5/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import dataFetch from 'lib/data-fetch';
 
-const grafanaStyles = (theme) => ({
-  wrapper: {
-    padding: theme.spacing(5),
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    borderBottomLeftRadius: theme.spacing(1),
-    borderBottomRightRadius: theme.spacing(1),
-    marginTop: theme.spacing(2),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  inputContainer: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(1),
-  },
-  button: {
-    marginTop: theme.spacing(3),
-    //   marginLeft: theme.spacing(1),
-  },
+const Wrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(5),
+  backgroundColor: theme.palette.background.card,
+  borderBottomLeftRadius: theme.spacing(1),
+  borderBottomRightRadius: theme.spacing(1),
+  marginTop: theme.spacing(2),
+}));
+
+const ButtonContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
 });
 
+const InputContainer = styled('div')(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(1),
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(3),
+}));
+
 function GrafanaConfigComponent({
-  classes,
-  grafanaURL,
   grafanaAPIKey,
   urlError,
   handleChange,
@@ -58,10 +56,10 @@ function GrafanaConfigComponent({
   return (
     <NoSsr>
       <React.Fragment>
-        <div className={classes.wrapper}>
+        <Wrapper>
           <Grid container spacing={1}>
             <Grid item xs={12} md={6}>
-              <div className={classes.inputContainer}>
+              <InputContainer>
                 <ReactSelectWrapper
                   onChange={(select) => handleChange('grafanaURL')(select)}
                   options={availableGrafanaConnection.map((connection) => ({
@@ -69,53 +67,52 @@ function GrafanaConfigComponent({
                     label: connection?.metadata?.url,
                     ...connection,
                   }))}
-                  value={grafanaURL}
                   label="Grafana Base URL"
+                  data-testid="grafana-base-url"
                   error={urlError}
                   placeholder="Address of Grafana Server"
                   noOptionsMessage="No Grafana servers discovered"
                 />
-              </div>
+              </InputContainer>
             </Grid>
             <Grid item xs={12} md={6}>
               <TextField
                 id="grafanaAPIKey"
                 name="grafanaAPIKey"
+                data-testid="grafana-api-key"
                 label="API Key"
                 fullWidth
                 value={grafanaAPIKey}
                 margin="normal"
                 variant="outlined"
-                onKeyDown={(e) => e.key == 'Enter' && handleGrafanaConfigure()}
+                onKeyDown={(e) => e.key === 'Enter' && handleGrafanaConfigure()}
                 onChange={handleChangeApiKey}
               />
             </Grid>
           </Grid>
-          <div className={classes.buttons}>
-            <Button
+          <ButtonContainer>
+            <StyledButton
               type="submit"
               variant="contained"
               color="primary"
               size="large"
               onClick={handleGrafanaConfigure}
-              className={classes.button}
               disabled={!CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject)}
             >
               Submit
-            </Button>
-          </div>
-        </div>
+            </StyledButton>
+          </ButtonContainer>
+        </Wrapper>
       </React.Fragment>
     </NoSsr>
   );
 }
 
 GrafanaConfigComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.object.isRequired,
   grafanaAPIKey: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleGrafanaConfigure: PropTypes.func.isRequired,
 };
 
-export default withStyles(grafanaStyles)(GrafanaConfigComponent);
+export default GrafanaConfigComponent;

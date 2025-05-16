@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-priviledged-simple
+displayName: Pod Priviledged Simple
+createdAt: "2024-01-17T05:30:26Z"
+description: 'This design configuration involves running Kubernetes pods with privileged access, which grants them elevated permissions within their host environment. This setup is typically used when applications or services require access to privileged resources or functionalities that are not available in standard pod configurations. '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8ba59757-4ae6-4568-be5c-32e32fe51031/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Careful consideration and adherence to best practices are crucial to maintain the balance between operational flexibility and security when implementing the \"Pod Privileged Simple\" design in Kubernetes environments. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

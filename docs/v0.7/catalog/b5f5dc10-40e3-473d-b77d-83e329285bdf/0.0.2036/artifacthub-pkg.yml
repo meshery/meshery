@@ -1,0 +1,24 @@
+version: 0.0.2036
+name: brainstorming-template
+displayName: Brainstorming Template
+createdAt: "2024-10-28T18:10:05Z"
+description: Use this template to structure brainstorming sessions effectively for various project types, including product launches and team collaboration sessions.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b5f5dc10-40e3-473d-b77d-83e329285bdf/0.0.2036/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This template is designed as a flexible starting point for brainstorming sessions. It’s adaptable for various goals, such as ideation, planning, and team discussions. For best results, use Kanvas’s collaborative tools like sticky notes, color coding, and comments to enrich discussions and enhance readability. Adjust sections as needed based on the scope of your brainstorming session. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 912f4e40-cb07-4c22-981f-3329f71c0cb4
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b5f5dc10-40e3-473d-b77d-83e329285bdf-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b5f5dc10-40e3-473d-b77d-83e329285bdf-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

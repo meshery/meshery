@@ -27,10 +27,60 @@ type catalogFilterPage struct {
 func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
 	token := ctx.Value(models.TokenCtxKey).(string)
 	metrics := "false"
-	if selector.Metrics != nil {
-		metrics = *selector.Metrics
+
+	// Convert []*string to []string for class
+	class := []string{}
+	for _, classPtr := range selector.Class {
+		if classPtr != nil {
+			class = append(class, *classPtr)
+		}
 	}
-	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics)
+
+	// Convert []*string to []string for technology
+	technology := []string{}
+	for _, techPtr := range selector.Technology {
+		if techPtr != nil {
+			technology = append(technology, *techPtr)
+		}
+	}
+
+	// Convert []*string to []string for patternType
+	patternType := []string{}
+	for _, typePtr := range selector.PatternType {
+		if typePtr != nil {
+			patternType = append(patternType, *typePtr)
+		}
+	}
+
+	orgID := []string{}
+	for _, orgIDPtr := range selector.OrgID {
+		if orgIDPtr != nil {
+			orgID = append(orgID, *orgIDPtr)
+		}
+	}
+
+	workspaceID := []string{}
+	for _, workspaceIDPtr := range selector.WorkspaceID {
+		if workspaceIDPtr != nil {
+			workspaceID = append(workspaceID, *workspaceIDPtr)
+		}
+	}
+
+	userid := []string{}
+	for _, useridPtr := range selector.Userid {
+		if useridPtr != nil {
+			userid = append(userid, *useridPtr)
+		}
+	}
+
+	populate := []string{}
+	for _, populatePtr := range selector.Populate {
+		if populatePtr != nil {
+			populate = append(populate, *populatePtr)
+		}
+	}
+
+	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics, populate, class, technology, patternType, orgID, workspaceID, userid)
 
 	if err != nil {
 		r.Log.Error(err)

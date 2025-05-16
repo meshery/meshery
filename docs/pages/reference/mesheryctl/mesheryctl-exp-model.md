@@ -12,11 +12,11 @@ subcommand: model
 
 # mesheryctl exp model
 
-View list of models and detail of models
+Experimental commands for mesheryctl model
 
 ## Synopsis
 
-View list of models and detailed information of a specific model
+Temporal container to deliver model init subcommand to exp command
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model [flags]
@@ -26,18 +26,10 @@ mesheryctl exp model [flags]
 
 ## Examples
 
-To view list of components
+Scaffold a folder structure for model creation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model list
-
-</div>
-</pre> 
-
-To view a specific model
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl exp model view [model-name]
+mesheryctl exp model init [model-name]
 
 </div>
 </pre> 
@@ -62,5 +54,7 @@ mesheryctl exp model view [model-name]
 </pre>
 
 ## See Also
+
+* [mesheryctl exp model init](/reference/mesheryctl/exp/model/init)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

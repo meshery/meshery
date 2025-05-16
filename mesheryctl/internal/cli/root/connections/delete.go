@@ -4,48 +4,25 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var deleteConnectionCmd = &cobra.Command{
 	Use:   "delete",
 	Short: "Delete a connection",
-	Long: `Delete
-a connection`,
+	Long: `Delete a connection providing the connection ID.
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/delete`,
 
 	Example: `
-// Delete a connection
-mesheryctl exp connections delete [connection_id]
+// Delete a specific connection
+mesheryctl exp connection delete [connection_id]
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp connections delete \nRun 'mesheryctl exp connections delete --help' to see detailed help message"
+		const errMsg = "[ Connection ID ] isn't specified\n\nUsage: mesheryctl exp connection delete \nRun 'mesheryctl exp connection delete --help' to see detailed help message"
 		if len(args) != 1 {
 			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
@@ -53,29 +30,16 @@ mesheryctl exp connections delete [connection_id]
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
+		connectionDeletePath := fmt.Sprintf("%s/%s", connectionApiPath, args[0])
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/integrations/connections/%s", baseUrl, args[0])
-		req, err := utils.NewRequest(http.MethodDelete, url, nil)
+		resp, err := api.Delete(connectionDeletePath)
 		if err != nil {
 			return err
 		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted successfully")
+			utils.Log.Info("Connection deleted")
 			return nil
 		}
 

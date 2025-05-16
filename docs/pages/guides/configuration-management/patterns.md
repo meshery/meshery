@@ -42,9 +42,9 @@ You can import a pattern using `mesheryctl` or Meshery UI. Patterns can be impor
 #### To import a pattern, execute this command:
 
 ```
-$ mesheryctl pattern import -f <path to the pattern>
+$ mesheryctl design import -f <path to the pattern>
 Importing pattern…
-Pattern successfully imported.
+Pattern imported.
 ```
 
 ### Using Meshery UI:
@@ -65,23 +65,23 @@ _To upload from url click the link icon_
 #### To deploy a pattern, execute this command:
 
 ```
-$ mesheryctl pattern apply -f <path to the pattern>
+$ mesheryctl design apply -f <path to the pattern>
 Deploying pattern…
 Pattern successfully applied.
 ```
 
 From here, output and behavior will vary based upon the specific pattern you’re deploying. Should you find that your pattern is not successfully deployed, refer to the pattern troubleshooting guide in the Meshery documentation.
 
-As you step through each pattern, you might choose to modify the pattern to suit your specific environment and workload, exploring in-context of your specific situation. Optionally, you may choose to use a plugin like MeshMap, or another visual cloud native topology tool, to facilitate your comprehension of the patterns and to literally see the patterns in-action.
+As you step through each pattern, you might choose to modify the pattern to suit your specific environment and workload, exploring in-context of your specific situation. Optionally, you may choose to use a plugin like Kanvas, or another visual cloud native topology tool, to facilitate your comprehension of the patterns and to literally see the patterns in-action.
 
 Take time to explore. Try deploying one cloud native’s sample application onto a different cloud native and compare differences in behavior and each cloud native’s ability to manage it. If using Meshery to do so, execute the following commands as an example to deploy the sample application, BookCatalog, onto Open cloud native:
 
 ```
-$ mesheryctl pattern apply -f book-catalog
+$ mesheryctl design apply -f book-catalog
 Deploying application “BookCatalog”...
 Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 ```
 
 ## Related Reading
 
-- [`mesheryctl pattern`]({{ site.baseurl }}/reference/mesheryctl/pattern)
+- [`mesheryctl design`]({{ site.baseurl }}/reference/mesheryctl/pattern)

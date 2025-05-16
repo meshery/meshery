@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: NGINX Ingress Controller
-subtitle: Collaborative and visual infrastructure as code for NGINX Ingress Controller
+subtitle: Collaborative and visual infrastructure as design for NGINX Ingress Controller
 image: /assets/img/integrations/nginx-ingress/icons/color/nginx-ingress-color.svg
 permalink: extensibility/integrations/nginx-ingress
 docURL: https://docs.meshery.io/extensibility/integrations/nginx-ingress
@@ -58,13 +58,19 @@ components:
   colorIcon: assets/img/integrations/nginx-ingress/components/virtual-server/icons/color/virtual-server-color.svg
   whiteIcon: assets/img/integrations/nginx-ingress/components/virtual-server/icons/white/virtual-server-white.svg
   description: 
+components-count: 12
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
+relationship-count: 1
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Exposes Kubernetes services to the internet",
+  "Routes traffic based on rules and policies",
+  "Provides SSL termination and load balancing"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Configures NGINX Ingress Controller"
+howItWorksDetails: "Simplified ingress management and enhanced traffic routing in Kubernetes"
 language: en
 list: include
 type: extensibility

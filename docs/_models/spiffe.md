@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: SPIFFE
-subtitle: Collaborative and visual infrastructure as code for SPIFFE
+subtitle: Collaborative and visual infrastructure as design for SPIFFE
 image: /assets/img/integrations/spiffe/icons/color/spiffe-color.svg
 permalink: extensibility/integrations/spiffe
 docURL: https://docs.meshery.io/extensibility/integrations/spiffe
@@ -10,6 +10,9 @@ integrations-category: Security & Compliance
 integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Design and apply policy for node and workload attestation.",
   "Configure your signing framework for securely issuing and renewing SVIDs.",

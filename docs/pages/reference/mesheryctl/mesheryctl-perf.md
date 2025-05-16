@@ -90,4 +90,8 @@ mesheryctl perf result -o yaml
 
 ## See Also
 
+* [mesheryctl perf apply](/reference/mesheryctl/perf/apply)
+* [mesheryctl perf profile](/reference/mesheryctl/perf/profile)
+* [mesheryctl perf result](/reference/mesheryctl/perf/result)
+
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -1,42 +1,65 @@
-import { useState, useEffect } from 'react';
 import { ability } from '../utils/can';
-import { useLazyGetUserKeysQuery } from './userKeys';
+import { useGetUserKeysQuery } from './userKeys';
+import _ from 'lodash';
+import CustomErrorMessage from '@/components/ErrorPage';
+import DefaultError from '@/components/General/error-404';
+import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { useSelector } from 'react-redux';
 
 export const useGetUserAbilities = (org, skip) => {
-  const [data, setData] = useState(null);
+  const { data, ...res } = useGetUserKeysQuery(
+    {
+      orgId: org?.id,
+    },
+    {
+      skip,
+    },
+  );
 
-  /**
-   * RTk Lazy Query
-   */
-  const [getUserQuery] = useLazyGetUserKeysQuery();
+  const abilities =
+    data?.keys?.map((key) => ({
+      action: key.id,
+      subject: _.lowerCase(key.function),
+    })) || [];
 
-  useEffect(() => {
-    getUserQuery({ orgId: org?.id }, { skip })
-      .unwrap()
-      .then((res) => {
-        const abilities = res.keys?.map((key) => ({
-          action: key.id,
-          subject: key.function,
-        }));
-
-        setData({
-          ...res,
-          abilities: abilities,
-        });
-      })
-      .catch((error) => {
-        console.error('Error when fetching keys in useGetUserAbilities custom hook', error);
-      });
-  }, [org?.id, getUserQuery, skip]);
-
-  return data;
+  return {
+    ...res,
+    abilities,
+  };
 };
 
-export const useGetCurrentAbilities = (org, setKeys, skip) => {
-  const res = useGetUserAbilities(org, skip);
+export const useGetCurrentAbilities = (org) => {
+  const shouldSkip = !org || !org.id;
+  const res = useGetUserAbilities(org, shouldSkip);
+
   if (res?.abilities) {
     ability.update(res.abilities);
-    setKeys({ keys: res.keys });
   }
+
   return res;
+};
+
+export const LoadSessionGuard = ({ children }) => {
+  // this assumes that the organization is already loaded at the app mount time
+  // otherwise, this will not work
+  const { organization: org } = useSelector((state) => state.ui);
+  const { isLoading, error } = useGetCurrentAbilities(org, () => {});
+
+  if (error) {
+    return (
+      <>
+        <DefaultError />
+        <CustomErrorMessage
+          message={
+            error.message || 'An error occurred while fetching your organization permissions'
+          }
+          showImage={false}
+        />
+      </>
+    );
+  }
+
+  return (
+    <DynamicFullScrrenLoader isLoading={isLoading || !org?.id}>{children}</DynamicFullScrrenLoader>
+  );
 };

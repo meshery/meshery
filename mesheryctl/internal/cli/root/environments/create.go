@@ -21,7 +21,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
 
@@ -33,46 +32,22 @@ import (
 var createEnvironmentCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new environments",
-	Long:  `Create a new environments by providing the name and description of the environment`,
+	Long: `Create a new environments by providing the name and description of the environment
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/create`,
 	Example: `
 // Create a new environment
-mesheryctl exp environment create --orgID [orgID] --name [name] --description [description] 
-// Documentation for environment can be found at:
-https://docs.layer5.io/cloud/spaces/environments/
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
-
 	Args: func(cmd *cobra.Command, args []string) error {
+		const errMsg = "[ Organization ID | Name | Description ] aren't specified\n\nUsage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]\nRun 'mesheryctl environment create --help' to see detailed help message"
+
 		// Check if all three flags are set
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
-		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId, --name, and --description flag"))
+		if orgIDFlag == "" || nameFlag == "" || descriptionFlag == "" {
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},
@@ -86,6 +61,10 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/environments", baseUrl)
+
+		orgID, _ := cmd.Flags().GetString("orgID")
+		name, _ := cmd.Flags().GetString("name")
+		description, _ := cmd.Flags().GetString("description")
 
 		if name == "" || description == "" {
 			return utils.ErrInvalidArgument(errors.New("name is required"))
@@ -107,13 +86,22 @@ https://docs.layer5.io/cloud/spaces/environments/
 			return err
 		}
 
-		resp, _ := utils.MakeRequest(req)
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			return err
+		}
 
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("environment created successfully")
+			utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgID))
 			return nil
 		}
 		utils.Log.Info("Error creating environment")
 		return nil
 	},
+}
+
+func init() {
+	createEnvironmentCmd.Flags().StringP("orgID", "o", "", "Organization ID")
+	createEnvironmentCmd.Flags().StringP("name", "n", "", "Name of the environment")
+	createEnvironmentCmd.Flags().StringP("description", "d", "", "Description of the environment")
 }

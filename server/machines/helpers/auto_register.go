@@ -9,18 +9,19 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
+	helpers "github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/v1beta1/component"
+
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
 )
 
 var (
@@ -79,66 +80,54 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 			connType := getTypeOfConnection(&data.Obj)
 			if connType != "" {
 				connectionDefs := arh.getConnectionDefinitions(connType)
-				connectionName := FormatToTitleCase(connType)
+				connectionName := helpers.FormatToTitleCase(connType)
 				for _, connectionDef := range connectionDefs {
-					connCapabilities, err := utils.Cast[string](connectionDef.Metadata["capabilities"])
 
+					urls, err := utils.Cast[[]interface{}](compCapabilites["urls"])
 					if err != nil {
-						arh.log.Error(err)
-						continue
+						return
 					}
-					var capabilities map[string]interface{}
-					err = utils.Unmarshal(connCapabilities, &capabilities)
-					if err != nil {
-						arh.log.Error(models.ErrUnmarshal(err, fmt.Sprintf("Connection Definition \"%s\" capabilities", connectionDef.Component.Kind)))
-						continue
-					}
-					autoRegister, ok := capabilities["autoRegister"].(bool)
-					if ok && autoRegister {
-						urls, err := utils.Cast[[]interface{}](compCapabilites["urls"])
+
+					ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID.String()})
+					ctx = context.WithValue(ctx, models.SystemIDKey, sysID)
+					ctx = context.WithValue(ctx, models.TokenCtxKey, data.MeshsyncDataHandler.Token)
+
+					for _, url := range urls {
+						connMetadata := map[string]interface{}{
+							"name": data.Obj.KubernetesResourceMeta.Name,
+							"url":  url,
+						}
+
+						connectionPayload, id := getConnectionPayload(connType, data.Obj.KubernetesResourceMeta.Name, data.Obj.ID, url, userID, &connectionDef, connMetadata)
+
+						machineInst, err := InitializeMachineWithContext(connectionPayload, ctx, id, data.MeshsyncDataHandler.UserID, arh.smInstanceTracker, arh.log, data.MeshsyncDataHandler.Provider, machines.DISCOVERED, connType, nil)
+
 						if err != nil {
-							return
+							arh.log.Error(ErrAutoRegister(err, connType))
 						}
 
-						ctx := context.WithValue(context.Background(), models.UserCtxKey, &models.User{ID: userID.String()})
-						ctx = context.WithValue(ctx, models.SystemIDKey, sysID)
-						ctx = context.WithValue(ctx, models.TokenCtxKey, data.MeshsyncDataHandler.Token)
+						_, err = machineInst.SendEvent(ctx, machines.Register, connectionPayload)
 
-						for _, url := range urls {
-							connMetadata := map[string]interface{}{
-								"name": data.Obj.KubernetesResourceMeta.Name,
-								"url":  url,
-							}
+						// If connection does not exist, transition to next states because in the "connect" event the connection will get created.
+						if err != nil && !IsConnectionUpdateErr(err) {
+							continue
+						}
+						event, err := machineInst.SendEvent(ctx, machines.Connect, connectionPayload)
 
-							connectionPayload, id := getConnectionPayload(connType, data.Obj.KubernetesResourceMeta.Name, data.Obj.ID, url, userID, &connectionDef, connMetadata)
-
-							machineInst, err := InitializeMachineWithContext(connectionPayload, ctx, id, data.MeshsyncDataHandler.UserID, arh.smInstanceTracker, arh.log, data.MeshsyncDataHandler.Provider, machines.DISCOVERED, connType, nil)
-							if err != nil {
-								arh.log.Error(ErrAutoRegister(err, connType))
-							}
-
-							_, err = machineInst.SendEvent(ctx, machines.Register, connectionPayload)
-							// If connection does not exist, transition to next states because in the "connect" event the connection will get created.
-							if err != nil && !IsConnectionUpdateErr(err) {
-								continue
-							}
-							event, err := machineInst.SendEvent(ctx, machines.Connect, connectionPayload)
-
-							if err != nil {
-								event.Description = fmt.Sprintf("Failed to auto register \"%s\" connection at %s", connectionName, url)
-								// Do not publish the event if auto registration fails.
-								_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
-								continue
-							}
-
-							// Delete the meshsync resource which has been upgraded to Connection.
-							_ = arh.dbHandler.Model(&model.KubernetesResource{}).Delete(&model.KubernetesResource{ID: data.Obj.ID})
-
-							event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
-
-							go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
+						if err != nil {
+							event.Description = fmt.Sprintf("Failed to auto register \"%s\" connection at %s", connectionName, url)
+							// Do not publish the event if auto registration fails.
 							_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
+							continue
 						}
+
+						// Delete the meshsync resource which has been upgraded to Connection.
+						_ = arh.dbHandler.Model(&meshsyncmodel.KubernetesResource{}).Delete(&meshsyncmodel.KubernetesResource{ID: data.Obj.ID})
+
+						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
+
+						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
+						_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
 					}
 				}
 
@@ -147,7 +136,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 	}
 }
 
-func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *v1beta1.ComponentDefinition, connMetadata map[string]interface{}) (models.ConnectionPayload, uuid.UUID) {
+func getConnectionPayload(connType, objName, objID string, identifier interface{}, userID uuid.UUID, connectionDef *component.ComponentDefinition, connMetadata map[string]interface{}) (connections.ConnectionPayload, uuid.UUID) {
 
 	id, _ := generateUUID(map[string]interface{}{
 		"name":       objName,
@@ -155,29 +144,29 @@ func getConnectionPayload(connType, objName, objID string, identifier interface{
 		"identifier": identifier,
 	})
 
-	subCategory, _ := connectionDef.Metadata["subCategory"].(string)
-	return models.ConnectionPayload{
+	subCategory := connectionDef.Model.SubCategory
+	return connections.ConnectionPayload{
 		Kind:                       connType,
 		Name:                       objName,
-		Type:                       connectionDef.Model.Category.Name,
-		SubType:                    subCategory,
+		Type:                       fmt.Sprintf("%v", connectionDef.Model.Category.Name),
+		SubType:                    fmt.Sprintf("%v", subCategory),
 		SkipCredentialVerification: false,
 		MetaData:                   connMetadata,
 		ID:                         id,
 	}, id
 }
 
-func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []v1beta1.ComponentDefinition {
+func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []component.ComponentDefinition {
 	connectionCompFilter := &regv1beta1.ComponentFilter{
 		Name:       fmt.Sprintf("%sConnection", connType),
-		APIVersion: "meshery.layer5.io/v1beta1",
+		APIVersion: "connection.meshery.io/v1alpha1",
 		Greedy:     true,
 	}
 
 	connectionEntities, _, _, _ := connectionCompFilter.Get(arh.dbHandler)
-	connectionDefs := make([]v1beta1.ComponentDefinition, len(connectionEntities))
+	connectionDefs := make([]component.ComponentDefinition, len(connectionEntities))
 	for _, connectionEntity := range connectionEntities {
-		def, ok := connectionEntity.(*v1beta1.ComponentDefinition)
+		def, ok := connectionEntity.(*component.ComponentDefinition)
 		if ok {
 			connectionDefs = append(connectionDefs, *def)
 		}
@@ -186,18 +175,13 @@ func (arh *AutoRegistrationHelper) getConnectionDefinitions(connType string) []v
 }
 
 // Improve this fingerprinting
-func getTypeOfConnection(obj *model.KubernetesResource) string {
+func getTypeOfConnection(obj *meshsyncmodel.KubernetesResource) string {
 	if strings.Contains(strings.ToLower(obj.KubernetesResourceMeta.Name), "grafana") && obj.Kind == "Service" {
 		return "grafana"
 	} else if strings.Contains(strings.ToLower(obj.KubernetesResourceMeta.Name), "prometheus") && obj.Kind == "Service" {
 		return "prometheus"
 	}
 	return ""
-}
-
-func FormatToTitleCase(s string) string {
-	c := cases.Title(language.English)
-	return c.String(s)
 }
 
 func generateUUID(data map[string]interface{}) (uuid.UUID, error) {

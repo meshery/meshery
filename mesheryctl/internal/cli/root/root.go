@@ -19,12 +19,14 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/adapter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/design"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/environments"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/mesh"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/pattern"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/model"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/perf"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/registry"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
@@ -107,13 +109,15 @@ func init() {
 		completionCmd,
 		versionCmd,
 		system.SystemCmd,
-		pattern.PatternCmd,
+		design.DesignCmd,
 		perf.PerfCmd,
-		mesh.MeshCmd,
+		adapter.AdapterCmd,
 		experimental.ExpCmd,
 		filter.FilterCmd,
 		registry.RegistryCmd,
-		components.ComponentsCmd,
+		components.ComponentCmd,
+		model.ModelCmd,
+		environments.EnvironmentCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)
@@ -198,5 +202,6 @@ func setVerbose() {
 }
 
 func setupLogger() {
-	utils.SetupMeshkitLogger(verbose, nil)
+	utils.Log = utils.SetupMeshkitLogger("mesheryctl", verbose, os.Stdout)
+	utils.LogError = utils.SetupMeshkitLogger("mesheryctl-error", verbose, os.Stderr)
 }

@@ -1,6 +1,7 @@
 name: Meshery UI and Server
 on:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
     branches:
       - "master"
     paths-ignore:
@@ -8,211 +9,169 @@ on:
       - "mesheryctl/**"
       - "*.md"
       - "*.github/**"
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "*.github/**"
   workflow_dispatch:
     inputs:
-      logLevel:
-        description: "Log level"
+      sha:
+        description: "Commit SHA to test"
         required: true
-        default: "warning"
+      pr_number:
+        description: "PR number (for commenting)"
+        required: true
+
+permissions: read-all
 
 jobs:
-  build-backend:
-    name: Backend build
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Setup Go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.21"
-      - name: Build Meshery Server
-        env:
-          PROVIDER_BASE_URLS: http://localhost:9876
-          PORT: 9081
-          ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007 localhost:10013"
-        run: |
-          make build-server
   ui-build:
     name: UI build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-      - name: Cache node modules
-        id: node-cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/cache
-            ~/.cache
-            /home/runner/.cache
-            !~/cache/exclude
-            **/node_modules
-            /home/runner/.cache/Cypress
-            ~/.npm
-            ${{ github.workspace }}/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-      - name: Install dependencies
-        if: steps.node-cache.outputs.cache-hit != 'true'
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+      - name: Build meshery-ui and provider-ui
         run: |
-          cd ui
-          npm i
-          cd ..
-          cd provider-ui
-          npm i
-      # - name: Cache meshery-ui
-      #   id: meshery-ui-cache
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: |
-      #       /home/runner/work/meshery/meshery/ui/out
-      #     key: ${{ runner.os }}-meshery-ui-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-      - name: build meshery-ui
-        # if: steps.meshery-ui-cache.outputs.cache-hit != 'true'
-        run: |
-          make ui-meshery-build
-      - name: build provider-ui
-        run: |
-          make ui-provider-build
+          make ui-build
       - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v4
         with:
           name: meshery-ui
+          retention-days: 30
           path: /home/runner/work/meshery/meshery/ui/out
       - name: Upload provider-ui artifacts
         uses: actions/upload-artifact@v4
         with:
           name: provider-ui
+          retention-days: 30
           path: /home/runner/work/meshery/meshery/provider-ui/out
-  # tests-ui-e2e:
-  #   needs: [build-backend, ui-build]
-  #   name: UI end-to-end tests
-  #   if: github.repository == 'meshery/meshery'
-  #   runs-on: ubuntu-22.04
-  #   steps:
-  #     - name: Check out code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - name: Check out meshery-istio code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: layer5io/meshery-istio
-  #         path: ./meshery-istio
-  #     - name: Check out meshery-consul code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         repository: layer5io/meshery-consul
-  #         path: ./meshery-consul
-  #     - name: Create k8s Kind Cluster
-  #       uses: helm/kind-action@v1.8.0
-  #       with:
-  #         cluster_name: "kind-cluster"
-  #     - name: Setup Go
-  #       uses: actions/setup-go@master
-  #       with:
-  #         go-version: "1.21"
-  #     - name: Run meshery-istio
-  #       run: |
-  #         mkdir -p /home/runner/.meshery/bin
-  #         cd ./meshery-istio
-  #         go run main.go &
-  #         sleep 60
-  #     - name: Run meshery-consul
-  #       run: |
-  #         mkdir -p /home/runner/.meshery/bin
-  #         cd ./meshery-consul
-  #         go run main.go &
-  #         sleep 60
-  #     - name: Setup node
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 18
-  #     - name: Restore node modules cache
-  #       id: node-cache
-  #       uses: actions/cache@v3
-  #       with:
-  #         path: |
-  #           ~/cache
-  #           ~/.cache
-  #           /home/runner/.cache
-  #           !~/cache/exclude
-  #           **/node_modules
-  #           /home/runner/.cache/Cypress
-  #           ~/.npm
-  #           ${{ github.workspace }}/.next/cache
-  #         key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
-  #         restore-keys: |
-  #           ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-  #     - name: Download meshery-ui artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: meshery-ui
-  #         path: /home/runner/work/meshery/meshery/ui/out
-  #     - name: Download provider-ui artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: provider-ui
-  #         path: /home/runner/work/meshery/meshery/provider-ui/out
-  #     - name: Run Meshery UI and Server
-  #       env:
-  #         PROVIDER_BASE_URLS: http://localhost:9876
-  #         PORT: 9081
-  #         ADAPTER_URLS: "localhost:10000 localhost:10001 localhost:10002 localhost:10003 localhost:10004 localhost:10009 localhost:10007"
-  #       run: |
-  #         make server &
-  #         sleep 60
-  #     - name: Cypress run
-  #       uses: cypress-io/github-action@v5
-  #       with:
-  #         working-directory: ui
-  #         wait-on: http://localhost:9081
-  #         spec: cypress/e2e/e2e/**/*
-  #         browser: chrome
-  #         record: true
-  #         tag: node-18
-  #       env:
-  #         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     - name: Upload artifacts
-  #       if: always()
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: cypress-ss
-  #         path: ./ui/cypress/screenshots
-  #     - name: Upload Videos
-  #       uses: actions/upload-artifact@v4
-  #       if: always()
-  #       with:
-  #         name: cypress-ss
-  #         path: ./ui/cypress/videos
-  #     - name: Upload coverage to Codecov (ui)
-  #       uses: codecov/codecov-action@v3
-  #       with:
-  #         files: ./ui/coverage/coverage-summary.json
-  #         directory: ./ui/coverage/lcov-report
-  #         flags: e2etests
-  docker-build-test:
-    name: Docker build
+  tests-ui-e2e:
+    needs: [ui-build]
+    name: UI end-to-end tests
+    environment: staging-playground
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
     steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
+      - name: Check out meshery-istio code
+        uses: actions/checkout@v4
+        with:
+          repository: meshery-extensions/meshery-istio
+          path: ./meshery-istio
+      # - name: Check out meshery-consul code
+      #   uses: actions/checkout@v4
+      #   with:
+      #     repository: layer5io/meshery-consul
+      #     path: ./meshery-consul
+      - name: Create k8s Kind Cluster
+        uses: helm/kind-action@v1.10.0
+        with:
+          cluster_name: "kind-cluster"
+      - name: Setup Go
+        uses: actions/setup-go@master
+        with:
+          go-version: "1.23"
+      - name: Run meshery-istio
+        run: |
+          mkdir -p /home/runner/.meshery/bin
+          cd ./meshery-istio
+          make run &
+          sleep 60
+      # - name: Run meshery-consul
+      #   run: |
+      #     mkdir -p /home/runner/.meshery/bin
+      #     cd ./meshery-consul
+      #     go run main.go &
+      #     sleep 60
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
+      - name: Download meshery-ui artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: meshery-ui
+          path: /home/runner/work/meshery/meshery/ui/out
+      - name: Download provider-ui artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: provider-ui
+          path: /home/runner/work/meshery/meshery/provider-ui/out
+      - name: Run Meshery UI and Server
+        run: |
+          make server &
+          sleep 90
+      - name: Install Playwright
+        run: make ui-setup-ci
+      - name: Install Playwright Browsers
+        run: make test-setup-ui
+      - name: Run Playwright End-to-End Tests
+        env:
+          MESHERY_SERVER_URL: "http://localhost:9081"
+          REMOTE_PROVIDER_URL: "https://cloud.layer5.io"
+          REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_TEST_USER_EMAIL }}
+          REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_TEST_USER_PASS }}
+          PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN  }}
+        run: make test-e2e-ci
+      - name: Save PR metadata
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p ./pr
+          echo "${{ github.event_name == 'workflow_dispatch' && inputs.pr_number || github.event.number }}" > ./pr/number
+          echo "${{ github.event_name == 'workflow_dispatch' && inputs.sha || github.event.pull_request.head.sha }}" > ./pr/sha      
+      - name: Upload Test Report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+        with:
+          name: e2e-test-reporter
+          path: |
+            ui/test-report.md
+            pr/
+          retention-days: 14
+      - name: Upload Test Trace
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: ui/test-results/
+          retention-days: 14
+  docker-build-test:
+    name: Docker build
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
       - name: Docker edge build & tag
         if: startsWith(github.ref, 'refs/tags/') != true && success()
         env:
@@ -221,24 +180,23 @@ jobs:
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
       - name: Docker edge push
-        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
         run: |
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
       - name: Docker Hub Description
-        if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
+        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
         uses: peter-evans/dockerhub-description@v4
-        env:
-          DOCKERHUB_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-          DOCKERHUB_REPOSITORY: ${{ secrets.IMAGE_NAME }}
-
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: ${{ secrets.IMAGE_NAME }}
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'
     name: swagger-docs
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Check if handlers were modified
@@ -264,12 +222,13 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.sha || 'refs/heads/master' }}
       - name: Check if schema was modified
         uses: dorny/paths-filter@v3
         id: filter
@@ -281,7 +240,7 @@ jobs:
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.2.6
           bundler-cache: true
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'
@@ -289,4 +248,3 @@ jobs:
           cd docs
           bundle install
           bundle exec rake graphql:compile_docs
-

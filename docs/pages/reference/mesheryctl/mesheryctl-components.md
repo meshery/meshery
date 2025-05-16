@@ -12,11 +12,11 @@ subcommand: nil
 
 # mesheryctl components
 
-View list of components and detail of components
+Manage components
 
 ## Synopsis
 
-View list of components and detailed information of a specific component
+List, search and view component(s) and detailed informations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components [flags]
@@ -26,34 +26,34 @@ mesheryctl components [flags]
 
 ## Examples
 
-To view the number of components present in Meshery
+Display number of available components in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components --count
+mesheryctl components --count
 
 </div>
 </pre> 
 
-To view list of components
+List available component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components list
+mesheryctl components list
 
 </div>
 </pre> 
 
-To view a specific component
+Search for component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components view [component-name]
+mesheryctl component search [component-name]
 
 </div>
 </pre> 
 
-To search for a specific component
+View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components search [component-name]
+mesheryctl component view [component-name]
 
 </div>
 </pre> 
@@ -62,7 +62,7 @@ mesheryctl exp components search [component-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count   (optional) Get the number of components in total
+      --count   (optional) Get the number of components in total
   -h, --help    help for components
 
 </div>
@@ -79,5 +79,9 @@ mesheryctl exp components search [component-name]
 </pre>
 
 ## See Also
+
+* [mesheryctl components list](/reference/mesheryctl/components/list)
+* [mesheryctl components search](/reference/mesheryctl/components/search)
+* [mesheryctl components view](/reference/mesheryctl/components/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

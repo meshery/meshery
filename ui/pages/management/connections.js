@@ -1,24 +1,35 @@
-import React from 'react';
-import { NoSsr, withStyles } from '@material-ui/core';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { NoSsr, styled } from '@layer5/sistent';
 import Head from 'next/head';
 import MesheryConnections from '../../components/connections';
+import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
+import { getPath } from 'lib/path';
 
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
+const StyledPageWrapperDiv = styled('div')({
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+  },
+});
 
-class Connections extends React.Component {
-  componentDidMount() {}
+const Connections = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Connections' }));
+  }, []);
 
-  render() {
-    return (
-      <NoSsr>
-        <Head>
-          <title>Connections | Meshery</title>
-        </Head>
+  return (
+    <NoSsr>
+      <Head>
+        <title>Connections | Meshery</title>
+      </Head>
+      <StyledPageWrapperDiv>
         <MesheryConnections />
-      </NoSsr>
-    );
-  }
-}
+      </StyledPageWrapperDiv>
+    </NoSsr>
+  );
+};
 
-export default withStyles(styles)(connect(null)(Connections));
+export default Connections;

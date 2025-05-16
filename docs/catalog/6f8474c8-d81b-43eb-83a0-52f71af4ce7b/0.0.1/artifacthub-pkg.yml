@@ -1,0 +1,31 @@
+version: 0.0.1
+name: cloud-native-pizza-store
+displayName: Cloud native pizza store
+createdAt: "2024-06-22T11:16:24Z"
+description: |-
+    The Pizza Store application simulates placing a Pizza Order that is going to be processed by different services. The application is composed by the Pizza Store Service which serve as the front end and backend to place the order. The order is sent to the Kitchen Service for preparation and once the order is ready to be delivered the Delivery Service takes the order to your door.
+    As any other application, these services will need to store and read data from a persistent store such as a Database and exchange messages if a more event-driven approach is needed.
+
+    This application uses PostgreSQL and Kafka, as they are well-known components among developers.
+    As you can see in the diagram, if we want to connect to PostgreSQL from the Pizza Store Service we need to add to our applications the PostgreSQL driver that must match with the PostgreSQL instance version that we have available. A Kafka client is required in all the services that are interested in publishing or consuming messages/events. Because you have Drivers and Clients that are sensitive to the available versions on the infrastructure components, the lifecycle of the application is now bound to the lifecycle of these components.
+
+    Adding Dapr to the picture not only breaks these dependencies, but also remove responsabilities from developers of choosing the right Driver/Client and how these need to be configured for the application to work correctly. Dapr provides developers building block APIs such as the StateStore and PubSub API that developer can use without know the details of which infrastructure is going to be connected under the covers.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6f8474c8-d81b-43eb-83a0-52f71af4ce7b/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The application services are written using Java + Spring Boot. These services use the Dapr Java SDK to interact with the Dapr PubSub and Statestore APIs.\n\nTo run the services locally you can use the Testcontainer integration already included in the projects.\n\nFor example you can start a local version of the pizza-store service by running the following command inside the pizza-store/ directory (this requires having Java and Maven installed locally):\nfor Caveats And Consideration refer this github repo https://github.com/salaboy/pizza?tab=readme-ov-file#installation \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6f8474c8-d81b-43eb-83a0-52f71af4ce7b-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6f8474c8-d81b-43eb-83a0-52f71af4ce7b-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

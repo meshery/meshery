@@ -36,7 +36,7 @@ Meshery Adapter for Meshery Nighthawk.
 | resources | object | `{}` |  |
 | securityContext | object | `{}` |  |
 | service.annotations | object | `{}` |  |
-| service.port | int | `10005` |  |
+| service.port | int | `10013` |  |
 | service.type | string | `"ClusterIP"` |  |
 | serviceAccount.create | bool | `false` |  |
 | serviceAccount.name | string | `""` |  |

@@ -19,7 +19,7 @@ list: exclude
 <div class="flex flex-col--2 container">
   <!-- OVERVIEW -->
   <div class="section">
-    <a href="{{ site.baseurl }}/project/overview">
+    <a href="{{ site.baseurl }}/installation">
         <div class="btn-primary">Overview & Installation</div>
     </a>
     <!-- <h6>Getting Started</h6> -->
@@ -110,13 +110,13 @@ list: exclude
 <!-- GUIDES -->
   <div class="section">
     <a href="{{ site.baseurl }}/guides">
-        <div class="btn-primary">Guides</div>
+        <div class="btn-primary">Guides & Tutorials</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Using the CLI</a>
+          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Using Meshery CLI Guides</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -135,13 +135,13 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Hands-on Labs using Meshery Playground</a>
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Tutorials</a>
         </p>
       </summary>
       <ul class="section-title">
         {% assign sorted_tutorials = site.pages | where: "type","guides" %}
         {% for item in sorted_tutorials %}
-        {% if item.type=="guides" and item.category=="tutorials" and item.language=="en" -%}
+        {% if item.type=="guides" and item.category=="tutorials" and item.list=="include" and item.language=="en" -%}
           <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
           {% if item.abstract != " " %}
             - {{ item.abstract }}
@@ -211,7 +211,7 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Troubleshooting</a>
+          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Troubleshooting Guides</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -227,40 +227,18 @@ list: exclude
           {% endfor %}
       </ul>
     </details>
-    <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.category!="tutorials" and item.language=="en" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
-    <!-- <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es"  -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-      {% for adapter in site.adapters -%}
-      {% if adapter.project_status -%}
-        <li><img src="{{ adapter.image }}" style="width:20px;height:20px; transform:translateY(5px)"/> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
-      {% endif -%}
-      {% endfor %}
-    </ul> -->
   </div>
 
   <!-- Extensions -->
   <div class="section">
-    <a href="{{ site.baseurl }}/extensibility">
+    <a href="{{ site.baseurl }}/extensions">
         <div class="btn-primary">Integrations & Extensions</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
         <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/extensibility/extensions" class="text-black">Extensions</a>
+          <a href="{{ site.baseurl }}/extensions" class="text-black">Extensions</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -302,25 +280,7 @@ list: exclude
 </div>
 <div class="flex flex-col--2 container">
 
-  <!-- PROJECT 
-  <div class="section">
-    <a href="{{ site.baseurl }}/project/overview">
-        <div class="btn-primary">Project</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> 
-    {% assign project = site.pages | sort: "name" | alphabetical %}
-    <ul>
-      {% for item in project %}
-      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-
-  </div> -->
-   <!-- CONTRIBUTING -->
-
+<!-- Contributing & Community -->
   <div class="section">
     <a href="{{ site.baseurl }}/project">
         <div class="btn-primary">Contributing & Community</div>
@@ -362,8 +322,8 @@ list: exclude
     <!-- REFERENCE -->
 
   <div class="section">
-  <a href="{{ site.baseurl }}/installation/quick-start">
-        <div class="btn-primary">Reference</div>
+  <a href="{{ site.baseurl }}/reference">
+        <div class="btn-primary">Extensibility & Reference</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6> -->
     <ul>
@@ -374,8 +334,29 @@ list: exclude
           {% endif %}
         {% endfor %}
       </ul>
+      <!-- Extensibility -->
+      <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/extensibility" class="text-black">Extensibility</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign extensibility_pages = site.pages | where: "type", "Extensibility" %}
+        {% for item in extensibility_pages %}
+          {% if item.list != "exclude" and item.language == "en" %}
+            <li>
+              <a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+              {% if item.abstract != " " %}
+                - {{ item.abstract }}
+              {% endif %}
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    </details>
     </div>
 
 </div>
 
-<p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
+<p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://meshery.io/community#discussion-forums">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>

@@ -146,7 +146,8 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 			footer = []string{"Total", fmt.Sprintf("%d", response.TotalCount), "", "", ""}
 		}
 
-		if cmd.Flag("count").Value.String() == "true" {
+		countFlag := cmd.Flag("count")
+		if countFlag != nil && countFlag.Value.String() == "true" {
 			whiteBoardPrinter.Println("Total number of filter: ", len(data))
 			return nil
 		}
@@ -158,7 +159,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		err = utils.HandlePagination(pageSize, "filter files", data, header, footer)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 		return nil
 	},
@@ -174,8 +175,6 @@ func fetchFilters(baseURL, searchString string, pageSize, pageNumber int) (*mode
 	if searchString != "" {
 		url = url + "&search=" + searchString
 	}
-
-	utils.Log.Debug(url)
 
 	req, err := utils.NewRequest("GET", url, nil)
 	if err != nil {

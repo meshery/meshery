@@ -1,0 +1,45 @@
+{
+  "category": {
+    "name": "Database"
+  },
+  "displayName": "Altinity ClickHouse",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+    "capabilities": null,
+    "defaultData": "",
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "shapePolygonPoints": "",
+    "styleOverrides": "",
+    "styles": "",
+    "svgColor": "\u003csvg width=\"150\" height=\"150\" viewBox=\"0 0 150 150\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_27227_10424)\"\u003e\n\u003cpath d=\"M18.7204 72.33L101.38 24.24L75.4104 9.23999V9.28999L18.6104 42.09L18.7204 42.16V72.33Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M23.8203 75.09L47.0103 88.57V61.59L23.8203 75.09Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M72.7697 109.26L18.7197 78.0601V140.46L72.7697 109.26Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M101.3 56.84L129.55 40.4L106.41 27.04L78.0703 43.53L101.3 56.84Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M103.67 63.96V123.77L132.09 140.18V80.49L103.67 63.96Z\" fill=\"#199DCF\"/\u003e\n\u003cpath d=\"M106.23 59.7L132.09 74.67V44.66L106.23 59.7Z\" fill=\"#199DCF\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_27227_10424\"\u003e\n\u003crect width=\"150\" height=\"150\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"150\" height=\"150\" viewBox=\"0 0 150 150\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_27227_10413)\"\u003e\n\u003cpath d=\"M18.7204 72.33L101.38 24.24L75.4104 9.23999V9.28999L18.6104 42.09L18.7204 42.16V72.33Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M23.8203 75.09L47.0103 88.57V61.59L23.8203 75.09Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M72.7697 109.26L18.7197 78.0601V140.46L72.7697 109.26Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M101.3 56.84L129.55 40.4L106.41 27.04L78.0703 43.53L101.3 56.84Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M103.67 63.96V123.77L132.09 140.18V80.49L103.67 63.96Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M106.23 59.7L132.09 74.67V44.66L106.23 59.7Z\" fill=\"white\"/\u003e\n\u003c/g\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_27227_10413\"\u003e\n\u003crect width=\"150\" height=\"150\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\r"
+  },
+  "model": {
+    "version": "0.23.6"
+  },
+  "name": "altinity-clickhouse-operator",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Application Definition \u0026 Image Build",
+  "version": "v1.0.0",
+  "components": null,
+  "relationships": null
+}

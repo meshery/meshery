@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubernetes UI Server
-subtitle: Collaborative and visual infrastructure as code for Kubernetes UI Server
+subtitle: Collaborative and visual infrastructure as design for Kubernetes UI Server
 image: /assets/img/integrations/kube-ui-server/icons/color/kube-ui-server-color.svg
 permalink: extensibility/integrations/kube-ui-server
 docURL: https://docs.meshery.io/extensibility/integrations/kube-ui-server
@@ -50,12 +50,27 @@ components:
   colorIcon: assets/img/integrations/kube-ui-server/components/project-quota/icons/color/project-quota-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/project-quota/icons/white/project-quota-white.svg
   description: 
+- name: service-monitor
+  colorIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/color/service-monitor-color.svg
+  whiteIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/white/service-monitor-white.svg
+  description: 
+- name: cluster-profile
+  colorIcon: assets/img/integrations/kube-ui-server/components/cluster-profile/icons/color/cluster-profile-color.svg
+  whiteIcon: assets/img/integrations/kube-ui-server/components/cluster-profile/icons/white/cluster-profile-white.svg
+  description: 
+- name: resource-outline-filter
+  colorIcon: assets/img/integrations/kube-ui-server/components/resource-outline-filter/icons/color/resource-outline-filter-color.svg
+  whiteIcon: assets/img/integrations/kube-ui-server/components/resource-outline-filter/icons/white/resource-outline-filter-white.svg
+  description: 
+components-count: 13
+relationships: 
+relationship-count: 0
 featureList: [
   "WhoAmI service returns the user info of the user making the api call.",
   "PodView resource exposes actual resource usage by a Pod. The resource usage information is read from Prometheus.",
   "Identity Server is a Kubernetes extended apiserver (EAS). As an EAS, it has access to the user who is making an api call to the whoami server."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

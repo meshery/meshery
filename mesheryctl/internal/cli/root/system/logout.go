@@ -57,7 +57,7 @@ mesheryctl system logout
 			return nil
 		}
 
-		log.Println("successfully logged out")
+		log.Println("logged out")
 		return nil
 	},
 }

@@ -1,0 +1,50 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "metadata": {
+        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively"
+    },
+    "model": {
+        "name": "meshery-shapes",
+        "schemaVersion": "core.meshery.io/v1lpha2",
+        "version": "v1.0.0",
+        "model": {
+            "version": "0.7.1"
+        },
+        "displayName": "Meshery Shapes",
+        "category": {
+            "name": "Orchestration \u0026 Management",
+            "metadata": null
+        },
+        "metadata": {}
+    },
+    "type": "parent",
+    "subType": "inventory",
+    "status": "enabled",
+    "selectors": [
+        {
+            "allow": {
+                "to": [
+                    {
+                        "kind": "Section",
+                        "model": {
+                            "name": "meshery-shapes"
+                        }
+                    }
+                ],
+                "from": [
+                    {
+                        "model": {
+                            "name": "*"
+                        }
+                    }
+                ]
+            },
+            "deny": {
+                "from": [],
+                "to": []
+            }
+        }
+    ]
+}

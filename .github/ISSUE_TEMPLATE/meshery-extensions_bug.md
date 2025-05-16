@@ -20,6 +20,7 @@ assignees: ''
 
 - Host OS: Mac Linux Windows
 - Meshery Server Version: stable-v
+- Meshery Extension Version: stable-v
 - Meshery Client Version: stable-v
 - Platform: Docker Kubernetes
 
@@ -30,4 +31,4 @@ assignees: ''
 - 🎨 UI Design For Meshery Extensions [Figma](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) in Figma [(open invite)](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9)
 - 📚 [Meshery Extensibility Providers](https://docs.meshery.io/extensibility/providers)
 - ⌨️ [Meshery API Docs](https://docs.meshery.io/extensibility/api)
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](http://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)

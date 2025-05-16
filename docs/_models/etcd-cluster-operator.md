@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Etcd Cluster Operator
-subtitle: Collaborative and visual infrastructure as code for Etcd Cluster Operator
+subtitle: Collaborative and visual infrastructure as design for Etcd Cluster Operator
 image: /assets/img/integrations/etcd-cluster-operator/icons/color/etcd-cluster-operator-color.svg
 permalink: extensibility/integrations/etcd-cluster-operator
 docURL: https://docs.meshery.io/extensibility/integrations/etcd-cluster-operator
@@ -30,13 +30,16 @@ components:
   colorIcon: assets/img/integrations/etcd-cluster-operator/components/etcd-restore/icons/color/etcd-restore-color.svg
   whiteIcon: assets/img/integrations/etcd-cluster-operator/components/etcd-restore/icons/white/etcd-restore-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates etcd cluster deployment and management",
+  "Provides backup and restore functionality",
+  "Ensures high availability and scalability"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages etcd clusters"
+howItWorksDetails: "Simplified etcd cluster management within Kubernetes"
 language: en
 list: include
 type: extensibility

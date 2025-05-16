@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Litmus Chaos
-subtitle: Collaborative and visual infrastructure as code for Litmus Chaos
+subtitle: Collaborative and visual infrastructure as design for Litmus Chaos
 image: /assets/img/integrations/litmus-core/icons/color/litmus-core-color.svg
 permalink: extensibility/integrations/litmus-core
 docURL: https://docs.meshery.io/extensibility/integrations/litmus-core
@@ -22,13 +22,16 @@ components:
   colorIcon: assets/img/integrations/litmus-core/components/chaos-experiment/icons/color/chaos-experiment-color.svg
   whiteIcon: assets/img/integrations/litmus-core/components/chaos-experiment/icons/white/chaos-experiment-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates chaos experiments",
+  "Simulates various failure scenarios",
+  "Provides a chaos hub with pre-defined experiments"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates chaos experiments"
+howItWorksDetails: "Enhanced resilience testing and validation of Kubernetes applications"
 language: en
 list: include
 type: extensibility

@@ -14,12 +14,15 @@ components:
   colorIcon: assets/img/integrations/grafana-agent/components/pod-logs/icons/color/pod-logs-color.svg
   whiteIcon: assets/img/integrations/grafana-agent/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Meshery discovers your Grafana servers",
   "Easily import existing Grafana dashboards and panels into Meshery",
   "Integrate your boards and panels and new insights and metrics"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

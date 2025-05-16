@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputLabel from '@mui/material/InputLabel';
-import FormControl from '@mui/material/FormControl';
 import {
   Checkbox,
   MenuItem,
   ListItemText,
   Select,
   Typography,
-  Grid,
-  Button,
-} from '@material-ui/core';
+  FormControl,
+  InputLabel,
+  OutlinedInput,
+  Box,
+} from '@layer5/sistent';
 
 import {
   ConnectionDetailContent,
@@ -20,10 +19,14 @@ import {
 } from './constants';
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import dataFetch from '../../../../lib/data-fetch';
-import { Box } from '@mui/material';
 import { selectCompSchema } from '../../../RJSFUtils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
+import Notification from './Notification';
+import {
+  useConnectToConnectionMutation,
+  useVerifyAndRegisterConnectionMutation,
+} from '@/rtk-query/connection';
+import { useGetCredentialsQuery } from '@/rtk-query/credentials';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 
@@ -35,33 +38,35 @@ const schema = selectCompSchema(
 );
 export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();
+  const [registerConnection] = useVerifyAndRegisterConnectionMutation();
 
-  const registerConnection = (componentName) => {
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
+  const handleRegisterConnection = async (componentName) => {
+    try {
+      const payload = {
+        body: {
           kind: componentName,
           status: 'initialize',
-        }),
-      },
-      (result) => {
-        let schemaObj = {
-          connection: JsonParse(result?.connection?.schema),
-          credential: JsonParse(result?.credential?.schema),
-        };
-        // formConnectionIdRef.current = result.id;
-        setSharedData((prevState) => ({
-          ...prevState,
-          connection: result,
-          schemas: schemaObj,
-          kind: componentName.toLowerCase(),
-        }));
-        handleNext();
-      },
-    );
+        },
+      };
+
+      const result = await registerConnection(payload).unwrap();
+
+      let schemaObj = {
+        connection: JsonParse(result?.connection?.schema),
+        credential: JsonParse(result?.credential?.schema),
+      };
+
+      setSharedData((prevState) => ({
+        ...prevState,
+        connection: result,
+        schemas: schemaObj,
+        kind: componentName.toLowerCase(),
+      }));
+
+      handleNext();
+    } catch (error) {
+      console.error('Failed to register connection:', error);
+    }
   };
 
   const handleCallback = () => {
@@ -73,7 +78,9 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
       const selectedConnectionType = data.selectedConnectionType;
       // The selectedConnectionType is the concatentaion of connectionType, ' ' and 'Connection' suffix.
       // Therefore, when initiating connection we are removing ' ' and suffix so that correct schema is retrieved.
-      registerConnection(selectedConnectionType?.slice(0, selectedConnectionType.indexOf(' ')));
+      handleRegisterConnection(
+        selectedConnectionType?.slice(0, selectedConnectionType.indexOf(' ')),
+      );
     }
   };
 
@@ -207,7 +214,9 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
 };
 
 export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationComplete }) => {
-  const [existingCredentials, setExistingCredentials] = useState([]);
+  const { data: credentialsData } = useGetCredentialsQuery();
+  const [verifyAndRegisterConnection] = useVerifyAndRegisterConnectionMutation();
+  const [connectToConnection] = useConnectToConnectionMutation();
   const [selectedCredential, setSelectedCredential] = useState(null);
   const [prevSelectedCredential, setPrevSelectedCredential] = useState(null);
   const [formState, setFormState] = useState(null);
@@ -215,28 +224,12 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
   const [disableVerify, setDisableVerify] = useState(true);
   const [isSuccess, setIsSuccess] = React.useState(null);
   const formRef = React.createRef();
-  useEffect(() => {
-    getchExistingCredential();
-  }, []);
 
   useEffect(() => {
     CredentialDetailContent.title = `Credential for ${sharedData?.kind}`;
   }, [sharedData.kind]);
 
-  const getchExistingCredential = () => {
-    dataFetch(
-      '/api/integrations/credentials',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setExistingCredentials(result?.credentials);
-      },
-    );
-  };
-
-  const verifyConnection = () => {
+  const verifyConnection = async () => {
     let credential = {};
     if (selectedCredential === null) {
       credential = formState;
@@ -248,41 +241,36 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       credential.id = selectedCredential?.id;
     }
 
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
+    try {
+      const payload = {
+        body: {
           skip_credential_verification: skipCredentialVerification,
-          kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
-          name: sharedData?.componentForm?.name, // This name is from the name field in schema
+          kind: sharedData?.kind,
+          name: sharedData?.componentForm?.name,
           type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
+          sub_type: sharedData?.connection?.connection?.model?.subCategory?.toLowerCase(),
           metadata: sharedData?.componentForm,
           credential_secret: credential,
           id: sharedData?.connection?.id,
           status: 'register',
-        }),
-      },
-      (result) => {
-        if (result === '') {
-          setIsSuccess(true);
-          connectToConnection();
-        } else {
-          setIsSuccess(false);
-        }
-      },
-      (err) => {
-        if (err != '') {
-          console.error(err);
-          setIsSuccess(false);
-        }
-      },
-    );
+        },
+      };
+
+      const result = await verifyAndRegisterConnection(payload).unwrap();
+
+      if (result === '') {
+        setIsSuccess(true);
+        handleConnectToConnection();
+      } else {
+        setIsSuccess(false);
+      }
+    } catch (error) {
+      console.error('Error verifying connection:', error);
+      setIsSuccess(false);
+    }
   };
 
-  const connectToConnection = () => {
+  const handleConnectToConnection = async () => {
     let credential = {};
     if (selectedCredential === null) {
       credential = formState;
@@ -294,30 +282,31 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       credential.id = selectedCredential?.id;
     }
 
-    dataFetch(
-      '/api/integrations/connections/register',
-      {
-        method: 'POST',
-        credentials: 'include',
-        body: JSON.stringify({
-          kind: sharedData?.kind, // this is "kind" column of the current row which is selected in the meshsync table. i.e. the entry against which registration process has been invoked.
-          name: sharedData?.componentForm?.name, // This name is from the name field in schema
+    try {
+      const payload = {
+        body: {
+          kind: sharedData?.kind,
+          name: sharedData?.componentForm?.name,
           type: sharedData?.connection?.connection?.model?.category?.name?.toLowerCase(),
-          sub_type: sharedData?.connection?.connection?.metadata?.subCategory.toLowerCase(),
+          sub_type: sharedData?.connection?.connection?.model?.subCategory?.toLowerCase(),
           metadata: sharedData?.componentForm,
           credential_secret: credential,
           id: sharedData?.connection?.id,
           status: 'connect',
-        }),
-      },
-      (result) => {
-        if (result === '') {
-          setIsSuccess(true);
-        } else {
-          setIsSuccess(false);
-        }
-      },
-    );
+        },
+      };
+
+      const result = await connectToConnection(payload).unwrap();
+
+      if (result !== undefined && result !== null && result === '') {
+        setIsSuccess(true);
+      } else {
+        setIsSuccess(false);
+      }
+    } catch (error) {
+      console.error('Error connecting to connection:', error);
+      setIsSuccess(false);
+    }
   };
 
   const handleCallback = () => {
@@ -359,6 +348,8 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
     }
   }, [selectedCredential, formState]);
 
+  const existingCredentials = credentialsData?.credentials || [];
+
   return (
     <StepperContent
       {...CredentialDetailContent}
@@ -367,9 +358,9 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
       disabled={disableVerify}
       btnText={isSuccess === null || isSuccess === false ? 'Verify Connection' : 'Next'}
     >
-      <p className={{ paddingLeft: '16px' }}>
+      <Typography variant="body2" style={{ paddingLeft: '16px' }}>
         Select an existing credential to use for this connection
-      </p>
+      </Typography>
       <FormControl sx={{ width: '100%' }} size="small">
         <InputLabel fontSize="20" id="credential-checkbox-label">
           Select existing credential
@@ -446,65 +437,15 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           </label>
         </Typography>
       </Box>
-      {isSuccess === false && (
-        <div
-          style={{
-            background: '#ff000010',
-            borderRadius: '0.5rem',
-            padding: '0.5rem',
-            display: 'flex',
-            marginBottom: '1rem',
-          }}
-        >
-          <Grid style={{ width: '80%' }}>
-            <Typography variant="body2">
-              <b>Verification Failed</b>
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#00000020' }}>
-              {`Unable to establish a connection using ${sharedData?.kind}`}
-            </Typography>
-          </Grid>
-          <Grid
-            style={{
-              width: '20%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-            }}
-          >
-            <Button
-              style={{
-                backgroundColor: '#ff0000',
-                padding: '0.5rem',
-                borderRadius: '0.5rem',
-                border: '0',
-                color: '#fff',
-                height: '2rem',
-              }}
-              onClick={() => verifyConnection()}
-            >
-              <Typography variant="body2">Retry</Typography>
-            </Button>
-          </Grid>
-        </div>
-      )}
-      {isSuccess === true && (
-        <div
-          style={{
-            background: '#00B39F40',
-            borderRadius: '0.5rem',
-            padding: '0.5rem',
-            display: 'flex',
-            marginBottom: '1rem',
-          }}
-        >
-          <Grid>
-            <Typography variant="body2" sx={{ color: '#00000020' }}>
-              {`Credential for ${sharedData?.kind} created.`}
-            </Typography>
-          </Grid>
-          <Grid style={{ width: '10%' }}></Grid>
-        </div>
+      {isSuccess !== null && (
+        <Notification
+          type={isSuccess ? 'success' : 'error'}
+          message={`Credential for ${sharedData?.kind} ${
+            isSuccess ? 'created' : 'verification failed'
+          }`}
+          retry={!isSuccess}
+          onRetry={() => verifyConnection()}
+        />
       )}
     </StepperContent>
   );

@@ -24,7 +24,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/pkg/errors"
-	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 )
 
@@ -172,10 +171,8 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	}()
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
-		msg := "unable to read request body"
-		err = errors.Wrapf(err, msg)
-		logrus.Error(err)
-		http.Error(w, msg, http.StatusInternalServerError)
+		h.log.Error(ErrRequestBody(err))
+		http.Error(w, ErrRequestBody(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -188,7 +185,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 	 if values have been passed as body we run test using SMP Handler
 	*/
 	if !isSSLCertificateProvided && string(body) != "" {
-		logrus.Info("Running test with SMP config")
+		h.log.Info("Running test with SMP config")
 		req.Body = io.NopCloser(strings.NewReader(string(body)))
 		h.LoadTestUsingSMPHandler(w, req, prefObj, user, provider)
 		return
@@ -239,7 +236,7 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 				_, err = file.Write([]byte(certificateData))
 				if err != nil {
-					logrus.Error(ErrCreateFile(err, certificateName))
+					h.log.Error(ErrCreateFile(err, certificateName))
 					http.Error(w, ErrCreateFile(err, certificateName).Error(), http.StatusInternalServerError)
 					return
 				}
@@ -353,12 +350,11 @@ func (h *Handler) LoadTestHandler(w http.ResponseWriter, req *http.Request, pref
 
 func (h *Handler) loadTestHelperHandler(w http.ResponseWriter, req *http.Request, profileID, testName, meshName, testUUID string,
 	prefObj *models.Preference, loadTestOptions *models.LoadTestOptions, provider models.Provider) {
-	log := logrus.WithField("file", "load_test_handler")
 
 	flusher, ok := w.(http.Flusher)
 	if !ok {
-		log.Error("Event streaming not supported.")
-		http.Error(w, "Event streaming is not supported at the moment.", http.StatusInternalServerError)
+		h.log.Error(ErrEventStreamingNotSupported)
+		http.Error(w, ErrEventStreamingNotSupported.Error(), http.StatusInternalServerError)
 		return
 	}
 	w.Header().Set("Content-Type", "text/event-stream")
@@ -422,11 +418,11 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 		err        error
 	)
 	if loadTestOptions.LoadGenerator == models.Wrk2LG {
-		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions)
+		resultsMap, resultInst, err = helpers.WRK2LoadTest(loadTestOptions, h.log)
 	} else if loadTestOptions.LoadGenerator == models.NighthawkLG {
-		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions)
+		resultsMap, resultInst, err = helpers.NighthawkLoadTest(loadTestOptions, h.log)
 	} else {
-		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions)
+		resultsMap, resultInst, err = helpers.FortioLoadTest(loadTestOptions, h.log)
 	}
 	if err != nil {
 		h.log.Error(ErrLoadTest(err, "unable to perform"))
@@ -481,7 +477,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 				go func() {
 					var nodes []*models.K8SNode
 					var err error
-					nodes, err = helpers.FetchKubernetesNodes(k8sconfig, mk8scontext.Name)
+					nodes, err = helpers.FetchKubernetesNodes(k8sconfig, mk8scontext.Name, h.log)
 					if err != nil {
 						err = errors.Wrap(err, "unable to ping kubernetes for context: "+mk8scontext.ID)
 						h.log.Warn(ErrFetchKubernetes(err))
@@ -492,7 +488,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 				go func() {
 					var serverVersion string
 					var err error
-					serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name)
+					serverVersion, err = helpers.FetchKubernetesVersion(k8sconfig, mk8scontext.Name, h.log)
 					if err != nil {
 						h.log.Error(ErrFetchKubernetes(err))
 					}
@@ -500,7 +496,7 @@ func (h *Handler) executeLoadTest(ctx context.Context, req *http.Request, profil
 					versionChan <- serverVersion
 				}()
 				go func() {
-					installedMeshes, err := helpers.ScanKubernetes(k8sconfig, mk8scontext.Name)
+					installedMeshes, err := helpers.ScanKubernetes(k8sconfig, mk8scontext.Name, h.log)
 					if err != nil {
 						h.log.Warn(ErrFetchKubernetes(err))
 					}

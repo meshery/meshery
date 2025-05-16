@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Github Actions Runners
-subtitle: Collaborative and visual infrastructure as code for Github Actions Runners
+subtitle: Collaborative and visual infrastructure as design for Github Actions Runners
 image: /assets/img/integrations/github-actions-runners/icons/color/github-actions-runners-color.svg
 permalink: extensibility/integrations/github-actions-runners
 docURL: https://docs.meshery.io/extensibility/integrations/github-actions-runners
@@ -30,12 +30,15 @@ components:
   colorIcon: assets/img/integrations/github-actions-runners/components/runner-set/icons/color/runner-set-color.svg
   whiteIcon: assets/img/integrations/github-actions-runners/components/runner-set/icons/white/runner-set-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Solr Operator
-subtitle: Collaborative and visual infrastructure as code for Solr Operator
+subtitle: Collaborative and visual infrastructure as design for Solr Operator
 image: /assets/img/integrations/solr-operator/icons/color/solr-operator-color.svg
 permalink: extensibility/integrations/solr-operator
 docURL: https://docs.meshery.io/extensibility/integrations/solr-operator
@@ -22,12 +22,15 @@ components:
   colorIcon: assets/img/integrations/solr-operator/components/solr-prometheus-exporter/icons/color/solr-prometheus-exporter-color.svg
   whiteIcon: assets/img/integrations/solr-operator/components/solr-prometheus-exporter/icons/white/solr-prometheus-exporter-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

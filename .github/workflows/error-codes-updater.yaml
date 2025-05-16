@@ -15,23 +15,23 @@ jobs:
   Update-error-codes:
     name: Error codes utility
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@master
         if: ${{ github.event_name == 'pull_request' }}
-        with:          
+        with:
           ref: "master"
           fetch-depth: 1
       - uses: actions/checkout@master
         if: ${{ github.event_name == 'push' }}
-        with:          
+        with:
           ref: "master"
           fetch-depth: 1
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.21"
+          go-version: "1.23"
 
       - name: Build Error Utility
         run: |
@@ -56,6 +56,9 @@ jobs:
             exit 1
           fi
           echo '{ "errors_export": "" }' | jq --slurpfile export ../server/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
+
+      - name: Pull changes from remote
+        run: git pull origin master
 
       - name: Commit changes
         if: ${{ github.event_name != 'pull_request' }}  # Skip for pull requests

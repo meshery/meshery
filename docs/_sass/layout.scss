@@ -69,8 +69,9 @@ ol {
 
 .main-container {
   padding: 3.5rem 4.4rem;
-  overflow: hidden;
+  overflow-x: auto;
   width: 100%;
+  min-height: calc(100vh - var(--footer-height));
   flex-grow: 5;
 
   @media (max-width: 1200px) {

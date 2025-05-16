@@ -20,12 +20,12 @@ GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
 REMOTE_PROVIDER="Meshery"
 LOCAL_PROVIDER="None"
-GOVERSION = 1.21
+GOVERSION = 1.23
 GOPATH = $(shell go env GOPATH)
 GOBIN  = $(GOPATH)/bin
 KEYS_PATH="../../server/permissions/keys.csv"
 
-SHELL :=/bin/bash -o pipefail
+SHELL := /usr/bin/env bash -o pipefail
 
 #-----------------------------------------------------------------------------
 # Components
@@ -40,14 +40,15 @@ ADAPTER_URLS := "localhost:10000 localhost:10001 localhost:10012 localhost:10013
 #-----------------------------------------------------------------------------
 REMOTE_PROVIDER_LOCAL="http://localhost:9876"
 MESHERY_CLOUD_DEV="http://localhost:9876"
-MESHERY_CLOUD_PROD="https://meshery.layer5.io"
-MESHERY_CLOUD_STAGING="https://staging-meshery.layer5.io"
+MESHERY_CLOUD_PROD="https://cloud.layer5.io"
+MESHERY_CLOUD_STAGING="https://staging-cloud.layer5.io"
 
 #-----------------------------------------------------------------------------
 # Server
 #-----------------------------------------------------------------------------
 MESHERY_K8S_SKIP_COMP_GEN ?= TRUE
 APPLICATIONCONFIGPATH="./apps.json"
+PORT:=9081
 
 #-----------------------------------------------------------------------------
 # Build

@@ -15,126 +15,35 @@
 package components
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-// represents the mesheryctl exp components list command
+// represents the mesheryctl component list command
 var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
-	Long:  "List all components registered in Meshery Server",
+	Long: `List all components registered in Meshery Server
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/list`,
 	Example: `
-	// View list of components
-mesheryctl exp components list
+// View list of components
+mesheryctl component list
+
 // View list of components with specified page number (25 components per page)
-mesheryctl exp components list --page 2
+mesheryctl component list --page [page-number]
+
+// Display the number of components present in Meshery
+mesheryctl component list --count
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check prerequisites for the command here
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
-		}
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		var url string
-		if cmd.Flags().Changed("page") {
-			url = fmt.Sprintf("%s/api/meshmodels/components?page=%d", baseUrl, pageNumberFlag)
-		} else {
-			url = fmt.Sprintf("%s/api/meshmodels/components?pagesize=all", baseUrl)
-		}
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		componentsResponse := &models.MeshmodelComponentsAPIResponse{}
-		err = json.Unmarshal(data, componentsResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		header := []string{"Model", "kind", "Version"}
-		rows := [][]string{}
-
-		for _, component := range componentsResponse.Components {
-			if len(component.DisplayName) > 0 {
-				rows = append(rows, []string{component.Model.Name, component.Component.Kind, component.Component.Version})
-			}
-		}
-
-		if len(rows) == 0 {
-			// if no component is found
-			fmt.Println("No components(s) found")
-			return nil
-		}
-
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			maxRowsPerPage := 25
-			err := utils.HandlePagination(maxRowsPerPage, "components", rows, header)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-		}
-		return nil
+		return listComponents(cmd, fmt.Sprintf("%s?%s", componentApiPath, utils.GetPageQueryParameter(cmd, pageNumberFlag)))
 	},
 }
 
 func init() {
-	// Add the new exp components commands to the ComponentsCmd
-	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	// Add the new components commands to the ComponentsCmd
+	listComponentCmd.Flags().IntP("page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }

@@ -60,13 +60,13 @@ The designs in this specification should result in enabling:
 
 ### Node Version Recommendations
 
-We recommend using Node 18 LTS. Meshery UI's build script supports other Node versions as well, including node16 and node17, but is recommended to use Node 18 LTS.
+We recommend using Node 20 LTS. Meshery UI's build script supports other Node versions as well, including node16, node17, node18 and node19, but is recommended to use Node 20 LTS.
 
 ### Linting-UI
 
 When contributing to Meshery UI, it is advisable to:
 
-- Use [prettier](https://marketplace.visualstudio.com/items?itemName=SimonSiefke.prettier-vscode) and [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
+- Use prettier plugin for Visual Studio Code.
 - Disable plugins other than `prettier` and `eslint` for formatting and linting, if any.
 
 ### Install UI dependencies
@@ -124,13 +124,9 @@ Refer to [Contributing to Meshery Server](contributing-server), if needed.
 
 Any UI changes made now will _automatically_ be rebuilt and served in your browser.
 
-### Running Cypress integration tests
+### Running end-to-end integration tests
 
-To run cypress integration tests, a convenience make target called `ui-integration-tests` that installs dependencies in `/ui` and `/provider-ui` folders as prerequisite and invokes `ci-test-integration` npm script found in [/ui/package.json](https://github.com/meshery/meshery/blob/master/ui/package.json)
-{% include code.html code="make ui-integration-tests" %}
-{% include alert.html type="info" title="Above command must be run from Meshery repository's root folder." %}
-
-Refer to [Meshery Cypress Testing](contributing-cypress) for details of how to contribute and benefit from Meshery Cypress (integration & end-to-end) testing.
+Refer to [Meshery UI Testing](contributing-ui-tests) for details of how to contribute and benefit from Meshery UI testing.
 
 ### Static Files, Icons and Images
 

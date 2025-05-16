@@ -12,6 +12,7 @@ var (
 	ErrUpdateModelCode       = "mesheryctl-1057"
 	ErrUpdateComponentCode   = "mesheryctl-1058"
 	ErrUpdateRegistryCode    = "mesheryctl-1059"
+	ErrParsingSheetCode      = "mesheryctl-1128"
 )
 
 func ErrUpdateRegistry(err error, path string) error {
@@ -19,7 +20,7 @@ func ErrUpdateRegistry(err error, path string) error {
 }
 
 func ErrGenerateModel(err error, modelName string) error {
-	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{err.Error()}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
 
 func ErrGenerateComponent(err error, modelName, compName string) error {
@@ -32,4 +33,7 @@ func ErrUpdateModel(err error, modelName string) error {
 
 func ErrUpdateComponent(err error, modelName, compName string) error {
 	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
+}
+func ErrParsingSheet(err error, obj string) error {
+	return errors.New(ErrParsingSheetCode, errors.Alert, []string{fmt.Sprintf("error parsing %s sheet", obj)}, []string{fmt.Sprintf("while parsing the %s sheet encountered an error: %s", obj, err)}, []string{"provied sheet id for %s might be incorrect"}, []string{"ensure the sheet id is correct"})
 }

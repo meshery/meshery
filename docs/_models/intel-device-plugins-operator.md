@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Intel Device Plugins Operator
-subtitle: Collaborative and visual infrastructure as code for Intel Device Plugins Operator
+subtitle: Collaborative and visual infrastructure as design for Intel Device Plugins Operator
 image: /assets/img/integrations/intel-device-plugins-operator/icons/color/intel-device-plugins-operator-color.svg
 permalink: extensibility/integrations/intel-device-plugins-operator
 docURL: https://docs.meshery.io/extensibility/integrations/intel-device-plugins-operator
@@ -46,12 +46,15 @@ components:
   colorIcon: assets/img/integrations/intel-device-plugins-operator/components/fpga-region/icons/color/fpga-region-color.svg
   whiteIcon: assets/img/integrations/intel-device-plugins-operator/components/fpga-region/icons/white/fpga-region-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Support for the QAT, GPU, FPGA, SGX, DSA, IAA device plugins.",
   "Validation of container image references and extending of reported statuses.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

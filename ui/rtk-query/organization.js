@@ -14,8 +14,8 @@ const organizationsApi = api
         query: (queryArgs) => ({
           url: `identity/orgs`,
           params: {
-            page: queryArgs.page || 0,
-            pagesize: queryArgs.pagesize || 10,
+            page: queryArgs?.page ?? 0,
+            pagesize: queryArgs?.pagesize ?? 10,
           },
         }),
         providesTags: () => [{ type: TAGS.ORGANIZATION }],

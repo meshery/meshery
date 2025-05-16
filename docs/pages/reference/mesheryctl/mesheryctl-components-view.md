@@ -12,11 +12,11 @@ subcommand: view
 
 # mesheryctl components view
 
-view registered components
+View registered components
 
 ## Synopsis
 
-view a component registered in Meshery Server
+View a component registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components view [flags]
@@ -29,7 +29,7 @@ mesheryctl components view [flags]
 View details of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp components view [component-name]
+mesheryctl components view [component-name]
 
 </div>
 </pre> 

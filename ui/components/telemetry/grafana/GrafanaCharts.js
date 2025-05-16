@@ -1,130 +1,127 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, ExpansionPanelDetails, Typography } from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { NoSsr } from '@layer5/sistent';
+import { Grid, ExpansionPanelDetails, Typography, styled } from '@layer5/sistent';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 
-const grafanaStyles = (theme) => ({
-  wrapper: { width: '100%' },
-  column: { flexBasis: '33.33%' },
-  heading: { fontSize: theme.typography.pxToRem(15) },
-  secondaryHeading: { fontSize: theme.typography.pxToRem(15), color: theme.palette.text.secondary },
-  dateRangePicker: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  iframe: { minHeight: theme.spacing(55), minWidth: theme.spacing(55) },
+const Wrapper = styled('div')({
+  width: '100%',
 });
 
-class GrafanaCharts extends Component {
-  constructor(props) {
-    super(props);
+const Column = styled('div')({
+  flexBasis: '33.33%',
+});
 
-    const startDate = new Date();
-    startDate.setMinutes(startDate.getMinutes() - 5);
-    this.state = {
-      startDate,
-      from: 'now-5m',
-      endDate: new Date(),
-      to: 'now',
-      liveTail: true,
-      refresh: '10s',
-    };
+const DateRangePickerContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  marginRight: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+}));
+
+const StyledHeading = styled(Typography)(({ theme }) => ({
+  fontSize: theme.typography.pxToRem(15),
+}));
+
+const SecondaryHeading = styled(Typography)(({ theme }) => ({
+  fontSize: theme.typography.pxToRem(15),
+  color: theme.palette.text.secondary,
+}));
+
+const IframeGridItem = styled(Grid)(({ theme }) => ({
+  minHeight: theme.spacing(55),
+  minWidth: theme.spacing(55),
+  '& iframe': {
+    width: '100%',
+    height: '100%',
+    border: 'none',
+  },
+}));
+
+const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
+  const [dateRange, setDateRange] = useState({
+    startDate: (() => {
+      const d = new Date();
+      d.setMinutes(d.getMinutes() - 5);
+      return d;
+    })(),
+    from: 'now-5m',
+    endDate: new Date(),
+    to: 'now',
+    liveTail: true,
+    refresh: '10s',
+  });
+
+  const { from, startDate, to, endDate, liveTail, refresh } = dateRange;
+
+  let adjustedGrafanaURL = grafanaURL;
+  if (adjustedGrafanaURL.endsWith('/')) {
+    adjustedGrafanaURL = adjustedGrafanaURL.slice(0, -1);
   }
 
-  updateDateRange = (from, startDate, to, endDate, liveTail, refresh) => {
-    this.setState({
-      from,
-      startDate,
-      to,
-      endDate,
-      liveTail,
-      refresh,
-    });
+  const updateDateRange = (from, startDate, to, endDate, liveTail, refresh) => {
+    setDateRange({ from, startDate, to, endDate, liveTail, refresh });
   };
 
-  render() {
-    const { from, startDate, to, endDate, liveTail, refresh } = this.state;
-    const { classes, boardPanelConfigs } = this.props;
-    let { grafanaURL } = this.props;
-    if (grafanaURL.endsWith('/')) {
-      grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
-    }
-    return (
-      <NoSsr>
-        <React.Fragment>
-          <div className={classes.wrapper}>
-            <div className={classes.dateRangePicker}>
-              <GrafanaDateRangePicker
-                from={from}
-                startDate={startDate}
-                to={to}
-                endDate={endDate}
-                liveTail={liveTail}
-                refresh={refresh}
-                updateDateRange={this.updateDateRange}
-              />
-            </div>
-            {boardPanelConfigs.map((config, ind) => (
-              // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-              <ExpansionPanel key={ind} square defaultExpanded={false}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <div className={classes.column}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {config.board.title}
-                    </Typography>
-                  </div>
-                  <div className={classes.column}>
-                    <Typography variant="subtitle2">
-                      {config.templateVars && config.templateVars.length > 0
-                        ? `Template variables: ${config.templateVars.join(' ')}`
-                        : ''}
-                    </Typography>
-                  </div>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container spacing={5}>
-                    {config.panels.map((panel, ind) => (
-                      <Grid key={ind} item xs={12} sm={6} className={classes.iframe}>
-                        <LazyLoad once>
-                          <iframe
-                            key={`url_-_-${ind}`}
-                            src={`${grafanaURL}/d-solo/${config.board.uid}/${
-                              config.board.slug
-                            }?theme=light&orgId=${config.board.org_id}&panelId=${
-                              panel.id
-                            }&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars
-                              .map((tv) => `var-${tv}`)
-                              .join('&')}`}
-                            // width='450'
-                            width="100%"
-                            // height='250'
-                            height="100%"
-                            frameBorder="0"
-                          />
-                        </LazyLoad>
-                      </Grid>
-                    ))}
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            ))}
-          </div>
-        </React.Fragment>
-      </NoSsr>
-    );
-  }
-}
+  return (
+    <NoSsr>
+      <Wrapper>
+        <DateRangePickerContainer>
+          <GrafanaDateRangePicker
+            from={from}
+            startDate={startDate}
+            to={to}
+            endDate={endDate}
+            liveTail={liveTail}
+            refresh={refresh}
+            updateDateRange={updateDateRange}
+          />
+        </DateRangePickerContainer>
+        {boardPanelConfigs.map((config, ind) => (
+          <ExpansionPanel key={ind} square defaultExpanded={false}>
+            <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+              <Column>
+                <StyledHeading variant="subtitle1" gutterBottom>
+                  {config.board.title}
+                </StyledHeading>
+              </Column>
+              <Column>
+                <SecondaryHeading variant="subtitle2">
+                  {config.templateVars && config.templateVars.length > 0
+                    ? `Template variables: ${config.templateVars.join(' ')}`
+                    : ''}
+                </SecondaryHeading>
+              </Column>
+            </ExpansionPanelSummary>
+            <ExpansionPanelDetails>
+              <Grid container spacing={5}>
+                {config.panels.map((panel, ind) => (
+                  <IframeGridItem key={ind} item xs={12} sm={6}>
+                    <LazyLoad once>
+                      <iframe
+                        key={`url_-_-${ind}`}
+                        src={`${adjustedGrafanaURL}/d-solo/${config.board.uid}/${config.board.slug}?theme=light&orgId=${config.board.org_id}&panelId=${panel.id}&refresh=${refresh}&from=${from}&to=${to}&${config.templateVars
+                          .map((tv) => `var-${tv}`)
+                          .join('&')}`}
+                      />
+                    </LazyLoad>
+                  </IframeGridItem>
+                ))}
+              </Grid>
+            </ExpansionPanelDetails>
+          </ExpansionPanel>
+        ))}
+      </Wrapper>
+    </NoSsr>
+  );
+};
 
 GrafanaCharts.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
 };
 
-export default withStyles(grafanaStyles)(GrafanaCharts);
+export default GrafanaCharts;

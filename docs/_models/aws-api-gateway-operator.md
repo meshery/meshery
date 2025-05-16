@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: AWS API Gateway Operator
-subtitle: Collaborative and visual infrastructure as code for AWS API Gateway Operator
+title: AWS API Gateway
+subtitle: Collaborative and visual infrastructure as design for AWS API Gateway
 image: /assets/img/integrations/aws-api-gateway-operator/icons/color/aws-api-gateway-operator-color.svg
 permalink: extensibility/integrations/aws-api-gateway-operator
 docURL: https://docs.meshery.io/extensibility/integrations/aws-api-gateway-operator
@@ -14,12 +14,15 @@ components:
   colorIcon: assets/img/integrations/aws-api-gateway-operator/components/awsapi-gateway/icons/color/awsapi-gateway-color.svg
   whiteIcon: assets/img/integrations/aws-api-gateway-operator/components/awsapi-gateway/icons/white/awsapi-gateway-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Create, publish, maintain, monitor, and secure REST, HTTP, and WebSocket APIs at any scale.",
   "Create APIs that access AWS or other web services, as well as data stored in the AWS Cloud.",
   "API Gateway creates RESTful APIs that enable stateless client-server communication."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

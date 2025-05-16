@@ -1,7 +1,7 @@
 ---
 layout: integration
-title: Apache Shardingsphere Operator Charts
-subtitle: Collaborative and visual infrastructure as code for Apache Shardingsphere Operator Charts
+title: Apache ShardingSphere
+subtitle: Collaborative and visual infrastructure as design for Apache ShardingSphere
 image: /assets/img/integrations/apache-shardingsphere-operator-charts/icons/color/apache-shardingsphere-operator-charts-color.svg
 permalink: extensibility/integrations/apache-shardingsphere-operator-charts
 docURL: https://docs.meshery.io/extensibility/integrations/apache-shardingsphere-operator-charts
@@ -34,12 +34,15 @@ components:
   colorIcon: assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-provider/icons/color/storage-provider-color.svg
   whiteIcon: assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-provider/icons/white/storage-provider-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "ShardingSphere provides a distributed database solution based on the underlying database, which can scale computing and storage horizontally.",
   "With a hybrid engine based on XA and BASE transactions, ShardingSphere provides distributed transaction capabilities on top of standalone databases, enabling data security across underlying data sources.",
   "ShardingSphere provides flexible read/write splitting capabilities and can achieve read access load balancing based on the understanding of SQL semantics and the ability to perceive the underlying database topology."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

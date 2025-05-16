@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Field Export",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-s3-controller",
+    "displayName": "AWS Simple Storage Service (S3)",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Storage"
+    },
+    "subCategory": "Storage",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#7AA116",
+      "shape": "bottom-round-rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/s3-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-Simple-Storage-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Storage\" fill=\"#7AA116\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-Simple-Storage-Service_32\" transform=\"translate(7.000200, 6.000100)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M23.532,15.391 L23.729,13.932 C25.821,15.131 25.864,15.626 25.8630149,15.64 C25.859,15.643 25.509,15.923 23.532,15.391 L23.532,15.391 Z M22.564,15.103 C19.722,14.206 15.904,12.531 13.723,11.504 C13.723,11.497 13.727,11.491 13.727,11.484 C13.727,10.821 13.187,10.281 12.524,10.281 C11.861,10.281 11.321,10.821 11.321,11.484 C11.321,12.148 11.861,12.687 12.524,12.687 C12.814,12.687 13.07,12.571 13.278,12.4 C14.547,12.994 19.075,15.076 22.428,16.113 L21.249,24.85 C21.249,25.716 17.575,27 12.5,27 C7.425,27 3.751,25.716 3.746,24.784 L1.283,6.563 C3.458,8.155 8.074,9 12.5,9 C16.926,9 21.543,8.155 23.718,6.563 L22.564,15.103 Z M1.003,4.489 C1.032,3.609 5.104,1 12.5,1 C19.895,1 23.97,3.609 24,4.489 L24,4.603 C23.81,6.231 19.137,8 12.5,8 C5.863,8 1.209,6.231 1.018,4.604 L1.003,4.489 Z M25,4.5 C25,2.665 20.131,0 12.5,0 C4.869,0 0,2.665 0,4.5 L0,4.567 L2.751,24.85 C2.751,26.896 7.773,28 12.5,28 C17.226,28 22.249,26.896 22.244,24.917 L23.396,16.39 C24.217,16.604 24.881,16.718 25.392,16.718 C25.985,16.718 26.386,16.574 26.628,16.285 C26.827,16.047 26.903,15.76 26.845,15.454 C26.708,14.716 25.797,13.919 23.89,12.87 L23.869,12.896 L25,4.567 L25,4.5 Z\" id=\"Amazon-Simple-Storage-Service-Icon_32_Squid\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-Simple-Storage-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-Simple-Storage-Service_32\" transform=\"translate(7.000200, 6.000100)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M23.532,15.391 L23.729,13.932 C25.821,15.131 25.864,15.626 25.8630149,15.64 C25.859,15.643 25.509,15.923 23.532,15.391 L23.532,15.391 Z M22.564,15.103 C19.722,14.206 15.904,12.531 13.723,11.504 C13.723,11.497 13.727,11.491 13.727,11.484 C13.727,10.821 13.187,10.281 12.524,10.281 C11.861,10.281 11.321,10.821 11.321,11.484 C11.321,12.148 11.861,12.687 12.524,12.687 C12.814,12.687 13.07,12.571 13.278,12.4 C14.547,12.994 19.075,15.076 22.428,16.113 L21.249,24.85 C21.249,25.716 17.575,27 12.5,27 C7.425,27 3.751,25.716 3.746,24.784 L1.283,6.563 C3.458,8.155 8.074,9 12.5,9 C16.926,9 21.543,8.155 23.718,6.563 L22.564,15.103 Z M1.003,4.489 C1.032,3.609 5.104,1 12.5,1 C19.895,1 23.97,3.609 24,4.489 L24,4.603 C23.81,6.231 19.137,8 12.5,8 C5.863,8 1.209,6.231 1.018,4.604 L1.003,4.489 Z M25,4.5 C25,2.665 20.131,0 12.5,0 C4.869,0 0,2.665 0,4.5 L0,4.567 L2.751,24.85 C2.751,26.896 7.773,28 12.5,28 C17.226,28 22.249,26.896 22.244,24.917 L23.396,16.39 C24.217,16.604 24.881,16.718 25.392,16.718 C25.985,16.718 26.386,16.574 26.628,16.285 C26.827,16.047 26.903,15.76 26.845,15.454 C26.708,14.716 25.797,13.919 23.89,12.87 L23.869,12.896 L25,4.567 L25,4.5 Z\" id=\"Amazon-Simple-Storage-Service-Icon_32_Squid\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.29"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#7AA116",
+    "shape": "bottom-round-rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Simple-Storage-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Storage\" fill=\"#7AA116\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cg id=\"Icon-Service/32/Amazon-Simple-Storage-Service_32\" transform=\"translate(7.000200, 6.000100)\" fill=\"#FFFFFF\"\u003e            \u003cpath d=\"M23.532,15.391 L23.729,13.932 C25.821,15.131 25.864,15.626 25.8630149,15.64 C25.859,15.643 25.509,15.923 23.532,15.391 L23.532,15.391 Z M22.564,15.103 C19.722,14.206 15.904,12.531 13.723,11.504 C13.723,11.497 13.727,11.491 13.727,11.484 C13.727,10.821 13.187,10.281 12.524,10.281 C11.861,10.281 11.321,10.821 11.321,11.484 C11.321,12.148 11.861,12.687 12.524,12.687 C12.814,12.687 13.07,12.571 13.278,12.4 C14.547,12.994 19.075,15.076 22.428,16.113 L21.249,24.85 C21.249,25.716 17.575,27 12.5,27 C7.425,27 3.751,25.716 3.746,24.784 L1.283,6.563 C3.458,8.155 8.074,9 12.5,9 C16.926,9 21.543,8.155 23.718,6.563 L22.564,15.103 Z M1.003,4.489 C1.032,3.609 5.104,1 12.5,1 C19.895,1 23.97,3.609 24,4.489 L24,4.603 C23.81,6.231 19.137,8 12.5,8 C5.863,8 1.209,6.231 1.018,4.604 L1.003,4.489 Z M25,4.5 C25,2.665 20.131,0 12.5,0 C4.869,0 0,2.665 0,4.5 L0,4.567 L2.751,24.85 C2.751,26.896 7.773,28 12.5,28 C17.226,28 22.249,26.896 22.244,24.917 L23.396,16.39 C24.217,16.604 24.881,16.718 25.392,16.718 C25.985,16.718 26.386,16.574 26.628,16.285 C26.827,16.047 26.903,15.76 26.845,15.454 C26.708,14.716 25.797,13.919 23.89,12.87 L23.869,12.896 L25,4.567 L25,4.5 Z\" id=\"Amazon-Simple-Storage-Service-Icon_32_Squid\"\u003e\u003c/path\u003e        \u003c/g\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Simple-Storage-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cg id=\"Icon-Service/32/Amazon-Simple-Storage-Service_32\" transform=\"translate(7.000200, 6.000100)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M23.532,15.391 L23.729,13.932 C25.821,15.131 25.864,15.626 25.8630149,15.64 C25.859,15.643 25.509,15.923 23.532,15.391 L23.532,15.391 Z M22.564,15.103 C19.722,14.206 15.904,12.531 13.723,11.504 C13.723,11.497 13.727,11.491 13.727,11.484 C13.727,10.821 13.187,10.281 12.524,10.281 C11.861,10.281 11.321,10.821 11.321,11.484 C11.321,12.148 11.861,12.687 12.524,12.687 C12.814,12.687 13.07,12.571 13.278,12.4 C14.547,12.994 19.075,15.076 22.428,16.113 L21.249,24.85 C21.249,25.716 17.575,27 12.5,27 C7.425,27 3.751,25.716 3.746,24.784 L1.283,6.563 C3.458,8.155 8.074,9 12.5,9 C16.926,9 21.543,8.155 23.718,6.563 L22.564,15.103 Z M1.003,4.489 C1.032,3.609 5.104,1 12.5,1 C19.895,1 23.97,3.609 24,4.489 L24,4.603 C23.81,6.231 19.137,8 12.5,8 C5.863,8 1.209,6.231 1.018,4.604 L1.003,4.489 Z M25,4.5 C25,2.665 20.131,0 12.5,0 C4.869,0 0,2.665 0,4.5 L0,4.567 L2.751,24.85 C2.751,26.896 7.773,28 12.5,28 C17.226,28 22.249,26.896 22.244,24.917 L23.396,16.39 C24.217,16.604 24.881,16.718 25.392,16.718 C25.985,16.718 26.386,16.574 26.628,16.285 C26.827,16.047 26.903,15.76 26.845,15.454 C26.708,14.716 25.797,13.919 23.89,12.87 L23.869,12.896 L25,4.567 L25,4.5 Z\" id=\"Amazon-Simple-Storage-Service-Icon_32_Squid\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/s3-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "services.k8s.aws/v1alpha1",
+    "kind": "FieldExport",
+    "schema": "{\n \"description\": \"FieldExport is the schema for the FieldExport API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FieldExportSpec defines the desired state of the FieldExport.\",\n   \"properties\": {\n    \"from\": {\n     \"description\": \"ResourceFieldSelector provides the values necessary to identify an individual\\nfield on an individual K8s resource.\",\n     \"properties\": {\n      \"path\": {\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"description\": \"NamespacedResource provides all the values necessary to identify an ACK\\nresource of a given type (within the same namespace as the custom resource\\ncontaining this type).\",\n       \"properties\": {\n        \"group\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"group\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\",\n      \"resource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"FieldExportTarget provides the values necessary to identify the\\noutput path for a field export.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key overrides the default value (`\\u003cnamespace\\u003e.\\u003cFieldExport-resource-name\\u003e`) for the FieldExport target\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"FieldExportOutputType represents all types that can be produced by a field\\nexport operation\",\n       \"enum\": [\n        \"configmap\",\n        \"secret\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is marked as optional, so we cannot compose `NamespacedName`\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"from\",\n    \"to\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Field Export\",\n \"type\": \"object\"\n}"
+  }
+}

@@ -1,26 +1,29 @@
 ---
 layout: integration
 title: Jaeger Operator
-subtitle: Collaborative and visual infrastructure as code for Jaeger Operator
+subtitle: Collaborative and visual infrastructure as design for Jaeger Operator
 image: /assets/img/integrations/jaeger-operator/icons/color/jaeger-operator-color.svg
 permalink: extensibility/integrations/jaeger-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jaeger-operator
 description: 
 integrations-category: Observability and Analysis
 integrations-subcategory: Tracing
-registrant: Artifact Hub
+registrant: GitHub
 components: 
 - name: jaeger
   colorIcon: assets/img/integrations/jaeger-operator/components/jaeger/icons/color/jaeger-color.svg
   whiteIcon: assets/img/integrations/jaeger-operator/components/jaeger/icons/white/jaeger-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates Jaeger installation and configuration",
+  "Manages Jaeger resources",
+  "Simplifies Jaeger setup and maintenance"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Deploys and manages Jaeger"
+howItWorksDetails: "Streamlined Jaeger management within Kubernetes"
 language: en
 list: include
 type: extensibility

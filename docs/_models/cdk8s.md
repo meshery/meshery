@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Cdk For Kubernetes (Cdk8S)
-subtitle: Collaborative and visual infrastructure as code for Cdk For Kubernetes (Cdk8S)
+subtitle: Collaborative and visual infrastructure as design for Cdk For Kubernetes (Cdk8S)
 image: /assets/img/integrations/cdk8s/icons/color/cdk8s-color.svg
 permalink: extensibility/integrations/cdk8s
 docURL: https://docs.meshery.io/extensibility/integrations/cdk8s
@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Defines Kubernetes applications and reusable abstractions using familiar programming languages.",
   "Simplify application workflows.",

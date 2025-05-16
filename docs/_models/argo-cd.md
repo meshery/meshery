@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Argo CD Applications
-subtitle: Collaborative and visual infrastructure as code for Argo CD Applications
+subtitle: Collaborative and visual infrastructure as design for Argo CD Applications
 image: /assets/img/integrations/argo-cd/icons/color/argo-cd-color.svg
 permalink: extensibility/integrations/argo-cd
 docURL: https://docs.meshery.io/extensibility/integrations/argo-cd
@@ -26,12 +26,21 @@ components:
   colorIcon: assets/img/integrations/argo-cd/components/app-project/icons/color/app-project-color.svg
   whiteIcon: assets/img/integrations/argo-cd/components/app-project/icons/white/app-project-white.svg
   description: 
+components-count: 4
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a Namespace in Kubernetes can be a parent of Pods within that Namespace. Similarly, in Argo CD, an AppProject represents a logical grouping of Applications. Applications and ApplicationSets reference their AppProject by name."
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a Namespace in Kubernetes can be a parent of Pods within that Namespace. Similarly, in Argo CD, an AppProject represents a logical grouping of Applications. Applications and ApplicationSets reference their AppProject by name."
+relationship-count: 2
 featureList: [
   "Gain mastery over Argo as a workflow engine for Kubernetes",
-  "Design application definitions using the intuitive, context-aware visual designer, MeshMap.",
+  "Design application definitions using the intuitive, context-aware visual designer, Kanvas.",
   "Visualize your declarative, GitOps continuous delivery tool for Kubernetes."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

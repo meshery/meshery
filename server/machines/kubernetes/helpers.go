@@ -7,6 +7,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
@@ -17,12 +18,12 @@ var (
 	adapterTracker = helpers.NewAdaptersTracker(adapterURLs)
 )
 
-func GenerateClientSetAction(k8sContext *models.K8sContext, eventBuilder *events.EventBuilder) (*kubernetes.Client, error) {
+func GenerateClientSetAction(k8sContext *models.K8sContext, eventBuilder *events.EventBuilder, log logger.Handler) (*kubernetes.Client, error) {
 	eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
 
 	eventMetadata := map[string]interface{}{}
 
-	handler, err := models.GenerateK8sClientSet(k8sContext, eventBuilder, eventMetadata)
+	handler, err := models.GenerateK8sClientSet(k8sContext, eventBuilder, eventMetadata, log)
 	if handler == nil {
 		return nil, err
 	}
@@ -50,7 +51,7 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 	k8sContext := machinectx.K8sContext
 	eventBuilder.ActedUpon(uuid.FromStringOrNil(k8sContext.ConnectionID))
 
-	handler, err := GenerateClientSetAction(&k8sContext, eventBuilder)
+	handler, err := GenerateClientSetAction(&k8sContext, eventBuilder, machinectx.log)
 	if err != nil {
 		// perofmr event publishinh and err handling
 		return err

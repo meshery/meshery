@@ -1,0 +1,11 @@
+**/node_modules
+**/out
+**/.next
+*.log
+.git
+.gitignore
+.env
+README.md
+LICENSE
+.vscode
+.github

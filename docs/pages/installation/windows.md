@@ -20,7 +20,7 @@ On Windows systems, `mesheryctl` can be installed via Scoop or can be [downloade
 
 ## Install `mesheryctl` as a direct download
 
-Follow the [installation steps]({{ site.baseurl }}/installation#windows) to install the mesheryctl CLI. Then, execute:
+Follow the installation steps to install the mesheryctl CLI. Then, execute:
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">./mesheryctl system start</div></div>
 </pre>
@@ -50,7 +50,7 @@ Guides to using Meshery's various features and components.
     </li>
     {% endif %}
   {% endfor %}
-    <li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
+    <li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
 </ul>
 
 {% include related-discussions.html tag="mesheryctl" %}

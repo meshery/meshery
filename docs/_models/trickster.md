@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Trickster
-subtitle: Collaborative and visual infrastructure as code for Trickster
+subtitle: Collaborative and visual infrastructure as design for Trickster
 image: /assets/img/integrations/trickster/icons/color/trickster-color.svg
 permalink: extensibility/integrations/trickster
 docURL: https://docs.meshery.io/extensibility/integrations/trickster
@@ -34,12 +34,15 @@ components:
   colorIcon: assets/img/integrations/trickster/components/trickster-tracing-config/icons/color/trickster-tracing-config-color.svg
   whiteIcon: assets/img/integrations/trickster/components/trickster-tracing-config/icons/white/trickster-tracing-config-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

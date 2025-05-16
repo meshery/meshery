@@ -1,0 +1,97 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "hierarchical",
+    "type": "parent",
+    "subType": "inventory",
+    "metadata": {
+        "description": "A relationship that defines whether a component can be a parent of other components. It is read like: `from` can be a child of `to`, where from and to are any components that match the from and to selectors respectively"
+    },
+    "model": {
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "registrant": {
+            "kind": "artifacthub"
+        },
+        "model": {
+            "version": "v1.25.2"
+        },
+        "displayName": "Kubernetes",
+        "category": {
+            "name": "Orchestration \u0026 Management",
+            "metadata": null
+        },
+        "metadata": {}
+    },
+    "status": "enabled",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "model": {
+                            "name": "*"
+                        },
+                        "kind": "*",
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatedRef": [
+                                [
+                                    "configuration",
+                                    "metadata",
+                                    "namespace"
+                                ]
+                            ],
+                            "description": "Namespace configuration to be applied to all namespaced resources."
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "Namespace",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        },
+                        "patch": {
+                            "patchStrategy": "replace",
+                            "mutatorRef": [
+                                [
+                                    "displayName"
+                                ]
+                            ],
+                            "description": "Namespace configuration to be applied to all namespaced resources."
+                        }
+                    }
+                ]
+            },
+            "deny": {
+                "from": [
+                    {
+                        "kind": "Namespace",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "Namespace",
+                        "model": {
+                            "name": "kubernetes",
+                            "registrant": {
+                                "kind": "artifacthub"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -11,37 +11,46 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode        = "mesheryctl-1090"
-	ErrInvalidTokenCode       = "mesheryctl-1091"
-	ErrFailReqStatusCode      = "mesheryctl-1092"
-	ErrAttachAuthTokenCode    = "mesheryctl-1093"
-	ErrUnmarshalCode          = "mesheryctl-1094"
-	ErrFileReadCode           = "mesheryctl-1095"
-	ErrCreatingRequestCode    = "mesheryctl-1096"
-	ErrMarshalCode            = "mesheryctl-1097"
-	ErrReadResponseBodyCode   = "mesheryctl-1098"
-	ErrParsingUrlCode         = "mesheryctl-1099"
-	ErrNotFoundCode           = "mesheryctl-1100"
-	ErrUnauthenticatedCode    = "mesheryctl-1101"
-	ErrInvalidFileCode        = "mesheryctl-1102"
-	ErrInvalidNameOrIDCode    = "mesheryctl-1103"
-	ErrInvalidAPIResponseCode = "mesheryctl-1104"
-	ErrReadConfigFileCode     = "mesheryctl-1105"
-	ErrMarshalIndentCode      = "mesheryctl-1106"
-	ErrLoadConfigCode         = "mesheryctl-1107"
-	ErrResponseStatusBodyCode = "mesheryctl-1108"
-	ErrResponseStatusCode     = "mesheryctl-1109"
-	ErrJSONToYAMLCode         = "mesheryctl-1110"
-	ErrOutFormatFlagCode      = "mesheryctl-1111"
-	ErrParseGithubFileCode    = "mesheryctl-1112"
-	ErrReadTokenCode          = "mesheryctl-1113"
-	ErrRequestResponseCode    = "mesheryctl-1114"
-	ErrMarshalStructToCSVCode = "mesheryctl-1115"
-	ErrAppendToSheetCode      = "mesheryctl-1116"
-	ErrBadRequestCode         = "mesheryctl-1117"
-	ErrInvalidArgumentCode    = "mesheryctl-1118"
-	ErrGeneratingIconsCode    = "mesheryctl-1119"
-	ErrClearLineCode          = "mesheryctl-1120"
+	ErrFailRequestCode            = "mesheryctl-1090"
+	ErrInvalidTokenCode           = "mesheryctl-1091"
+	ErrFailReqStatusCode          = "mesheryctl-1092"
+	ErrAttachAuthTokenCode        = "mesheryctl-1093"
+	ErrUnmarshalCode              = "mesheryctl-1094"
+	ErrFileReadCode               = "mesheryctl-1095"
+	ErrCreatingRequestCode        = "mesheryctl-1096"
+	ErrMarshalCode                = "mesheryctl-1097"
+	ErrReadResponseBodyCode       = "mesheryctl-1098"
+	ErrParsingUrlCode             = "mesheryctl-1099"
+	ErrNotFoundCode               = "mesheryctl-1100"
+	ErrUnauthenticatedCode        = "mesheryctl-1101"
+	ErrInvalidFileCode            = "mesheryctl-1102"
+	ErrInvalidNameOrIDCode        = "mesheryctl-1103"
+	ErrInvalidAPIResponseCode     = "mesheryctl-1104"
+	ErrReadConfigFileCode         = "mesheryctl-1105"
+	ErrMarshalIndentCode          = "mesheryctl-1106"
+	ErrLoadConfigCode             = "mesheryctl-1107"
+	ErrResponseStatusBodyCode     = "mesheryctl-1108"
+	ErrResponseStatusCode         = "mesheryctl-1109"
+	ErrJSONToYAMLCode             = "mesheryctl-1110"
+	ErrOutFormatFlagCode          = "mesheryctl-1111"
+	ErrParseGithubFileCode        = "mesheryctl-1112"
+	ErrReadTokenCode              = "mesheryctl-1113"
+	ErrRequestResponseCode        = "mesheryctl-1114"
+	ErrBadRequestCode             = "mesheryctl-1117"
+	ErrInvalidArgumentCode        = "mesheryctl-1118"
+	ErrGeneratingIconsCode        = "mesheryctl-1119"
+	ErrClearLineCode              = "mesheryctl-1120"
+	ErrGeneratesModelCode         = "mesheryctl-1132"
+	ErrUpdateComponentsCode       = "mesheryctl-1134"
+	ErrMissingCommandsCode        = "mesheryctl-1137"
+	ErrKubernetesConnectivityCode = "mesheryctl-1138"
+	ErrKubernetesQueryCode        = "mesheryctl-1139"
+	ErrCreateManifestsFolderCode  = "mesheryctl-1141"
+	ErrDownloadFileCode           = "mesheryctl-1142"
+	ErrNoManifestFilesFoundCode   = "mesheryctl-1143"
+	ErrWalkManifestsCode          = "mesheryctl-1144"
+	ErrGetChannelVersionCode      = "mesheryctl-1145"
+	ErrInvalidModelCode           = "mesheryctl-1150"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -142,6 +151,8 @@ func SystemModelSubError(msg string, cmd string) string {
 		return formatError(msg, cmdModelList)
 	case "view":
 		return formatError(msg, cmdModelView)
+	case "import":
+		return formatError(msg, cmdModelImport)
 	default:
 		return formatError(msg, cmdModel)
 	}
@@ -177,6 +188,10 @@ func RegistryError(msg string, cmd string) string {
 	switch cmd {
 	case "publish":
 		return formatError(msg, cmdRegistryPublish)
+	case "generate":
+		return formatError(msg, cmdRegistryGenerate)
+	case "update":
+		return formatError(msg, cmdRegistryUpdate)
 	default:
 		return formatError(msg, cmdRegistry)
 	}
@@ -188,6 +203,10 @@ func RelationshipsError(msg string, cmd string) string {
 		return formatError(msg, cmdRelationshipView)
 	case "generate":
 		return formatError(msg, cmdRelationshipGenerateDocs)
+	case "search":
+		return formatError(msg, cmdRelationshipSearch)
+	case "list":
+		return formatError(msg, cmdRelationshipList)
 	default:
 		return formatError(msg, cmdRelationships)
 	}
@@ -228,116 +247,152 @@ func FilterViewError(msg string) string {
 	return formatError(msg, cmdFilterView)
 }
 
-// PatternError returns a formatted error message with a link to 'pattern' command usage page in addition to the error message
-func PatternError(msg string) string {
-	return formatError(msg, cmdPattern)
+// DesignError returns a formatted error message with a link to 'design' command usage page in addition to the error message
+func DesignError(msg string) string {
+	return formatError(msg, cmdDesign)
 }
 
-// PatternViewError returns a formatted error message with a link to the 'pattern view' commad usage page in addition to the error message
-func PatternViewError(msg string) string {
-	return formatError(msg, cmdPatternView)
+// DesignViewError returns a formatted error message with a link to the 'design view' commad usage page in addition to the error message
+func DesignViewError(msg string) string {
+	return formatError(msg, cmdDesignView)
 }
 
 // formatError returns a formatted error message with a link to the meshery command URL
 func formatError(msg string, cmd cmdType) string {
 	switch cmd {
 	case cmdRoot:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, rootUsageURL)
+		return formatUsageDetails(msg, rootUsageURL)
 	case cmdPerf:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, perfUsageURL)
+		return formatUsageDetails(msg, perfUsageURL)
 	case cmdMesh:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, meshUsageURL)
+		return formatUsageDetails(msg, meshUsageURL)
 	case cmdSystem:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUsageURL)
+		return formatUsageDetails(msg, systemUsageURL)
 	case cmdSystemStop:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStopURL)
+		return formatUsageDetails(msg, systemStopURL)
 	case cmdSystemUpdate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemUpdateURL)
+		return formatUsageDetails(msg, systemUpdateURL)
 	case cmdSystemReset:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemResetURL)
+		return formatUsageDetails(msg, systemResetURL)
 	case cmdSystemStatus:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemStatusURL)
+		return formatUsageDetails(msg, systemStatusURL)
 	case cmdSystemRestart:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, systemRestartURL)
+		return formatUsageDetails(msg, systemRestartURL)
 	case cmdExp:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, expUsageURL)
+		return formatUsageDetails(msg, expUsageURL)
 	case cmdFilter:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterUsageURL)
+		return formatUsageDetails(msg, filterUsageURL)
 	case cmdFilterImport:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterImportURL)
+		return formatUsageDetails(msg, filterImportURL)
 	case cmdFilterDelete:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterDeleteURL)
+		return formatUsageDetails(msg, filterDeleteURL)
 	case cmdFilterList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterListURL)
+		return formatUsageDetails(msg, filterListURL)
 	case cmdFilterView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, filterViewURL)
-	case cmdPattern:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternUsageURL)
-	case cmdPatternView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, patternViewURL)
+		return formatUsageDetails(msg, filterViewURL)
+	case cmdDesign:
+		return formatUsageDetails(msg, designUsageURL)
+	case cmdDesignView:
+		return formatUsageDetails(msg, designViewURL)
+	case cmdDesignExport:
+		return formatUsageDetails(msg, designExportURL)
 	case cmdContextDelete:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextDeleteURL)
+		return formatUsageDetails(msg, contextDeleteURL)
 	case cmdContextCreate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextCreateURL)
+		return formatUsageDetails(msg, contextCreateURL)
 	case cmdContextView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextViewURL)
+		return formatUsageDetails(msg, contextViewURL)
 	case cmdContext:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, contextUsageURL)
+		return formatUsageDetails(msg, contextUsageURL)
 	case cmdChannelSwitch:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSwitchURL)
+		return formatUsageDetails(msg, channelSwitchURL)
 	case cmdChannelView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelViewURL)
+		return formatUsageDetails(msg, channelViewURL)
 	case cmdChannelSet:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelSetURL)
+		return formatUsageDetails(msg, channelSetURL)
 	case cmdChannel:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, channelUsageURL)
+		return formatUsageDetails(msg, channelUsageURL)
 	case cmdProviderView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerViewURL)
+		return formatUsageDetails(msg, providerViewURL)
 	case cmdProviderList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerListURL)
+		return formatUsageDetails(msg, providerListURL)
 	case cmdProviderSet:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSetURL)
+		return formatUsageDetails(msg, providerSetURL)
 	case cmdProviderSwitch:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerSwitchURL)
+		return formatUsageDetails(msg, providerSwitchURL)
 	case cmdProviderReset:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerResetURL)
+		return formatUsageDetails(msg, providerResetURL)
 	case cmdProvider:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, providerUsageURL)
+		return formatUsageDetails(msg, providerUsageURL)
 	case cmdToken:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, tokenUsageURL)
+		return formatUsageDetails(msg, tokenUsageURL)
 	case cmdModel:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelUsageURL)
+		return formatUsageDetails(msg, modelUsageURL)
 	case cmdModelList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelListURL)
+		return formatUsageDetails(msg, modelListURL)
+	case cmdModelImport:
+		return formatUsageDetails(msg, modelImportURl)
 	case cmdModelView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, modelViewURL)
+		return formatUsageDetails(msg, modelViewURL)
 	case cmdRegistry:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, registryUsageURL)
+		return formatUsageDetails(msg, registryUsageURL)
+	case cmdRegistryPublish:
+		return formatUsageDetails(msg, registryPublishURL)
+	case cmdRegistryGenerate:
+		return formatUsageDetails(msg, registryGenerateURL)
+	case cmdRegistryUpdate:
+		return formatUsageDetails(msg, registryUpdateURL)
 	case cmdEnvironment:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentUsageURL)
+		return formatUsageDetails(msg, environmentUsageURL)
 	case cmdEnvironmentCreate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentCreateURL)
+		return formatUsageDetails(msg, environmentCreateURL)
 	case cmdEnvironmentDelete:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentDeleteURL)
+		return formatUsageDetails(msg, environmentDeleteURL)
 	case cmdEnvironmentList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentListURL)
+		return formatUsageDetails(msg, environmentListURL)
 	case cmdEnvironmentView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, environmentViewURL)
+		return formatUsageDetails(msg, environmentViewURL)
 	case cmdWorkspace:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceUsageURL)
+		return formatUsageDetails(msg, workspaceUsageURL)
 	case cmdWorkspaceCreate:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceCreateURL)
+		return formatUsageDetails(msg, workspaceCreateURL)
 	case cmdWorkspaceList:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, workspaceListURL)
+		return formatUsageDetails(msg, workspaceListURL)
 	case cmdRelationshipView:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipViewURL)
+		return formatUsageDetails(msg, relationshipViewURL)
 	case cmdRelationships:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, relationshipUsageURL)
+		return formatUsageDetails(msg, relationshipUsageURL)
 	case cmdRelationshipGenerateDocs:
-		return fmt.Sprintf("%s\nSee %s for usage details\n", msg, cmdRelationshipGenerateDocs)
+		return formatUsageDetails(msg, cmdRelationshipGenerateDocsURL)
+	case cmdComponent:
+		return formatUsageDetails(msg, componentUsageURL)
+	case cmdComponentList:
+		return formatUsageDetails(msg, componentListURL)
+	case cmdComponentSearch:
+		return formatUsageDetails(msg, componentSearchURL)
+	case cmdComponentView:
+		return formatUsageDetails(msg, componentViewURL)
+	case cmdConnection:
+		return formatUsageDetails(msg, connectionUsageURL)
+	case cmdConnectionDelete:
+		return formatUsageDetails(msg, connectionDeleteURL)
+	case cmdConnectionList:
+		return formatUsageDetails(msg, connectionListURL)
+	case cmdExpRelationship:
+		return formatUsageDetails(msg, expRelationshipUsageURL)
+	case cmdExpRelationshipGenerate:
+		return formatUsageDetails(msg, expRelationshipGenerateURL)
+	case cmdExpRelationshipView:
+		return formatUsageDetails(msg, expRelationshipViewURL)
+	case cmdExpRelationshipList:
+		return formatUsageDetails(msg, expRelationshipListURL)
 	default:
 		return fmt.Sprintf("%s\n", msg)
 	}
+}
+
+func formatUsageDetails(msg string, docURL string) string {
+	return fmt.Sprintf("%s\nSee %s for usage details\n", msg, docURL)
 }
 
 func ErrFailRequest(err error) error {
@@ -438,19 +493,60 @@ func ErrInvalidNameOrID(err error) error {
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert,
 		[]string{"Authentication token Not Found"},
-		[]string{"Authentication token not found: " + err.Error()},
+		[]string{"Authentication token not found: " + err.Error() + "\nLog in with `mesheryctl system login`"},
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
+func ErrCreateManifestsFolder(err error) error {
+	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
+}
 
-func ErrFailReqStatus(statusCode int) error {
+func ErrFailReqStatus(statusCode int, obj string) error {
 	return errors.New(ErrFailReqStatusCode, errors.Alert,
 		[]string{"Failed response server error"},
-		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possibly Server error"},
+		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ". Server emitted an error: " + obj},
 		[]string{"Invalid API call"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
+func ErrGenerateModel(err error, modelName string) error {
+	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+}
 
+func ErrDownloadFile(err error, obj string) error {
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded"})
+}
+
+func ErrWalkManifests(err error) error {
+	return errors.New(
+		ErrWalkManifestsCode,
+		errors.Alert,
+		[]string{"Error walking through manifests"},
+		[]string{err.Error()},
+		[]string{"Unable to traverse git repository or manifests due to filesystem or permission issues."},
+		[]string{"Ensure the repository and manifests directory are accessible and have proper permissions."},
+	)
+}
+
+func ErrNoManifestFilesFound(path string) error {
+	return errors.New(
+		ErrNoManifestFilesFoundCode,
+		errors.Alert,
+		[]string{"No manifest files found in the specified path"},
+		[]string{fmt.Sprintf("No manifest files present in path: %s", path)},
+		[]string{"The provided directory may be empty, incorrect, or manifests were not properly downloaded."},
+		[]string{"Verify the specified path contains valid manifest files."},
+	)
+}
+func ErrGetChannelVersion(err error) error {
+	return errors.New(
+		ErrGetChannelVersionCode,
+		errors.Alert,
+		[]string{"Unable to retrieve release channel and version information."},
+		[]string{err.Error()},
+		[]string{"Failed to determine version from context or GitHub releases, possibly due to network or configuration issues."},
+		[]string{"Check your network connection and context configuration; ensure GitHub is accessible."},
+	)
+}
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
 		[]string{"Error indenting JSON body"},
@@ -539,22 +635,6 @@ func ErrRequestResponse(err error) error {
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 
-func ErrMarshalStructToCSV(err error) error {
-	return errors.New(ErrMarshalStructToCSVCode, errors.Alert,
-		[]string{"Failed to marshal struct to csv"},
-		[]string{err.Error()},
-		[]string{"The column names in your spreadsheet do not match the names in the struct.", " For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."},
-		[]string{"The column names in the spreadsheet do not match the names in the struct. Please make sure they are spelled exactly the same and use the same case (uppercase/lowercase).", "The value you are trying to convert is not of the expected type for the column. Please ensure it is a [number, string, date, etc.].", "The column names in your spreadsheet do not match the names in the struct. For example, the spreadsheet has a column named 'First Name' but the struct expects a column named 'firstname'. Please make sure the names match exactly."})
-}
-
-func ErrAppendToSheet(err error, id string) error {
-	return errors.New(ErrAppendToSheetCode, errors.Alert,
-		[]string{fmt.Sprintf("Failed to append data into sheet %s", id)},
-		[]string{err.Error()},
-		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
-		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
-}
-
 func ErrBadRequest(err error) error {
 	return errors.New(ErrBadRequestCode, errors.Alert,
 		[]string{"Failed to delete the connection"},
@@ -584,4 +664,24 @@ func ErrClearLine(err error) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
+}
+
+func ErrUpdateComponent(err error, modelName, compName string) error {
+	return errors.New(ErrUpdateComponentsCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
+}
+
+func ErrInvalidModel() error {
+	return errors.New(ErrInvalidModelCode, errors.Alert, []string{"No valid component or relationship found in the model provided"}, []string{"No valid component or relationship found in the Model provided. A Model can be only imported if it contains at least one valid Component or Relationship."}, []string{"Provided components or relationships might have incorrect format", "Folder structure might be incorrect"}, []string{"Know about Meshery Models and Importing instructions here: https://docs.meshery.io/guides/configuration-management/importing-models"})
+}
+
+func ErrMissingCommands(err error) error {
+	return errors.New(ErrMissingCommandsCode, errors.Alert, []string{"Missing required commands"}, []string{err.Error()}, []string{"Required commands are not installed or not in PATH"}, []string{"Install the missing commands and ensure they are in PATH"})
+}
+
+func ErrKubernetesConnectivity(err error) error {
+	return errors.New(ErrKubernetesConnectivityCode, errors.Alert, []string{"Failed to connect to Kubernetes API server"}, []string{err.Error()}, []string{"Kubernetes API server is not reachable"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
+}
+
+func ErrKubernetesQuery(err error) error {
+	return errors.New(ErrKubernetesQueryCode, errors.Alert, []string{"Failed to query Kubernetes API"}, []string{err.Error()}, []string{"Kubernetes API query failed"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
 }

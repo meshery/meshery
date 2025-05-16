@@ -14,157 +14,77 @@
 package workspaces
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	"github.com/eiannone/keyboard"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var listWorkspaceCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered workspaces",
-	Long:  `List name of all registered workspaces`,
+	Long: `List name of all registered workspaces
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/list`,
 	Example: `
-// List all registered workspace
+// List of workspace under a specific organization
 mesheryctl exp workspace list --orgId [orgId]
 
-// Documentation for workspace can be found at:
-https://docs.layer5.io/cloud/spaces/workspaces/
+// List of workspace under a specific organization for a specified page
+mesheryctl exp workspace list --orgId [orgId] --page [page-number]
 
+// Display number of available  workspace under a specific organization
+mesheryctl exp workspace list --orgId [orgId] --count
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if the orgID is provided
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
 		if orgIdFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return nil
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
+			const errorMsg = "[ Organization ID ] isn't specified\n\nUsage: \nmesheryctl  exp workspace list --orgId [Organization ID]\nmesheryctl  exp workspace list --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errorMsg))
 		}
 
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		orgID, _ := cmd.Flags().GetString("orgId")
 
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-
-		url := fmt.Sprintf("%s/api/workspaces?orgID=%s", baseUrl, orgID)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		workspaceResponse, err := api.Fetch[models.WorkspacePage](fmt.Sprintf("%s?orgID=%s", workspacesApiPath, orgID))
 		if err != nil {
 			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		workspaceResponse := &models.WorkspacePage{}
-		err = json.Unmarshal(data, workspaceResponse)
-		if err != nil {
-			return err
-		}
 		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
 		rows := [][]string{}
 		for _, workspace := range workspaceResponse.Workspaces {
 			rows = append(rows, []string{workspace.ID.String(), workspace.Name, workspace.OrganizationID.String(), workspace.Description, workspace.CreatedAt.String(), workspace.UpdatedAt.String()})
 		}
 
-		if len(rows) == 0 {
-			utils.Log.Info("No workspace found")
-			return nil
+		count, _ := cmd.Flags().GetBool("count")
+		dataToDisplay := display.DisplayedData{
+			DataType:         "workspaces",
+			Header:           header,
+			Rows:             rows,
+			Count:            int64(workspaceResponse.TotalCount),
+			DisplayCountOnly: count,
+			IsPage:           cmd.Flags().Changed("page"),
 		}
 
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			startIndex := 0
-			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			for {
-				// Clear the entire terminal screen
-				utils.ClearLine()
-
-				// Print number of workspaces and current page number
-				whiteBoardPrinter.Println("Total number of workspaces: ", len(rows))
-				whiteBoardPrinter.Println("Page: ", startIndex/maxRowsPerPage+1)
-
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
-
-				utils.PrintToTable(header, rows[startIndex:endIndex])
-				keysEvents, err := keyboard.GetKeys(10)
-				if err != nil {
-					return err
-				}
-
-				defer func() {
-					_ = keyboard.Close()
-				}()
-
-				event := <-keysEvents
-				if event.Err != nil {
-					utils.Log.Error(errors.New("error reading keyboard event"))
-					break
-				}
-
-				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-					break
-				}
-
-				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-					startIndex += maxRowsPerPage
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if startIndex >= len(rows) {
-					break
-				}
-			}
+		err = display.List(dataToDisplay)
+		if err != nil {
+			return err
 		}
+
 		return nil
 	},
+}
+
+func init() {
+	listWorkspaceCmd.Flags().BoolP("count", "", false, "total number of registered workspaces")
+	listWorkspaceCmd.Flags().StringP("orgId", "o", "", "Organization ID")
 }

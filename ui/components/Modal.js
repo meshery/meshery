@@ -4,87 +4,18 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Button,
   Typography,
   CircularProgress,
-} from '@material-ui/core';
-import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import CloseIcon from '@material-ui/icons/Close';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+  ModalBody,
+  ModalFooter,
+  PrimaryActionButtons,
+  Modal as SistentModal,
+} from '@layer5/sistent';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { ArrowDropDown } from '@material-ui/icons';
+import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
-import Link from 'next/link';
-import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
-
-const useStyles = makeStyles((theme) => ({
-  '@keyframes rotateCloseIcon': {
-    from: {
-      transform: 'rotate(0deg)',
-    },
-    to: {
-      transform: 'rotate(90deg)',
-    },
-  },
-  infoIcon: {
-    position: 'absolute',
-    right: 10,
-    color: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
-  },
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingBottom: 10,
-    padding: '0 .5rem',
-    paddingTop: 10,
-    backgroundColor: theme.palette.secondary.mainBackground,
-  },
-  modelHeader: {
-    fontSize: '1rem',
-    color: '#fff',
-  },
-  iconStyle: {
-    color: '#fff',
-    '&:hover': {
-      backgroundColor: 'transparent !important',
-      animation: '$rotateCloseIcon 1s',
-    },
-  },
-  iconContainer: {
-    // transition: 'all .3s',
-  },
-  submitButton: {
-    backgroundColor: theme.palette.secondary.focused,
-    color: '#fff',
-    textTransform: 'uppercase',
-  },
-  iconPatt: {
-    display: 'flex',
-    alignItems: 'center',
-    marginRight: theme.spacing(1),
-  },
-  btnText: {
-    textTransform: 'uppercase',
-  },
-  toolTip: {
-    textDecoration: 'underline',
-    color: theme.palette.secondary.link2,
-  },
-  dialogAction: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '0.5rem 1rem',
-  },
-  snackbar: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-  },
-  leftHeaderIcon: {
-    paddingLeft: '0.45rem',
-  },
-}));
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -149,35 +80,19 @@ function Modal(props) {
     type,
     schemaChangeHandler,
     handleSubmit,
-    showInfoIcon,
     submitBtnText,
     leftHeaderIcon,
-    submitBtnIcon,
     uiSchema = {},
+    helpText,
     RJSFWrapperComponent = null,
     initialData = {},
   } = props;
-  const classes = useStyles();
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const [snackbar, setSnackbar] = useState(false);
   const formStateRef = useRef({});
   const formRef = React.createRef();
   const [loadingSchema, setLoadingSchema] = useState(true);
-
-  const renderTooltipContent = () => (
-    <div>
-      <span>{showInfoIcon.text}</span>
-      {showInfoIcon.link && (
-        <Link href={showInfoIcon.link} passHref onClick={(e) => e.stopPropagation()}>
-          <a className={classes.toolTip} target="_blank" rel="noopener noreferrer">
-            Learn more
-          </a>
-        </Link>
-      )}
-    </div>
-  );
-
+  const { notify } = useNotification();
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleClose();
@@ -193,10 +108,9 @@ function Modal(props) {
 
       for (const word of forbiddenWords) {
         if (designName?.includes(word)) {
-          setSnackbar({
-            severity: 'warning',
+          notify({
+            event_type: EVENT_TYPES.WARNING,
             message: `Design name should not contain Untitled Design, Untitled, LFX`,
-            open: true,
           });
           setCanNotSubmit(true);
           break;
@@ -218,88 +132,144 @@ function Modal(props) {
 
   return (
     <>
-      <Dialog style={{ zIndex: 9999 }} open={open} onClose={handleClose}>
-        <div className={classes.modalHeader}>
-          <Typography className={classes.leftHeaderIcon}>
-            {leftHeaderIcon ? leftHeaderIcon : null}
-          </Typography>
-          <Typography className={classes.modelHeader} variant="h5">
-            {title}
-            {schema_array?.length < 1 && (
-              <SchemaVersion
-                schema_array={schema_array}
-                type={type}
-                schemaChangeHandler={schemaChangeHandler}
-              />
-            )}
-          </Typography>
-          <IconButton className={classes.iconContainer} onClick={handleClose} disableRipple>
-            <CloseIcon className={classes.iconStyle} />
-          </IconButton>
-        </div>
+      <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
+        <Typography variant="h5">
+          {schema_array?.length < 1 && (
+            <SchemaVersion
+              schema_array={schema_array}
+              type={type}
+              schemaChangeHandler={schemaChangeHandler}
+            />
+          )}
+        </Typography>
+        <ModalBody>
+          {loadingSchema ? (
+            <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+              <CircularProgress />
+            </div>
+          ) : (
+            <RJSFWrapper
+              key={type}
+              formData={initialData || formStateRef}
+              jsonSchema={schema || getSchema(type)}
+              uiSchema={uiSchema}
+              onChange={handleFormChange}
+              liveValidate={false}
+              formRef={formRef}
+              hideTitle={true}
+              {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
+            />
+          )}
+        </ModalBody>
+        <ModalFooter variant="filled" helpText={helpText} hasHelpText={!!helpText}>
+          <PrimaryActionButtons
+            primaryText={submitBtnText || 'Submit'}
+            secondaryText="Cancel"
+            primaryButtonProps={{
+              onClick: handleFormSubmit,
+              disabled: canNotSubmit,
+            }}
+            secondaryButtonProps={{
+              onClick: handleClose,
+            }}
+          />
+        </ModalFooter>
+      </SistentModal>
+    </>
+  );
+}
 
+export default React.memo(Modal);
+
+function RJSFModalWrapper({
+  handleClose,
+  schema,
+  uiSchema = {},
+  initialData = {},
+  handleSubmit,
+  handleNext,
+  title,
+  submitBtnText,
+  helpText,
+  widgets = {},
+}) {
+  const formRef = useRef();
+  const formStateRef = useRef();
+  const [canNotSubmit, setCanNotSubmit] = useState(false);
+  const [loadingSchema, setLoadingSchema] = useState(true);
+  const { notify } = useNotification();
+  useEffect(() => {
+    setCanNotSubmit(false);
+    const handleDesignNameCheck = () => {
+      const designName = title?.toLowerCase();
+      const forbiddenWords = ['untitled design', 'Untitled', 'lfx'];
+
+      for (const word of forbiddenWords) {
+        if (designName?.includes(word)) {
+          notify({
+            event_type: EVENT_TYPES.WARNING,
+            message: `Design name should not contain Untitled Design, Untitled, LFX`,
+          });
+          setCanNotSubmit(true);
+          break;
+        }
+      }
+    };
+    handleDesignNameCheck();
+  }, [title]);
+
+  const handleFormChange = (data) => {
+    formStateRef.current = data;
+  };
+
+  useEffect(() => {
+    setLoadingSchema(!schema);
+  }, [schema]);
+
+  const handleFormSubmit = () => {
+    if (formRef.current && formRef.current.validateForm()) {
+      handleSubmit(formRef.current.state.formData);
+      if (handleNext) {
+        handleNext();
+      }
+    }
+  };
+
+  return (
+    <>
+      <ModalBody>
         {loadingSchema ? (
           <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
             <CircularProgress />
           </div>
         ) : (
           <RJSFWrapper
-            key={type}
-            formData={initialData || formStateRef}
-            jsonSchema={schema || getSchema(type)}
+            formData={initialData}
+            jsonSchema={schema}
             uiSchema={uiSchema}
             onChange={handleFormChange}
             liveValidate={false}
             formRef={formRef}
             hideTitle={true}
-            {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
+            widgets={widgets}
           />
         )}
-
-        <DialogActions className={classes.dialogAction}>
-          <Button
-            title={submitBtnText ? submitBtnText : 'Submit'}
-            variant="contained"
-            color="primary"
-            className={classes.submitButton}
-            disabled={canNotSubmit}
-            onClick={handleFormSubmit}
-          >
-            {submitBtnIcon ? <div className={classes.iconPatt}>{submitBtnIcon}</div> : null}
-            <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
-          </Button>
-          {showInfoIcon && (
-            <CustomTextTooltip
-              backgroundColor="#3C494F"
-              placement="top"
-              interactive={true}
-              title={renderTooltipContent()}
-            >
-              <IconButton className={classes.infoIcon} color="primary">
-                <InfoOutlinedIcon />
-              </IconButton>
-            </CustomTextTooltip>
-          )}
-        </DialogActions>
-        {snackbar && (
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={snackbar.open}
-            autoHideDuration={6000}
-            onClose={() => setSnackbar(null)}
-          >
-            <Alert
-              className={classes.snackbar}
-              onClose={() => setSnackbar(null)}
-              severity={snackbar.severity}
-            >
-              {snackbar.message}
-            </Alert>
-          </Snackbar>
-        )}
-      </Dialog>
+      </ModalBody>
+      <ModalFooter variant="filled" helpText={helpText}>
+        <PrimaryActionButtons
+          primaryText={submitBtnText || 'Submit'}
+          secondaryText="Cancel"
+          primaryButtonProps={{
+            onClick: handleFormSubmit,
+            disabled: canNotSubmit,
+          }}
+          secondaryButtonProps={{
+            onClick: handleClose,
+          }}
+        />
+      </ModalFooter>
     </>
   );
 }
 
-export default React.memo(Modal);
+export { RJSFModalWrapper };

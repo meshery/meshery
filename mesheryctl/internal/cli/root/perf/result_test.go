@@ -115,7 +115,7 @@ func TestResultCmd(t *testing.T) {
 			os.Stdout = w
 
 			PerfCmd.SetArgs(tt.Args)
-			PerfCmd.SetOutput(rescueStdout)
+			PerfCmd.SetOut(rescueStdout)
 			err := PerfCmd.Execute()
 			if err != nil {
 				if tt.ExpectError {
@@ -141,7 +141,11 @@ func TestResultCmd(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-			utils.Equals(t, expectedResponse, actualResponse)
+
+			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
+			cleanedexpectedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
+
+			utils.Equals(t, cleanedexpectedResponse, cleanedActualResponse)
 			resetVariables()
 		})
 	}
@@ -162,7 +166,7 @@ func TestResultCmd(t *testing.T) {
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 			PerfCmd.SetArgs(tt.Args)
-			PerfCmd.SetOutput(b)
+			PerfCmd.SetOut(b)
 			err := PerfCmd.Execute()
 			if err != nil {
 				if tt.ExpectError {

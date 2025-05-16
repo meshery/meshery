@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: SPIRE
-subtitle: Collaborative and visual infrastructure as code for SPIRE
+subtitle: Collaborative and visual infrastructure as design for SPIRE
 image: /assets/img/integrations/spire/icons/color/spire-color.svg
 permalink: extensibility/integrations/spire
 docURL: https://docs.meshery.io/extensibility/integrations/spire
@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg
   whiteIcon: assets/img/integrations/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "SPIRE design and deployment best practices",
   "Configure SPIRE to securely issue and renew SVIDs.",

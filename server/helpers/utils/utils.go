@@ -1,19 +1,26 @@
 package utils
 
 import (
-	"crypto/md5"
-	"encoding/hex"
+	"database/sql/driver"
 	"encoding/json"
+	"errors"
 	"fmt"
+	"html/template"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
-	"sync"
 
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/model"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
+	"gorm.io/gorm"
 )
 
 const (
@@ -22,6 +29,8 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
+	RegistryLocation      = ".meshery/models"
+	DefVersion            = "1.0.0"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -114,7 +123,7 @@ func ToMapStringInterface(mp interface{}) map[string]interface{} {
 	return res
 }
 
-func IsClosed(ch chan struct{}) bool {
+func IsClosed[K any](ch chan K) bool {
 	if ch == nil {
 		return true
 	}
@@ -128,15 +137,9 @@ func IsClosed(ch chan struct{}) bool {
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
-var hashCheckSVG = make(map[string]string)
-var mx sync.Mutex
 
-func writeHashCheckSVG(key string, val string) {
-	mx.Lock()
-	hashCheckSVG[key] = val
-	mx.Unlock()
-}
-func writeSVGHelper(metadata map[string]interface{}, dirname, filename string) {
+func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
+
 	filename = strings.ToLower(filename)
 	successCreatingDirectory := false
 	defer func() {
@@ -144,7 +147,7 @@ func writeSVGHelper(metadata map[string]interface{}, dirname, filename string) {
 			UISVGPaths = append(UISVGPaths, filepath.Join(UI, dirname))
 		}
 	}()
-	if metadata["svgColor"] != "" {
+	if svgColor != "" {
 		path := filepath.Join(UI, dirname, "color")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
@@ -153,31 +156,21 @@ func writeSVGHelper(metadata map[string]interface{}, dirname, filename string) {
 		}
 		successCreatingDirectory = true
 
-		x, ok := metadata["svgColor"].(string)
-		if ok {
-			hash := md5.Sum([]byte(x))
-			hashString := hex.EncodeToString(hash[:])
-			pathsvg := hashCheckSVG[hashString]
-			if pathsvg != "" { // the image has already been loaded, point the component to that path
-				metadata["svgColor"] = pathsvg
-				goto White
-			}
-			f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			_, err = f.WriteString(x)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			metadata["svgColor"] = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
-			writeHashCheckSVG(hashString, metadata["svgColor"].(string))
+		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
+		_, err = f.WriteString(svgColor)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		svgColorPath = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
+
 	}
-White:
-	if metadata["svgWhite"] != "" {
+
+	if svgWhite != "" {
 		path := filepath.Join(UI, dirname, "white")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
@@ -186,31 +179,20 @@ White:
 		}
 		successCreatingDirectory = true
 
-		x, ok := metadata["svgWhite"].(string)
-		if ok {
-			hash := md5.Sum([]byte(x))
-			hashString := hex.EncodeToString(hash[:])
-			pathsvg := hashCheckSVG[hashString]
-			if pathsvg != "" { // the image has already been loaded, point the component to that path
-				metadata["svgWhite"] = pathsvg
-				goto Complete
-			}
-			f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			_, err = f.WriteString(x)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			metadata["svgWhite"] = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
-			writeHashCheckSVG(hashString, metadata["svgWhite"].(string))
+		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
+		_, err = f.WriteString(svgWhite)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		svgWhitePath = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
+
 	}
-Complete:
-	if metadata["svgComplete"] != "" {
+	if svgComplete != "" {
 		path := filepath.Join(UI, dirname, "complete")
 		err := os.MkdirAll(path, 0777)
 		if err != nil {
@@ -219,39 +201,44 @@ Complete:
 		}
 		successCreatingDirectory = true
 
-		x, ok := metadata["svgComplete"].(string)
-		if ok {
-			hash := md5.Sum([]byte(x))
-			hashString := hex.EncodeToString(hash[:])
-			pathsvg := hashCheckSVG[hashString]
-			if pathsvg != "" { // the image has already been loaded, point the component to that path
-				metadata["svgComplete"] = pathsvg
-				return
-			}
-			f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			_, err = f.WriteString(x)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			metadata["svgComplete"] = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
-			writeHashCheckSVG(hashString, metadata["svgComplete"].(string))
+		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
+		if err != nil {
+			fmt.Println(err)
+			return
 		}
+		_, err = f.WriteString(svgComplete)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		svgCompletePath = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
+
 	}
+	return
 }
-func WriteSVGsOnFileSystem(comp *v1beta1.ComponentDefinition) {
-	if comp.Metadata == nil {
-		comp.Metadata = make(map[string]interface{})
+func WriteSVGsOnFileSystem(comp *component.ComponentDefinition) {
+
+	if comp.Styles != nil {
+		writeSVGHelper(
+			comp.Styles.SvgColor,
+			comp.Styles.SvgWhite,
+			comp.Styles.SvgComplete,
+			comp.Model.Name,
+			comp.Component.Kind) //Write SVG on components
 	}
-	if comp.Model.Metadata == nil {
-		comp.Model.Metadata = make(map[string]interface{})
+
+	if comp.Model.Metadata != nil {
+		svgComplete := ""
+		if comp.Model.Metadata.SvgComplete != nil {
+			svgComplete = *comp.Model.Metadata.SvgComplete
+		}
+		writeSVGHelper(
+			comp.Model.Metadata.SvgColor,
+			comp.Model.Metadata.SvgWhite,
+			svgComplete,
+			comp.Model.Name,
+			comp.Model.Name) //Write SVG on models
 	}
-	writeSVGHelper(comp.Metadata, comp.Model.Name, comp.Component.Kind)   //Write SVG on components
-	writeSVGHelper(comp.Model.Metadata, comp.Model.Name, comp.Model.Name) //Write SVG on models
 }
 
 func DeleteSVGsFromFileSystem() {
@@ -347,9 +334,214 @@ func MarshalAndUnmarshal[k any, v any](val k) (unmarshalledvalue v, err error) {
 		return
 	}
 
-	err = utils.Unmarshal(data, &unmarshalledvalue)
+	err = encoding.Unmarshal([]byte(data), &unmarshalledvalue)
 	if err != nil {
 		return
 	}
 	return
+}
+
+type JSONMap map[string]interface{}
+
+// Value converts the JSON map to a database value.
+func (j JSONMap) Value() (driver.Value, error) {
+	return json.Marshal(j)
+}
+
+// Scan converts the database value to a JSON map.
+func (j *JSONMap) Scan(value interface{}) error {
+	bytes, ok := value.([]byte)
+	if !ok {
+		return errors.New("type assertion to []byte failed")
+	}
+	return json.Unmarshal(bytes, j)
+}
+
+// ApplyFilters applies dynamic filters to the GORM query
+func ApplyFilters(query *gorm.DB, filter string, dynamicKeys []string) *gorm.DB {
+	if filter != "" {
+		filterArr := strings.Split(filter, " ")
+		filterKey := filterArr[0]
+		filterVal := strings.Join(filterArr[1:], " ")
+
+		switch filterKey {
+		case "deleted_at":
+			// Handle deleted_at filter
+			if filterVal == "Deleted" {
+				query = query.Where("deleted_at IS NOT NULL")
+			} else {
+				query = query.Where("deleted_at IS NULL")
+			}
+		default:
+			// Handle dynamic keys
+			for _, key := range dynamicKeys {
+				if filterKey == key {
+					query = query.Where(fmt.Sprintf("%s = ?", filterKey), filterVal)
+					break
+				}
+			}
+		}
+	}
+
+	return query
+}
+
+func FormatToTitleCase(s string) string {
+	c := cases.Title(language.English)
+	return c.String(s)
+}
+func ExtractFile(filePath string, destDir string) error {
+
+	if utils.IsTarGz(filePath) {
+		return utils.ExtractTarGz(destDir, filePath)
+	} else if utils.IsZip(filePath) {
+		return utils.ExtractZip(destDir, filePath)
+	}
+	return utils.ErrExtractType
+}
+func ConvertToJSONCompatible(data interface{}) interface{} {
+	switch v := data.(type) {
+	case map[interface{}]interface{}:
+		m := make(map[string]interface{})
+		for key, value := range v {
+			m[key.(string)] = ConvertToJSONCompatible(value)
+		}
+		return m
+	case []interface{}:
+		for i, item := range v {
+			v[i] = ConvertToJSONCompatible(item)
+		}
+	}
+	return data
+}
+func ReplaceSVGData(model *model.ModelDefinition) error {
+	// Function to read SVG data from file
+	readSVGData := func(path string) (string, error) {
+		path = "../../" + path
+		svgData, err := os.ReadFile(path)
+		if err != nil {
+			return "", err
+		}
+		return string(svgData), nil
+	}
+
+	// Replace SVG paths with actual data in metadata
+	metadata := model.Metadata
+	if metadata.SvgColor != "" {
+		svgData, err := readSVGData(metadata.SvgColor)
+		if err == nil {
+			metadata.SvgColor = svgData
+		} else {
+			return err
+		}
+	}
+	if metadata.SvgWhite != "" {
+		svgData, err := readSVGData(metadata.SvgWhite)
+		if err == nil {
+			metadata.SvgWhite = svgData
+		} else {
+			return err
+		}
+	}
+	components, ok := model.Components.([]component.ComponentDefinition)
+	if !ok {
+		return fmt.Errorf("invalid type for Components field")
+	}
+	// Replace SVG paths with actual data in components
+	for i := range components {
+		compStyle := components[i].Styles
+		if compStyle != nil {
+			svgColor, err := readSVGData(compStyle.SvgColor)
+			if err == nil {
+				compStyle.SvgColor = svgColor
+			} else {
+				return err
+			}
+			svgWhite, err := readSVGData(compStyle.SvgWhite)
+			if err == nil {
+				compStyle.SvgWhite = svgWhite
+			} else {
+				return err
+			}
+		}
+		components[i].Styles = compStyle
+	}
+	model.Components = components
+	return nil
+}
+func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
+	modelLocation := filepath.Join(os.Getenv("HOME"), RegistryLocation)
+	modelDirPath := filepath.Join(modelLocation, modelName, version, DefVersion)
+	err := utils.CreateDirectory(modelDirPath)
+	if err != nil {
+		return "", "", err
+	}
+
+	compDirPath := filepath.Join(modelDirPath, "components")
+	err = utils.CreateDirectory(compDirPath)
+	return modelDirPath, compDirPath, err
+}
+func CopyDirectory(src string, dst string) error {
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		srcPath := filepath.Join(src, entry.Name())
+		dstPath := filepath.Join(dst, entry.Name())
+
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			if err := os.MkdirAll(dstPath, info.Mode()); err != nil {
+				return err
+			}
+			if err := CopyDirectory(srcPath, dstPath); err != nil {
+				return err
+			}
+		} else {
+			if err := copyFile(srcPath, dstPath); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func copyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		return err
+	}
+
+	// Ensure the destination file has the same permissions as the source
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, srcInfo.Mode())
+}
+
+func WriteEscaped(w http.ResponseWriter, data []byte, contentType string) (int, error) {
+	if contentType == "" {
+		contentType = "text/plain; charset=utf-8"
+	}
+	w.Header().Set("Content-Type", contentType)
+	escaped := template.HTMLEscapeString(string(data))
+	return w.Write([]byte(escaped))
 }

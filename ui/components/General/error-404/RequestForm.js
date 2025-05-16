@@ -1,17 +1,9 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
-import NoSsr from '@material-ui/core/NoSsr';
-import { setOrganization, setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
-import ErrorBoundary from '../../ErrorBoundary';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
-import { FormControl, FormGroup, MenuItem } from '@layer5/sistent';
+import { ErrorBoundary, FormControl, FormGroup, MenuItem, useTheme, NoSsr } from '@layer5/sistent';
 import {
   OrgName,
   StyledSelect,
@@ -21,23 +13,31 @@ import {
   StyledTypography,
   StyledFormButton,
 } from './styles';
-import theme from 'themes/app';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
+import CustomErrorFallback from '../ErrorBoundary';
+import { useDispatch, useSelector } from 'react-redux';
+import { setKeys, setOrganization } from '@/store/slices/mesheryUi';
 
-const RequestForm = (props) => {
+const RequestForm = () => {
   const {
     data: orgsResponse,
     isSuccess: isOrgsSuccess,
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
+
+  const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization } = props;
-  const [skip, setSkip] = React.useState(true);
+  const { organization } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const abilitiesResult = useGetCurrentAbilities(organization);
 
+  useEffect(() => {
+    if (abilitiesResult?.currentData?.keys) {
+      dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
+    }
+  }, [abilitiesResult?.currentData?.keys]);
   const { notify } = useNotification();
-
-  useGetCurrentAbilities(organization, props.setKeys, skip);
 
   useEffect(() => {
     if (isOrgsError) {
@@ -51,8 +51,7 @@ const RequestForm = (props) => {
   const handleOrgSelect = (e) => {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
-    setSkip(false);
+    dispatch(setOrganization({ organization: selected }));
   };
 
   return (
@@ -89,7 +88,7 @@ const RequestForm = (props) => {
                             <OrgIcon
                               width="24"
                               height="24"
-                              secondaryFill={theme.palette.darkSlateGray}
+                              secondaryFill={theme.palette.icon.secondary}
                             />
                             <OrgName>{org.name}</OrgName>
                           </MenuItem>
@@ -107,34 +106,14 @@ const RequestForm = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
-  setKeys: bindActionCreators(setKeys, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
 const RequestFormWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Spaces Prefs Component', e)}
-      >
-        <Provider store={store}>
-          <RequestForm {...props} />
-        </Provider>
+      <ErrorBoundary customFallback={CustomErrorFallback}>
+        <RequestForm {...props} />
       </ErrorBoundary>
     </NoSsr>
   );
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(RequestFormWithErrorBoundary));
+export default RequestFormWithErrorBoundary;

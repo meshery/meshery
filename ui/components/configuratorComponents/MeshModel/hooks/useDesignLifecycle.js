@@ -1,18 +1,15 @@
 import { useEffect, useState } from 'react';
 import jsYaml from 'js-yaml';
-// eslint-disable-next-line no-unused-vars
-import * as Types from './types';
 import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { getUnit8ArrayForDesign } from '@/utils/utils';
 
 export default function useDesignLifecycle() {
-  const [designName, setDesignName] = useState('Unitled Design');
   const [designId, setDesignId] = useState();
   const [designJson, setDesignJson] = useState({
-    name: designName,
-    services: {},
+    name: 'Untitled Design',
+    components: [],
+    schemaVersion: 'designs.meshery.io/v1beta1',
   });
   const [designYaml, setDesignyaml] = useState('');
   const { notify } = useNotification();
@@ -29,9 +26,17 @@ export default function useDesignLifecycle() {
    * @param {Types.ComponentDefinition} componentDefinition
    */
   function onSettingsChange(componentDefinition, formReference) {
-    const { kind, apiVersion, model } = componentDefinition;
-    const modelVersion = model.version;
-    const modelName = model.name;
+    const {
+      component,
+      schemaVersion,
+      version,
+      model: {
+        name: modelName,
+        registrant: modelRegistrant,
+        version: modelVersion,
+        category: modelCategory,
+      },
+    } = componentDefinition;
 
     /**
      * Handles actual design-json change in response to form-data change
@@ -39,21 +44,44 @@ export default function useDesignLifecycle() {
      */
     return function handledesignJsonChange(formData) {
       const referKey = formReference.current.referKey;
-      const { name, namespace, labels, annotations, ...settings } = formData;
-
-      const currentJson = { ...designJson };
-      currentJson.services[referKey] = {
-        name,
-        namespace,
-        labels,
-        annotations,
-        type: kind,
-        apiVersion,
-        model: modelName,
-        version: modelVersion,
-        settings,
+      const { name, namespace, labels, annotations, ...configuration } = formData;
+      const newInput = {
+        id: referKey,
+        schemaVersion,
+        version,
+        component,
+        displayName: name,
+        model: {
+          name: modelName,
+          version: modelVersion,
+          category: modelCategory,
+          registrant: modelRegistrant,
+        },
+        configuration: {
+          metadata: {
+            labels,
+            annotations,
+            namespace,
+          },
+          ...configuration,
+        },
       };
-      setDesignJson(currentJson);
+      setDesignJson((prev) => {
+        let newestKey = false;
+        const currentJson =
+          prev.components?.map((val) => {
+            if (val.id == referKey) {
+              newestKey = true;
+              return newInput;
+            }
+            return val;
+          }) || [];
+        if (!newestKey) {
+          currentJson.push(newInput);
+        }
+
+        return { ...prev, components: [...currentJson] };
+      });
     };
   }
 
@@ -64,17 +92,18 @@ export default function useDesignLifecycle() {
   function designSave() {
     promisifiedDataFetch('/api/pattern', {
       body: JSON.stringify({
-        pattern_data: {
-          name: designName,
-          pattern_file: getUnit8ArrayForDesign(designYaml),
-        },
-        save: true,
+        id: designJson.id,
+        name: designJson.name,
+        design_file: designJson,
       }),
       method: 'POST',
     })
       .then((data) => {
         setDesignId(data[0].id);
-        notify({ message: `"${designName}" saved successfully`, event_type: EVENT_TYPES.SUCCESS });
+        notify({
+          message: `"${designJson.name}" saved`,
+          event_type: EVENT_TYPES.SUCCESS,
+        });
       })
       .catch((err) => {
         notify({
@@ -89,15 +118,16 @@ export default function useDesignLifecycle() {
     try {
       await promisifiedDataFetch('/api/pattern', {
         body: JSON.stringify({
-          pattern_data: {
-            name: designName,
-            pattern_file: getUnit8ArrayForDesign(designYaml),
-            id: designId,
-          },
+          name: designJson.name,
+          design_file: designJson,
+          id: designId,
         }),
         method: 'POST',
       });
-      notify({ message: `"${designName}" updated successfully`, event_type: EVENT_TYPES.SUCCESS });
+      notify({
+        message: `"${designJson.name}" updated`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
     } catch (err) {
       notify({
         message: `failed to update design file`,
@@ -110,9 +140,13 @@ export default function useDesignLifecycle() {
   async function designDelete() {
     try {
       await promisifiedDataFetch('/api/pattern/' + designId, { method: 'DELETE' });
-      notify({ message: `Design "${designName}" Deleted`, event_type: EVENT_TYPES.SUCCESS });
+      notify({ message: `Design "${designJson.name}" Deleted`, event_type: EVENT_TYPES.SUCCESS });
       setDesignId(undefined);
-      setDesignName('Unitled Design');
+      setDesignJson({
+        name: 'Untitled Design',
+        components: [],
+        schemaVersion: 'designs.meshery.io/v1beta1',
+      });
     } catch (err) {
       return notify({
         message: `failed to delete design file`,
@@ -123,14 +157,13 @@ export default function useDesignLifecycle() {
   }
 
   const updateDesignName = (name) => {
-    setDesignName(name);
+    setDesignJson((prev) => ({ ...prev, name: name }));
   };
 
   const loadDesign = async (design_id) => {
     try {
       const data = await promisifiedDataFetch('/api/pattern/' + design_id);
       setDesignId(design_id);
-      setDesignName(data.name);
       setDesignJson(jsYaml.load(data.pattern_file));
     } catch (err) {
       notify({
@@ -153,7 +186,6 @@ export default function useDesignLifecycle() {
       });
     }
   };
-
   return {
     designJson,
     onSettingsChange,
@@ -164,7 +196,6 @@ export default function useDesignLifecycle() {
     designUpdate,
     designId,
     designDelete,
-    designName,
     updateDesignName,
     loadDesign,
     updateDesignData,

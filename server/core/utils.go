@@ -1,7 +1,6 @@
 package core
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -40,7 +39,7 @@ func CreateManifestsFolder() error {
 	log.Debug("creating " + ManifestsFolder + "folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(mesheryManifestFolder, os.ModePerm); err != nil {
-		return errors.Wrapf(err, fmt.Sprintf("failed to make %s directory", ManifestsFolder))
+		return errors.Wrapf(err, "failed to make %s directory", ManifestsFolder)
 	}
 	log.Debug("created manifests folder...")
 

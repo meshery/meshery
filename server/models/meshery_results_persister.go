@@ -6,7 +6,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/database"
-	"github.com/sirupsen/logrus"
+	"github.com/layer5io/meshkit/logger"
 )
 
 type MesheryResultsPersister struct {
@@ -35,7 +35,7 @@ type localMesheryResultDBRepresentation struct {
 	PerformanceProfileInfo PerformanceProfile `json:"-" gorm:"constraint:OnDelete:SET NULL;foreignKey:PerformanceProfile"`
 }
 
-func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID string) ([]byte, error) {
+func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID string, log logger.Handler) ([]byte, error) {
 	var res []*localMesheryResultDBRepresentation
 	var count int64
 	query := mrp.DB.Where("performance_profile = ?", profileID)
@@ -50,13 +50,13 @@ func (mrp *MesheryResultsPersister) GetResults(page, pageSize uint64, profileID 
 		Page:       page,
 		PageSize:   pageSize,
 		TotalCount: int(count),
-		Results:    convertLocalRepresentationSliceToMesheryResultSlice(res),
+		Results:    convertLocalRepresentationSliceToMesheryResultSlice(res, log),
 	}
 
 	return marshalMesheryResultsPage(resultPage), err
 }
 
-func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64) ([]byte, error) {
+func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64, log logger.Handler) ([]byte, error) {
 	var res []*localMesheryResultDBRepresentation
 	var count int64
 	query := mrp.DB.Table("meshery_results")
@@ -71,17 +71,17 @@ func (mrp *MesheryResultsPersister) GetAllResults(page, pageSize uint64) ([]byte
 		Page:       page,
 		PageSize:   pageSize,
 		TotalCount: int(count),
-		Results:    convertLocalRepresentationSliceToMesheryResultSlice(res),
+		Results:    convertLocalRepresentationSliceToMesheryResultSlice(res, log),
 	}
 
 	return marshalMesheryResultsPage(resultPage), err
 }
 
-func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID) (*MesheryResult, error) {
+func (mrp *MesheryResultsPersister) GetResult(key uuid.UUID, log logger.Handler) (*MesheryResult, error) {
 	var lres localMesheryResultDBRepresentation
 
 	err := mrp.DB.Table("meshery_results").Find(&lres).Where("id = ?", key).Error
-	res := convertLocalRepresentationToMesheryResult(&lres)
+	res := convertLocalRepresentationToMesheryResult(&lres, log)
 	return res, err
 }
 
@@ -104,18 +104,19 @@ func marshalMesheryResultsPage(mrp *MesheryResultPage) []byte {
 	return res
 }
 
-func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation) (res []*MesheryResult) {
+func convertLocalRepresentationSliceToMesheryResultSlice(local []*localMesheryResultDBRepresentation, log logger.Handler) (res []*MesheryResult) {
 	for _, val := range local {
-		res = append(res, convertLocalRepresentationToMesheryResult(val))
+		res = append(res, convertLocalRepresentationToMesheryResult(val, log))
 	}
 
 	return
 }
 
-func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation) *MesheryResult {
+func convertLocalRepresentationToMesheryResult(local *localMesheryResultDBRepresentation, log logger.Handler) *MesheryResult {
 	var jsonmap map[string]interface{}
 	if err := json.Unmarshal(local.Result, &jsonmap); err != nil {
-		logrus.Error(err)
+		err = ErrUnmarshal(err, "MesheryResult")
+		log.Error(err)
 		return nil
 	}
 

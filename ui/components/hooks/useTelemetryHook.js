@@ -1,9 +1,9 @@
+import { useDispatch } from 'react-redux';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { useNotification } from '@/utils/hooks/useNotification';
 import dataFetch from 'lib/data-fetch';
 import { EVENT_TYPES } from 'lib/event-types';
-import { updateProgress } from 'lib/store';
-import { useDispatch } from 'react-redux';
 
 export function useTelemetryHook(connectionType) {
   switch (connectionType) {
@@ -17,8 +17,10 @@ export function useTelemetryHook(connectionType) {
 function PingPrometheus() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
+
   const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
+
     dataFetch(
       `/api/telemetry/metrics/ping/${connectionID}`,
       {
@@ -32,9 +34,22 @@ function PingPrometheus() {
           });
         }
       },
-      self.handleError,
+      (error) => {
+        let cleanErrorMessage = 'There was an error communicating with Prometheus';
+        let serverError;
+        if (error && typeof error === 'string') {
+          serverError = error.replace(/^Status Code: \d+\.\s*/, '').trim();
+        } else if (error.message) {
+          serverError = error;
+        }
+        notify({
+          message: `${cleanErrorMessage}: ${serverError}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      },
     );
-    dispatch(updateProgress({ showProgress: false }));
+
+    dispatch(updateProgressAction({ showProgress: false }));
   };
   return ping;
 }
@@ -43,7 +58,7 @@ function PingGrafana() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     dataFetch(
       `/api/telemetry/metrics/grafana/ping/${connectionID}`,
       {
@@ -57,9 +72,14 @@ function PingGrafana() {
           });
         }
       },
-      self.handleError,
+      () => {
+        notify({
+          message: 'There was an error communicating with Grafana',
+          event_type: EVENT_TYPES.ERROR,
+        });
+      },
     );
-    dispatch(updateProgress({ showProgress: false }));
+    dispatch(updateProgressAction({ showProgress: false }));
   };
   return ping;
 }

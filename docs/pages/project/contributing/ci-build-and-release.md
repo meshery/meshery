@@ -7,11 +7,12 @@ language: en
 type: project
 category: contributing
 list: include
+training-video: "https://www.youtube.com/watch?v=dlr_nzJV16Q"
 ---
 
 Meshery’s build and release system incorporates many tools, organized into different workflows each triggered by different events. Meshery’s build and release system does not run on a schedule, but is event-driven. GitHub Actions are used to define Meshery’s CI workflows. New builds of Meshery and its various components are automatically generated upon push, release, and other similar events, typically in relation to their respective master branches.
 
-{% include alert.html type="info" title="Meshery Test Plan" content="The <a href='https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#'>Meshery Test Plan</a> is a comprehensive document that outlines the testing strategy for Meshery and specific integration test cases. It includes a list of GitHub workflows and their purpose." %}
+{% include alert.html type="info" title="Meshery Test Documents" content=" The Meshery Test Strategy (<a href='https://docs.google.com/document/d/11nAxYtz2SUusCYZ0JeNRrOLIxkgmmbUVWz63MBZV2oE/edit'>1</a>,<a href='https://docs.google.com/document/d/14vbwnKafqxrr-cJOmLWEvvj75MFrxFKiUdfPwZRhg64/edit'>2</a>) is a comprehensive document that outlines the approach to testing, types of tests, frameworks used - test strategy - for each of Meshery's architectural components. The <a href='https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit'>Meshery Test Plan</a> is a tactical spreadsheet that *itemizes* specific integration and end-to-end test cases and tracks their status. It includes a list of GitHub workflows and their purpose. Join the <a href='https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#'>Meshery CI meeting</a> and/or the <a href='https://meshery.io/subscribe'>developers mailing list</a> to get involved." %}
 
 ## Artifacts
 
@@ -36,11 +37,29 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
-- `GO_VERSION`: As of March, 2024 is 1.21
+- `GO_VERSION`: As of December, 2024 is 1.23
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
-- `CYPRESS_RECORD_KEY`: Used for integration with the Layer5 account on Cypress.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
+- `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
+- `GH_ACCESS_TOKEN`: GitHub access token for various operations
+- `INTEGRATION_SPREADSHEET_CRED`: Credentials for integration spreadsheet access
+- `MAIL_PASSWORD`: Password for email notifications
+- `MAIL_USERNAME`: Username for email notifications
+- `MESHERY_PROVIDER_TOKEN`: Token for Meshery provider authentication
+- `MESHERY_TOKEN`: General Meshery authentication token
+- `METAL_AUTH_TOKEN`: Authentication token for metal provider
+- `METAL_SERVER1`: Configuration for metal server 1
+- `METAL_SERVER2`: Configuration for metal server 2
+- `METAL_SERVER3`: Configuration for metal server 3
+- `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
+- `NETLIFY_SITE_ID`: Site ID for Netlify deployments
+- `PLAYGROUND_CONFIG`: Configuration for playground environments
+- `PROVIDER_TOKEN`: General provider authentication token
+- `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
+- `RELEASEDRAFTER_PAT`: Personal access token for release notes generation
+- `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
+- `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
 
 The Docker Hub user, `mesheryci`, belongs to the "ciusers" team in Docker Hub and acts as the service account under which these automated builds are being pushed. Every time a new Docker Hub repository is created we have to grant “Admin” (in order to update the README in the Docker Hub repository) permissions to the ciusers team.
 
@@ -169,11 +188,11 @@ All Meshery GitHub repositories are configured with GitHub Actions. Everytime a 
 1. assign each of these two tags to the new container image as well as the latest tag.
 1. push the new Docker tags and image to Docker Hub.
 
-### Building `mesheryctl`
+### `mesheryctl`
 
-As a special case, the meshery repository contains an additional artifact produced during each build. This artifact is mesheryctl which is built as an executable binary. In order to make the job of building mesheryctl easier for a combination of different platform architectures and operating systems, we are using [GoReleaser](https://goreleaser.com). Irrespective of branch, for every git commit and git push to the meshery repository, GoReleaser will execute and generate the OS and arch-specific binaries ( but will NOT publish them to GitHub). Even though mesheryctl binaries are built each time a pull request is merged to master, only stable channel artifacts are published (persisted).
+As a special case, the `meshery` repository contains an additional artifact produced during each build. This artifact is `mesheryctl`, which is built as an executable binary. In order to make the job of building `mesheryctl` easier for a combination of different platform architectures and operating systems, we are using [GoReleaser](https://goreleaser.com). Irrespective of branch, for every git commit and git push to the `meshery` repository, GoReleaser will execute and generate the OS and arch-specific binaries (but will NOT persist these artifacts in GitHub). Even though mesheryctl binaries are built each time a pull request is merged to master, only stable channel artifacts are published (persisted).
 
-### Releasing `mesheryctl` to GitHub
+#### Releasing `mesheryctl` to GitHub
 
 Only when a git tag containing a semantic version number is present (is a commit in the master branch) will GoReleaser execute, generate the archives, and also publish the archives to [Meshery’s GitHub releases](https://github.com/meshery/meshery/releases) automatically. GoReleaser is configured to generate artifacts for the following OS, ARCH combination:
 
@@ -184,11 +203,11 @@ Only when a git tag containing a semantic version number is present (is a commit
 
 The artifacts will be made available as a tar.gz archive for all the operating systems. mesheryctl is bundled into packages for commonly used package managers: homebrew and scoop.
 
-#### Homebrew
+##### Homebrew
 
-GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/layer5io/homebrew-tap) repository is the location for Layer5’s brew formulas.
+GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/meshery/homebrew-tap) repository is the location for `mesheryctl`'s brew formulas. Releases of mesheryctl are  published in the official homebrew-core tap at https://github.com/Homebrew/homebrew-core/pkgs/container/core%2Fmesheryctl.
 
-#### Scoop
+##### Scoop
 
 GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
 
@@ -215,13 +234,109 @@ Meshery and its components follow the commonly used, semantic versioning for its
 
 ### Component Versioning
 
-Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/guide/upgrade) for more information.
+Meshery comprises a number of components including a server, adapters, UI, and CLI. As an application, Meshery is a composition of these different functional components. While all of Meshery’s components generally deploy as a collective unit (together), each component is versioned independently, so as to allow them to be loosely coupled and iterate on functionality independently. Some of the components must be upgraded simultaneously, while others may be upgraded independently. See [Upgrading Meshery](/installation/upgrades) for more information.
 
 GitHub release tags will contain a semantic version number. Semantic version numbers will have to be managed manually by tagging a relevant commit in the master branch with a semantic version number (example: v1.2.3).
 
 ## Release Process
 
 Documentation of Meshery releases contains a table of releases and release notes and should be updated with each release.
+
+# Meshery Release Documents and Release Lead Responsibilities
+
+## Meshery Release Documents
+
+Meshery uses several types of release documents to standardize the purpose, style, and structure of release information. These documents are crucial for maintaining clear communication about changes, updates, and new features in Meshery releases.
+
+### Types of Release Documents
+
+- **Changelogs**
+  - Comprehensive list of all changes since the prior release
+  - Generated automatically by tools like ReleaseDrafter
+  - Contains detailed, technical information
+
+- **Release Notes**
+  - Curated, bulleted list of highlights
+  - Summarized and categorized in human-readable format
+  - Includes some engineering terminology and issue references
+  - Based on ReleaseDrafter output, but human-summarized and refined
+
+- **Release Announcement**
+  - Human-written summary highlighting significant items
+  - Includes caveats (e.g., incompatibility on upgrade)
+  - Provides links to other information sources (upgrade guide, feature blogs, full bug fix list)
+  - Contains graphics and links to in-depth documentation
+  - Distributed via #announcements Slack channel and public mailing list (for stable releases)
+
+- **User and Upgrade Docs**
+  - How-to guides for new features
+  - Updates to user-facing documentation
+  - Includes Upgrade Guide updates for version-to-version considerations
+
+- **Feature-functionality Blogs**
+  - In-depth reviews of new or significantly augmented functionality
+  - Explains the what, why, and how of new features
+
+## Meshery Release Lead Responsibilities
+
+The Meshery Release Lead plays a crucial role in coordinating and executing the release process. Their responsibilities span approximately 5 months per release cycle.
+
+### Pre-Release Phase (1 month)
+
+- **Release Planning**
+  - Schedule and organize release planning meetings
+  - Define and communicate release timelines
+  - Coordinate with development, testing, and documentation teams
+
+- **Feature Management**
+  - Oversee feature implementation and prioritization
+  - Ensure all planned features are completed or properly deferred
+
+- **Quality Assurance**
+  - Coordinate with QA team to ensure thorough testing
+  - Address and prioritize bug fixes
+
+- **Documentation Preparation**
+  - Ensure all new features and changes are properly documented
+  - Oversee the creation and updating of release notes
+
+- **Release Build Preparation**
+  - Manage the creation of release branches
+  - Oversee the release build process
+  - Coordinate with DevOps for deployment preparations
+
+### Active Maintenance Phase (6 months)
+
+- **Ongoing Releases**
+  - Manage minor releases every 3 weeks
+  - Coordinate vulnerability fix integrations
+  - Oversee cherry-pick decisions for backports
+
+- **Monitoring and Issue Resolution**
+  - Monitor for release blockers
+  - Coordinate resolution of critical issues
+
+- **Communication**
+  - Lead weekly Meshery build and release meetings
+  - Provide regular status updates to the community
+
+- **Documentation Updates**
+  - Ensure documentation remains current throughout the maintenance phase
+  - Oversee updates to user guides and upgrade instructions
+
+- **End-of-Life Procedures**
+  - Manage the process for deprecating the release
+  - Ensure proper handover to the next release cycle
+
+### Release Manager Qualifications and Selection
+
+- Must be an active community member for at least 3 months
+- Approved by majority vote of current maintainers
+- At least one release manager must meet requirements for vulnerability-related access
+
+To volunteer as a Meshery Release Lead, interested individuals should contact a current maintainer or self-nominate.
+
+This structured approach to release documentation and management ensures consistency, clarity, and efficiency in Meshery's release process, facilitating better communication with users and smoother project development.
 
 ### Automated Releases
 
@@ -369,3 +484,5 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
 
+
+{% include training-video.html %}

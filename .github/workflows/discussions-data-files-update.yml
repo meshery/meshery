@@ -5,9 +5,11 @@ on:
   schedule:
     - cron: '0 0 * * *' #runs every day at midnight
 
+permissions:
+  contents: write
 jobs:
   update:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: github.repository == 'meshery/meshery'
     steps:
       - name: Checkout
@@ -15,12 +17,23 @@ jobs:
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Fetch data for mesheryctl tag
-        run: curl https://discuss.layer5.io/tag/mesheryctl.json -o docs/_data/discuss/mesheryctl.json
+        run: |
+         curl -L http://discuss.meshery.io/tag/mesheryctl.json -o docs/_data/discuss/mesheryctl.json
+          sed -i 's|https://discuss.layer5.io|http://discuss.meshery.io|g' docs/_data/discuss/mesheryctl.json
+          sed -i 's|discuss.layer5.io|discuss.meshery.io|g' docs/_data/discuss/mesheryctl.json
+
       - name: Fetch data for meshery tag
-        run: curl https://discuss.layer5.io/tag/meshery.json -o docs/_data/discuss/meshery.json
-      - name: Commit changes 
-        uses: stefanzweifel/git-auto-commit-action@v5 
-        with: 
+        run: |
+          curl https://discuss.layer5.io/tag/meshery.json -o docs/_data/discuss/meshery.json
+          sed -i 's|https://discuss.layer5.io|http://discuss.meshery.io|g' docs/_data/discuss/meshery.json
+          sed -i 's|discuss.layer5.io|discuss.meshery.io|g' docs/_data/discuss/meshery.json
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
           file_pattern: docs/_data/discuss/*.json
           commit_user_name: Discussions bot
           commit_user_email: discussions@meshery.io

@@ -1,0 +1,107 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "sibling",
+  "subType": "matchlabels",
+  "metadata": {
+    "description": "Sibling relationships represent connections between components that are at the same hierarchical level or share a common parent. An example of this relationship is a Service and a Pod in Kubernetes. In kube-prometheus-stack, ServiceMonitor and PodMonitor resources configure Prometheus to scrape metrics from Kubernetes services and Pods respectively."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "*",
+    "name": "kube-prometheus-stack",
+    "model": {
+      "version": "*"
+    },
+    "displayName": "Kube-prometheus-stack",
+    "category": {
+      "name": "Observability and Analysis",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "ServiceMonitor",
+            "model": {
+              "name": "kube-prometheus-stack",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    },
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "PodMonitor",
+            "model": {
+              "name": "kube-prometheus-stack",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "match": {
+              "refs": [
+                []
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

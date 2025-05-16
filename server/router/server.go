@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/go-openapi/runtime/middleware"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/handlers"
 	"github.com/layer5io/meshery/server/models"
 )
 
@@ -35,6 +35,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("DELETE")
 
 	gMux.HandleFunc("/api/provider", h.ProviderHandler)
+	gMux.HandleFunc("/error", h.HandleErrorHandler)
 	gMux.HandleFunc("/api/providers", h.ProvidersHandler).
 		Methods("GET")
 	gMux.PathPrefix("/api/provider/extension").
@@ -42,6 +43,14 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET", "POST", "OPTIONS", "PUT", "DELETE")
 	gMux.Handle("/api/provider/capabilities", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ProviderCapabilityHandler), models.ProviderAuth))).
 		Methods("GET")
+	gMux.HandleFunc("/provider/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+	})
+	gMux.PathPrefix("/provider/_next").
+		Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+		}))
+
 	gMux.PathPrefix("/provider").
 		Handler(http.HandlerFunc(h.ProviderUIHandler)).
 		Methods("GET")
@@ -99,29 +108,33 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/smi/results/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.FetchSingleSmiResultHandler), models.ProviderAuth))).
 		Methods("GET")
-
+	gMux.Handle("/api/system/fileDownload", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.DownloadHandler), models.NoAuth))).Methods("GET")
+	gMux.Handle("/api/system/fileView", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ViewHandler), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/system/adapter/manage", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MeshAdapterConfigHandler)), models.ProviderAuth)))
 	gMux.Handle("/api/system/adapter/operation", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.MeshOpsHandler)), models.ProviderAuth))).
 		Methods("POST")
 	gMux.Handle("/api/system/adapters", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AdaptersHandler), models.ProviderAuth)))
 	gMux.Handle("/api/system/availableAdapters", http.HandlerFunc(h.AvailableAdaptersHandler)).
 		Methods("GET")
+	gMux.Handle("/api/meshmodels/export", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.ExportModel), models.NoAuth))).Methods("GET")
 
-	gMux.Handle("/api/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.EventStreamHandler), models.ProviderAuth))).
-		Methods("GET")
+	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ClientEventHandler), models.ProviderAuth))).
+		Methods("POST")
 		// This will be changed to /api/events once the UI is compeltely updated to use new events and SSE is tunred off, otherwise existing events will break.
-	gMux.Handle("/api/v2/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllEvents), models.ProviderAuth))).
+	gMux.Handle("/api/system/events", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetAllEvents), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/events/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEventTypes), models.ProviderAuth))).
+	gMux.Handle("/api/system/events/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetEventTypes), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/events/status/bulk", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BulkUpdateEventStatus), models.ProviderAuth))).
+	gMux.Handle("/api/system/events/status/bulk", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BulkUpdateEventStatus), models.ProviderAuth))).
 		Methods("PUT")
-	gMux.Handle("/api/events/status/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEventStatus), models.ProviderAuth))).
+	gMux.Handle("/api/system/events/status/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.UpdateEventStatus), models.ProviderAuth))).
 		Methods("PUT")
-	gMux.Handle("/api/events/bulk", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BulkDeleteEvent), models.ProviderAuth))).
+	gMux.Handle("/api/system/events/bulk", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.BulkDeleteEvent), models.ProviderAuth))).
 		Methods("DELETE")
-	gMux.Handle("/api/events/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteEvent), models.ProviderAuth))).
+	gMux.Handle("/api/system/events/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteEvent), models.ProviderAuth))).
 		Methods("DELETE")
+	gMux.Handle("/api/system/events/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ServerEventConfigurationHandler), models.ProviderAuth))).
+		Methods("GET", "PUT")
 
 	gMux.Handle("/api/telemetry/metrics/grafana/config", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GrafanaConfigHandler), models.ProviderAuth))).
 		Methods("GET", "POST", "DELETE")
@@ -152,9 +165,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("POST", "DELETE")
 	gMux.Handle("/api/pattern", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.PatternFileRequestHandler), models.ProviderAuth))).
 		Methods("POST", "GET")
+
+	gMux.Handle("/api/pattern/import", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileImportHandler), models.ProviderAuth))).
+		Methods("POST")
 	gMux.Handle("/api/pattern/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DesignFileRequestHandlerWithSourceType), models.ProviderAuth))).
-		Methods("POST", "PUT")
-	gMux.Handle("/api/pattern/convert/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.HandleConversionToDesign), models.ProviderAuth))).
 		Methods("POST", "PUT")
 	gMux.Handle("/api/pattern/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryDesignTypesHandler), models.ProviderAuth))).
 		Methods("GET")
@@ -192,6 +206,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/meshmodels/registrants", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelRegistrants), models.NoAuth))).Methods("GET")
 
+	gMux.Handle("/api/meshmodels/register", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RegisterMeshmodels), models.ProviderAuth))).
+		Methods("POST")
 	gMux.Handle("/api/meshmodels/categories/{category}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelCategoriesByName), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/categories/{category}/models", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByCategories), models.NoAuth))).Methods("GET")
 	gMux.Handle("/api/meshmodels/categories/{category}/models/{model}", h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(h.GetMeshmodelModelsByCategoriesByModel), models.NoAuth))).Methods("GET")
@@ -236,22 +252,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/filter/clone/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.CloneMesheryFilterHandler), models.ProviderAuth))).
 		Methods("POST")
 
-	gMux.Handle("/api/application/deploy", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.KubernetesMiddleware(h.ApplicationFileHandler)), models.ProviderAuth))).
-		Methods("POST", "DELETE")
-	gMux.Handle("/api/application", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler), models.ProviderAuth))).
-		Methods("GET", "POST")
-	gMux.Handle("/api/application/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.ApplicationFileRequestHandler), models.ProviderAuth))).
-		Methods("POST", "PUT")
-	gMux.Handle("/api/application/types", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationTypesHandler), models.ProviderAuth))).
-		Methods("GET")
-	gMux.Handle("/api/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationHandler), models.ProviderAuth))).
-		Methods("GET")
-	gMux.Handle("/api/application/download/{id}/{sourcetype}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationSourceHandler), models.ProviderAuth))).
-		Methods("GET")
-	gMux.Handle("/api/application/download/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMesheryApplicationFile), models.ProviderAuth))).
-		Methods("GET")
-	gMux.Handle("/api/application/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMesheryApplicationHandler), models.ProviderAuth))).
-		Methods("DELETE")
 	gMux.Handle("/api/content/design/share", h.ProviderMiddleware((h.AuthMiddleware(h.SessionInjectorMiddleware(h.ShareDesignHandler), models.ProviderAuth)))).
 		Methods("POST")
 	gMux.Handle("/api/content/filter/share", h.ProviderMiddleware((h.AuthMiddleware(h.SessionInjectorMiddleware(h.ShareFilterHandler), models.ProviderAuth)))).
@@ -283,7 +283,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	gMux.Handle("/api/system/meshsync/resources", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResources), models.ProviderAuth))).
 		Methods("GET")
-	gMux.Handle("/api/system/meshsync/resources/kinds", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResourcesKinds), models.ProviderAuth))).
+	gMux.Handle("/api/system/meshsync/resources/summary", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetMeshSyncResourcesSummary), models.ProviderAuth))).
 		Methods("GET")
 	gMux.Handle("/api/system/meshsync/resources/{id}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteMeshSyncResource), models.ProviderAuth))).
 		Methods("DELETE")
@@ -350,16 +350,10 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 
 	//gMux.PathPrefix("/api/system/graphql").Handler(h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GraphqlSystemHandler)))).Methods("GET", "POST")
 
-	gMux.Handle("/user/logout", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		providerI := req.Context().Value(models.ProviderCtxKey)
-		provider, ok := providerI.(models.Provider)
-		if !ok {
-			http.Redirect(w, req, "/provider", http.StatusFound)
-			return
-		}
-		h.LogoutHandler(w, req, provider)
+	gMux.Handle("/user/logout", h.ProviderMiddleware(h.SessionInjectorMiddleware(func(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
+		h.LogoutHandler(w, req, user, provider)
 	})))
-	gMux.Handle("/user/login", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	gMux.Handle("/user/login", h.NoCacheMiddleware(h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
@@ -367,8 +361,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 			return
 		}
 		h.LoginHandler(w, req, provider, false)
-	})))
-	gMux.Handle("/api/user/token", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	}))))
+	gMux.Handle("/api/user/token", h.NoCacheMiddleware(h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
@@ -376,7 +370,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 			return
 		}
 		h.TokenHandler(w, req, provider, false)
-	}))).Methods("POST", "GET")
+	})))).Methods("POST", "GET")
 	gMux.Handle("/api/token", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
 		func(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 			provider.ExtractToken(w, req)
@@ -418,6 +412,19 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/api/integrations/connections/{connectionId}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.DeleteConnection), models.ProviderAuth))).
 		Methods("DELETE")
 
+	gMux.HandleFunc("/auth/redirect", func(w http.ResponseWriter, r *http.Request) {
+		token := r.URL.Query().Get("token")
+		http.SetCookie(w, &http.Cookie{
+			Name:     models.TokenCookieName,
+			Value:    token,
+			Path:     "/",
+			HttpOnly: true,
+			Expires:  time.Now().Add(24 * time.Hour),
+		})
+		h.ServeUI(w, r, "/provider", "../../provider-ui/out/")
+	}).
+		Methods("GET")
+
 	// Swagger Interactive Playground
 	swaggerOpts := middleware.SwaggerUIOpts{SpecURL: "./swagger.yaml"}
 	swaggerSh := middleware.SwaggerUI(swaggerOpts, nil)
@@ -427,7 +434,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.PathPrefix("/ui/public/static/img/meshmodels").Handler(http.StripPrefix("/ui/", fs)).Methods("GET")
 	gMux.PathPrefix("/").
 		Handler(h.ProviderMiddleware(h.AuthMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			handlers.ServeUI(w, r, "", "../../ui/out/")
+			h.ServeUI(w, r, "", "../../ui/out/")
 		}), models.ProviderAuth))).
 		Methods("GET")
 

@@ -17,9 +17,6 @@ yarn-error.log*
 # Next.js
 /.next
 
-# Cypress Tests Files
-cypress/videos
-cypress/screenshots
 # Code coverage
 coverage
 .nyc_output

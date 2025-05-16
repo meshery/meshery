@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Helm Controller
-subtitle: Collaborative and visual infrastructure as code for Helm Controller
+subtitle: Collaborative and visual infrastructure as design for Helm Controller
 image: /assets/img/integrations/helm-controller/icons/color/helm-controller-color.svg
 permalink: extensibility/integrations/helm-controller
 docURL: https://docs.meshery.io/installation/kubernetes/helm
@@ -22,13 +22,16 @@ components:
   colorIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/color/helm-chart-color.svg
   whiteIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/white/helm-chart-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Manages Helm chart releases",
+  "Simplifies Helm chart upgrades and rollbacks",
+  "Integrates with GitOps workflows"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages Helm releases"
+howItWorksDetails: "Streamlined Helm chart management and automation in Kubernetes"
 language: en
 list: include
 type: extensibility

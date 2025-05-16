@@ -1,13 +1,13 @@
 ---
 layout: integration
 title: OpenStack (Crossplane)
-subtitle: Collaborative and visual infrastructure as code for OpenStack (Crossplane)
+subtitle: Collaborative and visual infrastructure as design for OpenStack (Crossplane)
 image: /assets/img/integrations/crossplane-provider-openstack/icons/color/crossplane-provider-openstack-color.svg
 permalink: extensibility/integrations/crossplane-provider-openstack
 docURL: https://docs.meshery.io/extensibility/integrations/crossplane-provider-openstack
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: OpenStack
+integrations-subcategory: Provisioning
 registrant: GitHub
 components: 
 - name: qos-association-v3
@@ -378,13 +378,16 @@ components:
   colorIcon: assets/img/integrations/crossplane-provider-openstack/components/site-connection-v2/icons/color/site-connection-v2-color.svg
   whiteIcon: assets/img/integrations/crossplane-provider-openstack/components/site-connection-v2/icons/white/site-connection-v2-white.svg
   description: 
+components-count: 92
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides declarative API for OpenStack",
+  "Simplifies OpenStack resource management",
+  "Integrates with Kubernetes ecosystem"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages OpenStack resources with Crossplane"
+howItWorksDetails: "Unified management of OpenStack and Kubernetes resources"
 language: en
 list: include
 type: extensibility

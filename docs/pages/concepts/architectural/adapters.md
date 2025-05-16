@@ -56,10 +56,10 @@ Yes, see the [extensibility]({{site.baseurl}}/extensibility) documentation for d
 
 #### Do adapters have to be written in Golang?
 
-No. Adapters much interface with Meshery Server via gRPC. What language is used in that adapter is the perogative of a given adapter's maintainers.
+No. Adapters much interface with Meshery Server via gRPC. What language is used in that adapter is the prerogative of a given adapter's maintainers.
 
 #### Can I run more than one instance of the same Meshery adapter?
 
 Yes. The default configuration of a Meshery deployment includes one instance of each of the Meshery adapters (that have reached a stable version status). You may choose to run multiple instances of the same type of Meshery adapter; e.g. two instances of the `meshery-istio` adapter. To do so, modify ~/.meshery/meshery.yaml to include multiple copies of the given adapter.
 
-See the "[Multiple Adapters]({{site.baseurl}}/guides/multiple-adapters)" guide for more information.
+See the "[Multiple Adapters]({{site.baseurl}}/installation/multiple-adapters)" guide for more information.

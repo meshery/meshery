@@ -1,0 +1,23 @@
+version: 0.0.1
+name: rabbitmq-cluster-operator
+displayName: rabbitmq-cluster-operator
+createdAt: "2024-06-01T11:14:14Z"
+description: |-
+    The RabbitMQ Cluster Operator design leverages Kubernetes to automate the deployment and management of RabbitMQ clusters, a widely-used open-source message broker.
+
+    This design facilitates streamlined operations and enables developers to focus on application logic, leveraging RabbitMQ's robust messaging capabilities for building resilient and scalable distributed systems
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/33307744-8085-4f09-9dda-28666c6bb8c1/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "The RabbitMQ Cluster Operator itself requires maintenance and updates to stay aligned with RabbitMQ and Kubernetes versions. Keeping the operator up to date with the latest patches and features is essential for stability and security. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

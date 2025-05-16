@@ -30,12 +30,15 @@ components:
   colorIcon: assets/img/integrations/istio-operator/components/istio-operator/icons/color/istio-operator-color.svg
   whiteIcon: assets/img/integrations/istio-operator/components/istio-operator/icons/white/istio-operator-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",
   "Design Istio Virtual Services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,11 +1,13 @@
 - title: Quick Start
   url: "installation/quick-start"
-- title: Site
+- title: Website
   external_url: https://meshery.io
-- title: GitHub
-  external_url: https://github.com/meshery/meshery
 - title: Discuss
-  external_url: http://discuss.meshery.io/ 
-# - title: GitHub
-#   external_url: https://github.com/meshery/meshery
+  external_url: https://meshery.io/community#discussion-forums/ 
+- title: Catalog
+  external_url: https://meshery.io/catalog
+- title: Blog
+  external_url: https://meshery.io/blog
+
+
 

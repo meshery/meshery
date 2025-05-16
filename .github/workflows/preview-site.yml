@@ -9,13 +9,13 @@ on:
 jobs:
   deploy-preview:
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout code
         uses: actions/checkout@master
 
       - name: Download Site dir
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           github_token: ${{ secrets.GH_ACCESS_TOKEN }}
           workflow: build-and-preview-site.yml

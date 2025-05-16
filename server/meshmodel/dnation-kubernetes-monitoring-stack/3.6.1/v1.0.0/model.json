@@ -1,0 +1,42 @@
+{
+  "category": {
+   "name": "Uncategorized"
+  },
+  "displayName": "Dnation Kubernetes Monitoring Stack",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": null,
+   "isAnnotation": false,
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "styleOverrides": "",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"#248431\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"#F4790D\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"#E61F2E\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0742 62 39 57.0752 39 51C39 44.9248 34.0742 40 28 40C21.9258 40 17 44.9248 17 51C17 57.0752 21.9258 62 28 62ZM29 57C32.3125 57 35 54.3137 35 51C35 47.6863 32.3125 45 29 45C25.6875 45 23 47.6863 23 51C23 54.3137 25.6875 57 29 57Z\" fill=\"#D9D9D9\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0751 62 39 57.0751 39 51C39 44.9249 34.0751 40 28 40C21.9249 40 17 44.9249 17 51C17 57.0751 21.9249 62 28 62ZM29 57C32.3137 57 35 54.3137 35 51C35 47.6863 32.3137 45 29 45C25.6863 45 23 47.6863 23 51C23 54.3137 25.6863 57 29 57Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+  },
+  "model": {
+   "version": "3.6.1"
+  },
+  "name": "dnation-kubernetes-monitoring-stack",
+  "registrant": {
+   "created_at": "0001-01-01T00:00:00Z",
+   "credential_id": "00000000-0000-0000-0000-000000000000",
+   "deleted_at": "0001-01-01T00:00:00Z",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "kind": "artifacthub",
+   "name": "Artifact Hub",
+   "status": "discovered",
+   "sub_type": "",
+   "type": "registry",
+   "updated_at": "0001-01-01T00:00:00Z",
+   "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "ignored",
+  "subCategory": "Uncategorized",
+  "version": "v1.0.0",
+  "components": null,
+  "relationships": null
+ }

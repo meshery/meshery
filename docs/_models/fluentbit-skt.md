@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Fluentbit Skt
-subtitle: Collaborative and visual infrastructure as code for Fluentbit Skt
+subtitle: Collaborative and visual infrastructure as design for Fluentbit Skt
 image: /assets/img/integrations/fluentbit-skt/icons/color/fluentbit-skt-color.svg
 permalink: extensibility/integrations/fluentbit-skt
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-skt
@@ -10,6 +10,9 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Logging
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

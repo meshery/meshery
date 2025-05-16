@@ -30,10 +30,10 @@ mesheryctl registry generate [flags]
 
 ## Examples
 
-Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet). 
+Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
 
 </div>
 </pre> 
@@ -42,6 +42,22 @@ Directly generate models from one of the supported registrants by using Registra
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
+
+</div>
+</pre> 
+
+Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
+
+</div>
+</pre> 
+
+Generate Meshery Models and Component from csv files in a local directory.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl registry generate --directory <DIRECTORY_PATH>
 
 </div>
 </pre> 
@@ -57,12 +73,14 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -d, --directory string          Directory containing the Model and Component CSV files
   -h, --help                      help for generate
+  -m, --model string              specific model name to be generated
   -o, --output string             location to output generated models, defaults to ../server/meshmodels (default "../server/meshmodel")
-      --registrant-cred string    path pointing to the registrant credetial definition
+      --registrant-cred string    path pointing to the registrant credential definition
       --registrant-def string     path pointing to the registrant connection definition
       --spreadsheet-cred string   base64 encoded credential to download the spreadsheet
-      --spreadsheet-id string     spreadsheet it for the integration spreadsheet
+      --spreadsheet-id string     spreadsheet ID for the integration spreadsheet
 
 </div>
 </pre>

@@ -12,11 +12,10 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
-
-	"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -100,7 +99,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
-		connection, err := p.SaveConnection(&models.ConnectionPayload{
+		connection, err := p.SaveConnection(&connections.ConnectionPayload{
 			Kind:             "grafana",
 			Type:             "observability",
 			SubType:          "monitoring",
@@ -123,7 +122,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		_ = p.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
-		logrus.Debugf("connection to grafana @ %s succeeded", grafanaURL)
+		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
 
 		_ = json.NewEncoder(w).Encode(connection)
 	} else if req.Method == http.MethodDelete {
@@ -258,7 +257,10 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+	
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    		h.log.Error(err)
+	}
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
@@ -292,7 +294,10 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+	
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idPostGrafanaBoards

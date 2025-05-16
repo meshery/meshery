@@ -8,6 +8,7 @@ import (
 	"os"
 	"path/filepath"
 	"reflect"
+	"regexp"
 	"runtime"
 	"strings"
 	"testing"
@@ -17,6 +18,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
@@ -171,7 +173,7 @@ func SetupLogrusGrabTesting(_ *testing.T, _ bool) *bytes.Buffer {
 // setup meshkit logger for testing and return the buffer in which commands output is to be set.
 func SetupMeshkitLoggerTesting(_ *testing.T, verbose bool) *bytes.Buffer {
 	b := bytes.NewBufferString("")
-	SetupMeshkitLogger(verbose, b)
+	Log = SetupMeshkitLogger("mesheryctl", verbose, b)
 	return b
 }
 
@@ -279,4 +281,221 @@ func StartMockMesheryServer(t *testing.T) error {
 	// Give the server some time to start
 	time.Sleep(100 * time.Millisecond)
 	return nil
+}
+
+// The HandlePagination function add special characters that is not
+// handle properly in test. This function will remove undesired characters
+// and spaces to ensure excepted versus actual result match when using http.MockURL
+func CleanStringFromHandlePagination(data string) string {
+	cleaned := stripAnsiEscapeCodes(data)
+	cleaned = formatToTabs(cleaned)
+	return cleaned
+}
+
+// removeANSICodes removes ANSI escape codes from a string.
+//
+// Parameters:
+//
+//	text - The input string that may contain ANSI escape sequences.
+//
+// Returns:
+//
+//	A string with the ANSI escape codes removed.
+func stripAnsiEscapeCodes(text string) string {
+	ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	return ansi.ReplaceAllString(text, "")
+}
+
+// formatToTabs replaces multiple spaces with tabs and trims spaces
+//
+// Parameters:
+//
+//	s - The input string containing columns separated by multiple spaces.
+//
+// Returns:
+//
+//	A string where multiple spaces are replaced with a single tab between columns, and leading/trailing spaces are removed.
+func formatToTabs(data string) string {
+	s := strings.TrimSpace(data)
+
+	// Replace multiple spaces with a single tab
+	re := regexp.MustCompile(`\s{2,}`) // Match 2 or more spaces
+	s = re.ReplaceAllString(s, "\t")
+
+	return s
+}
+
+type MesheryListCommamdTest struct {
+	Name             string
+	Args             []string
+	URL              string
+	Fixture          string
+	ExpectedResponse string
+	ExpectError      bool
+}
+
+func GetToken(t *testing.T) string {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	return filepath.Join(currDir, "fixtures", "token.golden")
+}
+
+func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommamdTest, commandDir string, commadName string) {
+	// setup current context
+	SetupContextEnv(t)
+
+	//initialize mock server for handling requests
+	StartMockery(t)
+
+	// create a test helper
+	testContext := NewTestHelper(t)
+
+	fixturesDir := filepath.Join(commandDir, "fixtures")
+
+	// run tests
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+
+			TokenFlag = GetToken(t)
+
+			httpmock.RegisterResponder("GET", testContext.BaseURL+tt.URL,
+				httpmock.NewStringResponder(200, apiResponse))
+
+			testdataDir := filepath.Join(commandDir, "testdata")
+			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
+			var buf bytes.Buffer
+
+			rescueStdout := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			_ = SetupMeshkitLoggerTesting(t, false)
+
+			cmd.SetArgs(tt.Args)
+			cmd.SetOut(rescueStdout)
+			err := cmd.Execute()
+			if err != nil {
+				// if we're supposed to get an error
+				if tt.ExpectError {
+					// write it in file
+					if *updateGoldenFile {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Fatal(err)
+			}
+
+			w.Close()
+
+			_, errCopy := io.Copy(&buf, r)
+
+			if errCopy != nil {
+				t.Fatal(errCopy)
+			}
+
+			os.Stdout = rescueStdout
+
+			actualResponse := buf.String()
+
+			if *updateGoldenFile {
+				golden.Write(actualResponse)
+			}
+			expectedResponse := golden.Load()
+
+			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
+			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
+
+			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+		})
+		t.Logf("List %s test", commadName)
+	}
+
+	StopMockery(t)
+
+}
+
+type MesheryCommamdTest struct {
+	Name             string
+	Args             []string
+	HttpMethod       string
+	HttpStatusCode   int
+	URL              string
+	Fixture          string
+	ExpectedResponse string
+	ExpectError      bool
+}
+
+func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommamdTest, commandDir string, commadName string) {
+	// setup current context
+	SetupContextEnv(t)
+
+	//initialize mock server for handling requests
+	StartMockery(t)
+
+	// create a test helper
+	testContext := NewTestHelper(t)
+
+	fixturesDir := filepath.Join(commandDir, "fixtures")
+
+	// Run tests
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			if tt.Fixture != "" {
+				apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+
+				TokenFlag = GetToken(t)
+
+				httpmock.RegisterResponder(tt.HttpMethod, testContext.BaseURL+tt.URL,
+					httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+			}
+
+			testdataDir := filepath.Join(commandDir, "testdata")
+			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
+			b := SetupMeshkitLoggerTesting(t, false)
+			cmd.SetArgs(tt.Args)
+			cmd.SetOut(b)
+			err := cmd.Execute()
+
+			if err != nil {
+
+				if tt.ExpectError {
+
+					if *updateGoldenFile {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Error(err)
+			}
+
+			actualResponse := b.String()
+
+			if *updateGoldenFile {
+				golden.Write(actualResponse)
+			}
+
+			expectedResponse := golden.Load()
+
+			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
+			cleanedExpectedResponse := CleanStringFromHandlePagination(expectedResponse)
+
+			Equals(t, cleanedExpectedResponse, cleanedActualResponse)
+		})
+		t.Logf("Test '%s' executed", tt.Name)
+	}
+
+	StopMockery(t)
 }

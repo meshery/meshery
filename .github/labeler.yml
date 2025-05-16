@@ -54,3 +54,12 @@ playground:
 - changed-files:
   - any-glob-to-any-file:
     - "install/playground/**/*"
+opa:
+- changed-files:
+  - any-glob-to-any-file:
+    - "*.rego"
+area/tests:
+- changed-files:
+  - any-glob-to-any-file:
+    - "ui/tests/**/*"
+    - "mesheryctl/tests/e2e/**/*"

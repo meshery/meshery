@@ -138,7 +138,7 @@ mesheryctl filter import /path/to/filter.wasm --name [string]
 		}
 
 		if resp.StatusCode == 200 {
-			utils.Log.Info("filter successfully imported")
+			utils.Log.Info("filter imported")
 		} else {
 			utils.Log.Error(utils.ErrResponseStatus(resp.StatusCode))
 			return nil

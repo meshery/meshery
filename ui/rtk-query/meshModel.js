@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { api } from './index';
 import _ from 'lodash';
+import { initiateQuery } from './utils';
 
 const TAGS = {
   MESH_MODELS: 'mesh-models',
@@ -98,6 +99,29 @@ const meshModelApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_MODELS }],
       }),
+      getComponentsByModelAndKind: builder.query({
+        query: (queryArg) => ({
+          url: `meshmodels/models/${queryArg.model}/components/${queryArg.component}`,
+          params: _.merge({}, defaultOptions, queryArg.params),
+        }),
+      }),
+      exportModel: builder.query({
+        query: (queryArg) => ({
+          url: `meshmodels/export`,
+          params: _.merge({}, defaultOptions, queryArg.params),
+          providesTags: () => [{ type: TAGS.MESH_MODELS }],
+        }),
+      }),
+      importMeshModel: builder.mutation({
+        query: (queryArgs) => {
+          return {
+            url: `meshmodels/register`,
+            method: 'POST',
+            body: queryArgs.importBody,
+          };
+        },
+        invalidatesTags: [TAGS.MESH_MODELS],
+      }),
     }),
   });
 
@@ -109,15 +133,21 @@ export const {
   useGetRegistrantsQuery,
   useGetRelationshipsQuery,
   useLazyGetRegistrantsQuery,
+  useGetComponentsFromModalQuery,
   useLazyGetComponentsFromModalQuery,
+  useGetRelationshipsFromModalQuery,
+  useLazyExportModelQuery,
   useLazyGetRelationshipsFromModalQuery,
   useUpdateEntityStatusMutation,
   useGetModelCategoriesQuery,
   useLazyGetModelFromCategoryQuery,
   useGetModelByNameQuery,
+  useLazyGetModelByNameQuery,
   useGetMeshModelsQuery,
   useGetComponentByNameQuery,
   useGetModelFromCategoryQuery,
+  useGetComponentsByModelAndKindQuery,
+  useImportMeshModelMutation,
 } = meshModelApi;
 
 export const useGetCategoriesSummary = () => {
@@ -146,3 +176,22 @@ export const useGetCategoriesSummary = () => {
   }, [categories]);
   return categoryMap;
 };
+
+export const getComponentDefinition = async (component, model, params = {}) => {
+  const res = await initiateQuery(meshModelApi.endpoints.getComponentsByModelAndKind, {
+    component,
+    model,
+    params: _.omit({ params, annotations: 'include' }, ['apiVersion']),
+  });
+
+  if (params.apiVersion) {
+    return res?.data?.components?.find((c) => c.component.version === params.apiVersion);
+  }
+  return res?.data?.components?.[0];
+};
+
+export const modelUniqueKey = (model) => `${model.name}-${model.version}`;
+export const componentUniqueKey = (component) =>
+  `${component.component.kind}-${component.component.version}-${component.version}-${modelUniqueKey(
+    component.model,
+  )}`;

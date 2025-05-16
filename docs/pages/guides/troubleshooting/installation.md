@@ -37,6 +37,8 @@ The difficulty with Minikube and Kind clusters is that they typically don't supp
 
    `kubectl port-forward service/meshery 9081:9081 -n meshery`
 
+   {% include mesheryctl/system-dashboard.md %}
+
 3. For `kind`, you can prefer installing MetalLB with a custom configmap.
 
    Docs: [link](https://kind.sigs.k8s.io/docs/user/loadbalancer/)
@@ -53,7 +55,7 @@ The env variable DISABLE_OPERATOR=true can be used to signal Meshery server to n
 
 Example of a healthy Meshery Broker server with an actively connected (subscribed) Meshery Server:
 
-```
+```shell
 ➜  ~ kubectl logs -n meshery meshery-broker-0 nats
 [8] 2021/09/08 21:46:03.070952 [INF] Starting nats-server version 2.1.9
 [8] 2021/09/08 21:46:03.070982 [INF] Git commit [7c76626]
@@ -75,7 +77,7 @@ When deploying Meshery out-of-cluster, verify your kubeconfig's contexts and the
 <div class="codeblock"><div class="clipboardjs">kubectl config get-contexts</div></div>
 </pre>
 
-If you're using Docker Destkop, consider whether you need to change your current Kubernetes context to `docker-desktop`.
+If you're using Docker Desktop, consider whether you need to change your current Kubernetes context to `docker-desktop`.
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">kubectl config use-context
@@ -96,10 +98,10 @@ Use the arrow keys to navigate: ↓ ↑ → ←
     None
 ```
 
-If you cannot see "Meshery" Remote Provider and find such error logs in Meshery Server's logs (`mesheryctl system logs`), please make sure that Meshery Server is able to reach "https://meshery.layer5.io" in order to initialize the "Meshery" Remote Provider.
+If you cannot see "Meshery" Remote Provider and find such error logs in Meshery Server's logs (`mesheryctl system logs`), please make sure that Meshery Server is able to reach "https://cloud.layer5.io" in order to initialize the "Meshery" Remote Provider.
 
 ```bash
-time="2021-11-10T11:05:30Z" level=error msg="[Initialize Provider]: Failed to get capabilities Get \"https://meshery.layer5.io/v0.5.71/capabilities?os=meshery\": dial tcp 3.140.89.205:443: i/o timeout"
+time="2021-11-10T11:05:30Z" level=error msg="[Initialize Provider]: Failed to get capabilities Get \"https://cloud.layer5.io/v0.5.71/capabilities?os=meshery\": dial tcp 3.140.89.205:443: i/o timeout"
 ```
 
 For more details about Meshery Providers:

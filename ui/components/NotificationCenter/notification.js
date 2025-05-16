@@ -2,34 +2,46 @@ import * as React from 'react';
 import {
   Avatar,
   Box,
-  Button,
   Collapse,
-  Grid,
-  Hidden,
-  IconButton,
-  Popover,
   Slide,
-  Tooltip,
+  IconButton,
   Typography,
-  alpha,
   useTheme,
   Checkbox,
-} from '@material-ui/core';
-import { makeStyles } from '@material-ui/core';
-import { SEVERITY_STYLE, STATUS } from './constants';
+  Popover,
+  alpha,
+  FormattedTime,
+  CustomTooltip,
+} from '@layer5/sistent';
+import {
+  OptionList,
+  OptionListItem,
+  MenuPaper,
+  SocialListItem,
+  ListButton,
+  ActorAvatar,
+  Expanded,
+  GridItem,
+  Message,
+  StyledAvatarStack,
+  Root,
+  Summary,
+} from './notificationCenter.style';
+
+import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
-import { MoreVert as MoreVertIcon } from '@material-ui/icons';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import FacebookIcon from '../../assets/icons/FacebookIcon';
 import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
 import ShareIcon from '../../assets/icons/ShareIcon';
 import DeleteIcon from '../../assets/icons/DeleteIcon';
-import moment from 'moment';
+import ErrorIcon from '@/assets/icons/ErrorIcon';
 import {
   useUpdateStatusMutation,
   useDeleteEventMutation,
 } from '../../rtk-query/notificationCenter';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   selectEventById,
   selectIsEventVisible,
@@ -39,66 +51,10 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import {
-  ErrorBoundary,
-  withErrorBoundary,
-  withSuppressedErrorBoundary,
-} from '../General/ErrorBoundary';
-import { FormattedMetadata } from './metadata';
-import theme from '../../themes/app';
+import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
-
-const useStyles = makeStyles(() => ({
-  root: (props) => ({
-    width: '100%',
-    borderRadius: '0.25rem',
-    border: `0.1rem solid ${props.notificationColor}`,
-    borderLeftWidth: props.status === STATUS.UNREAD ? '0.5rem' : '0.1rem',
-    marginBlock: '0.5rem',
-  }),
-
-  summary: (props) => ({
-    paddingBlock: '0.5rem',
-    paddingInline: '0.25rem',
-    cursor: 'pointer',
-    backgroundColor: alpha(props.notificationColor, 0.2),
-  }),
-
-  gridItem: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  message: {
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    whiteSpace: 'nowrap',
-    overflowWrap: 'break-word',
-    // max of min of 20rem or 50vw
-    maxWidth: 'min(25rem, 50vw)',
-    width: '100%',
-  },
-  expanded: {
-    paddingBlock: '0.75rem',
-    paddingInline: '0.2rem',
-    [theme.breakpoints.down('md')]: {
-      padding: '0.5rem',
-    },
-  },
-  actorAvatar: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'start',
-    paddingTop: '1rem',
-  },
-
-  descriptionHeading: {
-    fontWeight: 'bolder !important',
-    textTransform: 'uppercase',
-    fontSize: '0.9rem',
-  },
-}));
+import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { useDispatch } from 'react-redux';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -108,101 +64,36 @@ export const eventstopPropagation = (e) => {
   e.stopPropagation();
 };
 
-export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 45;
+export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 62;
 
 export const canTruncateDescription = (description) => {
   return description.length > MAX_NOTIFICATION_DESCRIPTION_LENGTH;
 };
 
 const AvatarStack = ({ avatars, direction }) => {
-  const theme = useTheme();
   return (
-    <Box
+    <StyledAvatarStack
       sx={{
-        display: 'flex',
         flexDirection: direction,
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '0',
-
-        '& .MuiAvatar-root': {
-          width: '2rem',
-          height: '2rem',
-          border: '0.05rem solid ' + theme.palette.secondary.menuActionText,
-        },
       }}
     >
       {avatars.map((avatar, index) => (
-        <Tooltip title={avatar.name} placement="top" key={index}>
-          <div style={{ zIndex: avatars.length - index, marginTop: '-0.4rem' }}>
+        <CustomTooltip title={avatar.name} placement="top" key={index}>
+          <Box
+            sx={{
+              zIndex: avatars.length - index,
+              ml: '-0.4rem',
+            }}
+          >
             <Avatar alt={avatar.name} src={avatar.avatar_url} />
-          </div>
-        </Tooltip>
+          </Box>
+        </CustomTooltip>
       ))}
-    </Box>
+    </StyledAvatarStack>
   );
 };
 
-const useMenuStyles = makeStyles((theme) => {
-  return {
-    paper: {
-      color: theme.palette.secondary.iconMain,
-      boxShadow: theme.shadows[4],
-      borderRadius: '0.25',
-      paddingInline: '0.5rem',
-      paddingBlock: '0.25rem',
-      width: '12.5rem',
-    },
-
-    list: {
-      display: 'flex',
-      flexDirection: 'column',
-      gridGap: '0.5rem',
-      marginBlock: '0.5rem',
-      borderRadius: '0.25rem',
-      backgroundColor: theme.palette.secondary.honeyComb,
-      '&:hover': {
-        backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
-      },
-    },
-
-    listItem: {
-      display: 'flex',
-      gridGap: '0.5rem',
-      alignItems: 'center',
-      justifyContent: 'space-around',
-    },
-    socialListItem: {
-      display: 'flex',
-      backgroundColor: alpha(theme.palette.secondary.honeyComb, 0.25),
-      alignItems: 'center',
-      justifyContent: 'space-around',
-      padding: '.65rem',
-    },
-
-    button: {
-      height: '100%',
-      width: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'start',
-    },
-  };
-});
-
-const formatTimestamp = (utcTimestamp) => {
-  const currentUtcTimestamp = moment.utc().valueOf();
-
-  const timediff = currentUtcTimestamp - moment(utcTimestamp).valueOf();
-
-  if (timediff >= 24 * 60 * 60 * 1000) {
-    return moment(utcTimestamp).local().format('MMM DD, YYYY');
-  }
-  return moment(utcTimestamp).fromNow();
-};
-
-const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
-  const classes = useMenuStyles();
+const BasicMenu = ({ event }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
@@ -220,8 +111,11 @@ const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
     e.stopPropagation();
     setIsSocialShareOpen((prev) => !prev);
   };
-
   const theme = useTheme();
+  const links = Object.entries(event.metadata || {})
+    .map(([key, value]) => PropertyLinkFormatters[key]?.(value))
+    .filter(Boolean);
+  const errorCodes = getErrorCodesFromEvent(event);
   return (
     <div className="mui-fixed" onClick={(e) => e.stopPropagation()}>
       <IconButton
@@ -242,95 +136,156 @@ const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
           horizontal: 'left',
         }}
       >
-        <Box className={classes.paper}>
-          <div className={classes.list}>
-            <Box className={classes.listItem} sx={{ width: '100%' }}>
-              <Button onClick={toggleSocialShare} className={classes.button}>
-                <ShareIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-                <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+        <MenuPaper>
+          <OptionList>
+            <OptionListItem sx={{ width: '100%' }}>
+              <ListButton onClick={toggleSocialShare}>
+                <ShareIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+                <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
                   Share
                 </Typography>
-              </Button>
-            </Box>
+              </ListButton>
+            </OptionListItem>
             <Collapse in={isSocialShareOpen}>
-              <Box className={classes.socialListItem}>
+              <SocialListItem>
                 <FacebookShareButton url={'https://meshery.io'} quote={event.description || ''}>
-                  <FacebookIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                  <FacebookIcon {...iconMedium} fill={theme.palette.icon.secondary} />
                 </FacebookShareButton>
                 <LinkedinShareButton url={'https://meshery.io'} summary={event.description || ''}>
-                  <LinkedInIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                  <LinkedInIcon {...iconMedium} fill={theme.palette.icon.secondary} />
                 </LinkedinShareButton>
                 <TwitterShareButton url={'https://meshery.io'} title={event.description || ''}>
-                  <TwitterIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+                  <TwitterIcon {...iconMedium} fill={theme.palette.icon.secondary} />
                 </TwitterShareButton>
-              </Box>
+              </SocialListItem>
             </Collapse>
-          </div>
-
+          </OptionList>
+          {errorCodes?.length > 0 && (
+            <OptionList>
+              <ListButton
+                component="a"
+                href={`${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ErrorIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+                <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                  Error Docs
+                </Typography>
+              </ListButton>
+            </OptionList>
+          )}
+          <OptionList>
+            {links.map((link, index) => {
+              const IconComponent = link.icon;
+              return (
+                <OptionListItem key={index} sx={{ width: '100%' }}>
+                  <ListButton
+                    component="a"
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {IconComponent && (
+                      <IconComponent {...iconMedium} fill={theme.palette.icon.secondary} />
+                    )}
+                    <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
+                      {link.label}
+                    </Typography>
+                  </ListButton>
+                </OptionListItem>
+              );
+            })}
+          </OptionList>
           <DeleteEvent event={event} />
           <ChangeStatus event={event} />
-        </Box>
+        </MenuPaper>
       </Popover>
     </div>
   );
-});
+};
 
 export const DeleteEvent = ({ event }) => {
-  const classes = useMenuStyles();
-  const [deleteEventMutation] = useDeleteEventMutation();
   const theme = useTheme();
+  const [deleteEventMutation] = useDeleteEventMutation();
+
   const handleDelete = (e) => {
     e.stopPropagation();
     deleteEventMutation({ id: event.id });
   };
   return (
-    <div className={classes.list}>
-      <Button className={classes.button} onClick={handleDelete}>
-        <DeleteIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-        <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+    <OptionList>
+      <ListButton onClick={handleDelete}>
+        <DeleteIcon {...iconMedium} fill={theme.palette.icon.secondary} />
+        <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
           {' '}
           Delete{' '}
         </Typography>
-      </Button>
-    </div>
+      </ListButton>
+    </OptionList>
   );
 };
 
 export const ChangeStatus = ({ event }) => {
-  const classes = useMenuStyles();
   const newStatus = event.status === STATUS.READ ? STATUS.UNREAD : STATUS.READ;
   const [updateStatusMutation] = useUpdateStatusMutation();
   const theme = useTheme();
-
   const updateStatus = (e) => {
     e.stopPropagation();
     updateStatusMutation({ id: event.id, status: newStatus });
   };
   return (
-    <div className={classes.list}>
-      <Button className={classes.button} onClick={updateStatus}>
+    <OptionList>
+      <ListButton onClick={updateStatus}>
         {newStatus === STATUS.READ ? (
-          <ReadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+          <ReadIcon {...iconMedium} fill={theme.palette.icon.secondary} />
         ) : (
-          <UnreadIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
+          <UnreadIcon {...iconMedium} fill={theme.palette.icon.secondary} />
         )}
-        <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+        <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
           {' '}
           Mark as {newStatus}{' '}
         </Typography>
-      </Button>
-    </div>
+      </ListButton>
+    </OptionList>
   );
 };
+export const getErrorCodesFromEvent = (event) => {
+  if (!event || !event.metadata) return null;
 
-export const Notification = withErrorBoundary(({ event_id }) => {
+  let errorCodes = new Set();
+  if (event.metadata.error) {
+    if (Array.isArray(event.metadata.error)) {
+      event.metadata.error.forEach((err) => {
+        if (err.Code) errorCodes.add(err.Code);
+      });
+    } else if (event.metadata.error.Code) {
+      errorCodes.add(event.metadata.error.Code);
+    }
+  }
+
+  if (event.metadata.ModelDetails) {
+    Object.values(event.metadata.ModelDetails).forEach((detail) => {
+      if (Array.isArray(detail.Errors)) {
+        detail.Errors.forEach((error) => {
+          if (error.error?.Code) {
+            errorCodes.add(error.error.Code);
+          }
+        });
+      }
+    });
+  }
+
+  return [...errorCodes];
+};
+export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
-  const severityStyles = SEVERITY_STYLE[event.severity];
-  const classes = useStyles({
-    notificationColor: severityStyles?.color,
-    status: event?.status,
-  });
+  const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
+  const eventStyle = SEVERITY_STYLE[event?.severity] || {};
+  const notificationColor = severityStyles?.color;
   const theme = useTheme();
   const dispatch = useDispatch();
   const [expanded, setExpanded] = React.useState(false);
@@ -369,6 +324,44 @@ export const Notification = withErrorBoundary(({ event_id }) => {
       : []),
   ];
 
+  const Detail = () => (
+    <Expanded
+      container
+      style={{
+        backgroundColor: alpha(eventStyle?.color || SEVERITY_STYLE['informational'].color, 0.1),
+        color: theme.palette.text.default,
+        borderTop: `1px solid ${notificationColor}`,
+      }}
+    >
+      <Box
+        sx={{
+          padding: '1rem',
+          width: '100%',
+        }}
+      >
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <ActorAvatar item style={{ marginBottom: '0.5rem' }}>
+            <AvatarStack
+              avatars={eventActors}
+              direction={{
+                xs: 'row',
+                md: 'row',
+              }}
+            />
+          </ActorAvatar>
+          <FormattedLinkMetadata event={event} />
+        </Box>
+        <FormattedMetadata event={event} />
+      </Box>
+    </Expanded>
+  );
   return (
     <Slide
       in={isVisible}
@@ -379,75 +372,51 @@ export const Notification = withErrorBoundary(({ event_id }) => {
       mountOnEnter
       unmountOnExit
     >
-      <div className={classes.root}>
-        <Grid container className={classes.summary} onClick={handleExpandClick}>
-          <Grid
-            item
-            xs="auto"
-            sm={2}
-            className={classes.gridItem}
-            style={{
-              justifyContent: 'start',
-              alignItems: 'center',
-              gap: '0.25rem',
-            }}
-          >
+      <Root notificationcolor={notificationColor} status={event?.status}>
+        <Summary
+          container
+          notificationcolor={notificationColor}
+          onClick={handleExpandClick}
+          spacing={0}
+          style={{ flexWrap: 'nowrap' }}
+        >
+          <GridItem item xs="auto">
             <Checkbox
               onClick={eventstopPropagation}
               checked={Boolean(event.checked)}
               onChange={handleSelectEvent}
-              style={{ margin: '0rem', padding: '0rem' }}
-              color="primary"
+              sx={{
+                margin: '0rem',
+                padding: '0rem',
+                paddingLeft: '0.5rem',
+                paddingRight: '0.25rem',
+              }}
             />
-            <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
-          </Grid>
-          <Grid item xs={8} sm={6} className={classes.gridItem}>
-            <Typography variant="body1" className={classes.message}>
+
+            <severityStyles.icon
+              {...iconLarge}
+              fill={severityStyles?.color}
+              style={{ paddingRight: '0.25rem' }}
+            />
+          </GridItem>
+          <GridItem item xs={8} sm>
+            <Message variant="body1">
               {truncate(event.description, {
                 length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
               })}
-            </Typography>
-          </Grid>
-          <Grid
-            item
-            xs={1}
-            sm={4}
-            className={classes.gridItem}
-            style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}
-          >
-            <Hidden smDown>
-              <Typography variant="body1"> {formatTimestamp(event.created_at)} </Typography>
-            </Hidden>
+            </Message>
+          </GridItem>
+          <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
+            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <FormattedTime date={event.created_at} />
+            </Box>
             <BasicMenu event={event} />
-          </Grid>
-        </Grid>
-        <Collapse in={expanded}>
-          <ErrorBoundary>
-            <Grid container className={classes.expanded}>
-              <Grid item sm={1} className={classes.actorAvatar}>
-                <AvatarStack
-                  avatars={eventActors}
-                  direction={{
-                    xs: 'row',
-                    md: 'column',
-                  }}
-                />
-              </Grid>
-              <Grid
-                item
-                sm={10}
-                style={{
-                  color: theme.palette.secondary.textMain,
-                }}
-              >
-                <FormattedMetadata event={event} classes={classes} />
-              </Grid>
-            </Grid>
-          </ErrorBoundary>
-        </Collapse>
-      </div>
+          </GridItem>
+        </Summary>
+        <Collapse in={expanded}>{expanded && <Detail />}</Collapse>
+      </Root>
     </Slide>
   );
-});
+};
 
 export default Notification;

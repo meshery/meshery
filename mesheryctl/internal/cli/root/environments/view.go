@@ -17,93 +17,44 @@ package environments
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
-// represents the mesheryctl exp environment view [orgId] subcommand.
+// represents the mesheryctl environment view [orgID] subcommand.
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view registered environmnents",
-	Long:  "view a environments registered in Meshery Server",
+	Short: "View registered environmnents",
+	Long: `View details of an environment registered in Meshery Server
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
-mesheryctl exp environment view --orgID [orgId]
+mesheryctl environment view --orgID [orgID]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
-		if orgIdFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
+		if orgIDFlag == "" {
+			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment view --orgID [orgID]\nRun 'mesheryctl environment view --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
+		orgID, _ := cmd.Flags().GetString("orgID")
+		outFormat, _ := cmd.Flags().GetString("output-format")
+		save, _ := cmd.Flags().GetBool("save")
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
+		environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
 
-		orgid := args[0]
-		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgid)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			return err
-		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		environmentResponse := &environments.EnvironmentPage{}
-		err = json.Unmarshal(data, environmentResponse)
 		if err != nil {
 			return err
 		}
@@ -111,7 +62,7 @@ mesheryctl exp environment view --orgID [orgId]
 		var selectedEnvironment environments.EnvironmentData
 
 		if environmentResponse.TotalCount == 0 {
-			utils.Log.Info("No environment(s) found for the given ID: ", orgid)
+			utils.Log.Info("No environment(s) found for the given ID: ", orgID)
 			return nil
 		} else if environmentResponse.TotalCount == 1 {
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
@@ -123,20 +74,20 @@ mesheryctl exp environment view --orgID [orgId]
 
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
-		outFormatFlag = strings.ToLower(outFormatFlag)
+		outFormat = strings.ToLower(outFormat)
 
-		if outFormatFlag != "json" && outFormatFlag != "yaml" {
+		if outFormat != "json" && outFormat != "yaml" {
 			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
 		// Get the home directory of the user to save the output file
 		homeDir, _ := os.UserHomeDir()
 		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
 
-		if outFormatFlag == "yaml" || outFormatFlag == "yml" {
+		if outFormat == "yaml" || outFormat == "yml" {
 			if output, err = yaml.Marshal(selectedEnvironment); err != nil {
 				return utils.ErrMarshal(errors.Wrap(err, "failed to format output in YAML"))
 			}
-			if saveFlag {
+			if save {
 				utils.Log.Info("Saving output as YAML file")
 				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".yaml", output, 0666)
 				if err != nil {
@@ -146,8 +97,8 @@ mesheryctl exp environment view --orgID [orgId]
 			} else {
 				utils.Log.Info(string(output))
 			}
-		} else if outFormatFlag == "json" {
-			if saveFlag {
+		} else if outFormat == "json" {
+			if save {
 				utils.Log.Info("Saving output as JSON file")
 				output, err = json.MarshalIndent(selectedEnvironment, "", "  ")
 				if err != nil {
@@ -160,11 +111,17 @@ mesheryctl exp environment view --orgID [orgId]
 				utils.Log.Info("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
-			return components.OutputJson(selectedEnvironment)
+			return format.OutputJson(selectedEnvironment)
 		} else {
 			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
 
 		return nil
 	},
+}
+
+func init() {
+	viewEnvironmentCmd.Flags().StringP("output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewEnvironmentCmd.Flags().BoolP("save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewEnvironmentCmd.Flags().StringP("orgID", "", "", "Organization ID")
 }

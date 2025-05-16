@@ -1,0 +1,24 @@
+version: 0.0.11
+name: ec2-controller
+displayName: EC2-CONTROLLER
+createdAt: "2024-10-31T15:59:58Z"
+description: 'This design provides everything needed to set up the ACK (AWS Controllers for Kubernetes) EC2 controller in your Kubernetes cluster, including CRDs, permissions, and pod configuration for managing EC2 resources directly from your cluster. '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/df959bcd-09c8-40b1-bf58-47ad6be30cd7/0.0.11/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: " 1. Kubernetes Cluster Connection: Ensure you have your cluster connected to Meshery.\n\n2. Set up a Secret: Base64 encode your AWS access key and secret access key, and store them in the Kubernetes Secret. \n\n3. Environment Variables: The design is pre-configured to use the access keys from the Secret as environment variables. Simply provide your encoded keys in the secret. \n\n4. AWS Region: Specify the correct AWS region in the controller pod configuration. This design uses us-east-1.\n\n5. Namespace Deployment: Deploy all resources within a dedicated namespace. This design uses the ack-system namespace. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/df959bcd-09c8-40b1-bf58-47ad6be30cd7-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/df959bcd-09c8-40b1-bf58-47ad6be30cd7-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

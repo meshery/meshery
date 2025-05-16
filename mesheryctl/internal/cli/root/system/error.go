@@ -26,7 +26,6 @@ import (
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 const (
 	ErrHealthCheckFailedCode             = "mesheryctl-1060"
-	ErrDownloadFileCode                  = "mesheryctl-1061"
 	ErrStopMesheryCode                   = "mesheryctl-1062"
 	ErrResetMeshconfigCode               = "mesheryctl-1063"
 	ErrApplyManifestCode                 = "mesheryctl-1064"
@@ -36,7 +35,6 @@ const (
 	ErrRetrievingCurrentContextCode      = "mesheryctl-1068"
 	ErrSettingDefaultContextToConfigCode = "mesheryctl-1069"
 	ErrSettingTemporaryContextCode       = "mesheryctl-1070"
-	ErrCreateManifestsFolderCode         = "mesheryctl-1071"
 	ErrRestartMesheryCode                = "mesheryctl-1072"
 	ErrK8sQueryCode                      = "mesheryctl-1073"
 	ErrK8sConfigCode                     = "mesheryctl-1074"
@@ -106,12 +104,8 @@ func ErrHealthCheckFailed(err error) error {
 		errors.Alert,
 		[]string{"Health checks failed"},
 		[]string{"Failed to initialize healthchecker" + err.Error()},
-		[]string{"Health checks execution failed in starting Meshery server successfully"},
+		[]string{"Health checks execution failed in starting Meshery server"},
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
-}
-
-func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
 }
 
 func ErrStopMeshery(err error) error {
@@ -155,7 +149,7 @@ func ErrUnsupportedPlatform(platform string, config string) error {
 		ErrUnsupportedPlatformCode,
 		errors.Alert,
 		[]string{"Unsupported platform"},
-		[]string{"The provided platform is not supprted"},
+		[]string{"The provided platform is not supported."},
 		[]string{"The platform ", platform, " is not supported for the deployment of Meshery. "},
 		[]string{"Supported platforms are:\n\n- docker\n- kubernetes\n\n Verify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"})
 }
@@ -166,8 +160,8 @@ func ErrRetrievingCurrentContext(err error) error {
 		errors.Alert,
 		[]string{"Error retrieving current-context"},
 		[]string{err.Error()},
-		[]string{"current-context is not retrieved successfully"},
-		[]string{"Verify current-context is retrieved successfully and valid" + FormatErrorReference()})
+		[]string{"current-context is not retrieved"},
+		[]string{"Verify current-context is retrieved and valid" + FormatErrorReference()})
 }
 
 func ErrSettingDefaultContextToConfig(err error) error {
@@ -176,10 +170,6 @@ func ErrSettingDefaultContextToConfig(err error) error {
 
 func ErrSettingTemporaryContext(err error) error {
 	return errors.New(ErrSettingTemporaryContextCode, errors.Alert, []string{"Error setting temporary context"}, []string{err.Error()}, []string{"temporary context is not set properly"}, []string{"Verify the temporary context is set properly using the -c flag provided"})
-}
-
-func ErrCreateManifestsFolder(err error) error {
-	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
 }
 
 func ErrRestartMeshery(err error) error {

@@ -1,11 +1,6 @@
-name: Mesheryctl
+name: Meshery Docs CLI Reference Update
 on:
   push:
-    branches:
-      - "master"
-    paths:
-      - "mesheryctl/**"
-  pull_request:
     branches:
       - "master"
     paths:
@@ -18,56 +13,9 @@ on:
         default: "warning"
 
 jobs:
-  golangci:
-    name: golangci-lint
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-go@master
-        with:
-          go-version: "1.21"
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
-        with:
-          version: v1.54
-          working-directory: mesheryctl
-          args: --timeout 10m --verbose
-          skip-cache: true
-          skip-pkg-cache: true
-          skip-build-cache: true
-  mesheryctl_build:
-    name: Mesheryctl build & release
-    if: github.repository == 'meshery/meshery'
-    runs-on: macos-latest
-    needs: [golangci]
-    steps:
-      - name: Check out code
-        uses: actions/checkout@master
-      - name: Unshallow
-        run: git fetch --prune --unshallow
-      - name: Set up Go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.21"
-      - name: Setup Cache
-        uses: actions/cache@v3
-        with:
-          path: ~/go/pkg/mod
-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-go-
-      - name: goreleaser WITHOUT tag
-        uses: goreleaser/goreleaser-action@v5
-        if: success() && startsWith(github.ref, 'refs/tags/') == false
-        env:
-          RELEASE_CHANNEL: "edge"
-        with:
-          version: latest
-          args: release --snapshot --skip-publish --clean
   mesheryctl_docs:
     if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Skip if needed
         run: |
@@ -78,25 +26,29 @@ jobs:
           if [ "${{github.event_name }}" == "release" ];then
             echo "version=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           fi
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           repository: meshery/meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
           check-latest: "true"
       - name: Run script 📜
         run: |
           cd mesheryctl
           make docs
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit ✅
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: docs
           commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
-          commit_message: "[Docs] Update mesheryctl docs"
+          commit_message: "[Docs] Update Meshery Docs CLI Reference"

@@ -30,12 +30,15 @@ components:
   colorIcon: assets/img/integrations/istio-ratelimit-operator/components/local-rate-limit/icons/color/local-rate-limit-color.svg
   whiteIcon: assets/img/integrations/istio-ratelimit-operator/components/local-rate-limit/icons/white/local-rate-limit-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",
   "Design Istio Virtual Services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,22 +1,29 @@
 ---
 layout: integration
 title: Operator Framework
-subtitle: Collaborative and visual infrastructure as code for Operator
+subtitle: Collaborative and visual infrastructure as design for Operator Framework
 image: /assets/img/integrations/operator-framework/icons/color/operator-framework-color.svg
 permalink: extensibility/integrations/operator-framework
 docURL: https://docs.meshery.io/extensibility/integrations/operator framework
 description: 
 integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
-registrant: Artifact Hub
+registrant: Github
 components: 
+- name: cluster-extension
+  colorIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
+  whiteIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
+  description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Defines custom resources for operators",
+  "Enables declarative configuration",
+  "Extends Kubernetes API"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates with operator CRDs"
+howItWorksDetails: "Facilitates the use of custom resources within Meshery"
 language: en
 list: include
 type: extensibility

@@ -267,7 +267,57 @@ func (r *subscriptionResolver) SubscribeMesheryControllersStatus(ctx context.Con
 	return resChan, nil
 }
 
-// SubscribeMeshSyncEvents is the resolver for the subscribeMeshSyncEvents field.
+// SubscribeConfiguration is the resolver for the subscribeConfiguration field.
+func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	user := ctx.Value(models.UserCtxKey).(*models.User)
+	return r.subscribeConfiguration(ctx, provider, *user, patternSelector, filterSelector)
+}
+
+// SubscribeClusterResources is the resolver for the subscribeClusterResources field.
+func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeClusterResources(ctx, provider, k8scontextIDs, namespace)
+}
+
+// SubscribeK8sContext is the resolver for the subscribeK8sContext field.
+func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeK8sContexts(ctx, provider, selector)
+}
+
+// SubscribeMeshModelSummary is the resolver for the subscribeMeshModelSummary field.
+func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	return r.subscribeMeshModelSummary(ctx, provider, selector)
+}
+
+// SubscribeEvents is the resolver for the subscribeEvents field.
+func (r *subscriptionResolver) SubscribeEvents(ctx context.Context) (<-chan *model.Event, error) {
+	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
+	user := ctx.Value(models.UserCtxKey).(*models.User)
+	return r.eventsResolver(ctx, provider, *user)
+}
+
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+
+// Subscription returns generated.SubscriptionResolver implementation.
+func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
+
+type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
+type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
 func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, connectionIDs []string, eventTypes []model.MeshSyncEventType) (<-chan *model.MeshSyncEvent, error) {
 	resChan := make(chan *model.MeshSyncEvent)
 	isSubscriptionFlushed := false
@@ -342,58 +392,6 @@ func (r *subscriptionResolver) SubscribeMeshSyncEvents(ctx context.Context, conn
 
 	return resChan, nil
 }
-
-// SubscribeConfiguration is the resolver for the subscribeConfiguration field.
-func (r *subscriptionResolver) SubscribeConfiguration(ctx context.Context, patternSelector model.PageFilter, filterSelector model.PageFilter) (<-chan *model.ConfigurationPage, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	user := ctx.Value(models.UserCtxKey).(*models.User)
-	return r.subscribeConfiguration(ctx, provider, *user, patternSelector, filterSelector)
-}
-
-// SubscribeClusterResources is the resolver for the subscribeClusterResources field.
-func (r *subscriptionResolver) SubscribeClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (<-chan *model.ClusterResources, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeClusterResources(ctx, provider, k8scontextIDs, namespace)
-}
-
-// SubscribeK8sContext is the resolver for the subscribeK8sContext field.
-func (r *subscriptionResolver) SubscribeK8sContext(ctx context.Context, selector model.PageFilter) (<-chan *model.K8sContextsPage, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeK8sContexts(ctx, provider, selector)
-}
-
-// SubscribeMeshModelSummary is the resolver for the subscribeMeshModelSummary field.
-func (r *subscriptionResolver) SubscribeMeshModelSummary(ctx context.Context, selector model.MeshModelSummarySelector) (<-chan *model.MeshModelSummary, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	return r.subscribeMeshModelSummary(ctx, provider, selector)
-}
-
-// SubscribeEvents is the resolver for the subscribeEvents field.
-func (r *subscriptionResolver) SubscribeEvents(ctx context.Context) (<-chan *model.Event, error) {
-	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
-	user := ctx.Value(models.UserCtxKey).(*models.User)
-	return r.eventsResolver(ctx, provider, *user)
-}
-
-// Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
-
-// Query returns generated.QueryResolver implementation.
-func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
-
-// Subscription returns generated.SubscriptionResolver implementation.
-func (r *Resolver) Subscription() generated.SubscriptionResolver { return &subscriptionResolver{r} }
-
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
-type subscriptionResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
 func (r *queryResolver) GetClusterResources(ctx context.Context, k8scontextIDs []string, namespace string) (*model.ClusterResources, error) {
 	provider := ctx.Value(models.ProviderCtxKey).(models.Provider)
 	return r.getClusterResources(ctx, provider, k8scontextIDs, namespace)

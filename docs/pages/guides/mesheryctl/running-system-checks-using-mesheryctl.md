@@ -90,13 +90,13 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 **Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying infrastructure and so on, if you want to do them via Meshery._
 
-##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned postive results but I couldn't start Meshery. What to do?
+##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
 
 **Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{ site.baseurl }}/installation) to see instructions related to the platform you use._
 
 ##### Question: Do I need a Kubernetes cluster or will a Docker host suffice for Meshery deployments?
 
-**Answer**: _Meshery's [performance management](tasks/performance/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
+**Answer**: _Meshery's [performance management](/guides/performance-management/managing-performance) functionality does not require a Kubernetes cluster. The rest of Meshery's functionality (e.g. cloud native management) does require a Kubernetes cluster._
 
 ##### Question: What are Meshery's production deployment requirements?
 
@@ -144,7 +144,7 @@ Guides to using Meshery's various features and components.
 
 {% capture tag %}
 
-<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+<li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
 
 {% endcapture %}
 

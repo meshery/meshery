@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: External Secrets Operator
-subtitle: Collaborative and visual infrastructure as code for External Secrets Operator
+subtitle: Collaborative and visual infrastructure as design for External Secrets Operator
 image: /assets/img/integrations/external-secrets-operator/icons/color/external-secrets-operator-color.svg
 permalink: extensibility/integrations/external-secrets-operator
 docURL: https://docs.meshery.io/extensibility/integrations/external-secrets-operator
@@ -22,13 +22,16 @@ components:
   colorIcon: assets/img/integrations/external-secrets-operator/components/external-secret/icons/color/external-secret-color.svg
   whiteIcon: assets/img/integrations/external-secrets-operator/components/external-secret/icons/white/external-secret-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates secret synchronization",
+  "Supports multiple secret stores",
+  "Simplifies secret management in Kubernetes"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages external secrets"
+howItWorksDetails: "Secure and centralized secret management for Kubernetes applications"
 language: en
 list: include
 type: extensibility

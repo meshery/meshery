@@ -23,7 +23,7 @@ Meshery tracks the status of each connections throughout the connection's lifecy
 
 ### State: Discovered
 
-All resources discovered by [MeshSync's](meshsync.md) multi-tier discovery or provided as part of config, and if Meshery can integrate, a connection with state as `Discovered` will be created. Though, the connection/resources are not tested for its reachability/usability i.e. Meshery has not made an attempt to connect or manage the connection.
+All resources discovered by [MeshSync's](https://docs.meshery.io/concepts/architecture/meshsync) multi-tier discovery or provided as part of config, and if Meshery can integrate, a connection with state as `Discovered` will be created. Though, the connection/resources are not tested for its reachability/usability i.e. Meshery has not made an attempt to connect or manage the connection.
 
 When a connection has been discovered, it will be listed in the MeshSync browser / Connections table in Meshery UI. You can self transition a particular connection to [Register](#state-registered) / [Ignore](#state-ignored) state.
 
@@ -33,12 +33,13 @@ When a connection has been discovered, it will be listed in the MeshSync browser
 
 The connection in this state have been verified for its use and reachability but not yet being used. Almost all reachable connections will auto transition to Registered state from [Discovered](#state-discovered) state and it is upto the user what to do with this connection (i.e. User needs to administratively process the connection). It can be transitioned to [Connected](#state-connected), [Maintenance](#state-maintenance) and [Not Found](#state-not-found).
 
-> EExampleg: User manually selects the registered Prometheus connection and transition to the [connected](#state-connected) state (i.e. User administratively processes the connection).
+> Example: User manually selects the registered Prometheus connection and transition to the [connected](#state-connected) state (i.e. User administratively processes the connection).
 
 ### State: Connected
 
-The connection in this state is administratively processed and being actively managed by Meshery. User can interface and invoke set of actions with the connection.</br>
-From this state the transition can happen to either [Maintenance](#state-maintenance) or [Ignore](#state-ignored) state. </br> Auto transition to [Disconnected](#state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
+The connection in this state is administratively processed and being actively managed by Meshery. User can interface and invoke set of actions with the connection.<br>
+From this state the transition can happen to either [Maintenance](#state-maintenance) or [Ignore](#state-ignored) state.<br>
+Auto transition to [Disconnected](#state-disconnected) state will occur if Meshery can no longer communicate with the connection, which can occur due to connectivity issue/AuthN-AuthZ/connection was deleted outside Meshery or any other issue.
 
 > Example: Meshery is communicating with Prometheus APIs to scrape metrics and present it in the UI.
 
@@ -95,3 +96,7 @@ Note that some connections, such as the registration of Meshery server with remo
 For more information on the different states and the lifecycle of connections, refer to the documentation above.
 
 ![]({{site.baseurl}}/assets/img/architecture/meshery-server-registration-with-remote-providers.svg)
+
+
+
+Meshery supports different kinds of connections, and each handles transitions between their statuses differently. 

@@ -9,7 +9,7 @@ jobs:
   update-rest-api-docs:
     name: Update REST API Documentation
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Check if handlers were modified
@@ -32,6 +32,10 @@ jobs:
         if: steps.changes.outputs.modified == 'true'
         run: |
           make swagger-docs-build
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -45,7 +49,7 @@ jobs:
   update-graphql-docs:
     name: Update GraphQL API Documentation
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -62,13 +66,17 @@ jobs:
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1.162.0
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.2.6
           bundler-cache: true
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -84,7 +92,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -97,7 +105,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker stable and playground build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:stable-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PLAYGROUND=true .
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-latest
@@ -130,15 +138,15 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
         with:
-          version: latest
-          args: release --clean --skip=validate
+          version: 2
+          args: release --clean --skip=validate -f .github/.goreleaser.yml
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
@@ -164,6 +172,14 @@ jobs:
   #   name: Deploy Meshery Playground
   #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
   #   secrets: inherit
+  deploy-delay:
+    name: Playground Deploy Delay
+    runs-on: ubuntu-24.04
+    needs:
+      - build
+    steps:
+      - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
+        run: sleep 780
   email-meshery-release-notes-workflow:
     needs:
       - build
@@ -180,16 +196,16 @@ jobs:
       release-tag: ${{github.ref_name}}
       to: developers@meshery.io
   call-cncf-playground-rollout:
-    needs:
-      - build
+    needs: [build, deploy-delay]
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
+    with:
+      image: layer5/meshery:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
-
   email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Find failed jobs.
         run: |
@@ -203,7 +219,7 @@ jobs:
           echo "${{ env.EMAIL_BODY }}"
       - name: Send Email Notification
         if: env.EMAIL_BODY != ''
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v4
         with:
           server_address: smtp.gmail.com
           server_port: 465

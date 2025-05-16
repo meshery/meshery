@@ -1,20 +1,16 @@
 import { isNil, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
-import { withRouter } from 'next/router';
-import { extensionStyles as styles } from '../../../css/icons.styles';
-import { Grid, Typography, Switch } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../../lib/store';
-import { adaptersList } from './constants';
+import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
+import { ADAPTER_STATUS, adaptersList } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { Grid, Switch, Typography, useTheme } from '@layer5/sistent';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
-const Adapters = ({ updateProgress, classes }) => {
+const Adapters = () => {
   // States.
   const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
 
@@ -25,6 +21,8 @@ const Adapters = ({ updateProgress, classes }) => {
   useEffect(() => {
     handleAdapterSync();
   }, []);
+
+  const theme = useTheme();
 
   // Handlers.
   const handleAdapterSync = async (showLoader = true) => {
@@ -62,15 +60,16 @@ const Adapters = ({ updateProgress, classes }) => {
       updateProgress({ showProgress: false });
 
       if (!isNil(errors)) {
-        // Toggle the switch to it's previous state if the request fails.
+        // Toggle the switch to its previous state if the request fails.
         setAvailableAdapters({
           ...availableAdapters,
           [adapterId]: { ...selectedAdapter, enabled: !selectedAdapter.enabled },
         });
         handleError(msg);
       } else {
+        const actionText = payload.status.toLowerCase();
         notify({
-          message: `Adapter ${response.adapterStatus.toLowerCase()}`,
+          message: `${selectedAdapter.name} adapter ${actionText}`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       }
@@ -91,18 +90,18 @@ const Adapters = ({ updateProgress, classes }) => {
       msg = '';
     if (!selectedAdapter.enabled) {
       payload = {
-        status: 'ENABLED',
+        status: ADAPTER_STATUS.ENABLED,
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
-      msg = 'Unable to Deploy adapter';
+      msg = 'Unable to deploy adapter';
     } else {
       payload = {
-        status: 'DISABLED',
+        status: ADAPTER_STATUS.DISABLED,
         adapter: selectedAdapter.label,
         targetPort: selectedAdapter.defaultPort,
       };
-      msg = 'Unable to Undeploy adapter';
+      msg = 'Unable to undeploy adapter';
     }
     handleAdapterDeployment(payload, msg, selectedAdapter, adapterId);
   };
@@ -112,13 +111,13 @@ const Adapters = ({ updateProgress, classes }) => {
     <>
       {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
         <Grid item {...LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
-          <div className={classes.card}>
-            <Typography className={classes.frontContent} variant="h5" component="div">
+          <CardContainer>
+            <Typography variant="h5" component="div">
               Meshery Adapter for {adapter.name}
             </Typography>
 
-            <Typography className={classes.frontSideDescription} variant="body">
-              <img className={classes.img} src={adapter.imageSrc} />
+            <FrontSideDescription variant="body">
+              <ImageWrapper src={adapter.imageSrc} />
               <div
                 style={{
                   display: 'inline',
@@ -127,12 +126,11 @@ const Adapters = ({ updateProgress, classes }) => {
               >
                 {adapter.description}
               </div>
-            </Typography>
+            </FrontSideDescription>
 
             <Grid
               container
               spacing={2}
-              className={classes.grid}
               direction="row"
               justifyContent="space-between"
               alignItems="baseline"
@@ -148,7 +146,11 @@ const Adapters = ({ updateProgress, classes }) => {
                   href="https://docs.meshery.io/concepts/architecture/adapters"
                   target="_blank"
                   rel="noreferrer"
-                  className={classes.link}
+                  style={{
+                    textDecoration: 'none',
+                    color: theme.palette.text.brand,
+                  }}
+                  data-testid={`adapter-docs-${String(adapter.name).toLowerCase()}`}
                 >
                   Open Adapter docs
                 </a>
@@ -160,23 +162,14 @@ const Adapters = ({ updateProgress, classes }) => {
                   onChange={() => handleToggle(adapter, adapterId)}
                   name="OperatorSwitch"
                   color="primary"
-                  classes={{
-                    switchBase: classes.switchBase,
-                    track: classes.track,
-                    checked: classes.checked,
-                  }}
                 />
               </div>
             </Grid>
-          </div>
+          </CardContainer>
         </Grid>
       ))}
     </>
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default withStyles(styles)(connect(() => {}, mapDispatchToProps)(withRouter(Adapters)));
+export default Adapters;

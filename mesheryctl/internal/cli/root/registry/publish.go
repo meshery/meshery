@@ -19,12 +19,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	meshkitUtils "github.com/layer5io/meshkit/utils"
 )
 
@@ -34,8 +35,9 @@ var (
 	sheetID               string
 	modelsOutputPath      string
 	imgsOutputPath        string
-	models                = []utils.ModelCSV{}
-	components            = map[string]map[string][]utils.ComponentCSV{}
+	models                = []meshkitRegistryUtils.ModelCSV{}
+	components            = map[string]map[string][]meshkitRegistryUtils.ComponentCSV{}
+	relationships         = []meshkitRegistryUtils.RelationshipCSV{}
 	outputFormat          string
 )
 
@@ -80,10 +82,15 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 // Publishing to any website
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+
 		if len(args) != 5 {
-			return cmd.Help()
+			return errors.New(utils.RegistryError("[ system, google sheet credential, sheet-id, models output path, imgs output path] are required\n\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]\nRun 'mesheryctl registry publish --help'", "publish"))
 		}
+
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		system = args[0]
 		googleSheetCredential = args[1]
@@ -91,42 +98,52 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		modelsOutputPath = args[3]
 		imgsOutputPath = args[4]
 
-		// move to meshkit
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "publish"))
 		}
 		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(err)
-			return nil
+			errMsg := fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", err.Error())
+			return errors.New(utils.RegistryError(errMsg, "publish"))
 		}
 
-		modelCSVHelper := &utils.ModelCSVHelper{}
-		componentCSVHelper := &utils.ComponentCSVHelper{}
+		modelCSVHelper := &meshkitRegistryUtils.ModelCSVHelper{}
+		componentCSVHelper := &meshkitRegistryUtils.ComponentCSVHelper{}
+		relationshipCSVHelper := &meshkitRegistryUtils.RelationshipCSVHelper{}
 		GoogleSpreadSheetURL += sheetID
 
 		for _, v := range resp.Sheets {
 			switch v.Properties.Title {
 			case "Models":
-				modelCSVHelper, err = utils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				modelCSVHelper, err = meshkitRegistryUtils.NewModelCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, modelCSVFilePath)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
 				}
-				err := modelCSVHelper.ParseModelsSheet(true)
+				err := modelCSVHelper.ParseModelsSheet(true, modelName)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
 				}
 			case "Components":
-				componentCSVHelper, err = utils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId)
+				componentCSVHelper, err = meshkitRegistryUtils.NewComponentCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, componentCSVFilePath)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
 				}
-				err := componentCSVHelper.ParseComponentsSheet()
+				err := componentCSVHelper.ParseComponentsSheet(modelName)
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+			case "Relationships":
+				relationshipCSVHelper, err = meshkitRegistryUtils.NewRelationshipCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, relationshipCSVFilePath)
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+				err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -136,6 +153,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 
 		models = modelCSVHelper.Models
 		components = componentCSVHelper.Components
+		relationships = relationshipCSVHelper.Relationships
 
 		switch system {
 		case "meshery":
@@ -188,7 +206,7 @@ func remoteProviderSystem() error {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			utils.Log.Debug("no components found for ", model.Model)
-			comps = []utils.ComponentCSV{}
+			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
 
 		err := utils.GenerateIcons(model, comps, imgsOutputPath)
@@ -210,14 +228,23 @@ func remoteProviderSystem() error {
 func websiteSystem() error {
 	var err error
 
+	relationshipMap := make(map[string][]meshkitRegistryUtils.RelationshipCSV)
+	for _, rel := range relationships {
+		relationshipMap[rel.Model] = append(relationshipMap[rel.Model], rel)
+	}
 	docsJSON := "const data = ["
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
 		if !ok {
 			utils.Log.Debug("no components found for ", model.Model)
-			comps = []utils.ComponentCSV{}
+			comps = []meshkitRegistryUtils.ComponentCSV{}
 		}
 
+		relnships, ok := relationshipMap[model.Model]
+		if !ok || len(relnships) == 0 {
+			utils.Log.Debug("no relationships found for ", model.Model)
+			relnships = []meshkitRegistryUtils.RelationshipCSV{}
+		}
 		switch outputFormat {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
@@ -225,12 +252,12 @@ func websiteSystem() error {
 				log.Fatalln(fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error()))
 			}
 		case "md":
-			err := utils.GenerateMDStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates md file
+			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
 				log.Fatalln(fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error()))
 			}
 		case "js":
-			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, imgsOutputPath) // json file
+			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
 				log.Fatalln(fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error()))
 			}
@@ -269,10 +296,10 @@ func init() {
 	// publishCmd.MarkFlagRequired("imgs-output-path")
 }
 
-func WriteModelDefToFileSystem(model *utils.ModelCSV, version string, location string) (string, *v1beta1.Model, error) {
+func WriteModelDefToFileSystem(model *meshkitRegistryUtils.ModelCSV, version string, location string) (string, *model.ModelDefinition, error) {
 	modelDef := model.CreateModelDefinition(version, defVersion)
 	modelDefPath := filepath.Join(location, modelDef.Name)
-	err := modelDef.WriteModelDefinition(modelDefPath)
+	err := modelDef.WriteModelDefinition(modelDefPath+"/model.json", "json")
 	if err != nil {
 		return "", nil, err
 	}

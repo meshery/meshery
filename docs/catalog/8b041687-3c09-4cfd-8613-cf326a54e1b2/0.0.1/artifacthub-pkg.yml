@@ -1,0 +1,27 @@
+version: 0.0.1
+name: jax-'hello-world'-using-nvidia-gpus-a100-80gb-on-gke
+displayName: JAX 'Hello World' using NVIDIA GPUs A100-80GB on GKE
+createdAt: "2024-03-01T13:00:13Z"
+description: |-
+    JAX is a rapidly growing Python library for high-performance numerical computing and machine learning (ML) research. With applications in large language models, drug discovery, physics ML, reinforcement learning, and neural graphics, JAX has seen incredible adoption in the past few years. JAX offers numerous benefits for developers and researchers, including an easy-to-use NumPy API, auto differentiation and optimization. JAX also includes support for distributed processing across multi-node and multi-GPU systems in a few lines of code, with accelerated performance through XLA-optimized kernels on NVIDIA GPUs.
+
+    We show how to run JAX multi-GPU-multi-node applications on GKE (Google Kubernetes Engine) using the A2 ultra machine series, powered by NVIDIA A100 80GB Tensor Core  GPUs. It runs a simple Hello World application on 4 nodes with 8 processes and 8 GPUs each.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8b041687-3c09-4cfd-8613-cf326a54e1b2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure networking is setup properly and correct annotation are applied to each resource \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8b041687-3c09-4cfd-8613-cf326a54e1b2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8b041687-3c09-4cfd-8613-cf326a54e1b2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

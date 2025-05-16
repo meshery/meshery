@@ -1,41 +1,100 @@
 name: Import Keys
-on: 
+on:
   workflow_dispatch:
     inputs:
       spreadsheet_uri:
         description: Link of the spreadsheet containing keys.
         type: string
         default: https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv
+  schedule:
+    - cron: "0 0 * * *"
+
+permissions:
+  contents: write
 jobs:
   fetch-keys:
     name: Fetch Keys
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GH_ACCESS_TOKEN }}
-        fetch-depth: 1
-    - name: Set spreadsheet_uri as environment variable
-      run: echo "spreadsheet_uri=${{inputs.spreadsheet_uri}}" >> $GITHUB_ENV
-      if: inputs.spreadsheet_uri != ''
-      
-    - name: Dump keys from the spreadsheet
-      run: |
-        curl -L "${{ env.spreadsheet_uri }}" -o "./keys.csv";      
-    - name: Create permissions folder
-      run: |
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          fetch-depth: 1
+      - name: Set spreadsheet_uri as environment variable
+        run: echo "spreadsheet_uri=https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv" >> $GITHUB_ENV
+        if: inputs.spreadsheet_uri != ''
+          echo "spreadsheet_uri=${{ inputs.spreadsheet_uri }}" >> $GITHUB_ENV
+
+      - name: Download Google Sheets CSV
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const url = `${{ env.spreadsheet_uri }}`;
+            const filePath = path.resolve(process.cwd(), './keys.csv');
+
+            fetch(url)
+              .then(response => {
+                if (!response.ok) {
+                  if (response.status === 404) {
+                    console.error('Error: Page not found (404)');
+                    process.exit(1);
+                  }
+                  throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+                }
+                return response.text();
+              })
+              .then(data => {
+                fs.writeFileSync(filePath, data, 'utf8');
+                console.log(`CSV data saved to ${filePath}`);
+              })
+              .catch(error => {
+                console.error('Error fetching CSV:', error.message);
+                process.exit(1);
+              });
+
+      - name: Create permissions folder
+        run: |
           [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";
           mv keys.csv server/permissions/keys.csv;
-    - name: Save keys.csv to docs/assets/excel
-      run: mv keys.csv docs/assets/excel/keys.csv
-    - name: Commit changes
-      uses: stefanzweifel/git-auto-commit-action@v5
-      with:
-        commit_message: Added permissions keys.
-        branch: master
-        commit_options: '--signoff'
-        commit_user_name: l5io
-        commit_user_email: ci@layer5.io
-        commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>author of the commit that triggered the run
+      - name: Save keys.csv to docs/assets/excel
+        run: cp server/permissions/keys.csv docs/assets/excel/keys.csv
+
+      - name: Pull changes from remote
+        run: git pull origin master
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: Added permissions keys.
+          branch: master
+          commit_options: "--signoff"
+          commit_user_name: l5io
+          commit_user_email: ci@layer5.io
+          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>author of the commit that triggered the run
+
+      - name: Send Email on Generate permission keys failure
+        if: ${{ failure() }}
+        uses: dawidd6/action-send-mail@v4
+        env:
+          msg: ${{ env.reason != '' && env.reason || ' Generate permission keys failure' }}
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Generate permission keys failure
+          from: |
+            "Meshery" <no-reply@meshery.io>
+          to: |
+            "Layer5 Support" <support@layer5.io>
+          html_body: |
+            <b>REPO:</b> ${{ github.repository }}<br />
+            <b>WORKFLOW:</b> ${{ github.workflow }}<br />
+            <b>JOB:</b> ${{ github.job }}<br />
+            <b>REASON:</b> ${{ env.msg }}<br />
+            <b>DETAILS:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}${{ job.status }}">${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a><br />

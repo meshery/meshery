@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Azure Active Directory (AAD)
-subtitle: Collaborative and visual infrastructure as code for Azure Active Directory (AAD)
+subtitle: Collaborative and visual infrastructure as design for Azure Active Directory (AAD)
 image: /assets/img/integrations/aad-pod-identity/icons/color/aad-pod-identity-color.svg
 permalink: extensibility/integrations/aad-pod-identity
 docURL: https://docs.meshery.io/extensibility/integrations/aad-pod-identity
@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aad-pod-identity/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg
   whiteIcon: assets/img/integrations/aad-pod-identity/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Use Azure Active Directory pod-managed identities in Azure Kubernetes Service.",
   "A maximum of 200 pod-managed identities are allowed for a cluster.",

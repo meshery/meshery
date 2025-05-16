@@ -1,60 +1,68 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { Chip, NoSsr } from '@material-ui/core';
+import { NoSsr } from '@layer5/sistent';
+import { Chip, Box, styled } from '@layer5/sistent';
 import MUIDataTable from 'mui-datatables';
 
-const grafanaStyles = (theme) => ({
-  root: { padding: theme.spacing(5) },
-  panelChips: { display: 'flex', flexWrap: 'wrap' },
-  panelChip: { margin: theme.spacing(0.25) },
-});
+const Root = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(5),
+}));
 
-class GrafanaDisplaySelection extends Component {
-  render() {
-    const { classes, boardPanelConfigs, deleteSelectedBoardPanelConfig } = this.props;
-    const selectedValsForDisplay = [];
-    boardPanelConfigs.forEach((cf) => {
-      selectedValsForDisplay.push({
-        board: cf.board && cf.board.title ? cf.board.title : '',
-        panels: cf.panels.map((panel, ind) => (
-          <Chip key={`${panel.id}_-_${ind}`} label={panel.title} className={classes.panelChip} />
-        )),
-        template_variables: cf.templateVars
-          ? cf.templateVars.map((tv, ind) => {
-              if (tv && tv !== '') {
-                return <Chip key={`${tv}-_-${ind}`} label={tv} className={classes.panelChip} />;
-              }
-              return null;
-            })
-          : [],
-      });
-    });
+const PanelChips = styled(Box)(() => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+}));
 
-    const columns = [
-      { name: 'board', label: 'Board' },
-      { name: 'panels', label: 'Panels' },
-      { name: 'template_variables', label: 'Template Variables' },
-    ];
-    const options = {
-      filter: false,
-      sort: false,
-      search: false,
-      filterType: 'textField',
-      responsive: 'stacked',
-      count: selectedValsForDisplay.length,
-      print: false,
-      download: false,
-      pagination: false,
-      viewColumns: false,
-      onRowsDelete: (rowsDeleted) => {
-        const delRows = rowsDeleted.data.map(({ dataIndex }) => dataIndex);
-        deleteSelectedBoardPanelConfig(delRows);
-        return false;
-      },
-    };
-    return (
-      <NoSsr>
+const StyledChip = styled(Chip)(({ theme }) => ({
+  margin: theme.spacing(0.25),
+}));
+
+const GrafanaDisplaySelection = ({ boardPanelConfigs, deleteSelectedBoardPanelConfig }) => {
+  const selectedValsForDisplay = boardPanelConfigs.map((cf) => ({
+    board: cf.board?.title || '',
+    panels: (
+      <PanelChips>
+        {cf.panels.map((panel, ind) => (
+          <StyledChip key={`${panel.id}_-_${ind}`} label={panel.title} />
+        ))}
+      </PanelChips>
+    ),
+    template_variables: (
+      <PanelChips>
+        {cf.templateVars
+          ? cf.templateVars.map((tv, ind) =>
+              tv && tv !== '' ? <StyledChip key={`${tv}-_-${ind}`} label={tv} /> : null,
+            )
+          : []}
+      </PanelChips>
+    ),
+  }));
+
+  const columns = [
+    { name: 'board', label: 'Board' },
+    { name: 'panels', label: 'Panels' },
+    { name: 'template_variables', label: 'Template Variables' },
+  ];
+  const options = {
+    filter: false,
+    sort: false,
+    search: false,
+    filterType: 'textField',
+    responsive: 'vertical',
+    count: selectedValsForDisplay.length,
+    print: false,
+    download: false,
+    pagination: false,
+    viewColumns: false,
+    onRowsDelete: (rowsDeleted) => {
+      const delRows = rowsDeleted.data.map(({ dataIndex }) => dataIndex);
+      deleteSelectedBoardPanelConfig(delRows);
+      return false;
+    },
+  };
+  return (
+    <NoSsr>
+      <Root>
         <MUIDataTable
           key={`gds_${new Date().getTime()}`}
           title="Meshery Results"
@@ -62,10 +70,10 @@ class GrafanaDisplaySelection extends Component {
           columns={columns}
           options={options}
         />
-      </NoSsr>
-    );
-  }
-}
+      </Root>
+    </NoSsr>
+  );
+};
 
 GrafanaDisplaySelection.propTypes = {
   classes: PropTypes.object.isRequired,
@@ -73,4 +81,4 @@ GrafanaDisplaySelection.propTypes = {
   deleteSelectedBoardPanelConfig: PropTypes.func.isRequired,
 };
 
-export default withStyles(grafanaStyles)(GrafanaDisplaySelection);
+export default GrafanaDisplaySelection;

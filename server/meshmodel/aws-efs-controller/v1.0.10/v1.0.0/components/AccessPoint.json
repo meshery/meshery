@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Access Point",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-efs-controller",
+    "displayName": "AWS Elastic File System",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Storage"
+    },
+    "subCategory": "Cloud Native Storage",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ED7100",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/efs-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 48 48\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-Resource/Storage/Res_Amazon-Elastic-File-System_File-System_48\u003c/title\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Resource/Storage/Res_Amazon-Elastic-File-System_File-System_48\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M37.2366623,11.621 L42.2336623,11.621 L42.2336623,6.624 L37.2366623,6.624 L37.2366623,11.621 Z M36.1116623,13.595 L36.1116623,15.245 L38.1116623,15.245 L38.1116623,13.621 L38.7356623,13.621 L38.7356623,15.245 L40.7356623,15.245 L40.7356623,13.621 L41.3596623,13.621 L41.3596623,15.245 L43.3596623,15.245 L43.3596623,13.595 C43.8066623,13.537 44.1496623,13.193 44.2076623,12.746 L45.8576623,12.746 L45.8576623,10.746 L44.2336623,10.746 L44.2336623,10.123 L45.8576623,10.123 L45.8576623,8.123 L44.2336623,8.123 L44.2336623,7.499 L45.8576623,7.499 L45.8576623,5.499 L44.2076623,5.499 C44.1496623,5.051 43.8066623,4.708 43.3596623,4.649 L43.3596623,3 L41.3596623,3 L41.3596623,4.624 L40.7356623,4.624 L40.7356623,3 L38.7356623,3 L38.7356623,4.624 L38.1116623,4.624 L38.1116623,3 L36.1116623,3 L36.1116623,4.649 C35.6626623,4.708 35.3206623,5.05 35.2616623,5.499 L33.6126623,5.499 L33.6126623,7.499 L35.2366623,7.499 L35.2366623,8.123 L33.6126623,8.123 L33.6126623,10.123 L35.2366623,10.123 L35.2366623,10.746 L33.6126623,10.746 L33.6126623,12.746 L35.2616623,12.746 C35.3206623,13.194 35.6626623,13.537 36.1116623,13.595 L36.1116623,13.595 Z M22.3676623,11.621 L27.3646623,11.621 L27.3646623,6.624 L22.3676623,6.624 L22.3676623,11.621 Z M21.2426623,13.595 L21.2426623,15.245 L23.2426623,15.245 L23.2426623,13.621 L23.8666623,13.621 L23.8666623,15.245 L25.8666623,15.245 L25.8666623,13.621 L26.4906623,13.621 L26.4906623,15.245 L28.4906623,15.245 L28.4906623,13.595 C28.9376623,13.537 29.2806623,13.193 29.3386623,12.746 L30.9886623,12.746 L30.9886623,10.746 L29.3646623,10.746 L29.3646623,10.123 L30.9886623,10.123 L30.9886623,8.123 L29.3646623,8.123 L29.3646623,7.499 L30.9886623,7.499 L30.9886623,5.499 L29.3386623,5.499 C29.2806623,5.051 28.9376623,4.708 28.4906623,4.649 L28.4906623,3 L26.4906623,3 L26.4906623,4.624 L25.8666623,4.624 L25.8666623,3 L23.8666623,3 L23.8666623,4.624 L23.2426623,4.624 L23.2426623,3 L21.2426623,3 L21.2426623,4.649 C20.7936623,4.708 20.4506623,5.05 20.3926623,5.499 L18.7426623,5.499 L18.7426623,7.499 L20.3676623,7.499 L20.3676623,8.123 L18.7426623,8.123 L18.7426623,10.123 L20.3676623,10.123 L20.3676623,10.746 L18.7426623,10.746 L18.7426623,12.746 L20.3926623,12.746 C20.4506623,13.194 20.7936623,13.537 21.2426623,13.595 L21.2426623,13.595 Z M7.49866234,11.621 L12.4956623,11.621 L12.4956623,6.624 L7.49866234,6.624 L7.49866234,11.621 Z M6.37266234,13.595 L6.37266234,15.245 L8.37266234,15.245 L8.37266234,13.621 L8.99666234,13.621 L8.99666234,15.245 L10.9966623,15.245 L10.9966623,13.621 L11.6206623,13.621 L11.6206623,15.245 L13.6206623,15.245 L13.6206623,13.595 C14.0696623,13.537 14.4116623,13.194 14.4706623,12.746 L16.1196623,12.746 L16.1196623,10.746 L14.4956623,10.746 L14.4956623,10.123 L16.1196623,10.123 L16.1196623,8.123 L14.4956623,8.123 L14.4956623,7.499 L16.1196623,7.499 L16.1196623,5.499 L14.4706623,5.499 C14.4116623,5.05 14.0696623,4.708 13.6206623,4.649 L13.6206623,3 L11.6206623,3 L11.6206623,4.624 L10.9966623,4.624 L10.9966623,3 L8.99666234,3 L8.99666234,4.624 L8.37266234,4.624 L8.37266234,3 L6.37266234,3 L6.37266234,4.649 C5.92566234,4.708 5.58166234,5.051 5.52466234,5.499 L3.87466234,5.499 L3.87466234,7.499 L5.49866234,7.499 L5.49866234,8.123 L3.87466234,8.123 L3.87466234,10.123 L5.49866234,10.123 L5.49866234,10.746 L3.87466234,10.746 L3.87466234,12.746 L5.52466234,12.746 C5.58166234,13.193 5.92566234,13.537 6.37266234,13.595 L6.37266234,13.595 Z M37.3346623,28.477 L43.4426623,42.23 L10.6516623,42.23 L4.53866234,28.477 L37.3346623,28.477 Z M6.87666234,24.979 L39.8116623,24.979 L41.7386623,33.463 L38.8996623,27.071 C38.7396623,26.709 38.3806623,26.477 37.9856623,26.477 L7.21766234,26.477 L6.87666234,24.979 Z M10.9966623,22.361 C10.9966623,21.828 11.4186623,21.393 11.9386623,21.393 L31.4436623,21.393 C31.9956623,21.393 32.4436623,20.946 32.4436623,20.393 L32.4436623,18.25 C32.4436623,18.092 32.5546623,17.973 32.7026623,17.973 L36.9456623,17.973 C37.0956623,17.973 37.2126623,18.094 37.2126623,18.25 L37.2126623,20.393 C37.2126623,20.946 37.6596623,21.393 38.2126623,21.393 L43.0406623,21.393 C43.5606623,21.393 43.9826623,21.828 43.9826623,22.361 L43.9826623,34.311 L41.5846623,23.757 C41.4816623,23.302 41.0756623,22.979 40.6096623,22.979 L10.9966623,22.979 L10.9966623,22.361 Z M43.0406623,19.393 L39.2126623,19.393 L39.2126623,18.25 C39.2126623,16.995 38.1956623,15.973 36.9456623,15.973 L32.7026623,15.973 C31.4566623,15.973 30.4436623,16.995 30.4436623,18.25 L30.4436623,19.393 L11.9386623,19.393 C10.3166623,19.393 8.99666234,20.724 8.99666234,22.361 L8.99666234,22.979 L5.62366234,22.979 C5.31966234,22.979 5.03266234,23.118 4.84266234,23.355 C4.65266234,23.593 4.58066234,23.904 4.64966234,24.201 L5.16666234,26.477 L2.99966234,26.477 C2.66066234,26.477 2.34566234,26.648 2.16066234,26.932 C1.97766234,27.216 1.94866234,27.574 2.08566234,27.883 L9.07266234,43.604 C9.22066234,43.97 9.57666234,44.23 9.99666234,44.23 L44.9826623,44.23 C45.5346623,44.23 45.9826623,43.783 45.9826623,43.23 L45.9826623,22.361 C45.9826623,20.724 44.6626623,19.393 43.0406623,19.393 L43.0406623,19.393 Z\" id=\"AWS-Amazon-Elastic-File-System_File-system_Resource-Icon_light-bg\" fill=\"#7AA116\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 48 48\" version=\"1.1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\"\u003e\n\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003eIcon-Resource/Storage/Res_Amazon-Elastic-File-System_File-System_48\u003c/title\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Resource/Storage/Res_Amazon-Elastic-File-System_File-System_48\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M37.2366623,11.621 L42.2336623,11.621 L42.2336623,6.624 L37.2366623,6.624 L37.2366623,11.621 Z M36.1116623,13.595 L36.1116623,15.245 L38.1116623,15.245 L38.1116623,13.621 L38.7356623,13.621 L38.7356623,15.245 L40.7356623,15.245 L40.7356623,13.621 L41.3596623,13.621 L41.3596623,15.245 L43.3596623,15.245 L43.3596623,13.595 C43.8066623,13.537 44.1496623,13.193 44.2076623,12.746 L45.8576623,12.746 L45.8576623,10.746 L44.2336623,10.746 L44.2336623,10.123 L45.8576623,10.123 L45.8576623,8.123 L44.2336623,8.123 L44.2336623,7.499 L45.8576623,7.499 L45.8576623,5.499 L44.2076623,5.499 C44.1496623,5.051 43.8066623,4.708 43.3596623,4.649 L43.3596623,3 L41.3596623,3 L41.3596623,4.624 L40.7356623,4.624 L40.7356623,3 L38.7356623,3 L38.7356623,4.624 L38.1116623,4.624 L38.1116623,3 L36.1116623,3 L36.1116623,4.649 C35.6626623,4.708 35.3206623,5.05 35.2616623,5.499 L33.6126623,5.499 L33.6126623,7.499 L35.2366623,7.499 L35.2366623,8.123 L33.6126623,8.123 L33.6126623,10.123 L35.2366623,10.123 L35.2366623,10.746 L33.6126623,10.746 L33.6126623,12.746 L35.2616623,12.746 C35.3206623,13.194 35.6626623,13.537 36.1116623,13.595 L36.1116623,13.595 Z M22.3676623,11.621 L27.3646623,11.621 L27.3646623,6.624 L22.3676623,6.624 L22.3676623,11.621 Z M21.2426623,13.595 L21.2426623,15.245 L23.2426623,15.245 L23.2426623,13.621 L23.8666623,13.621 L23.8666623,15.245 L25.8666623,15.245 L25.8666623,13.621 L26.4906623,13.621 L26.4906623,15.245 L28.4906623,15.245 L28.4906623,13.595 C28.9376623,13.537 29.2806623,13.193 29.3386623,12.746 L30.9886623,12.746 L30.9886623,10.746 L29.3646623,10.746 L29.3646623,10.123 L30.9886623,10.123 L30.9886623,8.123 L29.3646623,8.123 L29.3646623,7.499 L30.9886623,7.499 L30.9886623,5.499 L29.3386623,5.499 C29.2806623,5.051 28.9376623,4.708 28.4906623,4.649 L28.4906623,3 L26.4906623,3 L26.4906623,4.624 L25.8666623,4.624 L25.8666623,3 L23.8666623,3 L23.8666623,4.624 L23.2426623,4.624 L23.2426623,3 L21.2426623,3 L21.2426623,4.649 C20.7936623,4.708 20.4506623,5.05 20.3926623,5.499 L18.7426623,5.499 L18.7426623,7.499 L20.3676623,7.499 L20.3676623,8.123 L18.7426623,8.123 L18.7426623,10.123 L20.3676623,10.123 L20.3676623,10.746 L18.7426623,10.746 L18.7426623,12.746 L20.3926623,12.746 C20.4506623,13.194 20.7936623,13.537 21.2426623,13.595 L21.2426623,13.595 Z M7.49866234,11.621 L12.4956623,11.621 L12.4956623,6.624 L7.49866234,6.624 L7.49866234,11.621 Z M6.37266234,13.595 L6.37266234,15.245 L8.37266234,15.245 L8.37266234,13.621 L8.99666234,13.621 L8.99666234,15.245 L10.9966623,15.245 L10.9966623,13.621 L11.6206623,13.621 L11.6206623,15.245 L13.6206623,15.245 L13.6206623,13.595 C14.0696623,13.537 14.4116623,13.194 14.4706623,12.746 L16.1196623,12.746 L16.1196623,10.746 L14.4956623,10.746 L14.4956623,10.123 L16.1196623,10.123 L16.1196623,8.123 L14.4956623,8.123 L14.4956623,7.499 L16.1196623,7.499 L16.1196623,5.499 L14.4706623,5.499 C14.4116623,5.05 14.0696623,4.708 13.6206623,4.649 L13.6206623,3 L11.6206623,3 L11.6206623,4.624 L10.9966623,4.624 L10.9966623,3 L8.99666234,3 L8.99666234,4.624 L8.37266234,4.624 L8.37266234,3 L6.37266234,3 L6.37266234,4.649 C5.92566234,4.708 5.58166234,5.051 5.52466234,5.499 L3.87466234,5.499 L3.87466234,7.499 L5.49866234,7.499 L5.49866234,8.123 L3.87466234,8.123 L3.87466234,10.123 L5.49866234,10.123 L5.49866234,10.746 L3.87466234,10.746 L3.87466234,12.746 L5.52466234,12.746 C5.58166234,13.193 5.92566234,13.537 6.37266234,13.595 L6.37266234,13.595 Z M37.3346623,28.477 L43.4426623,42.23 L10.6516623,42.23 L4.53866234,28.477 L37.3346623,28.477 Z M6.87666234,24.979 L39.8116623,24.979 L41.7386623,33.463 L38.8996623,27.071 C38.7396623,26.709 38.3806623,26.477 37.9856623,26.477 L7.21766234,26.477 L6.87666234,24.979 Z M10.9966623,22.361 C10.9966623,21.828 11.4186623,21.393 11.9386623,21.393 L31.4436623,21.393 C31.9956623,21.393 32.4436623,20.946 32.4436623,20.393 L32.4436623,18.25 C32.4436623,18.092 32.5546623,17.973 32.7026623,17.973 L36.9456623,17.973 C37.0956623,17.973 37.2126623,18.094 37.2126623,18.25 L37.2126623,20.393 C37.2126623,20.946 37.6596623,21.393 38.2126623,21.393 L43.0406623,21.393 C43.5606623,21.393 43.9826623,21.828 43.9826623,22.361 L43.9826623,34.311 L41.5846623,23.757 C41.4816623,23.302 41.0756623,22.979 40.6096623,22.979 L10.9966623,22.979 L10.9966623,22.361 Z M43.0406623,19.393 L39.2126623,19.393 L39.2126623,18.25 C39.2126623,16.995 38.1956623,15.973 36.9456623,15.973 L32.7026623,15.973 C31.4566623,15.973 30.4436623,16.995 30.4436623,18.25 L30.4436623,19.393 L11.9386623,19.393 C10.3166623,19.393 8.99666234,20.724 8.99666234,22.361 L8.99666234,22.979 L5.62366234,22.979 C5.31966234,22.979 5.03266234,23.118 4.84266234,23.355 C4.65266234,23.593 4.58066234,23.904 4.64966234,24.201 L5.16666234,26.477 L2.99966234,26.477 C2.66066234,26.477 2.34566234,26.648 2.16066234,26.932 C1.97766234,27.216 1.94866234,27.574 2.08566234,27.883 L9.07266234,43.604 C9.22066234,43.97 9.57666234,44.23 9.99666234,44.23 L44.9826623,44.23 C45.5346623,44.23 45.9826623,43.783 45.9826623,43.23 L45.9826623,22.361 C45.9826623,20.724 44.6626623,19.393 43.0406623,19.393 L43.0406623,19.393 Z\" id=\"AWS-Amazon-Elastic-File-System_File-system_Resource-Icon_light-bg\" fill=\"#7AA116\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.10"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ED7100",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cg clip-path=\"url(#clip0_23296_3391)\"\u003e\n\u003cpath d=\"M40 0H0V40H40V0Z\" fill=\"#ED7100\" fill-opacity=\"0.12\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M19.403 16.1434V19.4551L22.273 16.1434H23.716L20.465 20.1487L23.882 24.3702H22.459L19.403 20.5653V24.3565H18.117V16.1434H19.403ZM32 24.2494L28 21.8925V15.8251C28 15.6355 27.888 15.4626 27.713 15.381L22 12.7363V8.28493L32 13.1823V24.2494ZM32.722 12.4386L21.722 7.05198C21.567 6.97535 21.383 6.98419 21.237 7.07359C21.09 7.16299 21 7.32116 21 7.49112V13.0477C21 13.2373 21.111 13.4112 21.287 13.4918L27 16.1365V22.1706C27 22.3435 27.091 22.5026 27.243 22.5911L32.243 25.5383C32.322 25.5855 32.411 25.6091 32.5 25.6091C32.585 25.6091 32.67 25.5875 32.746 25.5452C32.903 25.4578 33 25.2947 33 25.1179V12.8778C33 12.6921 32.892 12.5212 32.722 12.4386ZM19.995 32.9517L9 27.3165V13.1686L18 8.32029V12.7619L13.254 15.3977C13.096 15.4851 13 15.6482 13 15.8251V24.6669C13 24.8457 13.099 25.0108 13.258 25.0972L19.758 28.6124C19.909 28.6939 20.091 28.6939 20.24 28.6133L26.49 25.2416L30.036 27.572L19.995 32.9517ZM26.794 24.2592C26.638 24.157 26.439 24.1492 26.275 24.2366L20 27.6221L14 24.3771V16.1119L18.746 13.4751C18.903 13.3886 19 13.2246 19 13.0477V7.49112C19 7.31723 18.907 7.1571 18.755 7.06868C18.603 6.98026 18.415 6.97731 18.259 7.05984L8.259 12.4475C8.099 12.5339 8 12.699 8 12.8778V27.6142C8 27.7979 8.103 27.9649 8.268 28.0504L19.768 33.945C19.84 33.9813 19.921 34 20 34C20.082 34 20.165 33.9804 20.239 33.9401L31.239 28.0455C31.392 27.963 31.491 27.8087 31.499 27.6368C31.507 27.4649 31.424 27.3018 31.278 27.2065L26.794 24.2592Z\" fill=\"#ED7100\"/\u003e\n\u003c/g\u003e\n\u003crect x=\"0.5\" y=\"0.5\" width=\"39\" height=\"39\" stroke=\"#ED7100\"/\u003e\n\u003cdefs\u003e\n\u003cclipPath id=\"clip0_23296_3391\"\u003e\n\u003crect width=\"40\" height=\"40\" fill=\"white\"/\u003e\n\u003c/clipPath\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-Elastic-Kubernetes-Service_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M19.403,16.1433741 L19.403,19.4551416 L22.273,16.1433741 L23.716,16.1433741 L20.465,20.1487363 L23.882,24.3702329 L22.459,24.3702329 L19.403,20.5652861 L19.403,24.3564789 L18.117,24.3564789 L18.117,16.1433741 L19.403,16.1433741 Z M32,24.2493941 L28,21.8925474 L28,15.8250672 C28,15.6354584 27.888,15.4625509 27.713,15.3810093 L22,12.736311 L22,8.28492611 L32,13.1823337 L32,24.2493941 Z M32.722,12.4386351 L21.722,7.05197797 C21.567,6.97534852 21.383,6.98419038 21.237,7.0735914 C21.09,7.16299242 21,7.32116346 21,7.49112364 L21,13.0477409 C21,13.2373497 21.111,13.4112396 21.287,13.4917988 L27,16.1364971 L27,22.1705748 C27,22.3434823 27.091,22.5026357 27.243,22.5910543 L32.243,25.5383407 C32.322,25.5854973 32.411,25.6090756 32.5,25.6090756 C32.585,25.6090756 32.67,25.5874622 32.746,25.5452177 C32.903,25.4577816 33,25.2946984 33,25.1178612 L33,12.8777808 C33,12.6921017 32.892,12.5211591 32.722,12.4386351 L32.722,12.4386351 Z M19.995,32.9517485 L9,27.3165369 L9,13.1685797 L18,8.32029355 L18,12.7618542 L13.254,15.3977106 C13.096,15.4851468 13,15.64823 13,15.8250672 L13,24.6669264 C13,24.8457284 13.099,25.0107765 13.258,25.0972302 L19.758,28.6123605 C19.909,28.693902 20.091,28.693902 20.24,28.6133429 L26.49,25.2416472 L30.036,27.5719684 L19.995,32.9517485 Z M26.794,24.2592184 C26.638,24.1570458 26.439,24.1491864 26.275,24.2366226 L20,27.6220722 L14,24.3771099 L14,16.1119364 L18.746,13.4750975 C18.903,13.3886437 19,13.2245781 19,13.0477409 L19,7.49112364 C19,7.31723374 18.907,7.15709785 18.755,7.06867926 C18.603,6.98026067 18.415,6.97731338 18.259,7.0598374 L8.259,12.4474769 C8.099,12.5339307 8,12.6989787 8,12.8777808 L8,27.6142128 C8,27.797927 8.103,27.9649399 8.268,28.0504112 L19.768,33.944984 C19.84,33.9813339 19.921,34 20,34 C20.082,34 20.165,33.9803514 20.239,33.9400718 L31.239,28.045499 C31.392,27.962975 31.491,27.8087337 31.499,27.6368087 C31.507,27.4648836 31.424,27.3018004 31.278,27.2065048 L26.794,24.2592184 Z\" id=\"Amazon-Elastic-Kubernetes-Service_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/efs-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "efs.services.k8s.aws/v1alpha1",
+    "kind": "AccessPoint",
+    "schema": "{\n \"description\": \"AccessPoint is the Schema for the AccessPoints API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"AccessPointSpec defines the desired state of AccessPoint.\",\n   \"properties\": {\n    \"fileSystemID\": {\n     \"description\": \"The ID of the EFS file system that the access point provides access to.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"fileSystemRef\": {\n     \"description\": \"AWSResourceReferenceWrapper provides a wrapper around *AWSResourceReference\\ntype to provide more user friendly syntax for references using 'from' field\\nEx:\\nAPIIDRef:\\n\\n\\tfrom:\\n\\t  name: my-api\",\n     \"properties\": {\n      \"from\": {\n       \"description\": \"AWSResourceReference provides all the values necessary to reference another\\nk8s resource for finding the identifier(Id/ARN/Name)\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"posixUser\": {\n     \"description\": \"The operating system user and group applied to all file system requests made\\nusing the access point.\",\n     \"properties\": {\n      \"gid\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"secondaryGIDs\": {\n       \"items\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"type\": \"array\"\n      },\n      \"uid\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"rootDirectory\": {\n     \"description\": \"Specifies the directory on the EFS file system that the access point exposes\\nas the root directory of your file system to NFS clients using the access\\npoint. The clients using the access point can only access the root directory\\nand below. If the RootDirectory \\u003e Path specified does not exist, Amazon EFS\\ncreates it and applies the CreationInfo settings when a client connects to\\nan access point. When specifying a RootDirectory, you must provide the Path,\\nand the CreationInfo.\\n\\nAmazon EFS creates a root directory only if you have provided the CreationInfo:\\nOwnUid, OwnGID, and permissions for the directory. If you do not provide\\nthis information, Amazon EFS does not create the root directory. If the root\\ndirectory does not exist, attempts to mount using the access point will fail.\",\n     \"properties\": {\n      \"creationInfo\": {\n       \"description\": \"Required if the RootDirectory \\u003e Path specified does not exist. Specifies\\nthe POSIX IDs and permissions to apply to the access point's RootDirectory\\n\\u003e Path. If the access point root directory does not exist, EFS creates it\\nwith these settings when a client connects to the access point. When specifying\\nCreationInfo, you must include values for all properties.\\n\\nAmazon EFS creates a root directory only if you have provided the CreationInfo:\\nOwnUid, OwnGID, and permissions for the directory. If you do not provide\\nthis information, Amazon EFS does not create the root directory. If the root\\ndirectory does not exist, attempts to mount using the access point will fail.\\n\\nIf you do not provide CreationInfo and the specified RootDirectory does not\\nexist, attempts to mount the file system using the access point will fail.\",\n       \"properties\": {\n        \"ownerGID\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"ownerUID\": {\n         \"format\": \"int64\",\n         \"type\": \"integer\"\n        },\n        \"permissions\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable once set\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"tags\": {\n     \"description\": \"Creates tags associated with the access point. Each tag is a key-value pair,\\neach key must be unique. For more information, see Tagging Amazon Web Services\\nresources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html)\\nin the Amazon Web Services General Reference Guide.\",\n     \"items\": {\n      \"description\": \"A tag is a key-value pair. Allowed characters are letters, white space, and\\nnumbers that can be represented in UTF-8, and the following characters:+\\n- = . _ : /.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Access Point\",\n \"type\": \"object\"\n}"
+  }
+}

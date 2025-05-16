@@ -1,28 +1,18 @@
-import MomentUtils from '@date-io/moment';
-import { NoSsr, Typography } from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Hidden from '@material-ui/core/Hidden';
-import { ThemeProvider, withStyles } from '@material-ui/core/styles';
-import { CheckCircle, Error, Info, Warning } from '@material-ui/icons';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-// import 'billboard.js/dist/theme/insight.min.css';
+import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'billboard.js/dist/theme/dark.min.css';
-// import 'billboard.js/dist/billboard. min.css';
 import 'codemirror/addon/lint/lint.css';
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/material.css';
-import { fromJS } from 'immutable';
 import _ from 'lodash';
-import withRedux from 'next-redux-wrapper';
-import App from 'next/app';
 import Head from 'next/head';
 import { SnackbarProvider } from 'notistack';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { connect, Provider } from 'react-redux';
+import React, { useEffect, useMemo, useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
 import Navigator from '../components/Navigator';
@@ -30,40 +20,67 @@ import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
-import {
-  actionTypes,
-  makeStore,
-  toggleCatalogContent,
-  updateTelemetryUrls,
-  setConnectionMetadata,
-} from '../lib/store';
-import theme, { styles } from '../themes';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
-import { bindActionCreators } from 'redux';
-import { darkTheme } from '../themes/app';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
 import './styles/AnimatedMeshSync.css';
 import PlaygroundMeshDeploy from './extension/AccessMesheryModal';
 import Router from 'next/router';
-import subscribeMeshSyncEvents from '../components/graphql/subscriptions/MeshSyncEventsSubscription';
-import { isTelemetryComponent, TelemetryComps } from '../utils/nameMapper';
-import { extractURLFromScanData } from '../components/ConnectionWizard/helpers/metrics';
-import { formatToTitleCase, updateURLs } from '../utils/utils';
 import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
-
-import { ErrorBoundary } from '../components/General/ErrorBoundary';
+import uiConfig from '../ui.config';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
-import { ability } from '../utils/can';
+import CAN, { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
+import { formatToTitleCase } from '@/utils/utils';
+import { useThemePreference } from '@/themes/hooks';
+import {
+  ErrorBoundary,
+  useTheme,
+  SistentThemeProvider,
+  CssBaseline,
+  Typography,
+  Hidden,
+  NoSsr,
+} from '@layer5/sistent';
+import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
+import { LoadSessionGuard } from '@/rtk-query/ability';
+import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
+import { keys } from '@/utils/permission_constants';
+import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import {
+  StyledAppContent,
+  StyledDrawer,
+  StyledFooterBody,
+  StyledFooterText,
+  StyledMainContent,
+  StyledContentWrapper,
+  StyledRoot,
+  ThemeResponsiveSnackbar,
+} from '../themes/App.styles';
+import {
+  setConnectionMetadata,
+  setControllerState,
+  setK8sContexts,
+  setKeys,
+  setOrganization,
+  toggleCatalogContent,
+  updateExtensionType,
+  updateK8SConfig,
+} from '@/store/slices/mesheryUi';
+import { updateLoadTestPref } from '@/store/slices/prefTest';
+import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/telemetry';
+import { updateAdaptersInfo } from '@/store/slices/adapter';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -98,38 +115,136 @@ export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
-class MesheryApp extends App {
-  constructor() {
-    super();
-    this.pageContext = getPageContext();
-    this.meshsyncEventsSubscriptionRef = React.createRef();
-    this.eventsSubscriptionRef = React.createRef();
-    this.fullScreenChanged = this.fullScreenChanged.bind(this);
-    this.state = {
-      mobileOpen: false,
-      isDrawerCollapsed: false,
-      isFullScreenMode: false,
-      k8sContexts: [],
-      activeK8sContexts: [],
-      operatorSubscription: null,
-      mesheryControllerSubscription: null,
-      disposeK8sContextSubscription: null,
-      theme: 'light',
-      isOpen: false,
-      relayEnvironment: createRelayEnvironment(),
-      connectionMetadata: {},
-      keys: [],
-      abilities: [],
-      abilityUpdated: false,
-    };
+const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
+  const theme = useTheme();
+
+  const { extensionType: extension } = useSelector((state) => state.ui);
+
+  if (extension == 'navigator') {
+    return null;
   }
 
-  loadPromGrafanaConnection = () => {
-    const { store } = this.props;
+  return (
+    <StyledFooterBody>
+      <Typography
+        variant="body2"
+        align="center"
+        component="p"
+        style={{
+          color:
+            theme.palette.mode === 'light'
+              ? theme.palette.text.default
+              : theme.palette.text.disabled,
+        }}
+      >
+        <StyledFooterText onClick={handleL5CommunityClick}>
+          {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? (
+            'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
+          ) : (
+            <>
+              {' '}
+              Built with{' '}
+              <FavoriteIcon
+                style={{
+                  color: theme.palette.background.brand.default,
+                  display: 'inline',
+                  verticalAlign: 'bottom',
+                }}
+              />{' '}
+              by the Layer5 Community
+            </>
+          )}
+        </StyledFooterText>
+      </Typography>
+    </StyledFooterBody>
+  );
+};
 
+const KubernetesSubscription = ({ setAppState }) => {
+  const dispatch = useDispatch();
+  const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
+    // Don't fetch k8s contexts if user doesn't have permission
+    if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
+      return () => {};
+    }
+
+    return subscribeK8sContext(
+      (result) => {
+        // Initialize activeContexts with all context IDs plus "all"
+        const allContexts = [];
+        if (result.k8sContext?.contexts?.length > 0) {
+          result.k8sContext.contexts.forEach((ctx) => allContexts.push(ctx.id));
+          allContexts.push('all');
+        }
+
+        // TODO: Remove local state and only use redux store
+        setAppState({
+          k8sContexts: result.k8sContext,
+          activeK8sContexts: allContexts,
+        });
+
+        dispatch(updateK8SConfig({ k8sConfig: result.k8sContext.contexts }));
+      },
+      {
+        selector: {
+          page: page,
+          pageSize: pageSize,
+          order: order,
+          search: search,
+        },
+      },
+    );
+  };
+
+  useEffect(() => {
+    const disposeK8sContextSubscription = k8sContextSubscription();
+    setAppState({ disposeK8sContextSubscription });
+    return () => {
+      disposeK8sContextSubscription();
+    };
+  }, []);
+
+  return null;
+};
+
+const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
+  const pageContext = useMemo(() => getPageContext(), []);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { isDrawerCollapsed } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const [state, setState] = useState({
+    mobileOpen: false,
+    isDrawerCollapsed: false,
+    isFullScreenMode: false,
+    isLoading: true,
+    k8sContexts: [],
+    activeK8sContexts: [],
+    mesheryControllerSubscription: null,
+    disposeK8sContextSubscription: null,
+    theme: 'light',
+    isOpen: false,
+    relayEnvironment: createRelayEnvironment(),
+    connectionMetadata: {},
+    keys: [],
+    abilities: [],
+    abilityUpdated: false,
+  });
+
+  const setAppState = useCallback((partialState, callback) => {
+    setState((prevState) => {
+      const newState = { ...prevState, ...partialState };
+      if (callback) {
+        setTimeout(callback, 0);
+      }
+      return newState;
+    });
+  }, []);
+
+  const loadPromGrafanaConnection = useCallback(() => {
     dataFetch(
       `/api/integrations/connections?page=0&pagesize=2&status=${encodeURIComponent(
-        JSON.stringify([CONNECTION_STATES.CONNECTED]),
+        JSON.stringify([CONNECTION_STATES.CONNECTED, CONNECTION_STATES.REGISTERED]),
       )}&kind=${encodeURIComponent(
         JSON.stringify([CONNECTION_KINDS.PROMETHEUS, CONNECTION_KINDS.GRAFANA]),
       )}`,
@@ -147,7 +262,7 @@ class MesheryApp extends App {
               connectionName: connection?.name,
             };
 
-            store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
+            dispatch(updatePrometheusConfig(promCfg));
           } else {
             const credentialID = connection?.credential_id;
 
@@ -161,258 +276,204 @@ class MesheryApp extends App {
                 connectionID: connection?.id,
                 connectionName: connection?.name,
               };
-              store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: grafanaCfg });
+              dispatch(updateGrafanaConfig(grafanaCfg));
             });
           }
         });
       },
     );
-  };
+  }, [dispatch]);
 
-  initMeshSyncEventsSubscription(contexts = []) {
-    if (this.meshsyncEventsSubscriptionRef.current) {
-      this.meshsyncEventsSubscriptionRef.current.dispose();
-    }
-
-    const meshSyncEventsSubscription = subscribeMeshSyncEvents(
-      (result) => {
-        if (result.meshsyncevents.object.kind === 'Service') {
-          const telemetryCompName = isTelemetryComponent(
-            result.meshsyncevents.object?.metadata?.name,
-          );
-          let prometheusURLs = [];
-          let grafanaURLs = [];
-
-          const grafanaUrlsSet = new Set(this.props.telemetryURLs.grafana);
-          const promUrlsSet = new Set(this.props.telemetryURLs.prometheus);
-
-          const eventType = result.meshsyncevents.type;
-          const spec = result?.meshsyncevents?.object?.spec?.attribute;
-          const status = result?.meshsyncevents?.object?.status?.attribute;
-          const data = { spec: JSON.parse(spec), status: JSON.parse(status) };
-
-          if (telemetryCompName === TelemetryComps.GRAFANA) {
-            grafanaURLs = grafanaURLs.concat(extractURLFromScanData(data));
-            updateURLs(grafanaUrlsSet, grafanaURLs, eventType);
-          } else if (telemetryCompName === TelemetryComps.PROMETHEUS) {
-            prometheusURLs = new Set(prometheusURLs.concat(extractURLFromScanData(data)));
-            updateURLs(promUrlsSet, prometheusURLs, eventType);
-          }
-
-          this.props.updateTelemetryUrls({
-            telemetryURLs: {
-              grafana: Array.from(grafanaUrlsSet),
-              prometheus: Array.from(promUrlsSet),
-            },
-          });
-        }
-      },
-      {
-        connectionIDs: getConnectionIDsFromContextIds(contexts, this.props.k8sConfig),
-        eventTypes: ['ADDED', 'DELETED'],
-      },
-    );
-
-    this.meshsyncEventsSubscriptionRef.current = meshSyncEventsSubscription;
-  }
-
-  fullScreenChanged = () => {
-    this.setState((state) => {
-      return { isFullScreenMode: !state.isFullScreenMode };
+  const fullScreenChanged = useCallback(() => {
+    setState((prevState) => {
+      return { ...prevState, isFullScreenMode: !prevState.isFullScreenMode };
     });
-  };
+  }, []);
 
-  componentDidMount() {
-    this.loadConfigFromServer(); // this works, but sometimes other components which need data load faster than this data is obtained.
-    this.loadPromGrafanaConnection();
-    this.loadOrg();
-    this.initSubscriptions([]);
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-          this.props.toggleCatalogContent({
-            catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-          });
-        }
-      },
-      (err) => console.error(err),
-    );
-
-    this.initMeshSyncEventsSubscription(this.state.activeK8sContexts);
-    // this.initEventsSubscription()
-    const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
-      return subscribeK8sContext(
-        (result) => {
-          this.setState({ k8sContexts: result.k8sContext }, () => this.setActiveContexts('all'));
-          this.props.store.dispatch({
-            type: actionTypes.UPDATE_CLUSTER_CONFIG,
-            k8sConfig: result.k8sContext.contexts,
-          });
-        },
-        {
-          selector: {
-            page: page,
-            pageSize: pageSize,
-            order: order,
-            search: search,
-          },
-        },
-      );
-    };
-    const disposeK8sContextSubscription = k8sContextSubscription();
-    this.setState({ disposeK8sContextSubscription });
-
-    document.addEventListener('fullscreenchange', this.fullScreenChanged);
-    this.loadMeshModelComponent();
-  }
-
-  loadMeshModelComponent = () => {
+  const loadMeshModelComponent = useCallback(async () => {
     const connectionDef = {};
-    CONNECTION_KINDS_DEF.map(async (kind) => {
-      const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
-      if (res?.components) {
-        connectionDef[CONNECTION_KINDS[kind]] = {
-          transitions: res?.components[0].model.metadata.transitions,
-          icon: res?.components[0].metadata.svgColor,
-        };
+
+    const promises = CONNECTION_KINDS_DEF.map(async (kind) => {
+      try {
+        const res = await getMeshModelComponentByName(formatToTitleCase(kind).concat('Connection'));
+        if (res?.components) {
+          connectionDef[CONNECTION_KINDS[kind]] = {
+            transitions: res?.components[0].metadata.transitions,
+            icon: res?.components[0].styles.svgColor,
+          };
+        }
+      } catch (error) {
+        console.error(`Error fetching component for ${kind}:`, error);
       }
-      this.setState({ connectionMetadata: connectionDef });
-    });
-    this.props.setConnectionMetadata({
-      connectionMetadataState: connectionDef,
-    });
-  };
-
-  componentWillUnmount() {
-    document.removeEventListener('fullscreenchange', this.fullScreenChanged);
-  }
-
-  componentDidUpdate(prevProps) {
-    const { k8sConfig, capabilitiesRegistry } = this.props;
-
-    // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
-    if (isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)) {
-      Router.push(mesheryExtensionRoute);
-    }
-
-    if (!_.isEqual(prevProps.k8sConfig, k8sConfig)) {
-      const { mesheryControllerSubscription } = this.state;
-      console.log(
-        'k8sconfig changed, re-initialising subscriptions',
-        k8sConfig,
-        this.state.activeK8sContexts,
-      );
-      const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-
-      if (mesheryControllerSubscription) {
-        mesheryControllerSubscription.updateSubscription(
-          getConnectionIDsFromContextIds(ids, k8sConfig),
-        );
-      }
-
-      if (this.meshsyncEventsSubscriptionRef.current) {
-        this.initMeshSyncEventsSubscription(ids);
-      }
-    }
-  }
-
-  initSubscriptions = (contexts) => {
-    const mesheryControllerSubscription = new GQLSubscription({
-      type: MESHERY_CONTROLLER_SUBSCRIPTION,
-      connectionIDs: getConnectionIDsFromContextIds(contexts, this.props.k8sConfig),
-      callbackFunction: (data) => {
-        this.props.store.dispatch({
-          type: actionTypes.SET_CONTROLLER_STATE,
-          controllerState: data,
-        });
-      },
     });
 
-    this.setState({ mesheryControllerSubscription });
-  };
+    await Promise.all(promises);
 
-  handleDrawerToggle = () => {
-    this.setState((state) => ({ mobileOpen: !state.mobileOpen }));
-  };
+    setState((prevState) => ({ ...prevState, connectionMetadata: connectionDef }));
 
-  handleL5CommunityClick = () => {
-    this.setState((state) => ({ isOpen: !state.isOpen }));
-  };
+    dispatch(
+      setConnectionMetadata({
+        connectionMetadataState: connectionDef,
+      }),
+    );
+  }, [dispatch]);
+
+  const initSubscriptions = useCallback(
+    (contexts) => {
+      if (!k8sConfig?.length) return;
+      const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
+      // No need to create a controller subscription if there are no connections
+      if (connectionIDs.length < 1) {
+        setState((prevState) => ({ ...prevState, mesheryControllerSubscription: () => {} }));
+        return;
+      }
+
+      const mesheryControllerSubscription = new GQLSubscription({
+        type: MESHERY_CONTROLLER_SUBSCRIPTION,
+        connectionIDs: connectionIDs,
+        callbackFunction: (data) => {
+          dispatch(setControllerState({ controllerState: data }));
+        },
+      });
+
+      setState((prevState) => ({ ...prevState, mesheryControllerSubscription }));
+    },
+    [k8sConfig],
+  );
+
+  const handleDrawerToggle = useCallback(() => {
+    setState((prevState) => ({ ...prevState, mobileOpen: !prevState.mobileOpen }));
+  }, []);
+
+  const handleL5CommunityClick = useCallback(() => {
+    setState((prevState) => ({ ...prevState, isOpen: !prevState.isOpen }));
+  }, []);
 
   /**
    * Sets the selected k8s context on global level.
    * @param {Array.<string>} activeK8sContexts
    */
-  activeContextChangeCallback = (activeK8sContexts) => {
+  const activeContextChangeCallback = useCallback((activeK8sContexts) => {
     if (activeK8sContexts.includes('all')) {
       activeK8sContexts = ['all'];
     }
-    this.props.store.dispatch({
-      type: actionTypes.SET_K8S_CONTEXT,
-      selectedK8sContexts: activeK8sContexts,
-    });
-  };
+    dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
+  }, []);
 
-  setActiveContexts = (id) => {
-    if (this.state.k8sContexts?.contexts) {
-      if (id === 'all') {
-        let activeContexts = [];
-        this.state.k8sContexts.contexts.forEach((ctx) => activeContexts.push(ctx.id));
-        activeContexts.push('all');
-        this.setState({ activeK8sContexts: activeContexts }, () =>
-          this.activeContextChangeCallback(this.state.activeK8sContexts),
-        );
-        return;
-      }
+  const setActiveContexts = useCallback(
+    (id) => {
+      if (state.k8sContexts?.contexts) {
+        if (id === 'all') {
+          let activeContexts = [];
+          state.k8sContexts.contexts.forEach((ctx) => activeContexts.push(ctx.id));
+          activeContexts.push('all');
+          setState((prevState) => ({ ...prevState, activeK8sContexts: activeContexts }));
+          activeContextChangeCallback(activeContexts);
+          return;
+        }
 
-      this.setState(
-        (state) => {
-          let ids = [...(state.activeK8sContexts || [])];
+        // if id is an empty array, clear all active contexts
+        if (Array.isArray(id) && id.length === 0) {
+          setState((prevState) => ({ ...prevState, activeK8sContexts: [] }));
+          activeContextChangeCallback([]);
+
+          return;
+        }
+
+        setState((prevState) => {
+          let ids = [...(prevState.activeK8sContexts || [])];
           //pop event
           if (ids.includes(id)) {
-            ids = ids.filter((id) => id !== 'all');
-            return { activeK8sContexts: ids.filter((cid) => cid !== id) };
+            ids = ids.filter((cid) => cid !== 'all');
+            const filteredIds = ids.filter((cid) => cid !== id);
+            activeContextChangeCallback(filteredIds);
+            return { ...prevState, activeK8sContexts: filteredIds };
           }
 
           //push event
-          if (ids.length === this.state.k8sContexts.contexts.length - 1) {
+          if (ids.length === prevState.k8sContexts.contexts.length - 1) {
             ids.push('all');
           }
-          return { activeK8sContexts: [...ids, id] };
-        },
-        () => this.activeContextChangeCallback(this.state.activeK8sContexts),
-      );
-    }
-  };
+          const newIds = [...ids, id];
+          activeContextChangeCallback(newIds);
+          return { ...prevState, activeK8sContexts: newIds };
+        });
+      }
+    },
+    [state.k8sContexts, state.activeK8sContexts, activeContextChangeCallback],
+  );
 
-  searchContexts = (search = '') => {
-    fetchContexts(10, search)
-      .then((ctx) => {
-        this.setState({ k8sContexts: ctx });
-        const active = ctx?.contexts?.find((c) => c.is_current_context === true);
-        if (active) this.setState({ activeK8sContexts: [active?.id] });
-      })
-      .catch((err) => console.error(err));
-  };
+  const searchContexts = useCallback(
+    (search = '') => {
+      fetchContexts(10, search)
+        .then((ctx) => {
+          setState((prevState) => ({ ...prevState, k8sContexts: ctx }));
+          const active = ctx?.contexts?.find((c) => c.is_current_context === true);
+          if (active) {
+            setState((prevState) => ({ ...prevState, activeK8sContexts: [active?.id] }));
+            activeContextChangeCallback([active?.id]);
+          }
+        })
+        .catch((err) => console.error(err));
+    },
+    [activeContextChangeCallback],
+  );
 
-  updateExtensionType = (type) => {
-    this.props.store.dispatch({ type: actionTypes.UPDATE_EXTENSION_TYPE, extensionType: type });
-  };
+  const updateCurrentExtensionType = useCallback(
+    (type) => {
+      dispatch(updateExtensionType({ extensionType: type }));
+    },
+    [dispatch],
+  );
+  const setCurrentOrganization = useCallback(
+    (org) => {
+      dispatch(setOrganization({ organization: org }));
+    },
+    [dispatch],
+  );
 
-  loadOrg = async () => {
+  const updateAbility = useCallback(() => {
+    ability.update(
+      state.keys?.map((key) => ({ action: key.id, subject: _.lowerCase(key.function) })),
+    );
+    setState((prevState) => ({ ...prevState, abilityUpdated: true }));
+  }, [state.keys]);
+
+  const loadAbility = useCallback(
+    async (orgID, reFetchKeys) => {
+      const storedKeys = sessionStorage.getItem('keys');
+      if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
+        setState((prevState) => ({ ...prevState, keys: JSON.parse(storedKeys) }));
+        updateAbility();
+      } else {
+        dataFetch(
+          `/api/identity/orgs/${orgID}/users/keys`,
+          {
+            method: 'GET',
+            credentials: 'include',
+          },
+          (result) => {
+            if (result) {
+              setState((prevState) => ({ ...prevState, keys: result.keys }));
+              dispatch(setKeys({ keys: result.keys }));
+              updateAbility();
+            }
+          },
+          (err) => console.log('There was an error fetching available orgs:', err),
+        );
+      }
+    },
+    [dispatch, updateAbility],
+  );
+
+  const loadOrg = useCallback(async () => {
     const currentOrg = sessionStorage.getItem('currentOrg');
     let reFetchKeys = false;
 
     if (currentOrg && currentOrg !== 'undefined') {
       let org = JSON.parse(currentOrg);
-      await this.loadAbility(org.id, reFetchKeys);
-      this.setOrganization(org);
-      await this.loadWorkspace(org.id);
+      await loadAbility(org.id, reFetchKeys);
+      setCurrentOrganization(org);
     }
 
     dataFetch(
@@ -423,96 +484,28 @@ class MesheryApp extends App {
       },
       async (result) => {
         let organizationToSet;
-        const sessionOrg = JSON.parse(currentOrg);
+        const sessionOrg = currentOrg ? JSON.parse(currentOrg) : null;
 
         if (currentOrg) {
           const indx = result.organizations.findIndex((org) => org.id === sessionOrg.id);
           if (indx === -1) {
             organizationToSet = result.organizations[0];
             reFetchKeys = true;
-            await this.loadAbility(organizationToSet.id, reFetchKeys);
-            await this.loadWorkspace(organizationToSet.id);
-            this.setOrganization(organizationToSet);
+            await loadAbility(organizationToSet.id, reFetchKeys);
+            setCurrentOrganization(organizationToSet);
           }
         } else {
           organizationToSet = result.organizations[0];
           reFetchKeys = true;
-          await this.loadWorkspace(organizationToSet.id);
-          await this.loadAbility(organizationToSet.id, reFetchKeys);
-          this.setOrganization(organizationToSet);
+          await loadAbility(organizationToSet.id, reFetchKeys);
+          setCurrentOrganization(organizationToSet);
         }
       },
       (err) => console.log('There was an error fetching available orgs:', err),
     );
-  };
-  loadWorkspace = async (orgId) => {
-    const currentWorkspace = sessionStorage.getItem('currentWorkspace');
-    if (currentWorkspace && currentWorkspace !== 'undefined') {
-      let workspace = JSON.parse(currentWorkspace);
-      this.setWorkspace(workspace);
-    } else {
-      dataFetch(
-        `/api/workspaces?search=&order=&page=0&pagesize=10&orgID=${orgId}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        },
-        async (result) => {
-          this.setWorkspace(result.workspaces[0]);
-        },
-        (err) => console.log('There was an error fetching workspaces:', err),
-      );
-    }
-  };
-  setOrganization = (org) => {
-    const { store } = this.props;
-    store.dispatch({
-      type: actionTypes.SET_ORGANIZATION,
-      organization: org,
-    });
-  };
-  setWorkspace = (workspace) => {
-    const { store } = this.props;
-    store.dispatch({
-      type: actionTypes.SET_WORKSPACE,
-      workspace: workspace,
-    });
-  };
-  loadAbility = async (orgID, reFetchKeys) => {
-    const storedKeys = sessionStorage.getItem('keys');
-    const { store } = this.props;
-    if (storedKeys !== null && !reFetchKeys && storedKeys !== 'undefined') {
-      this.setState({ keys: JSON.parse(storedKeys) }, this.updateAbility);
-    } else {
-      dataFetch(
-        `/api/identity/orgs/${orgID}/users/keys`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        },
-        (result) => {
-          if (result) {
-            this.setState({ keys: result.keys }, () => {
-              store.dispatch({
-                type: actionTypes.SET_KEYS,
-                keys: result.keys,
-              });
-              this.updateAbility();
-            });
-          }
-        },
-        (err) => console.log('There was an error fetching available orgs:', err),
-      );
-    }
-  };
+  }, [loadAbility, setCurrentOrganization]);
 
-  updateAbility = () => {
-    ability.update(this.state.keys?.map((key) => ({ action: key.id, subject: key.function })));
-    this.setState({ abilityUpdated: true });
-  };
-
-  async loadConfigFromServer() {
-    const { store } = this.props;
+  const loadConfigFromServer = useCallback(async () => {
     dataFetch(
       '/api/system/sync',
       {
@@ -526,40 +519,8 @@ class MesheryApp extends App {
             result.meshAdapters !== null &&
             result.meshAdapters.length > 0
           ) {
-            store.dispatch({
-              type: actionTypes.UPDATE_ADAPTERS_INFO,
-              meshAdapters: result.meshAdapters,
-            });
+            dispatch(updateAdaptersInfo({ meshAdapters: result.meshAdapters }));
           }
-          // if (result.grafana) {
-          //   const grafanaCfg = Object.assign(
-          //     {
-          //       grafanaURL: '',
-          //       grafanaAPIKey: '',
-          //       grafanaBoardSearch: '',
-          //       grafanaBoards: [],
-          //       selectedBoardsConfigs: [],
-          //     },
-          //     result.grafana,
-          //   );
-          //   store.dispatch({ type: actionTypes.UPDATE_GRAFANA_CONFIG, grafana: grafanaCfg });
-          // }
-          // if (result.prometheus) {
-          //   if (typeof result.prometheus.prometheusURL === 'undefined') {
-          //     result.prometheus.prometheusURL = '';
-          //   }
-          //   if (typeof result.prometheus.selectedPrometheusBoardsConfigs === 'undefined') {
-          //     result.prometheus.selectedPrometheusBoardsConfigs = [];
-          //   }
-          //   const promCfg = Object.assign(
-          //     {
-          //       prometheusURL: '',
-          //       selectedPrometheusBoardsConfigs: [],
-          //     },
-          //     result.prometheus,
-          //   );
-          //   store.dispatch({ type: actionTypes.UPDATE_PROMETHEUS_CONFIG, prometheus: promCfg });
-          // }
           if (result.loadTestPrefs) {
             const loadTestPref = Object.assign(
               {
@@ -570,19 +531,7 @@ class MesheryApp extends App {
               },
               result.loadTestPrefs,
             );
-            store.dispatch({ type: actionTypes.UPDATE_LOAD_GEN_CONFIG, loadTestPref });
-          }
-          if (typeof result.anonymousUsageStats !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_USAGE_STATS,
-              anonymousUsageStats: result.anonymousUsageStats,
-            });
-          }
-          if (typeof result.anonymousPerfResults !== 'undefined') {
-            store.dispatch({
-              type: actionTypes.UPDATE_ANONYMOUS_PERFORMANCE_RESULTS,
-              anonymousPerfResults: result.anonymousPerfResults,
-            });
+            dispatch(updateLoadTestPref({ loadTestPref }));
           }
         }
       },
@@ -590,211 +539,223 @@ class MesheryApp extends App {
         console.log(`there was an error fetching user config data: ${error}`);
       },
     );
-  }
+  }, [dispatch]);
 
-  static async getInitialProps({ Component, ctx }) {
-    const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
-    return { pageProps };
-  }
-  themeSetter = (thememode) => {
-    this.setState({ theme: thememode });
-  };
-  render() {
-    const { Component, pageProps, classes, isDrawerCollapsed, relayEnvironment } = this.props;
+  useEffect(() => {
+    loadConfigFromServer();
+    loadPromGrafanaConnection();
+    loadOrg();
+    initSubscriptions([]);
 
-    return (
+    dataFetch(
+      '/api/user/prefs',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
+          dispatch(
+            toggleCatalogContent({
+              catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
+            }),
+          );
+        }
+      },
+      (err) => console.error(err),
+    );
+
+    document.addEventListener('fullscreenchange', fullScreenChanged);
+    loadMeshModelComponent();
+    setState((prevState) => ({ ...prevState, isLoading: false }));
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('fullscreenchange', fullScreenChanged);
+      if (state.disposeK8sContextSubscription) {
+        state.disposeK8sContextSubscription();
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update effect for k8sConfig
+  useEffect(() => {
+    // in case the meshery-ui is restricted, the user will be redirected to signup/extension page
+    if (
+      typeof window !== 'undefined' &&
+      isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry)
+    ) {
+      Router.push(mesheryExtensionRoute);
+    }
+
+    const { mesheryControllerSubscription } = state;
+    if (mesheryControllerSubscription) {
+      const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
+      mesheryControllerSubscription.updateSubscription(
+        getConnectionIDsFromContextIds(ids, k8sConfig),
+      );
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [k8sConfig, capabilitiesRegistry]);
+
+  const canShowNav = !state.isFullScreenMode && uiConfig?.components?.navigator !== false;
+  const { extensionType } = useSelector((state) => state.ui);
+  return (
+    <LoadingScreen message={randomLoadingMessage} isLoading={state.isLoading}>
       <DynamicComponentProvider>
         <RelayEnvironmentProvider environment={relayEnvironment}>
-          <ThemeProvider theme={this.state.theme === 'dark' ? darkTheme : theme}>
+          <MesheryThemeProvider>
             <NoSsr>
-              <ErrorBoundary>
-                <div className={classes.root}>
-                  <CssBaseline />
-                  {!this.state.isFullScreenMode && (
-                    <nav
-                      className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
-                      data-test="navigation"
-                      style={{ height: '100%', overflow: 'visible' }}
-                    >
-                      <Hidden smUp implementation="js">
-                        <Navigator
-                          variant="temporary"
-                          open={this.state.mobileOpen}
-                          onClose={this.handleDrawerToggle}
-                          onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                          isDrawerCollapsed={isDrawerCollapsed}
-                          updateExtensionType={this.updateExtensionType}
-                        />
-                      </Hidden>
-                      <Hidden xsDown implementation="css">
-                        <Navigator
-                          onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                          isDrawerCollapsed={isDrawerCollapsed}
-                          updateExtensionType={this.updateExtensionType}
-                        />
-                      </Hidden>
-                    </nav>
-                  )}
-                  <div className={classes.appContent}>
-                    <SnackbarProvider
-                      anchorOrigin={{
-                        vertical: 'bottom',
-                        horizontal: 'right',
-                      }}
-                      iconVariant={{
-                        success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                        error: <Error style={{ marginRight: '0.5rem' }} />,
-                        warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                        info: <Info style={{ marginRight: '0.5rem' }} />,
-                      }}
-                      classes={{
-                        variantSuccess:
-                          this.state.theme === 'dark'
-                            ? classes.darknotifSuccess
-                            : classes.notifSuccess,
-                        variantError:
-                          this.state.theme === 'dark' ? classes.darknotifError : classes.notifError,
-                        variantWarning:
-                          this.state.theme === 'dark' ? classes.darknotifWarn : classes.notifWarn,
-                        variantInfo:
-                          this.state.theme === 'dark' ? classes.darknotifInfo : classes.notifInfo,
-                      }}
-                      maxSnack={10}
-                    >
-                      <NotificationCenterProvider>
-                        <MesheryProgressBar />
-                        {!this.state.isFullScreenMode && (
-                          <Header
-                            onDrawerToggle={this.handleDrawerToggle}
-                            onDrawerCollapse={isDrawerCollapsed}
-                            contexts={this.state.k8sContexts}
-                            activeContexts={this.state.activeK8sContexts}
-                            setActiveContexts={this.setActiveContexts}
-                            searchContexts={this.searchContexts}
-                            updateExtensionType={this.updateExtensionType}
-                            theme={this.state.theme}
-                            themeSetter={this.themeSetter}
-                            abilityUpdated={this.state.abilityUpdated}
-                          />
-                        )}
-                      </NotificationCenterProvider>
-                      <main className={classes.mainContent}>
-                        <MuiPickersUtilsProvider utils={MomentUtils}>
-                          <ErrorBoundary>
-                            <Component
-                              pageContext={this.pageContext}
-                              contexts={this.state.k8sContexts}
-                              activeContexts={this.state.activeK8sContexts}
-                              setActiveContexts={this.setActiveContexts}
-                              searchContexts={this.searchContexts}
-                              theme={this.state.theme}
-                              themeSetter={this.themeSetter}
-                              {...pageProps}
-                            />
-                          </ErrorBoundary>
-                        </MuiPickersUtilsProvider>
-                      </main>
-                    </SnackbarProvider>
-                    <footer
-                      className={
-                        this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
-                          ? classes.playgroundFooter
-                          : this.state.theme === 'dark'
-                          ? classes.footerDark
-                          : classes.footer
-                      }
-                    >
-                      <Typography
-                        variant="body2"
-                        align="center"
-                        color="textSecondary"
-                        component="p"
-                        style={
-                          this.props.capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
-                            ? { color: '#000' }
-                            : {}
-                        }
+              <ErrorBoundary customFallback={CustomErrorFallback}>
+                <LoadSessionGuard>
+                  <StyledRoot>
+                    <CssBaseline />
+                    <NavigationBar
+                      isDrawerCollapsed={isDrawerCollapsed}
+                      mobileOpen={state.mobileOpen}
+                      handleDrawerToggle={handleDrawerToggle}
+                      updateExtensionType={updateCurrentExtensionType}
+                      canShowNav={canShowNav}
+                    />
+                    <StyledAppContent canShowNav={canShowNav}>
+                      <SnackbarProvider
+                        anchorOrigin={{
+                          vertical: 'bottom',
+                          horizontal: 'right',
+                        }}
+                        iconVariant={{
+                          success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                          error: <Error style={{ marginRight: '0.5rem' }} />,
+                          warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                          info: <Info style={{ marginRight: '0.5rem' }} />,
+                        }}
+                        Components={{
+                          info: ThemeResponsiveSnackbar,
+                          success: ThemeResponsiveSnackbar,
+                          error: ThemeResponsiveSnackbar,
+                          warning: ThemeResponsiveSnackbar,
+                          loading: ThemeResponsiveSnackbar,
+                        }}
+                        maxSnack={10}
                       >
-                        <span onClick={this.handleL5CommunityClick} className={classes.footerText}>
-                          {this.props.capabilitiesRegistry?.restrictedAccess
-                            ?.isMesheryUiRestricted ? (
-                            'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
-                          ) : (
-                            <>
-                              {' '}
-                              Built with{' '}
-                              <FavoriteIcon
-                                style={{
-                                  color:
-                                    this.state.theme === 'dark'
-                                      ? theme.palette.secondary.focused
-                                      : '#00b39f',
-                                }}
-                                className={classes.footerIcon}
-                              />{' '}
-                              by the Layer5 Community
-                            </>
+                        <NotificationCenterProvider>
+                          <MesheryProgressBar />
+                          <KubernetesSubscription setAppState={setAppState} />
+                          {!state.isFullScreenMode && (
+                            <Header
+                              onDrawerToggle={handleDrawerToggle}
+                              onDrawerCollapse={isDrawerCollapsed}
+                              contexts={state.k8sContexts}
+                              activeContexts={state.activeK8sContexts}
+                              setActiveContexts={setActiveContexts}
+                              searchContexts={searchContexts}
+                              updateExtensionType={updateCurrentExtensionType}
+                              abilityUpdated={state.abilityUpdated}
+                            />
                           )}
-                        </span>
-                      </Typography>
-                    </footer>
-                  </div>
-                </div>
-                <PlaygroundMeshDeploy
-                  closeForm={() => this.setState({ isOpen: false })}
-                  isOpen={this.state.isOpen}
-                />
+                          <StyledContentWrapper>
+                            <StyledMainContent
+                              style={{
+                                padding: extensionType === 'navigator' && '0px',
+                              }}
+                            >
+                              <LocalizationProvider dateAdapter={AdapterMoment}>
+                                <ErrorBoundary customFallback={CustomErrorFallback}>
+                                  <Component
+                                    pageContext={pageContext}
+                                    contexts={state.k8sContexts}
+                                    activeContexts={state.activeK8sContexts}
+                                    setActiveContexts={setActiveContexts}
+                                    searchContexts={searchContexts}
+                                    {...pageProps}
+                                  />
+                                </ErrorBoundary>
+                              </LocalizationProvider>
+                            </StyledMainContent>
+                            <Footer
+                              handleL5CommunityClick={handleL5CommunityClick}
+                              capabilitiesRegistry={capabilitiesRegistry}
+                            />
+                          </StyledContentWrapper>
+                        </NotificationCenterProvider>
+                      </SnackbarProvider>
+                    </StyledAppContent>
+                  </StyledRoot>
+                  <PlaygroundMeshDeploy
+                    closeForm={() => setState((prevState) => ({ ...prevState, isOpen: false }))}
+                    isOpen={state.isOpen}
+                  />
+                </LoadSessionGuard>
               </ErrorBoundary>
             </NoSsr>
-          </ThemeProvider>
+          </MesheryThemeProvider>
         </RelayEnvironmentProvider>
       </DynamicComponentProvider>
-    );
-  }
-}
+    </LoadingScreen>
+  );
+};
 
-MesheryApp.propTypes = { classes: PropTypes.object.isRequired };
+// Keep the static getInitialProps method
+MesheryApp.getInitialProps = async ({ Component, ctx }) => {
+  const pageProps = Component.getInitialProps ? await Component.getInitialProps(ctx) : {};
+  return { pageProps };
+};
 
-const mapStateToProps = (state) => ({
-  isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  k8sConfig: state.get('k8sConfig'),
-  operatorSubscription: state.get('operatorSubscription'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-  telemetryURLs: state.get('telemetryURLs'),
-  connectionMetadata: state.get('connectionMetadata'),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-  updateTelemetryUrls: bindActionCreators(updateTelemetryUrls, dispatch),
-  setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
-});
-
-const MesheryWithRedux = withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(MesheryApp),
-);
+const MesheryThemeProvider = ({ children }) => {
+  const themePref = useThemePreference();
+  const mode = themePref?.data?.mode || 'dark';
+  return <SistentThemeProvider initialMode={mode}>{children}</SistentThemeProvider>;
+};
 
 const MesheryAppWrapper = (props) => {
   return (
-    <Provider store={props.store}>
+    <ProviderStoreWrapper>
       <Head>
         <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
         <title>Meshery</title>
       </Head>
-      <MuiPickersUtilsProvider utils={MomentUtils}>
-        <MesheryWithRedux {...props} />
-      </MuiPickersUtilsProvider>
-    </Provider>
+      <LocalizationProvider dateAdapter={AdapterMoment}>
+        <MesheryApp {...props} />
+      </LocalizationProvider>
+    </ProviderStoreWrapper>
   );
 };
 
-// export default withStyles(styles)(withRedux(makeStore, {
-//   serializeState : state => state.toJS(),
-//   deserializeState : state => fromJS(state)
-// })(MesheryAppWrapper));
-export default withStyles(styles)(
-  withRedux(makeStore, {
-    serializeState: (state) => state.toJS(),
-    deserializeState: (state) => fromJS(state),
-  })(MesheryAppWrapper),
-);
+export default MesheryAppWrapper;
+
+const NavigationBar = ({
+  isDrawerCollapsed,
+  mobileOpen,
+  handleDrawerToggle,
+  updateExtensionType,
+  canShowNav,
+}) => {
+  if (!canShowNav) {
+    return null;
+  }
+
+  return (
+    <StyledDrawer
+      isDrawerCollapsed={isDrawerCollapsed}
+      data-testid="navigation"
+      id="left-navigation-bar"
+    >
+      <Hidden smUp implementation="js">
+        <Navigator
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+      <Hidden xsDown implementation="css">
+        <Navigator
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+    </StyledDrawer>
+  );
+};

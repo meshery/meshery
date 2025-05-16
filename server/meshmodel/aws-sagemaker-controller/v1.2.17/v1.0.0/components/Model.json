@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Model",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-sagemaker-controller",
+    "displayName": "AWS SageMaker",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Machine Learning"
+    },
+    "subCategory": "Machine Learning",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#01A88D",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.2.17"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#01A88D",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e            \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e        \u003c/g\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "sagemaker.services.k8s.aws/v1alpha1",
+    "kind": "Model",
+    "schema": "{\n \"description\": \"Model is the Schema for the Models API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ModelSpec defines the desired state of Model.\\n\\nThe properties of a model as returned by the Search (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_Search.html)\\nAPI.\",\n   \"properties\": {\n    \"containers\": {\n     \"description\": \"Specifies the containers in the inference pipeline.\",\n     \"items\": {\n      \"description\": \"Describes the container, as part of model definition.\",\n      \"properties\": {\n       \"containerHostname\": {\n        \"type\": \"string\"\n       },\n       \"environment\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"image\": {\n        \"type\": \"string\"\n       },\n       \"imageConfig\": {\n        \"description\": \"Specifies whether the model container is in Amazon ECR or a private Docker\\nregistry accessible from your Amazon Virtual Private Cloud (VPC).\",\n        \"properties\": {\n         \"repositoryAccessMode\": {\n          \"type\": \"string\"\n         },\n         \"repositoryAuthConfig\": {\n          \"description\": \"Specifies an authentication configuration for the private docker registry\\nwhere your model image is hosted. Specify a value for this property only\\nif you specified Vpc as the value for the RepositoryAccessMode field of the\\nImageConfig object that you passed to a call to CreateModel and the private\\nDocker registry where the model image is hosted requires authentication.\",\n          \"properties\": {\n           \"repositoryCredentialsProviderARN\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"inferenceSpecificationName\": {\n        \"type\": \"string\"\n       },\n       \"mode\": {\n        \"type\": \"string\"\n       },\n       \"modelDataSource\": {\n        \"description\": \"Specifies the location of ML model data to deploy. If specified, you must\\nspecify one and only one of the available data sources.\",\n        \"properties\": {\n         \"s3DataSource\": {\n          \"description\": \"Specifies the S3 location of ML model data to deploy.\",\n          \"properties\": {\n           \"compressionType\": {\n            \"type\": \"string\"\n           },\n           \"modelAccessConfig\": {\n            \"description\": \"The access configuration file to control access to the ML model. You can\\nexplicitly accept the model end-user license agreement (EULA) within the\\nModelAccessConfig.\\n\\n   * If you are a Jumpstart user, see the End-user license agreements (https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models-choose.html#jumpstart-foundation-models-choose-eula)\\n   section for more details on accepting the EULA.\\n\\n   * If you are an AutoML user, see the Optional Parameters section of Create\\n   an AutoML job to fine-tune text generation models using the API for details\\n   on How to set the EULA acceptance when fine-tuning a model using the AutoML\\n   API (https://docs.aws.amazon.com/sagemaker/latest/dg/autopilot-create-experiment-finetune-llms.html#autopilot-llms-finetuning-api-optional-params).\",\n            \"properties\": {\n             \"acceptEula\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"s3DataType\": {\n            \"type\": \"string\"\n           },\n           \"s3URI\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"modelDataURL\": {\n        \"type\": \"string\"\n       },\n       \"modelPackageName\": {\n        \"type\": \"string\"\n       },\n       \"multiModelConfig\": {\n        \"description\": \"Specifies additional configuration for hosting multi-model endpoints.\",\n        \"properties\": {\n         \"modelCacheSetting\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"enableNetworkIsolation\": {\n     \"description\": \"Isolates the model container. No inbound or outbound network calls can be\\nmade to or from the model container.\",\n     \"type\": \"boolean\"\n    },\n    \"executionRoleARN\": {\n     \"description\": \"The Amazon Resource Name (ARN) of the IAM role that SageMaker can assume\\nto access model artifacts and docker image for deployment on ML compute instances\\nor for batch transform jobs. Deploying on ML compute instances is part of\\nmodel hosting. For more information, see SageMaker Roles (https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-roles.html).\\n\\nTo be able to pass this role to SageMaker, the caller of this API must have\\nthe iam:PassRole permission.\",\n     \"type\": \"string\"\n    },\n    \"inferenceExecutionConfig\": {\n     \"description\": \"Specifies details of how containers in a multi-container endpoint are called.\",\n     \"properties\": {\n      \"mode\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"modelName\": {\n     \"description\": \"The name of the new model.\",\n     \"type\": \"string\"\n    },\n    \"primaryContainer\": {\n     \"description\": \"The location of the primary docker image containing inference code, associated\\nartifacts, and custom environment map that the inference code uses when the\\nmodel is deployed for predictions.\",\n     \"properties\": {\n      \"containerHostname\": {\n       \"type\": \"string\"\n      },\n      \"environment\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      },\n      \"image\": {\n       \"type\": \"string\"\n      },\n      \"imageConfig\": {\n       \"description\": \"Specifies whether the model container is in Amazon ECR or a private Docker\\nregistry accessible from your Amazon Virtual Private Cloud (VPC).\",\n       \"properties\": {\n        \"repositoryAccessMode\": {\n         \"type\": \"string\"\n        },\n        \"repositoryAuthConfig\": {\n         \"description\": \"Specifies an authentication configuration for the private docker registry\\nwhere your model image is hosted. Specify a value for this property only\\nif you specified Vpc as the value for the RepositoryAccessMode field of the\\nImageConfig object that you passed to a call to CreateModel and the private\\nDocker registry where the model image is hosted requires authentication.\",\n         \"properties\": {\n          \"repositoryCredentialsProviderARN\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"inferenceSpecificationName\": {\n       \"type\": \"string\"\n      },\n      \"mode\": {\n       \"type\": \"string\"\n      },\n      \"modelDataSource\": {\n       \"description\": \"Specifies the location of ML model data to deploy. If specified, you must\\nspecify one and only one of the available data sources.\",\n       \"properties\": {\n        \"s3DataSource\": {\n         \"description\": \"Specifies the S3 location of ML model data to deploy.\",\n         \"properties\": {\n          \"compressionType\": {\n           \"type\": \"string\"\n          },\n          \"modelAccessConfig\": {\n           \"description\": \"The access configuration file to control access to the ML model. You can\\nexplicitly accept the model end-user license agreement (EULA) within the\\nModelAccessConfig.\\n\\n   * If you are a Jumpstart user, see the End-user license agreements (https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models-choose.html#jumpstart-foundation-models-choose-eula)\\n   section for more details on accepting the EULA.\\n\\n   * If you are an AutoML user, see the Optional Parameters section of Create\\n   an AutoML job to fine-tune text generation models using the API for details\\n   on How to set the EULA acceptance when fine-tuning a model using the AutoML\\n   API (https://docs.aws.amazon.com/sagemaker/latest/dg/autopilot-create-experiment-finetune-llms.html#autopilot-llms-finetuning-api-optional-params).\",\n           \"properties\": {\n            \"acceptEula\": {\n             \"type\": \"boolean\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"s3DataType\": {\n           \"type\": \"string\"\n          },\n          \"s3URI\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"modelDataURL\": {\n       \"type\": \"string\"\n      },\n      \"modelPackageName\": {\n       \"type\": \"string\"\n      },\n      \"multiModelConfig\": {\n       \"description\": \"Specifies additional configuration for hosting multi-model endpoints.\",\n       \"properties\": {\n        \"modelCacheSetting\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"An array of key-value pairs. You can use tags to categorize your Amazon Web\\nServices resources in different ways, for example, by purpose, owner, or\\nenvironment. For more information, see Tagging Amazon Web Services Resources\\n(https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AddTags.html).\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"vpcConfig\": {\n     \"description\": \"A VpcConfig (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_VpcConfig.html)\\nobject that specifies the VPC that you want your model to connect to. Control\\naccess to and from your model container by configuring the VPC. VpcConfig\\nis used in hosting services and in batch transform. For more information,\\nsee Protect Endpoints by Using an Amazon Virtual Private Cloud (https://docs.aws.amazon.com/sagemaker/latest/dg/host-vpc.html)\\nand Protect Data in Batch Transform Jobs by Using an Amazon Virtual Private\\nCloud (https://docs.aws.amazon.com/sagemaker/latest/dg/batch-vpc.html).\",\n     \"properties\": {\n      \"securityGroupIDs\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"subnets\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"modelName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Model\",\n \"type\": \"object\"\n}"
+  }
+}

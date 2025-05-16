@@ -17,15 +17,15 @@ package components
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -33,42 +33,22 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// represents the mesheryctl exp components view [component-name] subcommand.
+// represents the mesheryctl component view [component-name] subcommand.
 var viewComponentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view registered components",
-	Long:  "view a component registered in Meshery Server",
+	Short: "View registered components",
+	Long: `View a component registered in Meshery Server
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/view`,
 	Example: `
 // View details of a specific component
-mesheryctl exp components view [component-name]
+mesheryctl component view [component-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp component view [component-name]\nRun 'mesheryctl exp component view --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl component view [component-name]\nRun 'mesheryctl component view --help' to see detailed help message"
 		if len(args) == 0 {
-			return fmt.Errorf("component name isn't specified\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("[component name] is requiredisn't specified\n\n%s", errMsg))
 		} else if len(args) > 1 {
-			return fmt.Errorf("too many arguments\n\n%v", errMsg)
+			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
 		}
 		return nil
 	},
@@ -79,41 +59,19 @@ mesheryctl exp components view [component-name]
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		component := args[0]
+		componentDefinition := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/components?search=%s&pagesize=all", baseUrl, component)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		url := fmt.Sprintf("%s/%s?search=%s&pagesize=all", baseUrl, componentApiPath, componentDefinition)
+
+		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](url)
 		if err != nil {
-			utils.Log.Error(err)
 			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		componentResponse := &models.MeshmodelComponentsAPIResponse{}
-		err = json.Unmarshal(data, componentResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return err
-		}
-
-		var selectedComponent v1beta1.ComponentDefinition
+		var selectedComponent component.ComponentDefinition
 
 		if componentResponse.Count == 0 {
-			fmt.Println("No component(s) found for the given name: ", component)
+			fmt.Println("No component(s) found for the given name: ", componentDefinition)
 			return nil
 		} else if componentResponse.Count == 1 {
 			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel
@@ -162,7 +120,7 @@ mesheryctl exp components view [component-name]
 				fmt.Println("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
-			return OutputJson(selectedComponent)
+			return format.OutputJson(selectedComponent)
 		} else {
 			return errors.New("output-format choice invalid, use [json|yaml]")
 		}
@@ -172,7 +130,7 @@ mesheryctl exp components view [component-name]
 }
 
 func init() {
-	// Add the new exp components commands to the ComponentsCmd
-	viewComponentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
-	viewComponentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
+	// Add the new components commands to the ComponentsCmd
+	viewComponentCmd.Flags().StringP("output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewComponentCmd.Flags().BoolP("save", "s", false, "(optional) save output as a JSON/YAML file")
 }

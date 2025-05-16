@@ -19,7 +19,7 @@ type: "installation"
           e.style.visibility = 'hidden';
       }
        else {
-         
+
           e.style.display = 'table-row';
           e.style.visibility = 'visible';
           }
@@ -58,7 +58,6 @@ type: "installation"
         }
     }
 
-    
 </script>
 
 <style>
@@ -92,30 +91,30 @@ td:hover,tr:hover {
     display: flex;
     justify-content: space-between;
 }
-th span.sort-by { 
-	padding-right: 18px;
-	position: relative;
+th span.sort-by {
+ padding-right: 18px;
+ position: relative;
     text-decoration: none;
     margin-right:0 ;
 }
 span.sort-by:before,
 span.sort-by:after {
-	border: 4px solid transparent;
-	content: "";
-	display: block;
-	height: 0;
-	right: 5px;
-	top: 50%;
-	position: absolute;
-	width: 0;
+ border: 4px solid transparent;
+ content: "";
+ display: block;
+ height: 0;
+ right: 5px;
+ top: 50%;
+ position: absolute;
+ width: 0;
 }
 span.sort-by:before {
-	border-bottom-color: #666;
-	margin-top: -9px;
+ border-bottom-color: #666;
+ margin-top: -9px;
 }
 span.sort-by:after {
-	border-top-color: #666;
-	margin-top: 1px;
+ border-top-color: #666;
+ margin-top: 1px;
 }
 
 table.tablesorter th.headerSortDown,
@@ -133,15 +132,12 @@ background-color: #8dbdd8;
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
 {% assign k8s_tests_group = site.compatibility | group_by: "k8s-version" | sort: "name" | reverse %}
-{% assign service_meshes = site.adapters  %}
-
- <div>
- </div>
 
 # Compatibility Matrix
 
 Meshery Server and Meshery Adapters are tested daily for their compatibility with the infrastructure they manage and the platforms Meshery deploys on (Kubernetes and Docker). End-to-end test results are automatically posted to the following compatibility matrix.
 
+See also https://docs.meshery.io/project/contributing/test-status, which needs to be combined with the Compatibility Matrix test results to come together under a unified page (set of drillable pages).
 
 {%include compatibility/compatibilityMatrix.md k8s_tests_group=k8s_tests_group %}
 
@@ -188,18 +184,18 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% endif %}
           <tr style="visibility: hidden; display: none; background: white" class="test-details edge edge_visible" onclick="toggle_visibility('{{item.meshery-component}}');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
-            <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
+            <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh | downcase }}">{{ item.meshery-component }}</a></td>
             {% if item.meshery-component-version == "edge" %}
-              <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases">{{ item.meshery-component-version }}</a></td>
+              <td><a href="{{ site.repo }}-{{ item.service-mesh | downcase }}/releases">{{ item.meshery-component-version }}</a></td>
             {% else %}
-              <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
+              <td><a href="{{ site.repo }}-{{ item.service-mesh | downcase }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
             {% endif %}
             {% if item.meshery-server-version == "edge" %}
               <td><a href="{{ site.repo }}/releases{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
             {% else %}
               <td><a href="{{ site.repo }}/releases/tag/{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
             {% endif %}
-            <td style="white-space: nowrap;"><img style="height: 2rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
+            <td style="white-space: nowrap;"><img style="height: 2rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh | downcase }}">{{ item.service-mesh | lowercase }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
           </tr>
           <tr class="hidden-details" id="{{item.meshery-component}}" style="visibility:hidden; display:none;">
@@ -216,7 +212,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </table>
             </td>
             <td>
-              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component | downcase }}-past-results">To see past results click here </a>
             </td>
           </tr>
 
@@ -237,18 +233,18 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% endif %}
           <tr style="visibility: hidden; display: none; background:white" class="test-details edge edge_visible" onclick="toggle_visibility('{{items[1].meshery-component}}');">
             <td style="{{ overall-status }}">{{ items[1].timestamp }}</td>
-            <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ items[1].service-mesh }}">{{ items[1].meshery-component }}</a></td>
+            <td style="white-space:nowrap;"><a href="{{ site.repo }}-{{ items[1].service-mesh | downcase }}">{{ items[1].meshery-component }}</a></td>
             {% if items[1].meshery-component-version == "edge" %}
-              <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}/releases">{{ items[1].meshery-component-version }}</a></td>
+              <td><a href="{{ site.repo }}-{{ items[1].service-mesh | downcase }}/releases">{{ items[1].meshery-component-version }}</a></td>
             {% else %}
-              <td><a href="{{ site.repo }}-{{ items[1].service-mesh }}/releases/tag/{{ items[1].meshery-component-version }}">{{ items[1].meshery-component-version }}</a></td>
+              <td><a href="{{ site.repo }}-{{ items[1].service-mesh | downcase }}/releases/tag/{{ items[1].meshery-component-version }}">{{ items[1].meshery-component-version }}</a></td>
             {% endif %}
             {% if items[1].meshery-server-version == "edge" %}
               <td><a href="{{ site.repo }}/releases{{ items[1].meshery-server-version }}">{{ items[1].meshery-server-version }}</a></td>
             {% else %}
               <td><a href="{{ site.repo }}/releases/tag/{{ items[1].meshery-server-version }}">{{ items[1].meshery-server-version }}</a></td>
             {% endif %}
-            <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{items[1].service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ items[1].service-mesh }}">{{ items[1].service-mesh }}</a></td>
+            <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{items[1].service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ items[1].service-mesh | downcase }}">{{ items[1].service-mesh | lowercase }}</a></td>
             <td>{{ items[1].service-mesh-version }}</td>
           </tr>
           <tr class="hidden-details" id="{{items[1].meshery-component}}" style="visibility:hidden; display:none;">
@@ -265,7 +261,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </table>
             </td>
             <td>
-              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component | downcase }}-past-results">To see past results click here </a>
             </td>
           </tr>
         {% endif %}
@@ -292,10 +288,10 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
           {% endif %}
           <tr style="visibility: hidden; display: none; background:white" class="test-details stable stable_visible" onclick="toggle_visibility('{{item.meshery-component}}-stable');">
             <td style="{{ overall-status }}">{{ item.timestamp }}</td>
-            <td style = "white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh }}">{{ item.meshery-component }}</a></td>
-            <td><a href="{{ site.repo }}-{{ item.service-mesh }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
+            <td style = "white-space:nowrap;"><a href="{{ site.repo }}-{{ item.service-mesh | downcase }}">{{ item.meshery-component }}</a></td>
+            <td><a href="{{ site.repo }}-{{ item.service-mesh | downcase }}/releases/tag/{{ item.meshery-component-version }}">{{ item.meshery-component-version }}</a></td>
             <td><a href="{{ site.repo }}/releases/tag/{{ item.meshery-server-version }}">{{ item.meshery-server-version }}</a></td>
-            <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh }}">{{ item.service-mesh }}</a></td>
+            <td style="white-space:nowrap;"><img style="height: 2rem; vertical-align: text-bottom;" src="{{site.baseurl}}/assets/img/service-meshes/{{item.service-mesh | downcase }}.svg" />&nbsp;<a href="{{ site.baseurl }}/service-meshes/adapters/{{ item.service-mesh | downcase }}">{{ item.service-mesh | lowercase }}</a></td>
             <td>{{ item.service-mesh-version }}</td>
           </tr>
           <tr class="hidden-details" id="{{item.meshery-component}}-stable" style="visibility:hidden; display:none;">
@@ -312,7 +308,7 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
               </table>
             </td>
             <td>
-              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component}}-past-results">To see past results click here </a>
+              <a href = "{{site.baseurl}}/installation/compatibility-matrix/{{item.meshery-component | downcase }}-past-results">To see past results click here </a>
             </td>
           </tr>
         {% endif %}
@@ -331,4 +327,3 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
             });
     });
 </script>
-

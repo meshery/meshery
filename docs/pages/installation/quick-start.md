@@ -29,15 +29,13 @@ If you are on macOS or Linux system, you can download, install, and run both `me
   </div>
 </div>
 </pre>-->
-<!-- <script src="/assets/js/terminal.js" data-termynal-container="#termynal0"></script> --> 
+<!-- <script src="/assets/js/terminal.js" data-termynal-container="#termynal0"></script> -->
 
 <pre class="codeblock-pre">
   <div class="codeblock">
   <div class="clipboardjs">$ curl -L https://meshery.io/install | PLATFORM=kubernetes bash -</div>
   </div>
 </pre>
-
-The script above downloads Meshery's command line interface, <code>mesheryctl</code>.
 
 {% include alert.html type="info" title="Meshery CLI" content="Meshery's command line interface, <code>mesheryctl</code>, can be installed in <a href='/installation/mesheryctl'>various ways</a>. In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available via <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
 
@@ -59,7 +57,11 @@ Select from the list of [Providers]({{ site.baseurl }}/extensibility/providers) 
 
 ## 4. Configure Connections to your Kubernetes Clusters
 
-If you have deployed Meshery out-of-cluster, Meshery will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). If you have deployed Meshery out-of-cluster, Meshery will automatically connect to the Kubernetes API Server availabe in the control plane. Ensure that Meshery is connected to one or more of your Kubernetes clusters.
+**Out-of-Cluster Deployments**
+If you have deployed Meshery out-of-cluster, Meshery Server will automatically attempt to connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`) and in kubeconfigs uploaded through Meshery UI. Meshery Server deploys [Meshery Operator](/concepts/architecture/operator), [MeshSync](/concepts/architecture/meshsync), and Broker into the `meshery` namespace (by default).
+
+**In-Cluster Deployments**
+If you have deployed Meshery in-cluster, Meshery Server will automatically connect to the Kubernetes API Server available in the control plane.
 
 Visit <i class="fas fa-cog"></i> Settings:
 
@@ -85,12 +87,39 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
   <img class="center" style="width:min(100%,650px);" src="{{site.baseurl}}/assets/img/platforms/meshery-designs.png" />
 </a>
 
+# Explore Tutorials
+
+🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure.
+
+<div class="section">
+
+{% assign tutorials = site.pages | where: "category", "tutorials" %}
+{% assign items_grouped = tutorials | group_by: 'model' %}
+{% for group in items_grouped %}
+  {% if group.name != "" %}
+ <strong>{{ group.name | upcase }}></strong>
+
+  {% capture tutorials %}
+  {% for item in group.items %}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+  {% endfor %}
+  {% endcapture %}
+
+  <ul style="list-style-type: circle;">
+  {{ tutorials }}
+  </ul>
+
+  {% endif %}
+{% endfor %}
+
+</div>
+
 # Additional Guides
 
 <div class="section">
     <ul>
         <li><a href="{{ site.baseurl }}/guides/troubleshooting/installation">Troubleshooting Meshery Installations</a></li>
         <li><a href="{{ site.baseurl }}/reference/error-codes">Meshery Error Code Reference</a></li>
-        <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
+        <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">mesheryctl system check</a></li> 
     </ul>
 </div>

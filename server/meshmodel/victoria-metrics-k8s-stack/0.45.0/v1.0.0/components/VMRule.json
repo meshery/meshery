@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "VM Rule",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "victoria-metrics-k8s-stack",
+    "displayName": "Victoria Metrics K8S Stack",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Observability and Analysis"
+    },
+    "subCategory": "Monitoring",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#000000",
+      "secondaryColor": "#ffffff",
+      "shape": "hexagon",
+      "source_uri": "https://github.com/VictoriaMetrics/helm-charts/releases/download/victoria-metrics-k8s-stack-0.45.0/victoria-metrics-k8s-stack-0.45.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"20\" height=\"20\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#000000\" stroke=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\u0026#xA;33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\u0026#xA;-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\u0026#xA;-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\u0026#xA;-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\u0026#xA;-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"20\" height=\"20\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#ffffff\" stroke=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\u0026#xA;33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\u0026#xA;-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\u0026#xA;-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\u0026#xA;-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\u0026#xA;-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.45.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff",
+    "shape": "hexagon",
+    "svgColor": "\u003csvg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e \u003cg transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#000000\" stroke=\"none\"\u003e \u003cpath d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6 33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"/\u003e \u003cpath d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64 -7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169 -225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"/\u003e \u003cpath d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110 -90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151 -121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"/\u003e \u003c/g\u003e \u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"\n width=\"18\" height=\"18\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\n\u003cg transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\"\nfill=\"#ffffff\" stroke=\"none\"\u003e\n\u003cpath d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\n33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"/\u003e\n\u003cpath d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\n-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\n-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"/\u003e\n\u003cpath d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\n-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\n-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e\n"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/VictoriaMetrics/helm-charts/releases/download/victoria-metrics-k8s-stack-0.45.0/victoria-metrics-k8s-stack-0.45.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "operator.victoriametrics.com/v1beta1",
+    "kind": "VMRule",
+    "schema": "{\n \"description\": \"VMRule defines rule records for vmalert application\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VMRuleSpec defines the desired state of VMRule\",\n   \"properties\": {\n    \"groups\": {\n     \"description\": \"Groups list of group rules\",\n     \"items\": {\n      \"description\": \"RuleGroup is a list of sequentially evaluated recording and alerting rules.\",\n      \"properties\": {\n       \"concurrency\": {\n        \"description\": \"Concurrency defines how many rules execute at once.\",\n        \"type\": \"integer\"\n       },\n       \"eval_alignment\": {\n        \"description\": \"Optional\\nThe evaluation timestamp will be aligned with group's interval,\\ninstead of using the actual timestamp that evaluation happens at.\\nIt is enabled by default to get more predictable results\\nand to visually align with graphs plotted via Grafana or vmui.\",\n        \"type\": \"boolean\"\n       },\n       \"eval_delay\": {\n        \"description\": \"Optional\\nAdjust the `time` parameter of group evaluation requests to compensate intentional query delay from the datasource.\",\n        \"type\": \"string\"\n       },\n       \"eval_offset\": {\n        \"description\": \"Optional\\nGroup will be evaluated at the exact offset in the range of [0...interval].\",\n        \"type\": \"string\"\n       },\n       \"extra_filter_labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"ExtraFilterLabels optional list of label filters applied to every rule's\\nrequest within a group. Is compatible only with VM datasource.\\nSee more details [here](https://docs.victoriametrics.com/#prometheus-querying-api-enhancements)\\nDeprecated, use params instead\",\n        \"type\": \"object\"\n       },\n       \"headers\": {\n        \"description\": \"Headers contains optional HTTP headers added to each rule request\\nMust be in form `header-name: value`\\nFor example:\\n headers:\\n   - \\\"CustomHeader: foo\\\"\\n   - \\\"CustomHeader2: bar\\\"\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"interval\": {\n        \"description\": \"evaluation interval for group\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Labels optional list of labels added to every rule within a group.\\nIt has priority over the external labels.\\nLabels are commonly used for adding environment\\nor tenant-specific tag.\",\n        \"type\": \"object\"\n       },\n       \"limit\": {\n        \"description\": \"Limit the number of alerts an alerting rule and series a recording\\nrule can produce\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"description\": \"Name of group\",\n        \"type\": \"string\"\n       },\n       \"notifier_headers\": {\n        \"description\": \"NotifierHeaders contains optional HTTP headers added to each alert request which will send to notifier\\nMust be in form `header-name: value`\\nFor example:\\n headers:\\n   - \\\"CustomHeader: foo\\\"\\n   - \\\"CustomHeader2: bar\\\"\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"params\": {\n        \"additionalProperties\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"description\": \"Params optional HTTP URL parameters added to each rule request\",\n        \"type\": \"object\"\n       },\n       \"rules\": {\n        \"description\": \"Rules list of alert rules\",\n        \"items\": {\n         \"description\": \"Rule describes an alerting or recording rule.\",\n         \"properties\": {\n          \"alert\": {\n           \"description\": \"Alert is a name for alert\",\n           \"type\": \"string\"\n          },\n          \"annotations\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Annotations will be added to rule configuration\",\n           \"type\": \"object\"\n          },\n          \"debug\": {\n           \"description\": \"Debug enables logging for rule\\nit useful for tracking\",\n           \"type\": \"boolean\"\n          },\n          \"expr\": {\n           \"description\": \"Expr is query, that will be evaluated at dataSource\",\n           \"type\": \"string\"\n          },\n          \"for\": {\n           \"description\": \"For evaluation interval in time.Duration format\\n30s, 1m, 1h  or nanoseconds\",\n           \"type\": \"string\"\n          },\n          \"keep_firing_for\": {\n           \"description\": \"KeepFiringFor will make alert continue firing for this long\\neven when the alerting expression no longer has results.\\nUse time.Duration format, 30s, 1m, 1h  or nanoseconds\",\n           \"type\": \"string\"\n          },\n          \"labels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Labels will be added to rule configuration\",\n           \"type\": \"object\"\n          },\n          \"record\": {\n           \"description\": \"Record represents a query, that will be recorded to dataSource\",\n           \"type\": \"string\"\n          },\n          \"update_entries_limit\": {\n           \"description\": \"UpdateEntriesLimit defines max number of rule's state updates stored in memory.\\nOverrides `-rule.updateEntriesLimit` in vmalert.\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"tenant\": {\n        \"description\": \"Tenant id for group, can be used only with enterprise version of vmalert.\\nSee more details [here](https://docs.victoriametrics.com/vmalert#multitenancy).\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"Type defines datasource type for enterprise version of vmalert\\npossible values - prometheus,graphite,vlogs\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"rules\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"groups\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"VM Rule\",\n \"type\": \"object\"\n}"
+  }
+}

@@ -6,13 +6,13 @@ import {
   IconButton,
   Tooltip,
 } from '@layer5/sistent';
-import useStyles from './MesheryPatterns/Cards.styles';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Fullscreen from '@material-ui/icons/Fullscreen';
-import Save from '@material-ui/icons/Save';
-import { StyledDialog, YamlDialogTitleText } from './MesheryPatterns/style';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import SaveIcon from '@mui/icons-material/Save';
+import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
+import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
 
 const YAMLDialog = ({
   fullScreen,
@@ -22,8 +22,8 @@ const YAMLDialog = ({
   setYaml,
   deleteHandler,
   updateHandler,
+  isReadOnly = false,
 }) => {
-  const classes = useStyles();
   return (
     <Dialog
       aria-labelledby="filter-dialog-title"
@@ -33,45 +33,46 @@ const YAMLDialog = ({
       fullWidth={!fullScreen}
     >
       <StyledDialog disableTypography id="filter-dialog-title">
-        <YamlDialogTitleText variant="h6" className={classes.yamlDialogTitleText}>
-          {name}
-        </YamlDialogTitleText>
-        <Tooltip title="Exit Fullscreen" arrow interactive placement="bottom">
-          <IconButton onClick={toggleFullScreen}>
-            {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+        <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
+        <Tooltip title="Exit Fullscreen" arrow placement="bottom">
+          <IconButton onClick={toggleFullScreen} size="large">
+            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
           </IconButton>
         </Tooltip>
       </StyledDialog>
-      <Divider variant="fullWidth" light />
+      <Divider />
       <DialogContent>
-        <CodeMirror
-          value={config_file}
-          className={fullScreen ? classes.fullScreenCodeMirror : ''}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            // @ts-ignore
-            lint: true,
-            mode: 'text/x-yaml',
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
+        <StyledCodeMirrorWrapper fullScreen={fullScreen}>
+          <CodeMirror
+            value={config_file}
+            options={{
+              theme: 'material',
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ['CodeMirror-lint-markers'],
+              lint: true,
+              mode: 'text/x-yaml',
+              readOnly: isReadOnly,
+            }}
+            onChange={(_, data, val) => setYaml(val)}
+          />
+        </StyledCodeMirrorWrapper>
       </DialogContent>
-      <Divider variant="fullWidth" light />
-      <DialogActions>
-        <Tooltip title="Update Pattern">
-          <IconButton aria-label="Update" color="primary" onClick={updateHandler}>
-            <Save />
-          </IconButton>
-        </Tooltip>
-        <Tooltip title="Delete Filter">
-          <IconButton aria-label="Delete" color="primary" onClick={deleteHandler}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      </DialogActions>
+      <Divider />
+      {!isReadOnly && (
+        <DialogActions>
+          <Tooltip title="Update Pattern">
+            <IconButton aria-label="Update" color="primary" onClick={updateHandler} size="large">
+              <SaveIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete Filter">
+            <IconButton aria-label="Delete" color="primary" onClick={deleteHandler} size="large">
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </DialogActions>
+      )}
     </Dialog>
   );
 };

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Identity and Access Management
-subtitle: Collaborative and visual infrastructure as code for AWS Identity and Access Management
+subtitle: Collaborative and visual infrastructure as design for AWS Identity and Access Management
 image: /assets/img/integrations/aws-iam-controller/icons/color/aws-iam-controller-color.svg
 permalink: extensibility/integrations/aws-iam-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-iam-controller
@@ -42,12 +42,15 @@ components:
   colorIcon: assets/img/integrations/aws-iam-controller/components/open-id-connect-provider/icons/color/open-id-connect-provider-color.svg
   whiteIcon: assets/img/integrations/aws-iam-controller/components/open-id-connect-provider/icons/white/open-id-connect-provider-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Manage per-account access or scale access across AWS accounts and applications",
   "Set, verify, and right-size permissions toward least privilege",
   "Establish organization-wide and preventative guardrails on AWS"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

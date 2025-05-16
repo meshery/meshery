@@ -16,7 +16,7 @@ Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manag
 - `mesheryctl filter` - Cloud Native Filter Management
 - `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management
 - `mesheryctl perf` - Cloud Native Performance Management
-- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management
+- `mesheryctl design` - Cloud Native Pattern Configuration & Management
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
 
 ## Configuring Meshery Deployments with meshconfig
@@ -37,7 +37,7 @@ A meshconfig `context` represents a single Meshery deployment. Using `context`s,
 
 #### Question: Why are contexts necessary?
 
-Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your invididual Meshery deployments.
+Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your individual Meshery deployments.
 
 #### Question: What is `current-context`?
 
@@ -50,6 +50,10 @@ Contexts configure Meshery deployments (server, adapters, operator and so on), w
 #### Question: What does the default meshconfig look like?
 
 The following template is used to create a config file from scratch. Not all of the following variables are required to be included. Some of the variables may have a null value or may be excluded (e.g. “adapters”).
+
+#### Question: What is the importance of --config flag?
+
+The `--config` flag is a global option that applies to all `mesheryctl` commands. It allows you to specify the location of a custom meshconfig file, overriding the default configuration. This config file is used to set up the `mesheryctl` context, which defines the configuration for a particular Meshery deployment.
 
 ```
 contexts:
@@ -112,7 +116,7 @@ Guides to using Meshery's various features and components.
 
 {% capture tag %}
 
-<li><a href="{{ site.baseurl }}/guides/upgrade#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
+<li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading mesheryctl</a></li>
 
 {% endcapture %}
 
@@ -136,7 +140,7 @@ Guides to using Meshery's various features and components.
 </div>
 
 <div>
-  <a href="{{ site.baseurl }}/guides/upgrade">
+  <a href="{{ site.baseurl }}/installation/upgrades">
     <div class="overview">Upgrade Guide</div>
   </a>
   <p>To upgrade <code>mesheryctl</code>, refer to the Upgrade Guide.</p>

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Jira Service Desk Operator
-subtitle: Collaborative and visual infrastructure as code for Jira Service Desk Operator
+subtitle: Collaborative and visual infrastructure as design for Jira Service Desk Operator
 image: /assets/img/integrations/jira-service-desk-operator/icons/color/jira-service-desk-operator-color.svg
 permalink: extensibility/integrations/jira-service-desk-operator
 docURL: https://docs.meshery.io/extensibility/integrations/jira-service-desk-operator
@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/jira-service-desk-operator/components/project/icons/color/project-color.svg
   whiteIcon: assets/img/integrations/jira-service-desk-operator/components/project/icons/white/project-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Teams can track issues, manage projects, and automate workflows.",
   "Configure Issues - abstract away use a Jira's REST API in it's underlying layer and extend to perform other tasks that are supported via the REST API.",

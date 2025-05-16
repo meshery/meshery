@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: layer5/meshery-linkerd:stable-latest
+  repository: meshery/meshery-linkerd:stable-latest
   pullPolicy: Always
 
 env: {}

@@ -191,7 +191,7 @@ func stop() error {
 			// }
 
 			// Dry run passed; now delete meshery components with the helm pkg
-			err := applyHelmCharts(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "")
+			err := applyHelmCharts(client, currCtx, currCtx.GetVersion(), false, meshkitkube.UNINSTALL, "", "")
 			if err != nil {
 				return errors.Wrap(err, "cannot stop Meshery")
 			}
@@ -271,8 +271,8 @@ func deleteCR(resourceName, instanceName string, client *meshkitkube.Client) err
 // invokeDeleteCRs is a wrapper of deleteCRD to delete CRDs (brokers and meshsyncs)
 func invokeDeleteCRDs() error {
 	const (
-		brokerCRDName   = "brokers.meshery.layer5.io"
-		meshsyncCRDName = "meshsyncs.meshery.layer5.io"
+		brokerCRDName   = "brokers.meshery.io"
+		meshsyncCRDName = "meshsyncs.meshery.io"
 	)
 
 	cfg := controllerConfig.GetConfigOrDie()

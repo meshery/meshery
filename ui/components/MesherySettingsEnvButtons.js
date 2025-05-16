@@ -5,26 +5,28 @@ import {
   TextField,
   InputAdornment,
   Tooltip,
-  makeStyles,
   Grid,
   Box,
-} from '@material-ui/core';
+  styled,
+  PROMPT_VARIANTS,
+} from '@layer5/sistent';
 import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
-import PromptComponent from './PromptComponent';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateProgress } from '../lib/store';
+import _PromptComponent from './PromptComponent';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
-import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
+import { TooltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
+import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
+import { useAddKubernetesConfigMutation } from '../rtk-query/connection';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
-const styles = makeStyles((theme) => ({
+const styles = styled((theme) => ({
   ctxIcon: {
     display: 'inline',
     verticalAlign: 'text-top',
@@ -39,7 +41,7 @@ const styles = makeStyles((theme) => ({
     [theme.breakpoints.down('md')]: { fontSize: '12px' },
   },
 }));
-// Add links to docs
+
 const MesherySettingsEnvButtons = () => {
   let k8sfileElementVal = '';
   let formData = new FormData();
@@ -47,6 +49,10 @@ const MesherySettingsEnvButtons = () => {
   const { notify } = useNotification();
 
   let contextsRef = useRef();
+
+  const testIDs = useTestIDsGenerator('connection');
+
+  const [addK8sConfig] = useAddKubernetesConfigMutation();
 
   const handleConfigSnackbars = (ctxs) => {
     updateProgress({ showProgress: false });
@@ -79,10 +85,7 @@ const MesherySettingsEnvButtons = () => {
   };
 
   const uploadK8SConfig = async () => {
-    return await promisifiedDataFetch('/api/system/kubernetes', {
-      method: 'POST',
-      body: formData,
-    });
+    return await addK8sConfig({ body: formData }).unwrap();
   };
 
   const showUploadedContexts = async (inputFileName) => {
@@ -111,10 +114,12 @@ const MesherySettingsEnvButtons = () => {
             connectedContexts={connectedContexts}
             ignoredContexts={ignoredContexts}
             allContextsRef={contextsRef}
+            dataTestid={testIDs('discoveredModal')}
           />
         </>
       ),
-      options: ['OK'],
+      variant: PROMPT_VARIANTS.SUCCESS,
+      primaryOption: 'OK',
     });
   };
 
@@ -124,7 +129,7 @@ const MesherySettingsEnvButtons = () => {
       title: 'Add Kubernetes Cluster(s)',
       subtitle: (
         <>
-          <div style={{ overflow: 'hidden' }}>
+          <div style={{ overflow: 'hidden' }} data-testid={testIDs('addKubernetesModal')}>
             <Typography variant="h6">Upload your kubeconfig</Typography>
             <Typography variant="body2">commonly found at ~/.kube/config</Typography>
             <FormGroup>
@@ -135,7 +140,6 @@ const MesherySettingsEnvButtons = () => {
                 onChange={handleChange}
                 style={{ display: 'none' }}
               />
-
               <TextField
                 id="k8sfileLabelText"
                 name="k8sfileLabelText"
@@ -146,6 +150,7 @@ const MesherySettingsEnvButtons = () => {
                 onClick={() => {
                   document.querySelector('#k8sfile')?.click();
                 }}
+                data-testid={testIDs('uploadKubeConfig')}
                 margin="normal"
                 InputProps={{
                   readOnly: true,
@@ -160,7 +165,10 @@ const MesherySettingsEnvButtons = () => {
           </div>
         </>
       ),
-      options: ['IMPORT', 'CANCEL'],
+      primaryOption: 'IMPORT',
+      variant: PROMPT_VARIANTS.SUCCESS,
+      showInfoIcon:
+        'If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. [See Managing Kubernetes Clusters for more information](https://docs.meshery.io/installation/kubernetes).',
     });
 
     if (response === 'IMPORT') {
@@ -177,52 +185,57 @@ const MesherySettingsEnvButtons = () => {
         return;
       }
 
-      uploadK8SConfig()
-        .then((obj) => {
-          contextsRef.current = obj;
-          showUploadedContexts(inputFileName);
-          handleConfigSnackbars(obj);
-        })
-        .catch((err) => {
-          handleError('failed to upload kubernetes config')(err);
-        });
+      try {
+        const obj = await uploadK8SConfig();
+        contextsRef.current = obj;
+        await showUploadedContexts(inputFileName);
+        handleConfigSnackbars(obj);
+      } catch (err) {
+        handleError('failed to upload kubernetes config')(err);
+      }
       formData.delete('k8sfile');
     }
   };
 
   return (
     <div>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleClick}
-        style={{
-          padding: '8px',
-          borderRadius: 5,
-          marginRight: '2rem',
-        }}
-        disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
-        data-cy="btnResetDatabase"
-      >
-        <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
-        <Typography
+      <>
+        <Button
+          type="submit"
+          variant="contained"
+          onClick={handleClick}
           style={{
-            paddingLeft: '4px',
-            marginRight: '4px',
+            width: '100%',
+            borderRadius: 5,
+            padding: '8px',
           }}
+          disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
+          data-cy="btnResetDatabase"
         >
-          {' '}
-          Add Cluster
-        </Typography>
-      </Button>
-      <PromptComponent ref={ref} />
+          <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+          <Typography
+            style={{
+              paddingLeft: '4px',
+              width: 'max-content',
+              marginRight: '4px',
+            }}
+            data-testid={testIDs('addCluster')}
+          >
+            Add Cluster
+          </Typography>
+        </Button>
+      </>
+      <_PromptComponent ref={ref} />
     </div>
   );
 };
 
-const ShowDiscoveredContexts = ({ registeredContexts, connectedContexts, ignoredContexts }) => {
+const ShowDiscoveredContexts = ({
+  registeredContexts,
+  connectedContexts,
+  ignoredContexts,
+  dataTestid,
+}) => {
   const ping = useKubernetesHook();
 
   return (
@@ -233,6 +246,7 @@ const ShowDiscoveredContexts = ({ registeredContexts, connectedContexts, ignored
       spacing={2}
       columns={1}
       xs={16}
+      data-testid={dataTestid}
     >
       {registeredContexts.length > 0 && (
         <K8sConnectionItems
@@ -289,7 +303,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                 whiteSpace="no-wrap"
                 textOverflow="ellipsis"
               >
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   handlePing={() => {
                     ping(context.name, context.server, context.connection_id);

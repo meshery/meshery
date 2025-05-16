@@ -10,7 +10,7 @@ div.overview {
   background: linear-gradient(337deg, $charcoal_rgba 0%, rgba(0, 179, 159, 0.861782212885154) 87%);
   color: #fff;
   font-size: 1.4rem;
-  padding: .65rem auto;
+  padding: 0.65rem auto;
   margin: 0.5rem;
   margin-right: 1rem;
   width: auto;
@@ -95,9 +95,15 @@ a > strong:hover {
   }
 }
 
+@media (max-width: 320px) {
+  div.overview {
+    min-width: 190px;
+  }
+}
 
 /*image align-right*/
 .image-right {
   float: right;
   padding-right: 10px;
 }
+

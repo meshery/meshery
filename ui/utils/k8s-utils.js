@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import humanizeDuration from 'humanize-duration';
+import { JsonParse } from './utils';
 
 const humanize = humanizeDuration.humanizer();
 humanize.languages['en-mini'] = {
@@ -115,7 +116,7 @@ export function normalizeUnit(resourceType, quantity) {
        * Binary: Ki | Mi | Gi | Ti | Pi | Ei
        * Refer https://github.com/kubernetes-client/csharp/blob/840a90e24ef922adee0729e43859cf6b43567594/src/KubernetesClient.Models/ResourceQuantity.cs#L211
        */
-      console.log('debug:', quantity, parseInt(quantity), quantity.endsWith('m'));
+
       bytes = parseInt(quantity);
       if (quantity.endsWith('Ki')) {
         bytes *= 1024;
@@ -252,3 +253,30 @@ export function getResourceStr(value, resourceType) {
   const valueInfo = resourceFormatters[resourceType](value);
   return `${valueInfo.value}${valueInfo.unit}`;
 }
+
+export const getStatus = (status) => {
+  if (!status || typeof status !== 'string') {
+    return false;
+  }
+
+  try {
+    const attribute = JsonParse(status);
+
+    if (!attribute) {
+      return false;
+    }
+    if (attribute.phase) {
+      return attribute.phase;
+    }
+    if (Array.isArray(attribute.conditions) && attribute.conditions.length > 0) {
+      // return the last condition status because it is the most recent one
+      const lastCondition = attribute.conditions.reverse()[0];
+      return lastCondition?.type === 'Ready' && lastCondition?.status === 'True' ? 'Ready' : false;
+    }
+
+    return false;
+  } catch (error) {
+    console.error('Error parsing status:', error);
+    return false;
+  }
+};

@@ -6,6 +6,7 @@ abstract: How to set up Meshery Development Environment on Windows
 language: en
 type: project
 category: contributing
+list: include
 --- 
 
 Meshery can be run on the Windows platform in three different modes.

@@ -1,12 +1,14 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 
 	"database/sql"
 
 	"github.com/gofrs/uuid"
 	isql "github.com/layer5io/meshery/server/internal/sql"
+	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	types "k8s.io/apimachinery/pkg/types"
@@ -90,11 +92,11 @@ type MesheryPattern struct {
 	// but the remote provider is allowed to provide one
 	UserID *string `json:"user_id"`
 
-	Location      isql.Map       `json:"location"`
-	Visibility    string         `json:"visibility"`
-	CatalogData   isql.Map       `json:"catalog_data,omitempty"`
-	Type          sql.NullString `json:"type"`
-	SourceContent []byte         `json:"source_content"`
+	Location      isql.Map             `json:"location"`
+	Visibility    string               `json:"visibility"`
+	CatalogData   v1alpha1.CatalogData `json:"catalog_data,omitempty" gorm:"type:bytes;serializer:json"`
+	Type          sql.NullString       `json:"type"`
+	SourceContent []byte               `json:"source_content"`
 
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	CreatedAt *time.Time `json:"created_at,omitempty"`
@@ -120,11 +122,14 @@ type MesheryClonePatternRequestBody struct {
 }
 
 // GetPatternName takes in a stringified patternfile and extracts the name from it
+// patternfile can be in yaml and json format
 func GetPatternName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}
 
 	if err := yaml.Unmarshal([]byte(stringifiedFile), &out); err != nil {
-		return "", err
+		if err := json.Unmarshal([]byte(stringifiedFile), &out); err != nil {
+			return "", err
+		}
 	}
 
 	// Get Name from the file
@@ -137,6 +142,6 @@ func GetPatternName(stringifiedFile string) (string, error) {
 }
 
 type MesheryPatternFileDeployPayload struct {
-	PatternFile string `json:"pattern_file"`
-	PatternID   string `json:"pattern_id"`
+	PatternFile string    `json:"pattern_file"`
+	PatternID   uuid.UUID `json:"pattern_id"`
 }

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Fluentbit Operator
-subtitle: Collaborative and visual infrastructure as code for Fluentbit Operator
+subtitle: Collaborative and visual infrastructure as design for Fluentbit Operator
 image: /assets/img/integrations/fluentbit-operator/icons/color/fluentbit-operator-color.svg
 permalink: extensibility/integrations/fluentbit-operator
 docURL: https://docs.meshery.io/extensibility/integrations/fluentbit-operator
@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

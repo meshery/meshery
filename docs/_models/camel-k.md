@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Camel K
-subtitle: Collaborative and visual infrastructure as code for Camel K
+subtitle: Collaborative and visual infrastructure as design for Camel K
 image: /assets/img/integrations/camel-k/icons/color/camel-k-color.svg
 permalink: extensibility/integrations/camel-k
 docURL: https://docs.meshery.io/extensibility/integrations/camel-k
@@ -42,12 +42,15 @@ components:
   colorIcon: assets/img/integrations/camel-k/components/pipe/icons/color/pipe-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/pipe/icons/white/pipe-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Define routing and mediation rules in a variety of domain-specific languages.",
   "Enables easier integration with all kinds of transport or messaging models.",
   "Minimal dependencies for easy embedding in any Java application."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

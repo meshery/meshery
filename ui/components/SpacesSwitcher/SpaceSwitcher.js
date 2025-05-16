@@ -9,28 +9,24 @@ import {
   FormGroup,
   Grid,
   MenuItem,
-  NoSsr,
   styled,
   TextField,
   Typography,
-  withStyles,
   Select,
-} from '@material-ui/core';
-import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
-import { connect, Provider } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import styles from './../UserPreferences/style';
-import { store } from '../../store';
-import { withRouter } from 'next/router';
+  useTheme,
+  WorkspaceIcon,
+} from '@layer5/sistent';
+import { NoSsr } from '@layer5/sistent';
+import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
-import { iconXLarge } from 'css/icons.styles';
-import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
+import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
-import theme from '@/themes/app';
-// import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlined';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-import { UsesSistent } from '../SistentWrapper';
 import _ from 'lodash';
+import WorkspaceSwitcher from './WorkspaceSwitcher';
+import { useDispatch, useSelector } from 'react-redux';
+import { setOrganization, setKeys } from '@/store/slices/mesheryUi';
+
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
   overflow: 'hidden',
@@ -48,10 +44,11 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   flexDirection: 'row',
   alignItems: 'center',
   textAlign: 'center',
-  fill: theme.palette.secondary.text,
+  fill: theme.palette.text.default,
 }));
-export const StyledSelect = styled(Select)(() => ({
-  paddingTop: '0.5rem',
+
+export const StyledSelect = styled(Select)(({ theme }) => ({
+  color: theme.palette.common.white,
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
@@ -68,10 +65,7 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
   marginRight: '0.625rem', // 10px converted to rem
   marginTop: '0.5rem', // 8px converted to rem
   '& .MuiInput-underline:after': {
-    borderBottomColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary, // change the color here
-  },
-  '& .MuiInput': {
-    fontFamily: 'Qanelas Soft, sans-serif',
+    borderBottomColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.text.default, // change the color here
   },
 }));
 
@@ -79,11 +73,25 @@ export const StyledHeader = styled(Typography)(({ theme }) => ({
   paddingLeft: theme.spacing(2),
   fontSize: '1.25rem',
   [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
+  color: theme.palette.common.white,
 }));
 export const StyledBetaHeader = styled('sup')(() => ({
   color: '#EEEEEE',
   fontWeight: '300',
   fontSize: '0.8125rem',
+}));
+
+const StyledSwitcher = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  fontSize: '1.5rem',
+  userSelect: 'none',
+  transition: 'width 2s ease-in',
+  color: theme.palette.common.white,
+  flexWrap: 'wrap',
+  gap: '0.5rem 0rem',
 }));
 
 function OrgMenu(props) {
@@ -95,10 +103,16 @@ function OrgMenu(props) {
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
-  const { organization, setOrganization, open } = props;
-  const [skip, setSkip] = React.useState(true);
+
+  const { organization, setOrganization, open, setKeys } = props;
   const { notify } = useNotification();
-  useGetCurrentAbilities(organization, props.setKeys, skip);
+  const dispatch = useDispatch();
+  const abilitiesResult = useGetCurrentAbilities(organization);
+  useEffect(() => {
+    if (abilitiesResult?.currentData?.keys) {
+      dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
+    }
+  }, [abilitiesResult?.currentData?.keys]);
   useEffect(() => {
     if (isOrgsError) {
       notify({
@@ -112,8 +126,8 @@ function OrgMenu(props) {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
-    setSkip(false);
   };
+  const theme = useTheme();
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && open && (
@@ -121,7 +135,7 @@ function OrgMenu(props) {
           <FormControl component="fieldset">
             <FormGroup>
               <FormControlLabel
-                key="SpacesPreferences"
+                key="OrgPreferences"
                 control={
                   <Grid container spacing={1} alignItems="flex-end">
                     <Grid item xs={12} data-cy="mesh-adapter-url">
@@ -133,7 +147,9 @@ function OrgMenu(props) {
                             display: 'flex',
                             flexDirection: 'row',
                             fill: '#eee',
-                            color: theme.palette.secondary.white,
+                            paddingBlock: '9px 8px',
+                            paddingInline: '18px 34px',
+                            color: theme.palette.background.constant.white,
                           },
                         }}
                         MenuProps={{
@@ -147,7 +163,7 @@ function OrgMenu(props) {
                           },
                           getContentAnchorEl: null,
                           style: {
-                            fill: theme.palette.secondary.text,
+                            fill: theme.palette.text.secondary,
                           },
                         }}
                       >
@@ -157,7 +173,7 @@ function OrgMenu(props) {
                               width="24"
                               height="24"
                               className="OrgClass"
-                              style={{ marginRight: '1rem' }}
+                              style={{ marginRight: '1rem', color: theme.palette.icon.default }}
                             />
                             <span>{org.name}</span>
                           </StyledMenuItem>
@@ -175,177 +191,60 @@ function OrgMenu(props) {
   );
 }
 
-export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
-  const [orgId, setOrgId] = useState('');
-  const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
-    {
-      page: 0,
-      pagesize: 10,
-      search: '',
-      order: '',
-      orgId: orgId,
-    },
-    {
-      skip: !orgId ? true : false,
-    },
-  );
-
-  const handleWorkspaceSelect = (e) => {
-    const id = e.target.value;
-    const selected = workspacesData.workspaces.find((org) => org.id === id);
-    setWorkspace({ workspace: selected });
-  };
-
-  useEffect(() => {
-    setOrgId(organization?.id);
-  }, [organization]);
-
-  if (!organization || !workspace) {
-    return null;
-  }
-
-  return (
-    <NoSsr>
-      {!isWorkspacesError && workspace && (
-        <div
-          style={{
-            width: open ? 'auto' : 0,
-            overflow: open ? '' : 'hidden',
-            transition: 'all 1s',
-          }}
-        >
-          <FormControl component="fieldset">
-            <FormGroup>
-              <FormControlLabel
-                key="SpacesPreferences"
-                control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
-                      <StyledSelect
-                        value={workspace.id}
-                        onChange={handleWorkspaceSelect}
-                        SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
-                        MenuProps={{
-                          anchorOrigin: {
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                          },
-                          transformOrigin: {
-                            vertical: 'top',
-                            horizontal: 'left',
-                          },
-                          getContentAnchorEl: null,
-                        }}
-                      >
-                        {workspacesData?.workspaces?.map((works) => (
-                          <MenuItem key={works.id} value={works.id}>
-                            <span>{works.name}</span>
-                          </MenuItem>
-                        ))}
-                      </StyledSelect>
-                    </Grid>
-                  </Grid>
-                }
-              />
-            </FormGroup>
-          </FormControl>
-        </div>
-      )}
-    </NoSsr>
-  );
-}
-
-export const FileNameInput = ({
-  fileName,
-  handleFileNameChange,
-  handleFocus,
-  activateWalkthrough,
-}) => {
-  return (
-    <StyledTextField
-      id="design-name-textfield"
-      onChange={handleFileNameChange}
-      label="Name"
-      value={fileName || ''}
-      autoComplete="off"
-      size="small"
-      variant="standard"
-      onFocus={handleFocus}
-      onMouseEnter={() => activateWalkthrough && activateWalkthrough()}
-    />
-  );
-};
-
 function DefaultHeader({ title, isBeta }) {
   return (
-    <StyledHeader color="inherit" variant="h5" data-cy="headerPageTitle">
+    <StyledHeader variant="h5" data-cy="headerPageTitle">
       {title}
       {isBeta ? <StyledBetaHeader>BETA</StyledBetaHeader> : ''}
     </StyledHeader>
   );
 }
 
-function SpaceSwitcher(props) {
+function SpaceSwitcher() {
   const [orgOpen, setOrgOpen] = useState(false);
-  // const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
+  const theme = useTheme();
+  const router = useRouter();
+  const rtkDispatch = useDispatch();
+  const { organization } = useSelector((state) => state.ui);
+  const { isBeta } = useSelector((state) => state.ui.page);
+  const { title } = useSelector((state) => state.ui.page);
+  const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
+  const dispatchSetKeys = (keys) => rtkDispatch(setKeys(keys));
+
   return (
     <NoSsr>
-      <Provider store={store}>
-        <UsesSistent>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '1.5rem',
-              userSelect: 'none',
-              transition: 'width 2s ease-in',
-            }}
-          >
-            <Button
-              onClick={() => setOrgOpen(!orgOpen)}
-              style={{ marginRight: orgOpen ? '1rem' : '0' }}
-            >
-              <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
-            </Button>
-            <OrgMenu {...props} open={orgOpen} />/
-            {/* /
-          <Button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-          >
-            <WorkspaceOutlinedIcon {...iconXLarge} />
-          </Button>
-          <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
-            <div
-              id="meshery-dynamic-header"
-              style={{ marginLeft: DynamicComponent ? '1rem' : '' }}
-            />
-            {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
-          </div>
-        </UsesSistent>
-      </Provider>
+      <StyledSwitcher>
+        <Button
+          onClick={() => setOrgOpen(!orgOpen)}
+          style={{ marginRight: orgOpen ? '1rem' : '0' }}
+        >
+          <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+        </Button>
+        <OrgMenu
+          open={orgOpen}
+          organization={organization}
+          setOrganization={dispatchSetOrganization}
+          setKeys={dispatchSetKeys}
+        />
+        /
+        <Button
+          onClick={() => setWorkspaceOpen(!workspaceOpen)}
+          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+        >
+          <WorkspaceIcon
+            {...iconLarge}
+            secondaryFill={theme.palette.common.white}
+            fill={theme.palette.common.white}
+          />
+        </Button>
+        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
+      </StyledSwitcher>
     </NoSsr>
   );
 }
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  const workspace = state.get('workspace');
-  return {
-    organization,
-    workspace,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
-  setWorkspace: bindActionCreators(setWorkspace, dispatch),
-  setKeys: bindActionCreators(setKeys, dispatch),
-});
-
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(SpaceSwitcher)),
-);
+export default SpaceSwitcher;

@@ -40,17 +40,15 @@ language: en
 
 The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}}. A number of sample applications can be installed using the {{page.name}}.
 
-The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{ site.baseurl }}installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
-
 Want to contribute? Check our [progress]({{page.github_link}}).
 
 ### Sample Applications
 
 The {{ page.name }} includes some sample applications operations. Meshery can be used to deploy any of these sample applications.
 
-- [Bookinfo]({{site.baseurl}}/guides/sample-apps#bookinfo)
+- [Bookinfo]({{site.baseurl}}/guides/infrastructure-management/sample-apps)
   - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
-- [Httpbin]({{site.baseurl}}/guides/sample-apps#httpbin)
+- [Httpbin]({{site.baseurl}}/guides/infrastructure-management/sample-apps)
   - Httpbin is a simple HTTP request and response service.
 
 ## Suggested Topics

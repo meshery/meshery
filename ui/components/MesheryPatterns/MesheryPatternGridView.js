@@ -1,27 +1,29 @@
-import { Grid, Paper, Typography } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
+import { Grid, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
-import useStyles from './Grid.styles';
-import Modal from '../Modal';
-import PublicIcon from '@material-ui/icons/Public';
-import { withSnackbar } from 'notistack';
-
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../lib/store';
+import {
+  GridNoContainerStyles,
+  GridNoPapperStyles,
+  GridNoTextStyles,
+  GridPaginationStyles,
+} from './Grid.styles';
+import { RJSFModalWrapper } from '../Modal';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
+import { Modal as SistentModal } from '@layer5/sistent';
+
+import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
+const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function PatternCardGridItem({
   pattern,
   handleDeploy,
   handleVerify,
+  handleDryRun,
   handlePublishModal,
   handleUnpublishModal,
   handleUnDeploy,
@@ -29,9 +31,10 @@ function PatternCardGridItem({
   handleSubmit,
   handleDownload,
   setSelectedPatterns,
-  canPublishPattern = false,
   user,
   handleInfoModal,
+  hideVisibility = false,
+  isReadOnly = false,
 }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
   const [yaml, setYaml] = useState(pattern.pattern_file);
@@ -41,7 +44,6 @@ function PatternCardGridItem({
       <MesheryPatternCard
         id={pattern.id}
         user={user}
-        canPublishPattern={canPublishPattern}
         name={pattern.name}
         updated_at={pattern.updated_at}
         created_at={pattern.created_at}
@@ -50,6 +52,7 @@ function PatternCardGridItem({
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
         handleDeploy={handleDeploy}
         handleVerify={handleVerify}
+        handleDryRun={handleDryRun}
         handlePublishModal={handlePublishModal}
         handleUnDeploy={handleUnDeploy}
         handleUnpublishModal={handleUnpublishModal}
@@ -79,6 +82,8 @@ function PatternCardGridItem({
         description={pattern.description}
         visibility={pattern.visibility}
         pattern={pattern}
+        hideVisibility={hideVisibility}
+        isReadOnly={isReadOnly}
       />
     </Grid>
   );
@@ -133,10 +138,12 @@ function MesheryPatternGrid({
   user,
   handleInfoModal,
   openDeployModal,
+  openValidationModal,
   openUndeployModal,
   openDryRunModal,
+  hideVisibility = false,
+  arePatternsReadOnly = false,
 }) {
-  const classes = useStyles();
   const { notify } = useNotification();
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
@@ -203,7 +210,6 @@ function MesheryPatternGrid({
               key={pattern.id}
               user={user}
               pattern={pattern}
-              canPublishPattern={canPublishPattern}
               handleClone={() => handleClone(pattern.id, pattern.name)}
               handleDeploy={(e) => {
                 openDeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
@@ -211,8 +217,11 @@ function MesheryPatternGrid({
               handleUnDeploy={(e) => {
                 openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
               }}
-              handleVerify={(e) =>
+              handleDryRun={(e) =>
                 openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
+              }
+              handleVerify={(e) =>
+                openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
               }
               handlePublishModal={() => handlePublishModal(pattern)}
               handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
@@ -220,60 +229,56 @@ function MesheryPatternGrid({
               handleSubmit={handleSubmit}
               handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
               setSelectedPatterns={setSelectedPattern}
+              hideVisibility={hideVisibility}
+              isReadOnly={arePatternsReadOnly}
             />
           ))}
         </Grid>
       )}
 
       {!selectedPattern.show && patterns.length === 0 && (
-        <Paper className={classes.noPaper}>
-          <div className={classes.noContainer}>
-            <Typography align="center" color="textSecondary" className={classes.noText}>
+        <GridNoPapperStyles>
+          <GridNoContainerStyles>
+            <GridNoTextStyles align="center" color="textSecondary">
               No Designs Found
-            </Typography>
-            <div>
-              {/* <Button
-                  aria-label="Add Application"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  // @ts-ignore
-                  onClick={handleUploadImport}
-                  style={{ marginRight : "2rem" }}
-                >
-                  <PublishIcon className={classes.addIcon} />
-              Import Design
-                </Button> */}
-            </div>
-          </div>
-        </Paper>
+            </GridNoTextStyles>
+          </GridNoContainerStyles>
+        </GridNoPapperStyles>
       )}
       {patterns.length ? (
-        <div className={classes.pagination}>
+        <GridPaginationStyles>
           <Pagination
             count={pages}
             page={selectedPage + 1}
             onChange={(_, page) => setPage(page - 1)}
           />
-        </div>
+        </GridPaginationStyles>
       ) : null}
 
       {canPublishPattern && publishModal.open && (
-        <Modal
+        <SistentModal
           open={true}
-          schema={publishSchema.rjsfSchema}
-          uiSchema={publishSchema.uiSchema}
-          handleClose={handlePublishModalClose}
-          aria-label="catalog publish"
           title={publishModal.pattern?.name}
-          handleSubmit={handlePublish}
-          showInfoIcon={{
-            text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-            link: 'https://docs.meshery.io/concepts/catalog',
-          }}
-          submitBtnText="Submit for Approval"
-          submitBtnIcon={<PublicIcon />}
-        />
+          closeModal={handlePublishModalClose}
+          aria-label="catalog publish"
+          maxWidth="sm"
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+        >
+          <RJSFModalWrapper
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
+            submitBtnText="Submit for Approval"
+            handleSubmit={handlePublish}
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+            handleClose={handlePublishModalClose}
+          />
+        </SistentModal>
       )}
       <ExportModal
         downloadModal={downloadModal}
@@ -284,9 +289,4 @@ function MesheryPatternGrid({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-// @ts-ignore
-export default connect(mapDispatchToProps)(withSnackbar(MesheryPatternGrid));
+export default MesheryPatternGrid;

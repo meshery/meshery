@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Karpenter
-subtitle: Collaborative and visual infrastructure as code for Karpenter
+subtitle: Collaborative and visual infrastructure as design for Karpenter
 image: /assets/img/integrations/karpenter/icons/color/karpenter-color.svg
 permalink: extensibility/integrations/karpenter
 docURL: https://docs.meshery.io/extensibility/integrations/karpenter
@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/karpenter/components/provisioner/icons/color/provisioner-color.svg
   whiteIcon: assets/img/integrations/karpenter/components/provisioner/icons/white/provisioner-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Watching for pods that the Kubernetes scheduler has marked as unschedulable",
   "Evaluating scheduling constraints (resource requests, nodeselectors, affinities, tolerations, and topology spread constraints) requested by the pods",

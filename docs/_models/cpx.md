@@ -10,12 +10,15 @@ integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",
   "Design Istio Virtual Services"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

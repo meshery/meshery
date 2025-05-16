@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Dapr
-subtitle: Collaborative and visual infrastructure as code for Dapr
+subtitle: Collaborative and visual infrastructure as design for Dapr
 image: /assets/img/integrations/dapr/icons/color/dapr-color.svg
 permalink: extensibility/integrations/dapr
 docURL: https://docs.meshery.io/extensibility/integrations/dapr
@@ -30,12 +30,18 @@ components:
   colorIcon: assets/img/integrations/dapr/components/subscription/icons/color/subscription-color.svg
   whiteIcon: assets/img/integrations/dapr/components/subscription/icons/white/subscription-white.svg
   description: 
+components-count: 5
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "This relationship defines how various Dapr components (HTTPEndpoint, Resiliency, Configuration, and Subscription) are applied to a sidecar container running daprd. It represents a hierarchical inventory relationship where the child components (Dapr resources) patch the configuration of the parent component (sidecar container)."
+relationship-count: 1
 featureList: [
   "Helps you write resilient and secured microservices.",
   "Provides you with APIs that abstract away the complexity of common challenges developers encounter regularly when building distributed applications.",
   "Leverages proven practices for distributed application development that enable you to build resilient, secured systems."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

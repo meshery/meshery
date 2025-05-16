@@ -1,0 +1,24 @@
+version: 0.0.593
+name: sample-template---relationship-diagram
+displayName: Sample Template - Relationship Diagram
+createdAt: "2024-10-25T06:34:30Z"
+description: A Beginners guide on creating a Relationship Diagram in Kanvas with a Model Template
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3fd06d85-e516-4eae-b7b6-474231b6d48d/0.0.593/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure clarity, avoid overcrowding, and prioritize relationships over excessive detail. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 8032ffe2-37fa-4c48-b93b-6503ded6e1b5
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3fd06d85-e516-4eae-b7b6-474231b6d48d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3fd06d85-e516-4eae-b7b6-474231b6d48d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

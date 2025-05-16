@@ -10,38 +10,41 @@ category: contributing
 list: include
 ---
 
-<!-- Concepts for which docs needs to be updated: -->
-<!-- Scopes - What they mean to contributors/expand on which takes precedence?
-1. Which policies get loaded?
-2. What policies are loaded by default?
-3. What happens in conflict?
-4. What controls are exposed to model contributors?
-5. Are there any Global meshery defaults (can user change them?) -->
+## Understanding the internals of Meshery's logical object model
 
-Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management and the capabilities Meshery has at its disposal. Meshery Models serve as the unit of packaging for the object models that define a registered capability or a type of managed infrastructure and their relationships, and details specifics of how to manage them.
+Meshery uses a logical object model to describe the infrastructure and capabilities it manages in a consistent and extensible way.
 
-Models often represent infrastructure and application technologies, however, they are also capable of defining other types of constructs like annotations, like shapes (infrastructure ambiguous components). Models are used to define the capabilities of Meshery.
+#### What Are Meshery Models?
 
-_See the Meshery [Registry]({{site.baseurl}}/concepts/logical/registry) to learn more._
+At the core of this system are **Meshery Models** — packages that define a specific type of infrastructure, application, or capability. These models include:
 
-[![Model Construct Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
-_Figure: Model Construct Classification_
+- **[Components]({{site.baseurl}}/concepts/logical/components)**: Individual parts of a system (e.g., services, databases).
+- **[Relationships]({{site.baseurl}}/concepts/logical/relationships)**: How those parts interact.
+- **Metadata**: Visual and behavioral traits, such as icons or capabilities.
 
-## Meshery Constructs and their Lifecycle
+Models can describe traditional technologies (like Kubernetes workloads), or more abstract entities (like annotations or diagrams).
+> Learn more: [What are Meshery Models?]({{site.baseurl}}/concepts/logical/models)
 
-This section aids in your understanding of the vernacular of Meshery's internal object model and discusses the difference beteween schemas, definitions, declarations, and instances
+#### What Is the Model Schema?
 
-The lifecycle of Meshery entities (components, relationships, policies) is represented by the following terms, which are used to describe the various stages of a Model's lifecycle:
+Each model includes a set of entities (in the form of definitions) that Meshery can manage. Models are defined and versioned using on the [Model Schema](https://github.com/meshery/schemas/blob/master/schemas/constructs/openapi/meshmodels.yml). 
 
-<!-- Model Definitions are read-only templates that contain instructions for creating a any given infrasture. A Model Definition is a snapshot or blueprint of the configuration, credentials(s) and dependencies required for an application to run.
+The schema defines the structure of the model, including the entities it contains, their relationships, and the properties they have. The schema also defines the version of the model and the version of the schema itself.
 
-Depending upon where they are in their lifecycle, Meshery Models can be referred to differently based on their are comprised of a handful of core constructs. -->
+> See [Registry]({{site.baseurl}}/concepts/logical/registry) to learn more about Meshery's internal registry and how to use it.
 
-#### Schema
+[![Model Entity Classification]({{ site.baseurl }}/assets/img/meshmodel/meshmodel-architecture.svg)]({{ site.baseurl }}/assets/img/concepts/meshery-models.png)
+_Figure: Model Entity Classification_
+
+## Meshery Entities and their Lifecycle
+
+This section aids in your understanding of the vernacular of Meshery's internal object model and discusses the difference beteween schemas, definitions, declarations, and instances. The lifecycle of Meshery entities (components, relationships, policies) is represented by the following terms, which are used to describe the various stages of their lifecycle.
+
+### Schema
 
 **Schema** _(static)_ **: the skeletal structure representing a logical view of the size, shape, characteristics of a construct.**
 
-The schema represents the skeletal structure of a construct and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the construct. The schema serves as a blueprint or template for creating instances of the construct. It is a static representation that defines the structure and properties but does not contain specific configuration values.
+The schema represents the skeletal structure of an entity and provides a logical view of its size, shape, and characteristics. It defines the expected properties and attributes of the entity. The schema serves as a blueprint or template for creating instances of the entity. It is a static representation that defines the structure and properties but does not contain specific configuration values.
 
 {% include alert.html type="info" title="Schema example" content='<details><summary>Component schema excerpt</summary><pre> {
 "$id": "https://schemas.meshery.io/component.json",
@@ -69,66 +72,86 @@ The schema represents the skeletal structure of a construct and provides a logic
 
 </pre></details> See <a href="https://github.com/meshery/schemas">github.com/meshery/schemas</a> for more details.' %}
 
-#### Definition
+### Definition
 
-**Definition** _(static)_ **: An implementation of the Schema containing an outline of the specific attributes of a given, unconfigured construct.**
+**Definition** _(static)_ **: An implementation of the Schema containing an outline of the specific attributes of a given, unconfigured entity.**
 
-A definition is an implementation of the schema. It contains specific configurations and values for the construct at hand. The definition provides the actual configuration details for a specific instance of the construct. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate instances of the construct.
+A definition is an implementation of the schema. It contains specific configurations and values for the entity at hand. The definition provides the actual configuration details for a specific instance of the entity. It is static because it is created based on the schema but does not change once created. The definition is used to instantiate declarations of the entity.
 
 {% include alert.html type="info" title="Definition example" content="a generic, unconfigured Kubernetes Pod." %}
 
-#### Declaration
+### Declaration
 
-**Declaration** _(static)_ **: - A configured construct with detailed intentions of a given Definition.**
+**Declaration** _(static)_ **: - A configured entity with detailed intentions of a given Definition.**
 
 {% include alert.html type="info" title="Declaration example" content="NGINX container as a Kubernetes Pod with port 443 and SSL termination." %}
 
-#### Instance
+### Instance
 
-**Instance** _(dynamic)_ **: A realized construct (deployed/discovered); An instantiation of the declaration.**
+**Instance** _(dynamic)_ **: A realized entity (deployed/discovered); An instantiation of the declaration.**
 
-An _instance_ represents a realized construct. An _instance_ is a dynamic representation that corresponds to a deployed or discovered instantiation of a _declaration_. An _instance_ is created based on its corresponding _definition_ and represents an actual running or deployed version of the construct within the environment.
+An _instance_ represents a realized entity. An _instance_ is a dynamic representation that corresponds to a deployed or discovered instantiation of a _declaration_. An _instance_ is created based on its corresponding _definition_ and represents an actual running or deployed version of the entity within the environment.
 
 {% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
-# Instructions for Creating a New Model
+### Importing and Creating Models
 
-All of Meshery's Models, Components, and Relationships can be found in the Meshery Integrations spreadsheet. This spreadsheet is the source of truth for the definition of Meshery's models. On a daily schedule, the contents of the Meshery Integrations spreadsheet is
-{% include alert.html type="light" title="Model Source Code" content="See examples of <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>Models defined in JSON in meshery/meshery</a>." %}
+Models can be created from scratch or imported using either the Meshery UI or the Meshery CLI.  
+To learn more, see the detailed guides on [Importing Models]({{site.baseurl}}/guides/configuration-management/importing-models) and [Creating Models]({{site.baseurl}}/guides/configuration-management/creating-models).
 
-To add or update a model, follow these steps:
+> Use **Create** if you're starting from scratch. Use **Import** if you already have model definitions (e.g., JSON, CSV, tar).
 
-1. **Create a Model Definition.** Open the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. Create a new row (or comment to suggest a new row) to capture the specific details of your model. As you fill-in model details, referernce each column's notes and comments as instructions and an explanation of their purpose.
-2. **Generate Components.** Once you have entered values into the required columns, execute the following command to generate components for your model.
+### Post Model Generation
 
-{% capture code_content %}$ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred “${{SPREADSHEET_CRED}}"{% endcapture %}
- {% include code.html code=code_content %}
+During model generation, corresponding components are created. Next step is to enrich these component details and define their capabilities and relationships.
 
-1. **Enhance Component details.** While the default shape for new components is a circle, each component should be considered for its best-fit shape.
-1. Review and familiarize with the available set of predefined relationship types. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes.
-2. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
-3. Proposee a specific icon, best-suited to visually represent the Component. _Example - DaemonSet as a skull icon._
+1. **Enrich Component Details**
+   When a Component is initially generated, a new Component definition is created with default properties (e.g. colors, icons, capabilities, etc.), some of which are inherited from their respective Model.
 
-{% include alert.html type="info" title="Using Meshery CLI with the Registry (models)" content="Create new and list existing models by using <code>mesheryctl registry</code> to interact with the Meshery Registry and the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>." %}
+   - **1.1. Customize Shapes and Colors**
 
-### Instructions for Relationships
+     - Default shape for new components is a circle
+     - Consider enriching components' details based on what they represent
+     - Reference Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for possible shapes
+     - Example: Use a pentagon shape to represent a Deployment
+     - Know more about [components shapes and colors](https://docs.meshery.io/extensions/component-shape-guide)
 
-See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) page.
+   - **1.2. Customize Icons**
 
-1. Identify the relationship and any specific constraints to be enforced between one or more specific components within the same or different models.
-1. Propose a specific visual representation for the relationship. See list of visualizations on [Visualizing Relationships](https://docs.meshery.io/project/contributing/contributing-relationships#relationship-visualizations)
-1. Prospose the appropriate relationship type, using one of the predefined set of relationship types or suggest a new relationship where an existing type does not fit.
-1. Create a Relationship Definition (yaml).
-1. (Rarely necessary) Create a policy for evaluation of the relationship (rego). _This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship._
-1. Review a prior pull request as an example of how to define a Relationships. For example, see [PR #9880](https://github.com/meshery/meshery/pull/9880/files)
+     - Components inherit the icon (colored and white SVGs) of their respective Model by default
+     - Propose specific icons best suited to visually represent each component
+     - Example: Use a skull icon for a DaemonSet
 
-{% include alert.html type="info" title="Generating Models does not require Meshery Server" content="Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components." %}
+   - **1.3. Review Capabilities**
+     - Review and confirm assigned capabilities
+     - Modify capabilities as needed
 
-### Managed and Unmanaged Connections
+    See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
 
-Each Meshery Model can contain one more ConnectionDefinitions (files), each Definition representing one Connection, and also, (as a matter of convenience multiple Connections can be described in the same ConnectionDefinition file).
+2. **Identify Relationships**
 
-Connections can be:
+   - **2.1. Review Available Types**
+     Review and familiarize yourself with the predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"]({{ site.baseurl }}/concepts/logical/relationships)
 
-1. a ConnectionDefinition based Meshery's [Connection Schema](https://github.com/meshery/schemas/) with hand-curated Connection attributes.
-2. a custom ConnectionDefinition based Meshery's Connection Schema that references an existing Component within the same Model.
+   - **2.2. Map Component Relationships**
+
+     - Identify appropriate relationships for your new components
+     - Consider how components relate to others within the same model
+     - Consider relationships with components in other models
+
+   - **2.3. Create Definitions**
+     Codify the relationships you have identified into a Relationship Definition
+
+    See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
+
+## Next Steps
+
+The Meshery team is currently working on the following:
+
+- Extending the model to support additional entities
+- Improving the tooling for working with models
+- Defining relationships between components and embedding those policies within models
+
+We encourage you to get involved in the development of Meshery Models and to share your feedback!
+
+{% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}

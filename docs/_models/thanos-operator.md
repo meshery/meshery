@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Thanos Operator
-subtitle: Collaborative and visual infrastructure as code for Thanos Operator
+subtitle: Collaborative and visual infrastructure as design for Thanos Operator
 image: /assets/img/integrations/thanos-operator/icons/color/thanos-operator-color.svg
 permalink: extensibility/integrations/thanos-operator
 docURL: https://docs.meshery.io/extensibility/integrations/thanos-operator
@@ -34,12 +34,15 @@ components:
   colorIcon: assets/img/integrations/thanos-operator/components/thanos-peer/icons/color/thanos-peer-color.svg
   whiteIcon: assets/img/integrations/thanos-operator/components/thanos-peer/icons/white/thanos-peer-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

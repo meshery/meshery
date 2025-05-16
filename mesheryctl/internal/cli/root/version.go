@@ -23,10 +23,8 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
-	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -132,7 +130,7 @@ mesheryctl version
 			return
 		}
 
-		defer checkMesheryctlClientVersion(build)
+		defer utils.CheckMesheryctlClientVersion(build)
 		client := &http.Client{}
 		resp, err := client.Do(req)
 
@@ -162,26 +160,4 @@ mesheryctl version
 		rows[1][2] = version.GetCommitSHA()
 		utils.PrintToTable(header, rows)
 	},
-}
-
-func checkMesheryctlClientVersion(build string) {
-	utils.Log.Info("Checking for latest version of mesheryctl...\n")
-
-	// Inform user of the latest release version
-	res, err := meshkitutils.GetLatestReleaseTagsSorted(c.GetMesheryGitHubOrg(), c.GetMesheryGitHubRepo())
-	if err != nil {
-		utils.Log.Warn(fmt.Errorf("Unable to check for latest version of mesheryctl. %s", err))
-		return
-	}
-	if len(res) == 0 {
-		utils.Log.Warn(fmt.Errorf("Unable to check for latest version of mesheryctl. %s", fmt.Errorf("no version found")))
-		return
-	}
-	r := res[len(res)-1]
-	// If user is running an outdated release, let them know.
-	if r != build {
-		utils.Log.Info(build, " is not the latest release. Update to ", r, ".")
-	} else { // If user is running the latest release, let them know.
-		utils.Log.Info(r, " is the latest release.")
-	}
 }

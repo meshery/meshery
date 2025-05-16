@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubernetes Secret Generator
-subtitle: Collaborative and visual infrastructure as code for Kubernetes Secret Generator
+subtitle: Collaborative and visual infrastructure as design for Kubernetes Secret Generator
 image: /assets/img/integrations/kubernetes-secret-generator/icons/color/kubernetes-secret-generator-color.svg
 permalink: extensibility/integrations/kubernetes-secret-generator
 docURL: https://docs.meshery.io/extensibility/integrations/kubernetes-secret-generator
@@ -22,12 +22,15 @@ components:
   colorIcon: assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/color/string-secret-color.svg
   whiteIcon: assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/white/string-secret-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Create secrets for Kubernetes applications",
+  "Manage secrets securely",
+  "Rotate secrets automatically"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

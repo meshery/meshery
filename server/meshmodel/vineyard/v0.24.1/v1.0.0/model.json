@@ -1,0 +1,42 @@
+{
+  "category": {
+   "name": "Runtime"
+  },
+  "displayName": "Vineyard",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "capabilities": null,
+   "isAnnotation": false,
+   "primaryColor": "#2384f1",
+   "secondaryColor": "#3990f2",
+   "shape": "circle",
+   "styleOverrides": "",
+   "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 576 576\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#2380f2;}.cls-2{fill:#30e0df;}.cls-3{fill:url(#未命名的渐变);}\u003c/style\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"未命名的渐变\" x1=\"-598.82068\" y1=\"30.58735\" x2=\"-598.82068\" y2=\"27.72976\" gradientTransform=\"matrix(54.12373, 0, 0, -172.99139, 32499.13428, 5332.32946)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#35eed7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#22b1fd\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"正稿\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"编组\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径\" class=\"cls-1\" d=\"M426.57318,268.07554l-.49873.21028A214.92961,214.92961,0,0,0,377.388,296.94744c-51.47433,40.62945-81.2012,104.36467-81.2999,196.22946q-.02378,22.38263,1.88707,42.144h-68.7577q-1.733-20.27023-1.7122-42.21728c.12142-112.45435,39.14463-196.12117,107.39138-249.98937A285.65158,285.65158,0,0,1,408.51007,201.374Q420.83352,231.2059,426.57318,268.07554Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径-2\" data-name=\"路径\" class=\"cls-2\" d=\"M240.93685,243.11423c68.24675,53.8682,107.27,137.535,107.39138,249.98937q.02283,21.94251-1.7122,42.21728h-68.7577q1.91543-19.77132,1.88707-42.144c-.0987-91.86479-29.82557-155.6-81.2999-196.22946a214.04937,214.04937,0,0,0-46.04681-27.51494q6.91446-36.59784,20.11145-65.98987A284.45232,284.45232,0,0,1,240.93685,243.11423Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径-3\" data-name=\"路径\" class=\"cls-3\" d=\"M111.23333,40.98064l54.82658,45.70592C68.28913,179.24247,66.409,379.09983,105.001,535.31983H36.40107C-7.00852,380.02391-.93753,157.32034,111.23333,40.98064Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径-4\" data-name=\"路径\" class=\"cls-1\" d=\"M465.52417,39.63568c113.4296,115.96149,119.71591,339.789,76.138,495.6872H473.06111c38.7651-156.91214,36.69721-357.857-62.367-449.86432Z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n",
+   "svgComplete": "",
+   "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 576 576\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#ccc;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"编组-2\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"编组备份\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径\" class=\"cls-1\" d=\"M427.03534,267.999l-.49828.21009a214.731,214.731,0,0,0-48.64139,28.63512c-51.42673,40.59189-81.12612,104.26817-81.22473,196.048q-.02374,22.36192,1.88532,42.105H229.86214q-1.73144-20.2515-1.71061-42.17824c.1213-112.35038,39.10843-195.93984,107.29208-249.75823a285.38747,285.38747,0,0,1,73.54532-41.70162Q421.301,231.16346,427.03534,267.999Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径-2\" data-name=\"路径\" class=\"cls-2\" d=\"M241.57064,243.06078C309.75429,296.87917,348.74143,380.46863,348.86273,492.819q.0228,21.92221-1.71062,42.17824H278.458q1.91366-19.75305,1.88532-42.105c-.0986-91.77986-29.798-155.45614-81.22472-196.048a213.85173,213.85173,0,0,0-46.00424-27.4895q6.90805-36.564,20.09285-65.92886A284.18909,284.18909,0,0,1,241.57064,243.06078Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径-3\" data-name=\"路径\" class=\"cls-2\" d=\"M111.98705,41.11407l54.77588,45.66367c-97.68037,92.47033-99.55874,292.1429-61.00248,448.21846H37.224C-6.14547,379.84387-.08009,157.34621,111.98705,41.11407Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"路径-4\" data-name=\"路径\" class=\"cls-1\" d=\"M465.95031,39.77036C579.275,155.62464,585.55553,379.24516,542.018,534.99925H473.48028c38.72926-156.76706,36.66328-357.5261-62.30932-449.44838Z\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
+  },
+  "model": {
+   "version": "v0.24.1"
+  },
+  "name": "vineyard",
+  "registrant": {
+   "created_at": "0001-01-01T00:00:00Z",
+   "credential_id": "00000000-0000-0000-0000-000000000000",
+   "deleted_at": "0001-01-01T00:00:00Z",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "kind": "github",
+   "name": "Github",
+   "status": "discovered",
+   "sub_type": "",
+   "type": "registry",
+   "updated_at": "0001-01-01T00:00:00Z",
+   "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Cloud Native Storage",
+  "version": "v1.0.0",
+  "components": null,
+  "relationships": null
+ }

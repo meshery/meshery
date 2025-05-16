@@ -1,0 +1,1369 @@
+name: Catalog Design2
+version: 0.0.2
+services:
+  api-service:
+    annotations: {}
+    apiVersion: apiregistration.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: api-service
+    namespace: ""
+    settings:
+      spec:
+        insecure Skip TLS Verify: true
+        version: v1
+        version Priority: 1
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e3debde0-d173-4de9-a83e-82585ac704fc
+        label: api-service
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 28
+        parent: 32fac983-6ade-4530-887e-adcb6b27b2b8
+        position:
+          posX: 230
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 49
+    type: APIService.K8s
+    version: v1.25.3
+  config-map:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: config-map
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f86229bc-d008-45f6-bf58-47bccd9891b7
+        label: config-map
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 20
+        parent: 8cfa8b7e-f8cd-47c8-b221-659b12fac444
+        position:
+          posX: 150
+          posY: 90
+        whiteboardData:
+          style:
+            z-index: 19
+    type: ConfigMap.K8s
+    version: v1.25.3
+  cron-job:
+    annotations: {}
+    apiVersion: batch/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: cron-job
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 1dc8b3cc-41ad-4c45-a30f-0fd144eb23e1
+        label: cron-job
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 26
+        parent: 528a0c80-1738-4c0c-8107-d2fd74000fc9
+        position:
+          posX: -270
+          posY: 190
+        whiteboardData:
+          style:
+            z-index: 37
+    type: CronJob.K8s
+    version: v1.25.3
+  daemon-set-ccxje:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: daemon-set-ccxje
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 7e720fd7-9c14-4dbd-b7fd-8ef97c7d43fa
+        label: daemon-set
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 8
+        parent: 8cfa8b7e-f8cd-47c8-b221-659b12fac444
+        position:
+          posX: 230
+          posY: 70
+        whiteboardData:
+          style:
+            z-index: 31
+    type: DaemonSet.K8s
+    version: v1.25.3
+  daemon-set-dwega:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: daemon-set-dwega
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 8ce78447-e4af-4fcb-bef8-8b94f696e185
+        label: daemon-set
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 11
+        parent: 528a0c80-1738-4c0c-8107-d2fd74000fc9
+        position:
+          posX: -270
+          posY: 90
+        whiteboardData:
+          style:
+            z-index: 55
+    type: DaemonSet.K8s
+    version: v1.25.3
+  daemon-set-ecwia:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: daemon-set-ecwia
+    namespace: Frontend Node
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: daemon-set-0.7153531197908531
+        label: daemon-set
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 29
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -310
+          posY: 610
+        whiteboardData:
+          style:
+            z-index: 67
+    type: DaemonSet.K8s
+    version: v1.25.3
+  daemon-set-emnxk:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: daemon-set-emnxk
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2da8fa5f-b8d8-4c23-b74c-b58de6dd5694
+        label: daemon-set
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 32
+        parent: 32fac983-6ade-4530-887e-adcb6b27b2b8
+        position:
+          posX: 410
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 59
+    type: DaemonSet.K8s
+    version: v1.25.3
+  daemon-set-pdfdh:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: daemon-set-pdfdh
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 66e68ae2-354c-47ea-8646-9856d368a426
+        label: daemon-set
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 31
+        parent: 849ba77b-bec6-4c5e-9957-95530454736a
+        position:
+          posX: -50
+          posY: 550
+        whiteboardData:
+          style:
+            z-index: 23
+    type: DaemonSet.K8s
+    version: v1.25.3
+  endpoints:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: endpoints
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f6ee535e-f21d-485e-8901-5bc95c6213f9
+        label: endpoints
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 23
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -390
+          posY: 530
+        whiteboardData:
+          style:
+            z-index: 69
+    type: Endpoints.K8s
+    version: v1.25.3
+  gateway-route:
+    annotations: {}
+    apiVersion: appmesh.k8s.aws/v1beta2
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: app_mesh
+    name: gateway-route
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2d60eb45-1479-4912-8bbe-59039a310429
+        label: gateway-route
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 4
+        position:
+          posX: -330
+          posY: 190
+        whiteboardData:
+          style:
+            z-index: 11
+    type: GatewayRoute.APP_MESH
+    version: ""
+  horizontal-pod-autoscaler:
+    annotations: {}
+    apiVersion: autoscaling/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: horizontal-pod-autoscaler
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f7af3c8b-4ec4-498f-ac27-572014a93754
+        label: horizontal-pod-autoscaler
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 6
+        parent: 8cfa8b7e-f8cd-47c8-b221-659b12fac444
+        position:
+          posX: 150
+          posY: 10
+        whiteboardData:
+          style:
+            z-index: 33
+    type: HorizontalPodAutoscaler.K8s
+    version: v1.25.3
+  http-route-group:
+    annotations: {}
+    apiVersion: specs.smi-spec.io/v1alpha3
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: nginx_service_mesh
+    name: http-route-group
+    namespace: default
+    settings:
+      spec:
+        matches: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 30a17139-24e0-4449-8230-222cd9a4b5bb
+        label: http-route-group
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 3
+        position:
+          posX: -330
+          posY: 110
+        whiteboardData:
+          style:
+            z-index: 9
+    type: HTTPRouteGroup
+    version: ""
+  ingress-gateway:
+    annotations: {}
+    apiVersion: consul.hashicorp.com/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: consul
+    name: ingress-gateway
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 74f2ec3d-b57b-4db2-baec-9f96c3f3c822
+        label: ingress-gateway
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 5
+        position:
+          posX: -410
+          posY: 150
+        whiteboardData:
+          style:
+            z-index: 7
+    type: IngressGateway
+    version: ""
+  ingress-iacvo:
+    annotations: {}
+    apiVersion: networking.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: ingress-iacvo
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 306c90bb-bcf7-4fec-9986-c720daf28a36
+        label: ingress
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 30
+        parent: 528a0c80-1738-4c0c-8107-d2fd74000fc9
+        position:
+          posX: -370
+          posY: 90
+        whiteboardData:
+          style:
+            z-index: 63
+    type: Ingress.K8s
+    version: v1.25.3
+  ingress-upufa:
+    annotations: {}
+    apiVersion: networking.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: ingress-upufa
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: c88ba7c7-ef5e-42c1-bc8a-2ab38007b83b
+        label: ingress
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 7
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -330
+          posY: 430
+        whiteboardData:
+          style:
+            z-index: 61
+    type: Ingress.K8s
+    version: v1.25.3
+  network-policy:
+    annotations: {}
+    apiVersion: networking.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: network-policy
+    namespace: ""
+    settings:
+      spec:
+        pod Selector:
+          match Labels: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a5d01e5c-7c8e-4a07-ac9a-c01659646a8f
+        label: network-policy
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 13
+        parent: 849ba77b-bec6-4c5e-9957-95530454736a
+        position:
+          posX: -130
+          posY: 550
+        whiteboardData:
+          style:
+            z-index: 25
+    type: NetworkPolicy.K8s
+    version: v1.25.3
+  persistent-volume-nzrrp:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-nzrrp
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 04e72bb7-38df-4610-a7bc-dff48b770e40
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 74007d36-1366-45d7-8009-13ca706144d5
+            target: 8c56da75-1003-430b-8caf-fa520da8848b
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 8c56da75-1003-430b-8caf-fa520da8848b
+        label: persistent-volume
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 9
+        parent: 849ba77b-bec6-4c5e-9957-95530454736a
+        position:
+          posX: -130
+          posY: 470
+        whiteboardData:
+          style:
+            z-index: 65
+    type: PersistentVolume.K8s
+    version: v1.25.3
+  persistent-volume-pjdsm:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-pjdsm
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 0657eaa8-0d2a-464d-83a5-7ddac171d0e6
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 74007d36-1366-45d7-8009-13ca706144d5
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 07bc655d-04ee-4402-bece-0912fe0f2723
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 19a11875-a3bb-4499-80cb-6a43d16a54f7
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 28882809-4f2e-47fd-9fc0-32d2ce83887d
+            metadata:
+              port: 80
+              protocol: TCP
+            source: e0c876e0-8f13-47de-b369-e2b336e9be4e
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 433563dc-3546-45f6-8684-c525ca170b43
+            metadata:
+              port: 80
+              protocol: TCP
+            source: a568822f-d3b7-46f9-8c97-12c61533eb87
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 733f5525-664e-4a7d-a25c-eea66b7c0ecd
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4c70cc69-26ad-4f87-bb49-e44febd0e229
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+        label: persistent-volume
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 21
+        parent: 32fac983-6ade-4530-887e-adcb6b27b2b8
+        position:
+          posX: 310
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 39
+    type: PersistentVolume.K8s
+    version: v1.25.3
+  persistent-volume-rmxfm:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-rmxfm
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: e418306e-ebdc-447b-9943-414b78269843
+            metadata:
+              port: 80
+              protocol: TCP
+            source: bc657cc2-bf2d-4f50-b9c5-437b76473b4b
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 27d6e4b8-b46b-499d-b90e-b8c946fc7f54
+            source: a568822f-d3b7-46f9-8c97-12c61533eb87
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: d618b2b6-289c-4ce4-8411-1e51ed431f50
+            source: 19a11875-a3bb-4499-80cb-6a43d16a54f7
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: a19d09ab-254d-4290-b5b0-15cd1903730a
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4c70cc69-26ad-4f87-bb49-e44febd0e229
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+        label: persistent-volume
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 18
+        parent: 528a0c80-1738-4c0c-8107-d2fd74000fc9
+        position:
+          posX: -430
+          posY: 210
+        whiteboardData:
+          style:
+            z-index: 35
+    type: PersistentVolume.K8s
+    version: v1.25.3
+  persistent-volume-utyht:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-utyht
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: ead8de48-42c3-4d22-a8ba-86ce21abc9c3
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 74007d36-1366-45d7-8009-13ca706144d5
+            target: 931a133a-47e2-4c4d-bda8-7958f79a6ca2
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 7163682e-0589-4feb-b1a5-d1f648e371e4
+            metadata:
+              port: 80
+              protocol: TCP
+            source: bc657cc2-bf2d-4f50-b9c5-437b76473b4b
+            target: 931a133a-47e2-4c4d-bda8-7958f79a6ca2
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 931a133a-47e2-4c4d-bda8-7958f79a6ca2
+        label: persistent-volume
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 34
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -410
+          posY: 410
+        whiteboardData:
+          style:
+            z-index: 41
+    type: PersistentVolume.K8s
+    version: v1.25.3
+  pod-eogwg:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-eogwg
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: a19d09ab-254d-4290-b5b0-15cd1903730a
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4c70cc69-26ad-4f87-bb49-e44febd0e229
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 733f5525-664e-4a7d-a25c-eea66b7c0ecd
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 4c70cc69-26ad-4f87-bb49-e44febd0e229
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 4c70cc69-26ad-4f87-bb49-e44febd0e229
+        label: pod
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 27
+        parent: 528a0c80-1738-4c0c-8107-d2fd74000fc9
+        position:
+          posX: -450
+          posY: 110
+        whiteboardData:
+          style:
+            z-index: 27
+    type: Pod.K8s
+    version: v1.25.3
+  pod-gqhua:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-gqhua
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: e418306e-ebdc-447b-9943-414b78269843
+            metadata:
+              port: 80
+              protocol: TCP
+            source: bc657cc2-bf2d-4f50-b9c5-437b76473b4b
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 7163682e-0589-4feb-b1a5-d1f648e371e4
+            metadata:
+              port: 80
+              protocol: TCP
+            source: bc657cc2-bf2d-4f50-b9c5-437b76473b4b
+            target: 931a133a-47e2-4c4d-bda8-7958f79a6ca2
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: bc657cc2-bf2d-4f50-b9c5-437b76473b4b
+        label: pod
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 22
+        parent: 849ba77b-bec6-4c5e-9957-95530454736a
+        position:
+          posX: -30
+          posY: 470
+        whiteboardData:
+          style:
+            z-index: 21
+    type: Pod.K8s
+    version: v1.25.3
+  pod-pnaxf:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-pnaxf
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: d618b2b6-289c-4ce4-8411-1e51ed431f50
+            source: 19a11875-a3bb-4499-80cb-6a43d16a54f7
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 07bc655d-04ee-4402-bece-0912fe0f2723
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 19a11875-a3bb-4499-80cb-6a43d16a54f7
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 19a11875-a3bb-4499-80cb-6a43d16a54f7
+        label: pod
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 10
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -450
+          posY: 410
+        whiteboardData:
+          style:
+            z-index: 43
+    type: Pod.K8s
+    version: v1.25.3
+  pod-suzih:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-suzih
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 28882809-4f2e-47fd-9fc0-32d2ce83887d
+            metadata:
+              port: 80
+              protocol: TCP
+            source: e0c876e0-8f13-47de-b369-e2b336e9be4e
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: e0c876e0-8f13-47de-b369-e2b336e9be4e
+        label: pod
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 25
+        parent: 32fac983-6ade-4530-887e-adcb6b27b2b8
+        position:
+          posX: 410
+          posY: 410
+        whiteboardData:
+          style:
+            z-index: 51
+    type: Pod.K8s
+    version: v1.25.3
+  pod-template:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-template
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2c5b403f-f32a-4d8e-b7a2-14a9b7b932f7
+        label: pod-template
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 19
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -330
+          posY: 490
+        whiteboardData:
+          style:
+            z-index: 45
+    type: PodTemplate.K8s
+    version: v1.25.3
+  pod-uhokd:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-uhokd
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 0657eaa8-0d2a-464d-83a5-7ddac171d0e6
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 74007d36-1366-45d7-8009-13ca706144d5
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 04e72bb7-38df-4610-a7bc-dff48b770e40
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 74007d36-1366-45d7-8009-13ca706144d5
+            target: 8c56da75-1003-430b-8caf-fa520da8848b
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: ead8de48-42c3-4d22-a8ba-86ce21abc9c3
+            metadata:
+              port: 80
+              protocol: TCP
+            source: 74007d36-1366-45d7-8009-13ca706144d5
+            target: 931a133a-47e2-4c4d-bda8-7958f79a6ca2
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 74007d36-1366-45d7-8009-13ca706144d5
+        label: pod
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 33
+        parent: 8cfa8b7e-f8cd-47c8-b221-659b12fac444
+        position:
+          posX: 250
+          posY: 10
+        whiteboardData:
+          style:
+            z-index: 29
+    type: Pod.K8s
+    version: v1.25.3
+  pod-ylsyj:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-ylsyj
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 27d6e4b8-b46b-499d-b90e-b8c946fc7f54
+            source: a568822f-d3b7-46f9-8c97-12c61533eb87
+            target: c96ae5b6-6fd9-4d3e-8f1d-3538d44896be
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 433563dc-3546-45f6-8684-c525ca170b43
+            metadata:
+              port: 80
+              protocol: TCP
+            source: a568822f-d3b7-46f9-8c97-12c61533eb87
+            target: 2f4401f8-0c32-4be7-84d2-8db0f63e08ae
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: a568822f-d3b7-46f9-8c97-12c61533eb87
+        label: pod
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 24
+        parent: 32fac983-6ade-4530-887e-adcb6b27b2b8
+        position:
+          posX: 210
+          posY: 390
+        whiteboardData:
+          style:
+            z-index: 57
+    type: Pod.K8s
+    version: v1.25.3
+  secret:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: secret
+    namespace: ""
+    settings:
+      data:
+        "256": HASH
+      type: String
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 5783204f-6036-4eed-bc34-dda9d5c52318
+        label: secret
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 35
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -450
+          posY: 470
+        whiteboardData:
+          style:
+            z-index: 47
+    type: Secret.K8s
+    version: v1.25.3
+  service-account:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: service-account
+    namespace: node
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 97b62e0d-f014-406a-b8f8-443addefe02e
+        label: service-account
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 12
+        parent: 3e9de90c-ed13-4300-856f-3b3f57158a16
+        position:
+          posX: -450
+          posY: 610
+        whiteboardData:
+          style:
+            z-index: 53
+    type: ServiceAccount.K8s
+    version: v1.25.3

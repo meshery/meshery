@@ -1,0 +1,24 @@
+version: 0.0.1
+name: grafana-deployment
+displayName: grafana deployment
+createdAt: "2024-04-02T20:31:16Z"
+description: The provided YAML configuration defines a Kubernetes Deployment named "grafana" within the "monitoring" namespace. This Deployment ensures the availability of one instance of Grafana, a monitoring and visualization tool. It specifies resource requirements, including memory and CPU limits, and mounts volumes for persistent storage and configuration. The container runs the latest version of the Grafana image, exposing port 3000 for access. The configuration also includes a Pod template with labels for Pod identification and a selector to match labels for managing Pods.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3a38cc90-e998-4f2a-9747-17f2d7ddf313/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Container Image Version: While the configuration uses grafana/grafana:latest for the container image, it's important to note that relying on the latest tag can introduce instability if Grafana publishes a new version that includes breaking changes or bugs. Consider specifying a specific version tag for more predictable behavior.\n\n2. Resource Limits: Resource limits (memory and cpu) are specified for the container. Ensure that these limits are appropriate for your deployment environment and the expected workload of Grafana. Adjust these limits based on performance testing and monitoring.\n\n3. Storage: The configuration uses an emptyDir volume for Grafana's storage. This volume is ephemeral and will be deleted if the Pod restarts or is rescheduled to a different node. Consider using a persistent volume (e.g., PersistentVolumeClaim) for storing Grafana data to ensure data persistence across Pod restarts.\n\n4. Configurations: Configuration for Grafana's data sources is mounted using a ConfigMap. Ensure that the ConfigMap (grafana-datasources) is properly configured with the required data source configurations. Verify that changes to the ConfigMap are propagated to the Grafana Pod without downtime. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3a38cc90-e998-4f2a-9747-17f2d7ddf313-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/3a38cc90-e998-4f2a-9747-17f2d7ddf313-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

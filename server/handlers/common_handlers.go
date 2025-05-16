@@ -2,11 +2,17 @@
 package handlers
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"io"
 	"net/http"
+	"net/url"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/sirupsen/logrus"
 )
 
 // swagger:route GET /api/user/login UserAPI idGetUserLogin
@@ -33,7 +39,7 @@ func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request, p models.
 // 	200:
 
 // LogoutHandler destroys the session and redirects to home.
-func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p models.Provider) {
+func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, user *models.User, p models.Provider) {
 	if req.Method != http.MethodGet {
 		w.WriteHeader(http.StatusNotFound)
 		return
@@ -45,13 +51,14 @@ func (h *Handler) LogoutHandler(w http.ResponseWriter, req *http.Request, p mode
 		Path:     "/",
 		HttpOnly: true,
 	})
+	_ = p.DeleteCapabilitiesForUser(user.ID)
 	err := p.Logout(w, req)
 	if err != nil {
-		logrus.Errorf("Error performing logout: %v", err.Error())
+		h.log.Error(models.ErrLogout(err))
 		p.HandleUnAuthenticated(w, req)
 		return
 	}
-	logrus.Infof("successfully logged out from %v provider", p.Name())
+	h.log.Info(fmt.Sprintf("logged out from %v provider", p.Name()))
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
@@ -76,4 +83,108 @@ func (h *Handler) TokenHandler(w http.ResponseWriter, r *http.Request, p models.
 	// 	return
 	// }
 	p.TokenHandler(w, r, fromMiddleWare)
+}
+
+// swagger:route GET /api/system/viewFile system viewFile idFileViewer
+// Handles GET request to view a file.
+//
+// Retrieves and displays the content of the specified file as plain text.
+//
+// responses:
+//   200:
+//   500:
+
+// ViewHandler handles viewing the file content.
+func (h *Handler) ViewHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
+
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	// Set the content type to plain text
+	responseWriter.Header().Set("Content-Type", "text/plain")
+
+	// Copy the file content to the response writer
+	_, err = io.Copy(responseWriter, file)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// swagger:route GET /api/system/downloadFile system downloadFile idDownloadFile
+// Handles GET request to download a file.
+//
+// Retrieves and initiates a download for the specified file.
+//
+// responses:
+//   200:
+//   500:
+
+// DownloadHandler handles downloading the file.
+func (h *Handler) DownloadHandler(responseWriter http.ResponseWriter, request *http.Request) {
+	filePath, err := url.QueryUnescape(request.URL.Query().Get("file"))
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	fileName := filepath.Base(filePath)
+	responseWriter.Header().Set("Content-Type", "text/plain")
+	responseWriter.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+
+	_, err = io.Copy(responseWriter, file)
+	if err != nil {
+		http.Error(responseWriter, err.Error(), http.StatusInternalServerError)
+		return
+	}
+}
+
+// Deep-link and redirect support to land user on their originally requested page post authentication instead of dropping user on the root (home) page.
+func GetRefURL(req *http.Request) string {
+	refURL := req.URL.Path + "?" + req.URL.RawQuery
+	// If the source is "/", and doesn't include any path or param, set refURL as empty string.
+	// Even if this isn't handle, it doesn't lead to issues but adds an extra /? after login in the URL.
+	if refURL == "?" || refURL == "/?" {
+		return ""
+	}
+	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
+	return refURLB64
+}
+func (h *Handler) HandleErrorHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	w.WriteHeader(http.StatusInternalServerError)
+
+	// Define the error response structure
+	type ErrorResponse struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	// Create an error response instance
+	errorResponse := ErrorResponse{
+		Status:  http.StatusInternalServerError,
+		Message: "We encountered an error while processing your request. Please try again later.",
+	}
+
+	// Encode and send the error response as JSON
+	if err := json.NewEncoder(w).Encode(errorResponse); err != nil {
+		h.log.Error(models.ErrMarshal(err, "error response"))
+	}
 }

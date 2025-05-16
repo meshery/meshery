@@ -28,11 +28,10 @@ import (
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
-	"k8s.io/client-go/tools/clientcmd"
-	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 func getContexts(configFile string) ([]string, error) {
@@ -313,23 +312,14 @@ mesheryctl system config minikube
 			log.Fatal("Could not find the default kube config:", err)
 			return err
 		}
-		config, _ := clientcmd.LoadFromFile(utils.KubeConfig)
-		if config == nil {
-			log.Fatal("Error reading the default kube config:", err)
-			return err
-		}
-		// Flatten the config file
-		err = clientcmdapi.FlattenConfig(config)
-		if err != nil {
-			log.Fatal("Error flattening config:", err)
-			return err
-		}
-		// write the flattened config to kubeconfig.yaml file
-		err = clientcmd.WriteToFile(*config, utils.ConfigPath)
+
+		// Minifies and flattens kubeconfig and writes it to kubeconfig.yaml
+		_, _, err := meshkitkube.ProcessConfig(utils.KubeConfig, utils.ConfigPath)
 		if err != nil {
 			log.Fatal("Error writing config to file:", err)
 			return err
 		}
+
 		log.Debugf("Minikube configuration is written to: %s", utils.ConfigPath)
 
 		// set the token in the chosen context
@@ -393,7 +383,7 @@ func setToken() {
 	if err != nil {
 		utils.Log.Error(err)
 	}
-	if contexts == nil || len(contexts) < 1 {
+	if len(contexts) < 1 {
 		log.Fatalf("Error getting context: %s", fmt.Errorf("no contexts found"))
 	}
 	choosenCtx := contexts[0]

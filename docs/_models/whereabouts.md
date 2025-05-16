@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Whereabouts
-subtitle: Collaborative and visual infrastructure as code for Whereabouts
+subtitle: Collaborative and visual infrastructure as design for Whereabouts
 image: /assets/img/integrations/whereabouts/icons/color/whereabouts-color.svg
 permalink: extensibility/integrations/whereabouts
 docURL: https://docs.meshery.io/extensibility/integrations/whereabouts
@@ -10,13 +10,28 @@ integrations-category: Cloud Native Network
 integrations-subcategory: CNI
 registrant: GitHub
 components: 
+- name: ip-pool
+  colorIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
+  whiteIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
+  description: 
+- name: overlapping-range-ip-reservation
+  colorIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
+  whiteIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
+  description: 
+- name: node-slice-pool
+  colorIcon: assets/img/integrations/whereabouts/components/node-slice-pool/icons/color/node-slice-pool-color.svg
+  whiteIcon: assets/img/integrations/whereabouts/components/node-slice-pool/icons/white/node-slice-pool-white.svg
+  description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Automates IP address allocation",
+  "Supports IPv4 and IPv6",
+  "Integrates with various CNI plugins"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages IP addresses with Whereabouts"
+howItWorksDetails: "Simplified IP address management in Kubernetes"
 language: en
 list: include
 type: extensibility

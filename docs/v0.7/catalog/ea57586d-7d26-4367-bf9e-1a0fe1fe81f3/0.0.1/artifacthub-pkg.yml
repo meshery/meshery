@@ -1,0 +1,24 @@
+version: 0.0.1
+name: mysql-operator
+displayName: mysql operator
+createdAt: "2024-05-21T09:16:16Z"
+description: 'This YAML file defines a Kubernetes Deployment for the mysql-operator in the mysql-operator namespace. The deployment specifies a single replica of the operator to manage MySQL instances within the cluster. The operator container uses the image container-registry.oracle.com/mysql/community-operator:8.4.0-2.1.3 and runs the mysqlsh command with specific arguments for the MySQL operator. '
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ea57586d-7d26-4367-bf9e-1a0fe1fe81f3/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Single Replica:\nRunning a single replica of the operator can be a single point of failure. Consider increasing the number of replicas for high availability if supported.\n\n2. Image Version:\nThe image version 8.4.0-2.1.3 is specified, ensuring consistent deployments. Be mindful of updating this version in accordance with operator updates and testing compatibility.\n\n3. Security Context:\nThe security context is configured to run as a non-root user (runAsUser: 2), with no privilege escalation (allowPrivilegeEscalation: false), and a read-only root filesystem (readOnlyRootFilesystem: true). This enhances the security posture of the deployment.\n\n4. Environment Variables:\nSensitive information should be handled securely. Environment variables such as credentials should be managed using Kubernetes Secrets if necessary.\n\n5. Readiness Probe:\nThe readiness probe uses a file-based check, which is simple but ensure that the mechanism creating the /tmp/mysql-operator-ready file is reliable. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ea57586d-7d26-4367-bf9e-1a0fe1fe81f3-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ea57586d-7d26-4367-bf9e-1a0fe1fe81f3-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

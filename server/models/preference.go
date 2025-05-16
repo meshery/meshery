@@ -67,6 +67,7 @@ type Preference struct {
 	AnonymousUsageStats       bool                   `json:"anonymousUsageStats"`
 	AnonymousPerfResults      bool                   `json:"anonymousPerfResults"`
 	UpdatedAt                 time.Time              `json:"updated_at,omitempty"`
+	DashboardPreferences      map[string]interface{} `json:"dashboardPreferences,omitempty"`
 	UsersExtensionPreferences map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
 	RemoteProviderPreferences map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
 }
@@ -85,6 +86,13 @@ type PreferencePersister interface {
 	// Lock(userID string)
 	// Unlock(userID string)
 	// ClosePersister()
+}
+
+// CapabilitiesPersister defines methods for a capability persister
+type CapabilitiesPersister interface {
+	ReadCapabilitiesForUser(userID string) (*ProviderProperties, error)
+	WriteCapabilitiesForUser(userID string, data *ProviderProperties) error
+	DeleteCapabilitiesForUser(userID string) error
 }
 
 // Parameters to save Grafana configuration

@@ -1,110 +1,87 @@
 import React from 'react';
-import { NoSsr, Grid } from '@material-ui/core';
+import { NoSsr } from '@layer5/sistent';
+import HoneycombComponent from './widgets/HoneyComb/HoneyCombComponent';
+import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
+import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import ConnectCluster from './charts/ConnectCluster';
+import { ErrorContainer, HoneycombRoot } from './style';
+import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
+import { useSelector } from 'react-redux';
 
-import Popup from '../Popup';
-import { withStyles } from '@material-ui/core/styles';
-import { withRouter } from 'next/router';
-import { withNotify } from '../../utils/hooks/useNotification';
-import blue from '@material-ui/core/colors/blue';
+const ErrorDisplay = ({ theme }) => (
+  <ErrorContainer>
+    <ErrorIcon fill={theme.palette.background.error.default} />
+    <Typography
+      variant="h6"
+      sx={{
+        color: theme.palette.text.error,
+      }}
+    >
+      Unable to fetch cluster data
+    </Typography>
+    <Typography variant="body1">
+      There was an error retrieving cluster information. Please check your connection and try again.
+    </Typography>
+  </ErrorContainer>
+);
 
-import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
-import ConnectionStatsChart from './charts/ConnectionCharts.js';
-import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
-import { Provider } from 'react-redux';
-import { store } from '@/store/index';
+const Overview = ({ isEditMode }) => {
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
+  const isClusterIdsEmpty = clusterIds.size === 0;
+  const theme = useTheme();
 
-const styles = (theme) => ({
-  rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
-  datatable: {
-    boxShadow: 'none',
-  },
-  chip: {
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-  },
-  link: {
-    cursor: 'pointer',
-    textDecoration: 'none',
-  },
-  metricsButton: { width: '240px' },
-  alreadyConfigured: { textAlign: 'center' },
-  margin: { margin: theme.spacing(1) },
-  colorSwitchBase: {
-    color: blue[300],
-    '&$colorChecked': {
-      color: blue[500],
-      '& + $colorBar': { backgroundColor: blue[500] },
+  const {
+    data: clusterSummary,
+    isFetching,
+    isLoading,
+    isError,
+  } = useGetMeshSyncResourceKindsQuery(
+    {
+      page: 0,
+      pagesize: 'all',
+      clusterIds: clusterIds,
     },
-  },
-  colorBar: {},
-  colorChecked: {},
-  fileLabel: { width: '100%' },
-  fileLabelText: {},
-  inClusterLabel: { paddingRight: theme.spacing(2) },
-  alignCenter: { textAlign: 'center' },
-  icon: { width: theme.spacing(2.5) },
-  istioIcon: { width: theme.spacing(1.5) },
-  settingsIcon: {
-    width: theme.spacing(2.5),
-    paddingRight: theme.spacing(0.5),
-  },
-  addIcon: {
-    width: theme.spacing(2.5),
-    paddingRight: theme.spacing(0.5),
-  },
-  cardHeader: { fontSize: theme.spacing(2) },
-  card: {
-    height: '100%',
-    marginTop: theme.spacing(2),
-  },
-  cardContent: { height: '100%' },
-  redirectButton: {
-    marginLeft: '-.5em',
-    color: '#000',
-  },
-  dashboardSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
-    marginBottom: theme.spacing(2),
-  },
-});
+    {
+      skip: isClusterIdsEmpty || clusterIds.length === 0,
+    },
+  );
 
-const Overview = ({ classes }) => {
+  if (clusterIds.length === 0) {
+    return (
+      <div
+        style={{
+          background: theme.palette.background.default,
+        }}
+      >
+        <HoneycombRoot>
+          <ConnectCluster message="No clusters available. Please connect your clusters to proceed." />
+        </HoneycombRoot>
+      </div>
+    );
+  }
+
+  const isClusterLoading = isFetching || isLoading;
+
+  if (isError) {
+    return (
+      <NoSsr>
+        <ErrorDisplay theme={theme} />
+      </NoSsr>
+    );
+  }
+
   return (
     <NoSsr>
-      <Popup />
-      <Provider store={store}>
-        <div className={classes.rootClass}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={12}>
-              <DashboardMeshModelGraph classes={classes} />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <ConnectionStatsChart classes={classes} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <MesheryConfigurationChart classes={classes} />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </div>
-      </Provider>
+      <HoneycombComponent
+        kinds={clusterSummary?.kinds}
+        isClusterLoading={isClusterLoading}
+        isClusterIdsEmpty={isClusterIdsEmpty}
+        isEditMode={isEditMode}
+      />
     </NoSsr>
   );
 };
 
-export default withStyles(styles, { withTheme: true })(withRouter(withNotify(Overview)));
+export default Overview;

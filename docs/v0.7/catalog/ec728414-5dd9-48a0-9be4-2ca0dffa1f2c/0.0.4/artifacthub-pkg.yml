@@ -1,0 +1,24 @@
+version: 0.0.4
+name: iscsi
+displayName: iscsi
+createdAt: "2024-08-16T10:46:09Z"
+description: Connect Kubernetes clusters to iSCSI devices for scalable storage solutions, supporting direct or multipath connections with CHAP authentication.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ec728414-5dd9-48a0-9be4-2ca0dffa1f2c/0.0.4/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure compatibility of Kubernetes and iSCSI versions, configure network settings appropriately, and monitor performance and scalability of both storage and network infrastructure. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 65a09154-3ae0-47c4-b19a-e0185ffb694f
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ec728414-5dd9-48a0-9be4-2ca0dffa1f2c-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/ec728414-5dd9-48a0-9be4-2ca0dffa1f2c-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

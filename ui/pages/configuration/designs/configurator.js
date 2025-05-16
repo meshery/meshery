@@ -1,25 +1,16 @@
 import React, { useEffect } from 'react';
-import { NoSsr, withStyles } from '@material-ui/core';
-import { updatebetabadge, updatepagepath, updatepagetitle } from '../../../lib/store';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { NoSsr } from '@layer5/sistent';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
 import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
+import { useDispatch } from 'react-redux';
+import { updatePagePath, updateTitle } from '@/store/slices/mesheryUi';
 
-const styles = {
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  },
-};
-
-function DesignConfiguratorPage({ updatepagepath, updatepagetitle, updatebetabadge }) {
+function DesignConfiguratorPage() {
+  const dispatch = useDispatch();
   useEffect(() => {
-    updatepagepath({ path: getPath(), isBeta: true, title: 'Configure Design' });
-    updatepagetitle({ title: 'Configure Design' });
-    updatebetabadge({ isBeta: true });
+    dispatch(updatePagePath({ path: getPath() }));
+    dispatch(updateTitle({ title: 'Configure Design' }));
   }, []);
 
   return (
@@ -32,10 +23,4 @@ function DesignConfiguratorPage({ updatepagepath, updatepagetitle, updatebetabad
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
-  updatebetabadge: bindActionCreators(updatebetabadge, dispatch),
-});
-
-export default withStyles(styles)(connect(null, mapDispatchToProps)(DesignConfiguratorPage));
+export default DesignConfiguratorPage;

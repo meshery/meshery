@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: OPA Gatekeeper
-subtitle: Collaborative and visual infrastructure as code for Frinx Machine
+subtitle: Collaborative and visual infrastructure as design for OPA Gatekeeper
 image: /assets/img/integrations/gatekeeper/icons/color/gatekeeper-color.svg
 permalink: extensibility/integrations/gatekeeper
 docURL: https://docs.meshery.io/extensibility/integrations/gatekeeper
@@ -62,12 +62,19 @@ components:
   colorIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/color/sync-set-color.svg
   whiteIcon: assets/img/integrations/gatekeeper/components/sync-set/icons/white/sync-set-white.svg
   description: 
+- name: config-pod-status
+  colorIcon: assets/img/integrations/gatekeeper/components/config-pod-status/icons/color/config-pod-status-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/config-pod-status/icons/white/config-pod-status-white.svg
+  description: 
+components-count: 14
+relationships: 
+relationship-count: 0
 featureList: [
   "Native Kubernetes CRDs for instantiating the policy library (aka constraints)",
   "An extensible, parameterized policy library",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,13 +1,13 @@
 ---
 layout: integration
 title: Meshery Core
-subtitle: Collaborative and visual infrastructure as code for Meshery Core
+subtitle: Collaborative and visual infrastructure as design for Meshery Core
 image: /assets/img/integrations/meshery-core/icons/color/meshery-core-color.svg
 permalink: extensibility/integrations/meshery-core
 docURL: https://docs.meshery.io/extensibility/integrations/meshery-core
 description: 
 integrations-category: Orchestration & Management
-integrations-subcategory: App Definition and Development
+integrations-subcategory: Application Definition & Image Build
 registrant: meshery
 components: 
 - name: wasm-filter
@@ -34,6 +34,10 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/credential/icons/color/credential-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/credential/icons/white/credential-white.svg
   description: 
+- name: container
+  colorIcon: assets/img/integrations/meshery-core/components/container/icons/color/container-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/container/icons/white/container-white.svg
+  description: 
 - name: node-group-inventory-wallet
   colorIcon: assets/img/integrations/meshery-core/components/node-group-inventory-wallet/icons/color/node-group-inventory-wallet-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/node-group-inventory-wallet/icons/white/node-group-inventory-wallet-white.svg
@@ -42,9 +46,13 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/generic-node/icons/color/generic-node-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/generic-node/icons/white/generic-node-white.svg
   description: 
-- name: pen-connector-node
-  colorIcon: assets/img/integrations/meshery-core/components/pen-connector-node/icons/color/pen-connector-node-color.svg
-  whiteIcon: assets/img/integrations/meshery-core/components/pen-connector-node/icons/white/pen-connector-node-white.svg
+- name: picture
+  colorIcon: assets/img/integrations/meshery-core/components/picture/icons/color/picture-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/picture/icons/white/picture-white.svg
+  description: 
+- name: pen-terminal
+  colorIcon: assets/img/integrations/meshery-core/components/pen-terminal/icons/color/pen-terminal-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/pen-terminal/icons/white/pen-terminal-white.svg
   description: 
 - name: anchor-node
   colorIcon: assets/img/integrations/meshery-core/components/anchor-node/icons/color/anchor-node-color.svg
@@ -66,12 +74,15 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/pencil/icons/color/pencil-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/pencil/icons/white/pencil-white.svg
   description: 
+components-count: 16
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
   "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,0 +1,24 @@
+version: 0.0.1
+name: service-internal-traffic-policy
+displayName: Service Internal Traffic Policy
+createdAt: "2024-03-18T09:47:18Z"
+description: "Service Internal Traffic Policy enables internal traffic restrictions to only route internal traffic to endpoints within the node the traffic originated from. The \"internal\" traffic here refers to traffic originated from Pods in the current cluster. This can help to reduce costs and improve performance. \n\nHow it works   ??\nThe kube-proxy filters the endpoints it routes to based on the spec.internalTrafficPolicy setting. When it's set to Local, only node local endpoints are considered. When it's Cluster (the default), or is not set, Kubernetes considers all endpoints.\n"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/58fc14c4-1ba6-41b6-8dd0-ed1dabd87215/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Note: For pods on nodes with no endpoints for a given Service, the Service behaves as if it has zero endpoints (for Pods on this node) even if the service does have endpoints on other nodes.          \n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/58fc14c4-1ba6-41b6-8dd0-ed1dabd87215-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/58fc14c4-1ba6-41b6-8dd0-ed1dabd87215-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

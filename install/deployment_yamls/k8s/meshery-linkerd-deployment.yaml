@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery-server
       containers:
-      - image: layer5/meshery-linkerd:stable-latest
+      - image: meshery/meshery-linkerd:stable-latest
         imagePullPolicy: Always
         name: meshery-linkerd
         ports:

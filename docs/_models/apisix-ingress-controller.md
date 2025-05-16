@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: APISIX Ingress Controller
-subtitle: Collaborative and visual infrastructure as code for APISIX Ingress Controller
+subtitle: Collaborative and visual infrastructure as design for APISIX Ingress Controller
 image: /assets/img/integrations/apisix-ingress-controller/icons/color/apisix-ingress-controller-color.svg
 permalink: extensibility/integrations/apisix-ingress-controller
 docURL: https://docs.meshery.io/extensibility/integrations/apisix-ingress-controller
@@ -38,12 +38,15 @@ components:
   colorIcon: assets/img/integrations/apisix-ingress-controller/components/apisix-global-rule/icons/color/apisix-global-rule-color.svg
   whiteIcon: assets/img/integrations/apisix-ingress-controller/components/apisix-global-rule/icons/white/apisix-global-rule-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "The Apache APISIX Dashboard is designed to make it as easy as possible for users to operate through a frontend interface.",
   "The Apache APISIX dashboard is flexible to User demands.",
   "Built-in and customizable plugins available."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

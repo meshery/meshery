@@ -12,7 +12,7 @@ list: include
 Meshery offers _Providers_ as a point of extensibility. It has a built-in Local Provider, named **"None"** and supports _Remote Providers_ that are designed to be pluggable. _Remote Providers_ offer a point of extension to users / integrators to deliver enhanced functionality such as authentication and authorization, using Meshery as a platform.
 
 1. **Extensibility points offer clean separation of Meshery's core functionality versus plugin functionality.**
-   - [MeshMap]({{site.baseurl}}/extensions/meshmap) is an example of a feature to be delivered via Remote Provider.
+   - See a list of [Meshery's extensions](https://meshery.io/extensions).
 1. **Remote Providers should be able to offer custom RBAC, custom UI components, and custom backend components**
    - Dynamically loadable frameworks need to be identified or created to serve each of these purposes.
 
@@ -27,10 +27,13 @@ Some examples include:
   - Examples: Storage and retrieval of performance test results.
   - Examples: Storage and retrieval of user preferences.
 - **Enhanced Visualization**
-  - Examples: Creation of a visual service mesh topology.
+  - Examples: Creation of a visual cloud native infrastructure topology.
   - Examples: Different charts (metrics), debug (log viewer), distributed trace explorers.
 - **Reporting**
   - Examples: Using Meshery's GraphQL server to compose new dashboards.
+- **Server Event Management**
+  - Examples: Local event storage in database
+  - Examples: Remote event synchronization (Remote providers only)
 
 <a href="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png">
 <img src="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png" width="50%" /></a>
@@ -48,7 +51,7 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
-A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.  
+A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.
 
 Name: **"Meshery"** (default)
 
@@ -57,6 +60,7 @@ Name: **"Meshery"** (default)
 - Save environment setup.
 - Retrieve performance test results.
 - Retrieve conformance test results.
+- Events are stored locally and can be published to remote provider. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
 ### Local Provider
@@ -70,17 +74,18 @@ Name: **“None”**
 - Environment setup not saved.
 - No performance test result history.
 - No conformance test result history.
+- Server events are stored locally in database. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
 ### Design Principles: Meshery Remote Provider Framework
 
 Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
 
-1. **Pluggable UI Functionality:**
+1. **Pluggable UI Functionality**
    - Out-of-tree custom UI components with seamless user experience.
    - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
 
-1. **Pluggable Backend Functionality:**
+1. **Pluggable Backend Functionality**
    - Remote Providers have any number of capabilities unbeknownst to Meshery.
 
 1. **Pluggable AuthZ**
@@ -91,6 +96,10 @@ Meshery's Remote Provider extensibility framework is designed to enable the foll
 Meshery interfaces with providers through a Go interface. The Provider implementations have to be placed in the code and compiled together today. A Provider instance will have to be injected into Meshery when the program starts.
 
 Meshery keeps the implementation of Remote Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
+
+### Verifying Compatibility With Golang Version Update
+
+When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
 
 ### Remote Provider Extension Points
 
@@ -226,14 +235,6 @@ Meshery Server will proxy all requests to remote provider endpoints. Endpoints a
     {
         "feature": "persist-result",
         "endpoint": "/result"
-    },
-    {
-        "feature": "persist-smi-results",
-        "endpoint": "/smi/results"
-    },
-    {
-        "feature": "persist-smi-result",
-        "endpoint": "/smi/result"
     },
     {
         "feature": "persist-metrics",

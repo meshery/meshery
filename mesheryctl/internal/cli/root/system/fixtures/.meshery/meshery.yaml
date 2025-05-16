@@ -1,7 +1,7 @@
 services:
     meshery:
         environment:
-            - PROVIDER_BASE_URLS=https://meshery.layer5.io
+            - PROVIDER_BASE_URLS=https://cloud.layer5.io
             - EVENT=mesheryLocal
             - KUBECONFIG_FOLDER=/home/appuser/.kube
             - PORT=9081

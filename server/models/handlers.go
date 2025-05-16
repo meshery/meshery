@@ -14,7 +14,7 @@ type HandlerInterface interface {
 	ServerVersionHandler(w http.ResponseWriter, r *http.Request)
 
 	ProviderMiddleware(http.Handler) http.Handler
-
+	NoCacheMiddleware(next http.Handler) http.Handler
 	//Set the AuthenticationMechanism as NoAuth to skip provider authentication for certain endpoints. If the provider is enforced, then this flag will not be respected.
 	//Make sure all the endpoints are behind this middleware thereby protecting them. The reason for not just skipping this middleware is:
 	//1. So that we can enfore provider through this middleware whenever want for use cases where no unauthenticated endpoints should be there, at buildtime.
@@ -27,6 +27,7 @@ type HandlerInterface interface {
 	GraphqlMiddleware(http.Handler) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
+	HandleErrorHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -34,7 +35,7 @@ type HandlerInterface interface {
 
 	TokenHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
 	LoginHandler(w http.ResponseWriter, r *http.Request, provider Provider, fromMiddleWare bool)
-	LogoutHandler(w http.ResponseWriter, req *http.Request, provider Provider)
+	LogoutHandler(w http.ResponseWriter, req *http.Request, user *User, provider Provider)
 	UserHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetUserByIDHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetUsers(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -60,16 +61,22 @@ type HandlerInterface interface {
 	GetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ResetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	ServerEventConfigurationHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ServerEventConfigurationGet(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ServerEventConfigurationSet(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshOpsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdaptersHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AvailableAdaptersHandler(w http.ResponseWriter, req *http.Request)
 	EventStreamHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ClientEventHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AdapterPingHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	DownloadHandler(w http.ResponseWriter, req *http.Request)
+	ViewHandler(w http.ResponseWriter, req *http.Request)
 	GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -122,7 +129,7 @@ type HandlerInterface interface {
 	UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Request)
-
+	RegisterMeshmodels(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	HandleResourceSchemas(rw http.ResponseWriter, r *http.Request)
 
 	GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.Request)
@@ -150,7 +157,7 @@ type HandlerInterface interface {
 	UnPublishCatalogPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryPatternHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DesignFileRequestHandlerWithSourceType(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	HandleConversionToDesign(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	DesignFileImportHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryDesignTypesHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetMesheryPatternSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -164,13 +171,13 @@ type HandlerInterface interface {
 	DeleteMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	CloneMesheryFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
-	ApplicationFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	ApplicationFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetMesheryApplicationTypesHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetMesheryApplicationSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetMesheryApplicationFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	DeleteMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ApplicationFileHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// ApplicationFileRequestHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// GetMesheryApplicationTypesHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// GetMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// GetMesheryApplicationSourceHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// GetMesheryApplicationFile(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	// DeleteMesheryApplicationHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ShareDesignHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	ShareFilterHandler(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
@@ -201,6 +208,8 @@ type HandlerInterface interface {
 	DeleteConnection(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ProcessConnectionRegistration(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	ExportModel(w http.ResponseWriter, req *http.Request)
+
 	GetEnvironments(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetEnvironmentByIDHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	SaveEnvironment(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -211,7 +220,7 @@ type HandlerInterface interface {
 	GetConnectionsOfEnvironmentHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
-	GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
+	GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 	DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	GetOrganizations(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -227,6 +236,8 @@ type HandlerInterface interface {
 	GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods
@@ -260,7 +271,6 @@ type HandlerConfig struct {
 	PerformanceChannel       chan struct{}
 	PerformanceResultChannel chan struct{}
 
-	ApplicationChannel        *Broadcast
 	PatternChannel            *Broadcast
 	FilterChannel             *Broadcast
 	EventBroadcaster          *Broadcast

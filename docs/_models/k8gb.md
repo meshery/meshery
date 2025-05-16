@@ -1,22 +1,33 @@
 ---
 layout: integration
 title: K8GB
-subtitle: Collaborative and visual infrastructure as code for K8GB
+subtitle: Collaborative and visual infrastructure as design for K8GB
 image: /assets/img/integrations/k8gb/icons/color/k8gb-color.svg
 permalink: extensibility/integrations/k8gb
 docURL: https://docs.meshery.io/extensibility/integrations/k8gb
 description: 
 integrations-category: Orchestration & Management
 integrations-subcategory: Coordination & Service Discovery
-registrant: Artifact Hub
+registrant: GitHub
 components: 
+- name: dns-endpoint
+  colorIcon: assets/img/integrations/k8gb/components/dns-endpoint/icons/color/dns-endpoint-color.svg
+  whiteIcon: assets/img/integrations/k8gb/components/dns-endpoint/icons/white/dns-endpoint-white.svg
+  description: 
+- name: gslb
+  colorIcon: assets/img/integrations/k8gb/components/gslb/icons/color/gslb-color.svg
+  whiteIcon: assets/img/integrations/k8gb/components/gslb/icons/white/gslb-white.svg
+  description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Provides a security benchmark for Kubernetes",
+  "Identifies misconfigurations and vulnerabilities",
+  "Generates reports and recommendations"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Integrates K8GB audits"
+howItWorksDetails: "Enhanced security and compliance for Kubernetes clusters"
 language: en
 list: include
 type: extensibility

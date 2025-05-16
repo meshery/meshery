@@ -1,4 +1,4 @@
-import { Typography } from '@material-ui/core';
+import { Typography } from '@layer5/sistent';
 
 export function TabPanel(props) {
   const { children, value, index, ...other } = props;

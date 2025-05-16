@@ -55,6 +55,13 @@ mesheryctl system dashboard --skip-browser
 </div>
 </pre> 
 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+Note: Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See accessing \"Meshery UI\" for additional deployment-specific options: https://docs.meshery.io/installation/accessing-meshery-ui.
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
@@ -79,6 +86,8 @@ mesheryctl system dashboard --skip-browser
 </div>
 </pre>
 
+
+{% include mesheryctl/system-dashboard.md %}
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

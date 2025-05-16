@@ -23,7 +23,7 @@ Meshery documentation is built using the following components:
 - Theme - [https://github.com/vsoch/docsy-jekyll](https://github.com/vsoch/docsy-jekyll)
 - Repo - [https://github.com/meshery/meshery/tree/master/docs](https://github.com/meshery/meshery/tree/master/docs)
 - Site - [https://docs.meshery.io](https://docs.meshery.io)
-- AWS API GW - an instance is configured to redirect from docs.meshery.io to meshery.layer5.io, because of the repo location of where the docs currently reside.
+- AWS API GW - an instance is configured to redirect from docs.meshery.io to cloud.layer5.io, because of the repo location of where the docs currently reside.
 
 ## Set up your development environment
 
@@ -106,6 +106,7 @@ Meshery documentation is built using the following components:
   sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
   </code>
   </div></pre>
+{% include alert.html type="info" title="Note" content="The latest versions of Debian-based OS'es do not support <code>libgdbm3</code>, so if you encounter an issue with it's installation, try replacing <code>libgdbm3</code> with <code>libgdbm5</code> or <code>libgdbm6</code>." %}
 
 #### Installing rbenv
 
@@ -146,13 +147,21 @@ Meshery documentation is built using the following components:
   </code>
   </div></pre>
 
+{% include alert.html type="info" title="Note" content="After installing rbenv, you need to install the ruby-build plugin to use the <code>rbenv install</code> command. This step is necessary for both package manager and manual installations of rbenv." %}
 
+- Install ruby-build as an rbenv plugin
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+  </code>
+  </div></pre>
+  
 #### Install Ruby
 
 - rbenv install version
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">rbenv install 3.2.2
+  <code class="clipboardjs">rbenv install 3.2.6
   </code>
   </div></pre>
 
@@ -181,7 +190,7 @@ Meshery documentation is built using the following components:
 
 - Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
 
-{% include alert.html type="light" title="Note" content="In case of any installation issues, use the <a href='http://discuss.meshery.io)'>discussion forum</a>." %}
+{% include alert.html type="light" title="Note" content="In case of any installation issues, use the <a href='https://meshery.io/community#discussion-forums'>discussion forum</a>." %}
 
 ### Get the code
 
@@ -285,6 +294,30 @@ The `Gemfile.lock` will be updated automatically once the `make docs` command is
 
 You should be able to access the site on port `4000`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
 
+### Using Github Codespaces
+
+- Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">Github</a>
+- Open your forked Meshery repository on GitHub.
+- Click on the "**Code**" button of your forked repository it will give you the option to open the project in Gituhub Codespaces.
+
+{% include alert.html type="dark" title="About Github Codespaces" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
+
+- After opening the project on Github Codespaces, change to the docs directory.
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">cd docs
+  </code>
+  </div></pre>
+
+- Serve the code locally.
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">make docs
+  </code>
+  </div></pre>
+
+You should be able to access the site on port `4000`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your Github Codespace this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs` then `make docs` and it will start the development server on port `4000`.
+
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
 - Ensure to verify that your changes reflect correctly by serving the site locally using `make docs`.
@@ -358,7 +391,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 
 ## Documentation Contribution Flow Summary
 
-{% include alert.html type="light" title="Note" content="For contributing `mesheryctl` reference section, refer <a href='/contributing-cli'>Contributing CLI</a>" %}
+{% include alert.html type="light" title="Note" content="For contributing `mesheryctl` reference section, refer <a href='/project/contributing/contributing-cli'>Contributing CLI</a>" %}
 
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
@@ -476,6 +509,44 @@ To use the `alert.html` feature in our documentation include the following code:
 
 Other supported alert types include `warning`, `danger`,`success`,`primary`, `secondary`, `light`, `dark` .
 
+
+### Image Handling
+
+Control image display in documentation pages using the following methods.
+
+#### Default Image Size in Markdown Format
+
+Using the Markdown image syntax:
+
+{% capture code_content %}[![Image Title]({{ site.baseurl }}/assets/img/your-image.png)]({{ site.baseurl }}/assets/img/your-image.png){% endcapture %}
+{% include code.html code=code_content %}
+
+This renders as:
+
+{% capture code_content %}<a href="/assets/img/your-image.png">
+    <img src="/assets/img/your-image.png" alt="Image Title">
+</a>{% endcapture %}
+{% include code.html code=code_content %}
+
+**Effect:**
+- Image is displayed at its original resolution, limited by global CSS (`max-width: 90vw; max-height: 90vh; height: auto; width: auto;`)
+- On larger screens (`min-width: 1200px`), image width can be up to `1200px`
+- Clickable, opening in Lightbox if the format is supported
+
+#### Custom Image Size (for Control)
+
+If you need to specify dimensions, use:
+
+{% capture code_content %}<a href="{{ site.baseurl }}/assets/img/your-image.png">
+    <img src="{{ site.baseurl }}/assets/img/your-image.png" style="width:500px; height:auto;" alt="Image Title">
+</a>{% endcapture %}
+{% include code.html code=code_content %}
+
+**Effect:**
+- Image width is fixed at `500px`, maintaining aspect ratio
+- If `500px` exceeds `90vw`, it will be constrained to `90vw`
+- Clickable, opening in Lightbox for full-size viewing
+
 ### Quotes
 
 You can include block quotes to emphasize text. 
@@ -484,6 +555,32 @@ You can include block quotes to emphasize text.
 
 ## Development
 
+### Adding Integration Specific Information to Individual Integration Pages
+
+Integration pages ([example](https://docs.meshery.io/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed. 
+
+[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/_modelscustominfo) collection holds custom markdown files. Follow these steps:
+
+1. Create a file inside the `modelscustominfo` collection.
+2. Ensure the file includes frontmatter with the `title` key, set to the title of the integration.
+
+The content that follows the frontmatter in this file will be automatically parsed and rendered on the integration page
+
+Example: 
+
+file: `_modelscustominfo/aad.md`
+
+```md
+---
+title: Azure Active Directory (AAD)
+---
+
+<h2>Azure Active Directory (AAD)</h2>
+
+```
+
+In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
+[Azure Active Directory Integration Page](https://docs.meshery.io/extensibility/integrations/aad-pod-identity)
 
 ### Suggested Reading
 

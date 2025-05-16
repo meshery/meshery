@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWX Operator
-subtitle: Collaborative and visual infrastructure as code for AWX Operator
+subtitle: Collaborative and visual infrastructure as design for AWX Operator
 image: /assets/img/integrations/awx-operator/icons/color/awx-operator-color.svg
 permalink: extensibility/integrations/awx-operator
 docURL: https://docs.meshery.io/extensibility/integrations/awx-operator
@@ -26,12 +26,15 @@ components:
   colorIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/color/awx-mesh-ingress-color.svg
   whiteIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/white/awx-mesh-ingress-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
-  "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",
+  "Use Kanvas&lsquo;s visual designer to explore your App Mesh configuration",
   "Deploy Meshery on your EKS clusters for App Mesh management"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

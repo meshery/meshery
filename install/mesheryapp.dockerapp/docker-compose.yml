@@ -1,11 +1,10 @@
-version: '3.7'
 services:
   meshery:
     image: layer5/meshery:stable-latest
     labels:
       - ${labels.watchtower}
     environment:
-      - "PROVIDER_BASE_URLS=https://meshery.layer5.io"
+      - "PROVIDER_BASE_URLS=https://cloud.layer5.io"
       - "ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004"
       - "EVENT=mesheryLocal"
     ports:
@@ -18,7 +17,7 @@ services:
       - "${istio.port}:10000"
     x-enabled: ${istio.enabled}
   meshery-linkerd:
-    image: layer5/meshery-linkerd:stable-latest
+    image: meshery/meshery-linkerd:stable-latest
     labels:
       - ${labels.watchtower}
     ports:

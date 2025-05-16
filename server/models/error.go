@@ -96,6 +96,7 @@ const (
 	ErrUnreachableRemoteProviderCode      = "meshery-server-1301"
 	ErrShareFilterCode                    = "meshery-server-1302"
 	ErrPersistEventCode                   = "meshery-server-1303"
+	ErrInvalidEventDataCode               = "meshery-server-1357"
 	ErrUnreachableKubeAPICode             = "meshery-server-1304"
 	ErrFlushMeshSyncDataCode              = "meshery-server-1305"
 	ErrUpdateConnectionStatusCode         = "meshery-server-1306"
@@ -106,6 +107,36 @@ const (
 	ErrGrafanaScanCode                    = "meshery-server-1311"
 	ErrDBCreateCode                       = "meshery-server-1312"
 	ErrDoRequestCode                      = "meshery-server-1321"
+	ErrMarshalYAMLCode                    = "meshery-server-1322"
+	ErrSessionNotReadIntactCode           = "meshery-server-1332"
+	ErrSessionNotFoundCode                = "meshery-server-1333"
+	ErrTokenRetryCode                     = "meshery-server-1334"
+	ErrUrlParseCode                       = "meshery-server-1335"
+	ErrCloseIoReaderCode                  = "meshery-server-1336"
+	ErrDownloadPackageCode                = "meshery-server-1337"
+	ErrOperationNotAvaibaleCode           = "meshery-server-1338"
+	ErrTokenVerifyCode                    = "meshery-server-1339"
+	ErrLogoutCode                         = "meshery-server-1340"
+	ErrGetSessionCookieCode               = "meshery-server-1341"
+	ErrCloneCode                          = "meshery-server-1342"
+	ErrPublishCode                        = "meshery-server-1343"
+	ErrUnPublishCode                      = "meshery-server-1344"
+	ErrSaveConnectionCode                 = "meshery-server-1345"
+	ErrGenerateK8sHandlerCode             = "meshery-server-1346"
+	ErrRetrieveK8sClusterIDCode           = "meshery-server-1347"
+	ErrCreateResourceEntryCode            = "meshery-server-1348"
+	ErrInitializeDBHandlerCode            = "meshery-server-1349"
+	ErrDeleteK8sResourceCode              = "meshery-server-1350"
+	ErrCreateK8sResourceCode              = "meshery-server-1351"
+	ErrGetResourceCode                    = "meshery-server-1352"
+	ErrDeleteResourceCode                 = "meshery-server-1353"
+	ErrRecreateResourceCode               = "meshery-server-1354"
+	ErrUpdateResourceCode                 = "meshery-server-1355"
+	ErrEmptySessionCode                   = "meshery-server-1356"
+	ErrSeedingComponentsCode              = "meshery-server-1358"
+	ErrImportFailureCode                  = "meshery-server-1359"
+	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
+	ErrStatusCodeCode                     = "meshery-server-1368"
 )
 
 var (
@@ -116,15 +147,15 @@ var (
 	ErrFilterFileName          = errors.New(ErrFilterFileNameCode, errors.Alert, []string{"Invalid Filterfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrPatternFileName         = errors.New(ErrPatternFileNameCode, errors.Alert, []string{"Invalid Patternfile"}, []string{"Name field is either not present or is not valid"}, []string{}, []string{})
 	ErrUserID                  = errors.New(ErrUserIDCode, errors.Alert, []string{"User ID is empty"}, []string{}, []string{}, []string{})
-	ErrDBConnection            = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to DataBase does not exist"}, []string{}, []string{}, []string{})
+	ErrDBConnection            = errors.New(ErrDBConnectionCode, errors.Alert, []string{"Connection to database does not exist"}, []string{}, []string{}, []string{})
 	ErrNilConfigData           = errors.New(ErrNilConfigDataCode, errors.Alert, []string{"Given config data is nil"}, []string{}, []string{}, []string{})
 	ErrNilJWKs                 = errors.New(ErrNilJWKsCode, errors.Alert, []string{"Invalid JWks"}, []string{"Value of JWKs is nil"}, []string{}, []string{})
 	ErrNilKeys                 = errors.New(ErrNilKeysCode, errors.Alert, []string{"Key not found"}, []string{"JWK not found for the given KeyID"}, []string{}, []string{})
 	ErrTokenExpired            = errors.New(ErrTokenExpiredCode, errors.Alert, []string{"Token has expired"}, []string{"Token is invalid, it has expired"}, []string{}, []string{})
-	ErrTokenClaims             = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occurred while prasing claims"}, []string{}, []string{}, []string{})
+	ErrTokenClaims             = errors.New(ErrTokenClaimsCode, errors.Alert, []string{"Error occurred while parsing JWT claims"}, []string{"JWTs are encoded and signed, ensuring the integrity and authenticity of the claims they contain."}, []string{}, []string{})
 	ErrValidURL                = errors.New(ErrValidURLCode, errors.Alert, []string{"Enter valid URLs"}, []string{}, []string{}, []string{})
-	ErrTestEndpoint            = errors.New(ErrTestEndpointCode, errors.Alert, []string{"minimum one test endpoint needs to be specified"}, []string{}, []string{}, []string{})
-	ErrLoadgenerator           = errors.New(ErrLoadgeneratorCode, errors.Alert, []string{"specify valid Loadgenerator"}, []string{}, []string{}, []string{})
+	ErrTestEndpoint            = errors.New(ErrTestEndpointCode, errors.Alert, []string{"Minimum one test endpoint needs to be specified"}, []string{}, []string{}, []string{})
+	ErrLoadgenerator           = errors.New(ErrLoadgeneratorCode, errors.Alert, []string{"specify valid load generator"}, []string{}, []string{}, []string{})
 	ErrProtocol                = errors.New(ErrProtocolCode, errors.Alert, []string{"specify the Protocol for all clients"}, []string{}, []string{}, []string{})
 	ErrTestClient              = errors.New(ErrTestClientCode, errors.Alert, []string{"minimum one test client needs to be specified"}, []string{}, []string{}, []string{})
 	ErrParsingTest             = errors.New(ErrParsingTestCode, errors.Alert, []string{"error parsing test duration, please refer to: https://docs.meshery.io/guides/mesheryctl#performance-management"}, []string{}, []string{}, []string{})
@@ -134,22 +165,43 @@ var (
 	ErrMesheryInstanceID       = errors.New(ErrMesheryInstanceIDCode, errors.Alert, []string{"Error: Meshery Instance ID is empty or is invalid"}, []string{}, []string{}, []string{})
 	ErrMesheryNotInCluster     = errors.New(ErrMesheryNotInClusterCode, errors.Alert, []string{"Error: Meshery is not running inside a cluster"}, []string{}, []string{}, []string{})
 	ErrContextAlreadyPersisted = errors.New(ErrContextAlreadyPersistedCode, errors.Alert, []string{"kubernetes context already persisted with provider"}, []string{"kubernetes context already persisted with provider"}, []string{}, []string{})
+	ErrTokenRetry              = errors.New(ErrTokenRetryCode, errors.Alert, []string{"Error occurred, retrying after refresh to fetch token"}, []string{}, []string{}, []string{})
+	ErrOperationNotAvaibale    = errors.New(ErrOperationNotAvaibaleCode, errors.Alert, []string{"Operation not available"}, []string{}, []string{}, []string{})
+	ErrEmptySession            = errors.New(ErrEmptySessionCode, errors.Alert, []string{"No session found in the request"}, []string{"Unable to find \"token\" cookie in the request."}, []string{"User is not authenticated with the selected Provider.", "Browser might be restricting use of cookies."}, []string{"Choose a Provider and login to establish an active session (receive a new token and cookie). Optionally, try using a private/incognito browser window.", "Verify that your browser settings allow cookies."})
 )
 
+func ErrCloseIoReader(err error) error {
+	return errors.New(ErrCloseIoReaderCode, errors.Alert,
+		[]string{"Error closing response body reader."},
+		[]string{err.Error()},
+		[]string{"An error occurred while attempting to close response body reader."},
+		[]string{"Ensure the response body reader is in a state that allows it to be closed."})
+}
 func ErrGetPackage(err error) error {
 	return errors.New(ErrGetPackageCode, errors.Alert, []string{"Could not get the package"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the configurations are correct"})
 }
-
+func ErrUrlParse(err error) error {
+	return errors.New(ErrUrlParseCode, errors.Alert, []string{"Error parsing the URL"}, []string{"", err.Error()}, []string{""}, []string{"Make sure the URL is correct"})
+}
 func ErrBrokerSubscription(err error) error {
 	return errors.New(ErrBrokerSubscriptionCode, errors.Alert, []string{"Could not subscribe to the broker subject"}, []string{"", err.Error()}, []string{""}, []string{"Make sure meshery broker is healthy"})
 }
-
+func ErrLogout(err error) error {
+	return errors.New(ErrLogoutCode, errors.Alert, []string{"Unable to perform logout"}, []string{err.Error()}, []string{"Session might already been revoked", "Remote provider is not able to complete the request"}, []string{"Close the tabs and open Meshery UI again. Optionally, try using a private/incognito browser window."})
+}
 func ErrRequestMeshsyncStore(err error) error {
 	return errors.New(ErrRequestMeshsyncStoreCode, errors.Alert, []string{"Meshsync store request could not be issued"}, []string{"", err.Error()}, []string{""}, []string{"Make sure meshery broker is healthy"})
 }
 
 func ErrCreateOperatorDeploymentConfig(err error) error {
 	return errors.New(ErrCreateOperatorDeploymentConfigCode, errors.Alert, []string{"Operator deployment configuration could not be created."}, []string{"", err.Error()}, []string{""}, []string{""})
+}
+func ErrCreateResourceEntry(err error) error {
+	return errors.New(ErrCreateResourceEntryCode, errors.Alert,
+		[]string{"Failed to create resource entry"},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid input data, database issues, or network problems."},
+		[]string{"Verify the input data is correct. Ensure the database is reachable and properly configured."})
 }
 
 func ErrBrokerNotFound(err error) error {
@@ -171,25 +223,63 @@ func ErrPageNumber(err error) error {
 func ErrPerfID(err error) error {
 	return errors.New(ErrPerfIDCode, errors.Alert, []string{"Invalid peformance profile ID"}, []string{err.Error()}, []string{}, []string{})
 }
-
+func ErrPublish(err error, obj string) error {
+	return errors.New(ErrPublishCode, errors.Alert, []string{fmt.Sprintf("Error while publishing %s to catlog", obj)}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrUnpPublish(err error, obj string) error {
+	return errors.New(ErrUnPublishCode, errors.Alert, []string{fmt.Sprintf("Error while unpublishing %s from catlog", obj)}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrMarshal(err error, obj string) error {
 	return errors.New(ErrMarshalCode, errors.Alert, []string{"Unable to marshal the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed has json tags"})
+}
+func ErrGenerateK8sHandler(err error, contextName string) error {
+	return errors.New(ErrGenerateK8sHandlerCode, errors.Alert,
+		[]string{fmt.Sprintf("Error generating Kubernetes handler, skipping context %s", contextName)},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid Kubernetes context, missing configuration, or network issues."},
+		[]string{"Verify the Kubernetes context configuration. Ensure the Kubernetes cluster is reachable and the configuration is correct."})
+}
+func ErrRetrieveK8sClusterID(err error, contextName string) error {
+	return errors.New(ErrRetrieveK8sClusterIDCode, errors.Alert,
+		[]string{fmt.Sprintf("Could not retrieve Kubernetes cluster ID, skipping context %s", contextName)},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid Kubernetes context, missing or incorrect configuration, or network issues."},
+		[]string{"Verify the Kubernetes context configuration. Ensure the Kubernetes cluster is reachable and the configuration is correct."})
 }
 
 func ErrUnmarshal(err error, obj string) error {
 	return errors.New(ErrUnmarshalCode, errors.Alert, []string{"Unable to unmarshal the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
-
+func ErrGetSessionCookie(err error) error {
+	return errors.New(ErrGetSessionCookieCode, errors.Alert, []string{"Error occurred while getting session cookie"}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrEncoding(err error, obj string) error {
 	return errors.New(ErrEncodingCode, errors.Alert, []string{"Error encoding the : ", obj}, []string{err.Error()}, []string{"Object is not a valid json object"}, []string{"Make sure if the object passed is a valid json"})
 }
 
 func ErrFetch(err error, obj string, statusCode int) error {
-	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
 }
 
 func ErrPost(err error, obj string, statusCode int) error {
-	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
+}
+func ErrStatusCode(statusCode int) error {
+	return errors.New(
+		ErrStatusCodeCode,
+		errors.Alert,
+		[]string{"Request was not successful"},
+		[]string{fmt.Sprintf("Received unexpected status code: %d. ", statusCode)},
+		[]string{
+			"The server might be down or temporarily unavailable.",
+			"There could be network connectivity issues between the client and the server.",
+			"The API endpoint might be misconfigured, or the server is experiencing high load.",
+		},
+		[]string{
+			"Check if the server is online and operational.",
+			"Verify network connectivity and ensure there are no firewalls or DNS issues blocking the request.",
+			"Confirm the API endpoint is correct and functional."},
+	)
 }
 
 func ErrDelete(err error, obj string, statusCode int) error {
@@ -211,7 +301,9 @@ func ErrEncodingPEM(err error) error {
 func ErrPraseUnverified(err error) error {
 	return errors.New(ErrPraseUnverifiedCode, errors.Alert, []string{"Error occurred while prasing tokens (unverified)"}, []string{err.Error()}, []string{}, []string{})
 }
-
+func ErrClone(err error, obj string) error {
+	return errors.New(ErrCloneCode, errors.Alert, []string{fmt.Sprintf("Error occurred while cloning the %s", obj)}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrDataRead(err error, r string) error {
 	return errors.New(ErrDataReadCode, errors.Alert, []string{"Error occurred while reading from the Reader", r}, []string{err.Error()}, []string{}, []string{})
 }
@@ -233,7 +325,7 @@ func ErrGrafanaOrg(err error) error {
 }
 
 func ErrGrafanaBoards(err error) error {
-	return errors.New(ErrGrafanaBoardsCode, errors.Alert, []string{"Unable to get Grafana Boards"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana endpoint is correct", "Connect to Grafana from the settings page in the UI"})
+	return errors.New(ErrGrafanaBoardsCode, errors.Alert, []string{"Unable to get Grafana Boards"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from Meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana endpoint is correct", "Connect to Grafana from the settings page in the UI"})
 }
 
 func ErrGrafanaDashboard(err error, UID string) error {
@@ -242,6 +334,25 @@ func ErrGrafanaDashboard(err error, UID string) error {
 
 func ErrGrafanaDataSource(err error, ds string) error {
 	return errors.New(ErrGrafanaDataSourceCode, errors.Alert, []string{"Error getting Grafana Board's Datasource", ds}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrDownloadPackage(err error, packageName string) error {
+	return errors.New(ErrDownloadPackageCode, errors.Alert, []string{fmt.Sprintf("Error downloading %s ", packageName)}, []string{err.Error()}, []string{}, []string{})
+
+}
+func ErrSessionNotReadIntact(userID string) error {
+	return errors.New(ErrSessionNotReadIntactCode, errors.Alert,
+		[]string{fmt.Sprintf("session for user with id: %s was NOT read intact.", userID)},
+		[]string{},
+		[]string{"The session data might be corrupted or not properly saved."},
+		[]string{""})
+}
+
+func ErrSessionNotFound(userID string) error {
+	return errors.New(ErrSessionNotFoundCode, errors.Alert,
+		[]string{fmt.Sprintf("unable to find session for user with id: %s.", userID)},
+		[]string{},
+		[]string{"The session might not exist or could have been deleted."},
+		[]string{"Check if the session data was correctly saved."})
 }
 
 func ErrGrafanaData(err error, apiEndpoint string) error {
@@ -302,6 +413,9 @@ func ErrPrometheusQueryRange(err error, query string, startTime, endTime time.Ti
 
 func ErrTokenRefresh(err error) error {
 	return errors.New(ErrTokenRefreshCode, errors.Alert, []string{"Error occurred while Refresing the token"}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrTokenVerify(err error) error {
+	return errors.New(ErrTokenVerifyCode, errors.Alert, []string{"Validation of refreshed token failed."}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrTokenRevoke(err error) error {
@@ -367,9 +481,12 @@ func ErrShareFilter(err error) error {
 func ErrUnreachableRemoteProvider(err error) error {
 	return errors.New(ErrUnreachableRemoteProviderCode, errors.Alert, []string{"Could not reach remote provider"}, []string{"", err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
 }
-
 func ErrPersistEvent(err error) error {
 	return errors.New(ErrPersistEventCode, errors.Alert, []string{"Could not persist event"}, []string{err.Error()}, []string{"Database could be down or not reachable", "Meshery Database handler is not accessible to perform operations"}, []string{"Restart Meshery Server or Perform Hard Reset"})
+}
+
+func ErrInvalidEventData() error {
+	return errors.New(ErrInvalidEventDataCode, errors.Alert, []string{"The event provided is not valid"}, []string{"ActedUpon, Action, Category and Severity are required fields of an event"}, []string{}, []string{"Ensure that ActedUpon, Action, Category and Severity are present in the event"})
 }
 
 func ErrUnreachableKubeAPI(err error, server string) error {
@@ -395,19 +512,100 @@ func ErrPersistCredential(err error) error {
 func ErrPersistConnection(err error) error {
 	return errors.New(ErrPersistConnectionCode, errors.Alert, []string{"unable to persist connection details"}, []string{err.Error()}, []string{"The connection object is not valid"}, []string{"Ensure all the required fields are provided"})
 }
-
+func ErrSaveConnection(err error) error {
+	return errors.New(ErrSaveConnectionCode, errors.Alert, []string{"Unable to save Meshery connection"}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrGrafanaScan(err error) error {
-	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
+	return errors.New(ErrGrafanaScanCode, errors.Alert, []string{"Unable to connect to grafana"}, []string{err.Error()}, []string{"Grafana endpoint might not be reachable from Meshery", "Grafana endpoint is incorrect"}, []string{"Check if your Grafana Endpoint is correct", "Connect to Grafana from the settings page in the UI"})
 }
 
 func ErrPrometheusScan(err error) error {
-	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint are correct", "Connect to Prometheus from the settings page in the UI"})
+	return errors.New(ErrPrometheusScanCode, errors.Alert, []string{"Unable to connect to prometheus"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from Meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint are correct", "Connect to Prometheus from the settings page in the UI"})
 }
 
 func ErrDBCreate(err error) error {
 	return errors.New(ErrDBCreateCode, errors.Alert, []string{"Unable to create record"}, []string{err.Error()}, []string{"Record already exist", "Database connection is not reachable"}, []string{"Delete the record or try updating the record instead of recreating", "Rest the database connection"})
 }
+func ErrInitializeDBHandler(err error) error {
+	return errors.New(ErrInitializeDBHandlerCode, errors.Alert,
+		[]string{"Unable to initialize database handler"},
+		[]string{err.Error()},
+		[]string{"Possible causes include incorrect database file path, invalid database engine configuration, or insufficient permissions."},
+		[]string{"Verify the database file path and ensure it is correct. Check the database engine configuration and ensure the application has the necessary permissions to access the database file."})
+}
 
 func ErrDoRequest(err error, method, endpoint string) error {
 	return errors.New(ErrDoRequestCode, errors.Alert, []string{fmt.Sprintf("unable to make %s request to %s", method, endpoint)}, []string{err.Error()}, []string{"Requested resource is not reachable.", "Unable to instantiate TCP connection"}, []string{"Ensure correct URL is specified", "Ensure network connectivity to the resource from your network"})
+}
+
+func ErrMarshalYAML(err error, obj string) error {
+	return errors.New(ErrMarshalYAMLCode, errors.Alert, []string{"unable to marshal yaml \"%s\""}, []string{err.Error()}, []string{"Object has invalid yaml format"}, []string{"Make sure to input a valid yaml object"})
+}
+func ErrDeleteK8sResource(err error, name, namespace string) error {
+	return errors.New(ErrDeleteK8sResourceCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to delete resource with name \"%s\" in namespace \"%s\"", name, namespace)},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid resource name or namespace, insufficient permissions, or network issues."},
+		[]string{"Verify the resource name and namespace are correct. Ensure you have the necessary permissions to delete the resource. Check network connectivity to the Kubernetes cluster."})
+}
+func ErrCreateK8sResource(err error, name, namespace string) error {
+	return errors.New(ErrCreateK8sResourceCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to create resource with name \"%s\" in namespace \"%s\"", name, namespace)},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid resource name or namespace, insufficient permissions, or network issues."},
+		[]string{"Verify the resource name and namespace are correct. Ensure you have the necessary permissions to create the resource. Check network connectivity to the Kubernetes cluster."})
+}
+func ErrGetResource(err error, name, namespace string) error {
+	return errors.New(ErrGetResourceCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to get pre-existing resource with name \"%s\" in namespace \"%s\"", name, namespace)},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid resource name or namespace, insufficient permissions, or resource not found."},
+		[]string{"Verify the resource name and namespace are correct. Ensure you have the necessary permissions to access the resource."})
+}
+func ErrDeleteResource(err error, name, namespace string) error {
+	return errors.New(ErrDeleteResourceCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to delete resource with name \"%s\" in namespace \"%s\"", name, namespace)},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid resource name or namespace, insufficient permissions, or network issues."},
+		[]string{"Verify the resource name and namespace are correct. Ensure you have the necessary permissions to delete the resource. Check network connectivity to the Kubernetes cluster."})
+}
+func ErrRecreateResource(err error, name, namespace string) error {
+	return errors.New(ErrRecreateResourceCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to recreate resource with name \"%s\" in namespace \"%s\"", name, namespace)},
+		[]string{err.Error()},
+		[]string{"Possible causes include invalid resource configuration, insufficient permissions, or network issues."},
+		[]string{"Verify the resource configuration and ensure it is correct. Ensure you have the necessary permissions to recreate the resource. Check network connectivity to the Kubernetes cluster."})
+}
+func ErrUpdateResource(name, namespace string) error {
+	return errors.New(ErrUpdateResourceCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to update the resource with name \"%s\" in namespace \"%s\"", name, namespace)},
+		[]string{},
+		[]string{"Possible causes include invalid resource configuration, insufficient permissions, or network issues."},
+		[]string{"Verify the resource configuration and ensure it is correct. Ensure you have the necessary permissions to update the resource. Check network connectivity to the Kubernetes cluster."})
+}
+
+func ErrSeedingComponents(err error) error {
+	return errors.New(
+		ErrSeedingComponentsCode,
+		errors.Alert,
+		[]string{"Failed to register the given models into meshery's registry"},
+		[]string{err.Error()},
+		[]string{"Given models may not be in accordance with Meshery's schema", "Internal(OS level) error while reading files"},
+		[]string{"Make sure the models being seeded are valid in accordance with Meshery's schema", "If it is an internal error, please try again after some time"},
+	)
+}
+
+func ErrImportFailure(hostname string, failedMsg string) error {
+	return errors.New(
+		ErrImportFailureCode,
+		errors.Alert,
+		[]string{fmt.Sprintf("Errors while registering entities for registrant: %s", hostname)},
+		[]string{failedMsg},
+		[]string{"Entity definition might not be in accordance with schema", "Entity version might not be supported by Meshery"},
+		[]string{"See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."},
+	)
+}
+
+func ErrMarshallingDesignIntoYAML(err error) error {
+	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
 }

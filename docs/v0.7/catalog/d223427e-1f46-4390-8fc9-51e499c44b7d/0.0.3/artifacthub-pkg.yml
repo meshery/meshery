@@ -1,0 +1,31 @@
+version: 0.0.3
+name: kubernetes-global-balancer
+displayName: Kubernetes Global  Balancer
+createdAt: "2024-07-24T14:12:12Z"
+description: |-
+    K8GB ,commonly referred to as GSLB (Global Server Load Balancing) solutions, has been typically the domain of proprietary network software and hardware vendors and installed and managed by siloed network teams.
+
+    k8gb is a completely open source, cloud native, global load balancing solution for Kubernetes.
+
+    k8gb focuses on load balancing traffic across geographically dispersed Kubernetes clusters using multiple load balancing strategies to meet requirements such as region failover for high availability.
+
+    Global load balancing for any Kubernetes Service can now be enabled and managed by any operations or development teams in the same Kubernetes native way as any other custom resource.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/d223427e-1f46-4390-8fc9-51e499c44b7d/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Key Differentiators\n\nLoad balancing is based on timeproof DNS protocol which is perfect for global scope and extremely reliable.\nNo dedicated management cluster and no single point of failure.\nKubernetes native application health checks utilizing status of Liveness and Readiness probes for load balancing decisions\nConfiguration with a single Kubernetes CRD of Gslb kind\n\nrefer this repo for more info https://github.com/k8gb-io/k8gb \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d223427e-1f46-4390-8fc9-51e499c44b7d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/d223427e-1f46-4390-8fc9-51e499c44b7d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import MUIDataTable from 'mui-datatables';
-import { withSnackbar } from 'notistack';
-import { TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
-
+import { Tooltip, TableCell, TableSortLabel } from '@layer5/sistent';
 import debounce from '../utils/debounce';
 import { getDuplicateModels, getDuplicateComponents } from '../api/meshmodel';
 import { MODELS, COMPONENTS } from '../constants/navigator';
@@ -207,4 +205,4 @@ const DuplicatesDataTable = ({ view, rowData, classes }) => {
   );
 };
 
-export default withSnackbar(DuplicatesDataTable);
+export default DuplicatesDataTable;

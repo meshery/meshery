@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS EMR Containers
-subtitle: Collaborative and visual infrastructure as code for AWS EMR Containers
+subtitle: Collaborative and visual infrastructure as design for AWS EMR Containers
 image: /assets/img/integrations/aws-emrcontainers-controller/icons/color/aws-emrcontainers-controller-color.svg
 permalink: extensibility/integrations/aws-emrcontainers-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-emrcontainers-controller
@@ -26,13 +26,16 @@ components:
   colorIcon: assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Runs Spark, Hive, and Presto on Kubernetes",
+  "Integrates with other AWS services",
+  "Cost-effective big data processing"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Runs containers on EMR"
+howItWorksDetails: "Easier big data processing on Kubernetes with EMR"
 language: en
 list: include
 type: extensibility

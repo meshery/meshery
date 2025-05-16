@@ -1,26 +1,27 @@
-//@ts-check
-import { Grid, Paper, Typography, Button } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
+import { Grid, Button, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';
 import { FILE_OPS } from '../../utils/Enum';
-import ConfirmationMsg from '../ConfirmationModal';
-import { getComponentsinFile } from '../../utils/utils';
-import PublishIcon from '@material-ui/icons/Publish';
-import useStyles from '../MesheryPatterns/Grid.styles';
-import Modal from '../Modal';
-import PublicIcon from '@material-ui/icons/Public';
+import {
+  GridAddIconStyles,
+  GridNoContainerStyles,
+  GridNoPapperStyles,
+  GridNoTextStyles,
+  GridPaginationStyles,
+} from '../MesheryPatterns/Grid.styles';
+import { RJSFModalWrapper } from '../Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { Modal as SistentModal } from '@layer5/sistent';
 
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
+import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
+
+const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function FilterCardGridItem({
   filter,
   yamlConfig,
-  handleDeploy,
   handleDownload,
-  handleUndeploy,
   handleSubmit,
   setSelectedFilters,
   handleClone,
@@ -45,8 +46,6 @@ function FilterCardGridItem({
         handleUnpublishModal={handleUnpublishModal}
         requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={handleDeploy}
-        handleUndeploy={handleUndeploy}
         handleClone={handleClone}
         handleDownload={(ev) => handleDownload(ev, filter.id, filter.name)}
         deleteHandler={() =>
@@ -113,8 +112,6 @@ function FilterCardGridItem({
 
 function FiltersGrid({
   filters = [],
-  handleDeploy,
-  handleUndeploy,
   handleClone,
   handleDownload,
   handleSubmit,
@@ -132,8 +129,6 @@ function FiltersGrid({
   publishSchema,
   handleInfoModal,
 }) {
-  const classes = useStyles();
-
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
       setPublishModal({
@@ -152,33 +147,6 @@ function FiltersGrid({
     });
   };
 
-  const [modalOpen, setModalOpen] = useState({
-    open: false,
-    deploy: false,
-    filter_file: null,
-    name: '',
-    count: 0,
-  });
-
-  const handleModalClose = () => {
-    setModalOpen({
-      open: false,
-      filter_file: null,
-      name: '',
-      count: 0,
-    });
-  };
-
-  const handleModalOpen = (filter, isDeploy) => {
-    setModalOpen({
-      open: true,
-      deploy: isDeploy,
-      filter_file: filter.filter_file,
-      name: filter.name,
-      count: getComponentsinFile(filter.filter_file),
-    });
-  };
-
   const getYamlConfig = (filter_resource) => {
     if (filter_resource) {
       return JSON.parse(filter_resource).settings.config;
@@ -190,7 +158,7 @@ function FiltersGrid({
   return (
     <div>
       {!selectedFilter.show && (
-        <Grid container spacing={3} style={{ padding: '1rem' }}>
+        <Grid container spacing={3}>
           {filters.map((filter) => (
             <FilterCardGridItem
               key={filter.id}
@@ -198,8 +166,6 @@ function FiltersGrid({
               yamlConfig={getYamlConfig(filter.filter_resource)}
               handleClone={() => handleClone(filter.id, filter.name)}
               handleDownload={handleDownload}
-              handleDeploy={() => handleModalOpen(filter, true)}
-              handleUndeploy={() => handleModalOpen(filter, false)}
               handleSubmit={handleSubmit}
               setSelectedFilters={setSelectedFilter}
               canPublishFilter={canPublishFilter}
@@ -211,11 +177,11 @@ function FiltersGrid({
         </Grid>
       )}
       {!selectedFilter.show && filters.length === 0 && (
-        <Paper className={classes.noPaper}>
-          <div className={classes.noContainer}>
-            <Typography align="center" color="textSecondary" className={classes.noText}>
+        <GridNoPapperStyles>
+          <GridNoContainerStyles>
+            <GridNoTextStyles align="center" color="textSecondary">
               No Filters Found
-            </Typography>
+            </GridNoTextStyles>
             <div>
               <Button
                 aria-label="Add Application"
@@ -227,49 +193,45 @@ function FiltersGrid({
                 onClick={handleUploadImport}
                 style={{ marginRight: '2rem' }}
               >
-                <PublishIcon className={classes.addIcon} />
+                <GridAddIconStyles />
                 Import Filter
               </Button>
             </div>
-          </div>
-        </Paper>
+          </GridNoContainerStyles>
+        </GridNoPapperStyles>
       )}
       {filters.length ? (
-        <div className={classes.pagination}>
+        <GridPaginationStyles>
           <Pagination
             count={pages}
             page={selectedPage + 1}
             onChange={(_, page) => setPage(page - 1)}
           />
-        </div>
+        </GridPaginationStyles>
       ) : null}
-      <ConfirmationMsg
-        open={modalOpen.open}
-        handleClose={handleModalClose}
-        submit={{
-          deploy: () => handleDeploy(modalOpen.filter_file),
-          unDeploy: () => handleUndeploy(modalOpen.filter_file),
-        }}
-        isDelete={!modalOpen.deploy}
-        title={modalOpen.name}
-        componentCount={modalOpen.count}
-        tab={modalOpen.deploy ? 2 : 1}
-      />
       {canPublishFilter && publishModal.open && (
-        <Modal
+        <SistentModal
           open={true}
-          schema={publishSchema.rjsfSchema}
-          uiSchema={publishSchema.uiSchema}
           title={publishModal.filter?.name}
-          handleClose={handlePublishModalClose}
-          handleSubmit={handlePublish}
-          showInfoIcon={{
-            text: 'Upon submitting your catalog item, an approval flow will be initiated.',
-            link: 'https://docs.meshery.io/concepts/catalog',
-          }}
-          submitBtnText="Submit for Approval"
-          submitBtnIcon={<PublicIcon />}
-        />
+          closeModal={handlePublishModalClose}
+          maxWidth="sm"
+          headerIcon={
+            <Filter
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+        >
+          <RJSFModalWrapper
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
+            handleSubmit={handlePublish}
+            handleClose={handlePublishModalClose}
+            submitBtnText="Submit for Approval"
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+          />
+        </SistentModal>
       )}
     </div>
   );

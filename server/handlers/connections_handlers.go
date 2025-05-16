@@ -27,7 +27,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		return
 	}
 
-	connectionRegisterPayload := models.ConnectionPayload{}
+	connectionRegisterPayload := connections.ConnectionPayload{}
 	userUUID := uuid.FromStringOrNil(user.ID)
 	err := json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
 	if err != nil {
@@ -90,7 +90,7 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
+func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *connections.ConnectionPayload) {
 	compFilter := &regv1beta1.ComponentFilter{
 		Name:  fmt.Sprintf("%sConnection", payload.Kind),
 		Limit: 1,
@@ -118,7 +118,7 @@ func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.R
 
 	err := json.NewEncoder(w).Encode(&schema)
 	if err != nil {
-		h.log.Error(ErrWriteResponse)
+		h.log.Error(ErrWriteResponse(err))
 	}
 }
 
@@ -137,7 +137,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
-	connection := models.ConnectionPayload{}
+	connection := connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, &connection)
 	obj := "connection"
 
@@ -197,8 +197,15 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 	page, _ := strconv.Atoi(q.Get("page"))
 	order := q.Get("order")
 	search := q.Get("search")
-	pageSize, _ := strconv.Atoi(q.Get("pagesize"))
+	pageSizeStr := q.Get("pagesize")
 	filter := q.Get("filter")
+
+	var pageSize int
+	if pageSizeStr == "all" {
+		pageSize = 100
+	} else {
+		pageSize, _ = strconv.Atoi(pageSizeStr)
+	}
 
 	if pageSize > 50 {
 		pageSize = 50
@@ -376,7 +383,11 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 			}
 
 			event := eventBuilder.WithSeverity(events.Informational).
-				WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).Build()
+				WithDescription(fmt.Sprintf("Processing status update to \"%s\" for connection %s", status, k8scontext.Name)).
+				WithMetadata(map[string]interface{}{
+					"connectionName": k8scontext.Name,
+				}).
+				Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
 
@@ -529,7 +540,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
-	connection := &models.ConnectionPayload{}
+	connection := &connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {
@@ -595,6 +606,6 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
-	h.log.Info("connection deleted successfully")
+	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
 }

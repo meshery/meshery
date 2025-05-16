@@ -12,11 +12,11 @@ subcommand: nil
 
 # mesheryctl registry
 
-Meshery Registry Management
+Model Database
 
 ## Synopsis
 
-Manage the state and contents of Meshery's internal registry of capabilities.
+Manage the state and contents of Meshery’s internal registry of capabilities.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry [flags]
@@ -28,7 +28,7 @@ mesheryctl registry [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl registry [subcommand]
+mesheryctl registry [subcommand]
 
 </div>
 </pre> 
@@ -53,5 +53,9 @@ mesheryctl registry [flags]
 </pre>
 
 ## See Also
+
+* [mesheryctl registry generate](/reference/mesheryctl/registry/generate)
+* [mesheryctl registry publish](/reference/mesheryctl/registry/publish)
+* [mesheryctl registry update](/reference/mesheryctl/registry/update)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -1,30 +1,22 @@
 package resolver
 
-import (
-	"context"
-	"encoding/json"
+// func (r *Resolver) fetchFilters(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.FilterPage, error) {
+// 	tokenString := ctx.Value(models.TokenCtxKey).(string)
 
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
-)
+// 	resp, err := provider.GetMesheryFilters(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, selector.Visibility)
 
-func (r *Resolver) fetchFilters(ctx context.Context, provider models.Provider, selector model.PageFilter) (*model.FilterPage, error) {
-	tokenString := ctx.Value(models.TokenCtxKey).(string)
+// 	if err != nil {
+// 		r.Log.Error(err)
+// 		return nil, err
+// 	}
 
-	resp, err := provider.GetMesheryFilters(tokenString, selector.Page, selector.PageSize, *selector.Search, *selector.Order, selector.Visibility)
+// 	filters := &model.FilterPage{}
 
-	if err != nil {
-		r.Log.Error(err)
-		return nil, err
-	}
+// 	err = json.Unmarshal(resp, filters)
+// 	if err != nil {
+// 		obj := "result data"
+// 		return nil, models.ErrUnmarshal(err, obj)
+// 	}
 
-	filters := &model.FilterPage{}
-
-	err = json.Unmarshal(resp, filters)
-	if err != nil {
-		obj := "result data"
-		return nil, models.ErrUnmarshal(err, obj)
-	}
-
-	return filters, nil
-}
+// 	return filters, nil
+// }

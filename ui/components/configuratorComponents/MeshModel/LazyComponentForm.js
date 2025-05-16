@@ -3,31 +3,26 @@ import {
   AccordionDetails,
   AccordionSummary,
   CircularProgress,
-  makeStyles,
-} from '@material-ui/core';
-import Typography from '@material-ui/core/Typography';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+  Typography,
+  styled,
+} from '@layer5/sistent';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { getMeshModelComponent } from '../../../api/meshmodel';
 import { iconMedium } from '../../../css/icons.styles';
 import PatternServiceForm from '../../MesheryMeshInterface/PatternServiceForm';
-// eslint-disable-next-line no-unused-vars
-import * as Types from '../MeshModel/hooks/types';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-// import { isEmptyObj } from "../../utils/utils";
-// import PatternServiceForm from "./PatternServiceForm";
 
-const useStyles = makeStyles((theme) => ({
-  accordionRoot: {
-    width: '100%',
-    marginBottom: 8,
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
+export const AccordionRoot = styled('div')({
+  width: '100%',
+  marginBottom: 8,
+});
+
+export const Heading = styled(Typography)(({ theme }) => ({
+  fontSize: theme.typography.pxToRem(15),
+  fontWeight: theme.typography.fontWeightRegular,
 }));
 
 /**
@@ -38,7 +33,6 @@ const useStyles = makeStyles((theme) => ({
  * @returns
  */
 export default function LazyComponentForm({ component, disabled, ...otherprops }) {
-  const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [schemaSet, setSchemaSet] = React.useState({});
   const { notify } = useNotification();
@@ -77,15 +71,14 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
       });
     }
   }
-
   return (
-    <div className={classes.accordionRoot}>
+    <AccordionRoot>
       <Accordion elevation={0} expanded={expanded} onChange={() => !disabled && expand(!expanded)}>
         <AccordionSummary expandIcon={<ExpandMoreIcon style={iconMedium} />}>
-          <Typography className={classes.heading}>
+          <Heading>
             {component.displayName}{' '}
             {disabled && <em style={{ opacity: 0.5 }}>(contains invalid schema)</em>}
-          </Typography>
+          </Heading>
         </AccordionSummary>
         <LazyAccordionDetails expanded={expanded}>
           {isEmpty(schemaSet) ? (
@@ -93,15 +86,14 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
           ) : (
             <PatternServiceForm
               formData={{}}
-              color={component?.metadata?.primaryColor}
+              color={component?.styles?.primaryColor}
               {...otherprops}
-              // @ts-ignore
               schemaSet={schemaSet}
             />
           )}
         </LazyAccordionDetails>
       </Accordion>
-    </div>
+    </AccordionRoot>
   );
 }
 

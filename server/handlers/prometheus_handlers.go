@@ -13,6 +13,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshkit/models/events"
@@ -238,7 +239,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
-		connection, err := provider.SaveConnection(&models.ConnectionPayload{
+		connection, err := provider.SaveConnection(&connections.ConnectionPayload{
 			Kind:             "prometheus",
 			Type:             "observability",
 			SubType:          "monitoring",
@@ -257,11 +258,11 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
-		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
+		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with Prometheus created at %s", connName, promURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
-		h.log.Debug("Prometheus URL %s successfully saved", promURL)
+		h.log.Debug("Prometheus URL %s saved", promURL)
 	} else if req.Method == http.MethodDelete {
 		http.Error(w, "API is deprecated, please use connections API", http.StatusGone)
 		return
@@ -374,7 +375,11 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    		h.log.Error(err)
+	}
+
 }
 
 // PrometheusQueryRangeHandler handles prometheus range queries
@@ -403,7 +408,10 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		http.Error(w, ErrPrometheusQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data,""); err != nil {
+    		h.log.Error(err)
+	}
 }
 
 // swagger:route GET /api/telemetry/metrics/static-board PrometheusAPI idGetPrometheusStaticBoard

@@ -171,7 +171,7 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 
 // update the status of MesheryOperator in all the contexts
 // for whom MesheryControllers are attached
-// should be called after UpdateCtxControllerHandlers
+// should be called after AddCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
 

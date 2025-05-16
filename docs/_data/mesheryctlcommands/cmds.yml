@@ -197,7 +197,7 @@ system:
           name: --skip-browser
           description: (optional) skip opening of MesheryUI in browser.
           usage: mesheryctl system dashboard --skip-browser
-          example: mesheryctl system dashboard --skip-browser 
+          example: mesheryctl system dashboard --skip-browser
 
     login:
       name: login
@@ -264,7 +264,7 @@ system-channel:
       name: switch
       description: switch release channel and version
       usage: mesheryctl system channel switch [stable|stable-version|edge|edge-version]
-      example: |  
+      example: |
         mesheryctl system channel switch stable
           mesheryctl system channel switch edge
           mesheryctl system channel switch v0.5.60
@@ -548,10 +548,9 @@ perf:
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
 
-mesh:
-  name: mesh
+adapter:
+  name: adapter
   description: Lifecycle management of cloud native infrastructure
-
   subcommands:
     validate:
       name: validate
@@ -560,176 +559,195 @@ mesh:
         adapter:
           name: --adapter, -a
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
-          usage: mesheryctl mesh validate --adapter [name of the adapter]
-          example: mesheryctl mesh validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --adapter [name of the adapter]
+          example: mesheryctl adapter validate --adapter meshery-istio:10000 -t "~/Download/auth.json"
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-          usage: mesheryctl mesh validate --namespace [namespace to be used]
-          example: mesheryctl mesh validate --namespace test-x1 -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --namespace [namespace to be used]
+          example: mesheryctl adapter validate --namespace test-x1 -t "~/Download/auth.json"
         spec:
           name: --spec, -s
           description: (required) specification to be used for conformance test. Defaults to "smi"
-          usage: mesheryctl mesh validate --spec [specification to be used for conformance test]
-          example: mesheryctl mesh validate --spec smi -t "~/Download/auth.json"
+          usage: mesheryctl adapter validate --spec [specification to be used for conformance test]
+          example: mesheryctl adapter validate --spec smi -t "~/Download/auth.json"
         tokenpath:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl mesh validate --tokenPath [path to token for authentication]
-          example: mesheryctl mesh validate --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter validate --tokenPath [path to token for authentication]
+          example: mesheryctl adapter validate --tokenPath "~/Downloads/auth.json"
 
     remove:
       name: remove
-      description: Remove service mesh in the connected Kubernetes cluster
-      usage: mesheryctl mesh remove [args] [flags] [args]
+      description: Remove infrastructure in the connected Kubernetes cluster
+      usage: mesheryctl adapter remove [args] [flags] [args]
       flags:
         namespace:
           name: --namespace, -n
-          description: Kubernetes namespace to be used for removing a service mesh under a specific namespace
-          usage: mesheryctl mesh remove [args] --namespace [namespace to be used]
-          example: mesheryctl mesh remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
+          description: Kubernetes namespace to be used for removing infrastrucutre under a specific namespace
+          usage: mesheryctl adapter remove [args] --namespace [namespace to be used]
+          example: mesheryctl adapter remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
 
     deploy:
       name: deploy
-      description: Deploy a service mesh into the cluster
-      usage: mesheryctl mesh deploy [flags]
-      example: mesheryctl mesh deploy -t "~/Downloads/auth.json"
+      description: Deploy infrastructure into the cluster
+      usage: mesheryctl adapter deploy [flags]
+      example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
         adapter:
           name: --adapter, -a
           description: (required) adapter to use for validation. Defaults to "meshery-osm:10010"
-          usage: mesheryctl mesh deploy --adapter [name of the adapter]
-          example: mesheryctl mesh deploy --adapter meshery-istio:10000
+          usage: mesheryctl adapter deploy --adapter [name of the adapter]
+          example: mesheryctl adapter deploy --adapter meshery-istio:10000
         namespace:
           name: --namespace, -n
           description: Kubernetes namespace to be used for deploying the validation tests and sample workload
-          usage: mesheryctl mesh deploy --namespace [namespace to be used]
+          usage: mesheryctl adapter deploy --namespace [namespace to be used]
           example: |
-            mesheryctl mesh deploy --namespace docker-desktop
-              mesheryctl mesh deploy --namespace minikube
+            mesheryctl adapter deploy --namespace docker-desktop
+              mesheryctl adapter deploy --namespace minikube
         token:
           name: --tokenpath, -t
           description: (required) path to token for authenticating to Meshery API
-          usage: mesheryctl mesh deploy --tokenPath [path to token for authentication]
-          example: mesheryctl mesh deploy --tokenPath "~/Downloads/auth.json"
+          usage: mesheryctl adapter deploy --tokenPath [path to token for authentication]
+          example: mesheryctl adapter deploy --tokenPath "~/Downloads/auth.json"
 
-pattern:
-  name: pattern
-  description: Manage cloud native infrastructure using predefined patterns
-  usage: mesheryctl pattern [flags] or mesheryctl pattern [command]
-  example: mesheryctl pattern list
+design:
+  name: design
+  description: Manage cloud native infrastructure using predefined design patterns
+  usage: mesheryctl design [flags] or mesheryctl design [command]
+  example: mesheryctl design list
   flags:
     file:
       name: --file, -f
-      description: (required) path to pattern file.
+      description: (required) path to design file.
       usage: |
-        mesheryctl pattern apply --file [pattern path]
-        mesheryctl pattern delete --file [pattern path]
+        mesheryctl design apply --file [design path]
+        mesheryctl design delete --file [design path]
       example: |
-        mesheryctl pattern apply --file "bookInfo.yaml"
-          mesheryctl pattern delete --file "bookInfo.yaml"
+        mesheryctl design apply --file "bookInfo.yaml"
+          mesheryctl design delete --file "bookInfo.yaml"
 
   subcommands:
     apply:
       name: apply
-      description: apply pattern file will trigger deploy of the pattern file
-      usage: mesheryctl pattern apply [flags]
+      description: apply design file will trigger deploy of the design file
+      usage: mesheryctl design apply [flags]
       flags:
         file:
           name: --file, -f
-          description: apply pattern file will trigger deploy of the pattern file and also supports file retrieval from GitHub
-          usage: mesheryctl pattern apply --file [path to pattern file]
-          example: mesheryctl pattern apply -f "bookInfo.yaml"
+          description: apply design file will trigger deploy of the design file and also supports file retrieval from GitHub
+          usage: mesheryctl design apply --file [path to design file]
+          example: mesheryctl design apply -f "bookInfo.yaml"
 
     delete:
       name: delete
-      description: Deprovision cloud native infrastructure using a design /pattern file
-      usage: mesheryctl pattern delete [flags]
+      description: Deprovision cloud native infrastructure using a design /design file
+      usage: mesheryctl design delete [flags]
       flags:
         file:
           name: --file, -f
-          description: Deletes the resources that were created, using pattern file
-          usage: mesheryctl pattern delete -f [path to pattern file]
-          example: mesheryctl pattern delete -f "bookInfo.yaml"
+          description: Deletes the resources that were created, using design file
+          usage: mesheryctl design delete -f [path to design file]
+          example: mesheryctl design delete -f "bookInfo.yaml"
 
     list:
       name: list
-      description: displays a list of available pattern files
-      usage: mesheryctl pattern list
+      description: displays a list of available design files
+      usage: mesheryctl design list
       flags:
-        all:
-          name: --all, -a
-          description: show all pattern file metadata
-          usage: mesheryctl pattern list --all
+        page:
+          name: --page, -p
+          description: list designs by specific page number (25 designs per page)
+        verbose:
+          name: --verbose, -v
+          description: show all design file metadata
+          usage: mesheryctl design list --verbose
+          example: mesheryctl design list -v
 
     view:
       name: view
-      description: displays the contents of a specific pattern file
-      usage: mesheryctl pattern view [pattern-name|pattern-id]
+      description: displays the contents of a specific design file
+      usage: mesheryctl design view [design-name|design-id]
       flags:
         all:
           name: --all, -a
-          description: show all pattern file content
-          usage: mesheryctl pattern view [pattern-name|pattern-id] --all
-          example: mesheryctl pattern view bookInfo --all
+          description: show all design file content
+          usage: mesheryctl design view [design-name|design-id] --all
+          example: mesheryctl design view bookInfo --all
         json:
           name: -o json
-          description: display the content of a pattern in json format
-          usage: mesheryctl pattern view [pattern-name|pattern-id] -o json
-          example: mesheryctl pattern view bookInfo -o json
+          description: display the content of a design in json format
+          usage: mesheryctl design view [design-name|design-id] -o json
+          example: mesheryctl design view bookInfo -o json
 
     import:
       name: import
       description: Import app manifests
-      usage: mesheryctl pattern import -f [file/URL]
-      example: mesheryctl pattern import -f "bookInfo.yaml"
+      usage: mesheryctl design import -f [file/URL]
+      example: mesheryctl design import -f "bookInfo.yaml"
       flags:
         file:
           name: --file, -f
           description: Path/URL to app file
-          usage: mesheryctl pattern import -f [file/URL]
-          example: mesheryctl pattern import -f "bookInfo.yaml"
+          usage: mesheryctl design import -f [file/URL]
+          example: mesheryctl design import -f "bookInfo.yaml"
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl pattern import -f [file/URL] --source-type [manifest/compose/helm]
-          example: mesheryctl pattern import -f "bookInfo.yaml" --source-type manifest
+          usage: mesheryctl design import -f [file/URL] --source-type [manifest/compose/helm]
+          example: mesheryctl design import -f "bookInfo.yaml" --source-type manifest
+    export:
+      name: export
+      description: Export a design from Meshery
+      usage: mesheryctl design export [design-name | ID]
+      flags:
+        type:
+          name: --type
+          description: Specify the design type to export (default current). Supported types are oci,current,original
+          usage: mesheryctl design export --type [design-type]
+          example: mesheryctl design export --type oci
+        output:
+          name: --output, -o
+          description: Specify the output directory to save the design
+          usage: mesheryctl design export --output [directory-path]
+          example: mesheryctl design export --output ./exports
 
     offboard:
       name: offboard
       description: Offboard application
-      usage: mesheryctl pattern offboard [app-name] [flags]
+      usage: mesheryctl design offboard [app-name] [flags]
       flags:
         file:
           name: --file, -f
           description: Offboard application with an application file
-          usage: mesheryctl pattern offboard -f [filepath]
-          example: mesheryctl pattern offboard -f "bookInfo.yaml"
+          usage: mesheryctl design offboard -f [filepath]
+          example: mesheryctl design offboard -f "bookInfo.yaml"
 
     onboard:
       name: onboard
       description: Onboard application
-      usage: mesheryctl pattern onboard [app name] [flags]
+      usage: mesheryctl design onboard [app name] [flags]
       flags:
         file:
           name: --file, -f
           description: Onboard application with application file
-          usage: mesheryctl pattern onboard --file [filepath]
-          example: mesheryctl pattern onboard -f "bookInfo.yaml"
+          usage: mesheryctl design onboard --file [filepath]
+          example: mesheryctl design onboard -f "bookInfo.yaml"
         skip-save:
           name: --skip-save
           description: Skip saving an application
-          usage: mesheryctl pattern onboard --file [filepath] --skip-save
-          example: mesheryctl pattern onboard -f "bookInfo.yaml" --skip-save
+          usage: mesheryctl design onboard --file [filepath] --skip-save
+          example: mesheryctl design onboard -f "bookInfo.yaml" --skip-save
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl pattern onboard mesheryctl pattern onboard --file [filepath] --source-type manifest
-          example: mesheryctl mesheryctl pattern onboard -f "bookInfo.yaml" --source-type manifest
-    
+          usage: mesheryctl design onboard mesheryctl design onboard --file [filepath] --source-type manifest
+          example: mesheryctl mesheryctl design onboard -f "bookInfo.yaml" --source-type manifest
+
 filter:
   name: filter
-  description: Service Mesh Filter Management
+  description: Envoy Filter Management
   usage: mesheryctl filter [command] or
   example: mesheryctl filter list
   subcommands:
@@ -841,9 +859,330 @@ registry:
         spreadsheet_id:
           name: --spreadsheet-id
           description: id of the spreadsheet to download
-          
+
+model:
+  name: model
+  description: A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
+  usage: mesheryctl model [command] [flags]
+  flags:
+    count:
+      name: --count
+      description: (optional) Get the number of models in total
+    help:
+      name: --help, -h
+      description: help for model
+      usage: mesheryctl model --help
+      example: mesheryctl model --help
+  subcommands:
+    list:
+      name: list
+      description: List models present in the registry
+      usage: mesheryctl model list [flags]
+      flags:
+        page:
+          name: --page, -p
+          description: list models by specific page number (25 models per page)
+    search:
+      name: search
+      description: Using a keyword(s) search the registry for matching model(s)
+      usage: mesheryctl model search [keyword]
+    generate:
+      name: generate
+      description: Generate models by specifying the directory, file, or URL.
+      usage: mesheryctl model generate [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Specify the path to the file, directory, or URL.
+        template:
+          name: --template, -t
+          description: Specify the path to the template JSON file (only required for URLs).
+        register:
+          name: --register, -r
+          description: Skip model registration (default is true).    
+    view:
+      name: view
+      description: View details of a specific model
+      usage: mesheryctl model view [model-name]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+    import:
+      name: import
+      description: Import models using a file or filepath directly to the meshery registry
+      usage: mesheryctl model import [ file | filepath ]
+      examples:
+         - mesheryctl import model /path/to/[file.yaml|file.json]
+         - mesheryctl import model /path/to/models
+    export:
+      name: export
+      description: Export a model by name to the given output type (default is oci).
+      usage: mesheryctl model export [model-name]
+      examples:
+         - mesheryctl model export [model-name] -l /home/meshery
+         - mesheryctl model export [model-name] --discard-components
+         - mesheryctl model export [model-name] -o yaml
+         - mesheryctl model export [model-name] --version v0.7.3
+
+component:
+  name: component
+  description: Fundamental building block used to represent and define the infrastructure under management
+  usage: mesheryctl component [command] [flags]
+  flags:
+    count:
+      name: --count
+      description: (optional) Get the number of components in total
+    help:
+      name: --help, -h
+      description: help for components
+      usage: mesheryctl component --help
+      example: mesheryctl component --help
+  subcommands:
+    list:
+      name: list
+      description: List all components registered in Meshery Server
+      usage: mesheryctl component list [flags]
+      flags:
+        page:
+          name: --page, -p
+          description: list components by specific page number (25 models per page)
+    search:
+      name: search
+      description: Using a keyword(s) search the registry for matching component(s)
+      usage: mesheryctl component search [keyword]
+    view:
+      name: view
+      description: View details of a specific component
+      usage: mesheryctl component view [component-name]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+        save:
+          name: --save
+          description: Save output as a JSON/YAML file
+          usage: mesheryctl component view --output-format [json|yaml] --save [filepath]
+          example: mesheryctl component view --save "bookInfo.yaml" --output-format yaml
+
+environment:
+  name: environment
+  description: Logical group related to connections and their credentials
+  usage: mesheryctl environment [command] [flags]
+  flags:
+  subcommands:
+    create:
+      name: create
+      description: create a new environments by providing the name and description of the environment
+      usage: mesheryctl environment create [flags]
+      example: mesheryctl
+      flags:
+        description:
+          name: -d, --description
+          description: description of the specified environment
+        name:
+          name: --name, -n
+          description: (optional) name of the environment
+        org:
+          name: -o, --orgId
+          description: organization id
+          usage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+    delete:
+      name: delete
+      description: delete a new environments by providing the name and description of the environment
+      usage: mesheryctl environment delete [environmentId]
+    list:
+      name: list
+      description: list name of all registered environments
+      usage: mesheryctl environment list [flags]
+      flags:
+        org:
+          name: -o, --orgId
+          description: organization id
+          usage: mesheryctl environment list --orgID [orgId]
+    view:
+      name: view
+      description: view a environments registered in Meshery Server
+      usage: mesheryctl environment view [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+        save:
+          name: -s, --save
+          description: (optional) save output as a JSON/YAML file
+          usage: mesheryctl environment view --output-format [json|yaml] --save [filepath]
+          example: mesheryctl environment view --save "bookInfo.yaml" --output-format yaml
+
 exp:
-  name: exp
-  description: Experimental features
-  usage: mesheryctl exp [command] [flags]
+  connection:
+    name: connection
+    description: Manage Meshery connections
+    usage: mesheryctl exp connection [command] [flags]
+    flags:
+      help:
+        name: --help, -h
+        description: help for exp connection
+        usage: mesheryctl exp connection --help
+        example: mesheryctl exp connection --help
+      count:
+        name: --count
+        description: (optional) Get the number of exp connection in total
+    subcommands:
+      delete:
+        name: delete
+        description: delete a connection
+        usage: mesheryctl exp connection delete [connection_id]
+      list:
+        name: list
+        description: list all the connections
+        usage: mesheryctl exp connection list [flags]
+        flags:
+          page:
+            name: -p, --page
+            description: "(optional) List next set of exp connection list with --page (default = 1) (default 1)."
+            usage: mesheryctl exp connection list --page [page number]
+            example: mesheryctl exp connection list --page 2
+          count:
+            name: --count
+            description: (optional) Get the number of exp connection in total
   
+  relationship:
+    name: relationship
+    description: View list of relationships and details of relationship
+    usage: mesheryctl exp relationship [command] [flags]
+    flags:
+    subcommands:
+      generate:
+        name: generate
+        description: generate relationships docs from the google spreadsheets
+        usage: mesheryctl exp relationship generate [flags]
+        flags:
+          sheet:
+            name: -s, --sheetId
+            description: google sheet id
+      list:
+        name: list
+        description: list all relationships registered in Meshery Server
+        usage: mesheryctl exp relationship list [flags]
+        flags:
+          page:
+            name: -p, --page
+            description: "(optional) List next set of exp relationship list with --page (default = 1) (default 1)."
+            usage: mesheryctl exp relationship list --page [page number]
+            example: mesheryctl exp relationship list --page 2
+      view:
+        name: view
+        description: view a relationship queried by the model name
+        usage: mesheryctl exp relationship view [flags]
+        flags:
+          output-format:
+            name: -o, --output-format
+            description: (optional) format to display in [json|yaml] (default "yaml")
+      search:
+        name: search
+        description: search for relationship using a query
+        usage: mesheryctl exp relationship search [flags] [query-text]
+        flags:
+          kind:
+            name: -k --kind
+            description: kind of relationships
+          model:
+            name: -m, --model
+            description: model name
+          subtype:
+            name: -s, --subtype
+            description: subtype of relationships
+          type:
+            name: -t, --type
+            description: type of relationships 
+  workspace:
+    name: workspace
+    description: View list of workspaces and detail of workspaces
+    usage: mesheryctl exp workspace [command] [flags]
+    flags:
+    subcommands:
+      create:
+        name: create
+        description: create a new workspace by providing the name, description, and organization ID
+        usage: mesheryctl exp workspace create [flags]
+        flags:
+          description:
+            name: -d, --description
+            description: description of the workspace
+          name:
+            name: -n, --name
+            description: name of the workspace
+          org:
+            name: -o, --orgId
+            description: organization id
+            usage: mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+      list:
+        name: list
+        description: list name of all registered workspaces
+        usage: mesheryctl exp workspace list [flags]
+        flags:
+          org:
+            name: -o, -orgId
+            description: organization id 
+  organization:
+    name: organization
+    description: Interact with existing organizations
+    usage: mesheryctl exp organization
+    flags:
+      count:
+        name: --count
+        description: (optional) Get the total of registrered organizations
+      help:
+        name: --help, -h
+        description: help for organization command
+        usage: mesheryctl exp organization --help
+        example: mesheryctl exp organization --help
+    subcommands:
+      list:
+        name: list
+        description: List all organizations registered in Meshery Server
+        usage: mesheryctl exp organization list [flags]
+        flags:
+          page:
+            name: --page, -p
+            description: list organizations by specific page number (25 models per page)  
+          count:
+            name: --count
+            description: (optional) Get the total of registrered organizations
+  model:
+    name: model
+    description: Manages models
+    usage: mesheryctl exp model
+    flags:
+      help:
+        name: --help, -h
+        description: help for model command
+        usage: mesheryctl exp model --help
+        example: mesheryctl exp model --help
+    subcommands:
+      init:
+        name: init
+        description: Scaffold a folder structure for model creation
+        usage: mesheryctl exp model init [model-name] [flags]
+        flags:
+          output-format:
+            name: --output-format, -o
+            description: (optional) format to scaffold files to, supports json or yaml, planned to support csv, defaults to json.
+            usage: mesheryctl exp model init [model-name] --output-format [format]
+            example:
+              mesheryctl exp model init aws-ec2-controller --output-format json
+              mesheryctl exp model init aws-ec2-controller --output-format yaml
+          path:
+            name: --path, -p
+            description: (optional) generates a folder structure under specified path, defaults to current dir.
+            usage: mesheryctl exp model init [model-name] --path [path]
+            example:
+              mesheryctl exp model init aws-ec2-controller --path .
+              mesheryctl exp model init aws-ec2-controller --path ./some/folder/where/to/put/files
+          count:
+            name: --version
+            description: (optional) model version, defaults to v0.1.0   
+            usage: mesheryctl exp model init [model-name] --path [path]
+            example:
+              mesheryctl exp model init aws-ec2-controller --version v1.2.3

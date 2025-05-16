@@ -1,12 +1,25 @@
 import React from 'react';
-import { IconButton, InputAdornment, TextField, useTheme, InputLabel } from '@material-ui/core';
+import {
+  IconButton,
+  InputAdornment,
+  TextField,
+  useTheme,
+  InputLabel,
+  styled,
+} from '@layer5/sistent';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { getHyperLinkDiv } from '../helper';
-import { makeStyles } from '@material-ui/styles';
+
+const CustomTextField = styled(TextField)(({ theme, overrideFlag }) => {
+  return {
+    '& div': {
+      backgroundColor: overrideFlag ? (theme.palette.mode === 'dark' ? '#303030' : '#fff') : '',
+    },
+  };
+});
 
 const BaseInput = (props) => {
   const additional = props.schema?.__additional_property; // check if the field is additional
@@ -16,23 +29,26 @@ const BaseInput = (props) => {
   const focused = props.options?.focused; // true for datetime-local
   const isRequired = props?.required;
   const prettifiedName = name || 'Enter a value';
-  const [isFocused, setIsFocused] = React.useState(false);
+  const [, setIsFocused] = React.useState(false);
   const style = {
     display: 'flex',
     alignItems: 'center',
   };
-  const styles = makeStyles((theme) => ({
-    customInputLabel: {
-      color: theme.palette.secondary.text,
-      backgroundColor: theme.palette.background.default,
-      padding: '0.2rem',
-      height: '1rem',
-      borderRadius: '3px',
-    },
-  }));
-
   const theme = useTheme();
-  const classes = styles();
+
+  const getInputLabelStyle = () => {
+    if (prettifiedName === 'name' || prettifiedName === 'namespace') {
+      return {
+        color: theme.palette.secondary.text,
+        backgroundColor: theme.palette.mode === 'dark' ? '#303030' : 'white',
+        padding: '0.2rem',
+        height: '1rem',
+        borderRadius: '3px',
+      };
+    }
+    return {};
+  };
+
   return (
     <>
       <div key={props.id} style={xRjsfGridArea ? {} : style}>
@@ -41,10 +57,11 @@ const BaseInput = (props) => {
             {prettifiedName}
           </InputLabel>
         )}
-        <TextField
+        <CustomTextField
           variant={additional ? 'standard' : 'outlined'}
           size="small"
           focused={focused}
+          overrideFlag={props.formContext.overrideFlag}
           type={props.options?.inputType}
           key={props.id}
           disabled={props?.disabled || props?.readonly}
@@ -52,10 +69,10 @@ const BaseInput = (props) => {
             props.options?.inputType === 'file'
               ? null
               : additional && props?.value === 'New Value'
-              ? ''
-              : props?.value && xEncodeInURI
-              ? decodeURIComponent(props?.value)
-              : props?.value
+                ? ''
+                : props?.value && xEncodeInURI
+                  ? decodeURIComponent(props?.value)
+                  : props?.value
           } // remove the default value i.e. New Value for additionalFields
           id={props.id}
           margin="dense"
@@ -70,15 +87,12 @@ const BaseInput = (props) => {
                   e.target.value === ''
                     ? props.options.emptyValue
                     : xEncodeInURI
-                    ? encodeURIComponent(e.target.value)
-                    : e.target.value,
+                      ? encodeURIComponent(e.target.value)
+                      : e.target.value,
                 )
           }
           InputLabelProps={{
-            className:
-              prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused
-                ? classes.customInputLabel
-                : '',
+            style: getInputLabelStyle(),
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -88,18 +102,12 @@ const BaseInput = (props) => {
               <InputAdornment position="start">
                 {props.rawErrors?.length > 0 && (
                   <CustomTextTooltip
-                    backgroundColor={ERROR_COLOR}
+                    bgColor={ERROR_COLOR}
                     flag={props?.formContext?.overrideFlag}
-                    title={
-                      <div>
-                        {props.rawErrors?.map((error, index) => (
-                          <div key={index}>{error}</div>
-                        ))}
-                      </div>
-                    }
+                    title={props.rawErrors?.join('  ')}
                     interactive={true}
                   >
-                    <IconButton component="span" size="small">
+                    <IconButton component="span" size="small" tabIndex={-1}>
                       <ErrorOutlineIcon
                         width="14px"
                         height="14px"
@@ -111,16 +119,15 @@ const BaseInput = (props) => {
                 )}
                 {props.schema?.description && (
                   <CustomTextTooltip
-                    backgroundColor="#3C494F"
                     flag={props?.formContext?.overrideFlag}
-                    title={getHyperLinkDiv(props.schema?.description)}
+                    title={props.schema?.description}
                     interactive={true}
                   >
-                    <IconButton component="span" size="small">
+                    <IconButton component="span" size="small" tabIndex={-1}>
                       <HelpOutlineIcon
                         width="14px"
                         height="14px"
-                        fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                        fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
                         style={{ verticalAlign: 'middle', ...iconSmall }}
                       />
                     </IconButton>

@@ -4,13 +4,15 @@ layout: default
 
 {{ page.subtitle }}
 {{ content }}
+
 <!-- components -->
 <div>
     <section class="Compheading">
-        {% if page.components.size != 0  %}
+        {% if page.components and page.components.size > 0 %}
         <h3>
             Components ( {{ page.components.size }} )
         </h3>
+        <p>The Meshery model for {{ page.title }} supports the following components.</p>
         {% endif %}
     </section>
 
@@ -19,7 +21,7 @@ layout: default
         {% if component.name %}
         <div class="maincontainer">
             <div class="componentimg">
-                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}"  data-logo-for-dark="/{{ component.whiteIcon }}"
+                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}" onerror="handleImageError(this)" data-logo-for-dark="/{{ component.whiteIcon }}"
                 data-logo-for-light="/{{ component.colorIcon }}" />
             </div>
             <p class="Compitems">{{ component.name }}</p>
@@ -29,11 +31,71 @@ layout: default
     </section>
 </div>
 <!-- components end -->
-{% include_cached models.html %}
-{% include_cached meshery-registry.html %}
+
+{% assign pageTitle = page.title %}
+
+{% assign modelcustomdata = site.modelscustominfo %}
+{% for modelinfo in modelcustomdata %}
+  {% if modelinfo.title == pageTitle %}
+    <div>
+        {{ modelinfo }}
+    </div>
+  {% endif %}
+{% endfor %}
+
+{% include_cached integration/models-components.html %}
+{% include_cached integration/meshery-registry.html %}
+
+<section>
+    <h3 id="related-designs-header">Designs containing {{page.title}}</h3>
+    {% assign tech = page.docURL | split: '/' | last %}
+    <ul>
+    {% for design in site.catalog %}
+    {% if design.compatibility contains tech %}
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/{{ design.patternId }}" target="_blank" >{{design.name}}</a> 
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
+</section>
+
+<section>
+    <h3 id="related-tutorials-header">Related Tutorials for {{ page.title }}</h3>
+    {% assign tutorials = site.pages | where: "category", "tutorials"%}
+    <ul>
+        {% for tutorial in tutorials %}
+            {% if tutorial.model %}
+                {% assign page_title_lower = page.title | downcase %}
+                {% assign tutorial_model_lower = tutorial.model | downcase %}
+                {% if page_title_lower contains tutorial_model_lower %}
+                    <li class="tutorial-link"><a href="{{ tutorial.url | relative_url }}">{{ tutorial.title }}</a></li>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    </ul>
+</section>
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category == page.integrations-category" %}
 {% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title type=page.type category=page.category
 url=page.url language="en" %}
 {% endif %}
+
+
+<script>
+    function handleImageError(image) {
+        image.onerror = null;
+        image.src = '{{ page.image }}';
+    }
+    const designLinks = document.querySelectorAll('.design-link');
+    if (designLinks.length === 0) {
+        document.getElementById('related-designs-header').style.display = 'none';
+    }
+
+    const relatedTutorials = document.querySelectorAll(".tutorial-link");
+    if (relatedTutorials.length === 0) {
+        document.getElementById("related-tutorials-header").style.display = "none";
+    }
+
+</script>

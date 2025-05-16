@@ -1,20 +1,27 @@
-import React from 'react';
-import { NoSsr, withStyles } from '@material-ui/core';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
+import { NoSsr, Box } from '@layer5/sistent';
+import { connect, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import { EnvironmentComponent } from '../../components/Lifecycle';
-
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
+import { updatePage } from '@/store/slices/mesheryUi';
+import { getPath } from 'lib/path';
 
 const Environments = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Environments' }));
+  }, []);
+
   return (
     <NoSsr>
       <Head>
         <title>Environments | Meshery</title>
       </Head>
-      <EnvironmentComponent />
+      <Box sx={{ margin: 'auto', overflow: 'hidden' }}>
+        <EnvironmentComponent />
+      </Box>
     </NoSsr>
   );
 };
 
-export default withStyles(styles)(connect(null)(Environments));
+export default connect(null)(Environments);

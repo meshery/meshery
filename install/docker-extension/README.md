@@ -5,8 +5,8 @@
 </picture></a><br /><br /></p>
 
 <p align="center">
-<a href="https://hub.docker.com/r/meshery/meshery" alt="Docker pulls">
-  <img src="https://img.shields.io/docker/pulls/meshery/meshery.svg" /></a>
+<a href="https://hub.docker.com/r/layer5/meshery" alt="Docker pulls">
+  <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
 <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
   <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg?color=informational" /></a>
 <a href="https://github.com/meshery/meshery/blob/master/LICENSE" alt="LICENSE">
@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/github/workflow/status/meshery/meshery/Meshery%20Build%20and%20Releaser%20(edge)" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="http://discuss.meshery.io" alt="Discuss Users">
+<a href="https://meshery.io/community#community-forums" alt="Discuss Users">
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fdiscuss.layer5.io" /></a>
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack"></a>
@@ -89,5 +89,5 @@ docker extension update meshery/docker-extension-meshery:edge-latest
 <a href ="https://layer5.io/community"><img alt="MeshMates" src="https://docs.meshery.io/assets/img/readme/layer5-community-sign.png" style="margin-right:10px; margin-bottom:7px;" width="28%" align="center" /></a>
 </p>
 <p style="text-align:center; width:100%;" align="center">
-<h3 style="text-align:center;" align="center"><em>Have questions? Need help?</em> <strong>Ask in the <a href="http://discuss.meshery.io">Community Forum</a></strong>.</h3></p>
+<h3 style="text-align:center;" align="center"><em>Have questions? Need help?</em> <strong>Ask in the <a href="https://meshery.io/community#community-forums">Community Forum</a></strong>.</h3></p>
 

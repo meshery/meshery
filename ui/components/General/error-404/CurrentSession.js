@@ -8,24 +8,20 @@ import {
   OrgNameDisabled,
   StyledTypographyDisabled,
 } from './styles';
-import { connect } from 'react-redux';
-import { withRouter } from 'next/router';
-import ErrorBoundary from '../../ErrorBoundary';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
-import NoSsr from '@material-ui/core/NoSsr';
+import { NoSsr } from '@layer5/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { useTheme } from '@material-ui/core/styles';
+import { ErrorBoundary } from '@layer5/sistent';
+import CustomErrorFallback from '../ErrorBoundary';
+import { useSelector } from 'react-redux';
 
-const CurrentSessionInfo = (props) => {
-  const theme = useTheme();
-  const { organization } = props;
+const CurrentSessionInfo = () => {
+  const { organization } = useSelector((state) => state.ui);
   const {
     data: rolesRes,
     // isSuccess: isRolesSuccess,
     // isError: isRolesError,
     // error: rolesError,
-  } = useGetUserOrgRolesQuery({ orgId: organization?.id });
+  } = useGetUserOrgRolesQuery({ orgId: organization?.id }, { skip: !organization?.id });
 
   const {
     data: providerRolesRes,
@@ -41,7 +37,7 @@ const CurrentSessionInfo = (props) => {
           Organization
         </StyledTypographyDisabled>
         <StyledBox>
-          <OrgIcon width="24" height="24" secondaryFill={theme.palette.darkSlateGray} />
+          <OrgIcon width="24" height="24" secondaryFill={'#294957'} />
           <OrgNameDisabled>{organization?.name}</OrgNameDisabled>
         </StyledBox>
       </div>
@@ -71,26 +67,14 @@ const CurrentSessionInfo = (props) => {
   );
 };
 
-const CurrentSessionInfoWithErrorBoundary = (props) => {
+const CurrentSessionInfoWithErrorBoundary = () => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Spaces Prefs Component', e)}
-      >
-        <Provider store={store}>
-          <CurrentSessionInfo {...props} />
-        </Provider>
+      <ErrorBoundary customFallback={CustomErrorFallback}>
+        <CurrentSessionInfo />
       </ErrorBoundary>
     </NoSsr>
   );
 };
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
-export default connect(mapStateToProps)(withRouter(CurrentSessionInfoWithErrorBoundary));
+export default CurrentSessionInfoWithErrorBoundary;

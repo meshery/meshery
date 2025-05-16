@@ -3,7 +3,7 @@
 require "haml"
 module Graphql
   module Docs
-    # This is a custom verion of Gitlab renderer for graphql-docs for Meshery.
+    # This is a custom version of Gitlab renderer for graphql-docs for Meshery.
     # Uses HAML templates to parse markdown and generate .md files.
     # It uses graphql-docs helpers and schema parser, more information in https://github.com/gjtorikian/graphql-docs.
     #

@@ -6,10 +6,14 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/generators/artifacthub"
+
 	meshkitmodels "github.com/layer5io/meshkit/generators/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/connection"
 )
 
 type generationPayloadItem struct {
@@ -22,9 +26,9 @@ type componentGenerationPayload struct {
 }
 
 type componentGenerationResponseDataItem struct {
-	Name       string                        `json:"name"`
-	Components []v1beta1.ComponentDefinition `json:"components"`
-	Errors     []string                      `json:"errors"`
+	Name       string                          `json:"name"`
+	Components []component.ComponentDefinition `json:"components"`
+	Errors     []string                        `json:"errors"`
 }
 
 // swagger:route POST /api/meshmodel/generate MeshmodelComponentGenerate idPostMeshModelComponentGenerate
@@ -69,13 +73,19 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 		}
 		if gpi.Register {
 			for _, comp := range comps {
+				var isModelError bool
+				var isRegistranError bool
 				utils.WriteSVGsOnFileSystem(&comp)
 				host := fmt.Sprintf("%s.artifacthub.meshery", gpi.Name)
-				err = h.registryManager.RegisterEntity(v1beta1.Host{
-					IHost:    v1beta1.ArtifactHub{},
-					Hostname: v1beta1.ArtifactHub{}.String(),
-					Metadata: host,
+				isRegistranError, isModelError, err = h.registryManager.RegisterEntity(connection.Connection{
+					Kind: artifacthub.ArtifactHub,
+					Metadata: map[string]interface{}{
+						"name": host,
+					},
 				}, &comp)
+				helpers.HandleError(connection.Connection{
+					Kind: artifacthub.ArtifactHub,
+				}, &comp, err, isModelError, isRegistranError)
 				if err != nil {
 					h.log.Error(ErrGenerateComponents(err))
 				}
@@ -83,8 +93,13 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 				h.log.Info(comp.DisplayName, " component for ", gpi.Name, " generated")
 			}
 		}
+
 		responseItem.Components = comps
 		response = append(response, responseItem)
+	}
+	err = helpers.WriteLogsToFiles()
+	if err != nil {
+		h.log.Error(err)
 	}
 	// Send response
 	rw.Header().Set("Content-Type", "application/json")
@@ -96,13 +111,13 @@ func (h *Handler) MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Req
 	}
 }
 
-func generateComponents(pm meshkitmodels.PackageManager) ([]v1beta1.ComponentDefinition, error) {
-	components := make([]v1beta1.ComponentDefinition, 0)
+func generateComponents(pm meshkitmodels.PackageManager) ([]component.ComponentDefinition, error) {
+	components := make([]component.ComponentDefinition, 0)
 	pkg, err := pm.GetPackage()
 	if err != nil {
 		return components, ErrGenerateComponents(err)
 	}
-	components, err = pkg.GenerateComponents()
+	components, err = pkg.GenerateComponents("")
 	if err != nil {
 		return components, ErrGenerateComponents(err)
 	}

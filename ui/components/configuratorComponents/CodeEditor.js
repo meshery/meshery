@@ -1,63 +1,52 @@
-import { Card, CardContent, makeStyles } from '@material-ui/core';
+import { Card, CardContent, styled } from '@layer5/sistent';
 import { useEffect, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 
-const useStyles = makeStyles((theme) => ({
-  cardRoot: {
-    position: 'sticky',
-  },
-  codeMirror: {
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: ({ scrollPos }) => getDynamicVh(scrollPos),
-    },
-  },
-  wrapper: {
-    [theme.breakpoints.up('md')]: {
-      top: ({ scrollPos }) =>
-        scrollPos >= 106 ? 106 : window.scrollY > 0 ? 208 - scrollPos : 'auto',
-      position: ({ fullWidth }) => (fullWidth ? 'inherit' : 'fixed'),
-      minWidth: ({ fullWidth }) => (fullWidth ? undefined : 'calc(50% - 175px)'),
-      maxWidth: ({ fullWidth }) => (fullWidth ? undefined : 'calc(50% - 175px)'),
-    },
-  },
-  icon: {
-    position: 'absolute',
-    right: '24px',
-    bottom: '30px',
-    color: '#fff',
-    zIndex: 11,
-    backgroundColor: 'rgb(255,255,255,0.05)',
+export const CardRoot = styled(Card)({
+  position: 'sticky',
+});
+
+export const CodeMirrorWrapper = styled(CodeMirror)(({ scrollPos }) => ({
+  '& .CodeMirror': {
+    minHeight: '300px',
+    height: `${getDynamicVh(scrollPos)}`,
   },
 }));
 
+export const Wrapper = styled('div')(({ theme, scrollPos, fullWidth }) => ({
+  [theme.breakpoints.up('md')]: {
+    top: scrollPos >= 106 ? 106 : window.scrollY > 0 ? 208 - scrollPos : 'auto',
+    position: fullWidth ? 'inherit' : 'fixed',
+    minWidth: fullWidth ? undefined : 'calc(50% - 175px)',
+    maxWidth: fullWidth ? undefined : 'calc(50% - 175px)',
+  },
+}));
+
+export const Icon = styled('div')({
+  position: 'absolute',
+  right: '24px',
+  bottom: '30px',
+  color: '#fff',
+  zIndex: 11,
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+});
+
 export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth, onChange }) {
-  const [style, setStyle] = useState(67);
-  const classes = useStyles({ scrollPos: style, fullWidth });
+  const [scrollPos, setScrollPos] = useState(67);
 
   useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
+    const handleScroll = () => setScrollPos(window.scrollY);
 
-    return () => {
-      window.removeEventListener('scroll', () => {});
-    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleScroll = () => {
-    setStyle(window.scrollY);
-  };
-
   return (
-    <div className={classes.wrapper} style={{}}>
-      <Card
-        elevation={0}
-        // @ts-ignore
-        className={classes.cardRoot}
-      >
+    <Wrapper scrollPos={scrollPos} fullWidth={fullWidth}>
+      <CardRoot elevation={0}>
         <CardContent>
           <CodeMirror
             value={yaml}
-            className={classes.codeMirror}
             options={{
               theme: 'material',
               lineNumbers: true,
@@ -77,8 +66,8 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth, onC
             }}
           />
         </CardContent>
-      </Card>
-    </div>
+      </CardRoot>
+    </Wrapper>
   );
 }
 

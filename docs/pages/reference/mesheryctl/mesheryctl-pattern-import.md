@@ -10,7 +10,7 @@ command: pattern
 subcommand: import
 ---
 
-# mesheryctl pattern import
+# mesheryctl design import
 
 Import a Meshery design
 
@@ -22,12 +22,12 @@ Import a Meshery design
 
 		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
 
-		If you are providing remote URL, it should be a direct URL to a downloadable file. 
+		If you are providing remote URL, it should be a direct URL to a downloadable file.
 		For example, if the file is stored on GitHub, the URL should be 'https://raw.githubusercontent.com/path-to-file'.
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern import [flags]
+mesheryctl design import [flags]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl pattern import [flags]
 Import pattern manifest
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
+mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 
 </div>
 </pre> 

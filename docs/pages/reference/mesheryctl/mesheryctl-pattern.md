@@ -10,7 +10,7 @@ command: pattern
 subcommand: nil
 ---
 
-# mesheryctl pattern
+# mesheryctl design
 
 Cloud Native Patterns Management
 
@@ -20,7 +20,7 @@ Manage cloud and cloud native infrastructure using predefined patterns.
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern [flags]
+mesheryctl design [flags]
 
 </div>
 </pre> 
@@ -30,7 +30,7 @@ mesheryctl pattern [flags]
 Apply pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern apply --file [path to pattern file | URL of the file]
+mesheryctl design apply --file [path to design file | URL of the file]
 
 </div>
 </pre> 
@@ -38,7 +38,7 @@ mesheryctl pattern apply --file [path to pattern file | URL of the file]
 Delete pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern delete --file [path to pattern file]
+mesheryctl design delete --file [path to design file]
 
 </div>
 </pre> 
@@ -46,7 +46,7 @@ mesheryctl pattern delete --file [path to pattern file]
 View pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern view [pattern name | ID]
+mesheryctl design view [design name | ID]
 
 </div>
 </pre> 
@@ -54,7 +54,7 @@ mesheryctl pattern view [pattern name | ID]
 List all patterns:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern list
+mesheryctl design list
 
 </div>
 </pre> 

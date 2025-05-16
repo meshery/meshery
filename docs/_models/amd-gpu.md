@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AMD GPU
-subtitle: Collaborative and visual infrastructure as code for AMD GPU
+subtitle: Collaborative and visual infrastructure as design for AMD GPU
 image: /assets/img/integrations/amd-gpu/icons/color/amd-gpu-color.svg
 permalink: extensibility/integrations/amd-gpu
 docURL: https://docs.meshery.io/extensibility/integrations/amd-gpu
@@ -18,13 +18,20 @@ components:
   colorIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
   whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
   description: 
+- name: node-feature-group
+  colorIcon: assets/img/integrations/amd-gpu/components/node-feature-group/icons/color/node-feature-group-color.svg
+  whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-group/icons/white/node-feature-group-white.svg
+  description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
-  "Invite anyone to review and make changes to your private designs.",
-  "Ongoing synchronization of Kubernetes configuration and changes across any number of clusters."
+  "Enables GPU acceleration for Kubernetes workloads",
+  "Supports various AMD GPU models",
+  "Integrates with Kubernetes device plugin framework"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
-howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+howItWorks: "Manages AMD GPU resources"
+howItWorksDetails: "Improved performance for GPU-accelerated workloads in Kubernetes"
 language: en
 list: include
 type: extensibility

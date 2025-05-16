@@ -1,11 +1,15 @@
 package models
 
 import (
+	"fmt"
+	"os"
 	"sync"
 	"time"
 
 	"github.com/jinzhu/copier"
+	"github.com/layer5io/meshkit/logger"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 // MapPreferencePersister assists with persisting session in a badger store
@@ -22,6 +26,18 @@ func NewMapPreferencePersister() (*MapPreferencePersister, error) {
 
 // ReadFromPersister reads the session data for the given userID
 func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, error) {
+	logLevel := viper.GetInt("LOG_LEVEL")
+	if viper.GetBool("DEBUG") {
+		logLevel = int(logrus.DebugLevel)
+	}
+	log, err := logger.New("meshery", logger.Options{
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
+	})
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 	data := &Preference{
 		AnonymousUsageStats:  true,
 		AnonymousPerfResults: true,
@@ -37,16 +53,16 @@ func (s *MapPreferencePersister) ReadFromPersister(userID string) (*Preference, 
 
 	dataCopyB, ok := s.db.Load(userID)
 	if ok {
-		logrus.Debugf("retrieved session for user with id: %s", userID)
+		log.Debug(fmt.Sprintf("retrieved session for user with id: %s", userID))
 		newData, ok1 := dataCopyB.(*Preference)
 		if ok1 {
-			logrus.Debugf("session for user with id: %s was read in tact.", userID)
+			log.Debug(fmt.Sprintf("session for user with id: %s was read in tact.", userID))
 			data = newData
 		} else {
-			logrus.Warnf("session for user with id: %s was NOT read in tact.", userID)
+			log.Warn(ErrSessionNotReadIntact(userID))
 		}
 	} else {
-		logrus.Warnf("unable to find session for user with id: %s.", userID)
+		log.Warn(ErrSessionNotFound(userID))
 	}
 	return data, nil
 }

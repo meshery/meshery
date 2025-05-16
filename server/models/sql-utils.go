@@ -52,11 +52,13 @@ func setNewDBInstance() {
 	defer mx.Unlock()
 
 	// Initialize Logger instance
+	logLevel := viper.GetInt("LOG_LEVEL")
 	log, err := logger.New("meshery", logger.Options{
-		Format: logger.SyslogLogFormat,
+		Format:   logger.SyslogLogFormat,
+		LogLevel: logLevel,
 	})
 	if err != nil {
-		log.Error(err)
+		logrus.Error(err)
 		os.Exit(1)
 	}
 
@@ -66,7 +68,8 @@ func setNewDBInstance() {
 		Logger:   log,
 	})
 	if err != nil {
-		logrus.Fatal(err)
+		err = ErrInitializeDBHandler(err)
+		log.Error(err)
 	}
 }
 

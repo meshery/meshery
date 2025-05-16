@@ -1,59 +1,192 @@
 {
   "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "core.meshery.io/v1beta1",
+  "schemaVersion": "components.meshery.io/v1beta1",
   "version": "v1.0.0",
   "displayName": "Edge Application",
   "description": "",
   "format": "JSON",
   "model": {
-   "id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "core.meshery.io/v1beta1",
-   "version": "v1.0.0",
-   "name": "cloudcore",
-   "displayName": "Cloudcore",
-   "description": "",
-   "status": "ignored",
-   "hostID": "00000000-0000-0000-0000-000000000000",
-   "registrant": {
-    "hostname": "artifacthub"
-   },
-   "category": {
-    "name": "Cloud Native Network",
-    "metadata": null
-   },
-   "subCategory": "Cloud Native Network",
-   "metadata": {
-    "isAnnotation": false,
-    "svgColor": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "cloudcore",
+    "displayName": "Cloudcore",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Cloud Native Network",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/web-seven/kubeedge/releases/download/cloudcore-0.1.1/cloudcore-0.1.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.1.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#1c77c8",
+    "secondaryColor": "2f7999",
+    "shape": "heptagon",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-1.76 0.49 364.26 356.51\" width=\"18\" height=\"18\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#1c77c8}.cls-2{fill:#fff}\u003c/style\u003e\u003c/defs\u003e\u003cpath d=\"M99.589 251.108a4.575 4.575 0 1 0 4.72 4.573 4.654 4.654 0 0 0-4.72-4.573zm150.361 9.146a4.575 4.575 0 1 0-4.72-4.573 4.653 4.653 0 0 0 4.72 4.573zm-16.086-37.929c20.693 0 37.567-16.148 37.567-35.987 0-14.965-9.619-27.82-23.127-33.248 0-1.068.095-2.158.095-3.249 0-30-25.37-54.386-56.78-54.386-22.649 0-42.029 12.692-51.17 30.998a27.216 27.216 0 0 0-16.038-5.267c-14.559 0-26.206 11.253-26.206 25.105a24.56 24.56 0 0 0 1.122 7.425 36.546 36.546 0 0 0-18.831 31.718c0 20.116 16.97 35.615 37.853 36.798h113.463c.668 0 1.312.093 2.052.093zM87.688 185.434a29.349 29.349 0 0 1 15.197-25.468l5.035-2.866-1.729-5.53a17.369 17.369 0 0 1-.794-5.279c0-9.846 8.398-17.913 19.014-17.913a20.02 20.02 0 0 1 11.786 3.876l6.878 5.04 3.809-7.628c8.173-16.37 25.37-27.019 44.736-27.019 27.472 0 49.587 21.206 49.587 47.194 0 .315-.01.612-.04 1.317a39.31 39.31 0 0 0-.055 1.932v4.86l4.51 1.813c11.185 4.495 18.617 14.959 18.617 26.575 0 15.79-13.58 28.795-30.375 28.795a8.9 8.9 0 0 1-.56-.029 28.085 28.085 0 0 0-.772-.047c-.333-.013-.333-.013-.72-.016H118.349c-17.206-.987-30.661-13.822-30.661-29.607zm88.275 82.21a4.575 4.575 0 1 0 4.72 4.573 4.654 4.654 0 0 0-4.72-4.573z\" class=\"cls-1\"/\u003e\u003cpath d=\"M267.594 339.93l81.986-102.808a27.308 27.308 0 0 0 5.273-23.103L325.593 85.82a27.307 27.307 0 0 0-14.775-18.527L192.345 10.24a27.309 27.309 0 0 0-23.697 0L50.174 67.293A27.308 27.308 0 0 0 35.4 85.82L6.14 214.02a27.308 27.308 0 0 0 5.273 23.103L93.399 339.93a27.308 27.308 0 0 0 21.35 10.282h131.496a27.308 27.308 0 0 0 21.35-10.282zm-31.11-89.023a14.174 14.174 0 1 1 0 9.547H209.56v-2.411h-.183v-28.612q-11.455-.005-28.64-.009v29.45a14.32 14.32 0 1 1-9.547-.001v-29.45l-28.64-.005v28.627h-.184v2.411h-29.31a14.174 14.174 0 1 1-.001-9.547h19.948v-21.492l-15.061-.002c-24.922-1.412-44.638-20.22-44.638-43.98a43.463 43.463 0 0 1 17.964-35.046 32.577 32.577 0 0 1-.255-4.096c0-17.923 14.965-32.297 33.398-32.297a34.272 34.272 0 0 1 13.372 2.728 64.37 64.37 0 0 1 53.837-28.459c34.843 0 63.252 26.823 63.958 60.303a43.089 43.089 0 0 1 23.045 37.772c0 23.876-20.157 43.18-44.759 43.18-.523 0-.896-.02-1.547-.064-.111-.007-4.585-.013-13.393-.018v21.471z\" class=\"cls-1\"/\u003e\u003cpath d=\"M232.532 215.057c.243.011.448.024.773.047a8.9 8.9 0 0 0 .56.03c16.793 0 30.374-13.006 30.374-28.796 0-11.616-7.432-22.08-18.618-26.575l-4.51-1.813v-4.86c0-.586.015-1.008.055-1.932.031-.705.041-1.002.041-1.317 0-25.988-22.115-47.194-49.587-47.194-19.365 0-36.563 10.65-44.736 27.02l-3.81 7.628-6.877-5.041a20.02 20.02 0 0 0-11.786-3.876c-10.616 0-19.014 8.067-19.014 17.913a17.369 17.369 0 0 0 .794 5.28l1.729 5.529-5.035 2.866a29.349 29.349 0 0 0-15.197 25.468c0 15.785 13.455 28.62 30.66 29.607h113.464c.387.003.387.003.72.016z\" class=\"cls-2\"/\u003e\u003cpath d=\"M218.924 222.61v6.826c8.808.005 13.282.011 13.393.018.651.045 1.024.063 1.547.063 24.602 0 44.758-19.303 44.758-43.179a43.089 43.089 0 0 0-23.045-37.772c-.705-33.48-29.114-60.303-63.957-60.303a64.37 64.37 0 0 0-53.837 28.46 34.272 34.272 0 0 0-13.372-2.729c-18.433 0-33.398 14.374-33.398 32.297a32.577 32.577 0 0 0 .255 4.096 43.463 43.463 0 0 0-17.964 35.047c0 23.759 19.716 42.567 44.638 43.979l15.06.002v-6.805h9.548v6.806l28.64.005v-4.449h9.547v4.45q17.178.004 28.64.01v-6.822zm-100.575-.378c-20.884-1.183-37.853-16.682-37.853-36.798a36.546 36.546 0 0 1 18.83-31.718 24.56 24.56 0 0 1-1.121-7.425c0-13.852 11.647-25.105 26.206-25.105a27.216 27.216 0 0 1 16.038 5.267c9.141-18.306 28.521-30.998 51.17-30.998 31.41 0 56.78 24.386 56.78 54.386 0 1.09-.095 2.181-.095 3.249 13.508 5.429 23.127 18.283 23.127 33.248 0 19.838-16.874 35.987-37.567 35.987-.74 0-1.384-.093-2.052-.093z\" class=\"cls-2\"/\u003e\u003cpath d=\"M218.924 222.61h-9.547v35.433h.183v2.411h26.924a13.773 13.773 0 0 1 0-9.547h-17.56V222.61zm-47.734 2.362v33.899a14.19 14.19 0 0 1 9.547 0v-33.899zm-38.187-2.362v28.297h-19.948a13.775 13.775 0 0 1 0 9.547h29.311v-2.411h.184V222.61z\" class=\"cls-2\"/\u003e\u003cpath d=\"M113.055 250.907a14.174 14.174 0 1 0 0 9.547 13.775 13.775 0 0 0 0-9.547zm-13.466 9.347a4.575 4.575 0 1 1 4.72-4.573 4.653 4.653 0 0 1-4.72 4.573zm71.601-1.383a14.32 14.32 0 1 0 9.547 0 14.19 14.19 0 0 0-9.547 0zm4.773 17.919a4.575 4.575 0 1 1 4.72-4.573 4.653 4.653 0 0 1-4.72 4.573zm60.521-16.336a14.174 14.174 0 1 0 0-9.547 13.773 13.773 0 0 0 0 9.547zm13.467-9.346a4.575 4.575 0 1 1-4.72 4.573 4.655 4.655 0 0 1 4.72-4.573z\" class=\"cls-2\"/\u003e\u003c/svg\u003e",
     "svgComplete": "",
-    "svgWhite": ""
-   },
-   "model": {
-    "version": "0.1.1"
-   },
-   "components": null,
-   "relationships": null
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-1.76 0.49 364.26 356.51\" width=\"18\" height=\"18\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#1c77c8}.cls-2{fill:#fff}\u003c/style\u003e\u003c/defs\u003e\u003cpath d=\"M99.589 251.108a4.575 4.575 0 1 0 4.72 4.573 4.654 4.654 0 0 0-4.72-4.573zm150.361 9.146a4.575 4.575 0 1 0-4.72-4.573 4.653 4.653 0 0 0 4.72 4.573zm-16.086-37.929c20.693 0 37.567-16.148 37.567-35.987 0-14.965-9.619-27.82-23.127-33.248 0-1.068.095-2.158.095-3.249 0-30-25.37-54.386-56.78-54.386-22.649 0-42.029 12.692-51.17 30.998a27.216 27.216 0 0 0-16.038-5.267c-14.559 0-26.206 11.253-26.206 25.105a24.56 24.56 0 0 0 1.122 7.425 36.546 36.546 0 0 0-18.831 31.718c0 20.116 16.97 35.615 37.853 36.798h113.463c.668 0 1.312.093 2.052.093zM87.688 185.434a29.349 29.349 0 0 1 15.197-25.468l5.035-2.866-1.729-5.53a17.369 17.369 0 0 1-.794-5.279c0-9.846 8.398-17.913 19.014-17.913a20.02 20.02 0 0 1 11.786 3.876l6.878 5.04 3.809-7.628c8.173-16.37 25.37-27.019 44.736-27.019 27.472 0 49.587 21.206 49.587 47.194 0 .315-.01.612-.04 1.317a39.31 39.31 0 0 0-.055 1.932v4.86l4.51 1.813c11.185 4.495 18.617 14.959 18.617 26.575 0 15.79-13.58 28.795-30.375 28.795a8.9 8.9 0 0 1-.56-.029 28.085 28.085 0 0 0-.772-.047c-.333-.013-.333-.013-.72-.016H118.349c-17.206-.987-30.661-13.822-30.661-29.607zm88.275 82.21a4.575 4.575 0 1 0 4.72 4.573 4.654 4.654 0 0 0-4.72-4.573z\" class=\"cls-1\"/\u003e\u003cpath d=\"M267.594 339.93l81.986-102.808a27.308 27.308 0 0 0 5.273-23.103L325.593 85.82a27.307 27.307 0 0 0-14.775-18.527L192.345 10.24a27.309 27.309 0 0 0-23.697 0L50.174 67.293A27.308 27.308 0 0 0 35.4 85.82L6.14 214.02a27.308 27.308 0 0 0 5.273 23.103L93.399 339.93a27.308 27.308 0 0 0 21.35 10.282h131.496a27.308 27.308 0 0 0 21.35-10.282zm-31.11-89.023a14.174 14.174 0 1 1 0 9.547H209.56v-2.411h-.183v-28.612q-11.455-.005-28.64-.009v29.45a14.32 14.32 0 1 1-9.547-.001v-29.45l-28.64-.005v28.627h-.184v2.411h-29.31a14.174 14.174 0 1 1-.001-9.547h19.948v-21.492l-15.061-.002c-24.922-1.412-44.638-20.22-44.638-43.98a43.463 43.463 0 0 1 17.964-35.046 32.577 32.577 0 0 1-.255-4.096c0-17.923 14.965-32.297 33.398-32.297a34.272 34.272 0 0 1 13.372 2.728 64.37 64.37 0 0 1 53.837-28.459c34.843 0 63.252 26.823 63.958 60.303a43.089 43.089 0 0 1 23.045 37.772c0 23.876-20.157 43.18-44.759 43.18-.523 0-.896-.02-1.547-.064-.111-.007-4.585-.013-13.393-.018v21.471z\" class=\"cls-1\"/\u003e\u003cpath d=\"M232.532 215.057c.243.011.448.024.773.047a8.9 8.9 0 0 0 .56.03c16.793 0 30.374-13.006 30.374-28.796 0-11.616-7.432-22.08-18.618-26.575l-4.51-1.813v-4.86c0-.586.015-1.008.055-1.932.031-.705.041-1.002.041-1.317 0-25.988-22.115-47.194-49.587-47.194-19.365 0-36.563 10.65-44.736 27.02l-3.81 7.628-6.877-5.041a20.02 20.02 0 0 0-11.786-3.876c-10.616 0-19.014 8.067-19.014 17.913a17.369 17.369 0 0 0 .794 5.28l1.729 5.529-5.035 2.866a29.349 29.349 0 0 0-15.197 25.468c0 15.785 13.455 28.62 30.66 29.607h113.464c.387.003.387.003.72.016z\" class=\"cls-2\"/\u003e\u003cpath d=\"M218.924 222.61v6.826c8.808.005 13.282.011 13.393.018.651.045 1.024.063 1.547.063 24.602 0 44.758-19.303 44.758-43.179a43.089 43.089 0 0 0-23.045-37.772c-.705-33.48-29.114-60.303-63.957-60.303a64.37 64.37 0 0 0-53.837 28.46 34.272 34.272 0 0 0-13.372-2.729c-18.433 0-33.398 14.374-33.398 32.297a32.577 32.577 0 0 0 .255 4.096 43.463 43.463 0 0 0-17.964 35.047c0 23.759 19.716 42.567 44.638 43.979l15.06.002v-6.805h9.548v6.806l28.64.005v-4.449h9.547v4.45q17.178.004 28.64.01v-6.822zm-100.575-.378c-20.884-1.183-37.853-16.682-37.853-36.798a36.546 36.546 0 0 1 18.83-31.718 24.56 24.56 0 0 1-1.121-7.425c0-13.852 11.647-25.105 26.206-25.105a27.216 27.216 0 0 1 16.038 5.267c9.141-18.306 28.521-30.998 51.17-30.998 31.41 0 56.78 24.386 56.78 54.386 0 1.09-.095 2.181-.095 3.249 13.508 5.429 23.127 18.283 23.127 33.248 0 19.838-16.874 35.987-37.567 35.987-.74 0-1.384-.093-2.052-.093z\" class=\"cls-2\"/\u003e\u003cpath d=\"M218.924 222.61h-9.547v35.433h.183v2.411h26.924a13.773 13.773 0 0 1 0-9.547h-17.56V222.61zm-47.734 2.362v33.899a14.19 14.19 0 0 1 9.547 0v-33.899zm-38.187-2.362v28.297h-19.948a13.775 13.775 0 0 1 0 9.547h29.311v-2.411h.184V222.61z\" class=\"cls-2\"/\u003e\u003cpath d=\"M113.055 250.907a14.174 14.174 0 1 0 0 9.547 13.775 13.775 0 0 0 0-9.547zm-13.466 9.347a4.575 4.575 0 1 1 4.72-4.573 4.653 4.653 0 0 1-4.72 4.573zm71.601-1.383a14.32 14.32 0 1 0 9.547 0 14.19 14.19 0 0 0-9.547 0zm4.773 17.919a4.575 4.575 0 1 1 4.72-4.573 4.653 4.653 0 0 1-4.72 4.573zm60.521-16.336a14.174 14.174 0 1 0 0-9.547 13.773 13.773 0 0 0 0 9.547zm13.467-9.346a4.575 4.575 0 1 1-4.72 4.573 4.655 4.655 0 0 1 4.72-4.573z\" class=\"cls-2\"/\u003e\u003c/svg\u003e"
   },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
   "metadata": {
-   "capabilities": "",
-   "defaultData": "",
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "shapePolygonPoints": "",
-   "styleOverrides": "",
-   "styles": "",
-   "subCategory": "",
-   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 134.95 135.02\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#00d3a9}.cls-2{fill:#00b39f}\u003c/style\u003e\u003c/defs\u003e\u003ctitle\u003emeshery-logo-light\u003c/title\u003e\u003cpolygon points=\"69.49 31.82 69.49 64.07 97.44 47.89 69.49 31.82\" class=\"cls-1\"/\u003e\u003cpolygon points=\"69.49 70.81 69.49 103.22 97.7 87.09 69.49 70.81\" class=\"cls-1\"/\u003e\u003cpolygon points=\"65.47 63.85 65.47 32.09 37.87 47.92 65.47 63.85\" class=\"cls-2\"/\u003e\u003cpath d=\"M10.1,103.1a67.79,67.79,0,0,0,21.41,21.55V90.71Z\" class=\"cls-2\"/\u003e\u003cpolygon points=\"65.47 103.06 65.47 71.05 37.8 87.07 65.47 103.06\" class=\"cls-2\"/\u003e\u003cpolygon points=\"35.54 122.63 63.56 106.61 35.54 90.41 35.54 122.63\" class=\"cls-1\"/\u003e\u003cpolygon points=\"99.61 122.8 99.61 90.63 71.63 106.63 99.61 122.8\" class=\"cls-2\"/\u003e\u003cpath d=\"M127,99.37a67.22,67.22,0,0,0,7.91-28.94L105.78,87.11Z\" class=\"cls-2\"/\u003e\u003cpolygon points=\"103.64 83.69 131.76 67.61 103.64 51.45 103.64 83.69\" class=\"cls-1\"/\u003e\u003cpolygon points=\"99.61 44.5 99.61 12.52 71.76 28.49 99.61 44.5\" class=\"cls-2\"/\u003e\u003cpolygon points=\"99.61 83.55 99.61 51.28 71.7 67.44 99.61 83.55\" class=\"cls-2\"/\u003e\u003cpolygon points=\"67.48 135.02 67.49 135.02 67.48 135.02 67.48 135.02\" class=\"cls-2\"/\u003e\u003cpolygon points=\"35.54 51.22 35.54 83.73 63.66 67.45 35.54 51.22\" class=\"cls-1\"/\u003e\u003cpath d=\"M65.47,0A67.2,67.2,0,0,0,35.83,7.83l29.64,17Z\" class=\"cls-2\"/\u003e\u003cpolygon points=\"35.54 12.3 35.54 44.62 63.68 28.48 35.54 12.3\" class=\"cls-1\"/\u003e\u003cpath d=\"M31.51,10.34A67.89,67.89,0,0,0,10.1,31.89L31.51,44.25Z\" class=\"cls-2\"/\u003e\u003cpath d=\"M99.43,8A67.23,67.23,0,0,0,69.49,0V25.15Z\" class=\"cls-1\"/\u003e\u003cpath d=\"M0,69.87A67.27,67.27,0,0,0,8.07,99.63L29.76,87.07Z\" class=\"cls-1\"/\u003e\u003cpath d=\"M8.07,35.37A67.16,67.16,0,0,0,0,65L29.79,47.91Z\" class=\"cls-1\"/\u003e\u003cpath d=\"M35.78,127.13A67.13,67.13,0,0,0,65.47,135V110.15Z\" class=\"cls-2\"/\u003e\u003cpath d=\"M124.92,32a67.9,67.9,0,0,0-21.28-21.52V44.3Z\" class=\"cls-1\"/\u003e\u003cpath d=\"M103.64,124.54A68,68,0,0,0,125,102.86L103.64,90.52Z\" class=\"cls-1\"/\u003e\u003cpath d=\"M135,64.81a67.06,67.06,0,0,0-8-29.35L105.49,47.88Z\" class=\"cls-2\"/\u003e\u003cpath d=\"M69.49,135a67.12,67.12,0,0,0,29.63-7.83L69.49,110Z\" class=\"cls-1\"/\u003e\u003cpolygon points=\"31.51 83.44 31.51 51.56 3.83 67.43 31.51 83.44\" class=\"cls-2\"/\u003e\u003c/svg\u003e",
-   "svgComplete": "",
-   "svgWhite": "\u003csvg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M16.405 8.732v6.57l5.694-3.297-5.694-3.273Zm0 7.942v6.602l5.747-3.285-5.747-3.317Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M15.586 15.256v-6.47l-5.622 3.225 5.622 3.245ZM4.307 23.252a13.809 13.809 0 0 0 4.362 4.39v-6.914l-4.362 2.524Zm11.279-.008v-6.52L9.95 19.985l5.636 3.258Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003cpath d=\"m9.49 27.23 5.707-3.263-5.707-3.3v6.563Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M22.54 27.265v-6.553l-5.699 3.259 5.7 3.294Zm5.58-4.773a13.697 13.697 0 0 0 1.612-5.895l-5.934 3.397 4.323 2.498Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003cpath d=\"m23.362 19.298 5.728-3.276-5.728-3.291v6.567Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M22.541 11.315V4.8l-5.673 3.253 5.673 3.262Zm0 7.955v-6.574l-5.685 3.292 5.685 3.281Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003cpath d=\"M9.49 12.684v6.622l5.728-3.316-5.728-3.306Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M15.586 2.25a13.69 13.69 0 0 0-6.037 1.595l6.037 3.463V2.25Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003cpath d=\"M9.49 4.756v6.583l5.732-3.288L9.49 4.756Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M8.669 4.356a13.83 13.83 0 0 0-4.362 4.39l4.362 2.518V4.356Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003cpath d=\"M22.504 3.88a13.695 13.695 0 0 0-6.099-1.63v5.123l6.1-3.493ZM2.25 16.483c.071 2.12.634 4.196 1.644 6.062l4.418-2.559-6.062-3.503Zm1.644-7.028a13.68 13.68 0 0 0-1.644 6.036l6.068-3.482-4.424-2.554Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M9.539 28.147a13.673 13.673 0 0 0 6.047 1.603v-5.062L9.54 28.147Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003cpath d=\"M27.697 8.768a13.83 13.83 0 0 0-4.335-4.383v6.889l4.335-2.506ZM23.362 27.62a13.851 13.851 0 0 0 4.351-4.417l-4.351-2.514v6.93Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M29.75 15.452a13.659 13.659 0 0 0-1.63-5.979l-4.381 2.53 6.011 3.45Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003cpath d=\"M16.405 29.75a13.673 13.673 0 0 0 6.036-1.595l-6.036-3.498v5.093Z\" fill=\"#fff\"/\u003e\u003cpath d=\"M8.669 19.247v-6.494L3.03 15.986l5.639 3.261Z\" fill=\"#fff\" fill-opacity=\".8\"/\u003e\u003c/svg\u003e"
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
+  "configuration": null,
   "component": {
-   "kind": "EdgeApplication",
-   "version": "apps.kubeedge.io/v1alpha1",
-   "schema": "{\n \"description\": \"EdgeApplication is the Schema for the edgeapplications API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec represents the desired behavior of EdgeApplication.\",\n   \"properties\": {\n    \"workloadScope\": {\n     \"description\": \"WorkloadScope represents which node groups the workload will be deployed in.\",\n     \"properties\": {\n      \"targetNodeGroups\": {\n       \"description\": \"TargetNodeGroups represents the target node groups of workload to be deployed.\",\n       \"items\": {\n        \"description\": \"TargetNodeGroup represents the target node group of workload to be deployed, including override rules to apply for this node group.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name represents the name of target node group\",\n          \"type\": \"string\"\n         },\n         \"overriders\": {\n          \"description\": \"Overriders represents the override rules that would apply on workload.\",\n          \"properties\": {\n           \"imageOverriders\": {\n            \"description\": \"ImageOverriders represents the rules dedicated to handling image overrides.\",\n            \"items\": {\n             \"description\": \"ImageOverrider represents the rules dedicated to handling image overrides.\",\n             \"properties\": {\n              \"component\": {\n               \"description\": \"Component is part of image name. Basically we presume an image can be made of '[registry/]repository[:tag]'. The registry could be: - k8s.gcr.io - fictional.registry.example:10443 The repository could be: - kube-apiserver - fictional/nginx The tag cloud be: - latest - v1.19.1 - @sha256:dbcc1c35ac38df41fd2f5e4130b32ffdb93ebae8b3dbe638c23575912276fc9c\",\n               \"enum\": [\n                \"Registry\",\n                \"Repository\",\n                \"Tag\"\n               ],\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"description\": \"Operator represents the operator which will apply on the image.\",\n               \"enum\": [\n                \"add\",\n                \"remove\",\n                \"replace\"\n               ],\n               \"type\": \"string\"\n              },\n              \"predicate\": {\n               \"description\": \"Predicate filters images before applying the rule. \\n Defaults to nil, in that case, the system will automatically detect image fields if the resource type is Pod, ReplicaSet, Deployment or StatefulSet by following rule:   - Pod: spec/containers/\\u003cN\\u003e/image   - ReplicaSet: spec/template/spec/containers/\\u003cN\\u003e/image   - Deployment: spec/template/spec/containers/\\u003cN\\u003e/image   - StatefulSet: spec/template/spec/containers/\\u003cN\\u003e/image In addition, all images will be processed if the resource object has more than one containers. \\n If not nil, only images matches the filters will be processed.\",\n               \"properties\": {\n                \"path\": {\n                 \"description\": \"Path indicates the path of target field\",\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"path\"\n               ],\n               \"type\": \"object\"\n              },\n              \"value\": {\n               \"description\": \"Value to be applied to image. Must not be empty when operator is 'add' or 'replace'. Defaults to empty and ignored when operator is 'remove'.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"component\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"replicas\": {\n            \"description\": \"Replicas will override the replicas field of deployment\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workloadTemplate\": {\n     \"description\": \"WorkloadTemplate contains original templates of resources to be deployed as an EdgeApplication.\",\n     \"properties\": {\n      \"manifests\": {\n       \"description\": \"Manifests represent a list of Kubernetes resources to be deployed on the managed node groups.\",\n       \"items\": {\n        \"description\": \"Manifest represents a resource to be deployed on managed node groups.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"workloadScope\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Edge Application\",\n \"type\": \"object\"\n}"
+    "version": "apps.kubeedge.io/v1alpha1",
+    "kind": "EdgeApplication",
+    "schema": "{\n \"description\": \"EdgeApplication is the Schema for the edgeapplications API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Spec represents the desired behavior of EdgeApplication.\",\n   \"properties\": {\n    \"workloadScope\": {\n     \"description\": \"WorkloadScope represents which node groups the workload will be deployed in.\",\n     \"properties\": {\n      \"targetNodeGroups\": {\n       \"description\": \"TargetNodeGroups represents the target node groups of workload to be deployed.\",\n       \"items\": {\n        \"description\": \"TargetNodeGroup represents the target node group of workload to be deployed, including override rules to apply for this node group.\",\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name represents the name of target node group\",\n          \"type\": \"string\"\n         },\n         \"overriders\": {\n          \"description\": \"Overriders represents the override rules that would apply on workload.\",\n          \"properties\": {\n           \"imageOverriders\": {\n            \"description\": \"ImageOverriders represents the rules dedicated to handling image overrides.\",\n            \"items\": {\n             \"description\": \"ImageOverrider represents the rules dedicated to handling image overrides.\",\n             \"properties\": {\n              \"component\": {\n               \"description\": \"Component is part of image name. Basically we presume an image can be made of '[registry/]repository[:tag]'. The registry could be: - k8s.gcr.io - fictional.registry.example:10443 The repository could be: - kube-apiserver - fictional/nginx The tag cloud be: - latest - v1.19.1 - @sha256:dbcc1c35ac38df41fd2f5e4130b32ffdb93ebae8b3dbe638c23575912276fc9c\",\n               \"enum\": [\n                \"Registry\",\n                \"Repository\",\n                \"Tag\"\n               ],\n               \"type\": \"string\"\n              },\n              \"operator\": {\n               \"description\": \"Operator represents the operator which will apply on the image.\",\n               \"enum\": [\n                \"add\",\n                \"remove\",\n                \"replace\"\n               ],\n               \"type\": \"string\"\n              },\n              \"predicate\": {\n               \"description\": \"Predicate filters images before applying the rule. \\n Defaults to nil, in that case, the system will automatically detect image fields if the resource type is Pod, ReplicaSet, Deployment or StatefulSet by following rule:   - Pod: spec/containers/\\u003cN\\u003e/image   - ReplicaSet: spec/template/spec/containers/\\u003cN\\u003e/image   - Deployment: spec/template/spec/containers/\\u003cN\\u003e/image   - StatefulSet: spec/template/spec/containers/\\u003cN\\u003e/image In addition, all images will be processed if the resource object has more than one containers. \\n If not nil, only images matches the filters will be processed.\",\n               \"properties\": {\n                \"path\": {\n                 \"description\": \"Path indicates the path of target field\",\n                 \"type\": \"string\"\n                }\n               },\n               \"required\": [\n                \"path\"\n               ],\n               \"type\": \"object\"\n              },\n              \"value\": {\n               \"description\": \"Value to be applied to image. Must not be empty when operator is 'add' or 'replace'. Defaults to empty and ignored when operator is 'remove'.\",\n               \"type\": \"string\"\n              }\n             },\n             \"required\": [\n              \"component\",\n              \"operator\"\n             ],\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           },\n           \"replicas\": {\n            \"description\": \"Replicas will override the replicas field of deployment\",\n            \"type\": \"integer\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"workloadTemplate\": {\n     \"description\": \"WorkloadTemplate contains original templates of resources to be deployed as an EdgeApplication.\",\n     \"properties\": {\n      \"manifests\": {\n       \"description\": \"Manifests represent a list of Kubernetes resources to be deployed on the managed node groups.\",\n       \"items\": {\n        \"description\": \"Manifest represents a resource to be deployed on managed node groups.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"workloadScope\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Edge Application\",\n \"type\": \"object\"\n}"
   }
- }
+}

@@ -1,119 +1,42 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { useRouter, withRouter } from 'next/router';
-import { withStyles } from '@material-ui/core/styles';
-import { withNotify } from '../../utils/hooks/useNotification';
-import { Tabs, Tab, Paper } from '@material-ui/core';
-import { updateProgress } from '../../lib/store';
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
-import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
+import { useState } from 'react';
+import {
+  Tab,
+  Tabs,
+  CustomTooltip,
+  Box,
+  Stack,
+  EditIcon,
+  CloseIcon,
+  SaveAsIcon,
+  OutlinedValidateIcon,
+  OutlinedResetIcon,
+  useTheme,
+  ErrorBoundary,
+} from '@layer5/sistent';
+import { WrapperPaper } from './style';
+import _ from 'lodash';
+import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
+import Popup from '../Popup';
+import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
+import getWidgets from './widgets/getWidgets';
+import { tabsClasses } from '@mui/material';
+import { useSelector } from 'react-redux';
 
-const styles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    height: 'auto',
-  },
-  tab: {
-    width: '20%',
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  subMenuTab: {
-    backgroundColor: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
-  },
-  tabs: {
-    width: '100%',
-    // flexGrow: 1,
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-    '& .MuiTab-fullWidth': {
-      // flexBasis: 'unset', // Remove flex-basis
-    },
-  },
-  icon: {
-    display: 'inline',
-    verticalAlign: 'text-top',
-    width: theme.spacing(1.75),
-    marginLeft: theme.spacing(0.5),
-  },
-  iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
-  },
-  backToPlay: { margin: theme.spacing(2) },
-  link: { cursor: 'pointer' },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(2),
-  },
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  },
-  topToolbar: {
-    marginBottom: '2rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingLeft: '1rem',
-    maxWidth: '90%',
-  },
-  dashboardSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
-  },
-  cardHeader: { fontSize: theme.spacing(2) },
-  card: {
-    height: '100%',
-    marginTop: theme.spacing(2),
-  },
-  cardContent: { height: '100%' },
-  boxWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'end',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    height: '60vh',
-    borderRadius: 0,
-    color: 'white',
-    ['@media (max-width: 455px)']: {
-      width: '100%',
-    },
-    zIndex: 5,
-  },
-  box: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    width: 300,
-    height: 300,
-    backgroundColor: theme.palette.secondary.dark,
-    border: '0px solid #000',
-    boxShadow: theme.shadows[5],
-    margin: theme.spacing(2),
-    cursor: 'pointer',
-  },
-});
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
+
 const useDashboardRouter = () => {
   const router = useRouter();
   const { query, push: pushRoute, route } = router;
@@ -145,7 +68,15 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
-const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
+
+const DashboardComponent = () => {
+  const { data: userData, isLoading } = useGetUserPrefQuery();
+  const [updateUserPref] = useUpdateUserPrefMutation();
+  const defaultLayout = isLoading
+    ? OVERVIEW_LAYOUT
+    : userData?.remoteProviderPreferences
+      ? DEFAULT_LAYOUT
+      : LOCAL_PROVIDER_LAYOUT; //TODO: Use capability to determine default layout
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
 
@@ -156,31 +87,217 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
   const getResourceCategory = (index) => {
     return ResourceCategoryTabs[index];
   };
+
   const { width } = useWindowDimensions();
+  const theme = useTheme();
+
+  if (!ResourceCategoryTabs.includes(resourceCategory)) {
+    changeResourceTab('Overview');
+  }
+  const getCurrentDashboardLayoutFromOrgPrefs = (prefs) => {
+    if (!prefs) {
+      return defaultLayout;
+    }
+    return prefs;
+  };
+
+  const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const WIDGETS = getWidgets({ iconsProps, isEditMode });
+  const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
+
+  const cols = { lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 };
+
+  const iconsProps = {
+    fill: theme.palette.icon.default,
+    primaryFill: theme.palette.icon.default,
+    secondaryFill: theme.palette.icon.secondary,
+    width: '40',
+  };
+
+  const isWidgetAlreadyAdded = (key, layout, breakpoint) => {
+    return Boolean(layout[breakpoint].find((item) => item.i == key));
+  };
+
+  const getWidgetsAvailableToBeAdded = (layout, breakpoint) => {
+    return Object.entries(WIDGETS)
+      .map(([key, value]) => ({ key, ...value }))
+      .filter(
+        (widget) => widget?.isEnabled?.() && !isWidgetAlreadyAdded(widget.key, layout, breakpoint),
+      );
+  };
+  const orgDashboardLayout = getCurrentDashboardLayoutFromOrgPrefs(userData?.dashboardPreferences);
+  const [dashboardLayout, setDashboardLayout] = useState(orgDashboardLayout);
+
+  const widgetsToAdd = getWidgetsAvailableToBeAdded(dashboardLayout, currentBreakPoint);
+
+  const editModeStyles = {
+    padding: '0.87rem',
+    paddingBottom: '4rem',
+    backgroundColor: theme.palette?.background?.tabs,
+  };
+
+  const onAddWidget = (widget, key) => {
+    const newComponent = {
+      i: key,
+      x: 0,
+      static: false,
+      moved: false,
+      y: 10,
+      ...widget.defaultSizing,
+    };
+    const updatedLayouts = {
+      lg: [...dashboardLayout.lg, newComponent],
+      md: [...dashboardLayout.md, newComponent],
+      sm: [...dashboardLayout.sm, newComponent],
+      xs: [...dashboardLayout.xs, newComponent],
+      xxs: [...dashboardLayout.xxs, newComponent],
+    };
+    setDashboardLayout(updatedLayouts);
+  };
+  const { handleError, handleSuccess } = useNotificationHandlers();
+
+  const updateLayout = async (dashboardLayout) => {
+    const res = await updateUserPref({ dashboardPreferences: dashboardLayout });
+    if (res.error) {
+      handleError('failed to save layout');
+      return;
+    }
+    handleSuccess('Layout saved');
+  };
+
+  const toggleEditMode = () => {
+    setIsEditMode(!isEditMode);
+  };
+  const cancelEditing = () => {
+    setIsEditMode(false);
+    setDashboardLayout(orgDashboardLayout);
+  };
+
+  const saveLayout = () => {
+    updateLayout(dashboardLayout);
+  };
+
+  const resetLayout = () => {
+    setDashboardLayout(defaultLayout);
+    updateLayout(defaultLayout);
+  };
+  const LayoutActions = {
+    START_EDIT: {
+      label: 'Edit',
+      Icon: EditIcon,
+      action: toggleEditMode,
+      description: 'Configure dashboard layout for the current organization',
+      isShown: !isEditMode,
+    },
+    CANCEL_EDIT: {
+      label: 'Cancel',
+      Icon: CloseIcon,
+      action: cancelEditing,
+      description: 'Stop editing and discard any unsaved changes',
+      isShown: isEditMode,
+    },
+
+    SAVE_LAYOUT: {
+      label: 'Save',
+      Icon: SaveAsIcon,
+      description: 'Save the current layout',
+      action: saveLayout,
+      isShown: isEditMode,
+    },
+    SAVE_AND_CLOSE: {
+      label: 'Save and Close',
+      Icon: OutlinedValidateIcon,
+      action: () => {
+        saveLayout();
+        toggleEditMode();
+      },
+
+      isShown: isEditMode,
+      description: 'Save the current layout and close edit mode',
+    },
+
+    RESET_LAYOUT: {
+      label: 'Reset',
+      description: 'Delete custom configuration and reset to default layout',
+      Icon: OutlinedResetIcon,
+      action: resetLayout,
+      isShown: isEditMode,
+    },
+  };
+
+  const topBarActions = Object.entries(_.omit(LayoutActions, 'START_EDIT'))
+    .filter(([, action]) => action.isShown)
+    .map(([key, layoutAction]) => ({ key, ...layoutAction }));
+
+  const onBreakpointChange = (breakpoint) => {
+    if (!isEditMode) {
+      return;
+    }
+    setCurrentBreakpoint(breakpoint);
+  };
+  useEffect(() => {
+    setDashboardLayout(orgDashboardLayout);
+  }, [orgDashboardLayout]);
+
+  const onLayoutChange = (layout, layouts) => {
+    if (!isEditMode) {
+      return;
+    }
+    setDashboardLayout(layouts);
+  };
+
+  const widgetsToRenderForLayout = (layout, breakpoint) => {
+    return layout[breakpoint]
+      .map((layoutItem) => ({
+        key: layoutItem.i,
+        ...(WIDGETS[layoutItem.i] || {}), // old widgets might still be in the layout and now no longer available
+      }))
+      .filter((widget) => widget?.isEnabled?.());
+  };
+
+  const removeWidget = (key) => {
+    setDashboardLayout((currentLayouts) => {
+      const updatedLayout = (currentLayouts[currentBreakPoint] || []).filter((w) => w.i !== key);
+      const updatedLayouts = _.set(currentLayouts, currentBreakPoint, updatedLayout);
+      return { ...updatedLayouts };
+    });
+  };
 
   return (
     <>
-      <div className={classes.wrapperClss}>
-        <Paper square className={classes.wrapperClss}>
+      <>
+        <WrapperPaper>
           <Tabs
+            sx={{
+              [`& .${tabsClasses.scrollButtons}`]: {
+                '&.Mui-disabled': { display: 'none' },
+              },
+            }}
             value={getResourceCategoryIndex(resourceCategory)}
             indicatorColor="primary"
-            className={classes.tabs}
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
-            variant={width < 800 ? 'scrollable' : 'fullWidth'}
-            scrollButtons="on"
+            variant={width < 1080 ? 'scrollable' : 'fullWidth'}
+            allowScrollButtonsMobile
+            scrollButtons
             textColor="primary"
-            centered
           >
             {ResourceCategoryTabs.map((resource, idx) => {
               return (
-                <CustomTextTooltip key={idx} title={`View ${resource}`} placement="top">
+                <CustomTooltip
+                  key={`${resource}-${idx}`}
+                  title={`View ${resource}`}
+                  placement="top"
+                >
                   <Tab
-                    value={idx}
+                    style={{
+                      gap: '0.4rem',
+                    }}
                     key={resource}
-                    className={classes.tab}
                     icon={
                       resource === 'Overview' ? (
                         <MesheryIcon style={iconLarge} />
@@ -190,61 +307,115 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     }
                     label={resource}
                   />
-                </CustomTextTooltip>
+                </CustomTooltip>
               );
             })}
           </Tabs>
-        </Paper>
+        </WrapperPaper>
 
         <TabPanel value={resourceCategory} index={'Overview'}>
-          <Overview />
+          <Box display="flex" flexDirection={'column'} gap="1rem">
+            <Box padding={0} width={'100%'}>
+              <Stack
+                direction="row"
+                useFlexGap
+                gap="0rem 2rem"
+                justifyContent="end"
+                flexWrap={'wrap-reverse'}
+              >
+                {topBarActions.map(({ key, ...layoutAction }) => (
+                  <LayoutActionButton {...layoutAction} key={key} />
+                ))}
+              </Stack>
+
+              <ResponsiveReactGridLayout
+                layouts={dashboardLayout}
+                resizeHandles={availableHandles}
+                isResizable={isEditMode}
+                isDraggable={isEditMode}
+                cols={cols}
+                draggableHandle=".react-grid-dragHandleExample"
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                onBreakpointChange={onBreakpointChange}
+                onLayoutChange={onLayoutChange}
+                measureBeforeMount={false}
+                style={{
+                  backgroundColor: 'transparent',
+                }}
+                containerPadding={[0, 8]}
+              >
+                {widgetsToRenderForLayout(dashboardLayout, currentBreakPoint).map((widget) => {
+                  return (
+                    <div key={widget.key} style={isEditMode ? editModeStyles : {}}>
+                      <ErrorBoundary>
+                        <LayoutWidget
+                          isEditMode={isEditMode}
+                          key={widget.key}
+                          widget={widget}
+                          removeWidget={removeWidget}
+                        />
+                      </ErrorBoundary>
+                    </div>
+                  );
+                })}
+              </ResponsiveReactGridLayout>
+              <LayoutActionButton {...LayoutActions.START_EDIT} />
+            </Box>
+            <AddWidgetsToLayoutPanel
+              editMode={isEditMode}
+              widgetsToAdd={widgetsToAdd}
+              onAddWidget={onAddWidget}
+            />
+          </Box>
         </TabPanel>
-        {Object.keys(ResourcesConfig).map((resource, idx) => (
-          <TabPanel value={resourceCategory} index={resource} key={resource}>
-            {ResourcesConfig[resource].submenu ? (
-              <ResourcesSubMenu
-                key={idx}
-                resource={ResourcesConfig[resource]}
-                selectedResource={selectedResource}
-                handleChangeSelectedResource={handleChangeSelectedResource}
-                updateProgress={updateProgress}
-                classes={classes}
-                k8sConfig={k8sconfig}
-                selectedK8sContexts={selectedK8sContexts}
-              />
-            ) : (
-              <ResourcesTable
-                key={idx}
-                workloadType={resource}
-                classes={classes}
-                k8sConfig={k8sconfig}
-                selectedK8sContexts={selectedK8sContexts}
-                resourceConfig={ResourcesConfig[resource].tableConfig}
-                menu={ResourcesConfig[resource].submenu}
-                updateProgress={updateProgress}
-              />
-            )}
-          </TabPanel>
-        ))}
-      </div>
+
+        {Object.keys(ResourcesConfig).map((resource, idx) => {
+          let CRDsKeys = [];
+          const isCRDS = resource === 'CRDS';
+          if (isCRDS) {
+            const TableValue = Object.values(
+              ResourcesConfig[resource].tableConfig(
+                null,
+                null,
+                k8sConfig,
+                null,
+                resource,
+                selectedK8sContexts,
+              ),
+            );
+            CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
+          }
+
+          return (
+            <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
+              {ResourcesConfig[resource].submenu ? (
+                <ResourcesSubMenu
+                  key={idx}
+                  resource={ResourcesConfig[resource]}
+                  selectedResource={selectedResource}
+                  handleChangeSelectedResource={handleChangeSelectedResource}
+                  k8sConfig={k8sConfig}
+                  selectedK8sContexts={selectedK8sContexts}
+                  CRDsKeys={CRDsKeys}
+                  isCRDS={isCRDS}
+                />
+              ) : (
+                <ResourcesTable
+                  key={idx}
+                  workloadType={resource}
+                  k8sConfig={k8sConfig}
+                  selectedK8sContexts={selectedK8sContexts}
+                  resourceConfig={ResourcesConfig[resource].tableConfig}
+                  menu={ResourcesConfig[resource].submenu}
+                />
+              )}
+            </TabPanel>
+          );
+        })}
+      </>
+      <Popup />
     </>
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-
-  return {
-    k8sconfig,
-    selectedK8sContexts,
-  };
-};
-
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(DashboardComponent))),
-);
+export default DashboardComponent;

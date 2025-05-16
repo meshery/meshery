@@ -17,13 +17,10 @@ package relationships
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -31,53 +28,62 @@ import (
 )
 
 var (
-	outFormatFlag string
-
-	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd}
+	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
 )
+
+type MeshmodelRelationshipsAPIResponse struct {
+	Page          int                                   `json:"page"`
+	PageSize      int                                   `json:"page_size"`
+	Count         int64                                 `json:"total_count"`
+	Relationships []relationship.RelationshipDefinition `json:"relationships"`
+}
 
 var RelationshipCmd = &cobra.Command{
 	Use:   "relationship",
-	Short: "View list of relationships and details of relationship",
-	Long:  "Meshery uses relationships to define how interconnected components interact. View list of relationships and detailed information of a specific relationship",
+	Short: "Manage relationships",
+	Long: `Generate, list, search and view relationship(s) and detailed information
+Meshery uses relationships to define how interconnected components interact.
+`,
 	Example: `
-// To view list of relationships
-mesheryctl exp relationships list
+// Display number of available relationships in Meshery
+mesheryctl relationship --count
 
-// To view a specific relationship
-mesheryctl exp relationships view [model-name]
+// Generate a relationship documentation 
+mesheryctl exp relationship generate [flags]
+
+// List available relationship(s)
+mesheryctl exp relationship list [flags]
+
+// Search for a specific relationship
+mesheryctl exp relationship search [flags] [query-text]
+
+// View a specific relationship
+mesheryctl exp relationship view [model-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			errMsg := "Usage: mesheryctl exp relationships [subcommand]\nRun 'mesheryctl exp relationships --help' to see detailed help message"
-			return utils.ErrInvalidArgument(errors.New("missing required argument: [model-name]. " + errMsg))
+		count, _ := cmd.Flags().GetBool("count")
+		if len(args) == 0 && !count {
+			errMsg := "Usage: mesheryctl exp relationship [subcommand]\nRun 'mesheryctl exp relationship --help' to see detailed help message"
+			return utils.ErrInvalidArgument(fmt.Errorf("no command specified. %s", errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		countFlag, _ := cmd.Flags().GetBool("count")
+		if countFlag {
+			models, err := api.Fetch[MeshmodelRelationshipsAPIResponse]("api/meshmodels/relationships")
+
+			if err != nil {
+				return err
+			}
+
+			utils.DisplayCount("relationships", models.Count)
+
+			return nil
+		}
+
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationships --help' to display usage guide.\n", args[0]), "relationship"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationship --help' to display usage guide.\n", args[0]), "relationship"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -93,38 +99,6 @@ mesheryctl exp relationships view [model-name]
 }
 
 func init() {
-	ViewRelationshipsCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json| yaml]")
-
 	RelationshipCmd.AddCommand(availableSubcommands...)
-}
-
-// selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []entity.Entity) *v1alpha2.RelationshipDefinition {
-	relationshipArray := []v1alpha2.RelationshipDefinition{}
-	relationshipNames := []string{}
-
-	for _, rel := range relationship {
-		_rel, err := mutils.Cast[*v1alpha2.RelationshipDefinition](rel)
-		if err != nil {
-			continue
-		}
-
-		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, _rel.EvaluationQuery, _rel.SubType)
-		relationshipNames = append(relationshipNames, relationshipName)
-	}
-
-	prompt := promptui.Select{
-		Label: "Select a relationship:",
-		Items: relationshipNames,
-	}
-
-	for {
-		i, _, err := prompt.Run()
-		if err != nil {
-			continue
-		}
-
-		return &relationshipArray[i]
-	}
+	RelationshipCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of relationship(s) in total")
 }

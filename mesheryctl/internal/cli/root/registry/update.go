@@ -15,15 +15,17 @@
 package registry
 
 import (
+	// "bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
+	comp "github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
@@ -32,21 +34,26 @@ import (
 var (
 	modelLocation            string
 	logFile                  *os.File
+	errorLogFile             *os.File
 	sheetGID                 int64
 	totalAggregateComponents int
-	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs")
+	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
 )
 
+// This command is used for retreving the information of components based on the sheet. It updates the components with the actual values of the fetched for sheet.
+// Look the utils.ComponentCSV to see the values fetched.
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
-	Long:  "`Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.`",
+	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet.",
 	Example: `
 // Update models from Meshery Integration Spreadsheet
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
 
 // Updating models in the meshery/meshery repo
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
+// Updating models in the meshery/meshery repo based on flag
+mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -80,7 +87,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		err = InvokeCompUpdate()
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		return nil
@@ -113,16 +120,17 @@ func InvokeCompUpdate() error {
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID)
+
+	componentCSVHelper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
 		return err
 	}
 
-	err = componentCSVHelper.ParseComponentsSheet()
+	err = componentCSVHelper.ParseComponentsSheet(modelName)
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
@@ -132,7 +140,6 @@ func InvokeCompUpdate() error {
 	pwd, _ := os.Getwd()
 
 	// var wg sync.WaitGroup
-
 	for registrant, model := range componentCSVHelper.Components {
 		if registrant == "" {
 			continue
@@ -158,7 +165,7 @@ func InvokeCompUpdate() error {
 				totalCompsUpdatedPerModelPerVersion := 0
 
 				if content.IsDir() {
-					if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+					if mutils.FindIndexInSlice(content.Name(), ExcludeDirs) != -1 {
 						continue
 					}
 
@@ -170,14 +177,13 @@ func InvokeCompUpdate() error {
 					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
 
 					for _, component := range components {
-						utils.Log.Info("Updating ", component.Component)
 						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
 						componentByte, err := os.ReadFile(compPath)
 						if err != nil {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						componentDef := v1beta1.ComponentDefinition{}
+						componentDef := comp.ComponentDefinition{}
 						err = json.Unmarshal(componentByte, &componentDef)
 						if err != nil {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
@@ -189,13 +195,22 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						err = mutils.WriteJSONToFile[v1beta1.ComponentDefinition](compPath, componentDef)
+
+						_, err = os.Stat(compPath)
+
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
+
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
 						if err != nil {
 							utils.Log.Error(err)
 							continue
 						}
 						totalCompsUpdatedPerModelPerVersion++
 					}
+
 					compUpdateArray = append(compUpdateArray, compUpdateTracker{
 						totalComps:        availableComponentsPerModelPerVersion,
 						totalCompsUpdated: totalCompsUpdatedPerModelPerVersion,
@@ -221,7 +236,7 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 		}
 	}
 
-	utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", len(values), totalAggregateComponents))
+	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", len(values), totalAggregateComponents))
 }
 
 func init() {
@@ -230,6 +245,7 @@ func init() {
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 
 	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 

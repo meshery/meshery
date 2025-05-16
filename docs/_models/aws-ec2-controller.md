@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS EC2
-subtitle: Collaborative and visual infrastructure as code for AWS EC2
+subtitle: Collaborative and visual infrastructure as design for AWS EC2
 image: /assets/img/integrations/aws-ec2-controller/icons/color/aws-ec2-controller-color.svg
 permalink: extensibility/integrations/aws-ec2-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-ec2-controller
@@ -78,13 +78,36 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/color/vpc-endpoint-service-configuration-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/white/vpc-endpoint-service-configuration-white.svg
   description: 
+- name: capacity-reservation
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+- name: capacity-reservation
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+- name: launch-template
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/color/launch-template-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/launch-template/icons/white/launch-template-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+- name: transit-gateway-vpc-attachment
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/color/transit-gateway-vpc-attachment-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/transit-gateway-vpc-attachment/icons/white/transit-gateway-vpc-attachment-white.svg
+  description: 
+components-count: 22
+relationships: 
+relationship-count: 0
 featureList: [
   "Optimized CPU Configurations",
   "High Packet-Per-Second Performance and Low Latency with Enhanced Networking",
   "High Precision Time with Amazon Time Sync Service
 "
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

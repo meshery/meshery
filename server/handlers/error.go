@@ -70,7 +70,7 @@ const (
 	ErrPatternFileCode                     = "meshery-server-1070"
 	ErrExecutionPlanCode                   = "meshery-server-1071"
 	ErrInvalidPatternCode                  = "meshery-server-1072"
-	ErrCompConfigPairsCode                 = "meshery-server-1073"
+	ErrPatternDeployCode                   = "meshery-server-1073"
 	ErrCreateDirCode                       = "meshery-server-1074"
 	ErrInvalidRequestObjectCode            = "meshery-server-1075"
 	ErrChangeK8sContextCode                = "meshery-server-1076"
@@ -132,28 +132,56 @@ const (
 	ErrWaklingLocalDirectoryCode           = "meshery-server-1132"
 	ErrConvertingK8sManifestToDesignCode   = "meshery-server-1133"
 	ErrConvertingDockerComposeToDesignCode = "meshery-server-1134"
-	ErrMarshallingDesignIntoYAMLCode       = "meshery-server-1135"
 	ErrConvertingHelmChartToDesignCode     = "meshery-server-1136"
 	ErrInvalidUUIDCode                     = "meshery-server-1137"
 	ErrPersistEventToRemoteProviderCode    = "meshery-server-1320"
+	ErrEventStreamingNotSupportedCode      = "meshery-server-1324"
+	ErrGenerateClusterContextCode          = "meshery-server-1325"
+	ErrNilClusterContextCode               = "meshery-server-1326"
+	ErrFailToSaveContextCode               = "meshery-server-1327"
+	ErrParsingCallBackUrlCode              = "meshery-server-1328"
+	ErrReadSessionPersistorCode            = "meshery-server-1329"
+	ErrFailToGetK8SContextCode             = "meshery-server-1330"
+	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
+	ErrNoTarInsideOCiCode                  = "meshery-server-1365"
+	ErrEmptyOCIImageCode                   = "meshery-server-1360"
+	ErrGetComponentDefinitionCode          = "meshery-server-1362"
+	ErrGetCapabilitiesCode                 = "meshery-server-1363"
+	ErrExportPatternInFormatCode           = "meshery-server-1364"
+	ErrFileTypeCode                        = "meshery-server-1366"
+	ErrCreatingOPAInstanceCode             = "meshery-server-1367"
 )
 
 var (
-	ErrInvalidK8SConfigNil = errors.New(ErrInvalidK8SConfigNilCode, errors.Alert, []string{"No valid kubernetes config found. Make sure to pass contextIDs in query parameters."}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrNilClient           = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to meshery or not valid"}, []string{"Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
-	ErrPrometheusConfig    = errors.New(ErrPrometheusConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{"Prometheus endpoint might not be reachable from meshery"}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
-	ErrGrafanaConfig       = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Grafana endpoint not configured"}, []string{"Cannot find valid grafana endpoint in user pref"}, []string{"Grafana endpoint might not be reachable from meshery"}, []string{"Setup your Grafana Endpoint via the settings dashboard"})
-	ErrStaticBoards        = errors.New(ErrStaticBoardsCode, errors.Alert, []string{"unable to get static board"}, []string{"unable to get static board"}, []string{"No boards could be available in grafana"}, []string{})
-	ErrValidAdapter        = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
-	ErrAddAdapter          = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
-	ErrMeshClient          = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
-	ErrWriteResponse       = errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{}, []string{}, []string{})
-	ErrTestConfigs         = errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
-	ErrInvalidGenValue     = errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
-	ErrParseDuration       = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
-	ErrPerformanceTest     = errors.New(ErrPerformanceTestCode, errors.Alert, []string{"Load test error"}, []string{}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
+	ErrInvalidK8SConfigNil        = errors.New(ErrInvalidK8SConfigNilCode, errors.Alert, []string{"No valid Kubernetes config found. Make sure to pass contextIDs in query parameters."}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to Meshery or not valid"}, []string{"Upload your Kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	ErrNilClient                  = errors.New(ErrNilClientCode, errors.Alert, []string{"Kubernetes client not initialized"}, []string{"Kubernetes config is not initialized with Meshery"}, []string{"Kubernetes config is not accessible to Meshery or not valid"}, []string{"Upload your Kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"})
+	ErrPrometheusConfig           = errors.New(ErrPrometheusConfigCode, errors.Alert, []string{"Prometheus endpoint not configured"}, []string{"Cannot find valid Prometheus endpoint in user pref"}, []string{"Prometheus endpoint might not be reachable from Meshery"}, []string{"Setup your Prometheus Endpoint via the settings dashboard"})
+	ErrGrafanaConfig              = errors.New(ErrGrafanaConfigCode, errors.Alert, []string{"Grafana endpoint not configured"}, []string{"Cannot find valid grafana endpoint in user pref"}, []string{"Grafana endpoint might not be reachable from Meshery"}, []string{"Setup your Grafana Endpoint via the settings dashboard"})
+	ErrStaticBoards               = errors.New(ErrStaticBoardsCode, errors.Alert, []string{"unable to get static board"}, []string{"unable to get static board"}, []string{"No boards could be available in grafana"}, []string{})
+	ErrValidAdapter               = errors.New(ErrValidAdapterCode, errors.Alert, []string{"Unable to find valid Adapter URL"}, []string{"unable to find a valid adapter for the given adapter URL"}, []string{"Given adapter URL is not valid"}, []string{"Please provide a valid Adapter URL"})
+	ErrAddAdapter                 = errors.New(ErrAddAdapterCode, errors.Alert, []string{"meshLocationURL is empty"}, []string{"meshLocationURL is empty to add an adapter"}, []string{"meshLocationURL cannot be empty to add an adapter"}, []string{"please provide the meshLocationURL"})
+	ErrMeshClient                 = errors.New(ErrMeshClientCode, errors.Alert, []string{"Error creating a mesh client", "Error pinging the mesh adapter"}, []string{"Unable to create a mesh client", "Unable to ping the mesh adapter"}, []string{"Adapter could not be pinged"}, []string{"Unable to connect to the Mesh adapter using the given config, please try again"})
+	ErrTestConfigs                = errors.New(ErrTestConfigsCode, errors.Alert, []string{"Error fetching test configs"}, []string{}, []string{}, []string{})
+	ErrInvalidGenValue            = errors.New(ErrInvalidGenValueCode, errors.Alert, []string{"Invalid value for gen"}, []string{}, []string{}, []string{"please provide a valid value for gen (load generator)"})
+	ErrParseDuration              = errors.New(ErrParseDurationCode, errors.Alert, []string{"error parsing test duration"}, []string{}, []string{"The format of the duration passed could be incorrect"}, []string{"please refer to:  https://docs.meshery.io/guides/mesheryctl#performance-management"})
+	ErrPerformanceTest            = errors.New(ErrPerformanceTestCode, errors.Alert, []string{"Load test error"}, []string{}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
+	ErrEventStreamingNotSupported = errors.New(ErrEventStreamingNotSupportedCode, errors.Alert, []string{"Live events stream not supported."}, []string{"Our server cannot provide live events streaming at the moment. This might be due to a technical issue with our system."}, []string{}, []string{})
+	ErrReadSessionPersistor       = errors.New(ErrReadSessionPersistorCode, errors.Alert, []string{"Unable to read session from the session persister, starting with a new one"}, []string{}, []string{}, []string{})
+	ErrFailToGetK8SContext        = errors.New(ErrFailToGetK8SContextCode, errors.Alert, []string{"Failed to get Kubernetes context"}, []string{}, []string{}, []string{})
 )
 
+func ErrGenerateClusterContext(err error) error {
+	return errors.New(ErrGenerateClusterContextCode, errors.Alert, []string{"Failed to generate in cluster context."}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrNilClusterContext(err error) error {
+	return errors.New(ErrNilClusterContextCode, errors.Alert, []string{"Nil context generated from in cluster config"}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrWriteResponse(err error) error {
+	return errors.New(ErrWriteResponseCode, errors.Alert, []string{"Error writing response"}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrFailToSaveContext(err error) error {
+	return errors.New(ErrFailToSaveContextCode, errors.Alert, []string{"Failed to save the context"}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrGenerateComponents(err error) error {
 	return errors.New(ErrGenerateComponentsCode, errors.Alert, []string{"failed to generate components for the given payload"}, []string{err.Error()}, []string{}, []string{"Make sure the payload is valid"})
 }
@@ -161,17 +189,22 @@ func ErrGenerateComponents(err error) error {
 func ErrValidate(err error) error {
 	return errors.New(ErrValidateCode, errors.Alert, []string{"failed to validate the given value against the schema"}, []string{err.Error()}, []string{"unable to validate the value against given schema", "either value or schema might not be a valid cue expression"}, []string{"Make sure that the schema and value provided are valid cue values", "Make sure both schema and value are sent", "Make sure appropriate value types are sent"})
 }
-
+func ErrParsingCallBackUrl(err error) error {
+	return errors.New(ErrParsingCallBackUrlCode, errors.Alert, []string{"Failed to parse the callback URL"}, []string{err.Error()}, []string{"callback URL might be empty"}, []string{"Make sure the callback URL is not empty"})
+}
+func ErrFailToLoadK8sContext(err error) error {
+	return errors.New(ErrFailToLoadK8sContextCode, errors.Alert, []string{"Failed to load Kubernetes context"}, []string{err.Error()}, []string{}, []string{})
+}
 func ErrPrometheusQuery(err error) error {
-	return errors.New(ErrPrometheusQueryCode, errors.Alert, []string{"Unable to query prometheus"}, []string{err.Error()}, []string{"Prometheus query did not get executed from meshery", "Prometheus query is invalid"}, []string{"Check if your Prometheus query is correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
+	return errors.New(ErrPrometheusQueryCode, errors.Alert, []string{"Unable to query prometheus"}, []string{err.Error()}, []string{"Prometheus query did not get executed from Meshery", "Prometheus query is invalid"}, []string{"Check if your Prometheus query is correct", "Connect to Prometheus and Grafana from the settings page in the UI"})
 }
 
 func ErrGrafanaQuery(err error) error {
-	return errors.New(ErrGrafanaQueryCode, errors.Alert, []string{"Unable to query grafana"}, []string{err.Error()}, []string{"Grafana query did not get executed from meshery", "Grafana query is invalid"}, []string{"Check if your Grafana query is correct", "Connect to Grafana from the settings page in the UI"})
+	return errors.New(ErrGrafanaQueryCode, errors.Alert, []string{"Unable to query Grafana"}, []string{err.Error()}, []string{"Grafana query did not get executed from Meshery", "Grafana query is invalid"}, []string{"Check if your Grafana query is correct", "Connect to Grafana from the settings page in the UI"})
 }
 
 func ErrPrometheusBoards(err error) error {
-	return errors.New(ErrPrometheusBoardsCode, errors.Alert, []string{"unable to get Prometheus boards"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint is correct", "Connect to Prometheus from the settings page in the UI"})
+	return errors.New(ErrPrometheusBoardsCode, errors.Alert, []string{"unable to get Prometheus boards"}, []string{err.Error()}, []string{"Prometheus endpoint might not be reachable from Meshery", "Prometheus endpoint is incorrect"}, []string{"Check if your Prometheus endpoint is correct", "Connect to Prometheus from the settings page in the UI"})
 }
 
 func ErrRecordPreferences(err error) error {
@@ -179,7 +212,7 @@ func ErrRecordPreferences(err error) error {
 }
 
 func ErrKubeClient(err error) error {
-	return errors.New(ErrKubeClientCode, errors.Alert, []string{"Failed to Create Kube Client", err.Error()}, []string{err.Error()}, []string{"Check Kubernetes"}, []string{"Check your kubeconfig if valid", "Ensure meshery is able to reach the kubernetes cluster"})
+	return errors.New(ErrKubeClientCode, errors.Alert, []string{"Failed to Create Kube Client", err.Error()}, []string{err.Error()}, []string{"Check Kubernetes"}, []string{"Check your kubeconfig if valid", "Ensure Meshery is able to reach the Kubernetes cluster"})
 }
 
 func ErrWorkloadDefinition(err error) error {
@@ -206,8 +239,8 @@ func ErrExecutionPlan(err error) error {
 	return errors.New(ErrExecutionPlanCode, errors.Alert, []string{"Failed to Create Execution Plan", err.Error()}, []string{err.Error()}, []string{"Trait Definition is invalid or unable to process"}, []string{"Check Trait Definition"})
 }
 
-func ErrCompConfigPairs(err error) error {
-	return errors.New(ErrCompConfigPairsCode, errors.Alert, []string{"unable to Create Comp Config.", err.Error()}, []string{err.Error()}, []string{}, []string{})
+func ErrPatternDeploy(err error, patternName string) error {
+	return errors.New(ErrPatternDeployCode, errors.Alert, []string{"Unable to deploy the selected design \"%s\"", patternName}, []string{err.Error()}, []string{"Connection Error: There was an error connecting to the selected target platform (i.e. Kubernetes cluster(s)).", "This connection might not be assigned to the selected environment."}, []string{"Verify that the Kubernetes connection status is 'Connected' or try uploading a new kubeconfig.", "Assign the current Kubernetes connection to the selected environment."})
 }
 
 func ErrRequestBody(err error) error {
@@ -227,11 +260,11 @@ func ErrStreamClient(err error) error {
 }
 
 func ErrPublishSmiResults(err error) error {
-	return errors.New(ErrPublishSmiResultsCode, errors.Alert, []string{"Error publishing SMI results"}, []string{err.Error()}, []string{"Meshery Cloud is not functional or reachable"}, []string{"Make sure meshery cloud is up and reachable"})
+	return errors.New(ErrPublishSmiResultsCode, errors.Alert, []string{"Error publishing SMI results"}, []string{err.Error()}, []string{"Meshery Cloud is not functional or reachable"}, []string{"Make sure Meshery cloud is up and reachable"})
 }
 
 func ErrPluginOpen(err error) error {
-	return errors.New(ErrPluginOpenCode, errors.Alert, []string{"Error opening the plugin"}, []string{err.Error()}, []string{"Plugin is not available in the location", "plugin does not match with meshery version"}, []string{"Make sure the plugin is compatible with Meshery server"})
+	return errors.New(ErrPluginOpenCode, errors.Alert, []string{"Error opening the plugin"}, []string{err.Error()}, []string{"Plugin is not available in the location", "plugin does not match with Meshery version"}, []string{"Make sure the plugin is compatible with Meshery server"})
 }
 
 func ErrPluginLookup(err error) error {
@@ -239,7 +272,7 @@ func ErrPluginLookup(err error) error {
 }
 
 func ErrPluginRun(err error) error {
-	return errors.New(ErrPluginRunCode, errors.Alert, []string{"Error running meshery plugin"}, []string{err.Error()}, []string{"plugin does not match with meshery version"}, []string{"Make sure the plugin is compatible with Meshery server"})
+	return errors.New(ErrPluginRunCode, errors.Alert, []string{"Error running Meshery plugin"}, []string{err.Error()}, []string{"plugin does not match with Meshery version"}, []string{"Make sure the plugin is compatible with Meshery server"})
 }
 
 func ErrParseForm(err error) error {
@@ -263,27 +296,27 @@ func ErrFetchSMIResults(err error) error {
 }
 
 func ErrFormFile(err error) error {
-	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting k8s file"}, []string{err.Error()}, []string{"The kubeconfig file does not exist in the location"}, []string{"Make sure to upload the correct kubeconfig file"})
+	return errors.New(ErrFormFileCode, errors.Alert, []string{"error getting kubeconfig file"}, []string{err.Error()}, []string{"The kubeconfig file does not exist in the location."}, []string{"Make sure to upload the correct kubeconfig file."})
 }
 
 func ErrReadConfig(err error) error {
-	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config"}, []string{err.Error()}, []string{"The kubeconfig file is empty or not valid"}, []string{"Make sure to upload the correct kubeconfig file"})
+	return errors.New(ErrReadConfigCode, errors.Alert, []string{"error reading config."}, []string{err.Error()}, []string{"The kubeconfig file is empty or not valid."}, []string{"Make sure to upload the correct kubeconfig file."})
 }
 
 func ErrLoadConfig(err error) error {
-	return errors.New(ErrLoadConfigCode, errors.Alert, []string{"unable to load kubernetes config"}, []string{err.Error()}, []string{"The kubeconfig file is empty or not valid"}, []string{"Make sure to upload the correct kubeconfig file"})
+	return errors.New(ErrLoadConfigCode, errors.Alert, []string{"unable to load Kubernetes config"}, []string{err.Error()}, []string{"The kubeconfig file is empty or not valid"}, []string{"Make sure to upload the correct kubeconfig file"})
 }
 
 func ErrOpenFile(file string) error {
-	return errors.New(ErrOpenFileCode, errors.Alert, []string{"unable to open file: ", file}, []string{}, []string{"The file does not exist in the location"}, []string{"Make sure to upload the correct file"})
+	return errors.New(ErrOpenFileCode, errors.Alert, []string{"Unable to open file: ", file}, []string{}, []string{"The file does not exist in the location."}, []string{"Make sure to upload the correct file."})
 }
 
 func ErrKubeVersion(err error) error {
-	return errors.New(ErrKubeVersionCode, errors.Alert, []string{"unable to get kubernetes version"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to kubernetes"})
+	return errors.New(ErrKubeVersionCode, errors.Alert, []string{"Unable to get Kubernetes version."}, []string{err.Error()}, []string{"Kubernetes might not be reachable from Meshery."}, []string{"Make sure Meshery has connectivity to Kubernetes."})
 }
 
 func ErrRetrieveData(err error) error {
-	return errors.New(ErrRetrieveDataCode, errors.Alert, []string{"Unable to retrieve the requested data"}, []string{err.Error()}, []string{"Adapter operation invalid"}, []string{"Make sure adapter is reachable and running"})
+	return errors.New(ErrRetrieveDataCode, errors.Alert, []string{"Unable to retrieve the requested data"}, []string{err.Error()}, []string{"Adapter operation invalid"}, []string{"Make sure adapter is running and reachable by Meshery Server."})
 }
 
 func ErrOperationID(err error) error {
@@ -295,7 +328,7 @@ func ErrApplyChange(err error) error {
 }
 
 func ErrRetrieveMeshData(err error) error {
-	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the mesh", "Error getting component name"}, []string{err.Error()}, []string{"unable to retrieve the requested data"}, []string{"Make sure adapter is reachable and running"})
+	return errors.New(ErrRetrieveMeshDataCode, errors.Alert, []string{"Error getting operations for the adapter.", "Error getting component name."}, []string{err.Error()}, []string{"Unable to retrieve the requested data."}, []string{"Make sure adapter is reachable and running."})
 }
 
 func ErrApplicationFailure(err error, obj string) error {
@@ -307,7 +340,7 @@ func ErrApplicationSourceContent(err error, obj string) error {
 }
 
 func ErrDesignSourceContent(err error, obj string) error {
-	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable", "Remote provider doesn't support this capability"}, []string{"Ensure you have required permissions or retry after sometime."})
+	return errors.New(ErrDesignSourceContentCode, errors.Alert, []string{"failed to ", obj, "the design content"}, []string{err.Error()}, []string{"Remote provider might be not reachable.", "Remote provider doesn't support this capability."}, []string{"Ensure you have required permissions or retry after sometime."})
 }
 
 func ErrDownloadWASMFile(err error, obj string) error {
@@ -330,7 +363,7 @@ func ErrFailToDelete(err error, obj string) error {
 }
 
 func ErrBlankName(err error) error {
-	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank"}, []string{err.Error()}, []string{"Load test name empty or not valid"}, []string{"Provide a name for the test"})
+	return errors.New(ErrBlankNameCode, errors.Alert, []string{"Error: name field is blank."}, []string{err.Error()}, []string{"Load test name empty or not valid."}, []string{"Provide a name for the test."})
 }
 
 func ErrConversion(err error) error {
@@ -338,35 +371,35 @@ func ErrConversion(err error) error {
 }
 
 func ErrLoadTest(err error, obj string) error {
-	return errors.New(ErrLoadTestCode, errors.Alert, []string{"Load test error: ", obj}, []string{err.Error()}, []string{"Load test endpoint could be not reachable"}, []string{"Make sure load test endpoint is reachable"})
+	return errors.New(ErrLoadTestCode, errors.Alert, []string{"Load test error: ", obj}, []string{err.Error()}, []string{"Load test endpoint might be not reachable."}, []string{"Make sure load test endpoint is reachable by Meshery Server."})
 }
 
 func ErrFetchKubernetes(err error) error {
-	return errors.New(ErrFetchKubernetesCode, errors.Alert, []string{"unable to ping kubernetes", "unable to scan"}, []string{err.Error()}, []string{"Kubernetes might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to kubernetes"})
+	return errors.New(ErrFetchKubernetesCode, errors.Alert, []string{"Unable to ping Kubernetes.", "Unable to run a discovery scan for Kubernetes cluster."}, []string{err.Error()}, []string{"Kubernetes might not be reachable from Meshery."}, []string{"Make sure Meshery has connectivity to Kubernetes."})
 }
 
 func ErrPanicRecovery(r interface{}) error {
-	return errors.New(ErrPanicRecoveryCode, errors.Alert, []string{"Recovered from panic"}, []string{fmt.Sprint(r)}, []string{"Meshery crashes"}, []string{"Restart Meshery"})
+	return errors.New(ErrPanicRecoveryCode, errors.Alert, []string{"Recovered from panic."}, []string{fmt.Sprint(r)}, []string{"Meshery crashed."}, []string{"Restart Meshery."})
 }
 
 func ErrFailToLoadExtensions(err error) error {
-	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package"}, []string{err.Error()}, []string{"Plugin is not available in the location", "plugin does not match with meshery version"}, []string{"Make sure the plugin is compatible with Meshery server"})
+	return errors.New(ErrFailToLoadExtensionsCode, errors.Alert, []string{"Failed to Load Extensions from Package."}, []string{err.Error()}, []string{"Plugin is not available in the location.", "Plugin does not match with Meshery version."}, []string{"Make sure the plugin is compatible with Meshery server."})
 }
 
 func ErrInvalidLTURL(url string) error {
-	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid loadtest url: ", url}, []string{}, []string{"URL for load test could be invalid"}, []string{"please refer to: https://docs.meshery.io/tasks/performance-management"})
+	return errors.New(ErrInvalidLTURLCode, errors.Alert, []string{"invalid load test url: ", url}, []string{}, []string{"URL for load test could be invalid."}, []string{"Please refer to: https://docs.meshery.io/tasks/performance-management"})
 }
 
 func ErrVersionCompare(err error) error {
-	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrVersionCompareCode, errors.Alert, []string{"failed to compare latest and current version of Meshery."}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGetLatestVersion(err error) error {
-	return errors.New(ErrGetLatestVersionCode, errors.Alert, []string{"failed to get latest version of Meshery"}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGetLatestVersionCode, errors.Alert, []string{"failed to get latest version of Meshery."}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrSaveSession(err error) error {
-	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session"}, []string{err.Error()}, []string{"User session could be expired"}, []string{"Re-initiate login"})
+	return errors.New(ErrSaveSessionCode, errors.Alert, []string{"unable to save session."}, []string{err.Error()}, []string{"User session could be expired."}, []string{"Re-initiate login."})
 }
 
 func ErrCreateDir(err error, obj string) error {
@@ -378,19 +411,19 @@ func ErrInvalidRequestObject(fields ...string) error {
 }
 
 func ErrChangeK8sContext(err error) error {
-	return errors.New(ErrChangeK8sContextCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig then try uploading the kubeconfig again"})
+	return errors.New(ErrChangeK8sContextCode, errors.Alert, []string{"Error changing context"}, []string{err.Error()}, []string{"Context Name might be invalid or not present in the uploaded kubeconfig"}, []string{"Check the context name, if the context name is correct and is present in the kubeconfig, then try uploading the kubeconfig again."})
 }
 
 func ErrInvalidKubeConfig(err error, content string) error {
-	return errors.New(ErrInvalidKubeConfigCode, errors.Alert, []string{"Invalid Kube Config ", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes config for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+	return errors.New(ErrInvalidKubeConfigCode, errors.Alert, []string{"Invalid Kube Config ", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid Kubernetes config for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server"})
 }
 
-func ErrInvalidKubeHandler(err error, content string) error {
-	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Invalid Kube Handler", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes handler for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+func ErrInvalidKubeHandler(err error, userId string) error {
+	return errors.New(ErrInvalidKubeHandlerCode, errors.Alert, []string{"Kubernetes cluster is unavailable for ", userId}, []string{err.Error()}, []string{"There might be a network disruption or the Meshery server does not have valid credentials."}, []string{"Try uploading a new kubeconfig.", "Check the network connection and Kubernetes cluster status.", "Verify that the Meshery server has valid and updated credentials to access the Kubernetes cluster."})
 }
 
 func ErrInvalidKubeContext(err error, content string) error {
-	return errors.New(ErrInvalidKubeContextCode, errors.Alert, []string{"Invalid Kube Context", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid kubernetes context for the deployment"}, []string{"Try uploading a new kubeconfig and also ensure that meshery can reach kubernetes API server"})
+	return errors.New(ErrInvalidKubeContextCode, errors.Alert, []string{"Invalid Kube Context", content}, []string{err.Error()}, []string{"Meshery handler failed to find a valid Kubernetes context for the deployment."}, []string{"Try uploading a new kubeconfig and also ensure that Meshery can reach Kubernetes API server."})
 }
 
 func ErrSavingUserPreference(err error) error {
@@ -418,19 +451,19 @@ func ErrImportFilter(err error) error {
 }
 
 func ErrFetchFilter(err error) error {
-	return errors.New(ErrFetchFilterCode, errors.Alert, []string{"Error failed to fetch filter"}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Filters"}, []string{})
+	return errors.New(ErrFetchFilterCode, errors.Alert, []string{"Error failed to fetch filter."}, []string{err.Error()}, []string{"Failed to retrieve the list of all the Filters"}, []string{})
 }
 
 func ErrDeleteFilter(err error) error {
-	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter"}, []string{err.Error()}, []string{"Failed to delete Filter with the given ID"}, []string{"Check if the Filter ID is correct"})
+	return errors.New(ErrDeleteFilterCode, errors.Alert, []string{"Error failed to delete filter."}, []string{err.Error()}, []string{"Failed to delete Filter with the given ID"}, []string{"Check if the Filter ID is correct"})
 }
 
 func ErrSavePattern(err error) error {
-	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design"}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Confirm the correct path / URL to the design"})
+	return errors.New(ErrSavePatternCode, errors.Alert, []string{"Error failed to save design."}, []string{err.Error()}, []string{"Cannot save the design due to an invalid path or URL"}, []string{"Verify that you have an active user session. Try logging and in again.", "Confirm that you have sufficient permissions to save the design.", "Try reducing the size of the design file by removing the number of images, using alternative image formats or removing other non-critical components from the design. See https://docs.layer5.io/kanvas/advanced/performance/."})
 }
 
 func ErrSaveApplication(err error) error {
-	return errors.New(ErrSaveApplicationCode, errors.Alert, []string{"Error failed to save application"}, []string{err.Error()}, []string{"Cannot save the Application due to wrong path or URL"}, []string{"Check if the given path or URL of the Application is correct"})
+	return errors.New(ErrSaveApplicationCode, errors.Alert, []string{"Error failed to save application."}, []string{err.Error()}, []string{"Cannot save the Application due to wrong path or URL."}, []string{"Check if the given path or URL of the Application is correct."})
 }
 
 func ErrFetchApplication(err error) error {
@@ -501,6 +534,10 @@ func ErrGetMeshModels(err error) error {
 	return errors.New(ErrGetMeshModelsCode, errors.Alert, []string{"could not get meshmodel entitities"}, []string{err.Error()}, []string{"Meshmodel entity could not be converted into valid json", "data in the registry was inconsistent"}, []string{"make sure correct and consistent data is present inside the registry", "drop the Meshmodel tables and restart Meshery server"})
 }
 
+func ErrGetComponentDefinition(err error) error {
+	return errors.New(ErrGetComponentDefinitionCode, errors.Alert, []string{"component definition not found"}, []string{err.Error()}, []string{"Component might not have been registered", "The component might not be supported by default, in the version of Meshery you are currently using."}, []string{"Ensure component definition is valid JSON/YAML.", "Import the model and try again."})
+}
+
 func ErrGetUserDetails(err error) error {
 	return errors.New(ErrGetUserDetailsCode, errors.Alert, []string{"could not get user details"}, []string{err.Error()}, []string{"User details could not be fetched from provider", "Your provider may not be reachable", "No user exists for the provided token"}, []string{"Make sure provider is reachable", "Make sure you are logged in", "Make sure you are using a valid token"})
 }
@@ -547,7 +584,7 @@ func ErrUnsupportedEventStatus(err error, status string) error {
 
 // ErrFetchMeshSyncResources
 func ErrFetchMeshSyncResources(err error) error {
-	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from meshery"}, []string{"Make sure meshery has connectivity to MeshSync", "Try restarting Meshery server"})
+	return errors.New(ErrFetchMeshSyncResourcesCode, errors.Alert, []string{"Error fetching MeshSync resources", "DB might be corrupted"}, []string{err.Error()}, []string{"MeshSync might not be reachable from Meshery"}, []string{"Make sure Meshery has connectivity to MeshSync", "Try restarting Meshery server"})
 }
 
 func ErrGetConnections(err error) error {
@@ -555,7 +592,7 @@ func ErrGetConnections(err error) error {
 }
 
 func ErrWritingIntoFile(err error, obj string) error {
-	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s" + obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
+	return errors.New(ErrWritingIntoFileCode, errors.Alert, []string{fmt.Sprintf("failed to write into file %s", obj)}, []string{err.Error()}, []string{"Insufficient permissions to write into file", "file might be corrupted"}, []string{"check if sufficient permissions are givent to the file", "check if the file is corrupted"})
 }
 
 func ErrBuildOCIImg(err error) error {
@@ -565,7 +602,9 @@ func ErrBuildOCIImg(err error) error {
 func ErrSaveOCIArtifact(err error) error {
 	return errors.New(ErrSaveOCIArtifactCode, errors.Alert, []string{"Failed to persist OCI artifact"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted", "unable to persist in requested location", "OCI img may be corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted", "check if sufficient permissions are available to write in requested location", "check if the OCI img is not corrupted"})
 }
-
+func ErrFileType(obj string) error {
+	return errors.New(ErrFileTypeCode, errors.Alert, []string{"Error: ", obj, " is not a valid file type"}, []string{fmt.Sprintf("file is not the expected type %splease verify the file type", obj)}, []string{"The provided file type is wrong"}, []string{"Verify the file type"})
+}
 func ErrIOReader(err error) error {
 	return errors.New(ErrIOReaderCode, errors.Alert, []string{"Failed to read from io.Reader"}, []string{err.Error()}, []string{"unable to read from io.Reader"}, []string{"check if the io.Reader is valid"})
 }
@@ -586,10 +625,6 @@ func ErrConvertingDockerComposeToDesign(err error) error {
 	return errors.New(ErrConvertingDockerComposeToDesignCode, errors.Alert, []string{"Failed to convert docker compose to design"}, []string{err.Error()}, []string{"unable to convert docker compose to design", "docker compose may be corrupted", "incorrect source type selected"}, []string{"check if the docker compose is valid and not corrupted", "check if the source type selected is Docker Compose"})
 }
 
-func ErrMarshallingDesignIntoYAML(err error) error {
-	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
-}
-
 func ErrConvertingHelmChartToDesign(err error) error {
 	return errors.New(ErrConvertingHelmChartToDesignCode, errors.Alert, []string{"Failed to convert helm chart to design"}, []string{err.Error()}, []string{"unable to convert helm chart to design", "helm chart may be corrupted", "incorrect source type selected"}, []string{"check if the helm chart is valid and not corrupted", "check if the source type selected is Helm Chart"})
 }
@@ -600,4 +635,21 @@ func ErrInvalidUUID(err error) error {
 
 func ErrPersistEventToRemoteProvider(err error) error {
 	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
+}
+func ErrNoTarInsideOCi() error {
+	return errors.New(ErrNoTarInsideOCiCode, errors.Alert, []string{"No tar file found inside OCI image"}, []string{"Unable to locate the compressed file(.tar.gz) inside the OCI image."}, []string{"The OCI image does not contain a ziped file."}, []string{"Verify that the OCI image contains a ziped file."})
+}
+func ErrEmptyOCIImage(err error) error {
+	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrGetCapabilities(err error, userId string) error {
+	return errors.New(ErrGetCapabilitiesCode, errors.Alert, []string{fmt.Sprintf("failed to get capabilities for the user with id: \"%s\"", userId)}, []string{err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
+}
+
+func ErrExportPatternInFormat(err error, format, designName string) error {
+	return errors.New(ErrExportPatternInFormatCode, errors.Alert, []string{fmt.Sprintf("Failed to export design file \"%s\" as \"%s\"", designName, format)}, []string{err.Error()}, []string{fmt.Sprintf("Current version of Meshery does not support exporting in \"%s\" format", format)}, []string{"Export design in one of the supported format."})
+}
+func ErrCreatingOPAInstance(err error) error {
+	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})
 }

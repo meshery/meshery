@@ -7,7 +7,7 @@ import {
   MenuItem,
   MenuList,
   ClickAwayListener,
-} from '@material-ui/core';
+} from '@layer5/sistent';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function ActionButton({ defaultActionClick, options }) {
@@ -34,15 +34,30 @@ export default function ActionButton({ defaultActionClick, options }) {
   return (
     <React.Fragment>
       <ButtonGroup
-        variant="contained"
+        variant="outlined"
         style={{ boxShadow: 'none' }}
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <Button onClick={defaultActionClick} variant="contained">
+        <Button
+          sx={{
+            padding: '6px 9px',
+            borderRadius: '8px',
+          }}
+          onClick={defaultActionClick}
+          variant="outlined"
+        >
           Action
         </Button>
-        <Button size="small" onClick={handleToggle} variant="contained">
+        <Button
+          sx={{
+            padding: '6px 9px',
+            borderRadius: '8px',
+          }}
+          size="small"
+          onClick={handleToggle}
+          variant="outlined"
+        >
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>

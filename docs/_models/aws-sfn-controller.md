@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Step Functions
-subtitle: Collaborative and visual infrastructure as code for AWS Step Functions
+subtitle: Collaborative and visual infrastructure as design for AWS Step Functions
 image: /assets/img/integrations/aws-sfn-controller/icons/color/aws-sfn-controller-color.svg
 permalink: extensibility/integrations/aws-sfn-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-sfn-controller
@@ -26,12 +26,15 @@ components:
   colorIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/color/state-machine-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/white/state-machine-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Step Functions is based on state machines and tasks.",
   "Supports Catch and Retry statements",
   "Examine the state of each step in your workflow to make sure that your application runs in order and as expected"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kubeflow
-subtitle: Collaborative and visual infrastructure as code for Kubeflow
+subtitle: Collaborative and visual infrastructure as design for Kubeflow
 image: /assets/img/integrations/kubeflow/icons/color/kubeflow-color.svg
 permalink: extensibility/integrations/kubeflow
 docURL: https://docs.meshery.io/extensibility/integrations/kubeflow
@@ -42,12 +42,15 @@ components:
   colorIcon: assets/img/integrations/kubeflow/components/auth-code/icons/color/auth-code-color.svg
   whiteIcon: assets/img/integrations/kubeflow/components/auth-code/icons/white/auth-code-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Make deployments of machine learning (ML) workflows on Kubernetes simple, portable and scalable. ",
   "Design and manage you the machine learning toolkit for Kubernetes",
   "Easy, repeatable, portable deployments on a diverse infrastructure (for example, experimenting on a laptop, then moving to an on-premises cluster or to the cloud)"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

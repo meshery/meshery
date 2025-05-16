@@ -1,0 +1,56 @@
+{
+    "schemaVersion": "relationships.meshery.io/v1alpha3",
+    "version": "v1.0.0",
+    "kind": "edge",
+    "subType": "annotation",
+    "type": "non-binding",
+    "metadata": {
+        "description": "A relationship that defines annotation edges between components",
+        "styles": {
+            "line-style": "solid",
+            "line-color": "#00B39F",
+            "target-arrow-color": "#00B39F",
+            "targetArrowShape": "triangle"
+        }
+    },
+    "model": {
+        "schemaVersion": "core.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "meshery-shapes",
+        "model": {
+            "version": "0.7.1"
+        },
+        "displayName": "Meshery Shapes",
+        "category": {
+            "name": "Orchestration \u0026 Management",
+            "metadata": null
+        },
+        "metadata": {}
+    },
+    "status": "enabled",
+    "selectors": [
+        {
+            "allow": {
+                "from": [
+                    {
+                        "kind": "*",
+                        "model": {
+                            "name": "*"
+                        }
+                    }
+                ],
+                "to": [
+                    {
+                        "kind": "*",
+                        "model": {
+                            "name": "*"
+                        }
+                    }
+                ]
+            },
+            "deny": {
+                "from": []
+            }
+        }
+    ]
+}

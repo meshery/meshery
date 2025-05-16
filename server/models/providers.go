@@ -5,13 +5,14 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
 // ContextKey is a custom type for setting context key
@@ -206,20 +207,6 @@ type K8sContextPersistResponse struct {
 	Inserted   bool       `json:"inserted,omitempty"`
 }
 
-type ConnectionPayload struct {
-	ID                         uuid.UUID                    `json:"id,omitempty"`
-	Kind                       string                       `json:"kind,omitempty"`
-	SubType                    string                       `json:"sub_type,omitempty"`
-	Type                       string                       `json:"type,omitempty"`
-	MetaData                   map[string]interface{}       `json:"metadata,omitempty"`
-	Status                     connections.ConnectionStatus `json:"status,omitempty"`
-	CredentialSecret           map[string]interface{}       `json:"credential_secret,omitempty"`
-	Name                       string                       `json:"name,omitempty"`
-	CredentialID               *uuid.UUID                   `json:"credential_id,omitempty"`
-	Model                      string                       `json:"model,omitempty"`
-	SkipCredentialVerification bool                         `json:"skip_credential_verification"`
-}
-
 type ExtensionProxyResponse struct {
 	Body       []byte `json:"body,omitempty"`
 	StatusCode int    `json:"status_code,omitempty"`
@@ -285,6 +272,8 @@ const (
 	PersistEnvironments Feature = "environments"
 
 	PersistWorkspaces Feature = "workspaces"
+
+	PersistAnonymousUser Feature = "persist-anonymous-user"
 )
 
 const (
@@ -361,6 +350,7 @@ func VerifyMesheryProvider(provider string, supportedProviders map[string]Provid
 // Provider - interface for providers
 type Provider interface {
 	PreferencePersister
+	CapabilitiesPersister
 	MesheryEvents
 
 	// Initialize will initialize a provider instance
@@ -368,14 +358,16 @@ type Provider interface {
 	Initialize()
 
 	Name() string
+	GetProviderURL() string
 
 	// Returns ProviderType
 	GetProviderType() ProviderType
 
 	PackageLocation() string
 
-	GetProviderCapabilities(http.ResponseWriter, *http.Request)
+	GetProviderCapabilities(http.ResponseWriter, *http.Request, string)
 
+	SetProviderProperties(providerProperties ProviderProperties)
 	GetProviderProperties() ProviderProperties
 	// InitiateLogin - does the needed check, returns a true to indicate "return" or false to continue
 	InitiateLogin(http.ResponseWriter, *http.Request, bool)
@@ -388,6 +380,8 @@ type Provider interface {
 	GetUsersKeys(token, page, pageSize, search, order, filter string, orgID string) ([]byte, error)
 	GetProviderToken(req *http.Request) (string, error)
 	UpdateToken(http.ResponseWriter, *http.Request) string
+	SetJWTCookie(w http.ResponseWriter, token string)
+	UnSetJWTCookie(w http.ResponseWriter)
 	Logout(http.ResponseWriter, *http.Request) error
 	HandleUnAuthenticated(w http.ResponseWriter, req *http.Request)
 	FetchResults(tokenVal string, page, pageSize, search, order, profileID string) ([]byte, error)
@@ -423,8 +417,8 @@ type Provider interface {
 	GetKubeClient() *mesherykube.Client
 
 	SaveMesheryPattern(tokenString string, pattern *MesheryPattern) ([]byte, error)
-	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string, visbility []string, includeMetrics string) ([]byte, error)
-	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string, includeMetrics string) ([]byte, error)
+	GetMesheryPatterns(tokenString, page, pageSize, search, order string, updatedAfter string, visbility []string, includeMetrics string, populate []string) ([]byte, error)
+	GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order string, includeMetrics string, populate, class, technology, patternType, orgID, workspaceID, userid []string) ([]byte, error)
 	PublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	UnPublishCatalogPattern(req *http.Request, publishPatternRequest *MesheryCatalogPatternRequestBody) ([]byte, error)
 	DeleteMesheryPattern(req *http.Request, patternID string) ([]byte, error)
@@ -437,7 +431,7 @@ type Provider interface {
 	GetMesheryPatternResources(token, page, pageSize, search, order, name, namespace, typ, oamType string) (*PatternResourcePage, error)
 	DeleteMesheryPatternResource(token, resourceID string) error
 	SaveMesheryPatternSourceContent(token string, applicationID string, sourceContent []byte) error
-	GetDesignSourceContent(req *http.Request, patternID string) ([]byte, error)
+	GetDesignSourceContent(token, patternID string) ([]byte, error)
 
 	SaveMesheryFilter(tokenString string, filter *MesheryFilter) ([]byte, error)
 	GetMesheryFilters(tokenString, page, pageSize, search, order string, visibility []string) ([]byte, error)
@@ -471,14 +465,14 @@ type Provider interface {
 
 	ExtensionProxy(req *http.Request) (*ExtensionProxyResponse, error)
 
-	SaveConnection(conn *ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
+	SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error)
 	GetConnections(req *http.Request, userID string, page, pageSize int, search, order string, filter string, status []string, kind []string) (*connections.ConnectionPage, error)
 	GetConnectionByIDAndKind(token string, connectionID uuid.UUID, kind string) (*connections.Connection, int, error)
 	GetConnectionByID(token string, connectionID uuid.UUID) (*connections.Connection, int, error)
 	GetConnectionsByKind(req *http.Request, userID string, page, pageSize int, search, order, connectionKind string) (*map[string]interface{}, error)
 	GetConnectionsStatus(req *http.Request, userID string) (*connections.ConnectionsStatusPage, error)
 	UpdateConnection(req *http.Request, conn *connections.Connection) (*connections.Connection, error)
-	UpdateConnectionById(req *http.Request, conn *ConnectionPayload, connId string) (*connections.Connection, error)
+	UpdateConnectionById(req *http.Request, conn *connections.ConnectionPayload, connId string) (*connections.Connection, error)
 	UpdateConnectionStatusByID(token string, connectionID uuid.UUID, connectionStatus connections.ConnectionStatus) (*connections.Connection, int, error)
 	DeleteConnection(req *http.Request, connID uuid.UUID) (*connections.Connection, error)
 	DeleteMesheryConnection() error
@@ -491,9 +485,9 @@ type Provider interface {
 
 	GetEnvironments(token, page, pageSize, search, order, filter, orgID string) ([]byte, error)
 	GetEnvironmentByID(req *http.Request, environmentID, orgID string) ([]byte, error)
-	SaveEnvironment(req *http.Request, env *environments.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
+	SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteEnvironment(req *http.Request, environmentID string) ([]byte, error)
-	UpdateEnvironment(req *http.Request, env *environments.EnvironmentPayload, environmentID string) (*environments.EnvironmentData, error)
+	UpdateEnvironment(req *http.Request, env *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error)
 	AddConnectionToEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	RemoveConnectionFromEnvironment(req *http.Request, environmentID string, connectionID string) ([]byte, error)
 	GetConnectionsOfEnvironment(req *http.Request, environmentID, page, pagesize, search, order, filter string) ([]byte, error)
@@ -502,9 +496,9 @@ type Provider interface {
 
 	GetWorkspaces(token, page, pagesize, search, order, filter, orgID string) ([]byte, error)
 	GetWorkspaceByID(req *http.Request, workspaceID, orgID string) ([]byte, error)
-	SaveWorkspace(req *http.Request, workspace *WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
+	SaveWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error)
 	DeleteWorkspace(req *http.Request, workspaceID string) ([]byte, error)
-	UpdateWorkspace(req *http.Request, workspace *WorkspacePayload, workspaceID string) (*Workspace, error)
+	UpdateWorkspace(req *http.Request, workspace *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error)
 	GetEnvironmentsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string) ([]byte, error)
 	AddEnvironmentToWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)

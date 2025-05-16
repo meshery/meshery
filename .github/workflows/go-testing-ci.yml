@@ -5,11 +5,13 @@ on:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -21,35 +23,35 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: [1.21]
-        os: [ubuntu-22.04]
+        go: [1.23]
+        os: [ubuntu-24.04]
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/setup-go@master
+      - uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
       - uses: actions/checkout@v4
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v4
+        uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.54
+          version: v1.64
           args: --config=.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: golangci
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -60,22 +62,26 @@ jobs:
           flags: unittests
   integration-tests:
     name: Integration tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     needs: golangci
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 2
       - name: Install lynx for xdg-open support
         run: sudo apt-get install lynx
       - name: Setup Go
-        uses: actions/setup-go@master
+        uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
+      - name: Install Docker Compose
+        run: |
+          sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3 
       - name: Create k8s Kind Cluster
-        uses: helm/kind-action@v1.9.0
+        uses: helm/kind-action@v1.10.0
         with:
           cluster_name: "kind-cluster"
       - name: Run coverage
@@ -100,7 +106,7 @@ jobs:
           
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           files: ./coverage.txt
           flags: gointegrationtests     

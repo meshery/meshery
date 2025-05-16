@@ -1,10 +1,10 @@
-import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import { withTheme } from '@rjsf/core';
-import { Theme as MaterialUITheme } from '@rjsf/material-ui';
+import { Theme as MaterialUITheme } from '@rjsf/mui';
 import ajv8validator from '@rjsf/validator-ajv8';
 import React, { useEffect } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
+import { useTheme, ThemeProvider } from '@layer5/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
@@ -18,7 +18,10 @@ import MesheryCustomSelectWidget from './RJSFCustomComponents/CustomSelectWidget
 import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
-import ErrorBoundary from '../../ErrorBoundary';
+import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
+import { ErrorBoundary } from '@layer5/sistent';
+import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -31,14 +34,16 @@ const MuiRJSFForm = withTheme(MaterialUITheme);
  * @param {*} props
  * @returns
  */
-function RJSFForm({
+function RJSFForm_({
   schema,
   jsonSchema,
   data,
   onChange,
   isLoading,
+  children,
   ArrayFieldTemplate = MesheryArrayFieldTemplate,
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
+  BaseInputTemplate,
   WrapIfAdditionalTemplate = MesheryWrapIfAdditionalTemplate,
   SelectWidget = MesheryCustomSelectWidget,
   LoadingComponent,
@@ -48,13 +53,24 @@ function RJSFForm({
   override,
   formRef = null,
   uiSchema = {},
+  validator,
+  fieldTemplates = {},
+  customFields = {},
+  widgets = {},
+  extraErrors,
+  isExtensionTooltipPortal = true,
   ...restProps
 }) {
   const globalTheme = useTheme();
+
   useEffect(() => {
-    const extensionTooltipPortal = document.getElementById('extension-tooltip-portal');
+    const extensionTooltipPortal =
+      isExtensionTooltipPortal && document.getElementById('extension-tooltip-portal');
     if (extensionTooltipPortal) {
-      rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
+      rjsfTheme.components.MuiMenu.defaultProps = {
+        ...rjsfTheme.components.MuiMenu.defaultProps,
+        container: extensionTooltipPortal,
+      };
     }
     rjsfTheme.zIndex.modal = 99999;
   }, []);
@@ -64,22 +80,24 @@ function RJSFForm({
   }
 
   return (
-    <ErrorBoundary>
-      {' '}
-      {/* Putting RJSF into error boundary, so that error can be catched.. */}
-      <MuiThemeProvider theme={globalTheme.palette.type === 'dark' ? darkRjsfTheme : rjsfTheme}>
+    <ErrorBoundary customFallback={CustomErrorFallback}>
+      {/* Putting RJSF into error boundary, so that error can be catched.. */}{' '}
+      <ThemeProvider theme={globalTheme.palette.mode === 'dark' ? darkRjsfTheme : rjsfTheme}>
         <MuiRJSFForm
           schema={schema.rjsfSchema}
           idPrefix={jsonSchema?.title}
           ref={formRef}
           onChange={onChange}
           formData={data}
-          validator={ajv8validator}
+          extraErrors={extraErrors}
+          validator={validator || ajv8validator}
           templates={{
             ArrayFieldTemplate,
             ObjectFieldTemplate,
             WrapIfAdditionalTemplate,
+            BaseInputTemplate,
             FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
+            ...fieldTemplates,
           }}
           formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}
           uiSchema={_.merge(schema.uiSchema, uiSchema)}
@@ -88,22 +106,29 @@ function RJSFForm({
             TextWidget: CustomTextWidget,
             DateTimeWidget: CustomDateTimeWidget,
             SelectWidget,
+            ColorWidget: CustomColorWidget,
             CheckboxWidget: CustomCheckboxWidget,
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,
             URLWidget: CustomURLWidget,
+            ...widgets,
           }}
+          fields={customFields}
           liveValidate={liveValidate}
           showErrorList={false}
           noHtml5Validate
           transformErrors={transformErrors}
           {...restProps}
         >
+          {children}
           <div></div>
         </MuiRJSFForm>
-      </MuiThemeProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
 
+const RJSFForm = (props) => {
+  return <ProviderStoreWrapper>{<RJSFForm_ {...props} />}</ProviderStoreWrapper>;
+};
 export default RJSFForm;

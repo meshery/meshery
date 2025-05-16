@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { Tooltip, Typography, Grid, Box, IconButton, useTheme } from '@material-ui/core';
-import { Launch as LaunchIcon } from '@material-ui/icons';
+import { CustomTooltip, Typography, Grid, Box, IconButton, useTheme } from '@layer5/sistent';
+import { Launch as LaunchIcon } from '@mui/icons-material';
 import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import CopyIcon from '../../assets/icons/CopyIcon';
-
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });
@@ -55,7 +54,7 @@ export const formatDateTime = (date) => {
  */
 export const FormattedDate = ({ date }) => {
   return (
-    <Tooltip title={formatDateTime(date)} placement="top">
+    <CustomTooltip title={formatDateTime(date)} placement="top">
       <div>
         <SectionBody
           body={formatDate(date)}
@@ -64,15 +63,16 @@ export const FormattedDate = ({ date }) => {
           }}
         ></SectionBody>
       </div>
-    </Tooltip>
+    </CustomTooltip>
   );
 };
 
 export const FormatId = ({ id }) => {
   const [copied, setCopied] = React.useState(false);
   const theme = useTheme();
-  // truncates the id to 15 characters and adds an ellipsis and adds a clicpboard copy button
-  const copyToClipboard = () => {
+  // truncates the id to 15 characters and adds an ellipsis and adds a clipboard copy button
+  const copyToClipboard = (e) => {
+    e.stopPropagation();
     navigator.clipboard.writeText(id);
     setCopied(true);
 
@@ -84,22 +84,22 @@ export const FormatId = ({ id }) => {
   const truncatedId = _.truncate(id, { length: 15 });
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-      <Tooltip title={id} placement="top">
+      <CustomTooltip title={id} placement="top">
         <Typography
           variant="body2"
           style={{
             cursor: 'pointer',
-            color: theme.palette.secondary.text,
+            color: theme.palette.text.tertiary,
           }}
         >
           {truncatedId}
         </Typography>
-      </Tooltip>
-      <Tooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+      </CustomTooltip>
+      <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
         <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
           <CopyIcon width="1rem" height="1rem" />
         </IconButton>
-      </Tooltip>
+      </CustomTooltip>
     </Box>
   );
 };
@@ -126,7 +126,7 @@ export const Link = ({ href, title }) => {
         color: 'inherit',
         textDecorationLine: 'underline',
         cursor: 'pointer',
-        marginBottom: '0.5rem',
+        marginBottom: '0.75rem',
       }}
     >
       {title}
@@ -163,7 +163,7 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   const linkRegex = /(https?:\/\/[^\s]+)/g;
 
   // Split the text into parts, alternating between text and link components
-  const parts = text.split(linkRegex);
+  const parts = text?.split?.(linkRegex) || [];
 
   // Map the parts to React elements
   const elements = parts.map((part, idx) => {
@@ -175,10 +175,10 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
     }
   });
 
-  return <Typography {...typographyProps}>{elements}</Typography>;
+  return <Typography {...typographyProps}> {elements}</Typography>;
 };
 
-export const KeyValue = ({ Key, Value }) => {
+export const KeyValue = ({ Key, Value, style }) => {
   const theme = useTheme();
   return (
     <div
@@ -188,26 +188,28 @@ export const KeyValue = ({ Key, Value }) => {
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
-        marginBottom: '1.5rem',
-        fontFamily: 'Qanelas Soft, sans-serif',
       }}
     >
       <SectionBody
         body={Key.replaceAll('_', ' ')}
         style={{
           textTransform: 'capitalize',
-          color: theme.palette.text.primary,
+          overflow: 'hidden',
+          color: theme.palette.text.default,
         }}
       />
+
       {React.isValidElement(Value) ? (
         Value
       ) : (
         <SectionBody
           body={Value}
           style={{
-            color: theme.palette.text.secondary,
+            color: theme.palette.text.tertiary,
             textOverflow: 'ellipsis',
-            wordBreak: 'break-all',
+            wordBreak: 'break-word',
+            overflow: 'hidden',
+            ...style,
           }}
         />
       )}
@@ -215,48 +217,55 @@ export const KeyValue = ({ Key, Value }) => {
   );
 };
 
-export const SectionHeading = ({ children, ...props }) => {
+export const SectionHeading = ({ children, isLevel, ...props }) => {
   const level = useContext(LevelContext);
-  const fontSize = Math.max(0.9, 1.3 - 0.1 * level) + 'rem';
-  const margin = Math.max(0.25, 0.55 - 0.15 * level) + 'rem';
+  const fontSize = isLevel ? Math.max(0.9, 1.3 - 0.1 * level) + 'rem' : '1rem';
+  const margin = isLevel ? Math.max(0.25, 0.55 - 0.15 * level) + 'rem' : 'inherit';
 
   return (
-    <Typography
-      variant="h5"
-      style={{
-        fontWeight: 'bold !important',
-        textTransform: 'capitalize',
-        marginBottom: margin,
-        wordBreak: 'break-all',
-        fontSize,
-      }}
-      {...props}
-    >
-      {children}
-    </Typography>
+    <div style={{ marginBlock: margin }}>
+      <Typography
+        variant="body1"
+        style={{
+          fontWeight: 'bold !important',
+          textTransform: 'capitalize',
+          wordBreak: 'break-all',
+          fontSize,
+        }}
+        {...props}
+      >
+        {children}
+      </Typography>
+    </div>
   );
 };
-
 export const SectionBody = ({ body, style = {} }) => {
   const theme = useTheme();
   return (
     <TextWithLinks
       variant="body1"
       style={{
+        fontWeight: 'bold',
         wordWrap: 'break-word',
-        color: theme.palette.text.secondary,
+        color: theme.palette.text.tertiary,
         ...style,
       }}
       text={body}
     ></TextWithLinks>
   );
 };
-
-const ArrayFormatter = ({ items }) => {
+export const ArrayFormatter = ({ items, style }) => {
+  const theme = useTheme();
   return (
-    <ol style={{ paddingInline: '0.75rem', paddingBlock: '0.25rem', margin: '0rem' }}>
+    <ol
+      style={{
+        paddingInline: '1rem',
+        paddingBlock: '0.25rem',
+        margin: '0rem',
+      }}
+    >
       {items.map((item) => (
-        <li key={item}>
+        <li key={item} style={{ color: theme.palette.text.tertiary, ...style }}>
           <Level>
             <DynamicFormatter data={item} />
           </Level>
@@ -276,14 +285,16 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema }) => {
+const DynamicFormatter = ({ data, uiSchema, isLevel = true, style }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
+
   if (_.isString(data)) {
-    return <SectionBody body={data}></SectionBody>;
+    return <SectionBody body={data} style={style}></SectionBody>;
   }
+
   if (_.isArray(data)) {
-    return <ArrayFormatter items={data} />;
+    return <ArrayFormatter items={data} style={style} />;
   }
 
   if (_.isObject(data)) {
@@ -291,17 +302,30 @@ const DynamicFormatter = ({ data, uiSchema }) => {
       if (!title.trim() || !data || _.isEmpty(data)) {
         return null;
       }
+
       if (propertyFormatters?.[title]) {
         return (
-          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
+          <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
             {propertyFormatters[title](data, data)}
           </Grid>
         );
       }
+
       if (typeof data == 'string') {
         return (
-          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
-            <KeyValue key={title} Key={title} Value={data} />
+          <Grid
+            item
+            key={title}
+            sm={12}
+            {...(uiSchema?.[title] || {})}
+            spacing={3}
+            style={{
+              marginBlock: '0.4rem',
+              maxWidth: title !== 'age' && 'fit-content', // for age, we need to show the full text it is used in kanvas
+              marginRight: '1rem',
+            }}
+          >
+            <KeyValue key={title} Key={title} Value={data} style={style} />
           </Grid>
         );
       }
@@ -316,9 +340,11 @@ const DynamicFormatter = ({ data, uiSchema }) => {
             marginBlock: '0.25rem',
           }}
         >
-          <SectionHeading level={level}>{title}</SectionHeading>
+          <SectionHeading level={level} isLevel={isLevel}>
+            {title}
+          </SectionHeading>
           <Level>
-            <DynamicFormatter level={level + 1} data={data} />
+            <DynamicFormatter level={level + 1} data={data} style={style} />
           </Level>
         </Grid>
       );
@@ -328,28 +354,32 @@ const DynamicFormatter = ({ data, uiSchema }) => {
   return null;
 };
 
-export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }) => {
+export const FormatStructuredData = ({
+  propertyFormatters = {},
+  data,
+  uiSchema,
+  isLevel,
+  style,
+}) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
   }
 
   return (
-    <>
-      <FormatterContext.Provider
-        value={{
-          propertyFormatters: propertyFormatters,
+    <FormatterContext.Provider
+      value={{
+        propertyFormatters: propertyFormatters,
+      }}
+    >
+      <Grid
+        container
+        style={{
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
         }}
       >
-        <Grid
-          container
-          style={{
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-          }}
-        >
-          <DynamicFormatter data={data} uiSchema={uiSchema} />
-        </Grid>
-      </FormatterContext.Provider>
-    </>
+        <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} style={style} />
+      </Grid>
+    </FormatterContext.Provider>
   );
 };

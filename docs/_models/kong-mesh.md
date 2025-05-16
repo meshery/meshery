@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kong Mesh
-subtitle: Collaborative and visual infrastructure as code for Kong Mesh
+subtitle: Collaborative and visual infrastructure as design for Kong Mesh
 image: /assets/img/integrations/kong-mesh/icons/color/kong-mesh-color.svg
 permalink: extensibility/integrations/kong-mesh
 docURL: https://docs.meshery.io/extensibility/integrations/kong-mesh
@@ -206,12 +206,39 @@ components:
   colorIcon: assets/img/integrations/kong-mesh/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: assets/img/integrations/kong-mesh/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
+- name: mesh-service
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-service/icons/color/mesh-service-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-service/icons/white/mesh-service-white.svg
+  description: 
+- name: hostname-generator
+  colorIcon: assets/img/integrations/kong-mesh/components/hostname-generator/icons/color/hostname-generator-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/hostname-generator/icons/white/hostname-generator-white.svg
+  description: 
+- name: mesh-external-service
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-external-service/icons/color/mesh-external-service-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-external-service/icons/white/mesh-external-service-white.svg
+  description: 
+- name: mesh-passthrough
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-passthrough/icons/color/mesh-passthrough-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-passthrough/icons/white/mesh-passthrough-white.svg
+  description: 
+- name: mesh-multi-zone-service
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-multi-zone-service/icons/color/mesh-multi-zone-service-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-multi-zone-service/icons/white/mesh-multi-zone-service-white.svg
+  description: 
+- name: mesh-tls
+  colorIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/color/mesh-tls-color.svg
+  whiteIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/white/mesh-tls-white.svg
+  description: 
+components-count: 55
+relationships: 
+relationship-count: 0
 featureList: [
   "Built on top of Envoy with 50+ observability charts out of the box, you can collect metrics, traces and logs of all L4-L7 traffic.",
   "Integrate with Kong Ingress Controller to implement authentication, transformations, and other functionalities across Kubernetes clusters with zero downtime.",
   "Configure Mesh natively using an API, web UI, or with declarative configuration to manage updates via your CI/CD pipelines."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS DynamoDB
-subtitle: Collaborative and visual infrastructure as code for AWS DynamoDB
+subtitle: Collaborative and visual infrastructure as design for AWS DynamoDB
 image: /assets/img/integrations/aws-dynamodb-controller/icons/color/aws-dynamodb-controller-color.svg
 permalink: extensibility/integrations/aws-dynamodb-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-dynamodb-controller
@@ -30,13 +30,16 @@ components:
   colorIcon: assets/img/integrations/aws-dynamodb-controller/components/global-table/icons/color/global-table-color.svg
   whiteIcon: assets/img/integrations/aws-dynamodb-controller/components/global-table/icons/white/global-table-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Handle more than 10 trillion requests per day and can support peaks of more than 20 million requests per second.
 ",
   "Secure your data with encryption at rest, automatic backup and restore, and guaranteed reliability with an SLA of up to 99.999% availability.",
   "Fast and flexible NoSQL database service for any scale"
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

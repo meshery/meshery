@@ -7,9 +7,10 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"gorm.io/gorm"
+	"gopkg.in/yaml.v2"
 
 	"github.com/layer5io/meshkit/database"
+	"github.com/layer5io/meshkit/models/patterns"
 )
 
 // MesheryPatternPersister is the persister for persisting
@@ -37,10 +38,13 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 
 	count := int64(0)
 	patterns := []*MesheryPattern{}
-	var query *gorm.DB
-	if len(visibility) == 0 {
-		query = mpp.DB.Where("visibility in (?)", visibility)
+
+	query := mpp.DB.Table("meshery_patterns")
+
+	if len(visibility) > 0 {
+		query = query.Where("visibility in (?)", visibility)
 	}
+
 	query = query.Where("updated_at > ?", updatedAfter).Order(order)
 
 	if search != "" {
@@ -48,8 +52,7 @@ func (mpp *MesheryPatternPersister) GetMesheryPatterns(search, order string, pag
 		query = query.Where("(lower(meshery_patterns.name) like ?)", like)
 	}
 
-	query.Table("meshery_patterns").Count(&count)
-
+	query.Count(&count)
 	Paginate(uint(page), uint(pageSize))(query).Find(&patterns)
 
 	mesheryPatternPage := &MesheryPatternPage{
@@ -170,6 +173,11 @@ func (mpp *MesheryPatternPersister) DeleteMesheryPatterns(patterns MesheryPatter
 }
 
 func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) ([]byte, error) {
+	pf, err := patterns.GetPatternFormat(pattern.PatternFile)
+	if err != nil {
+		return nil, err
+	}
+
 	if pattern.Visibility == "" {
 		pattern.Visibility = Private
 	}
@@ -179,17 +187,36 @@ func (mpp *MesheryPatternPersister) SaveMesheryPattern(pattern *MesheryPattern) 
 			return nil, ErrGenerateUUID(err)
 		}
 
+		patterns.AssignVersion(pf)
+
 		pattern.ID = &id
+	} else {
+		nextVersion, err := patterns.GetNextVersion(pf)
+		if err != nil {
+			return nil, err
+		}
+		pf.Version = nextVersion
+		byt, err := yaml.Marshal(pf)
+		if err != nil {
+			return nil, err
+		}
+		pattern.PatternFile = string(byt)
 	}
 
 	return marshalMesheryPatterns([]MesheryPattern{*pattern}), mpp.DB.Save(pattern).Error
 }
 
 // SaveMesheryPatterns batch inserts the given patterns
-func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPattern) ([]byte, error) {
+func (mpp *MesheryPatternPersister) SaveMesheryPatterns(mesheryPatterns []MesheryPattern) ([]byte, error) {
 	finalPatterns := []MesheryPattern{}
 	nilUserID := ""
-	for _, pattern := range patterns {
+	for _, pattern := range mesheryPatterns {
+
+		pf, err := patterns.GetPatternFormat(pattern.PatternFile)
+		if err != nil {
+			return nil, err
+		}
+
 		if pattern.Visibility == "" {
 			pattern.Visibility = Private
 		}
@@ -199,8 +226,14 @@ func (mpp *MesheryPatternPersister) SaveMesheryPatterns(patterns []MesheryPatter
 			if err != nil {
 				return nil, ErrGenerateUUID(err)
 			}
-
+			patterns.AssignVersion(pf)
 			pattern.ID = &id
+		} else {
+			nextVersion, err := patterns.GetNextVersion(pf)
+			if err != nil {
+				return nil, err
+			}
+			pf.Version = nextVersion
 		}
 
 		finalPatterns = append(finalPatterns, pattern)

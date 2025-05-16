@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: AWS Relational Database Service
-subtitle: Collaborative and visual infrastructure as code for AWS Relational Database Service
+subtitle: Collaborative and visual infrastructure as design for AWS Relational Database Service
 image: /assets/img/integrations/aws-rds-controller/icons/color/aws-rds-controller-color.svg
 permalink: extensibility/integrations/aws-rds-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-rds-controller
@@ -46,12 +46,55 @@ components:
   colorIcon: assets/img/integrations/aws-rds-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+- name: db-snapshot
+  colorIcon: assets/img/integrations/aws-rds-controller/components/db-snapshot/icons/color/db-snapshot-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/db-snapshot/icons/white/db-snapshot-white.svg
+  description: 
+- name: db-cluster-snapshot
+  colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/color/db-cluster-snapshot-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/white/db-cluster-snapshot-white.svg
+  description: 
+- name: db-cluster-snapshot
+  colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/color/db-cluster-snapshot-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/white/db-cluster-snapshot-white.svg
+  description: 
+- name: db-cluster-endpoint
+  colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/color/db-cluster-endpoint-color.svg
+  whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-endpoint/icons/white/db-cluster-endpoint-white.svg
+  description: 
+components-count: 13
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Parent"
+  kind: "Hierarchical"
+  description: ""
+- type: "Binding"
+  kind: "Edge"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Binding"
+  kind: "Edge"
+  description: ""
+relationship-count: 8
 featureList: [
   "Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance",
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",
   "Amazon RDS provides Amazon CloudWatch metrics for your database instances at no additional charge."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

@@ -1,15 +1,14 @@
 import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import theme, { Colors } from '../themes/app';
-import { MenuItem } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
-import { Checkbox } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
+import { Colors } from '../themes/app';
+import { Checkbox, MenuItem, Paper, FormControlLabel } from '@layer5/sistent';
+import { useTheme } from '@layer5/sistent';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
   const allOption = { value: '*' };
+  const theme = useTheme();
 
   const filterOptions = (options, input) =>
     options?.filter(({ label }) => label?.toLowerCase().includes(input.toLowerCase()));
@@ -39,26 +38,28 @@ const MultiSelectWrapper = (props) => {
         <FormControlLabel
           control={
             props.value === '*' && filteredSelectedOptions?.length > 0 ? (
-              <Checkbox
-                color="primary"
-                key={props.value}
-                ref={(input) => {
-                  if (input) input.indeterminate = true;
-                }}
-                style={{
-                  padding: '0',
-                }}
-              />
+              <>
+                <Checkbox
+                  key={props.value}
+                  ref={(input) => {
+                    if (input) input.indeterminate = true;
+                  }}
+                  style={{
+                    padding: '0',
+                  }}
+                />
+              </>
             ) : (
-              <Checkbox
-                color="primary"
-                key={props.value}
-                checked={props.isSelected}
-                onChange={() => {}}
-                style={{
-                  padding: '0',
-                }}
-              />
+              <>
+                <Checkbox
+                  key={props.value}
+                  checked={props.isSelected}
+                  onChange={() => {}}
+                  style={{
+                    padding: '0',
+                  }}
+                />
+              </>
             )
           }
           label={<span style={{ marginLeft: '0.5rem' }}>{props.label}</span>}
@@ -73,7 +74,7 @@ const MultiSelectWrapper = (props) => {
         {props.children}
       </components.Input>
     ) : (
-      <div style={{ border: '1px dotted gray' }}>
+      <div>
         <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
           {props.children}
         </components.Input>
@@ -179,6 +180,10 @@ const MultiSelectWrapper = (props) => {
       ...base,
       backgroundColor: base.backgroundColor2,
     }),
+    input: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+    }),
   };
 
   return (
@@ -202,8 +207,7 @@ const MultiSelectWrapper = (props) => {
         ...selectTheme,
         colors: {
           ...selectTheme.colors,
-          backgroundColor2:
-            theme.palette.type === 'dark' ? theme.palette.secondary.mainBackground : '#fff',
+          backgroundColor2: theme.palette.mode === 'dark' ? theme.palette.background.card : '#fff',
         },
       })}
       isMulti

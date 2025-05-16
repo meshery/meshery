@@ -1,7 +1,7 @@
 ---
 layout: integration
 title: Kanister Operator
-subtitle: Collaborative and visual infrastructure as code for Kanister Operator
+subtitle: Collaborative and visual infrastructure as design for Kanister Operator
 image: /assets/img/integrations/kanister-operator/icons/color/kanister-operator-color.svg
 permalink: extensibility/integrations/kanister-operator
 docURL: https://docs.meshery.io/extensibility/integrations/kanister-operator
@@ -26,12 +26,15 @@ components:
   colorIcon: assets/img/integrations/kanister-operator/components/repository-server/icons/color/repository-server-color.svg
   whiteIcon: assets/img/integrations/kanister-operator/components/repository-server/icons/white/repository-server-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Encapsulate key data management tasks in blueprints that allow uniform operations at scale.",
   "Customize blueprints to fit specific needs of your environment and workload without starting from scratch.",
   "Keep application images unchanged by including required tools as a sidecar container or as a separate pod."
 ]
-howItWorks: "Collaborative Infrastructure as Code"
+howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en
 list: include

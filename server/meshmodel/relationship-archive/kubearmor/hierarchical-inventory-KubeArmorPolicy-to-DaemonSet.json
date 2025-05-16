@@ -1,0 +1,78 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "hierarchical",
+  "type": "parent",
+  "subType": "inventory",
+  "metadata": {
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. In this case, the configuration of the Kubernetes Node (parent) component is patched with the configuration as received from KubeArmorHostPolicy (child) component."
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1lpha2",
+    "version": "v1.0.0",
+    "name": "kubearmor",
+    "model": {
+      "version": "*"
+    },
+    "displayName": "KubeArmor",
+    "category": {
+      "name": "Provisioning",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "KubeArmorPolicy",
+            "model": {
+              "name": "kubearmor",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "displayName"
+                ]
+              ],
+              "description": "KubeArmorPolicy defines rules governing system call behavior within Kubernetes Pods, ensuring security and compliance by controlling access to resources and actions. KubeArmorPolicy helps enforce fine-grained security measures tailored to specific application requirements and threat landscapes."
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "DaemonSet",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "annotations",
+                  "security.kubearmor.com/policy"
+                ]
+              ],
+              "description": "A DaemonSet in Kubernetes ensures a copy of a Pod runs on each node. KubeArmorPolicy can be applied to DaemonSets to enforce consistent security measures across all nodes in the cluster."
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [],
+        "to": []
+      }
+    }
+  ]
+}

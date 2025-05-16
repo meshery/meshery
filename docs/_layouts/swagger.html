@@ -12,6 +12,17 @@ title: Rest API Docs
 {% endif %}
 {% assign sorted_paths = swagger.paths | sort %}
 
+<details>
+<summary>
+    Here is a concise list of all REST API endpoints.
+</summary>
+<ul>
+{% for route in sorted_paths %}
+<li>{{ route[0] }}</li>
+{% endfor %}
+</ul>
+</details>
+
 {% for route in sorted_paths %}
 <div class="swagger-path">
     <h2 class="swagger-path">{{ route[0] }}</h2>

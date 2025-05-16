@@ -1,0 +1,20 @@
+version: 0.0.1
+name: istio-bookinfo-application
+displayName: Istio BookInfo Application
+createdAt: "2023-02-05T12:15:30Z"
+description: "This design deploys Istio BookInfo App. The Bookinfo application is broken into four separate microservices: \n\nproductpage. The productpage microservice calls the details and reviews microservices to populate the page. \\\\\\\\ndetails. The details microservice contains book information. \\\\\\\\nreviews. The reviews microservice contains book reviews. It also calls the ratings microservice. \n\nratings. The ratings microservice contains book ranking information that accompanies a book review."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/ddf8a9f1-5fd0-4bda-b074-7dc9ceb1dd43/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "  Networking should be properly configured to enable communication between the different services of the app \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 173202fe-b94d-4064-8a86-1cf063732884
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
