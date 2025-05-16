@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   meshAdapters: [],
-  meshAdaptersts: new Date(),
+  meshAdaptersts: Date.now(),
   selectedAdapter: '',
 };
 
@@ -12,7 +12,7 @@ const adapterSlice = createSlice({
   reducers: {
     updateAdaptersInfo: (state, action) => {
       state.meshAdapters = action.payload.meshAdapters;
-      state.meshAdaptersts = new Date();
+      state.meshAdaptersts = Date.now();
     },
     setAdapter: (state, action) => {
       state.selectedAdapter = action.payload.selectedAdapter;

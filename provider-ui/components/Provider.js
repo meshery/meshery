@@ -282,7 +282,9 @@ export default function Provider() {
                     disableElevation
                     sx={{
                       width: '100%',
-                      marginTop: '0.4rem'
+                      marginTop: '0.4rem',
+                      backgroundColor: 'none',
+                      color: (theme) => theme.palette.text.inverse,
                     }}
                   >Create Your Own Provider&nbsp;
                     <img

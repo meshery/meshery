@@ -7,12 +7,12 @@ const initialState = {
     grafanaBoardSearch: '',
     grafanaBoards: [],
     selectedBoardsConfigs: [],
-    ts: new Date(-8640000000000000),
+    ts: -8640000000000000,
   },
   prometheus: {
     prometheusURL: '',
     selectedPrometheusBoardsConfigs: [],
-    ts: new Date(-8640000000000000),
+    ts: -8640000000000000,
   },
   staticPrometheusBoardConfig: {},
 };
@@ -23,11 +23,11 @@ const telemetrySlice = createSlice({
   reducers: {
     updateGrafanaConfig: (state, action) => {
       state.grafana = { ...state.grafana, ...action.payload };
-      state.grafana.ts = new Date();
+      state.grafana.ts = Date.now();
     },
     updatePrometheusConfig: (state, action) => {
       state.prometheus = { ...state.prometheus, ...action.payload };
-      state.prometheus.ts = new Date();
+      state.prometheus.ts = Date.now();
     },
     updateStaticPrometheusBoardConfig: (state, action) => {
       state.staticPrometheusBoardConfig = action.payload;
