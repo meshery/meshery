@@ -22,6 +22,7 @@ const DatabaseSummary = (props) => {
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
   const [sortOrder, setSortOrder] = useState('');
+  const [order, sort] = sortOrder.split(' ');
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
@@ -37,7 +38,8 @@ const DatabaseSummary = (props) => {
     page: page,
     pagesize: rowsPerPage,
     search: searchText,
-    order: sortOrder,
+    order,
+    sort,
   });
 
   const handleResetDatabase = () => {
@@ -108,8 +110,8 @@ const DatabaseSummary = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
-    onColumnSortChange: (_, direction) => {
-      setSortOrder(`name ${direction}`);
+    onColumnSortChange: (columnName, direction) => {
+      setSortOrder(`${columnName} ${direction}`);
     },
   };
 
