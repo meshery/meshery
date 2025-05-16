@@ -1,4 +1,3 @@
-//@ts-check
 import React, { useEffect, useState } from 'react';
 import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
