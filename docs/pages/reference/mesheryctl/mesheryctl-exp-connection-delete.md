@@ -1,36 +1,36 @@
 ---
 layout: default
-title: mesheryctl-exp-workspace-create
-permalink: reference/mesheryctl/exp/workspace/create
-redirect_from: reference/mesheryctl/exp/workspace/create/
+title: mesheryctl-exp-connection-delete
+permalink: reference/mesheryctl/exp/connection/delete
+redirect_from: reference/mesheryctl/exp/connection/delete/
 type: reference
 display-title: "false"
 language: en
 command: exp
-subcommand: workspace
+subcommand: connection
 ---
 
-# mesheryctl exp workspace create
+# mesheryctl exp connection delete
 
-Create a new workspace under an organization
+Delete a connection
 
 ## Synopsis
 
-Create a new workspace by providing the name, description, and organization ID
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/create
+Delete a connection providing the connection ID.
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/delete
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace create [flags]
+mesheryctl exp connection delete [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Create a new workspace in an organization
+Delete a specific connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl exp connection delete [connection_id]
 
 </div>
 </pre> 
@@ -39,10 +39,7 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -d, --description string   Description of the workspace
-  -h, --help                 help for create
-  -n, --name string          Name of the workspace
-  -o, --orgId string         Organization ID
+  -h, --help   help for delete
 
 </div>
 </pre>

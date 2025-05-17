@@ -1,52 +1,52 @@
 ---
 layout: default
-title: mesheryctl-component-list
-permalink: reference/mesheryctl/component/list
-redirect_from: reference/mesheryctl/component/list/
+title: mesheryctl-exp-connection
+permalink: reference/mesheryctl/exp/connection
+redirect_from: reference/mesheryctl/exp/connection/
 type: reference
 display-title: "false"
 language: en
-command: component
-subcommand: list
+command: exp
+subcommand: connection
 ---
 
-# mesheryctl component list
+# mesheryctl exp connection
 
-List registered components
+Manage Meshery connection
 
 ## Synopsis
 
-List all components registered in Meshery Server
-Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/list
+View and manage your Meshery connection.
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list [flags]
+mesheryctl exp connection [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View list of components
+Display total count of all available connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list
+mesheryctl exp connection --count
 
 </div>
 </pre> 
 
-View list of components with specified page number (25 components per page)
+List all the connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list --page [page-number]
+mesheryctl exp connection list
 
 </div>
 </pre> 
 
-Display the number of components present in Meshery
+Delete a connection
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list --count
+mesheryctl exp connection delete [connection_id]
 
 </div>
 </pre> 
@@ -55,9 +55,8 @@ mesheryctl component list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Display count only
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of components with --page (default = 1) (default 1)
+  -c, --count   Display the count of total available connections
+  -h, --help    help for connection
 
 </div>
 </pre>
@@ -73,5 +72,8 @@ mesheryctl component list --count
 </pre>
 
 ## See Also
+
+* [mesheryctl exp connection delete](/reference/mesheryctl/exp/connection/delete)
+* [mesheryctl exp connection list](/reference/mesheryctl/exp/connection/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

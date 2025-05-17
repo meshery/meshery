@@ -1,44 +1,52 @@
 ---
 layout: default
-title: mesheryctl-exp-workspace
-permalink: reference/mesheryctl/exp/workspace
-redirect_from: reference/mesheryctl/exp/workspace/
+title: mesheryctl-exp-connection-list
+permalink: reference/mesheryctl/exp/connection/list
+redirect_from: reference/mesheryctl/exp/connection/list/
 type: reference
 display-title: "false"
 language: en
 command: exp
-subcommand: workspace
+subcommand: connection
 ---
 
-# mesheryctl exp workspace
+# mesheryctl exp connection list
 
-Managge workspaces under an organization
+List all the connections
 
 ## Synopsis
 
-Create, list of workspaces under an organization
-Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace
+List all available connections.
+Documentation for connection can be found at https://docs.meshery.io/reference/mesheryctl/exp/connection/list
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace [flags]
+mesheryctl exp connection list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view a list workspaces
+List all the connections
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId]
+mesheryctl exp connection list
 
 </div>
 </pre> 
 
-To create a workspace
+List all the connections with page number
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+mesheryctl exp connection list --page [page-number]
+
+</div>
+</pre> 
+
+Display total count of all available connections
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp connection list --count
 
 </div>
 </pre> 
@@ -47,8 +55,9 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   total number of registered workspaces
-  -h, --help    help for workspace
+  -c, --count      Display the count of total available connections
+  -h, --help       help for list
+  -p, --page int   Page number (default 1)
 
 </div>
 </pre>
@@ -64,8 +73,5 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 </pre>
 
 ## See Also
-
-* [mesheryctl exp workspace create](/reference/mesheryctl/exp/workspace/create)
-* [mesheryctl exp workspace list](/reference/mesheryctl/exp/workspace/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
