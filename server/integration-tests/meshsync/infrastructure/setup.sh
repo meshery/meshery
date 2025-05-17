@@ -117,6 +117,12 @@ setup_cluster() {
   echo "Outputing cluster resources..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
+
+  echo "debug: get meshsync logs"
+  # Get the pod name for the deployment
+  MESHSYNC_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app.kubernetes.io/name="meshery-meshsync" -o jsonpath='{.items[0].metadata.name}')
+  # Output logs from the pod
+  kubectl --namespace $MESHERY_K8S_NAMESPACE logs $MESHSYNC_DEPLOYMENT_POD_NAME
 }
 
 setup_connection() {
