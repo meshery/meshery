@@ -28,7 +28,7 @@ test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
       await page.getByRole('button', { name: 'Connect', exact: true }).click();
 
       // Verify success notification
-      await expect(page.getByText('Adapter was configured!')).toBeVisible();
+      await expect(page.getByText('Adapter configured')).toBeVisible();
 
       // Visit Lifecycle > Service Mesh Page
       await page.goto(`${ENV.MESHERY_SERVER_URL}/management/adapter`);
