@@ -608,7 +608,7 @@ const MesheryPerformanceComponent_ = (props) => {
       dispatch(
         updateStaticPrometheusBoardConfig({
           staticPrometheusBoardConfig: configData,
-        })
+        }),
       );
       setStaticPrometheusBoardConfig(configData);
     }
@@ -617,7 +617,7 @@ const MesheryPerformanceComponent_ = (props) => {
   const logBoardConfigFetchError = () => {
     console.warn(
       'Unable to fetch pre-configured boards: No Kubernetes cluster is connected, so statistics will not be gathered from cluster',
-      fetchError
+      fetchError,
     );
   };
 
