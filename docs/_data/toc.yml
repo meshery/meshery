@@ -228,7 +228,7 @@
             - title: Working with Tags
               url: extensions/working-with-tags
         - title: Kanvas Snapshot
-          url: extensions/kanvas-snapshot 
+          url: extensions/kanvas-snapshot
 
 - title: 🧑‍💻 Contributing & Community
   url: project
@@ -274,6 +274,8 @@
               url: project/contributing/contributing-ui-tests
             - title: Dashboard Widgets
               url: project/contributing/contributing-ui-widgets
+            - title: Schema-Driven UI in Meshery
+              url: project/contributing/contributing-schemas-ui
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Policies

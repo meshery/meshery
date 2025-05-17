@@ -23,7 +23,6 @@ import { getView, useDeleteViewMutation, useUpdateViewVisibilityMutation } from 
 import ShareModal from './ShareModal';
 import { ViewInfoModal } from '../ViewInfoModal';
 import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
-import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { Router } from 'next/router';
@@ -31,7 +30,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
-import { useLegacySelector } from 'lib/store';
+import { useSelector } from 'react-redux';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 const MainViewsContent = ({
   page,
@@ -197,7 +197,7 @@ const MainViewsContent = ({
     return options.filter((option) => option.enabled({ view, userId: user?.id }));
   };
   const isKanvasDesignerAvailable = useIsOperatorEnabled();
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { notify } = useNotification();
   const handleOpenViewInOperator = (viewId, viewName) => {
     if (!isKanvasDesignerAvailable) {
@@ -216,7 +216,7 @@ const MainViewsContent = ({
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
-  const capabilitiesRegistry = useLegacySelector((state) => state.get('capabilitiesRegistry'));
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   console.l;
   const activeUsers = useRoomActivity({

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { connect, useSelector } from 'react-redux';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import { Search } from '@mui/icons-material';
@@ -8,14 +7,12 @@ import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
-import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
-import { bindActionCreators } from 'redux';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import { useNotification, withNotify } from '../utils/hooks/useNotification';
+import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
@@ -59,6 +56,8 @@ import {
 } from './Header.styles';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateCapabilities, updateK8SConfig } from '@/store/slices/mesheryUi';
 
 async function loadActiveK8sContexts() {
   try {
@@ -133,7 +132,6 @@ export const K8sContextConnectionChip = K8sContextConnectionChip_;
 function K8sContextMenu({
   contexts = {},
   activeContexts = [],
-  updateK8SConfig,
   setActiveContexts = () => {},
   searchContexts = () => {},
 }) {
@@ -142,8 +140,9 @@ function K8sContextMenu({
   const [transformProperty, setTransformProperty] = useState(100);
   const deleteCtxtRef = React.createRef();
   const { notify } = useNotification();
-  const connectionMetadataState = useSelector((state) => state.get('connectionMetadataState'));
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const { connectionMetadataState } = useSelector((state) => state.ui);
 
   const styleSlider = {
     position: 'absolute',
@@ -201,7 +200,7 @@ function K8sContextMenu({
       const successCallback = async () => {
         const updatedConfig = await loadActiveK8sContexts();
         if (Array.isArray(updatedConfig)) {
-          updateK8SConfig({ k8sConfig: updatedConfig });
+          dispatch(updateK8SConfig({ k8sConfig: updatedConfig }));
         }
       };
       deleteKubernetesConfig(
@@ -382,24 +381,17 @@ function K8sContextMenu({
 }
 
 const Header = ({
-  title,
   onDrawerToggle,
-  isBeta,
   onDrawerCollapse,
   abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
   searchContexts,
-  operatorState,
-  meshSyncState,
-  updateK8SConfig,
-  updateProgress,
-  updateCapabilities,
-  updateExtensionType,
 }) => {
   const { notify } = useNotification;
 
+  const dispatch = useDispatch();
   const {
     data: providerCapabilities,
     isSuccess: isProviderCapabilitiesSuccess,
@@ -409,7 +401,7 @@ const Header = ({
 
   const collaboratorExt = () => {
     if (isProviderCapabilitiesSuccess) {
-      updateCapabilities({ capabilitiesRegistry: providerCapabilities });
+      dispatch(updateCapabilities({ capabilitiesRegistry: providerCapabilities }));
       return ExtensionPointSchemaValidator('collaborator')(
         providerCapabilities?.extensions?.collaborator,
       );
@@ -452,7 +444,7 @@ const Header = ({
                     justifyContent: 'center',
                   }}
                 ></div>
-                <SpaceSwitcher title={title} isBeta={isBeta} />
+                <SpaceSwitcher />
               </Grid>
               <Box
                 component={UserContainer}
@@ -477,12 +469,6 @@ const Header = ({
                       activeContexts={activeContexts}
                       setActiveContexts={setActiveContexts}
                       searchContexts={searchContexts}
-                      runningStatus={{
-                        operatorStatus: operatorState,
-                        meshSyncStatus: meshSyncState,
-                      }}
-                      updateK8SConfig={updateK8SConfig}
-                      updateProgress={updateProgress}
                     />
                   </UserSpan>
 
@@ -499,10 +485,10 @@ const Header = ({
                   </div>
 
                   <UserSpan>
-                    <User updateExtensionType={updateExtensionType} />
+                    <User />
                   </UserSpan>
                   <UserSpan data-testid="header-menu">
-                    <HeaderMenu updateExtensionType={updateExtensionType} />
+                    <HeaderMenu />
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
@@ -518,22 +504,4 @@ Header.propTypes = {
   onDrawerToggle: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = (state) => {
-  return {
-    title: state.get('page').get('title'),
-    isBeta: state.get('page').get('isBeta'),
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-    k8sconfig: state.get('k8sConfig'),
-    operatorState: state.get('operatorState'),
-    meshSyncState: state.get('meshSyncState'),
-    capabilitiesRegistry: state.get('capabilitiesRegistry'),
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateK8SConfig: bindActionCreators(updateK8SConfig, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withNotify(Header));
+export default Header;

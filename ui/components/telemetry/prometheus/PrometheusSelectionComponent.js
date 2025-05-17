@@ -1,13 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { TextField, Grid, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { Controlled as CodeMirror } from 'react-codemirror2';
-import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
 import dataFetch from '../../../lib/data-fetch';
 import CodeIcon from '@mui/icons-material/Code';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const PrometheusContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -125,7 +123,7 @@ const PrometheusSelectionComponent = (props) => {
   };
 
   const boardChange = (newVal) => {
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     dataFetch(
       `/api/telemetry/metrics/board_import/${connectionID}`,
@@ -136,7 +134,7 @@ const PrometheusSelectionComponent = (props) => {
         body: newVal,
       },
       (result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         const filteredPanels =
           result.panels?.filter((panel) =>
             panel.targets?.some((t) => t.datasource?.type?.toLowerCase() === 'prometheus'),
@@ -179,13 +177,13 @@ const PrometheusSelectionComponent = (props) => {
       queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(ed.getTime() / 1000)}`; // accounts for the last 24hrs
     }
 
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
 
     dataFetch(
       queryURL,
       { credentials: 'include' },
       (result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         let tmpVarOpts = [];
 
         if (Array.isArray(result?.data)) {
@@ -409,9 +407,4 @@ PrometheusSelectionComponent.propTypes = {
   handleError: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-const mapStateToProps = () => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(PrometheusSelectionComponent);
+export default PrometheusSelectionComponent;

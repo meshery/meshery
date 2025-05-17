@@ -98,7 +98,7 @@ const DesignViewListItem = ({
             <AvatarSkeleton />
           ) : (
             <StyledAvatarContainer>
-              <Link href={`https://${MESHERY_CLOUD_PROD}/user/${userData?.id}`}>
+              <Link href={`${MESHERY_CLOUD_PROD}/user/${userData?.id}`}>
                 <Avatar alt={userData?.first_name} src={userData?.avatar_url} />
               </Link>
               <StyledUserDetailsContainer>

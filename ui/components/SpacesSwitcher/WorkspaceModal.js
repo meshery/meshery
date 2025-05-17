@@ -30,12 +30,14 @@ import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
 import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
-import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelector } from 'react-redux';
+import CAN from '@/utils/can';
+import { keys } from '@/utils/permission_constants';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 const getNavItem = (theme) => {
   return [
@@ -62,6 +64,7 @@ const getNavItem = (theme) => {
       id: 'My-Views',
       label: 'My Views',
       icon: <ViewIcon {...iconSmall} fill={theme.palette.icon.default} />,
+      enabled: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
       content: <MyViewsContent />,
     },
     {
@@ -198,7 +201,7 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
 };
 
 const WorkspaceContentWrapper = ({ id, workspacesData }) => {
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const theme = useTheme();
 
   useEffect(() => {
@@ -235,11 +238,11 @@ const Navigation = ({ setHeaderInfo }) => {
   const [open, setOpen] = useState(!isMobile);
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
   const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const currentOrganization = useGetCurrentOrganization();
-  const navConfig = getNavItem(theme);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
 
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
     {
@@ -351,7 +354,7 @@ const Navigation = ({ setHeaderInfo }) => {
   );
 };
 
-const WorkspaceModal = ({ setWorkspaceModal, workspaceModal }) => {
+const WorkspaceModal = ({ workspaceModal, closeWorkspaceModal }) => {
   const theme = useTheme();
   const [headerInfo, setHeaderInfo] = useState({
     title: 'All Workspaces',
@@ -360,7 +363,7 @@ const WorkspaceModal = ({ setWorkspaceModal, workspaceModal }) => {
 
   return (
     <Modal
-      closeModal={() => setWorkspaceModal(false)}
+      closeModal={closeWorkspaceModal}
       fullScreen
       fullWidth
       sx={{ margin: '5rem 8rem' }}
