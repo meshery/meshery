@@ -34,9 +34,15 @@ jobs:
       - name: file system info 00
         run: df -h
 
-        # TODO  think about if we could reuse image build from ui-and-server build workflow?
-      - name: Build meshery image
-        run: make docker-build
+      #   # TODO  think about if we could reuse image build from ui-and-server build workflow?
+      # - name: Build meshery image
+      #   run: make docker-build
+
+      # For debug: because build takes 10 minutes :) 
+      - name: docker pull for now instead of build
+        run: |
+          docker pull layer5/meshery:stable-latest
+          docker tag layer5/meshery:stable-latest layer5/meshery:latest
 
       - name: file system info 01
         run: df -h
