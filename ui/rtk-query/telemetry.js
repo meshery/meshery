@@ -25,6 +25,14 @@ const telemetryApi = api.injectEndpoints({
       }),
     }),
 
+    getStaticPrometheusBoardConfig: builder.query({
+      query: () => ({
+        url: `telemetry/metrics/static-board`,
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+
     updateGrafanaBoards: builder.mutation({
       query: ({ connectionID, selectedBoardsConfigs }) => ({
         url: `telemetry/metrics/grafana/boards/${connectionID}`,
@@ -53,6 +61,7 @@ export const {
   useGetGrafanaBoardsQuery,
   useLazyGetGrafanaBoardsQuery,
   useGetGrafanaConfigQuery,
+  useGetStaticPrometheusBoardConfigQuery,
   useUpdateGrafanaBoardsMutation,
   useConfigureGrafanaMutation,
 } = telemetryApi;

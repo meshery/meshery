@@ -26,7 +26,6 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import dataFetch from '../../lib/data-fetch';
 import MesheryChart from '../MesheryChart';
 import LoadTestTimerDialog from '../load-test-timer-dialog';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
@@ -57,6 +56,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { updateLoadTest } from '@/store/slices/prefTest';
 import { updateStaticPrometheusBoardConfig } from '@/store/slices/telemetry';
+import { useGetStaticPrometheusBoardConfigQuery } from '@/rtk-query/telemetry';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -561,7 +561,6 @@ const MesheryPerformanceComponent_ = (props) => {
     }
   }
   useEffect(() => {
-    getStaticPrometheusBoardConfig();
     scanForMeshes();
     getLoadTestPrefs();
     getSMPMeshes();
@@ -577,45 +576,54 @@ const MesheryPerformanceComponent_ = (props) => {
     }
   };
 
-  const getStaticPrometheusBoardConfig = () => {
+  const shouldSkipFetch =
+    (staticPrometheusBoardConfig &&
+      staticPrometheusBoardConfig !== null &&
+      Object.keys(staticPrometheusBoardConfig).length > 0) ||
+    (staticPrometheusBoardConfigState &&
+      staticPrometheusBoardConfigState !== null &&
+      Object.keys(staticPrometheusBoardConfigState).length > 0);
+
+  const {
+    data: configData,
+    isSuccess: isConfigFetchSuccessful,
+    isError: isConfigFetchFailed,
+    error: fetchError,
+  } = useGetStaticPrometheusBoardConfigQuery(undefined, {
+    skip: shouldSkipFetch,
+  });
+
+  const persistStaticBoardConfig = () => {
     if (
-      (staticPrometheusBoardConfig &&
-        staticPrometheusBoardConfig !== null &&
-        Object.keys(staticPrometheusBoardConfig).length > 0) ||
-      (staticPrometheusBoardConfigState &&
-        staticPrometheusBoardConfigState !== null &&
-        Object.keys(staticPrometheusBoardConfigState).length > 0)
+      isConfigFetchSuccessful &&
+      configData &&
+      typeof configData !== 'undefined' &&
+      typeof configData.cluster !== 'undefined' &&
+      typeof configData.node !== 'undefined' &&
+      typeof configData.cluster.panels !== 'undefined' &&
+      configData.cluster.panels.length > 0 &&
+      typeof configData.node.panels !== 'undefined' &&
+      configData.node.panels.length > 0
     ) {
-      return;
+      dispatch(
+        updateStaticPrometheusBoardConfig({
+          staticPrometheusBoardConfig: configData,
+        }),
+      );
+      setStaticPrometheusBoardConfig(configData);
     }
-    dataFetch(
-      '/api/telemetry/metrics/static-board',
-      { credentials: 'include' },
-      (result) => {
-        if (
-          typeof result !== 'undefined' &&
-          typeof result.cluster !== 'undefined' &&
-          typeof result.node !== 'undefined' &&
-          typeof result.cluster.panels !== 'undefined' &&
-          result.cluster.panels.length > 0 &&
-          typeof result.node.panels !== 'undefined' &&
-          result.node.panels.length > 0
-        ) {
-          dispatch(
-            updateStaticPrometheusBoardConfig({
-              staticPrometheusBoardConfig: result, // will contain both the cluster and node keys for the respective boards
-            }),
-          );
-          setStaticPrometheusBoardConfig(result);
-        }
-      },
-      (err) => {
-        handleWarn(
-          'Unable to fetch pre-configured boards: No Kubernetes cluster is connected, so statistics will not be gathered from cluster',
-        )(err);
-      },
-    );
   };
+
+  const logBoardConfigFetchError = () => {
+    handleWarn(
+      'Unable to fetch pre-configured boards: No Kubernetes cluster is connected, so statistics will not be gathered from cluster',
+    )(fetchError);
+  };
+
+  useEffect(() => {
+    if (isConfigFetchSuccessful) persistStaticBoardConfig();
+    else if (isConfigFetchFailed) logBoardConfigFetchError();
+  }, [isConfigFetchSuccessful, isConfigFetchFailed]);
 
   const getK8sClusterIds = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
