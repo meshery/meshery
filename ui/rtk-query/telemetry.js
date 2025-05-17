@@ -61,6 +61,7 @@ export const {
   useGetGrafanaBoardsQuery,
   useLazyGetGrafanaBoardsQuery,
   useGetGrafanaConfigQuery,
+  useGetStaticPrometheusBoardConfigQuery,
   useUpdateGrafanaBoardsMutation,
   useConfigureGrafanaMutation,
 } = telemetryApi;
