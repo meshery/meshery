@@ -8,6 +8,7 @@ integrations:
     - jaegerlinkerdaddon_meshmodel.json
     - linkerdmesh_meshmodel.json
     - meshtlsauthentication.Linkerd
+    - networkauthentication.Linkerd
     - server.Linkerd
     - serverauthorization.Linkerd
     - serviceprofile.Linkerd
