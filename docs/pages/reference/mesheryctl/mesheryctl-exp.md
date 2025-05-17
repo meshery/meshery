@@ -45,7 +45,7 @@ mesheryctl exp [flags]
 
 ## See Also
 
-* [mesheryctl exp connections](/reference/mesheryctl/exp/connections)
+* [mesheryctl exp connection](/reference/mesheryctl/exp/connection)
 * [mesheryctl exp model](/reference/mesheryctl/exp/model)
 * [mesheryctl exp organization](/reference/mesheryctl/exp/organization)
 * [mesheryctl exp relationship](/reference/mesheryctl/exp/relationship)

@@ -107,6 +107,6 @@ test.describe('Settings Page Tests', () => {
     verifyAdapterResBody(await manageRes.json());
 
     // Verify success notification
-    await expect(page.getByText('Adapter was configured!')).toBeVisible();
+    await expect(page.getByText('Adapter configured')).toBeVisible();
   });
 });

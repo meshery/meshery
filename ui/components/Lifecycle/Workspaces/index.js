@@ -47,9 +47,9 @@ import RightArrowIcon from '@/assets/icons/RightArrowIcon';
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
-import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -122,7 +122,7 @@ const Workspaces = () => {
     id: '',
     name: '',
   });
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   if (workspaceSwitcherContext.selectedWorkspace.id) {
     selectedWorkspace = workspaceSwitcherContext.selectedWorkspace;
     setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;

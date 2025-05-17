@@ -58,6 +58,8 @@ mesheryctl component view [component-name]
 			log.Fatalln(err, "error processing config")
 		}
 
+		outFormatFlag, _ := cmd.Flags().GetString("output-format")
+
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		componentDefinition := args[0]
 

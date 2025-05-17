@@ -35,7 +35,6 @@ var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
 	pageNumberFlag int
-	outFormatFlag  string
 	saveFlag       bool
 
 	componentApiPath = "api/meshmodels/components"

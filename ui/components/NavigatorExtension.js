@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   createUseRemoteComponent,
   getDependencies,
@@ -34,6 +34,7 @@ import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/meshe
 import { useSelector } from 'react-redux';
 import { store } from '../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -43,6 +44,7 @@ function NavigatorExtension({ url }) {
   const { selectedK8sContexts } = useSelector((state) => state.ui);
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const { openModalWithDefault } = useContext(WorkspaceModalContext);
 
   if (err != null) {
     return (
@@ -120,6 +122,7 @@ function NavigatorExtension({ url }) {
           },
           mesheryStore: extensionExposedMesheryStore,
           currentOrganization,
+          openWorkspaceModal: openModalWithDefault,
         }}
       />
     </DynamicFullScrrenLoader>

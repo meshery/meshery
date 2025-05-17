@@ -1,7 +1,6 @@
 import {
   getDesign,
   useDeletePatternFileMutation,
-  usePublishPatternMutation,
   useUpdatePatternFileMutation,
 } from '@/rtk-query/design';
 import { getUserAccessToken, getUserProfile, useGetLoggedInUserQuery } from '@/rtk-query/user';
@@ -18,7 +17,7 @@ import {
   useTheme,
   useRoomActivity,
 } from '@layer5/sistent';
-import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
 import { MenuComponent } from './MenuComponent';
@@ -30,11 +29,8 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
 import InfoModal from '../Modals/Information/InfoModal';
-import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
-import _ from 'lodash';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
-import { WorkspaceSwitcherContext } from './WorkspaceSwitcher';
 import Router from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -45,6 +41,7 @@ import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 const MainDesignsContent = ({
   page,
@@ -61,7 +58,6 @@ const MainDesignsContent = ({
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
-  const [publishCatalog] = usePublishPatternMutation();
   const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
   const { notify } = useNotification();
   const modalRef = useRef(true);
@@ -178,13 +174,6 @@ const MainDesignsContent = ({
       userId: selectedDesignWithPatternFile?.data?.user_id,
     });
   };
-  const [formSchema, setFormSchema] = useState({});
-  const { data: publishFormSchema } = useGetSchemaQuery(
-    { schemaName: 'publish' },
-    {
-      skip: !infoModal.open,
-    },
-  );
 
   const { data: meshModelsData } = useGetMeshModelsQuery(
     {
@@ -197,79 +186,17 @@ const MainDesignsContent = ({
       skip: !infoModal.open,
     },
   );
-  const modifyRJSFSchema = (schema, propertyPath, newValue) => {
-    const clonedSchema = _.cloneDeep(schema);
-    _.set(clonedSchema, propertyPath, newValue);
-    return clonedSchema;
-  };
-
-  useEffect(() => {
-    if (infoModal.open && publishFormSchema && meshModelsData) {
-      const modelNames = _.uniq(meshModelsData.models?.map((model) => model.displayName));
-
-      const modifiedSchema = modifyRJSFSchema(
-        publishFormSchema.rjsfSchema,
-        'properties.compatibility.items.enum',
-        modelNames,
-      );
-
-      setFormSchema({ rjsfSchema: modifiedSchema, uiSchema: publishFormSchema.uiSchema });
-    }
-  }, [publishFormSchema, meshModelsData]);
 
   const handleInfoModalClose = () => {
     setSelectedDesign(null);
     setInfoModal({ open: false, userId: '' });
   };
 
-  const handlePublish = (formData) => {
-    const compatibilityStore = _.uniqBy(meshModelsData, (model) => _.toLower(model.displayName))
-      ?.filter((model) =>
-        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
-      )
-      ?.map((model) => model.name);
-
-    const payload = {
-      id: infoModal.selectedDesign?.id,
-      catalog_data: {
-        ...formData,
-        compatibility: compatibilityStore,
-        type: _.toLower(formData?.type),
-      },
-    };
-    updateProgress({ showProgress: true });
-    publishCatalog({
-      publishBody: JSON.stringify(payload),
-    })
-      .unwrap()
-      .then(() => {
-        updateProgress({ showProgress: false });
-        if (currentUser.role_names.includes('admin')) {
-          notify({
-            message: `${selectedDesign?.name} Design Published`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        } else {
-          notify({
-            message:
-              'Design queued for publishing into Meshery Catalog. Maintainers notified for review',
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
-      })
-      .catch(() => {
-        updateProgress({ showProgress: false });
-        notify({
-          message: `Unable to publish ${selectedDesign?.name} Design`,
-          event_type: EVENT_TYPES.ERROR,
-        });
-      });
-  };
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
   const [updatePatterns] = useUpdatePatternFileMutation();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
 
   const handleOpenDesignInDesigner = (designId, designName) => {
     if (!isKanvasDesignerAvailable) {
@@ -448,14 +375,11 @@ const MainDesignsContent = ({
       {infoModal.open && (
         <Modal {...sistentInfoModal}>
           <InfoModal
-            handlePublish={handlePublish}
             infoModalOpen={infoModal.open}
             handleInfoModalClose={handleInfoModalClose}
-            dataName={'patterns'}
             selectedResource={selectedDesign}
             resourceOwnerID={infoModal.userId}
             currentUser={currentUser}
-            formSchema={formSchema}
             meshModels={meshModelsData?.models}
             patternFetcher={refetch}
           />
