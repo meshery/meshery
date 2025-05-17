@@ -30,7 +30,7 @@ const telemetryApi = api.injectEndpoints({
         url: `telemetry/metrics/static-board`,
         method: 'GET',
         credentials: 'include',
-      })
+      }),
     }),
 
     updateGrafanaBoards: builder.mutation({

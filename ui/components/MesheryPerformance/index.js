@@ -561,7 +561,6 @@ const MesheryPerformanceComponent_ = (props) => {
     }
   }
   useEffect(() => {
-    getStaticPrometheusBoardConfig();
     scanForMeshes();
     getLoadTestPrefs();
     getSMPMeshes();
@@ -577,12 +576,13 @@ const MesheryPerformanceComponent_ = (props) => {
     }
   };
 
-  const shouldSkipFetch = (staticPrometheusBoardConfig &&
-        staticPrometheusBoardConfig !== null &&
-        Object.keys(staticPrometheusBoardConfig).length > 0) ||
-      (staticPrometheusBoardConfigState &&
-        staticPrometheusBoardConfigState !== null &&
-        Object.keys(staticPrometheusBoardConfigState).length > 0);
+  const shouldSkipFetch =
+    (staticPrometheusBoardConfig &&
+      staticPrometheusBoardConfig !== null &&
+      Object.keys(staticPrometheusBoardConfig).length > 0) ||
+    (staticPrometheusBoardConfigState &&
+      staticPrometheusBoardConfigState !== null &&
+      Object.keys(staticPrometheusBoardConfigState).length > 0);
 
   const {
     data: configData,
@@ -593,7 +593,7 @@ const MesheryPerformanceComponent_ = (props) => {
     skip: shouldSkipFetch,
   });
 
-  const persistStaticBoardConfig  = () => {
+  const persistStaticBoardConfig = () => {
     if (
       isConfigFetchSuccessful &&
       configData &&
@@ -605,7 +605,11 @@ const MesheryPerformanceComponent_ = (props) => {
       typeof configData.node.panels !== 'undefined' &&
       configData.node.panels.length > 0
     ) {
-      dispatch(updateStaticPrometheusBoardConfig({ staticPrometheusBoardConfig: configData }));
+      dispatch(
+        updateStaticPrometheusBoardConfig({
+          staticPrometheusBoardConfig: configData,
+        })
+      );
       setStaticPrometheusBoardConfig(configData);
     }
   };
@@ -613,12 +617,12 @@ const MesheryPerformanceComponent_ = (props) => {
   const logBoardConfigFetchError = () => {
     console.warn(
       'Unable to fetch pre-configured boards: No Kubernetes cluster is connected, so statistics will not be gathered from cluster',
-      fetchError,
+      fetchError
     );
-  }
+  };
 
   useEffect(() => {
-    if (isConfigFetchSuccessful) persistStaticBoardConfig ();
+    if (isConfigFetchSuccessful) persistStaticBoardConfig();
     else if (isConfigFetchFailed) logBoardConfigFetchError();
   }, [isConfigFetchSuccessful, isConfigFetchFailed]);
 
