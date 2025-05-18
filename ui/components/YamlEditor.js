@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import {
-    CustomTooltip,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    Divider,
-    IconButton,
-    Typography,
-    styled,
+  CustomTooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  Typography,
+  styled,
 } from '@layer5/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -21,13 +21,13 @@ import { keys } from '@/utils/permission_constants';
 import { FILE_OPS } from '../utils/Enum';
 
 const YamlDialogTitle = styled(DialogTitle)(() => ({
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'end',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'end',
 }));
 
 const YamlDialogTitleText = styled(Typography)(() => ({
-    flexGrow: 1,
+  flexGrow: 1,
 }));
 
 /**
@@ -45,136 +45,136 @@ const YamlDialogTitleText = styled(Typography)(() => ({
  * @returns {JSX.Element} YamlEditor component
  */
 function YamlEditor({
-    title,
-    content,
-    isReadOnly = false,
-    onClose,
-    onSubmit,
-    additionalButtons,
-    id,
-    resourceType = 'pattern',
-    metadata = {},
+  title,
+  content,
+  isReadOnly = false,
+  onClose,
+  onSubmit,
+  additionalButtons,
+  id,
+  resourceType = 'pattern',
+  metadata = {},
 }) {
-    const [yamlContent, setYamlContent] = useState(content);
-    const [fullScreen, setFullScreen] = useState(false);
+  const [yamlContent, setYamlContent] = useState(content);
+  const [fullScreen, setFullScreen] = useState(false);
 
-    const toggleFullScreen = () => {
-        setFullScreen(!fullScreen);
-    };
+  const toggleFullScreen = () => {
+    setFullScreen(!fullScreen);
+  };
 
-    const handleUpdate = () => {
-        onSubmit({
-            data: yamlContent,
-            id: id,
-            name: title,
-            type: FILE_OPS.UPDATE,
-            catalog_data: metadata.catalog_data,
-            ...metadata,
-        });
-    };
+  const handleUpdate = () => {
+    onSubmit({
+      data: yamlContent,
+      id: id,
+      name: title,
+      type: FILE_OPS.UPDATE,
+      catalog_data: metadata.catalog_data,
+      ...metadata,
+    });
+  };
 
-    const handleDelete = () => {
-        onSubmit({
-            data: yamlContent,
-            id: id,
-            name: title,
-            type: FILE_OPS.DELETE,
-            catalog_data: metadata.catalog_data,
-            ...metadata,
-        });
-    };
+  const handleDelete = () => {
+    onSubmit({
+      data: yamlContent,
+      id: id,
+      name: title,
+      type: FILE_OPS.DELETE,
+      catalog_data: metadata.catalog_data,
+      ...metadata,
+    });
+  };
 
-    const FullScreenCodeMirrorWrapper = styled('div')(() => ({
-        height: '100%',
-        '& .CodeMirror': {
-            minHeight: '300px',
-            height: fullScreen ? '80vh' : '30vh',
-        },
-    }));
+  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: '300px',
+      height: fullScreen ? '80vh' : '30vh',
+    },
+  }));
 
-    // Determine permissions keys based on resource type
-    const editPermissionKey = resourceType === 'pattern' ? keys.EDIT_DESIGN : keys.EDIT_WASM_FILTER;
-    const deletePermissionKey =
-        resourceType === 'pattern' ? keys.DELETE_A_DESIGN : keys.DELETE_WASM_FILTER;
+  // Determine permissions keys based on resource type
+  const editPermissionKey = resourceType === 'pattern' ? keys.EDIT_DESIGN : keys.EDIT_WASM_FILTER;
+  const deletePermissionKey =
+    resourceType === 'pattern' ? keys.DELETE_A_DESIGN : keys.DELETE_WASM_FILTER;
 
-    return (
-        <Dialog
-            onClose={onClose}
-            aria-labelledby={`${resourceType}-dialog-title`}
-            open
-            maxWidth="md"
-            fullScreen={fullScreen}
-            fullWidth={!fullScreen}
-        >
-            <YamlDialogTitle disableTypography id={`${resourceType}-dialog-title`}>
-                <YamlDialogTitleText variant="h6">{title}</YamlDialogTitleText>
-                <div>
-                    <CustomTooltip
-                        placement="top"
-                        title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-                        interactive
-                    >
-                        <IconButton onClick={toggleFullScreen}>
-                            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-                        </IconButton>
-                    </CustomTooltip>
-                    <CustomTooltip placement="top" title="Exit" interactive>
-                        <IconButton onClick={onClose}>
-                            <CloseIcon />
-                        </IconButton>
-                    </CustomTooltip>
-                </div>
-            </YamlDialogTitle>
-            <Divider variant="fullWidth" light />
-            <DialogContent>
-                <FullScreenCodeMirrorWrapper>
-                    <CodeMirror
-                        value={content || ''}
-                        options={{
-                            theme: 'material',
-                            lineNumbers: true,
-                            lineWrapping: true,
-                            gutters: ['CodeMirror-lint-markers'],
-                            lint: true,
-                            mode: 'text/x-yaml',
-                            readOnly: isReadOnly,
-                        }}
-                        onChange={(_, data, val) => setYamlContent(val)}
-                    />
-                </FullScreenCodeMirrorWrapper>
-            </DialogContent>
-            <Divider variant="fullWidth" light />
-            <DialogActions>
-                {!isReadOnly && (
-                    <>
-                        <CustomTooltip title={`Update ${resourceType === 'pattern' ? 'Design' : 'Filter'}`}>
-                            <div>
-                                <IconButton
-                                    aria-label="Update"
-                                    disabled={!CAN(editPermissionKey.action, editPermissionKey.subject)}
-                                    onClick={handleUpdate}
-                                >
-                                    <SaveIcon />
-                                </IconButton>
-                            </div>
-                        </CustomTooltip>
-                        <CustomTooltip title={`Delete ${resourceType === 'pattern' ? 'Design' : 'Filter'}`}>
-                            <div>
-                                <IconButton
-                                    aria-label="Delete"
-                                    disabled={!CAN(deletePermissionKey.action, deletePermissionKey.subject)}
-                                    onClick={handleDelete}
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                            </div>
-                        </CustomTooltip>
-                        {additionalButtons}
-                    </>
-                )}
-            </DialogActions>
-        </Dialog>
-    );
+  return (
+    <Dialog
+      onClose={onClose}
+      aria-labelledby={`${resourceType}-dialog-title`}
+      open
+      maxWidth="md"
+      fullScreen={fullScreen}
+      fullWidth={!fullScreen}
+    >
+      <YamlDialogTitle disableTypography id={`${resourceType}-dialog-title`}>
+        <YamlDialogTitleText variant="h6">{title}</YamlDialogTitleText>
+        <div>
+          <CustomTooltip
+            placement="top"
+            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            interactive
+          >
+            <IconButton onClick={toggleFullScreen}>
+              {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip placement="top" title="Exit" interactive>
+            <IconButton onClick={onClose}>
+              <CloseIcon />
+            </IconButton>
+          </CustomTooltip>
+        </div>
+      </YamlDialogTitle>
+      <Divider variant="fullWidth" light />
+      <DialogContent>
+        <FullScreenCodeMirrorWrapper>
+          <CodeMirror
+            value={content || ''}
+            options={{
+              theme: 'material',
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ['CodeMirror-lint-markers'],
+              lint: true,
+              mode: 'text/x-yaml',
+              readOnly: isReadOnly,
+            }}
+            onChange={(_, data, val) => setYamlContent(val)}
+          />
+        </FullScreenCodeMirrorWrapper>
+      </DialogContent>
+      <Divider variant="fullWidth" light />
+      <DialogActions>
+        {!isReadOnly && (
+          <>
+            <CustomTooltip title={`Update ${resourceType === 'pattern' ? 'Design' : 'Filter'}`}>
+              <div>
+                <IconButton
+                  aria-label="Update"
+                  disabled={!CAN(editPermissionKey.action, editPermissionKey.subject)}
+                  onClick={handleUpdate}
+                >
+                  <SaveIcon />
+                </IconButton>
+              </div>
+            </CustomTooltip>
+            <CustomTooltip title={`Delete ${resourceType === 'pattern' ? 'Design' : 'Filter'}`}>
+              <div>
+                <IconButton
+                  aria-label="Delete"
+                  disabled={!CAN(deletePermissionKey.action, deletePermissionKey.subject)}
+                  onClick={handleDelete}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </div>
+            </CustomTooltip>
+            {additionalButtons}
+          </>
+        )}
+      </DialogActions>
+    </Dialog>
+  );
 }
 
 export default YamlEditor;

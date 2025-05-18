@@ -1490,11 +1490,16 @@ function MesheryPatterns({
               {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
                 infoModal.open && (
                   <InfoModal
+                    handlePublish={handlePublish}
                     infoModalOpen={true}
                     handleInfoModalClose={handleInfoModalClose}
+                    dataName="patterns"
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
+                    currentUser={user}
                     patternFetcher={getPatterns}
+                    formSchema={publishSchema}
+                    meshModels={meshModels}
                   />
                 )}
             </SistentModal>
