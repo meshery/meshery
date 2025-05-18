@@ -18,7 +18,11 @@ func HandlePaginationAsync[T any](
 	processDataFunc func(*T) ([][]string, int64),
 ) error {
 	startIndex := 0
-	currentPage := displayData.Page
+	currentPage := displayData.Page - 1
+
+	if currentPage < 0 {
+		currentPage = 0
+	}
 
 	for {
 		// Clear the terminal screen

@@ -40,7 +40,7 @@ mesheryctl model list --count
 			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
-		return display.ListAsyncPagination(modelData, processModelData)
+		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
 	},
 }
 

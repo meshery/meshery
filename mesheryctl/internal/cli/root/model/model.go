@@ -137,13 +137,15 @@ func displayModels(modelsResponse *models.MeshmodelsAPIResponse, cmd *cobra.Comm
 	return nil
 }
 
-func processModelData(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
+func generateModelDataToDisplay(modelsResponse *models.MeshmodelsAPIResponse) ([][]string, int64) {
 	rows := [][]string{}
 
 	for _, model := range modelsResponse.Models {
-		if len(model.DisplayName) > 0 {
-			rows = append(rows, []string{model.Name, string(model.Category.Name), model.Version})
+		modelName := model.Name
+		if modelName == "" {
+			modelName = "N/A"
 		}
+		rows = append(rows, []string{modelName, string(model.Category.Name), model.Version})
 	}
 
 	return rows, int64(modelsResponse.Count)
