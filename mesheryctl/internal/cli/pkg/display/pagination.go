@@ -2,6 +2,7 @@ package display
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
@@ -40,14 +41,14 @@ func HandlePaginationAsync[T any](
 		}
 
 		// Display the total count and current page
-		whiteBoardPrinter.Print("Total number of ", displayData.DataType, ":", totalCount)
+		whiteBoardPrinter.Fprint(os.Stdout, "Total number of ", displayData.DataType, ":", totalCount)
 		fmt.Println()
 
 		if displayData.DisplayCountOnly {
 			return nil
 		}
 
-		whiteBoardPrinter.Print("Page: ", currentPage)
+		whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage)
 		fmt.Println()
 
 		// Display the data in a table
@@ -58,7 +59,7 @@ func HandlePaginationAsync[T any](
 		}
 
 		// Check if there is more data to display
-		if len(rows) < pageSize {
+		if len(rows) <= pageSize {
 			break
 		}
 
