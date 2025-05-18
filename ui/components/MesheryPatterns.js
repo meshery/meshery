@@ -11,28 +11,16 @@ import {
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
   Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
   IconButton,
   ResponsiveDataTable,
-  Typography,
   styled,
   PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon from '@mui/icons-material/Delete';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import GetAppIcon from '@mui/icons-material/GetApp';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
@@ -97,6 +85,7 @@ import yaml from 'js-yaml';
 import ActionPopover from './MesheryPatterns/ActionPopover';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import YamlEditor from './YamlEditor';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -149,16 +138,6 @@ const ActionWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
-const YamlDialogTitle = styled(DialogTitle)(() => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'end',
-}));
-
-const YamlDialogTitleText = styled(Typography)(() => ({
-  flexGrow: 1,
-}));
-
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (
     <>
@@ -170,116 +149,6 @@ function TooltipIcon({ children, onClick, title, placement, disabled }) {
         </div>
       </CustomTooltip>
     </>
-  );
-}
-
-function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
-  const [yaml, setYaml] = useState(pattern.pattern_file);
-  const [fullScreen, setFullScreen] = useState(false);
-
-  const toggleFullScreen = () => {
-    setFullScreen(!fullScreen);
-  };
-
-  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
-    height: '100%',
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: fullScreen ? '80vh' : '30vh',
-    },
-  }));
-
-  return (
-    <Dialog
-      onClose={onClose}
-      aria-labelledby="pattern-dialog-title"
-      open
-      maxWidth="md"
-      fullScreen={fullScreen}
-      fullWidth={!fullScreen}
-    >
-      <YamlDialogTitle
-        style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}
-        disableTypography
-        id="pattern-dialog-title"
-      >
-        <div>
-          <YamlDialogTitleText variant="h6">{pattern.name}</YamlDialogTitleText>
-        </div>
-        <div>
-          <CustomTooltip
-            placement="top"
-            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            onClick={toggleFullScreen}
-          >
-            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-          </CustomTooltip>
-          <CustomTooltip placement="top" title="Exit" onClick={onClose}>
-            <CloseIcon />
-          </CustomTooltip>
-        </div>
-      </YamlDialogTitle>
-      <Divider variant="fullWidth" light />
-      <DialogContent>
-        <FullScreenCodeMirrorWrapper>
-          <CodeMirror
-            value={pattern.pattern_file}
-            options={{
-              theme: 'material',
-              lineNumbers: true,
-              lineWrapping: true,
-              gutters: ['CodeMirror-lint-markers'],
-              // @ts-ignore
-              lint: true,
-              mode: 'text/x-yaml',
-              readOnly: isReadOnly,
-            }}
-            onChange={(_, data, val) => setYaml(val)}
-          />
-        </FullScreenCodeMirrorWrapper>
-      </DialogContent>
-      <Divider variant="fullWidth" light />
-      <DialogActions>
-        {isReadOnly ? null : (
-          <>
-            <CustomTooltip title="Update Pattern">
-              <IconButton
-                aria-label="Update"
-                disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                onClick={() =>
-                  onSubmit({
-                    data: yaml,
-                    id: pattern.id,
-                    name: pattern.name,
-                    type: FILE_OPS.UPDATE,
-                    catalog_data: pattern.catalog_data,
-                  })
-                }
-              >
-                <SaveIcon />
-              </IconButton>
-            </CustomTooltip>
-            <CustomTooltip title="Delete Pattern">
-              <IconButton
-                aria-label="Delete"
-                disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-                onClick={() =>
-                  onSubmit({
-                    data: yaml,
-                    id: pattern.id,
-                    name: pattern.name,
-                    type: FILE_OPS.DELETE,
-                    catalog_data: pattern.catalog_data,
-                  })
-                }
-              >
-                <DeleteIcon />
-              </IconButton>
-            </CustomTooltip>
-          </>
-        )}
-      </DialogActions>
-    </Dialog>
   );
 }
 
@@ -1455,11 +1324,15 @@ function MesheryPatterns({
         {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
           <>
             {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-              <YAMLEditor
-                pattern={selectedRowData}
+              <YamlEditor
+                title={selectedRowData.name}
+                content={selectedRowData.pattern_file}
+                isReadOnly={arePatternsReadOnly}
                 onClose={resetSelectedRowData()}
                 onSubmit={handleSubmit}
-                isReadOnly={arePatternsReadOnly}
+                id={selectedRowData.id}
+                resourceType="pattern"
+                metadata={{ catalog_data: selectedRowData.catalog_data }}
               />
             )}
             <ToolWrapper>
