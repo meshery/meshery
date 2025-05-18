@@ -34,15 +34,12 @@ func HandlePaginationAsync[T any](
 		// Process the fetched data
 		rows, totalCount := processDataFunc(data)
 
+		// Display the total count and current page
+		utils.DisplayCount(displayData.DataType, totalCount)
+
 		if len(rows) == 0 {
-			whiteBoardPrinter.Print("No data available.")
-			fmt.Println()
 			break
 		}
-
-		// Display the total count and current page
-		whiteBoardPrinter.Fprint(os.Stdout, "Total number of ", displayData.DataType, ":", totalCount)
-		fmt.Println()
 
 		if displayData.DisplayCountOnly {
 			return nil
