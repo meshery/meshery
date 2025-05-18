@@ -55,11 +55,6 @@ func HandlePaginationAsync[T any](
 			break
 		}
 
-		// Check if there is more data to display
-		if len(rows) <= pageSize {
-			break
-		}
-
 		// Wait for user input to navigate pages
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
