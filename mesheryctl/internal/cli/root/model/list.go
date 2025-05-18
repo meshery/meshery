@@ -1,11 +1,8 @@
 package model
 
 import (
-	"fmt"
-
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -34,17 +31,20 @@ mesheryctl model list --count
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page, _ := cmd.Flags().GetInt("page")
 
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](fmt.Sprintf("%s?%s", modelsApiPath, utils.GetPageQueryParameter(cmd, page)))
-
-		if err != nil {
-			return err
+		modelData := display.DisplayDataAsync{
+			UrlPath:          modelsApiPath,
+			DataType:         "model",
+			Header:           []string{"Model", "Category", "Version"},
+			Page:             page,
+			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
-		return displayModels(modelsResponse, cmd)
+		return display.ListAsyncPagination(modelData, processModelData)
 	},
 }
 
 func init() {
-	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listModelCmd.Flags().IntP("page", "p", 0, "(optional) List next set of models with --page (default = 0)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 }

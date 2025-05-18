@@ -4,6 +4,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
+var pageSize = 25
+
 type DisplayedData struct {
 	// Meshery Logical conmponent
 	DataType string
@@ -16,6 +18,17 @@ type DisplayedData struct {
 	DisplayCountOnly bool
 	IsPage           bool
 }
+
+type DisplayDataAsync struct {
+	UrlPath          string
+	DataType         string
+	Header           []string
+	Page             int
+	DisplayCountOnly bool
+	IsPage           bool
+}
+
+type dataProcessor[T any] func(*T) ([][]string, int64)
 
 func List(data DisplayedData) error {
 	utils.DisplayCount(data.DataType, data.Count)
@@ -36,4 +49,13 @@ func List(data DisplayedData) error {
 	}
 	return nil
 
+}
+
+func ListAsyncPagination[T any](displayData DisplayDataAsync, processData dataProcessor[T]) error {
+
+	return HandlePaginationAsync(
+		pageSize,
+		displayData,
+		processData,
+	)
 }
