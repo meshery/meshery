@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import {
   CustomTooltip,
@@ -28,6 +28,7 @@ import {
   ConnectionStyledSelect,
 } from './styles';
 import { FormatId } from '../DataFormatter';
+import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
@@ -102,7 +103,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState();
-  const [sortOrder, setSortOrder] = useState('name asc');
+  const [sortOrder, setSortOrder] = useState('created_at desc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -164,6 +165,8 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     isError: isConnectionError,
     error: connectionError,
     refetch: getConnections,
+    isLoading: isConnectionLoading,
+    isFetching: isConnectionFetching,
   } = useGetConnectionsQuery({
     page: page,
     pagesize: pageSize,
@@ -207,25 +210,24 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     }
   }, [environmentsError, connectionError, isEnvironmentsSuccess]);
 
-  const modifiedConnections = connectionData?.connections.map((connection) => {
-    return {
-      ...connection,
-      nextStatus:
-        connection.nextStatus === undefined &&
-        connectionMetadataState[connection.kind]?.transitions,
-      kindLogo: connection.kindLogo === undefined && connectionMetadataState[connection.kind]?.icon,
-    };
+  const enhancedConnections = useMemo(() => {
+    if (!connectionData?.connections) return [];
+
+    return connectionData.connections
+      .filter((conn) => conn.name && conn.kind && conn.status)
+      .map((connection) => ({
+        ...connection,
+        nextStatus: connection.nextStatus || connectionMetadataState[connection.kind]?.transitions,
+        kindLogo: connection.kindLogo || connectionMetadataState[connection.kind]?.icon,
+      }));
+  }, [connectionData, isConnectionLoading, isConnectionFetching, connectionMetadataState]);
+
+  const filteredConnections = enhancedConnections?.filter(({ status, kind }) => {
+    const statusMatch = selectedFilters.status === 'All' || status === selectedFilters.status;
+    const kindMatch = selectedFilters.kind === 'All' || kind === selectedFilters.kind;
+    return statusMatch && kindMatch;
   });
 
-  const connections = modifiedConnections?.filter((connection) => {
-    if (selectedFilters.status === 'All' && selectedFilters.kind === 'All') {
-      return true;
-    }
-    return (
-      (statusFilter === null || connection.status === statusFilter) &&
-      (kindFilter === null || connection.kind === kindFilter)
-    );
-  });
   const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
   const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
 
@@ -341,9 +343,9 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       if (response === 'DELETE') {
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
-            [connections[index].id]: CONNECTION_STATES.DELETED,
+            [filteredConnections[index].id]: CONNECTION_STATES.DELETED,
           });
-          UpdateConnectionStatus(connections[index].kind, requestBody);
+          UpdateConnectionStatus(filteredConnections[index].kind, requestBody);
         });
       }
     }
@@ -366,7 +368,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const handleFlushMeshSync = () => {
     return async () => {
       handleActionMenuClose();
-      const connection = connections[rowData.rowIndex];
+      const connection = filteredConnections[rowData.rowIndex];
 
       let response = await modalRef.current.show({
         title: `Flush MeshSync data for ${connection.metadata?.name} ?`,
@@ -544,11 +546,11 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     if (!selectedConnectionId || expansionFlags.current.isHandlingExpansion) return;
     if (expansionFlags.current.lastProcessedId === selectedConnectionId) return;
 
-    if (connections && connections.length > 0) {
+    if (filteredConnections && filteredConnections.length > 0) {
       expansionFlags.current.isUrlExpansion = true;
       expansionFlags.current.lastProcessedId = selectedConnectionId;
 
-      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+      const index = filteredConnections?.findIndex((conn) => conn.id === selectedConnectionId);
       if (index !== -1) {
         setRowsExpanded([index]);
       } else {
@@ -558,7 +560,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       expansionFlags.current.isUrlExpansion = false;
       expansionFlags.current.isInitialLoad = false;
     }
-  }, [selectedConnectionId, connections]);
+  }, [selectedConnectionId, filteredConnections]);
 
   const columns = [
     {
@@ -1032,6 +1034,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
         onClick={() => handleDeleteConnections(selected)}
         sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
         disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+        data-testid="Button-delete-connections"
       >
         <DeleteIcon style={iconMedium} fill={theme.palette.common.white} />
         Delete
@@ -1079,9 +1082,9 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       const expandedRows = allRowsExpanded.slice(-1);
       setRowsExpanded(expandedRows.map((item) => item.index));
 
-      if (expandedRows.length > 0 && connections) {
+      if (expandedRows.length > 0 && filteredConnections) {
         const index = expandedRows[0].index;
-        const connection = connections[index];
+        const connection = filteredConnections[index];
 
         if (
           connection &&
@@ -1098,7 +1101,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;
-      const connection = connections && connections[tableMeta.rowIndex];
+      const connection = filteredConnections && filteredConnections[tableMeta.rowIndex];
       return (
         <>
           <TableCell colSpan={colSpan}>
@@ -1136,6 +1139,10 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     return initialVisibility;
   });
 
+  if (isConnectionLoading) {
+    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
+  }
+
   return (
     <>
       <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
@@ -1150,14 +1157,16 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
             justifyContent: 'flex-end',
           }}
         >
-          <SearchBar
-            onSearch={(value) => {
-              setSearch(value);
-            }}
-            placeholder="Search Connections..."
-            expanded={isSearchExpanded}
-            setExpanded={setIsSearchExpanded}
-          />
+          <div data-testid="ConnectionTable-search">
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+              }}
+              placeholder="Search Connections..."
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+            />
+          </div>
 
           <UniversalFilter
             id="ref"
@@ -1177,7 +1186,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
       </ToolWrapper>
 
       <ResponsiveDataTable
-        data={connections}
+        data={filteredConnections}
         columns={columns}
         options={options}
         tableCols={tableCols}

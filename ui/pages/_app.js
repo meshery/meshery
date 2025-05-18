@@ -506,7 +506,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
     );
   }, [loadAbility, setCurrentOrganization]);
 
-  const loadConfigFromServer = useCallback(async () => {
+  const loadConfigFromServer = useCallback(() => {
     dataFetch(
       '/api/system/sync',
       {
@@ -543,34 +543,38 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    loadConfigFromServer();
-    loadPromGrafanaConnection();
-    loadOrg();
-    initSubscriptions([]);
+    // todo further refactoring required for data fetch
+    const loadAll = async () => {
+      loadConfigFromServer();
+      loadPromGrafanaConnection();
+      await loadOrg();
 
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
-          dispatch(
-            toggleCatalogContent({
-              catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
-            }),
-          );
-        }
-      },
-      (err) => console.error(err),
-    );
+      initSubscriptions([]);
 
-    document.addEventListener('fullscreenchange', fullScreenChanged);
-    loadMeshModelComponent();
-    setState((prevState) => ({ ...prevState, isLoading: false }));
+      dataFetch(
+        '/api/user/prefs',
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+        (result) => {
+          if (typeof result?.usersExtensionPreferences?.catalogContent !== 'undefined') {
+            dispatch(
+              toggleCatalogContent({
+                catalogVisibility: result?.usersExtensionPreferences?.catalogContent,
+              }),
+            );
+          }
+        },
+        (err) => console.error(err),
+      );
 
-    // Cleanup
+      document.addEventListener('fullscreenchange', fullScreenChanged);
+      await loadMeshModelComponent();
+      setState((prevState) => ({ ...prevState, isLoading: false }));
+    };
+    loadAll();
+
     return () => {
       document.removeEventListener('fullscreenchange', fullScreenChanged);
       if (state.disposeK8sContextSubscription) {
