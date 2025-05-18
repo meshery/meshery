@@ -32,7 +32,6 @@
     },
     "subCategory": "Database",
     "metadata": {
-      "capabilities": null,
       "isAnnotation": false,
       "primaryColor": "#00B39F",
       "secondaryColor": "#00D3A9",
@@ -60,7 +59,7 @@
     "svgWhite": ""
   },
   "capabilities": null,
-  "status": "ignored",
+  "status": "enabled",
   "metadata": {
     "configurationUISchema": "",
     "genealogy": "",
