@@ -99,9 +99,9 @@ To generate
 
 - TypeScript types
 - json templates
-- yaml templates 
+- yaml templates
 
-from schemas, use:  
+from schemas, use:
 ```bash
 make generate-types
 ```

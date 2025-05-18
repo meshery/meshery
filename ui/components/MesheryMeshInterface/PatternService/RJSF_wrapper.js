@@ -20,7 +20,6 @@ function RJSFWrapper(props) {
     ...restProps
     //.. temporarily ignoring till handler is attached successfully
   } = props;
-
   const errorHandler = HandleError();
 
   const [data, setData] = React.useState((prev) => ({ ...formData, ...prev }));

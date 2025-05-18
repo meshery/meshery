@@ -39,10 +39,10 @@ import {
 } from '@/utils/utils';
 import Router from 'next/router';
 import { useContext } from 'react';
-import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
 import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import { getView, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const { notify } = useNotification();
@@ -104,7 +104,7 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
   const isKanvasOperatorAvailable = useIsOperatorEnabled();
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
 
   function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
