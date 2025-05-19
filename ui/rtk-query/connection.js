@@ -122,29 +122,6 @@ const connectionsApi = api.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
-    getPrometheusConfig: builder.query({
-      query: () => ({
-        url: 'telemetry/metrics/config',
-        method: 'GET',
-        credentials: 'include',
-      }),
-    }),
-    postBoardImport: builder.mutation({
-      query: ({ connectionID, body }) => ({
-        url: `/telemetry/metrics/board_import/${connectionID}`,
-        method: 'POST',
-        body,
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-      }),
-    }),
-    queryTemplateVars: builder.query({
-      query: ({ connectionID, query }) => ({
-        url: `/telemetry/metrics/query/${connectionID}?${query}`,
-        method: 'GET',
-        credentials: 'include',
-      }),
-    }),
   }),
 });
 
@@ -164,7 +141,4 @@ export const {
   useGetConnectionByKindQuery,
   useCancelConnectionRegisterMutation,
   useAddKubernetesConfigMutation,
-  useGetPrometheusConfigQuery,
-  usePostBoardImportMutation,
-  useLazyQueryTemplateVarsQuery,
 } = connectionsApi;

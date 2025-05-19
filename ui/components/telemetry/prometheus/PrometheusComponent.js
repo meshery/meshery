@@ -5,8 +5,8 @@ import { Typography, styled, Box } from '@layer5/sistent';
 import {
   useConfigureConnectionMutation,
   useUpdateConnectionMutation,
-  useGetPrometheusConfigQuery,
 } from '@/rtk-query/connection';
+import { useGetPrometheusConfigQuery } from '@/rtk-query/telemetry';
 import PrometheusSelectionComponent from './PrometheusSelectionComponent';
 import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';

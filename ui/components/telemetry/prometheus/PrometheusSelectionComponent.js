@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { TextField, Grid, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@layer5/sistent';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { trueRandom } from '../../../lib/trueRandom';
-import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/connection';
+import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 import CodeIcon from '@mui/icons-material/Code';
 import { updateProgress } from '@/store/slices/mesheryUi';
 

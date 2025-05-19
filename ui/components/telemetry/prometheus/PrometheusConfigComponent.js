@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { Grid, Button, styled } from '@layer5/sistent';
@@ -6,7 +6,7 @@ import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
-import { useLazyGetConnectionsQuery } from '@/rtk-query/connection';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 
 const StyledRoot = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -26,16 +26,12 @@ const ButtonContainer = styled('div')(({ theme }) => ({
 
 // change this to display all connected prometheuses connecion and based on the selection updat tht erduc prom object
 const PrometheusConfigComponent = ({ urlError, handleChange, handlePrometheusConfigure }) => {
-  const [triggerFetchConnections, { data }] = useLazyGetConnectionsQuery();
-
-  useEffect(() => {
-    triggerFetchConnections({
-      page: 0,
-      pagesize: 1,
-      status: JSON.stringify([CONNECTION_STATES.CONNECTED]),
-      kind: JSON.stringify([CONNECTION_KINDS.PROMETHEUS]),
-    });
-  }, []);
+  const { data } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 1,
+    status: JSON.stringify([CONNECTION_STATES.CONNECTED]),
+    kind: JSON.stringify([CONNECTION_KINDS.PROMETHEUS]),
+  });
 
   const availablePrometheusConnection = data?.connections || [];
 
