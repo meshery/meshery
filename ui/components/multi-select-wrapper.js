@@ -36,23 +36,27 @@ const MultiSelectWrapper = (props) => {
           padding: '0.4rem 1rem',
         }}
       >
-      <FormControlLabel
-        control={
-          props.value === '*' ? (
-            <FilterNoneIcon
-              style={{ color: theme.palette.text.primary, marginRight: '0.25rem' }}
-            />
-          ) : (
-            <Checkbox
-              key={props.value}
-              checked={props.isSelected}
-              onChange={() => {}}
-              style={{ padding: '0' }}
-            />
-          )
-        }
-        label={<span style={{ marginLeft: props.value === '*' ? '0.25rem' : '0.5rem' }}>{props.label}</span>}
-      />
+        <FormControlLabel
+          control={
+            props.value === '*' ? (
+              <FilterNoneIcon
+                style={{ color: theme.palette.text.primary, marginRight: '0.25rem' }}
+              />
+            ) : (
+              <Checkbox
+                key={props.value}
+                checked={props.isSelected}
+                onChange={() => {}}
+                style={{ padding: '0' }}
+              />
+            )
+          }
+          label={
+            <span style={{ marginLeft: props.value === '*' ? '0.25rem' : '0.5rem' }}>
+              {props.label}
+            </span>
+          }
+        />
       </MenuItem>
     );
   };
