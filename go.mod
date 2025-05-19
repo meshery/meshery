@@ -15,7 +15,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 require (
 	cuelang.org/go v0.12.1
 	fortio.org/fortio v1.66.2
-	github.com/99designs/gqlgen v0.17.73
+	github.com/99designs/gqlgen v0.17.45
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.2
@@ -60,7 +60,7 @@ require (
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
-	github.com/vektah/gqlparser/v2 v2.5.26
+	github.com/vektah/gqlparser/v2 v2.5.21
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/mod v0.24.0
 	golang.org/x/oauth2 v0.30.0
