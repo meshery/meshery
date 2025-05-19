@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { TextField, Grid, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@layer5/sistent';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { trueRandom } from '../../../lib/trueRandom';
-import dataFetch from '../../../lib/data-fetch';
+import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 import CodeIcon from '@mui/icons-material/Code';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
@@ -122,104 +122,97 @@ const PrometheusSelectionComponent = (props) => {
     });
   };
 
-  const boardChange = (newVal) => {
+  const [postBoardImport] = usePostBoardImportMutation();
+  const [triggerTemplateQuery] = useLazyQueryTemplateVarsQuery();
+
+  const boardChange = async (newVal) => {
     updateProgress({ showProgress: true });
-
-    dataFetch(
-      `/api/telemetry/metrics/board_import/${connectionID}`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+    try {
+      const result = await postBoardImport({
+        connectionID,
         body: newVal,
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        const filteredPanels =
-          result.panels?.filter((panel) =>
-            panel.targets?.some((t) => t.datasource?.type?.toLowerCase() === 'prometheus'),
-          ) || [];
+      }).unwrap();
 
-        if (filteredPanels.length === 0) {
-          return handleError('No panels found with target datasource as prometheus.');
-        }
+      const filteredPanels =
+        result.panels?.filter((panel) =>
+          panel.targets?.some((t) => t.datasource?.type?.toLowerCase() === 'prometheus'),
+        ) || [];
 
-        setGrafanaBoardObject(result);
-        setPanels(filteredPanels);
-        setSelectedPanels(filteredPanels.map((p) => p.id));
-        setTemplateVars(result.template_vars || []);
-        setTemplateVarOptions([]);
-        setSelectedTemplateVars([]);
+      if (filteredPanels.length === 0) {
+        return handleError('No panels found with target datasource as prometheus.');
+      }
 
-        if (result.template_vars?.length > 0) {
-          queryTemplateVars(0, result.template_vars, [], []);
-        }
-      },
-      handleError,
-    );
+      setGrafanaBoardObject(result);
+      setPanels(filteredPanels);
+      setSelectedPanels(filteredPanels.map((p) => p.id));
+      setTemplateVars(result.template_vars || []);
+      setTemplateVarOptions([]);
+      setSelectedTemplateVars([]);
+
+      if (result.template_vars?.length > 0) {
+        queryTemplateVars(0, result.template_vars, [], []);
+      }
+    } catch (error) {
+      handleError(error);
+    } finally {
+      updateProgress({ showProgress: false });
+    }
   };
 
-  const queryTemplateVars = (ind, vars, options, selectedVars) => {
+  const queryTemplateVars = async (ind, vars, options, selectedVars) => {
     if (!vars?.[ind]) return;
 
-    let queryURL = `/api/telemetry/metrics/query/${connectionID}?query=${encodeURIComponent(vars[ind].query)}`;
+    let queryStr = `query=${encodeURIComponent(vars[ind].query)}`;
     for (let i = ind; i > 0; i--) {
-      queryURL += `&${vars[i - 1].name}=${selectedVars[i - 1]}`;
+      queryStr += `&${vars[i - 1].name}=${selectedVars[i - 1]}`;
     }
 
     if (vars[ind].query.startsWith('label_values') && vars[ind].query.includes(',')) {
-      // series query needs a start and end time or else it will take way longer to return. . .
-      // but at this point this component does not have the time range selection bcoz the time range selection comes after this component makes its selections
-      // hence for now just limiting the time period to the last 24hrs
       const ed = new Date();
       const sd = new Date();
       sd.setDate(sd.getDate() - 1);
-      queryURL += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(ed.getTime() / 1000)}`; // accounts for the last 24hrs
+      queryStr += `&start=${Math.floor(sd.getTime() / 1000)}&end=${Math.floor(ed.getTime() / 1000)}`;
     }
 
     updateProgress({ showProgress: true });
+    try {
+      const result = await triggerTemplateQuery({ connectionID, query: queryStr }).unwrap();
+      let tmpVarOpts = [];
 
-    dataFetch(
-      queryURL,
-      { credentials: 'include' },
-      (result) => {
-        updateProgress({ showProgress: false });
-        let tmpVarOpts = [];
-
-        if (Array.isArray(result?.data)) {
-          if (
-            vars[ind].query.startsWith('label_values') &&
-            vars[ind].query.includes(',') &&
-            typeof result.data[0] === 'object'
-          ) {
-            const q = vars[ind].query.replace('label_values(', '').slice(0, -1);
-            const qInd = q.split(',').pop().trim();
-            result.data.forEach((d) => {
-              const v = d[qInd];
-              if (v && !tmpVarOpts.includes(v)) tmpVarOpts.push(v);
-            });
-          } else {
-            tmpVarOpts = result.data;
-          }
-        } else if (result?.data?.result) {
-          tmpVarOpts = result.data.result.map(({ metric }) => Object.values(metric)?.[0]);
+      if (Array.isArray(result?.data)) {
+        if (
+          vars[ind].query.startsWith('label_values') &&
+          vars[ind].query.includes(',') &&
+          typeof result.data[0] === 'object'
+        ) {
+          const q = vars[ind].query.replace('label_values(', '').slice(0, -1);
+          const qInd = q.split(',').pop().trim();
+          result.data.forEach((d) => {
+            const v = d[qInd];
+            if (v && !tmpVarOpts.includes(v)) tmpVarOpts.push(v);
+          });
+        } else {
+          tmpVarOpts = result.data;
         }
+      } else if (result?.data?.result) {
+        tmpVarOpts = result.data.result.map(({ metric }) => Object.values(metric)?.[0]);
+      }
 
-        setTemplateVarOptions((prev) => {
-          const newOptions = [...prev];
-          newOptions[ind] = tmpVarOpts;
-          return newOptions;
-        });
-      },
-      (error) => {
-        setTemplateVarOptions((prev) => {
-          const newOptions = [...prev];
-          newOptions[ind] = [vars[ind].Value];
-          return newOptions;
-        });
-        handleError(error);
-      },
-    );
+      setTemplateVarOptions((prev) => {
+        const newOptions = [...prev];
+        newOptions[ind] = tmpVarOpts;
+        return newOptions;
+      });
+    } catch (error) {
+      setTemplateVarOptions((prev) => {
+        const newOptions = [...prev];
+        newOptions[ind] = [vars[ind].Value];
+        return newOptions;
+      });
+      handleError(error);
+    } finally {
+      updateProgress({ showProgress: false });
+    }
   };
 
   const handleTemplateVarChange = (ind) => (e) => {
