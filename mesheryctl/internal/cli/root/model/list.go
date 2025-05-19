@@ -46,7 +46,7 @@ mesheryctl model list --count
 }
 
 func init() {
-	listModelCmd.Flags().IntP("page", "p", 0, "(optional) List next set of models with --page (default = 0)")
+	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 0)")
 	listModelCmd.Flags().IntP("pagesize", "s", 0, "(optional) List next set of models with --pagesize (default = 0)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 }
