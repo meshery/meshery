@@ -30,12 +30,13 @@ mesheryctl model list --count
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		page, _ := cmd.Flags().GetInt("page")
-
+		pageSize, _ := cmd.Flags().GetInt("pagesize")
 		modelData := display.DisplayDataAsync{
 			UrlPath:          modelsApiPath,
 			DataType:         "model",
 			Header:           []string{"Model", "Category", "Version"},
 			Page:             page,
+			PageSize:         pageSize,
 			IsPage:           cmd.Flags().Changed("page"),
 			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
@@ -46,5 +47,6 @@ mesheryctl model list --count
 
 func init() {
 	listModelCmd.Flags().IntP("page", "p", 0, "(optional) List next set of models with --page (default = 0)")
+	listModelCmd.Flags().IntP("pagesize", "s", 0, "(optional) List next set of models with --pagesize (default = 0)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 }

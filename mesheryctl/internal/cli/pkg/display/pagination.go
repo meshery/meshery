@@ -18,6 +18,7 @@ func HandlePaginationAsync[T any](
 	processDataFunc func(*T) ([][]string, int64),
 ) error {
 	startIndex := 0
+	// Adjust the page number to be zero-based
 	currentPage := displayData.Page - 1
 
 	if currentPage < 0 {
@@ -29,7 +30,8 @@ func HandlePaginationAsync[T any](
 		utils.ClearLine()
 
 		// Fetch data for the current page
-		urlPath := fmt.Sprintf("%s?page=%d&page_size=%d", displayData.UrlPath, currentPage, pageSize)
+		urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", displayData.UrlPath, currentPage, pageSize)
+		utils.Log.Debug("Fetching data from URL: ", urlPath)
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
 			return fmt.Errorf("failed to fetch data for page %d: %w", currentPage, err)
@@ -49,7 +51,8 @@ func HandlePaginationAsync[T any](
 			return nil
 		}
 
-		whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage)
+		// Display the current page number to be one-based
+		whiteBoardPrinter.Fprint(os.Stdout, "Page: ", currentPage+1)
 		fmt.Println()
 
 		// Display the data in a table
