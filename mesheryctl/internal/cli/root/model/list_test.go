@@ -36,7 +36,7 @@ func TestListModel(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:             "List model no data",
+			Name:             "Display model count no data",
 			Args:             []string{"list", "--count"},
 			URL:              testUrl,
 			Fixture:          "list.model.empty.api.response.golden",
@@ -44,11 +44,11 @@ func TestListModel(t *testing.T) {
 			ExpectError:      false,
 		},
 		{
-			Name:             "List model no data",
+			Name:             "Display count model",
 			Args:             []string{"list", "--count"},
 			URL:              testUrl,
 			Fixture:          "list.model.api.response.golden",
-			ExpectedResponse: "list.model.count.empty.ouput.golden",
+			ExpectedResponse: "list.model.count.ouput.golden",
 			ExpectError:      false,
 		},
 	}
