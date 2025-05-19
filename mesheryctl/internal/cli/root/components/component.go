@@ -33,8 +33,7 @@ import (
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	pageNumberFlag int
-	saveFlag       bool
+	saveFlag bool
 
 	componentApiPath = "api/meshmodels/components"
 )
