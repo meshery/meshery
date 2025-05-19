@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { Typography, styled, Box } from '@layer5/sistent';
-import dataFetch from '../../../lib/data-fetch';
+import {
+  useConfigureConnectionMutation,
+  useUpdateConnectionMutation,
+} from '@/rtk-query/connection';
+import { useGetPrometheusConfigQuery } from '@/rtk-query/telemetry';
 import PrometheusSelectionComponent from './PrometheusSelectionComponent';
 import GrafanaDisplaySelection from '../grafana/GrafanaDisplaySelection';
 import GrafanaCustomCharts from '../grafana/GrafanaCustomCharts';
@@ -71,35 +75,32 @@ const PrometheusComponent = (props) => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
-  const submitPrometheusConfigure = (url) => {
-    const params = new URLSearchParams({ prometheusURL: url });
+  const [configurePrometheus] = useConfigureConnectionMutation();
+
+  const submitPrometheusConfigure = async (url) => {
     updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/telemetry/metrics/config`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
-        body: params,
-      },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (result) {
-          props.notify({
-            message: 'Prometheus was configured!',
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-          setPrometheusConfigSuccess(true);
-          dispatch(
-            updatePrometheusConfig({
-              prometheusURL: url,
-              selectedPrometheusBoardsConfigs: [],
-            }),
-          );
-        }
-      },
-      handleError,
-    );
+    try {
+      await configurePrometheus({
+        connectionKind: CONNECTION_KINDS.PROMETHEUS,
+        body: { prometheusURL: url },
+      }).unwrap();
+
+      props.notify({
+        message: 'Prometheus was configured!',
+        event_type: EVENT_TYPES.SUCCESS,
+      });
+      setPrometheusConfigSuccess(true);
+      dispatch(
+        updatePrometheusConfig({
+          prometheusURL: url,
+          selectedPrometheusBoardsConfigs: [],
+        }),
+      );
+    } catch (err) {
+      handleError(err?.data?.error || 'Error communicating with Prometheus');
+    } finally {
+      updateProgress({ showProgress: false });
+    }
   };
 
   const isValidGrafanaURL = (url) =>
@@ -115,6 +116,9 @@ const PrometheusComponent = (props) => {
       }
 
       setPrometheusURL(newURL);
+      setConnectionID(data?.id);
+      setConnectionName(data?.name);
+
       dispatch(
         updatePrometheusConfig({
           prometheusURL: newURL,
@@ -139,36 +143,37 @@ const PrometheusComponent = (props) => {
     props.notify({ message, event_type: EVENT_TYPES.ERROR });
   };
 
-  const handlePrometheusChipDelete = (e) => {
+  const [updateConnection] = useUpdateConnectionMutation();
+
+  const handlePrometheusChipDelete = async (e) => {
     e.preventDefault();
     if (!connectionID) return;
 
     updateProgress({ showProgress: true });
-    dataFetch(
-      `/api/integrations/connections/${CONNECTION_KINDS.PROMETHEUS}/status`,
-      {
-        method: 'PUT',
-        credentials: 'include',
-        body: JSON.stringify({ [connectionID]: CONNECTION_STATES.DISCOVERED }),
-      },
-      () => {
-        updateProgress({ showProgress: false });
-        setPrometheusConfigSuccess(false);
-        setPrometheusURL('');
-        setSelectedPrometheusBoardsConfigs([]);
-        dispatch(
-          updatePrometheusConfig({
-            prometheusURL: '',
-            selectedPrometheusBoardsConfigs: [],
-          }),
-        );
-        props.notify({
-          message: `Connection "${connectionID}" transitioned to discovered state`,
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      },
-      (err) => handleError(err.message),
-    );
+    try {
+      await updateConnection({
+        connectionKind: CONNECTION_KINDS.PROMETHEUS,
+        connectionPayload: { [connectionID]: CONNECTION_STATES.DISCOVERED },
+      }).unwrap();
+
+      setPrometheusConfigSuccess(false);
+      setPrometheusURL('');
+      setSelectedPrometheusBoardsConfigs([]);
+      dispatch(
+        updatePrometheusConfig({
+          prometheusURL: '',
+          selectedPrometheusBoardsConfigs: [],
+        }),
+      );
+      props.notify({
+        message: `Connection "${connectionID}" transitioned to discovered state`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
+    } catch (err) {
+      handleError(err?.data?.error || 'Failed to update Prometheus connection');
+    } finally {
+      updateProgress({ showProgress: false });
+    }
   };
 
   const handlePrometheusClick = () => {
@@ -200,50 +205,50 @@ const PrometheusComponent = (props) => {
     );
   };
 
+  const { data: prometheusConfig, isSuccess: isPrometheusConfigLoaded } =
+    useGetPrometheusConfigQuery(undefined, { skip: !props.isMeshConfigured });
+
   useEffect(() => {
-    if (initialPrometheus.prometheusURL !== prometheusURL) {
-      setPrometheusConfigSuccess(initialPrometheus.prometheusURL !== '');
-      setPrometheusURL(initialPrometheus.prometheusURL);
-      setSelectedPrometheusBoardsConfigs(initialPrometheus.selectedPrometheusBoardsConfigs || []);
-      setConnectionID(initialPrometheus.connectionID);
-      setConnectionName(initialPrometheus.connectionName);
+    if (!isPrometheusConfigLoaded) return;
+
+    updateProgress({ showProgress: false });
+
+    if (prometheusConfig?.prometheusURL) {
+      setPrometheusURL(prometheusConfig.prometheusURL);
+      setPrometheusConfigSuccess(true);
+      setSelectedPrometheusBoardsConfigs(prometheusConfig.selectedPrometheusBoardsConfigs || []);
     }
-  }, [initialPrometheus]);
 
-  useEffect(() => {
-    if (!props.isMeshConfigured) return;
+    const selector = {
+      type: 'ALL_MESH',
+      k8sClusterIDs: getK8sClusterIds(),
+    };
 
-    dataFetch(
-      `/api/telemetry/metrics/config`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+    fetchAvailableAddons(selector).subscribe({
+      next: (res) => {
+        res?.addonsState?.forEach((addon) => {
+          if (
+            addon.name === 'prometheus' &&
+            prometheusURL === '' &&
+            prometheusConfig?.prometheusURL === ''
+          ) {
+            const newURL = `http://${addon.endpoint}`;
+            setPrometheusURL(newURL);
+            submitPrometheusConfigure(newURL);
+          }
+        });
       },
-      (result) => {
-        updateProgress({ showProgress: false });
-        if (result?.prometheusURL) {
-          const selector = {
-            type: 'ALL_MESH',
-            k8sClusterIDs: getK8sClusterIds(),
-          };
-          fetchAvailableAddons(selector).subscribe({
-            next: (res) => {
-              res?.addonsState?.forEach((addon) => {
-                if (addon.name === 'prometheus' && prometheusURL === '') {
-                  const newURL = `http://${addon.endpoint}`;
-                  setPrometheusURL(newURL);
-                  submitPrometheusConfigure(newURL);
-                }
-              });
-            },
-            error: (err) => console.error('Error registering Prometheus:', err),
-          });
-        }
-      },
-      handleError,
-    );
-  }, []);
+      error: (err) => console.error('Error registering Prometheus:', err),
+    });
+  }, [
+    isPrometheusConfigLoaded,
+    prometheusConfig,
+    props.isMeshConfigured,
+    prometheusURL,
+    submitPrometheusConfigure,
+    selectedK8sContexts,
+    k8sConfig,
+  ]);
 
   if (prometheusConfigSuccess) {
     const displaySelec = selectedPrometheusBoardsConfigs.length > 0 && (
