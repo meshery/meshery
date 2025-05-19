@@ -1,14 +1,9 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
 import { NoSsr } from '@layer5/sistent';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
-import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
-import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
 import _PromptComponent from './PromptComponent';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
 import ViewSwitch from './ViewSwitch';
 import FiltersGrid from './MesheryFilters/FiltersGrid';
@@ -18,7 +13,6 @@ import PublicIcon from '@mui/icons-material/Public';
 import PublishIcon from '@mui/icons-material/Publish';
 import downloadContent from '../utils/fileDownloader';
 import CloneIcon from '../public/static/img/CloneIcon';
-import SaveIcon from '@mui/icons-material/Save';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
@@ -40,11 +34,6 @@ import {
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
   IconButton,
-  Dialog,
-  DialogTitle,
-  DialogActions,
-  Divider,
-  Typography,
   Button,
   Box,
   styled,
@@ -73,6 +62,7 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import YamlEditor from './YamlEditor';
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
@@ -83,15 +73,6 @@ const CreateButton = styled(Button)(() => ({
 const ViewSwitchButton = styled('div')(() => ({
   justifySelf: 'flex-end',
   paddingLeft: '1rem',
-}));
-
-const YmlDialogTitle = styled(DialogTitle)(() => ({
-  display: 'flex',
-  alignItems: 'center',
-}));
-
-const YmlDialogTitleText = styled(Typography)(() => ({
-  flexGrow: 1,
 }));
 
 const BtnText = styled('span')(({ theme }) => ({
@@ -114,120 +95,6 @@ function TooltipIcon({ children, onClick, title }) {
         </div>
       </CustomTooltip>
     </>
-  );
-}
-
-function YAMLEditor({ filter, onClose, onSubmit }) {
-  const [fullScreen, setFullScreen] = useState(false);
-
-  const toggleFullScreen = () => {
-    setFullScreen(!fullScreen);
-  };
-
-  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
-    height: '100%',
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: fullScreen ? '80vh' : '100%',
-    },
-  }));
-
-  let resourceData;
-  try {
-    resourceData = JSON.parse(filter.filter_resource);
-  } catch (error) {
-    // Handling the error or provide a default value
-    console.error('Error parsing JSON:', error);
-    resourceData = {}; // Setting a default value if parsing fails
-  }
-
-  const config = resourceData?.settings?.config || '';
-  const [yaml, setYaml] = useState(config);
-
-  return (
-    <Dialog
-      onClose={onClose}
-      aria-labelledby="filter-dialog-title"
-      open
-      maxWidth="md"
-      fullScreen={fullScreen}
-      fullWidth={!fullScreen}
-    >
-      <YmlDialogTitle>
-        <DialogTitle
-          disableTypography
-          id="filter-dialog-title"
-          style={{ width: '100%', display: 'flex' }}
-        >
-          <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
-          <TooltipIcon
-            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            onClick={toggleFullScreen}
-          >
-            {fullScreen ? (
-              <FullscreenExitIcon style={iconMedium} />
-            ) : (
-              <FullscreenIcon style={iconMedium} />
-            )}
-          </TooltipIcon>
-          <TooltipIcon title="Exit" onClick={onClose}>
-            <CloseIcon style={iconMedium} />
-          </TooltipIcon>
-        </DialogTitle>
-      </YmlDialogTitle>
-      <Divider variant="fullWidth" light />
-      <FullScreenCodeMirrorWrapper>
-        <CodeMirror
-          value={config}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            lint: true,
-            mode: 'text/x-yaml',
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
-      </FullScreenCodeMirrorWrapper>
-      <Divider variant="fullWidth" light />
-      <DialogActions>
-        <CustomTooltip title="Update Filter">
-          <IconButton
-            aria-label="Update"
-            disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: filter.id,
-                name: filter.name,
-                type: FILE_OPS.UPDATE,
-                catalog_data: filter.catalog_data,
-              })
-            }
-          >
-            <SaveIcon style={iconMedium} />
-          </IconButton>
-        </CustomTooltip>
-        <CustomTooltip title="Delete Filter">
-          <IconButton
-            aria-label="Delete"
-            disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
-            onClick={() =>
-              onSubmit({
-                data: yaml,
-                id: filter.id,
-                name: filter.name,
-                type: FILE_OPS.DELETE,
-                catalog_data: filter.catalog_data,
-              })
-            }
-          >
-            <DeleteIcon style={iconMedium} />
-          </IconButton>
-        </CustomTooltip>
-      </DialogActions>
-    </Dialog>
   );
 }
 
@@ -1124,10 +991,22 @@ function MesheryFilters() {
           {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
             <>
               {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-                <YAMLEditor
-                  filter={selectedRowData}
+                <YamlEditor
+                  title={selectedRowData.name}
+                  content={(() => {
+                    try {
+                      const resourceData = JSON.parse(selectedRowData.filter_resource || '{}');
+                      return resourceData?.settings?.config || '';
+                    } catch (error) {
+                      console.error('Error parsing filter resource JSON:', error);
+                      return ''; // Return empty string if parsing fails
+                    }
+                  })()}
                   onClose={resetSelectedRowData()}
                   onSubmit={handleSubmit}
+                  id={selectedRowData.id}
+                  resourceType="filter"
+                  metadata={{ catalog_data: selectedRowData.catalog_data }}
                 />
               )}
               <ToolWrapper>
