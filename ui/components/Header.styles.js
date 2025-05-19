@@ -44,6 +44,10 @@ export const UserContainer = styled('div')(({ theme }) => ({
   },
 }));
 
+export const SettingsWrapper = styled('div')(({ isDesktop }) => ({
+  display: isDesktop ? 'block' : 'none',
+}));
+
 export const PageTitleWrapper = styled('div')({
   flexGrow: 1,
   marginRight: 'auto',

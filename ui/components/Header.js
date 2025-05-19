@@ -54,6 +54,7 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
+  SettingsWrapper,
 } from './Header.styles';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -473,19 +474,17 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
-
-                  {isDesktop && (
-                    <div data-testid="settings-button" aria-describedby={abilityUpdated}>
-                      <CanShow Key={keys.VIEW_SETTINGS}>
-                        <IconButton onClick={() => Router.push('/settings')}>
-                          <SettingsIcon
-                            style={{ ...iconMedium, fill: theme.palette.common.white }}
-                          />
-                        </IconButton>
-                      </CanShow>
-                    </div>
-                  )}
-
+                  <SettingsWrapper
+                    isDesktop={isDesktop}
+                    data-testid="settings-button"
+                    aria-describedby={abilityUpdated}
+                  >
+                    <CanShow Key={keys.VIEW_SETTINGS}>
+                      <IconButton onClick={() => Router.push('/settings')}>
+                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
+                      </IconButton>
+                    </CanShow>
+                  </SettingsWrapper>
                   <div data-testid="notification-button">
                     <NotificationDrawerButton />
                   </div>
