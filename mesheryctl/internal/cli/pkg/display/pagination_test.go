@@ -37,18 +37,18 @@ func TestHandlePaginationAsync(t *testing.T) {
 				UrlPath:          "test",
 				DataType:         "items",
 				DisplayCountOnly: false,
-				IsPage:           false,
+				IsPage:           true,
 				Header:           []string{"ID", "Name"},
 			},
 			processDataFunc: func(data *[]items) ([][]string, int64) {
 				return [][]string{{"1", "Item1"}, {"2", "Item2"}}, 2
 			},
-			urlPath: "/test?page=1&page_size=2",
+			urlPath: "/test?page=0&pagesize=2",
 			apiResponse: []items{
 				{ID: "1", Name: "Item1"},
 				{ID: "2", Name: "Item2"},
 			},
-			exceptedResponse: "Total number of items:2\nPage: 1\n  \x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
+			exceptedResponse: "Total number of items: 2\nPage: 1\n  \x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
 			expectedError:    nil,
 		},
 		{
@@ -65,12 +65,31 @@ func TestHandlePaginationAsync(t *testing.T) {
 			processDataFunc: func(data *[]items) ([][]string, int64) {
 				return [][]string{{"1", "Item1"}, {"2", "Item2"}}, 2
 			},
-			urlPath: "/test?page=1&page_size=2",
+			urlPath: "/test?page=0&pagesize=2",
 			apiResponse: []items{
 				{ID: "1", Name: "Item1"},
 				{ID: "2", Name: "Item2"},
 			},
-			exceptedResponse: "Total number of items:2\n",
+			exceptedResponse: "Total number of items: 2\n",
+			expectedError:    nil,
+		},
+		{
+			name:     "Successful count empty response",
+			pageSize: 2,
+			displayData: DisplayDataAsync{
+				Page:             1,
+				UrlPath:          "test",
+				DataType:         "items",
+				DisplayCountOnly: true,
+				IsPage:           false,
+				Header:           []string{"ID", "Name"},
+			},
+			processDataFunc: func(data *[]items) ([][]string, int64) {
+				return [][]string{}, 0
+			},
+			urlPath:          "/test?page=0&pagesize=2",
+			apiResponse:      []items{},
+			exceptedResponse: "No items found\n",
 			expectedError:    nil,
 		},
 	}
@@ -92,7 +111,9 @@ func TestHandlePaginationAsync(t *testing.T) {
 				t.Fatalf("Failed to marshal API response: %v", err)
 			}
 
-			httpmock.RegisterResponder("GET", testContext.BaseURL+tt.urlPath,
+			url := testContext.BaseURL + tt.urlPath
+
+			httpmock.RegisterResponder("GET", url,
 				httpmock.NewStringResponder(200, string(mApiRespoanse)))
 
 			originalStdout := os.Stdout
