@@ -420,7 +420,7 @@ const Header = ({
 
   const loaderType = 'circular';
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.up('sm'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
@@ -474,14 +474,16 @@ const Header = ({
                     />
                   </UserSpan>
 
-                  {isMobile && 
-                  (<div data-testid="settings-button" aria-describedby={abilityUpdated}>
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')}>
-                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
-                      </IconButton>
-                    </CanShow>
-                  </div>
+                  {isDesktop && (
+                    <div data-testid="settings-button" aria-describedby={abilityUpdated}>
+                      <CanShow Key={keys.VIEW_SETTINGS}>
+                        <IconButton onClick={() => Router.push('/settings')}>
+                          <SettingsIcon
+                            style={{ ...iconMedium, fill: theme.palette.common.white }}
+                          />
+                        </IconButton>
+                      </CanShow>
+                    </div>
                   )}
 
                   <div data-testid="notification-button">

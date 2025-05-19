@@ -58,7 +58,7 @@ const HeaderMenu = () => {
   const handleSettings = () => {
     router.push('/settings');
     handleClose();
-  }
+  };
 
   const handleGetToken = () => {
     triggerGetToken()
