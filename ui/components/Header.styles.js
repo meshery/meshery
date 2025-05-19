@@ -10,8 +10,8 @@ export const StyledToolbar = styled(Toolbar, {
 })(({ theme, isDrawerCollapsed }) => ({
   minHeight: 59,
   padding: 16,
-  paddingLeft: isDrawerCollapsed ? 0 : 34,
-  paddingRight: 34,
+  paddingLeft: isDrawerCollapsed ? 0 : 14,
+  paddingRight: 14,
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
   boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
   [theme.breakpoints.down('sm')]: {

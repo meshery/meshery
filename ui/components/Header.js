@@ -32,6 +32,7 @@ import {
   Hidden,
   NoSsr,
   useTheme,
+  useMediaQuery,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
@@ -419,11 +420,12 @@ const Header = ({
 
   const loaderType = 'circular';
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
-          <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
+          <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
             <Grid container alignItems="center">
               <Hidden smUp>
                 <Grid item style={{ display: 'none' }}>
@@ -472,13 +474,15 @@ const Header = ({
                     />
                   </UserSpan>
 
-                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
+                  {isMobile && 
+                  (<div data-testid="settings-button" aria-describedby={abilityUpdated}>
                     <CanShow Key={keys.VIEW_SETTINGS}>
                       <IconButton onClick={() => Router.push('/settings')}>
                         <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
                       </IconButton>
                     </CanShow>
                   </div>
+                  )}
 
                   <div data-testid="notification-button">
                     <NotificationDrawerButton />
