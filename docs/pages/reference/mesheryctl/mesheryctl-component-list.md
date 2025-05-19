@@ -55,9 +55,10 @@ mesheryctl component list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Display count only
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of components with --page (default = 1) (default 1)
+  -c, --count          (optional) Display count only
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of components with --page (default = 1) (default 1)
+  -s, --pagesize int   (optional) List next set of components with --pagesize (default = 0)
 
 </div>
 </pre>
