@@ -95,8 +95,6 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
 
   const isLoading =
     viewRes.isLoading || userRes.isLoading || viewRes.isFetching || userRes.isFetching;
-  const canRenderInfo = viewRes.isSuccess && userRes.isSuccess;
-
   const formRef = React.useRef(null);
   const [saving, setSaving] = useState(false);
   const [updateView] = useUpdateViewVisibilityMutation();
@@ -137,7 +135,7 @@ export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata,
           </div>
         )}
 
-        {!isLoading && canRenderInfo && (
+        {!isLoading && (
           <div>
             <Row style={{ paddingInline: '0rem' }}>
               <Row justifyContent="start">
@@ -197,15 +195,22 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const UserChip = ({ user_id }) => {
-  const userProfileRes = useGetUserProfileSummaryByIdQuery({ id: user_id });
+  const userProfileRes = useGetUserProfileSummaryByIdQuery(
+    { id: user_id },
+    {
+      skip: !user_id,
+    },
+  );
 
   if (userProfileRes.isError || userProfileRes.isLoading) {
     return null;
   }
-  const { avatar_url } = userProfileRes.data || {};
-  const userName = formatUsername(userProfileRes.data);
+  const { avatar_url } = userProfileRes?.data || {};
+  const userName = formatUsername(userProfileRes?.data || {});
 
-  return <StyledChip avatar={<Avatar src={avatar_url} />} label={userName} variant="outlined" />;
+  return (
+    <StyledChip avatar={<Avatar src={avatar_url} />} label={userName || ''} variant="outlined" />
+  );
 };
 
 const formatUsername = ({ first_name, last_name }) => {
@@ -217,7 +222,7 @@ const ViewVisibilityMenu = ({ view }) => {
   const [updateView] = useUpdateViewVisibilityMutation();
   return (
     <VisibilityChipMenu
-      value={view.visibility}
+      value={view?.visibility || VIEW_VISIBILITY.PUBLIC}
       onChange={(value) =>
         handleUpdateViewVisibility({ value: value, updateView: updateView, selectedResource: view })
       }
