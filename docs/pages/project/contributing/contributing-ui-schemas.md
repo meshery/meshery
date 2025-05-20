@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Schema-Driven UI Development in Meshery
-permalink: project/contributing/contributing-schemas-ui
+permalink: project/contributing/contributing-ui-schemas
 abstract: How to contribute to Meshery Schemas for UI
 language: en
 type: project

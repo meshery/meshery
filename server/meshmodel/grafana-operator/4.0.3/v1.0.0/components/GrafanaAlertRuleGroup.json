@@ -47,7 +47,8 @@
     "relationships": null
   },
   "styles": {
-    "primaryColor": "",
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
     "svgComplete": "",
