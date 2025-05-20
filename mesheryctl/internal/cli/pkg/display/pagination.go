@@ -31,7 +31,6 @@ func HandlePaginationAsync[T any](
 
 		// Fetch data for the current page
 		urlPath := fmt.Sprintf("%s?page=%d&pagesize=%d", displayData.UrlPath, currentPage, pageSize)
-		utils.Log.Debug("Fetching data from URL: ", urlPath)
 		data, err := api.Fetch[T](urlPath)
 		if err != nil {
 			return fmt.Errorf("failed to fetch data for page %d: %w", currentPage, err)
