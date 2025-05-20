@@ -8,6 +8,9 @@ on:
         default: https://docs.google.com/spreadsheets/d/e/2PACX-1vQwzrUSKfuSRcpkp7sJTw1cSB63s4HCjYLJeGPWECsvqn222hjaaONQlN4X8auKvlaB0es3BqV5rQyz/pub?gid=64355745&single=true&output=csv
   schedule:
     - cron: "0 0 * * *"
+
+permissions:
+  contents: write
 jobs:
   fetch-keys:
     name: Fetch Keys
@@ -76,7 +79,7 @@ jobs:
 
       - name: Send Email on Generate permission keys failure
         if: ${{ failure() }}
-        uses: dawidd6/action-send-mail@v3.7.1
+        uses: dawidd6/action-send-mail@v4
         env:
           msg: ${{ env.reason != '' && env.reason || ' Generate permission keys failure' }}
         with:

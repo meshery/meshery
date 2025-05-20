@@ -1,0 +1,45 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "victoria-metrics-k8s-stack",
+  "displayName": "Victoria Metrics K8S Stack",
+  "status": "enabled",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Artifact Hub",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "artifacthub",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Observability and Analysis"
+  },
+  "subCategory": "Monitoring",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff",
+    "shape": "hexagon",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"20\" height=\"20\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#000000\" stroke=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\u0026#xA;33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\u0026#xA;-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\u0026#xA;-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\u0026#xA;-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\u0026#xA;-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.0\" width=\"20\" height=\"20\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\" fill=\"#ffffff\" stroke=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\u0026#xA;33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\u0026#xA;-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\u0026#xA;-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\u0026#xA;-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\u0026#xA;-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "0.45.0"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

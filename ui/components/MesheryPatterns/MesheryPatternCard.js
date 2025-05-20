@@ -31,8 +31,6 @@ import { Edit, Lock, Public } from '@mui/icons-material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
-import { Provider } from 'react-redux';
-import { store } from '../../store';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
@@ -418,12 +416,7 @@ function MesheryPatternCard_({
 }
 
 export const MesheryPatternCard = (props) => {
-  return (
-    <Provider store={store}>
-      <MesheryPatternCard_ {...props} />
-    </Provider>
-  );
+  return <MesheryPatternCard_ {...props} />;
 };
 
-// @ts-ignore
 export default MesheryPatternCard;

@@ -368,11 +368,14 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			testdataDir := filepath.Join(commandDir, "testdata")
 			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-			// Grab console prints
+			var buf bytes.Buffer
+
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
+
 			_ = SetupMeshkitLoggerTesting(t, false)
+
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(rescueStdout)
 			err := cmd.Execute()
@@ -392,10 +395,16 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			}
 
 			w.Close()
-			out, _ := io.ReadAll(r)
+
+			_, errCopy := io.Copy(&buf, r)
+
+			if errCopy != nil {
+				t.Fatal(errCopy)
+			}
+
 			os.Stdout = rescueStdout
 
-			actualResponse := string(out)
+			actualResponse := buf.String()
 
 			if *updateGoldenFile {
 				golden.Write(actualResponse)
@@ -408,6 +417,84 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
 		t.Logf("List %s test", commadName)
+	}
+
+	StopMockery(t)
+
+}
+
+type MesheryCommamdTest struct {
+	Name             string
+	Args             []string
+	HttpMethod       string
+	HttpStatusCode   int
+	URL              string
+	Fixture          string
+	ExpectedResponse string
+	ExpectError      bool
+}
+
+func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommamdTest, commandDir string, commadName string) {
+	// setup current context
+	SetupContextEnv(t)
+
+	//initialize mock server for handling requests
+	StartMockery(t)
+
+	// create a test helper
+	testContext := NewTestHelper(t)
+
+	fixturesDir := filepath.Join(commandDir, "fixtures")
+
+	// Run tests
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			if tt.Fixture != "" {
+				apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+
+				TokenFlag = GetToken(t)
+
+				httpmock.RegisterResponder(tt.HttpMethod, testContext.BaseURL+tt.URL,
+					httpmock.NewStringResponder(tt.HttpStatusCode, apiResponse))
+			}
+
+			testdataDir := filepath.Join(commandDir, "testdata")
+			golden := NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
+
+			b := SetupMeshkitLoggerTesting(t, false)
+			cmd.SetArgs(tt.Args)
+			cmd.SetOut(b)
+			err := cmd.Execute()
+
+			if err != nil {
+
+				if tt.ExpectError {
+
+					if *updateGoldenFile {
+						golden.Write(err.Error())
+					}
+					expectedResponse := golden.Load()
+
+					Equals(t, expectedResponse, err.Error())
+					return
+				}
+				t.Error(err)
+			}
+
+			actualResponse := b.String()
+
+			if *updateGoldenFile {
+				golden.Write(actualResponse)
+			}
+
+			expectedResponse := golden.Load()
+
+			cleanedActualResponse := CleanStringFromHandlePagination(actualResponse)
+			cleanedExpectedResponse := CleanStringFromHandlePagination(expectedResponse)
+
+			Equals(t, cleanedExpectedResponse, cleanedActualResponse)
+		})
+		t.Logf("Test '%s' executed", tt.Name)
 	}
 
 	StopMockery(t)

@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 import { Button, CatalogIcon, Grid, Switch, Typography, useTheme } from '@layer5/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters } from '../components/extensions';
 import DefaultError from '@/components/General/error-404';
-import { toggleCatalogContent } from '../lib/store';
 import { EVENT_TYPES } from '../lib/event-types';
 import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -14,6 +11,9 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleCatalogContent, updatePage } from '@/store/slices/mesheryUi';
+import { getPath } from 'lib/path';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
@@ -228,6 +228,59 @@ const MesheryDesignEmbedLogo = () => {
   );
 };
 
+const MesheryHelmKanvasLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/helm_chart.svg"
+    />
+  );
+};
+
+const MesheryHelmKanvasExtension = () => {
+  const handleLearnMore = (e) => {
+    window.open('https://docs.meshery.io/extensions/helm-kanvas-snapshot', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography variant="h5" component="div">
+            Kanvas Snapshot Helm Plugin
+          </Typography>
+
+          <FrontSideDescription variant="body">
+            <MesheryHelmKanvasLogo />
+            The Kanvas Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm
+            charts directly from the command line. It simplifies the process of creating Meshery
+            Snapshots, providing a visual representation of packaged Helm charts.
+          </FrontSideDescription>
+          {
+            <div style={{ textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                data-testid="helm-kanvas-learn-more-btn"
+                onClick={(e) => handleLearnMore(e)}
+              >
+                Learn More
+              </Button>
+            </div>
+          }
+        </CardContainer>
+      </Grid>
+    </>
+  );
+};
+
 const MesheryDesignEmbedExtension = () => {
   const handleLearnMore = (e) => {
     window.open('https://docs.layer5.io/kanvas/designer/embedding-designs/', '_blank');
@@ -271,12 +324,21 @@ export const WrappedMeshMapSnapShopCard = MeshMapSnapShotCard;
 export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
 export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
-const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
+export const WrappedMesheryHelmKanvasExtension = MesheryHelmKanvasExtension;
+
+const Extensions = () => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false);
   const { notify } = useNotification();
   const [updateUserPref] = useUpdateUserPrefMutation();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(updatePage({ path: getPath(), title: 'Extensions' }));
+  }, []);
+
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
 
   const {
     data: userData,
@@ -286,7 +348,7 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
   } = useGetUserPrefQuery();
 
   const handleToggle = () => {
-    toggleCatalogContent({ catalogVisibility: !catalogContent });
+    dispatch(toggleCatalogContent({ catalogVisibility: !catalogContent }));
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
   };
@@ -340,6 +402,7 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
             <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
             <WrappedMesheryPerformanceAction githubActionEnabled={false} />
             <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
+            <WrappedMesheryHelmKanvasExtension />
             <WrappedMesheryDockerExtension />
             <WrappedMesheryEmbedDesignExtension />
             <Grid item {...INITIAL_GRID_SIZE}>
@@ -421,13 +484,4 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
   );
 };
 
-const mapStateToProps = (state) => ({
-  catalogVisibility: state.get('catalogVisibility'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Extensions);
+export default Extensions;

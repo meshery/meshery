@@ -55,6 +55,19 @@
             "id": null,
             "kind": "Service",
             "match": {},
+            "match_strategy_matrix": [
+              [
+                "to_contains_from",
+                "not_null"
+              ],
+              [
+                "equal_as_strings",
+                "not_null"
+              ],
+              [
+                "equal"
+              ]
+            ],
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -102,14 +115,14 @@
                   "configuration",
                   "spec",
                   "ports",
-                  "_",
-                  "port"
+                  "0",
+                  "targetPort"
                 ],
                 [
                   "configuration",
                   "spec",
                   "ports",
-                  "_",
+                  "0",
                   "protocol"
                 ]
               ]
@@ -121,6 +134,7 @@
             "id": null,
             "kind": "Deployment",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -170,7 +184,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "0",
                   "containerPort"
@@ -181,7 +195,7 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
+                  "0",
                   "ports",
                   "0",
                   "protocol"
@@ -197,6 +211,7 @@
             "id": null,
             "kind": "Service",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -240,6 +255,7 @@
             "id": null,
             "kind": "Service",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -281,6 +297,7 @@
             "id": null,
             "kind": "Pod",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",

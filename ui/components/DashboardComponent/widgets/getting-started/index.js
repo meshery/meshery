@@ -14,14 +14,16 @@ import { useGetUserOrgRolesQuery } from '@/rtk-query/orgRoles';
 import { useGetOrgsQuery } from '@/rtk-query/organization';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { useLegacySelector } from 'lib/store';
+import { useSelector } from 'react-redux';
 
 const GetStarted = (props) => {
   const [openModal, setOpenModal] = useState(false);
   const theme = useTheme();
   const { data: currentUser } = useGetLoggedInUserQuery();
-  const { data: profileData } = useGetUserByIdQuery(currentUser?.id);
-  const currentOrg = useLegacySelector((state) => state.get('organization'));
+  const { data: profileData } = useGetUserByIdQuery(currentUser?.id, {
+    skip: !currentUser?.id,
+  });
+  const { organization: currentOrg } = useSelector((state) => state.ui);
   const { id: org_id } = currentOrg;
   return (
     <>

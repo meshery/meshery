@@ -25,7 +25,8 @@ type outputDetail struct {
 var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export registered models",
-	Long:  "Export the registered model to the specified output type",
+	Long: `Export the registered model to the specified output type
+Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export`,
 	Example: `
 // Export a model by name 
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
@@ -89,8 +90,7 @@ func export(modelName string, url string, output *outputDetail) error {
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	// ensure proper cleaning of resources
@@ -103,14 +103,16 @@ func export(modelName string, url string, output *outputDetail) error {
 	}
 
 	var exportedModelPath string
+
 	if output.Type != "oci" {
-		exportedModelPath = filepath.Join(output.Path, modelName+"."+"tar.gz")
+		exportedModelPath = filepath.Join(output.Path, modelName+".tar.gz")
 	} else {
-		exportedModelPath = output.Path + modelName + ".tar"
+		exportedModelPath = filepath.Join(output.Path, modelName+".tar")
 	}
+
 	err = os.WriteFile(exportedModelPath, data, 0644)
 	if err != nil {
-		utils.Log.Error(err)
+		utils.LogError.Error(err)
 		return nil
 	}
 

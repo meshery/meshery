@@ -1,16 +1,13 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Provider, useDispatch, useSelector } from 'react-redux';
-import { NoSsr } from '@layer5/sistent';
+import { CustomTooltip, NoSsr } from '@layer5/sistent';
 import {
   Divider,
   ClickAwayListener,
   Typography,
-  Chip,
   Button,
   CircularProgress,
   Box,
   useTheme,
-  Tooltip,
   Checkbox,
   Collapse,
   IconButton,
@@ -26,7 +23,6 @@ import {
   STATUS_STYLE,
 } from './constants';
 import Notification from './notification';
-import { store } from '../../store';
 import {
   Container,
   DarkBackdrop,
@@ -39,7 +35,6 @@ import {
   StyledNotificationDrawer,
   Title,
   TitleBellIcon,
-  StyledSubtitle,
 } from './notificationCenter.style';
 import {
   closeNotificationCenter,
@@ -58,7 +53,6 @@ import {
   useLazyGetEventsQuery,
   useUpdateEventsMutation,
 } from '../../rtk-query/notificationCenter';
-import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
 import { hasClass } from '../../utils/Elements';
 import ReadIcon from '../../assets/icons/ReadIcon';
@@ -67,7 +61,7 @@ import DeleteIcon from '../../assets/icons/DeleteIcon';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
-import { useSelectorRtk } from '@/store/hooks';
+import { useDispatch, useSelector } from 'react-redux';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
@@ -133,7 +127,6 @@ const NavbarNotificationIcon = () => {
   const { data, error, isLoading } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-
   if (error || (!data && !isLoading)) {
     console.log(
       '[NavbarNotificationIcon] Error fetching notification summary for NotificationIconCount',
@@ -176,23 +169,25 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
   };
   count = Number(count).toLocaleString('en', { useGrouping: true });
   return (
-    <Tooltip title={type} placement="bottom">
-      <Button
-        style={{
-          backgroundColor: alpha(chipStyles.fill, 0.2),
-          border:
-            selectedSeverity === severity
-              ? `solid 2px ${chipStyles.fill}`
-              : 'solid 2px transparent',
-        }}
-        onClick={handleClick}
-      >
-        <SeverityChip>
-          {<notificationStyle.icon {...chipStyles} />}
-          <span>{count}</span>
-        </SeverityChip>
-      </Button>
-    </Tooltip>
+    <CustomTooltip title={type} placement="bottom">
+      <div>
+        <Button
+          style={{
+            backgroundColor: alpha(chipStyles.fill, 0.2),
+            border:
+              selectedSeverity === severity
+                ? `solid 2px ${chipStyles.fill}`
+                : 'solid 2px transparent',
+          }}
+          onClick={handleClick}
+        >
+          <SeverityChip>
+            {<notificationStyle.icon {...chipStyles} />}
+            <span>{count}</span>
+          </SeverityChip>
+        </Button>
+      </div>
+    </CustomTooltip>
   );
 };
 
@@ -310,17 +305,19 @@ const BulkActions = () => {
       );
     }
     return (
-      <Tooltip title={tooltip} placement="top">
-        <IconButton onClick={onClick} disabled={disabled}>
-          <Icon
-            {...iconMedium}
-            style={{
-              opacity: disabled ? 0.5 : 1,
-            }}
-            fill="currentColor"
-          />
-        </IconButton>
-      </Tooltip>
+      <CustomTooltip title={tooltip} placement="top">
+        <div>
+          <IconButton onClick={onClick} disabled={disabled}>
+            <Icon
+              {...iconMedium}
+              style={{
+                opacity: disabled ? 0.5 : 1,
+              }}
+              fill="currentColor"
+            />
+          </IconButton>
+        </div>
+      </CustomTooltip>
     );
   };
 
@@ -337,8 +334,11 @@ const BulkActions = () => {
         padding: '0.15rem',
       }}
     >
-      <Box>
+      <Box sx={{ display: 'flex', alignItems: 'center' }}>
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
+        <Typography variant="body2">
+          {areAllEventsChecked ? `Selected ${checkedEvents.length} notifications` : 'Select All'}
+        </Typography>
       </Box>
       <Collapse in={checkedEvents.length > 0}>
         <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
@@ -399,78 +399,19 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
 
   return (
     <>
-      {events.map((event, idx) => (
-        <div key={event.id + idx}>
-          <Notification eventData={event} event_id={event.id} />
-        </div>
-      ))}
+      {events.map((event, idx) => {
+        return (
+          <div key={event.id + idx}>
+            <Notification eventData={event} event_id={event.id} />
+          </div>
+        );
+      })}
 
       {events.length === 0 && <EmptyState />}
 
       <div ref={lastEventRef}></div>
       {isFetching && hasMore && <Loading />}
     </>
-  );
-};
-
-const CurrentFilterView = ({ handleFilter }) => {
-  const currentFilters = useSelector((state) => state.events.current_view.filters);
-  const onDelete = (key, value) => {
-    const newFilters = {
-      ...currentFilters,
-      [key]:
-        typeof currentFilters[key] === 'string'
-          ? null
-          : currentFilters[key].filter((item) => item !== value),
-    };
-    handleFilter(newFilters);
-  };
-
-  const Chips = ({ type, value }) => {
-    if (typeof value === 'string') {
-      return (
-        <Chip label={value} sx={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
-      );
-    }
-
-    if (_.isArray(value) && value.length > 0) {
-      return (
-        <div sx={{ display: 'flex', gap: '0.2rem' }}>
-          {value.map((item) => (
-            <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />
-          ))}
-        </div>
-      );
-    }
-
-    return null;
-  };
-
-  return (
-    <div>
-      {Object.entries(currentFilters).map(([key, value]) => {
-        if (value && value?.length > 0) {
-          return (
-            <div
-              key={key}
-              sx={{
-                display: 'flex',
-                gap: '0.3rem',
-                alignItems: 'center',
-                marginLeft: '1rem',
-                paddingTop: '.35rem',
-              }}
-            >
-              <StyledSubtitle variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
-                {' '}
-                {key}:
-              </StyledSubtitle>
-              <Chips value={value} type={key} />
-            </div>
-          );
-        }
-      })}
-    </div>
   );
 };
 
@@ -549,7 +490,6 @@ const NotificationCenterDrawer = () => {
                 <Divider light />
                 <Container>
                   <Filter handleFilter={handleFilter}></Filter>
-                  <CurrentFilterView handleFilter={handleFilter} />
                   <BulkActions />
 
                   {isLoadingFilters ? (
@@ -599,15 +539,11 @@ const NotificationDrawerButton_ = () => {
 };
 
 export const NotificationDrawerButton = () => {
-  return (
-    <Provider store={store}>
-      <NotificationDrawerButton_ />
-    </Provider>
-  );
+  return <NotificationDrawerButton_ />;
 };
 
 const NotificationCenter = (props) => {
-  const isOpen = useSelectorRtk((state) => state.events.isNotificationCenterOpen);
+  const isOpen = useSelector((state) => state.events.isNotificationCenterOpen);
 
   if (!isOpen) {
     return null;
@@ -616,9 +552,7 @@ const NotificationCenter = (props) => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <NotificationCenterDrawer {...props} />
-        </Provider>
+        <NotificationCenterDrawer {...props} />
       </ErrorBoundary>
     </NoSsr>
   );

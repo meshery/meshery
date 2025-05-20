@@ -185,7 +185,7 @@ export const handleGrafanaConfigure = (
       updateProgress({ showProgress: false });
       if (typeof result !== 'undefined') {
         notify({ message: 'Grafana was configured!', event_type: EVENT_TYPES.SUCCESS });
-        updateGrafanaConfig({ grafana: { grafanaURL, grafanaAPIKey } });
+        updateGrafanaConfig({ grafanaURL, grafanaAPIKey });
       }
     },
     (err) => {

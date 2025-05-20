@@ -31,6 +31,8 @@ import {
 } from '@/rtk-query/meshsync';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -38,8 +40,9 @@ const ACTION_TYPES = {
     error_msg: 'Failed to fetch meshsync resources',
   },
 };
+
 export default function MeshSyncTable(props) {
-  const { updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const { selectedResourceId, updateUrlWithResourceId } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -51,6 +54,8 @@ export default function MeshSyncTable(props) {
   const [kindFilter, setKindFilter] = useState();
   const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
   const [selectedFilters, setSelectedFilters] = useState({
     kind: 'All',
     model: 'All',
@@ -80,7 +85,7 @@ export default function MeshSyncTable(props) {
     kind: kindFilter,
     model: modelFilter,
     namespace: namespaceFilter,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
   });
   if (isError) {
     if (isError) {
@@ -96,7 +101,7 @@ export default function MeshSyncTable(props) {
     pagesize: 'all',
     search: search,
     order: sortOrder,
-    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig),
+    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
   });
   const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
   const availableModels = [
@@ -419,7 +424,6 @@ export default function MeshSyncTable(props) {
     viewColumns: false,
     search: false,
     responsive: 'standard',
-    // resizableColumns: true,
     serverSide: true,
     selectableRows: 'none',
     count: meshSyncData?.total_count,
@@ -470,8 +474,28 @@ export default function MeshSyncTable(props) {
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-      // setShowMore(false);
+      if (expansionFlags.current.isUrlExpansion) return;
+
+      expansionFlags.current.isHandlingExpansion = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && meshSyncResources) {
+        const index = expandedRows[0].index;
+        const resource = meshSyncResources[index];
+
+        if (
+          resource &&
+          updateUrlWithResourceId &&
+          (!expansionFlags.current.isInitialLoad || resource.id !== selectedResourceId)
+        ) {
+          updateUrlWithResourceId(resource.id);
+        }
+      } else if (updateUrlWithResourceId && !expansionFlags.current.isInitialLoad) {
+        updateUrlWithResourceId('');
+      }
+
+      expansionFlags.current.isHandlingExpansion = false;
     },
     renderExpandableRow: (rowData) => {
       const colSpan = rowData.length;
@@ -526,6 +550,34 @@ export default function MeshSyncTable(props) {
     }
   }, [meshSyncError]);
 
+  // Consolidate multiple useRef hooks into a single object
+  const expansionFlags = useRef({
+    isHandlingExpansion: false,
+    isInitialLoad: true,
+    isUrlExpansion: false,
+    lastProcessedId: null,
+  });
+
+  // Find and expand the selected resource when it becomes available
+  useEffect(() => {
+    if (!selectedResourceId || expansionFlags.current.isHandlingExpansion) return;
+    if (expansionFlags.current.lastProcessedId === selectedResourceId) return;
+    if (meshSyncResources && meshSyncResources.length > 0) {
+      expansionFlags.current.isUrlExpansion = true;
+      expansionFlags.current.lastProcessedId = selectedResourceId;
+
+      const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithResourceId('');
+      }
+
+      expansionFlags.current.isUrlExpansion = false;
+      expansionFlags.current.isInitialLoad = false;
+    }
+  }, [selectedResourceId, meshSyncResources]);
+
   const filters = {
     kind: {
       name: 'Kind',
@@ -577,10 +629,6 @@ export default function MeshSyncTable(props) {
     });
     return initialVisibility;
   });
-
-  useEffect(() => {
-    updateCols(columns);
-  }, []);
 
   return (
     <>

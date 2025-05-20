@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { toggleDrawer } from '../lib/store';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import normalizeURI from '../utils/normalizeURI';
-import dataFetch from '../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
-
+import {
+  useLazyGetExtensionsByTypeQuery,
+  useLazyGetFullPageExtensionsQuery,
+} from '@/rtk-query/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleDrawer } from '@/store/slices/mesheryUi';
 /**
  * getPath returns the current pathname
  * @returns {string}
@@ -23,23 +24,19 @@ function getPath() {
  * @param {Function} cb
  */
 export function getCapabilities(type, cb) {
-  dataFetch(
-    '/api/provider/capabilities',
-    {
-      method: 'GET',
-      credentials: 'include',
-    },
-    (result) => {
-      if (typeof result !== 'undefined') {
-        cb(ExtensionPointSchemaValidator(type)(result?.extensions[type]));
+  const [getExtensionsByType] = useLazyGetExtensionsByTypeQuery();
+  getExtensionsByType(type)
+    .unwrap()
+    .then((data) => {
+      if (typeof data !== 'undefined') {
+        cb(data);
       }
-    },
-    (err) => {
+    })
+    .catch((err) => {
       console.group('extension error');
       console.error(err);
       console.groupEnd();
-    },
-  );
+    });
 }
 
 /**
@@ -48,35 +45,18 @@ export function getCapabilities(type, cb) {
  * @param {Function} cb
  */
 export function getFullPageExtensions(cb) {
-  let extNames = [];
-  dataFetch(
-    '/api/provider/capabilities',
-    {
-      method: 'GET',
-      credentials: 'include',
-    },
-    (result) => {
-      for (var key of Object.keys(result?.extensions)) {
-        if (Array.isArray(result?.extensions[key])) {
-          result?.extensions[key].forEach((comp) => {
-            if (comp?.type === 'full_page') {
-              let ext = {
-                name: key,
-                uri: comp?.href?.uri,
-              };
-              extNames.push(ext);
-            }
-          });
-        }
-      }
-      cb(extNames);
-    },
-    (err) => {
+  const [getFullPageExtensions] = useLazyGetFullPageExtensionsQuery();
+
+  getFullPageExtensions
+    .unwrap()
+    .then((data) => {
+      cb(data);
+    })
+    .catch((err) => {
       console.group('extension error');
       console.error(err);
       console.groupEnd();
-    },
-  );
+    });
 }
 
 /**
@@ -307,18 +287,16 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
 const ExtensionSandbox = React.memo(
-  function MemoizedExtensionSandbox({
-    type,
-    Extension,
-    isDrawerCollapsed,
-    toggleDrawer,
-    capabilitiesRegistry,
-  }) {
+  function MemoizedExtensionSandbox({ type, Extension }) {
     const [extension, setExtension] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { capabilitiesRegistry } = useSelector((state) => state.ui);
+    const { isDrawerCollapsed } = useSelector((state) => state.ui);
+    const dispatch = useDispatch();
+
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
-        toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
+        dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
       }
 
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
@@ -384,13 +362,4 @@ const ExtensionSandbox = React.memo(
     prevProps.capabilitiesRegistry === nextProps.capabilitiesRegistry,
 );
 
-const mapDispatchToProps = (dispatch) => ({
-  toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);
+export default ExtensionSandbox;

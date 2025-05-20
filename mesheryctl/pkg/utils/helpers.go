@@ -1231,9 +1231,11 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 
 	startIndex := 0
 	endIndex := min(len(data), startIndex+pageSize)
+
 	for {
 		// Clear the entire terminal screen
 		ClearLine()
+		remaining := len(data) - endIndex
 
 		// Print number of filter files and current page number
 		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
@@ -1247,8 +1249,8 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 			PrintToTable(header, data[startIndex:endIndex])
 		}
 
-		// No user interaction required if all available data is displayed once
-		if len(data) <= pageSize {
+		// No user interaction required if no more data to display
+		if !hasDataToDisplay(len(data), remaining, startIndex, pageSize) {
 			break
 		}
 
@@ -1283,6 +1285,16 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 	return nil
 }
 
+func hasDataToDisplay(length int, remaining int, startIndex int, pageSize int) bool {
+	if length <= pageSize {
+		return false
+	}
+	if remaining <= pageSize && startIndex+pageSize >= length {
+		return false
+	}
+	return true
+}
+
 func FindInSlice(key string, items []string) (int, bool) {
 	for idx, item := range items {
 		if item == key {
@@ -1293,7 +1305,11 @@ func FindInSlice(key string, items []string) (int, bool) {
 }
 
 func DisplayCount(component string, count int64) {
-	whiteBoardPrinter.Println("Total number of ", component, ":", count)
+	display := fmt.Sprintf("Total number of %ss: %d", strings.TrimSuffix(component, "s"), count)
+	if count == 0 {
+		display = fmt.Sprintf("No %ss found", strings.TrimSuffix(component, "s"))
+	}
+	whiteBoardPrinter.Fprintln(os.Stdout, display)
 }
 
 func GetPageQueryParameter(cmd *cobra.Command, page int) string {

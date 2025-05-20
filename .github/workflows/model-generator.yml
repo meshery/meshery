@@ -64,12 +64,12 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_options: "--signoff"
-          commit_message: "New Models generated and updated"
+          commit_message: "Models generated and updated"
           branch: master
 
       - name: Send Email on Workflow Failure
         if: failure()
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v4
         with:
           server_address: smtp.gmail.com
           server_port: 465
@@ -85,7 +85,7 @@ jobs:
 
       - name: Send Email on Registry Generate Error
         if: env.registry-generate-error == 'false' #Turn it back to true when we are good with all the errors.
-        uses: dawidd6/action-send-mail@v3
+        uses: dawidd6/action-send-mail@v4
         with:
           server_address: smtp.gmail.com
           server_port: 465

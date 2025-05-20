@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import { ErrorBoundary, AppBar } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../lib/store';
 import Modal from '../Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
@@ -13,9 +10,9 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
 import { useGetSchemaQuery } from '@/rtk-query/schema';
-import { withRouter } from 'next/router';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
+import { useRouter } from 'next/router';
 
 /**
  * Parent Component for Connection Component
@@ -67,20 +64,49 @@ function ConnectionManagementPage(props) {
     </>
   );
 }
-function Connections(props) {
-  const {
-    updateProgress,
-    operatorState,
-    selectedK8sContexts,
-    k8sconfig,
-    connectionMetadataState,
-    meshsyncControllerState,
-  } = props;
-  const [_operatorState] = useState(operatorState || []);
-  const [tab, setTab] = useState(0);
+function Connections() {
+  const router = useRouter();
+  const [_operatorState] = useState([]);
   const _operatorStateRef = useRef(_operatorState);
   _operatorStateRef.current = _operatorState;
 
+  const { query, pathname, push, isReady } = router;
+  const tabParam = query.tab?.toLowerCase();
+  const connectionId = query.connectionId;
+
+  const tab = tabParam === 'meshsync' ? 1 : 0;
+
+  const updateUrlParams = (params) => {
+    const newQuery = { ...query, ...params };
+
+    Object.keys(newQuery).forEach((key) => {
+      if (newQuery[key] === undefined || newQuery[key] === '') {
+        delete newQuery[key];
+      }
+    });
+
+    push({ pathname, query: newQuery }, undefined, { shallow: true });
+  };
+
+  // Handle tab change and update URL
+  const handleTabChange = (e, newTab) => {
+    e.stopPropagation();
+
+    if (newTab !== tab) {
+      updateUrlParams({
+        tab: newTab === 0 ? 'connections' : 'meshsync',
+        connectionId: undefined, // Clear the connection ID when switching tabs
+      });
+    }
+  };
+  // Update URL with connection ID
+  const updateUrlWithConnectionId = (id) => {
+    if (id && id === connectionId) return;
+
+    updateUrlParams({ connectionId: id || undefined });
+  };
+
+  if (!isReady) return null;
   return (
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
@@ -88,10 +114,7 @@ function Connections(props) {
           <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
             <ConnectionTabs
               value={tab}
-              onChange={(e, newTab) => {
-                e.stopPropagation();
-                setTab(newTab);
-              }}
+              onChange={handleTabChange}
               indicatorColor="primary"
               textColor="primary"
               variant="fullWidth"
@@ -120,15 +143,14 @@ function Connections(props) {
 
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable
-              meshsyncControllerState={meshsyncControllerState}
-              connectionMetadataState={connectionMetadataState}
+              selectedConnectionId={connectionId}
+              updateUrlWithConnectionId={updateUrlWithConnectionId}
             />
           )}
           {tab === 1 && (
             <MeshSyncTable
-              updateProgress={updateProgress}
-              selectedK8sContexts={selectedK8sContexts}
-              k8sconfig={k8sconfig}
+              selectedResourceId={connectionId}
+              updateUrlWithResourceId={updateUrlWithConnectionId}
             />
           )}
         </>
@@ -138,26 +160,6 @@ function Connections(props) {
     </NoSsr>
   );
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const operatorState = state.get('operatorState');
-  const connectionMetadataState = state.get('connectionMetadataState');
-  const meshsyncControllerState = state.get('controllerState');
-
-  return {
-    k8sconfig,
-    selectedK8sContexts,
-    operatorState,
-    connectionMetadataState,
-    meshsyncControllerState,
-  };
-};
 
 const ConnectionManagementPageWithErrorBoundary = (props) => {
   return (
@@ -169,8 +171,4 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
   );
 };
 
-// @ts-ignore
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(ConnectionManagementPageWithErrorBoundary));
+export default ConnectionManagementPageWithErrorBoundary;

@@ -4,13 +4,6 @@ import ExtensionSandbox, {
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
 import { Box, CircularProgress, NoSsr } from '@layer5/sistent';
-import {
-  updatepagepath,
-  updatepagetitle,
-  updateExtensionType,
-  updatebetabadge,
-  updateCapabilities,
-} from '../../lib/store';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
@@ -18,8 +11,15 @@ import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { useRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
-import { useDispatch, useSelector } from 'react-redux';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import {
+  updateBetaBadge,
+  updateCapabilities,
+  updateExtensionType,
+  updatePagePath,
+  updateTitle,
+} from '@/store/slices/mesheryUi';
+import { useDispatch, useSelector } from 'react-redux';
 
 /**
  * getPath returns the current pathname
@@ -44,8 +44,7 @@ function RemoteExtension() {
   const [componentTitle, setComponentTitle] = useState('');
   const router = useRouter();
   const dispatch = useDispatch();
-
-  const extensionType = useSelector((state) => state.get('extensionType'));
+  const { extensionType } = useSelector((state) => state.ui);
   const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
   const renderExtension = useCallback(() => {
     if (!capabilitiesRegistry?.extensions) return;
@@ -73,9 +72,9 @@ function RemoteExtension() {
           capabilitiesRegistry.extensions[ext.name],
         );
         setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
-        dispatch(updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
-        dispatch(updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
-        dispatch(updatepagepath({ path: getPath() }));
+        dispatch(updateTitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
+        dispatch(updateBetaBadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
+        dispatch(updatePagePath({ path: getPath() }));
       }
     });
   }, [capabilitiesRegistry, dispatch]);

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Grid, Box } from '@layer5/sistent';
 import { ErrorMetadataFormatter } from './error';
+import { TitleLink } from './common';
+import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
+import { iconMedium } from 'css/icons.styles';
 
 const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   const entityTypesAndQuantities = {};
@@ -50,13 +53,13 @@ const ComponentWithIcon = ({ component }) => {
   const kind = Metadata.toLowerCase();
 
   const paths = [
-    `ui/public/static/img/meshmodels/${modelname}/color/${kind}-color.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
+    `/static/img/meshmodels/${modelname}/color/${kind}-color.svg`,
+    `/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
+    `/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
+    `/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
   ];
 
-  const defaultPath = 'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
+  const defaultPath = FALLBACK_MESHERY_IMAGE_PATH;
 
   const [finalPath, setFinalPath] = useState(defaultPath);
 
@@ -109,7 +112,7 @@ const ComponentWithIcon = ({ component }) => {
             justifyContent: 'center',
           }}
         >
-          <img src={finalPath} style={{ width: '30px', height: '30px' }} alt={DisplayName} />
+          <img src={finalPath} {...iconMedium} alt={DisplayName} />
         </div>
       </Grid>
       <Grid item>
@@ -189,12 +192,25 @@ export const ModelImportedSection = ({ modelDetails }) => {
 
         return (
           <Box key={index} mb={2}>
-            <Typography gutterBottom>
-              <span style={{ fontWeight: 'bold', fontSize: '17px' }}>
-                {isEntityFile ? 'FILE NAME:' : 'MODEL:'}{' '}
-              </span>
-              <span style={{ fontSize: '18px' }}>{modelName}</span>
-            </Typography>
+            <div
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              data-testid={`ModelImportedSection-ModelHeader-${modelName}`}
+            >
+              <Typography gutterBottom>
+                <span style={{ fontWeight: 'bold', fontSize: '17px' }}>
+                  {isEntityFile ? 'FILE NAME:' : 'MODEL:'}{' '}
+                </span>
+                <span style={{ fontSize: '18px' }}>{modelName}</span>
+              </Typography>
+              {!isEntityFile && (
+                <TitleLink
+                  href={`settings?settingsCategory=Registry&tab=Models&searchText=${modelName}`}
+                  target="_self"
+                >
+                  Registry
+                </TitleLink>
+              )}
+            </div>
             {hasComponents && (
               <>
                 <Typography variant="body1">
@@ -237,7 +253,7 @@ export const ModelImportedSection = ({ modelDetails }) => {
 };
 
 export const ModelImportMessages = ({ message }) => (
-  <Typography>
+  <Typography data-testid="ModelImportMessages-Wrapper">
     <span style={{ fontWeight: 'bold', fontSize: '17px' }}>{`SUMMARY: `}</span>
     <span style={{ fontSize: '17px' }}>{message}</span>
   </Typography>

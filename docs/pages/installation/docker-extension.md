@@ -17,8 +17,10 @@ abstract: Install Docker Extension for Meshery
 
 The Docker Extension for Meshery extends Docker Desktop’s position as the developer’s go-to Kubernetes environment with easy access to full the capabilities of Meshery's collaborative cloud native management features.
 
-{% include alert.html type="info" title="Prerequisites" content="You need Docker Desktop version of 4.10 or higher for this." %}
+## Prerequisites
 
+- You need Docker Desktop version of 4.10 or higher for this.
+- This document applies only when Docker Desktop uses kubeadm with Kubernetes enabled. If you are using kind, please refer to the [Kind]({{site.baseurl}}/installation/kubernetes/kind) section.
 
 ## Install the Docker Meshery Extension
 
@@ -81,6 +83,8 @@ Finally, you can also install the Meshery Docker Extension using the Docker CLI.
 </pre>
 
 It runs as a set of one or more containers inside your Docker Desktop virtual machine.
+
+Finally, you can now fully utilize Meshery to manage and monitor your cloud-native infrastructure.
 
 ## Remove Meshery as a Docker Extension
 

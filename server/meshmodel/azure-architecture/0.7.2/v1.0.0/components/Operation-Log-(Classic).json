@@ -55,13 +55,70 @@
       "label": ""
     },
     "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A29",
+    "secondaryColor": "#00D3A9",
     "shape": "polygon",
     "svgColor": "\u003csvg id=\"bbbdcf65-3739-4dbc-b087-782b22710417\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"eb32dcec-9280-43a7-8fb4-14f8780a43df\" x1=\"8.15\" y1=\"17.5\" x2=\"8.15\" y2=\"2.09\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\" /\u003e\u003cstop offset=\"0.9\" stop-color=\"#54aef0\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-manage-324\u003c/title\u003e\u003cpath d=\"M1.93,2.11,3.14.7A.59.59,0,0,1,3.59.5H15.2a.81.81,0,0,1,.89.83v14.5a.57.57,0,0,1-.2.43l-1.3,1.19H2.72l-.81-.33Z\" fill=\"#005ba1\" /\u003e\u003cpath d=\"M2.91,2.1l.74-.84A.5.5,0,0,1,4,1.08H14.89a.52.52,0,0,1,.52.52V15.38a.52.52,0,0,1-.17.39l-1.16,1.05Z\" fill=\"#fff\" /\u003e\u003cpath d=\"M14,2.09H2a.06.06,0,0,0-.06.06v15a.39.39,0,0,0,.39.38H14a.38.38,0,0,0,.38-.38V2.48A.39.39,0,0,0,14,2.09Z\" fill=\"url(#eb32dcec-9280-43a7-8fb4-14f8780a43df)\" /\u003e\u003crect x=\"4.72\" y=\"6.2\" width=\"6.58\" height=\"2.38\" rx=\"0.28\" fill=\"#fff\" /\u003e\u003c/svg\u003e",
     "svgComplete": "\u003csvg id=\"bbbdcf65-3739-4dbc-b087-782b22710417\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"eb32dcec-9280-43a7-8fb4-14f8780a43df\" x1=\"8.15\" y1=\"17.5\" x2=\"8.15\" y2=\"2.09\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\" /\u003e\u003cstop offset=\"0.9\" stop-color=\"#54aef0\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-manage-324\u003c/title\u003e\u003cpath d=\"M1.93,2.11,3.14.7A.59.59,0,0,1,3.59.5H15.2a.81.81,0,0,1,.89.83v14.5a.57.57,0,0,1-.2.43l-1.3,1.19H2.72l-.81-.33Z\" fill=\"#005ba1\" /\u003e\u003cpath d=\"M2.91,2.1l.74-.84A.5.5,0,0,1,4,1.08H14.89a.52.52,0,0,1,.52.52V15.38a.52.52,0,0,1-.17.39l-1.16,1.05Z\" fill=\"#fff\" /\u003e\u003cpath d=\"M14,2.09H2a.06.06,0,0,0-.06.06v15a.39.39,0,0,0,.39.38H14a.38.38,0,0,0,.38-.38V2.48A.39.39,0,0,0,14,2.09Z\" fill=\"url(#eb32dcec-9280-43a7-8fb4-14f8780a43df)\" /\u003e\u003crect x=\"4.72\" y=\"6.2\" width=\"6.58\" height=\"2.38\" rx=\"0.28\" fill=\"#fff\" /\u003e\u003c/svg\u003e",
     "svgWhite": "\u003csvg id=\"bbbdcf65-3739-4dbc-b087-782b22710417\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"eb32dcec-9280-43a7-8fb4-14f8780a43df\" x1=\"8.15\" y1=\"17.5\" x2=\"8.15\" y2=\"2.09\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\" /\u003e\u003cstop offset=\"0.9\" stop-color=\"#54aef0\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-manage-324\u003c/title\u003e\u003cpath d=\"M1.93,2.11,3.14.7A.59.59,0,0,1,3.59.5H15.2a.81.81,0,0,1,.89.83v14.5a.57.57,0,0,1-.2.43l-1.3,1.19H2.72l-.81-.33Z\" fill=\"#005ba1\" /\u003e\u003cpath d=\"M2.91,2.1l.74-.84A.5.5,0,0,1,4,1.08H14.89a.52.52,0,0,1,.52.52V15.38a.52.52,0,0,1-.17.39l-1.16,1.05Z\" fill=\"#fff\" /\u003e\u003cpath d=\"M14,2.09H2a.06.06,0,0,0-.06.06v15a.39.39,0,0,0,.39.38H14a.38.38,0,0,0,.38-.38V2.48A.39.39,0,0,0,14,2.09Z\" fill=\"url(#eb32dcec-9280-43a7-8fb4-14f8780a43df)\" /\u003e\u003crect x=\"4.72\" y=\"6.2\" width=\"6.58\" height=\"2.38\" rx=\"0.28\" fill=\"#fff\" /\u003e\u003c/svg\u003e"
   },
-  "capabilities": null,
+  "capabilities": [
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Add text to nodes body",
+      "displayName": "Body Text",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "body-text",
+      "type": "style",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",

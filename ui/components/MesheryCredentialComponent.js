@@ -7,22 +7,26 @@ import {
   styled,
   ResponsiveDataTable,
 } from '@layer5/sistent';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Modal from './Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
-import dataFetch from '../lib/data-fetch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import { CustomColumnVisibilityControl } from '@layer5/sistent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import {
+  useCreateCredentialMutation,
+  useDeleteCredentialMutation,
+  useGetCredentialsQuery,
+  useUpdateCredentialMutation,
+} from '@/rtk-query/credentials';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const CredentialIcon = styled('img')({
   width: '24px',
@@ -42,10 +46,14 @@ const CustomTableCell = styled(TableCell)({
 
 const schema_array = ['prometheus', 'grafana', 'kubernetes'];
 
-const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState }) => {
-  const [credentials, setCredentials] = useState([]);
+const MesheryCredentialComponent = () => {
+  const { data: credentialsData, isLoading } = useGetCredentialsQuery();
+  const [createCredential] = useCreateCredentialMutation();
+  const [updateCredential] = useUpdateCredentialMutation();
+  const [deleteCredential] = useDeleteCredentialMutation();
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(true);
   const [credModal, setCredModal] = useState({
     open: false,
     data: null,
@@ -56,10 +64,6 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
   const [credentialName, setCredentialName] = useState(null);
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
-
-  useEffect(() => {
-    fetchCredential();
-  }, []);
 
   const schemaChangeHandler = (type) => {
     setCredentialType(type);
@@ -92,25 +96,6 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
       event_type: EVENT_TYPES.ERROR,
       details: error_msg.toString(),
     });
-  };
-
-  const fetchCredential = async () => {
-    updateProgress({ showProgress: true });
-    dataFetch(
-      '/api/integrations/credentials',
-      {
-        credentials: 'include',
-        method: 'GET',
-      },
-      (resp) => {
-        updateProgress({ showProgress: false });
-        setCredentials(resp?.credentials);
-        setLoading(false);
-      },
-      () => {
-        handleError('Unable to fetch credentials');
-      },
-    );
   };
 
   const getCredentialsIcon = (type) => {
@@ -257,13 +242,13 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
           return <CustomTableCell key={index}>{column.label}</CustomTableCell>;
         },
         customBodyRender: (_, tableMeta) => {
-          const rowData = credentials[tableMeta.rowIndex];
+          const rowData = (credentialsData?.credentials || [])[tableMeta.rowIndex];
           return (
             <ActionContainer>
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
-                  onClick={() => handleSubmit({ type: 'delete', id: rowData['id'] })}
+                  onClick={() => handleSubmit({ type: CON_OPS.DELETE, id: rowData['id'] })}
                   size="large"
                 >
                   <DeleteIcon />
@@ -293,73 +278,55 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
   };
 
   // control the entire submit
-  const handleSubmit = ({ id, type }) => {
+  const handleSubmit = async ({ id, type }) => {
     updateProgress({ showProgress: true });
 
-    if (type === CON_OPS.DELETE) {
-      dataFetch(
-        `/api/integrations/credentials?credential_id=${id}`,
-        {
-          credentials: 'include',
-          method: 'DELETE',
-        },
-        () => {
-          fetchCredential();
-          updateProgress({ showProgress: false });
-          notify({ message: `"${type}" deleted.`, event_type: EVENT_TYPES.SUCCESS });
-        },
-        () => {
-          handleError('Failed to delete credentials.');
-        },
-      );
-    }
-    if (type === CON_OPS.CREATE) {
-      const data = {
-        name: credentialName,
-        type: credentialType,
-        secret: formData,
-      };
-      dataFetch(
-        `/api/integrations/credentials`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body: JSON.stringify(data),
-        },
-        () => {
-          fetchCredential();
-          updateProgress({ showProgress: false });
-          notify({ message: `"${credentialType}" created.`, event_type: EVENT_TYPES.SUCCESS });
-        },
-        () => {
-          handleError('Failed to create credentials.');
-        },
-      );
-    }
+    try {
+      if (type === CON_OPS.DELETE) {
+        await deleteCredential(id).unwrap();
+        notify({ message: `Credential deleted.`, event_type: EVENT_TYPES.SUCCESS });
+      }
 
-    if (type === CON_OPS.UPDATE) {
-      const data = {
-        id: id,
-        name: credentialName,
-        type: credentialType,
-        secret: formData,
-      };
-      dataFetch(
-        `/api/integrations/credentials`,
-        {
-          credentials: 'include',
-          method: 'PUT',
-          body: JSON.stringify(data),
-        },
-        () => {
-          fetchCredential();
-          updateProgress({ showProgress: false });
-          notify({ message: `"${credentialType}" updated.`, event_type: EVENT_TYPES.SUCCESS });
-        },
-        () => {
-          handleError('Failed to update credentials.');
-        },
-      );
+      if (type === CON_OPS.CREATE) {
+        const data = {
+          name: credentialName,
+          type: credentialType,
+          secret: formData,
+        };
+        await createCredential(data).unwrap();
+        notify({ message: `"${credentialType}" created.`, event_type: EVENT_TYPES.SUCCESS });
+      }
+
+      if (type === CON_OPS.UPDATE) {
+        const data = {
+          id: id,
+          name: credentialName,
+          type: credentialType,
+          secret: formData,
+        };
+        await updateCredential(data).unwrap();
+        notify({ message: `"${credentialType}" updated.`, event_type: EVENT_TYPES.SUCCESS });
+      }
+
+      // Close modal if needed
+      if (credModal.open) {
+        setCredModal({
+          open: false,
+          data: null,
+          actionType: null,
+          id: null,
+        });
+      }
+    } catch (error) {
+      const errorMessage =
+        type === CON_OPS.DELETE
+          ? 'Failed to delete credentials.'
+          : type === CON_OPS.CREATE
+            ? 'Failed to create credentials.'
+            : 'Failed to update credentials.';
+      handleError(errorMessage);
+    } finally {
+      updateProgress({ showProgress: false });
     }
   };
 
@@ -380,7 +347,7 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
     marginTop: '1rem',
   };
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Credentials" />;
   }
   return (
@@ -426,7 +393,7 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
       </ToolWrapper>
       <ResponsiveDataTable
         columns={columns}
-        data={credentials}
+        data={credentialsData?.credentials || []}
         options={options}
         tableCols={tableCols}
         updateCols={updateCols}
@@ -450,14 +417,4 @@ const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState })
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  return {
-    connectionMetadataState: state.get('connectionMetadataState'),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryCredentialComponent);
+export default MesheryCredentialComponent;

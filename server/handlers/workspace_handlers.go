@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/mux"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
 
 // swagger:route GET /api/workspaces WorkspacesAPI idGetWorkspaces
@@ -87,7 +87,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	workspace := v1beta1.WorkspacePayload{}
+	workspace := workspace.WorkspacePayload{}
 	err = json.Unmarshal(bd, &workspace)
 	obj := "workspace"
 
@@ -147,7 +147,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	workspace := v1beta1.WorkspacePayload{}
+	workspace := workspace.WorkspacePayload{}
 	err = json.Unmarshal(bd, &workspace)
 	obj := "workspace"
 
@@ -232,7 +232,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
-	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)

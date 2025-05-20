@@ -17,6 +17,7 @@ List registered models
 ## Synopsis
 
 List all registered models by pagingation (25 models per page)
+Documentation for models list can be found at https://docs.meshery.io/reference/mesheryctl/model/list
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list [flags]
@@ -61,9 +62,10 @@ mesheryctl model list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -c, --count      (optional) Get the number of models in total
-  -h, --help       help for list
-  -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
+  -c, --count          (optional) Get the number of models in total
+  -h, --help           help for list
+  -p, --page int       (optional) List next set of models with --page (default = 0) (default 1)
+  -s, --pagesize int   (optional) List next set of models with --pagesize (default = 0)
 
 </div>
 </pre>

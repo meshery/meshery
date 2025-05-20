@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, styled, Chip, Tooltip, Collapse } from '@layer5/sistent';
+import { Box, Typography, styled, CustomTooltip, Collapse } from '@layer5/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
-import { AddIcon, DeleteIcon, EditIcon, InfoIcon } from '@layer5/sistent'; // Assuming MUI icons are available
+import { InfoIcon } from '@layer5/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
 import ExpandMoreIcon from '@/assets/icons/ExpandMoreIcon';
 
@@ -42,11 +42,6 @@ const ItemRow = styled(Box)(({ theme }) => ({
   },
 }));
 
-const ModelBadge = styled(Chip)(() => ({
-  fontSize: '12px',
-  height: '24px',
-}));
-
 const EmptyState = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
@@ -57,22 +52,7 @@ const EmptyState = styled(Box)(({ theme }) => ({
   fontStyle: 'italic',
 }));
 
-// Helper Components
-const SectionIcon = ({ type }) => {
-  // const theme = useTheme()
-  switch (type) {
-    case 'added':
-      return <AddIcon fill="white" />;
-    case 'deleted':
-      return <DeleteIcon fill="white" />;
-    case 'updated':
-      return <EditIcon fill="white" />;
-    default:
-      return null;
-  }
-};
-
-const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes' }) => {
+const TraceSection = ({ title, items, children, emptyMessage = 'No changes' }) => {
   const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
     setExpanded((prev) => !prev);
@@ -83,7 +63,6 @@ const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes
     <SectionContainer>
       <SectionHeader onClick={toggleExpanded} expanded={expanded}>
         <SectionTitle>
-          <SectionIcon type={type} />
           <Typography variant="subtitle1">{title}</Typography>
         </SectionTitle>
 
@@ -119,49 +98,63 @@ const ComponentItem = ({ component }) => (
         <Typography variant="body2" fontWeight={500}>
           {component.component.kind} <strong> &quot;{component.displayName}&quot; </strong>
         </Typography>
-        <Tooltip title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}>
-          <ModelBadge size="small" label={component.model.name} variant="outlined" />
-        </Tooltip>
+        <CustomTooltip
+          title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}
+        >
+          <div>
+            <ComponentIcon
+              iconSrc={`/static/img/${component.model.name}.svg`}
+              label={component.model.name}
+            />
+          </div>
+        </CustomTooltip>
       </Box>
     </Box>
   </ItemRow>
 );
 
 // Relationship Trace Item
-const RelationshipItem = ({ relationship }) => (
-  <>
-    {relationship.selectors.map((selector, index) => (
-      <ItemRow key={index}>
-        <Box
-          flex={1}
-          display={'flex'}
-          justifyItems={'space-between'}
-          justifyContent={'space-between'}
-          width={'100%'}
-          alignItems={'center'}
-        >
-          <Typography variant="body2">
-            <span style={{ fontWeight: 500 }}>
-              {relationship.kind}-{relationship.subType}-{relationship.type}
-            </span>{' '}
-            relationship from <strong>{selector?.allow?.from?.[0]?.kind || 'Unknown'}</strong> to{' '}
-            <strong>{selector?.allow?.to?.[0]?.kind || 'Unknown'}</strong>
-          </Typography>
-
-          <Tooltip
-            title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}
+const RelationshipItem = ({ relationship }) => {
+  return (
+    <>
+      {relationship.selectors.map((selector, index) => (
+        <ItemRow key={index}>
+          <Box
+            flex={1}
+            display={'flex'}
+            justifyItems={'space-between'}
+            justifyContent={'space-between'}
+            width={'100%'}
+            alignItems={'center'}
           >
-            <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
-          </Tooltip>
-        </Box>
-      </ItemRow>
-    ))}
-  </>
-);
+            <Typography variant="body2">
+              <span style={{ fontWeight: 500 }}>
+                {relationship.kind}-{relationship.subType}-{relationship.type}
+              </span>{' '}
+              relationship from <strong>{selector?.allow?.from?.[0]?.kind || 'Unknown'}</strong> to{' '}
+              <strong>{selector?.allow?.to?.[0]?.kind || 'Unknown'}</strong>
+            </Typography>
+
+            <CustomTooltip
+              title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}
+            >
+              <div>
+                <ComponentIcon
+                  iconSrc={`/static/img/${relationship.model.name}.svg`}
+                  label={relationship.model.name}
+                />
+              </div>
+            </CustomTooltip>
+          </Box>
+        </ItemRow>
+      ))}
+    </>
+  );
+};
 
 // Component Trace List
-export const ComponentsTrace = ({ components, title, type }) => (
-  <TraceSection title={title} items={components} type={type}>
+export const ComponentsTrace = ({ components, title }) => (
+  <TraceSection title={title} items={components}>
     {components.map((component, index) => (
       <ComponentItem key={index} component={component} />
     ))}
@@ -169,10 +162,10 @@ export const ComponentsTrace = ({ components, title, type }) => (
 );
 
 // Relationship Trace List
-export const RelationshipsTrace = ({ relationships, title, type }) => (
-  <TraceSection title={title} items={relationships} type={type}>
+export const RelationshipsTrace = ({ relationships, title }) => (
+  <TraceSection title={title} items={relationships}>
     {relationships.map((relationship, index) => (
-      <RelationshipItem key={index} relationship={relationship} action={type} />
+      <RelationshipItem key={index} relationship={relationship} />
     ))}
   </TraceSection>
 );
@@ -184,12 +177,12 @@ export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTr
   if (!trace) return null;
 
   const hasChanges =
-    trace.componentsAdded.length > 0 ||
-    trace.componentsRemoved.length > 0 ||
-    trace.componentsUpdated.length > 0 ||
-    trace.relationshipsAdded.length > 0 ||
-    trace.relationshipsUpdated.length > 0 ||
-    trace.relationshipsRemoved.length > 0;
+    trace.componentsAdded?.length > 0 ||
+    trace.componentsRemoved?.length > 0 ||
+    trace.componentsUpdated?.length > 0 ||
+    trace.relationshipsAdded?.length > 0 ||
+    trace.relationshipsUpdated?.length > 0 ||
+    trace.relationshipsRemoved?.length > 0;
 
   return (
     <Box mt={2}>
@@ -202,33 +195,33 @@ export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTr
         <Box flexDirection="column" display="flex">
           <ComponentsTrace
             title="Components Added"
-            components={trace.componentsAdded}
+            components={trace.componentsAdded || []}
             type="added"
           />
           <ComponentsTrace
             title="Components Updated"
-            components={trace.componentsUpdated}
+            components={trace.componentsUpdated || []}
             type="updated"
           />
           <ComponentsTrace
             title="Components Removed"
-            components={trace.componentsRemoved}
+            components={trace.componentsRemoved || []}
             type="deleted"
           />
           <RelationshipsTrace
             title="Relationships Added"
             type="added"
-            relationships={trace.relationshipsAdded}
+            relationships={trace.relationshipsAdded || []}
           />
           <RelationshipsTrace
             title="Relationships Updated"
             type="updated"
-            relationships={trace.relationshipsUpdated}
+            relationships={trace.relationshipsUpdated || []}
           />
           <RelationshipsTrace
             title="Relationships Removed"
             type="deleted"
-            relationships={trace.relationshipsRemoved}
+            relationships={trace.relationshipsRemoved || []}
           />
         </Box>
       )}

@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Graph QL Api",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "gloo",
+    "displayName": "Gloo",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "API Gateway",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://storage.googleapis.com/solo-public-helm/charts/gloo-1.20.0-beta1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.20.0-beta1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://storage.googleapis.com/solo-public-helm/charts/gloo-1.20.0-beta1.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "graphql.gloo.solo.io/v1beta1",
+    "kind": "GraphQLApi",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowedQueryHashes\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"executableSchema\": {\n     \"properties\": {\n      \"executor\": {\n       \"properties\": {\n        \"local\": {\n         \"properties\": {\n          \"enableIntrospection\": {\n           \"type\": \"boolean\"\n          },\n          \"options\": {\n           \"properties\": {\n            \"maxDepth\": {\n             \"maximum\": 4294967295,\n             \"minimum\": 0,\n             \"nullable\": true,\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"resolutions\": {\n           \"additionalProperties\": {\n            \"properties\": {\n             \"grpcResolver\": {\n              \"properties\": {\n               \"requestTransform\": {\n                \"properties\": {\n                 \"methodName\": {\n                  \"type\": \"string\"\n                 },\n                 \"outgoingMessageJson\": {\n                  \"format\": \"textarea\",\n                  \"type\": \"string\"\n                 },\n                 \"requestMetadata\": {\n                  \"additionalProperties\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"serviceName\": {\n                  \"type\": \"string\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"spanName\": {\n                \"type\": \"string\"\n               },\n               \"timeout\": {\n                \"type\": \"string\"\n               },\n               \"upstreamRef\": {\n                \"properties\": {\n                 \"name\": {\n                  \"type\": \"string\"\n                 },\n                 \"namespace\": {\n                  \"type\": \"string\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"mockResolver\": {\n              \"properties\": {\n               \"asyncResponse\": {\n                \"properties\": {\n                 \"delay\": {\n                  \"type\": \"string\"\n                 },\n                 \"response\": {\n                  \"format\": \"textarea\",\n                  \"type\": \"string\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"errorResponse\": {\n                \"type\": \"string\"\n               },\n               \"syncResponse\": {\n                \"format\": \"textarea\",\n                \"type\": \"string\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"restResolver\": {\n              \"properties\": {\n               \"request\": {\n                \"properties\": {\n                 \"body\": {\n                  \"format\": \"textarea\",\n                  \"type\": \"string\"\n                 },\n                 \"headers\": {\n                  \"additionalProperties\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"object\"\n                 },\n                 \"queryParams\": {\n                  \"additionalProperties\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"response\": {\n                \"properties\": {\n                 \"resultRoot\": {\n                  \"type\": \"string\"\n                 },\n                 \"setters\": {\n                  \"additionalProperties\": {\n                   \"type\": \"string\"\n                  },\n                  \"type\": \"object\"\n                 }\n                },\n                \"type\": \"object\"\n               },\n               \"spanName\": {\n                \"type\": \"string\"\n               },\n               \"timeout\": {\n                \"type\": \"string\"\n               },\n               \"upstreamRef\": {\n                \"properties\": {\n                 \"name\": {\n                  \"type\": \"string\"\n                 },\n                 \"namespace\": {\n                  \"type\": \"string\"\n                 }\n                },\n                \"type\": \"object\"\n               }\n              },\n              \"type\": \"object\"\n             },\n             \"statPrefix\": {\n              \"nullable\": true,\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"remote\": {\n         \"properties\": {\n          \"headers\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"queryParams\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"spanName\": {\n           \"type\": \"string\"\n          },\n          \"upstreamRef\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"grpcDescriptorRegistry\": {\n       \"properties\": {\n        \"protoDescriptor\": {\n         \"type\": \"string\"\n        },\n        \"protoDescriptorBin\": {\n         \"format\": \"byte\",\n         \"type\": \"string\"\n        },\n        \"protoRefsList\": {\n         \"properties\": {\n          \"configMapRefs\": {\n           \"items\": {\n            \"properties\": {\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"namespace\": {\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"schemaDefinition\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"namespacedStatuses\": {\n     \"properties\": {\n      \"statuses\": {\n       \"additionalProperties\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"options\": {\n     \"properties\": {\n      \"logSensitiveInfo\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"persistedQueryCacheConfig\": {\n     \"properties\": {\n      \"cacheSize\": {\n       \"maximum\": 4294967295,\n       \"minimum\": 0,\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"statPrefix\": {\n     \"nullable\": true,\n     \"type\": \"string\"\n    },\n    \"stitchedSchema\": {\n     \"properties\": {\n      \"subschemas\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"type\": \"string\"\n         },\n         \"typeMerge\": {\n          \"additionalProperties\": {\n           \"properties\": {\n            \"args\": {\n             \"additionalProperties\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"object\"\n            },\n            \"queryName\": {\n             \"type\": \"string\"\n            },\n            \"selectionSet\": {\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Graph QL Api\",\n \"type\": \"object\"\n}"
+  }
+}

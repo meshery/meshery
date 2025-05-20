@@ -15,45 +15,46 @@
 package components
 
 import (
-	"fmt"
-
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // represents the mesheryctl component list command
 var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
-	Long:  "List all components registered in Meshery Server",
+	Long: `List all components registered in Meshery Server
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/list`,
 	Example: `
 // View list of components
 mesheryctl component list
 
 // View list of components with specified page number (25 components per page)
-mesheryctl component list --page 2
+mesheryctl component list --page [page-number]
 
-// To view the number of components present in Meshery
+// Display the number of components present in Meshery
 mesheryctl component list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
+		page, _ := cmd.Flags().GetInt("page")
+		pageSize, _ := cmd.Flags().GetInt("pagesize")
+		modelData := display.DisplayDataAsync{
+			UrlPath:          componentApiPath,
+			DataType:         "component",
+			Header:           []string{"Model", "Category", "Version"},
+			Page:             page,
+			PageSize:         pageSize,
+			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/meshmodels/components?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
-		countonly, _ := cmd.Flags().GetBool("count")
-		return listComponents(cmd, url, countonly)
+		return display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
 	},
 }
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
-	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	listComponentCmd.Flags().IntP("page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	listComponentCmd.Flags().IntP("pagesize", "s", 0, "(optional) List next set of components with --pagesize (default = 0)")
 	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }

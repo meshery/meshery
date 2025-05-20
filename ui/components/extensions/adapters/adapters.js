@@ -1,10 +1,6 @@
 import { isNil, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
-import { withRouter } from 'next/router';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../../lib/store';
 import { ADAPTER_STATUS, adaptersList } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
@@ -12,8 +8,9 @@ import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { Grid, Switch, Typography, useTheme } from '@layer5/sistent';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
-const Adapters = ({ updateProgress }) => {
+const Adapters = () => {
   // States.
   const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
 
@@ -153,6 +150,7 @@ const Adapters = ({ updateProgress }) => {
                     textDecoration: 'none',
                     color: theme.palette.text.brand,
                   }}
+                  data-testid={`adapter-docs-${String(adapter.name).toLowerCase()}`}
                 >
                   Open Adapter docs
                 </a>
@@ -174,8 +172,4 @@ const Adapters = ({ updateProgress }) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(() => {}, mapDispatchToProps)(withRouter(Adapters));
+export default Adapters;
