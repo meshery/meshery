@@ -190,20 +190,44 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
 
 export const TableListHeader = () => {
   return (
-    <Box display={'flex'} width={'100%'} paddingInline={'1rem'} gap={'1rem'}>
-      <Typography style={{ width: '40%' }} variant="body1">
-        Name
-      </Typography>
-      <Typography style={{ width: '30%' }} variant="body1">
-        Author
-      </Typography>
-      <Typography style={{ width: '10%' }} variant="body1">
-        Visibility
-      </Typography>
-      <Typography style={{ width: '20%' }} variant="body1">
-        Actions
-      </Typography>
-    </Box>
+    <Grid
+      container
+      width="100%"
+      paddingInline="1rem"
+      spacing={2}
+      alignItems="center"
+      wrap="nowrap"
+      marginTop={0}
+    >
+      <Grid item xs={6} md={5} lg={5} zeroMinWidth>
+        <Typography variant="body1" noWrap>
+          Name
+        </Typography>
+      </Grid>
+
+      <Grid item xs={4} md={4} lg={4} zeroMinWidth>
+        <Typography variant="body1" noWrap>
+          Author
+        </Typography>
+      </Grid>
+
+      <Grid
+        item
+        md={2}
+        lg={1}
+        sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
+      >
+        <Typography variant="body1" noWrap>
+          Visibility
+        </Typography>
+      </Grid>
+
+      <Grid item xs={3} sm={2} md={1} lg={2} zeroMinWidth>
+        <Typography variant="body1" noWrap>
+          Actions
+        </Typography>
+      </Grid>
+    </Grid>
   );
 };
 
