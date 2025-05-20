@@ -158,10 +158,10 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
   const sortOptions = [
     { value: 'name asc', label: 'Name (A-Z)' },
     { value: 'name desc', label: 'Name (Z-A)' },
-    { value: 'updated_at desc', label: 'Last Updated (Newest First)' },
-    { value: 'updated_at asc', label: 'Last Updated (Oldest First)' },
-    { value: 'created_at desc', label: 'Created At (Newest First)' },
-    { value: 'created_at asc', label: 'Created At (Oldest First)' },
+    { value: 'updated_at desc', label: 'Last Updated' },
+    { value: 'updated_at asc', label: 'Last Updated' },
+    { value: 'created_at desc', label: 'Created At' },
+    { value: 'created_at asc', label: 'Created At' },
   ];
 
   return (
