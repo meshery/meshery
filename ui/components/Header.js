@@ -9,8 +9,8 @@ import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
-import ExtensionSandbox from './ExtensionSandbox';
-import RemoteComponent from './RemoteComponent';
+// import ExtensionSandbox from './ExtensionSandbox';
+// import RemoteComponent from './RemoteComponent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
@@ -408,6 +408,7 @@ const Header = ({
     }
     return null;
   };
+  console.log("collab ext",collaboratorExt)
 
   if (isProviderCapabilitiesError) {
     notify({
@@ -417,7 +418,7 @@ const Header = ({
     });
   }
 
-  const loaderType = 'circular';
+  // const loaderType = 'circular';
   const theme = useTheme();
   return (
     <NoSsr>
@@ -456,12 +457,12 @@ const Header = ({
                 }}
               >
                 {/* According to the capabilities load the component */}
-                {collaboratorExt && (
+                {/*collaboratorExt && (
                   <ExtensionSandbox
                     type="collaborator"
                     Extension={(url) => RemoteComponent({ url, loaderType })}
                   />
-                )}
+                )*/}
                 <UserInfoContainer>
                   <UserSpan style={{ position: 'relative' }}>
                     <K8sContextMenu
