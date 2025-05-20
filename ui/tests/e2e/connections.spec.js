@@ -109,7 +109,12 @@ test.describe.serial('Connection Management Tests', () => {
       await page.getByTestId('ConnectionTable-search').getByRole('button').click();
       await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
 
-      const connectedRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
+      const matchingRows = page.getByRole('menuitem', { hasText: clusterMetaData.name });
+
+      const connectedRow = matchingRows.filter({
+        has: page.locator('span', { hasText: 'connected' })
+      }).first();
+      
       await expect(connectedRow).toBeVisible();
 
       // ===== TRANSITIONING TO A NEW STATE =====
@@ -157,7 +162,7 @@ test.describe('Cleanup', () => {
     await page.getByRole('button', { name: 'Lifecycle' }).click();
     await page.getByTestId('connection-addCluster').waitFor();
 
-    await page.getByRole('row', { name: 'Name Environments Kind' }).getByRole('checkbox').check();
+    await page.locator('input[type="checkbox"][data-indeterminate="false"]').first().check();
     await page.getByTestId('Button-delete-connections').click();
     await page.getByText('Delete Connections').click();
     await page.getByRole('button', { name: 'DELETE' }).click();
