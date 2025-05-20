@@ -104,6 +104,11 @@ jobs:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-24.04
     steps:
+      - name: Free up disk space
+        run: |
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          docker system prune -af
       - name: Fetch latest tag
         run: |
           echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
