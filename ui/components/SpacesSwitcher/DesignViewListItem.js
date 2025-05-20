@@ -1,15 +1,11 @@
-import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
 import {
   Divider,
   CustomTooltip,
   Skeleton,
-  Link,
-  Avatar,
   VisibilityChipMenu,
   getRelativeTime,
   getFullFormattedTime,
-  Typography,
   DesignIcon,
   ViewIcon,
   useTheme,
