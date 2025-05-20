@@ -6,6 +6,7 @@ import {
   DesignIcon,
   EnvironmentIcon,
   FormControl,
+  Grid,
   InputLabel,
   MenuItem,
   Select,
@@ -156,52 +157,33 @@ const WorkspaceContent = ({ workspace }) => {
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Box display={'flex'} alignItems="center" gap={'1rem'}>
-          <StyledSearchBar
-            sx={{
-              backgroundColor: 'transparent',
-            }}
-            width="auto"
-            placeholder={filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'}
-            value={filters.searchQuery}
-            onChange={onSearchChange}
-            endAdornment={
-              filters.type === RESOURCE_TYPE.DESIGN ? (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Designs: {designsData?.total_count ?? 0}
-                </p>
-              ) : (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Views: {viewsData?.total_count ?? 0}
-                </p>
-              )
-            }
-          />{' '}
-          <AssignDesignViewButton
-            type={filters.type}
-            handleAssign={(e) => {
-              e.stopPropagation();
-              if (filters.type === RESOURCE_TYPE.DESIGN) {
-                designAssignment.handleAssignModal();
-              } else {
-                viewAssignment.handleAssignModal();
+        <Grid container spacing={2} alignItems="center">
+          {/* Search Bar */}
+          <Grid item xs={12} sm={12} md={6} lg={5}>
+            <StyledSearchBar
+              sx={{ backgroundColor: 'transparent' }}
+              width="auto"
+              placeholder={
+                filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
               }
-            }}
-            disabled={
-              filters.type === RESOURCE_TYPE.DESIGN
-                ? !CAN(
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-                  )
-                : !CAN(
-                    keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-                    keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-                  )
-            }
-          />
-        </Box>
-        <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
-          <Box sx={{ minWidth: 120 }}>
+              value={filters.searchQuery}
+              onChange={onSearchChange}
+              endAdornment={
+                filters.type === RESOURCE_TYPE.DESIGN ? (
+                  <p style={{ color: theme.palette.text.default }}>
+                    Total Designs: {designsData?.total_count ?? 0}
+                  </p>
+                ) : (
+                  <p style={{ color: theme.palette.text.default }}>
+                    Total Views: {viewsData?.total_count ?? 0}
+                  </p>
+                )
+              }
+            />
+          </Grid>
+
+          {/* Type Select */}
+          <Grid item xs={6} sm={6} md={2} lg={1.5}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -214,24 +196,54 @@ const WorkspaceContent = ({ workspace }) => {
                   },
                 }}
               >
-                {<MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>}
+                <MenuItem value={RESOURCE_TYPE.DESIGN}>Design</MenuItem>
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
-          </Box>
+          </Grid>
 
-          <Box sx={{ minWidth: 120 }}>
+          {/* Sort By */}
+          <Grid item xs={6} sm={6} md={2} lg={1.5}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-          </Box>
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+
+          {/* Visibility Select */}
+          <Grid item xs={12} sm={6} md={3} lg={2}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
-          </Box>
-        </Box>
-        <Box minWidth={'50rem'}>
+          </Grid>
+
+          {/* Assign Button */}
+          <Grid item xs={12} sm={6} md={3} lg={2}>
+            <AssignDesignViewButton
+              type={filters.type}
+              handleAssign={(e) => {
+                e.stopPropagation();
+                if (filters.type === RESOURCE_TYPE.DESIGN) {
+                  designAssignment.handleAssignModal();
+                } else {
+                  viewAssignment.handleAssignModal();
+                }
+              }}
+              disabled={
+                filters.type === RESOURCE_TYPE.DESIGN
+                  ? !CAN(
+                      keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+                      keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+                    )
+                  : !CAN(
+                      keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+                      keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+                    )
+              }
+            />
+          </Grid>
+        </Grid>
+
+        <>
           <TableListHeader />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
@@ -260,7 +272,7 @@ const WorkspaceContent = ({ workspace }) => {
               refetch={() => setViewsPage(0)}
             />
           )}
-        </Box>
+        </>
       </Box>
       <AssignmentModal
         open={viewAssignment.assignModal}
