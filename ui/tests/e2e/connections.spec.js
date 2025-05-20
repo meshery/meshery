@@ -32,6 +32,8 @@ test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Lifecycle' }).click();
+    await page.getByTestId('connection-addCluster').waitFor();
+
   });
   test('Verify that UI components are displayed', async ({ page }) => {
     // Verify that connections table is displayed (by checking for table headings)
@@ -153,6 +155,7 @@ test.describe('Cleanup', () => {
     }
     await page.goto('/');
     await page.getByRole('button', { name: 'Lifecycle' }).click();
+    await page.getByTestId('connection-addCluster').waitFor();
 
     await page.getByRole('row', { name: 'Name Environments Kind' }).getByRole('checkbox').check();
     await page.getByTestId('Button-delete-connections').click();
