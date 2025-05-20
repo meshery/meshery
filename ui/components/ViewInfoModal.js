@@ -26,6 +26,7 @@ import { ModalButtonPrimary } from '@layer5/sistent';
 import rehypeSanitize from 'rehype-sanitize';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '@/utils/Enum';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 const Row = styled('div')(({ justifyContent = 'space-between' }) => ({
   display: 'flex',
@@ -80,7 +81,7 @@ export const ActionBox = styled(Box)(() => ({
   gap: '1rem',
 }));
 
-export const ViewInfoModal = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
+export const ViewInfoModal_ = ({ open, closeModal, view_id, view_name, metadata, refetch }) => {
   const [formState, setFormState] = useState(metadata);
   const viewRes = useGetViewQuery(
     { viewId: view_id },
@@ -94,8 +95,6 @@ export const ViewInfoModal = ({ open, closeModal, view_id, view_name, metadata, 
 
   const isLoading =
     viewRes.isLoading || userRes.isLoading || viewRes.isFetching || userRes.isFetching;
-  const canRenderInfo = viewRes.isSuccess && userRes.isSuccess;
-
   const formRef = React.useRef(null);
   const [saving, setSaving] = useState(false);
   const [updateView] = useUpdateViewVisibilityMutation();
@@ -136,7 +135,7 @@ export const ViewInfoModal = ({ open, closeModal, view_id, view_name, metadata, 
           </div>
         )}
 
-        {!isLoading && canRenderInfo && (
+        {!isLoading && (
           <div>
             <Row style={{ paddingInline: '0rem' }}>
               <Row justifyContent="start">
@@ -184,20 +183,34 @@ export const ViewInfoModal = ({ open, closeModal, view_id, view_name, metadata, 
   );
 };
 
+export const ViewInfoModal = (props) => {
+  return (
+    <ProviderStoreWrapper>
+      <ViewInfoModal_ {...props} />
+    </ProviderStoreWrapper>
+  );
+};
 const StyledChip = styled(Chip)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper,
 }));
 
 export const UserChip = ({ user_id }) => {
-  const userProfileRes = useGetUserProfileSummaryByIdQuery({ id: user_id });
+  const userProfileRes = useGetUserProfileSummaryByIdQuery(
+    { id: user_id },
+    {
+      skip: !user_id,
+    },
+  );
 
   if (userProfileRes.isError || userProfileRes.isLoading) {
     return null;
   }
-  const { avatar_url } = userProfileRes.data || {};
-  const userName = formatUsername(userProfileRes.data);
+  const { avatar_url } = userProfileRes?.data || {};
+  const userName = formatUsername(userProfileRes?.data || {});
 
-  return <StyledChip avatar={<Avatar src={avatar_url} />} label={userName} variant="outlined" />;
+  return (
+    <StyledChip avatar={<Avatar src={avatar_url} />} label={userName || ''} variant="outlined" />
+  );
 };
 
 const formatUsername = ({ first_name, last_name }) => {
@@ -209,7 +222,7 @@ const ViewVisibilityMenu = ({ view }) => {
   const [updateView] = useUpdateViewVisibilityMutation();
   return (
     <VisibilityChipMenu
-      value={view.visibility}
+      value={view?.visibility || VIEW_VISIBILITY.PUBLIC}
       onChange={(value) =>
         handleUpdateViewVisibility({ value: value, updateView: updateView, selectedResource: view })
       }

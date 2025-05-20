@@ -20,7 +20,6 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -34,9 +33,7 @@ import (
 var (
 	availableSubcommands = []*cobra.Command{listComponentCmd, viewComponentCmd, searchComponentsCmd}
 
-	pageNumberFlag int
-	outFormatFlag  string
-	saveFlag       bool
+	saveFlag bool
 
 	componentApiPath = "api/meshmodels/components"
 )
@@ -123,37 +120,38 @@ func init() {
 	ComponentCmd.Flags().BoolP("count", "", false, "(optional) Get the number of components in total")
 }
 
-func listComponents(cmd *cobra.Command, url string) error {
-	componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](url)
-
-	if err != nil {
-		return err
-	}
-
-	header := []string{"Model", "kind", "Version"}
+func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponentsAPIResponse) ([][]string, int64) {
 	rows := [][]string{}
-
 	for _, component := range componentsResponse.Components {
-		if len(component.DisplayName) > 0 {
-			rows = append(rows, []string{component.Model.Name, component.Component.Kind, component.Component.Version})
+		modelName := component.Model.Name
+		if modelName == "" {
+			modelName = "N/A"
 		}
+		componentVersion := component.Component.Version
+		if componentVersion == "" {
+			componentVersion = "N/A"
+		}
+		componenttKind := component.Component.Kind
+		if componenttKind == "" {
+			componenttKind = "N/A"
+		}
+		rows = append(rows, []string{modelName, componenttKind, componentVersion})
 	}
 
-	count, _ := cmd.Flags().GetBool("count")
+	return rows, int64(componentsResponse.Count)
+}
 
-	dataToDisplay := display.DisplayedData{
-		DataType:         "components",
-		Header:           header,
-		Rows:             rows,
-		Count:            int64(componentsResponse.Count),
-		DisplayCountOnly: count,
+func listComponents(cmd *cobra.Command, apiPath string) error {
+	page, _ := cmd.Flags().GetInt("page")
+
+	modelData := display.DisplayDataAsync{
+		UrlPath:          componentApiPath,
+		DataType:         "component",
+		Header:           []string{"Model", "Category", "Version"},
+		Page:             page,
 		IsPage:           cmd.Flags().Changed("page"),
+		DisplayCountOnly: cmd.Flags().Changed("count"),
 	}
 
-	err = display.List(dataToDisplay)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
 }

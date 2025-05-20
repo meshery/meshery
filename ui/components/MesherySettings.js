@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { withRouter } from 'next/router';
-import { connect, Provider } from 'react-redux';
+import { useRouter } from 'next/router';
 import { NoSsr } from '@layer5/sistent';
-import { bindActionCreators } from 'redux';
 import {
   CustomTooltip,
   AppBar,
@@ -25,7 +23,6 @@ import Link from 'next/link';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
-import { updateProgress } from '../lib/store';
 import _PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './Registry/MeshModelComponent';
@@ -36,7 +33,6 @@ import {
   getRelationshipsDetail,
   getMeshModelRegistrants,
 } from '../api/meshmodel';
-import { withNotify } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import {
@@ -50,10 +46,10 @@ import {
 } from '@/constants/navigator';
 import { removeDuplicateVersions } from './Registry/helper';
 import DefaultError from './General/error-404';
-import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
+import { useSelector } from 'react-redux';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -133,13 +129,15 @@ const settingsRouter = (router) => {
 };
 
 //TODO: Tabs are hardcoded everywhere
-const MesherySettings = (props) => {
-  const { k8sconfig, meshAdapters, grafana, prometheus, router, classes } = props;
+const MesherySettings = () => {
+  const router = useRouter();
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
   const theme = useTheme();
-
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { prometheus } = useSelector((state) => state.telemetry);
+  const { grafana } = useSelector((state) => state.telemetry);
+  const { meshAdapters } = useSelector((state) => state.adapter);
   const [state, setState] = useState({
-    k8sconfig,
     meshAdapters,
     grafana,
     prometheus,
@@ -149,7 +147,7 @@ const MesherySettings = (props) => {
     componentsCount: 0,
     relationshipsCount: 0,
     registrantCount: 0,
-    isMeshConfigured: k8sconfig.clusterConfigured,
+    isMeshConfigured: k8sConfig.clusterConfigured,
     scannedPrometheus: [],
     scannedGrafana: [],
   });
@@ -198,7 +196,7 @@ const MesherySettings = (props) => {
       handleChangeSettingsCategory,
       handleChangeSelectedTab,
       handleChangeSelectedTabCustomCategory,
-    } = settingsRouter(props.router);
+    } = settingsRouter(router);
 
     return (event, newVal) => {
       if (val === 'tabVal') {
@@ -228,11 +226,11 @@ const MesherySettings = (props) => {
 
   const { tabVal, subTabVal } = state;
   let backToPlay = '';
-  if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
+  if (k8sConfig.clusterConfigured === true && meshAdapters.length > 0) {
     backToPlay = (
-      <div className={classes.backToPlay}>
+      <div>
         <Link href="/management">
-          <div className={classes.link}>
+          <div>
             <LeftArrowIcon transform="grow-4" />
             You are ready to manage cloud native infrastructure
           </div>
@@ -327,19 +325,17 @@ const MesherySettings = (props) => {
             {tabVal === OVERVIEW && (
               <TabContainer>
                 <NoSsr>
-                  <Provider store={store}>
-                    <RootClass>
-                      <DashboardMeshModelGraph />
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                          <ConnectionStatsChart />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <MesheryConfigurationChart />
-                        </Grid>
+                  <RootClass>
+                    <DashboardMeshModelGraph />
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <ConnectionStatsChart />
                       </Grid>
-                    </RootClass>
-                  </Provider>
+                      <Grid item xs={12} md={6}>
+                        <MesheryConfigurationChart />
+                      </Grid>
+                    </Grid>
+                  </RootClass>
                 </NoSsr>
               </TabContainer>
             )}
@@ -432,30 +428,4 @@ const MesherySettings = (props) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters').toJS();
-  const grafana = state.get('grafana').toJS();
-  const prometheus = state.get('prometheus').toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const telemetryUrls = state.get('telemetryURLs').toJS();
-  return {
-    k8sconfig,
-    meshAdapters,
-    grafana,
-    prometheus,
-    selectedK8sContexts,
-    telemetryUrls,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-MesherySettings.propTypes = { classes: PropTypes.object };
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(withNotify(MesherySettings)));
+export default MesherySettings;

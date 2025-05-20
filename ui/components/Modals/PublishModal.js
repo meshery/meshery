@@ -4,41 +4,38 @@ import PublicIcon from '@mui/icons-material/Public';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';
-import dataFetch from '../../lib/data-fetch';
+import { useGetSchemaQuery } from '@/rtk-query/schema';
 
 // This modal is used in Meshery Extensions also
 export default function PublishModal(props) {
   const { open, title, handleClose, handleSubmit } = props;
   const [publishSchema, setPublishSchema] = useState({});
+  const { data: schemaData, isSuccess } = useGetSchemaQuery({ schemaName: 'publish' });
+
+  const processSchema = async () => {
+    if (isSuccess && schemaData) {
+      try {
+        const { models } = await getMeshModels();
+        const modelNames = _.uniq(models?.map((model) => model.displayName));
+        modelNames.sort();
+
+        const modifiedSchema = modifyRJSFSchema(
+          schemaData.rjsfSchema,
+          'properties.compatibility.items.enum',
+          modelNames,
+        );
+
+        setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: schemaData.uiSchema });
+      } catch (err) {
+        console.error(err);
+        setPublishSchema(schemaData);
+      }
+    }
+  };
 
   useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
-
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-    );
-  }, []);
+    processSchema();
+  }, [isSuccess, schemaData]);
 
   return (
     <Modal

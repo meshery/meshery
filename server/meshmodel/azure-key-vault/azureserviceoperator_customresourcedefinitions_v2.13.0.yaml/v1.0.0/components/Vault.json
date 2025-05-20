@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Vault",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "azure-key-vault",
+    "displayName": "Azure Key Vault",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Security \u0026 Compliance"
+    },
+    "subCategory": "Secrets Management",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2384f1",
+      "secondaryColor": "#3990f2",
+      "shape": "rectangle",
+      "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#5ea0ef\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#a67af4\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#773adc\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#3cd4c2\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#258277\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\"\u003e\u003c/path\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#5ea0ef\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#a67af4\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#773adc\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#3cd4c2\"\u003e\u003c/stop\u003e\n\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#258277\"\u003e\u003c/stop\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\"\u003e\u003c/path\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "configuration": null,
+  "component": {
+    "version": "keyvault.azure.com/v1api20210401preview",
+    "kind": "Vault",
+    "schema": "{\n \"description\": \"Generator information:\\n- Generated from: /keyvault/resource-manager/Microsoft.KeyVault/preview/2021-04-01-preview/keyvault.json\\n- ARM URI: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"azureName\": {\n     \"description\": \"AzureName: The name of the resource in Azure. This is often the same as the name of the resource in Kubernetes but it\\ndoesn't have to be.\",\n     \"pattern\": \"^[a-zA-Z0-9-]{3,24}$\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Location: The supported Azure location where the key vault should be created.\",\n     \"type\": \"string\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The specification for configuring operator behavior. This field is interpreted by the operator and not\\npassed directly to Azure\",\n     \"properties\": {\n      \"configMapExpressions\": {\n       \"description\": \"ConfigMapExpressions: configures where to place operator written dynamic ConfigMaps (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secretExpressions\": {\n       \"description\": \"SecretExpressions: configures where to place operator written dynamic secrets (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a resources.azure.com/ResourceGroup resource\",\n     \"properties\": {\n      \"armId\": {\n       \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"properties\": {\n     \"description\": \"Properties: Properties of the vault\",\n     \"properties\": {\n      \"accessPolicies\": {\n       \"description\": \"AccessPolicies: An array of 0 to 1024 identities that have access to the key vault. All identities in the array must use\\nthe same tenant ID as the key vault's tenant ID. When `createMode` is set to `recover`, access policies are not\\nrequired. Otherwise, access policies are required.\",\n       \"items\": {\n        \"description\": \"An identity that have access to the key vault. All identities in the array must use the same tenant ID as the key\\nvault's tenant ID.\",\n        \"properties\": {\n         \"applicationId\": {\n          \"description\": \"ApplicationId:  Application ID of the client making request on behalf of a principal\",\n          \"pattern\": \"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$\",\n          \"type\": \"string\"\n         },\n         \"applicationIdFromConfig\": {\n          \"description\": \"ApplicationIdFromConfig:  Application ID of the client making request on behalf of a principal\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"Key is the key in the Kubernetes configmap being referenced\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name is the name of the Kubernetes configmap being referenced.\\nThe configmap must be in the same namespace as the resource\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"key\",\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"objectId\": {\n          \"description\": \"ObjectId: The object ID of a user, service principal or security group in the Azure Active Directory tenant for the\\nvault. The object ID must be unique for the list of access policies.\",\n          \"type\": \"string\"\n         },\n         \"objectIdFromConfig\": {\n          \"description\": \"ObjectIdFromConfig: The object ID of a user, service principal or security group in the Azure Active Directory tenant\\nfor the vault. The object ID must be unique for the list of access policies.\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"Key is the key in the Kubernetes configmap being referenced\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name is the name of the Kubernetes configmap being referenced.\\nThe configmap must be in the same namespace as the resource\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"key\",\n           \"name\"\n          ],\n          \"type\": \"object\"\n         },\n         \"permissions\": {\n          \"description\": \"Permissions: Permissions the identity has for keys, secrets and certificates.\",\n          \"properties\": {\n           \"certificates\": {\n            \"description\": \"Certificates: Permissions to certificates\",\n            \"items\": {\n             \"enum\": [\n              \"backup\",\n              \"create\",\n              \"delete\",\n              \"deleteissuers\",\n              \"get\",\n              \"getissuers\",\n              \"import\",\n              \"list\",\n              \"listissuers\",\n              \"managecontacts\",\n              \"manageissuers\",\n              \"purge\",\n              \"recover\",\n              \"restore\",\n              \"setissuers\",\n              \"update\"\n             ],\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"keys\": {\n            \"description\": \"Keys: Permissions to keys\",\n            \"items\": {\n             \"enum\": [\n              \"backup\",\n              \"create\",\n              \"decrypt\",\n              \"delete\",\n              \"encrypt\",\n              \"get\",\n              \"import\",\n              \"list\",\n              \"purge\",\n              \"recover\",\n              \"release\",\n              \"restore\",\n              \"sign\",\n              \"unwrapKey\",\n              \"update\",\n              \"verify\",\n              \"wrapKey\"\n             ],\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"secrets\": {\n            \"description\": \"Secrets: Permissions to secrets\",\n            \"items\": {\n             \"enum\": [\n              \"backup\",\n              \"delete\",\n              \"get\",\n              \"list\",\n              \"purge\",\n              \"recover\",\n              \"restore\",\n              \"set\"\n             ],\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           },\n           \"storage\": {\n            \"description\": \"Storage: Permissions to storage accounts\",\n            \"items\": {\n             \"enum\": [\n              \"backup\",\n              \"delete\",\n              \"deletesas\",\n              \"get\",\n              \"getsas\",\n              \"list\",\n              \"listsas\",\n              \"purge\",\n              \"recover\",\n              \"regeneratekey\",\n              \"restore\",\n              \"set\",\n              \"setsas\",\n              \"update\"\n             ],\n             \"type\": \"string\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"tenantId\": {\n          \"description\": \"TenantId: The Azure Active Directory tenant ID that should be used for authenticating requests to the key vault.\",\n          \"pattern\": \"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$\",\n          \"type\": \"string\"\n         },\n         \"tenantIdFromConfig\": {\n          \"description\": \"TenantIdFromConfig: The Azure Active Directory tenant ID that should be used for authenticating requests to the key\\nvault.\",\n          \"properties\": {\n           \"key\": {\n            \"description\": \"Key is the key in the Kubernetes configmap being referenced\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name is the name of the Kubernetes configmap being referenced.\\nThe configmap must be in the same namespace as the resource\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"key\",\n           \"name\"\n          ],\n          \"type\": \"object\"\n         }\n        },\n        \"required\": [\n         \"permissions\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"createMode\": {\n       \"description\": \"CreateMode: The vault's create mode to indicate whether the vault need to be recovered or not.\",\n       \"enum\": [\n        \"createOrRecover\",\n        \"default\",\n        \"purgeThenCreate\",\n        \"recover\"\n       ],\n       \"type\": \"string\"\n      },\n      \"enablePurgeProtection\": {\n       \"description\": \"EnablePurgeProtection: Property specifying whether protection against purge is enabled for this vault. Setting this\\nproperty to true activates protection against purge for this vault and its content - only the Key Vault service may\\ninitiate a hard, irrecoverable deletion. The setting is effective only if soft delete is also enabled. Enabling this\\nfunctionality is irreversible - that is, the property does not accept false as its value.\",\n       \"type\": \"boolean\"\n      },\n      \"enableRbacAuthorization\": {\n       \"description\": \"EnableRbacAuthorization: Property that controls how data actions are authorized. When true, the key vault will use Role\\nBased Access Control (RBAC) for authorization of data actions, and the access policies specified in vault properties\\nwill be  ignored. When false, the key vault will use the access policies specified in vault properties, and any policy\\nstored on Azure Resource Manager will be ignored. If null or not specified, the vault is created with the default value\\nof false. Note that management actions are always authorized with RBAC.\",\n       \"type\": \"boolean\"\n      },\n      \"enableSoftDelete\": {\n       \"description\": \"EnableSoftDelete: Property to specify whether the 'soft delete' functionality is enabled for this key vault. If it's not\\nset to any value(true or false) when creating new key vault, it will be set to true by default. Once set to true, it\\ncannot be reverted to false.\",\n       \"type\": \"boolean\"\n      },\n      \"enabledForDeployment\": {\n       \"description\": \"EnabledForDeployment: Property to specify whether Azure Virtual Machines are permitted to retrieve certificates stored\\nas secrets from the key vault.\",\n       \"type\": \"boolean\"\n      },\n      \"enabledForDiskEncryption\": {\n       \"description\": \"EnabledForDiskEncryption: Property to specify whether Azure Disk Encryption is permitted to retrieve secrets from the\\nvault and unwrap keys.\",\n       \"type\": \"boolean\"\n      },\n      \"enabledForTemplateDeployment\": {\n       \"description\": \"EnabledForTemplateDeployment: Property to specify whether Azure Resource Manager is permitted to retrieve secrets from\\nthe key vault.\",\n       \"type\": \"boolean\"\n      },\n      \"networkAcls\": {\n       \"description\": \"NetworkAcls: Rules governing the accessibility of the key vault from specific network locations.\",\n       \"properties\": {\n        \"bypass\": {\n         \"description\": \"Bypass: Tells what traffic can bypass network rules. This can be 'AzureServices' or 'None'.  If not specified the\\ndefault is 'AzureServices'.\",\n         \"enum\": [\n          \"AzureServices\",\n          \"None\"\n         ],\n         \"type\": \"string\"\n        },\n        \"defaultAction\": {\n         \"description\": \"DefaultAction: The default action when no rule from ipRules and from virtualNetworkRules match. This is only used after\\nthe bypass property has been evaluated.\",\n         \"enum\": [\n          \"Allow\",\n          \"Deny\"\n         ],\n         \"type\": \"string\"\n        },\n        \"ipRules\": {\n         \"description\": \"IpRules: The list of IP address rules.\",\n         \"items\": {\n          \"description\": \"A rule governing the accessibility of a vault from a specific ip address or ip range.\",\n          \"properties\": {\n           \"value\": {\n            \"description\": \"Value: An IPv4 address range in CIDR notation, such as '124.56.78.91' (simple IP address) or '124.56.78.0/24' (all\\naddresses that start with 124.56.78).\",\n            \"type\": \"string\"\n           }\n          },\n          \"required\": [\n           \"value\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        },\n        \"virtualNetworkRules\": {\n         \"description\": \"VirtualNetworkRules: The list of virtual network rules.\",\n         \"items\": {\n          \"description\": \"A rule governing the accessibility of a vault from a specific virtual network.\",\n          \"properties\": {\n           \"ignoreMissingVnetServiceEndpoint\": {\n            \"description\": \"IgnoreMissingVnetServiceEndpoint: Property to specify whether NRP will ignore the check if parent subnet has\\nserviceEndpoints configured.\",\n            \"type\": \"boolean\"\n           },\n           \"reference\": {\n            \"description\": \"Reference: Full resource id of a vnet subnet, such as\\n'/subscriptions/subid/resourceGroups/rg1/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/subnet1'.\",\n            \"properties\": {\n             \"armId\": {\n              \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n              \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n              \"type\": \"string\"\n             },\n             \"group\": {\n              \"description\": \"Group is the Kubernetes group of the resource.\",\n              \"type\": \"string\"\n             },\n             \"kind\": {\n              \"description\": \"Kind is the Kubernetes kind of the resource.\",\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"description\": \"Name is the Kubernetes name of the resource.\",\n              \"type\": \"string\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"required\": [\n           \"reference\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"provisioningState\": {\n       \"description\": \"ProvisioningState: Provisioning state of the vault.\",\n       \"enum\": [\n        \"RegisteringDns\",\n        \"Succeeded\"\n       ],\n       \"type\": \"string\"\n      },\n      \"sku\": {\n       \"description\": \"Sku: SKU details\",\n       \"properties\": {\n        \"family\": {\n         \"description\": \"Family: SKU family name\",\n         \"enum\": [\n          \"A\"\n         ],\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name: SKU name to specify whether the key vault is a standard vault or a premium vault.\",\n         \"enum\": [\n          \"premium\",\n          \"standard\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"family\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"softDeleteRetentionInDays\": {\n       \"description\": \"SoftDeleteRetentionInDays: softDelete data retention days. It accepts \\u003e=7 and \\u003c=90.\",\n       \"type\": \"integer\"\n      },\n      \"tenantId\": {\n       \"description\": \"TenantId: The Azure Active Directory tenant ID that should be used for authenticating requests to the key vault.\",\n       \"pattern\": \"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$\",\n       \"type\": \"string\"\n      },\n      \"tenantIdFromConfig\": {\n       \"description\": \"TenantIdFromConfig: The Azure Active Directory tenant ID that should be used for authenticating requests to the key\\nvault.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"Key is the key in the Kubernetes configmap being referenced\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the name of the Kubernetes configmap being referenced.\\nThe configmap must be in the same namespace as the resource\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"key\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"vaultUri\": {\n       \"description\": \"VaultUri: The URI of the vault for performing operations on keys and secrets.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"sku\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Tags: The tags that will be assigned to the key vault.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"owner\",\n    \"properties\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault\",\n \"type\": \"object\"\n}"
+  }
+}

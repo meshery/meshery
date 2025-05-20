@@ -1,0 +1,54 @@
+name: Vulnerability Scan workflow
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  vex_scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Generate CycloneDX SBOM
+        uses: CycloneDX/gh-gomod-generate-sbom@v2
+        with:
+          version: v1
+          args: mod -licenses -json -output bom.json
+
+      - name: Scan vulnerabilities with Grype
+        run: grype sbom:./bom.json -o json > grype-results.json
+
+      - name: Parse Grype Results
+        id: parse_results
+        run: |
+          vulns=$(jq '.matches | length' grype-results.json)
+          echo "Found $vulns vulnerabilities" > issue_body.txt
+          echo '```json' >> issue_body.txt
+          jq '.matches[0:5]' grype-results.json >> issue_body.txt
+          echo '```' >> issue_body.txt
+          echo "vuln_count=$vulns" >> $GITHUB_OUTPUT
+
+      - name: Meterian Scanner
+        uses: MeterianHQ/meterian-github-action@v1.0.17
+        continue-on-error: true
+        with:
+            oss: true
+
+      - name: Create GitHub Issue
+        if: steps.parse_results.outputs.vuln_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Vulnerability Scan Report - $(date +'%Y-%m-%d %H:%M:%S %Z')" \
+            --body-file issue_body.txt \
+         #   --label "security,grype,automated-scan"

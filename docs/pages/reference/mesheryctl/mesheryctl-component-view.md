@@ -17,6 +17,7 @@ View registered components
 ## Synopsis
 
 View a component registered in Meshery Server
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/component/view
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl component view [flags]

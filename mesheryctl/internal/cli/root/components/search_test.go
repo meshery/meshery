@@ -21,7 +21,7 @@ func TestSearchComponent(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "Search components with query parameter",
+			Name:             "Search components without query parameter",
 			Args:             []string{"search"},
 			URL:              "",
 			Fixture:          "components.api.response.golden",
@@ -33,7 +33,7 @@ func TestSearchComponent(t *testing.T) {
 			Args:             []string{"search", "Test"},
 			URL:              fmt.Sprintf("/%s?search=Test&pagesize=all", componentApiPath),
 			Fixture:          "components.api.response.golden",
-			ExpectedResponse: "components.list.output.golden",
+			ExpectedResponse: "components.search.output.golden",
 			ExpectError:      false,
 		},
 	}

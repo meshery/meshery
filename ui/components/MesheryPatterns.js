@@ -34,9 +34,6 @@ import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { toggleCatalogContent, updateProgress } from '../lib/store';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
@@ -98,6 +95,8 @@ import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import yaml from 'js-yaml';
 import ActionPopover from './MesheryPatterns/ActionPopover';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -289,10 +288,6 @@ function resetSelectedPattern() {
 }
 
 function MesheryPatterns({
-  updateProgress,
-  user,
-  selectedK8sContexts,
-  catalogVisibility,
   disableCreateImportDesignButton = false,
   disableUniversalFilter = false,
   hideVisibility = false,
@@ -324,7 +319,9 @@ function MesheryPatterns({
   const [viewType, setViewType] = useState(view === 'table' ? 'table' : 'grid');
   const { notify } = useNotification();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
-
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { catalogVisibility } = useSelector((state) => state.ui);
+  const { user } = useSelector((state) => state.ui);
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
   const {
@@ -559,12 +556,6 @@ function MesheryPatterns({
     );
     disposeConfSubscriptionRef.current = configurationSubscription;
   };
-
-  // const handleCatalogVisibility = () => {
-  //   handleCatalogPreference(!catalogVisibilityRef.current);
-  //   catalogVisibilityRef.current = !catalogVisibility;
-  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  // };
 
   useEffect(async () => {
     try {
@@ -1626,16 +1617,11 @@ function MesheryPatterns({
               {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
                 infoModal.open && (
                   <InfoModal
-                    handlePublish={handlePublish}
                     infoModalOpen={true}
                     handleInfoModalClose={handleInfoModalClose}
-                    dataName="patterns"
                     selectedResource={infoModal.selectedResource}
                     resourceOwnerID={infoModal.ownerID}
-                    currentUser={user}
                     patternFetcher={getPatterns}
-                    formSchema={publishSchema}
-                    meshModels={meshModels}
                   />
                 )}
             </SistentModal>
@@ -1724,16 +1710,5 @@ const PublishModal = React.memo((props) => {
   );
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  user: state.get('user')?.toObject(),
-  selectedK8sContexts: state.get('selectedK8sContexts'),
-  catalogVisibility: state.get('catalogVisibility'),
-});
-
 // @ts-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns);
+export default MesheryPatterns;

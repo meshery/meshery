@@ -33,7 +33,6 @@ import {
   useUnassignTeamFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
-import { updateProgress } from '../../../lib/store';
 import { useNotification, useNotificationHandlers } from '../../../utils/hooks/useNotification';
 import { RJSFModalWrapper } from '../../Modal';
 import _PromptComponent from '../../PromptComponent';
@@ -48,8 +47,9 @@ import RightArrowIcon from '@/assets/icons/RightArrowIcon';
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
-import { WorkspaceSwitcherContext } from '@/components/SpacesSwitcher/WorkspaceSwitcher';
-import { useGetCurrentOrganization } from '@/utils/hooks/useStateValue';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -109,7 +109,7 @@ const Workspaces = () => {
     open: false,
     schema: {},
   });
-  const organization = useGetCurrentOrganization();
+  const { organization } = useSelector((state) => state.ui);
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';
@@ -122,7 +122,7 @@ const Workspaces = () => {
     id: '',
     name: '',
   });
-  const workspaceSwitcherContext = useContext(WorkspaceSwitcherContext);
+  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   if (workspaceSwitcherContext.selectedWorkspace.id) {
     selectedWorkspace = workspaceSwitcherContext.selectedWorkspace;
     setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
