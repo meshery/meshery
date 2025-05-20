@@ -40,7 +40,7 @@ test.describe.serial('Connection Management Tests', () => {
     }
   });
 
-  test('Add a cluster connection by uploading kubeconfig file', async ({ page }) => {
+  test('Add a cluster connection by uploading kubeconfig file', async ({ page, clusterMetaData }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
     const addConnectionReq = page.waitForRequest(
@@ -70,19 +70,16 @@ test.describe.serial('Connection Management Tests', () => {
     await addConnectionReq;
     await addConnectionRes;
 
-    // if (provider === 'None') {
-    //    await page.getByRole('button', { name: 'OK' }).click();
-    // }
-  
+    await page.getByRole('button', { name: 'OK' }).click();
 
-    // // Search for the newly added cluster
-    // await page.getByTestId('ConnectionTable-search').getByRole('button').click();
+    // Search for the newly added cluster
+    await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
-    // await page.getByRole('textbox', { name: 'Search Connections...' }).click();
-    // await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+    await page.getByRole('textbox', { name: 'Search Connections...' }).click();
+    await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
 
-    // const newConnectionRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
-    // await expect(newConnectionRow).toContainText('connected');
+    const newConnectionRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
+    await expect(newConnectionRow).toContainText('connected');
   });
 
   transitionTests.forEach((t) => {
@@ -145,5 +142,21 @@ test.describe.serial('Connection Management Tests', () => {
       await waitForSnackBar(page, 'Connection status updated');
     });
   });
+});
 
+test.describe('Cleanup', () => {
+  test('Delete all test connections', async ({ page, provider }) => {
+    // todo -remove after test user data is cleaned up
+    if(provider === 'None') {
+      test.skip('Skipping test as provider is None');
+      return;
+    }
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Lifecycle' }).click();
+
+    await page.getByRole('row', { name: 'Name Environments Kind' }).getByRole('checkbox').check();
+    await page.getByTestId('Button-delete-connections').click();
+    await page.getByText('Delete Connections').click();
+    await page.getByRole('button', { name: 'DELETE' }).click();
+  });
 });
