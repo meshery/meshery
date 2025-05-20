@@ -16,14 +16,6 @@ on:
       - "docs/**"
       - "*.md"
       - "*.github/**"
-  workflow_dispatch:
-    inputs:
-      sha:
-        description: "Commit SHA to test"
-        required: true
-      pr_number:
-        description: "PR number (for commenting)"
-        required: true
 
 permissions: read-all
 
