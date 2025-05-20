@@ -123,7 +123,7 @@ const DesignViewListItem = ({
             clipPath="polygon(0 0, 100% 0, 100% 33%, 0 33%)"
           >
             <AvatarGroup
-              max={3}
+              max={7}
               className="root"
               componentsProps={{
                 additionalAvatar: {

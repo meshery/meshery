@@ -129,9 +129,7 @@ export const StyledListItem = styled(ListItem)({
   position: 'relative',
 });
 
-export const StyledTextContainer = styled(Grid)({
-  marginRight: '1rem',
-});
+export const StyledTextContainer = styled(Grid)({});
 
 export const StyledUserInfoContainer = styled(Grid)({});
 
