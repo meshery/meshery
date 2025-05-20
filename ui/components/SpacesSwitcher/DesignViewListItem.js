@@ -34,6 +34,7 @@ import {
 import React from 'react';
 import { iconMedium } from 'css/icons.styles';
 import { RESOURCE_TYPE } from '@/utils/Enum';
+import UserAvatarComponent from './UserAvatarComponent';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -70,7 +71,7 @@ const DesignViewListItem = ({
           }
         }}
       >
-        <StyledTextContainer item xs={5} md={5}>
+        <StyledTextContainer item xs={6} md={5} lg={5}>
           <StyledAvatarContainer>
             <StyledListIcon>
               {type === RESOURCE_TYPE.DESIGN ? (
@@ -95,28 +96,14 @@ const DesignViewListItem = ({
           </StyledAvatarContainer>
         </StyledTextContainer>
 
-        <StyledUserInfoContainer item xs={4} md={4}>
-          {isUserLoading ? (
-            <AvatarSkeleton />
-          ) : (
-            <StyledAvatarContainer>
-              <Link href={`${MESHERY_CLOUD_PROD}/user/${userData?.id}`}>
-                <Avatar alt={userData?.first_name} src={userData?.avatar_url} />
-              </Link>
-              <StyledUserDetailsContainer>
-                <Typography variant="body2">
-                  {userData?.first_name}
-                  {userData?.last_name ? ` ${userData?.last_name}` : ''}
-                </Typography>
-                <StyledUpdatedText variant="subtitle1">{userData?.email}</StyledUpdatedText>
-              </StyledUserDetailsContainer>
-            </StyledAvatarContainer>
-          )}
+        <StyledUserInfoContainer item xs={4} md={4} lg={4}>
+          {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
         </StyledUserInfoContainer>
 
         <StyledVisibilityContainer
           item
-          md={1}
+          md={2}
+          lg={1}
           sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
         >
           <VisibilityChipMenu
@@ -130,7 +117,7 @@ const DesignViewListItem = ({
           />
         </StyledVisibilityContainer>
 
-        <StyledActionsContainer item xs={3} md={2} zeroMinWidth>
+        <StyledActionsContainer item xs={1} md={1} lg={2} zeroMinWidth>
           {MenuComponent}
         </StyledActionsContainer>
         {activeUsers && (
@@ -177,7 +164,7 @@ export const DesignViewListItemSkeleton = () => {
   return (
     <>
       <StyledListItem>
-        <StyledTextContainer item xs={5} md={5}>
+        <StyledTextContainer item xs={6} md={5} lg={5}>
           <StyledAvatarContainer>
             <Skeleton variant="circular" animation="wave" width={24} height={24} />
             <div style={{ width: '100%', paddingLeft: '1rem' }}>
@@ -187,13 +174,14 @@ export const DesignViewListItemSkeleton = () => {
           </StyledAvatarContainer>
         </StyledTextContainer>
 
-        <StyledUserInfoContainer item xs={4} md={4}>
+        <StyledUserInfoContainer item xs={4} md={4} lg={4}>
           <AvatarSkeleton />
         </StyledUserInfoContainer>
 
         <StyledVisibilityContainer
           item
-          md={1}
+          md={2}
+          lg={1}
           sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
         >
           <Skeleton animation="wave" height={32} width="70%" />
@@ -201,8 +189,10 @@ export const DesignViewListItemSkeleton = () => {
 
         <StyledActionsContainer
           item
-          xs={3}
-          md={2}
+          xs={2}
+          sm={3}
+          md={1}
+          lg={2}
           zeroMinWidth
           sx={{
             display: 'flex',
