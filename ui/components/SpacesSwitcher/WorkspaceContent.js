@@ -208,7 +208,7 @@ const WorkspaceContent = ({ workspace }) => {
           </Grid>
 
           {/* Visibility Select */}
-          <Grid item xs={12} sm={6} md={3} lg={2}>
+          <Grid item xs={12} sm={6} md={2} lg={2}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}

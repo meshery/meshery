@@ -343,7 +343,9 @@ const MainDesignsContent = ({
               .map((_, index) => <DesignViewListItemSkeleton key={index} />)
           ) : isFetching ? (
             <DesignViewListItemSkeleton />
-          ) : null}
+          ) : (
+            <DesignViewListItemSkeleton />
+          )}
 
           {!hasMore && !isLoading && !isFetching && designs?.length > 0 && !isEmpty && (
             <ListItemText secondary="No more designs to load" sx={{ padding: '1rem' }} />

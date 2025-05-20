@@ -190,20 +190,31 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
 
 export const TableListHeader = () => {
   return (
-    <Box display={'flex'} width={'100%'} paddingInline={'1rem'} gap={'1rem'}>
-      <Typography style={{ width: '40%' }} variant="body1">
-        Name
-      </Typography>
-      <Typography style={{ width: '30%' }} variant="body1">
-        Author
-      </Typography>
-      <Typography style={{ width: '10%' }} variant="body1">
-        Visibility
-      </Typography>
-      <Typography style={{ width: '20%' }} variant="body1">
-        Actions
-      </Typography>
-    </Box>
+    <Grid container width="100%" paddingInline="1rem" spacing={2} alignItems="center" wrap="nowrap">
+      <Grid item xs={5} md={5} zeroMinWidth>
+        <Typography variant="body1" noWrap>
+          Name
+        </Typography>
+      </Grid>
+
+      <Grid item xs={4} md={4} zeroMinWidth>
+        <Typography variant="body1" noWrap>
+          Author
+        </Typography>
+      </Grid>
+
+      <Grid item md={1} sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}>
+        <Typography variant="body1" noWrap>
+          Visibility
+        </Typography>
+      </Grid>
+
+      <Grid item xs={3} md={2} zeroMinWidth>
+        <Typography variant="body1" noWrap>
+          Actions
+        </Typography>
+      </Grid>
+    </Grid>
   );
 };
 

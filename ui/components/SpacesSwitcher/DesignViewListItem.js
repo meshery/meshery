@@ -70,30 +70,32 @@ const DesignViewListItem = ({
           }
         }}
       >
-        <StyledTextContainer>
-          <StyledListIcon>
-            {type === RESOURCE_TYPE.DESIGN ? (
-              <DesignIcon />
-            ) : (
-              <ViewIcon {...iconMedium} fill={theme.palette.icon.brand} />
-            )}
-          </StyledListIcon>
-          <StyledListItemText
-            primary={selectedItem.name || ''}
-            primaryTypographyProps={{ fontSize: '0.9rem' }}
-            secondary={
-              <CustomTooltip
-                variant="small"
-                title={getFullFormattedTime(selectedItem.updated_at)}
-                placement="bottom"
-              >
-                <StyledUpdatedText>{getRelativeTime(selectedItem.updated_at)}</StyledUpdatedText>
-              </CustomTooltip>
-            }
-          />
+        <StyledTextContainer item xs={5} md={5}>
+          <StyledAvatarContainer>
+            <StyledListIcon>
+              {type === RESOURCE_TYPE.DESIGN ? (
+                <DesignIcon />
+              ) : (
+                <ViewIcon {...iconMedium} fill={theme.palette.icon.brand} />
+              )}
+            </StyledListIcon>
+            <StyledListItemText
+              primary={selectedItem.name || ''}
+              primaryTypographyProps={{ fontSize: '0.9rem' }}
+              secondary={
+                <CustomTooltip
+                  variant="small"
+                  title={getFullFormattedTime(selectedItem.updated_at)}
+                  placement="bottom"
+                >
+                  <StyledUpdatedText>{getRelativeTime(selectedItem.updated_at)}</StyledUpdatedText>
+                </CustomTooltip>
+              }
+            />
+          </StyledAvatarContainer>
         </StyledTextContainer>
 
-        <StyledUserInfoContainer>
+        <StyledUserInfoContainer item xs={4} md={4}>
           {isUserLoading ? (
             <AvatarSkeleton />
           ) : (
@@ -112,7 +114,11 @@ const DesignViewListItem = ({
           )}
         </StyledUserInfoContainer>
 
-        <StyledVisibilityContainer>
+        <StyledVisibilityContainer
+          item
+          md={1}
+          sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
+        >
           <VisibilityChipMenu
             value={selectedItem?.visibility}
             onChange={(value) => onVisibilityChange(value, selectedItem)}
@@ -124,7 +130,9 @@ const DesignViewListItem = ({
           />
         </StyledVisibilityContainer>
 
-        <StyledActionsContainer>{MenuComponent}</StyledActionsContainer>
+        <StyledActionsContainer item xs={3} md={2} zeroMinWidth>
+          {MenuComponent}
+        </StyledActionsContainer>
         {activeUsers && (
           <StyledSmallAvatarContainer
             id={`${type}-avatar-${selectedItem.id}`}
@@ -169,23 +177,40 @@ export const DesignViewListItemSkeleton = () => {
   return (
     <>
       <StyledListItem>
-        <StyledTextContainer>
-          <Skeleton variant="circular" animation="wave" width={24} height={24} />
-          <div style={{ width: '100%', paddingLeft: '1rem' }}>
-            <Skeleton animation="wave" height={24} width="80%" />
-            <Skeleton animation="wave" height={16} width="40%" />
-          </div>
+        <StyledTextContainer item xs={5} md={5}>
+          <StyledAvatarContainer>
+            <Skeleton variant="circular" animation="wave" width={24} height={24} />
+            <div style={{ width: '100%', paddingLeft: '1rem' }}>
+              <Skeleton animation="wave" height={24} width="80%" />
+              <Skeleton animation="wave" height={16} width="40%" />
+            </div>
+          </StyledAvatarContainer>
         </StyledTextContainer>
 
-        <StyledUserInfoContainer>
+        <StyledUserInfoContainer item xs={4} md={4}>
           <AvatarSkeleton />
         </StyledUserInfoContainer>
 
-        <StyledVisibilityContainer>
+        <StyledVisibilityContainer
+          item
+          md={1}
+          sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
+        >
           <Skeleton animation="wave" height={32} width="70%" />
         </StyledVisibilityContainer>
 
-        <StyledActionsContainer style={{ gap: '0.75rem' }}>
+        <StyledActionsContainer
+          item
+          xs={3}
+          md={2}
+          zeroMinWidth
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1rem',
+            paddingLeft: '0.5rem',
+          }}
+        >
           {Array(4)
             .fill()
             .map((_, index) => (
