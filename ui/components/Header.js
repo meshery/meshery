@@ -408,7 +408,7 @@ const Header = ({
     }
     return null;
   };
-  console.log("collab ext",collaboratorExt)
+  console.log('collab ext', collaboratorExt);
 
   if (isProviderCapabilitiesError) {
     notify({
