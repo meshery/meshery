@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 20th 2025, 9:28:12 am
+- Testing started at: May 20th 2025, 9:30:45 am
 
 **📦 Test Result Summary**
 
-- ✅ 69 passed
-- ❌ 1 failed
-- ⚠️ 2 flaked
-- ⏩ 1 skipped
+- ✅ 70 passed
+- ❌ 0 failed
+- ⚠️ 3 flaked
+- ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 15 seconds_
+⌛ _Duration: 5 minutes and 48 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -25,13 +25,12 @@
 | 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
 | 3 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 4 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 5 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 6 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 7 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 8 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 9 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 10 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
-| 11 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
+| 5 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 6 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
+| 7 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 8 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 9 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 10 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
 
 </div>
 </details>
