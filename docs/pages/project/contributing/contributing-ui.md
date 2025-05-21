@@ -23,6 +23,12 @@ The following is a list of top-level frameworks, libraries, design system used i
 - [BillboardJS](https://naver.github.io/billboard.js/) - Charting library, used for exposing Grafana and Prometheus-collected metrics
 - [CytoscapeJS](https://js.cytoscape.org/) - a visualization tool for canvas-based, visual topology (networks)
 
+## Schema-Driven UI Development
+
+Meshery UI uses a schema-driven approach where components and forms are generated from JSON schemas. This enables dynamic UI adaptation, consistent validation, and type-safety across the application.
+
+**⚠️ Required Reading:** Before contributing, you must read the [Schema-Driven UI Development Guide](https://docs.meshery.io/project/contributing/contributing-ui-schemas) to understand how Meshery's UI components are generated and maintained using schemas.
+
 ## Meshery Server APIs
 
 The [API overview](https://docs.meshery.io/extensibility/api) in the Extensibility guide offers high-level insight, while each API reference (below) offers details pertaining to each API endpoints' behavior and use.
@@ -172,4 +178,3 @@ Images and icons used in Meshery UI need to be sourced from the [public director
 For accessing the svg file as data-url, the utf8 encoding should be used in place of base64.Use [encodeURIComponent](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURIComponent) on SVG data URIs. \
 
 {% include code.html code="let svg = 'data:image/svg+xml;utf8,' + encodeURIComponent(svgFile);" %}
-

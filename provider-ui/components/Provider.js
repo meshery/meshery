@@ -267,24 +267,44 @@ export default function Provider() {
                     The University of Texas at Austin{"\u00A0"}
                     <span> Offline</span>
                   </MenuProviderDisabled>
+                  <Divider
+                    sx={{
+                      my: 0.5,
+                      backgroundColor: accentGrey[40],
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "0px",
+                    }}
+                  />
+                  {/* Use Sistent's Button as a link */}
                   <Button
-                    size="small"
-                    variant="contained"
+                    component="a"
+                    href="https://docs.meshery.io/extensibility/providers"
                     aria-describedby={id}
-                    onClick={() =>
-                      window.open(
-                        "https://docs.meshery.io/extensibility/providers",
-                        "_blank"
-                      )
-                    }
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label="Create Provider"
                     data-cy="create_provider"
-                    disableElevation
+                    variant="text"
                     sx={{
-                      width: '100%',
-                      marginTop: '0.4rem'
+                      display: "flex",
+                      fontStyle: "italic",
+                      margin: "auto 0.5rem",
+                      textDecoration: "none",
+                      cursor: "pointer",
+                      width: "100%",
+                      backgroundColor: "none",
+                      justifySelf: "center",
+                      textAlign: "center",
+                      color: "#ccc",
+                      alignItems: "center",
+                      "&:hover": {
+                        backgroundColor: accentGrey[20],
+                        color: "#fff",
+                      },
                     }}
-                  >Create Your Own Provider&nbsp;
+                  >
+                    Create Your Own Provider&nbsp;
                     <img
                       src="/provider/static/img/external-link.svg"
                       onError={(e) =>
@@ -293,7 +313,7 @@ export default function Provider() {
                       width="16px"
                       alt="External link"
                       style={{
-                        filter: 'brightness(0)'
+                        filter: "brightness(20)",
                       }}
                     />
                   </Button>
@@ -385,7 +405,26 @@ export default function Provider() {
 
         <CustomDialogActions>
           <div className="learnmore">
-            <a href="https://docs.meshery.io/extensibility/providers">
+            <Button
+              component="a"
+              href="https://docs.meshery.io/extensibility/providers"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="text"
+              sx={{
+                color: (theme) => theme.palette.text.inverse,
+                textTransform: "none",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                fontWeight: 400,
+                fontSize: "1rem",
+                "&:hover": {
+                  textDecoration: "underline",
+                  backgroundColor: "transparent",
+                },
+              }}
+            >
               Providers in Meshery Docs
               <img
                 src="/provider/static/img/external-link.svg"
@@ -393,8 +432,9 @@ export default function Provider() {
                   (e.target.src = "/static/img/external-link.svg")
                 }
                 width="16px"
+                alt="External link"
               />
-            </a>
+            </Button>
           </div>
 
           <StyledButton

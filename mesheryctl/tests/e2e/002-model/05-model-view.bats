@@ -16,7 +16,7 @@ setup() {
 }
 
 @test "mesheryctl model view displays an existing model" {
-  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu"
+  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu | grep -Ev 'created_at|updated_at|deleted_at'"
   [ "$status" -eq 0 ]
   assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_existing_model.txt")"
 }
@@ -29,13 +29,13 @@ setup() {
 }
 
 @test "mesheryctl model view supports JSON output" {
-  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o json"
+  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o json | grep -Ev 'created_at|updated_at|deleted_at'"
   [ "$status" -eq 0 ]
   assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_json.txt")"
 }
 
 @test "mesheryctl model view supports YAML output" {
-  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o yaml"
+  run bash -c "printf '\n' | $MESHERYCTL_BIN model view amd-gpu -o yaml | grep -Ev 'created_at|updated_at|deleted_at'"
   [ "$status" -eq 0 ]
   assert_output --partial "$(cat "$TESTDATA_DIR/exp_out_yaml.txt")"
 }

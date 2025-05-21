@@ -17,10 +17,11 @@ package components
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 // represents the mesheryctl component search [query-text] subcommand.
@@ -41,15 +42,32 @@ mesheryctl component search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, args[0]))
+
 		if err != nil {
 			return err
 		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		queryText := args[0]
-		url := fmt.Sprintf("%s/%s?search=%s&pagesize=all", baseUrl, componentApiPath, queryText)
+		header := []string{"Model", "kind", "Version"}
 
-		return listComponents(cmd, url)
+		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
+
+		count, _ := cmd.Flags().GetBool("count")
+
+		dataToDisplay := display.DisplayedData{
+			DataType:         "components",
+			Header:           header,
+			Rows:             rows,
+			Count:            componentsCount,
+			DisplayCountOnly: count,
+			IsPage:           cmd.Flags().Changed("page"),
+		}
+
+		err = display.List(dataToDisplay)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }

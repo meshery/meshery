@@ -1,0 +1,45 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "azure-network-frontdoor",
+  "displayName": "Azure Network Front Door",
+  "status": "ignored",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "github",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Cloud Native Network"
+  },
+  "subCategory": "Networking Content Delivery",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"9\" y1=\"13.83\" x2=\"9\" y2=\"1.07\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".82\" stop-color=\"#5ea0ef\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18 9.83A4 4 0 0014.49 6a5.1 5.1 0 00-5.25-4.93 5.23 5.23 0 00-5 3.41A4.83 4.83 0 000 9.12a4.9 4.9 0 005.07 4.71h8.65a.78.78 0 00.22 0 4.09 4.09 0 004.06-4z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.63 6.82h5.06v7H6.63z\" fill=\"#f2f2f2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.61 6.37l-3.49-2a.25.25 0 00-.31.15v12.16a.25.25 0 00.24.25h.08l3.49-2.06a.25.25 0 00.17-.23v-8a.26.26 0 00-.18-.27z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"9\" y1=\"13.83\" x2=\"9\" y2=\"1.07\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".82\" stop-color=\"#5ea0ef\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18 9.83A4 4 0 0014.49 6a5.1 5.1 0 00-5.25-4.93 5.23 5.23 0 00-5 3.41A4.83 4.83 0 000 9.12a4.9 4.9 0 005.07 4.71h8.65a.78.78 0 00.22 0 4.09 4.09 0 004.06-4z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.63 6.82h5.06v7H6.63z\" fill=\"#f2f2f2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.61 6.37l-3.49-2a.25.25 0 00-.31.15v12.16a.25.25 0 00.24.25h.08l3.49-2.06a.25.25 0 00.17-.23v-8a.26.26 0 00-.18-.27z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

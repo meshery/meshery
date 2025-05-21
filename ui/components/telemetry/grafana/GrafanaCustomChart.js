@@ -1,14 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import moment from 'moment';
 import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
 import WarningIcon from '@mui/icons-material/Warning';
 import CachedIcon from '@mui/icons-material/Cached';
 import dataFetch from '../../../lib/data-fetch';
-import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
 import {
@@ -22,6 +19,7 @@ import {
   LinearProgress,
 } from '@layer5/sistent';
 import grafanaDateRangeToDate from './helper';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const StyledCard = styled(Card)(() => ({
   height: '100%',
@@ -69,7 +67,6 @@ function GrafanaCustomChart(props) {
     connectionID,
     refresh,
     liveTail,
-    updateProgress,
     updateDateRange,
     sparkline,
   } = props;
@@ -703,8 +700,4 @@ GrafanaCustomChart.propTypes = {
   inDialog: PropTypes.bool.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(GrafanaCustomChart);
+export default GrafanaCustomChart;

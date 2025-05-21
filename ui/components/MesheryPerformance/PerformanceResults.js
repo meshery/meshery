@@ -1,7 +1,4 @@
-//@ts-check
 import React, { useEffect, useState, useRef } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import CustomToolbarSelect from '../CustomToolbarSelect';
@@ -34,7 +31,9 @@ import {
 } from '@layer5/sistent';
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
-import { clearResultsSelection, updateProgress, updateResultsSelection } from '../../lib/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
+import { updateResultsSelection } from '@/store/slices/prefTest';
 
 const COL_MAPPING = {
   QPS: 3,
@@ -484,15 +483,7 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
  *  elevation?: Number
  * }} props
  */
-function MesheryResults({
-  updateProgress,
-  endpoint,
-  updateResultsSelection,
-  results_selection,
-  user,
-  CustomHeader = <div />,
-  elevation = 4,
-}) {
+function MesheryResults({ endpoint, CustomHeader = <div />, elevation = 4 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -506,7 +497,9 @@ function MesheryResults({
   const [anchorEl, setAnchorEl] = useState([]);
   const [socialMessage, setSocialMessage] = useState();
   const theme = useTheme();
-
+  const { user } = useSelector((state) => state.ui);
+  const dispatch = useDispatch();
+  const { results_selection } = useSelector((state) => state.prefTest);
   const searchTimeout = useRef();
   const { notify } = useNotification();
 
@@ -658,7 +651,7 @@ function MesheryResults({
         }
       });
 
-      updateResultsSelection({ page, results: res });
+      dispatch(updateResultsSelection({ page, results: res }));
     },
 
     onTableChange: (action, tableState) => {
@@ -754,28 +747,4 @@ function MesheryResults({
     </NoSsr>
   );
 }
-
-const mapDispatchToProps = (dispatch) => ({
-  updateResultsSelection: bindActionCreators(updateResultsSelection, dispatch),
-  clearResultsSelection: bindActionCreators(clearResultsSelection, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const startKey = state.get('results').get('startKey');
-  const results = state.get('results').get('results').toArray();
-  const results_selection = state.get('results_selection').toObject();
-  const user = state.get('user')?.toObject();
-  if (typeof results !== 'undefined') {
-    return {
-      startKey,
-      results,
-      results_selection,
-      user,
-    };
-  }
-  return { results_selection, user };
-};
-
-// @ts-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryResults);
+export default MesheryResults;

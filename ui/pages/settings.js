@@ -1,16 +1,15 @@
 import MesherySettings from '../components/MesherySettings';
 import { NoSsr } from '@layer5/sistent';
-import { updatepagepath, updatepagetitle } from '../lib/store';
-import { connect } from 'react-redux';
 import Head from 'next/head';
-import { bindActionCreators } from 'redux';
 import { getPath } from '../lib/path';
 import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
 
-function Settings(props) {
+function Settings() {
+  const dispatch = useDispatch();
   useEffect(() => {
-    props.updatepagepath({ path: getPath() });
-    props.updatepagetitle({ title: 'Settings' });
+    dispatch(updatePage({ path: getPath(), title: 'Settings' }));
   }, []);
 
   return (
@@ -24,9 +23,4 @@ function Settings(props) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(Settings);
+export default Settings;

@@ -1,9 +1,6 @@
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { useRouter, withRouter } from 'next/router';
-import { useNotificationHandlers, withNotify } from '../../utils/hooks/useNotification';
-import { updateProgress } from '../../lib/store';
+import { useRouter } from 'next/router';
+import { useNotificationHandlers } from '../../utils/hooks/useNotification';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
 import ResourcesSubMenu from './resources/resources-sub-menu';
@@ -36,6 +33,7 @@ import Popup from '../Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
+import { useSelector } from 'react-redux';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -71,7 +69,7 @@ const useDashboardRouter = () => {
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
-const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) => {
+const DashboardComponent = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
   const defaultLayout = isLoading
@@ -104,8 +102,8 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
   };
 
   const [currentBreakPoint, setCurrentBreakpoint] = useState('lg');
-  useEffect(() => {}, [currentBreakPoint]);
-
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig } = useSelector((state) => state.ui);
   const [isEditMode, setIsEditMode] = useState(false);
   const WIDGETS = getWidgets({ iconsProps, isEditMode });
   const availableHandles = ['s', 'w', 'e', 'n', 'sw', 'nw', 'se', 'ne'];
@@ -379,7 +377,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
               ResourcesConfig[resource].tableConfig(
                 null,
                 null,
-                k8sconfig,
+                k8sConfig,
                 null,
                 resource,
                 selectedK8sContexts,
@@ -396,8 +394,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                   resource={ResourcesConfig[resource]}
                   selectedResource={selectedResource}
                   handleChangeSelectedResource={handleChangeSelectedResource}
-                  updateProgress={updateProgress}
-                  k8sConfig={k8sconfig}
+                  k8sConfig={k8sConfig}
                   selectedK8sContexts={selectedK8sContexts}
                   CRDsKeys={CRDsKeys}
                   isCRDS={isCRDS}
@@ -406,11 +403,10 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                 <ResourcesTable
                   key={idx}
                   workloadType={resource}
-                  k8sConfig={k8sconfig}
+                  k8sConfig={k8sConfig}
                   selectedK8sContexts={selectedK8sContexts}
                   resourceConfig={ResourcesConfig[resource].tableConfig}
                   menu={ResourcesConfig[resource].submenu}
-                  updateProgress={updateProgress}
                 />
               )}
             </TabPanel>
@@ -422,21 +418,4 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-
-  return {
-    k8sconfig,
-    selectedK8sContexts,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withRouter(withNotify(DashboardComponent)));
+export default DashboardComponent;

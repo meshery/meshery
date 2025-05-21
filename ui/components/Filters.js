@@ -3,12 +3,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import Moment from 'react-moment';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
-import { toggleCatalogContent, updateProgress } from '../lib/store';
 import _PromptComponent from './PromptComponent';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
@@ -74,6 +71,8 @@ import {
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
@@ -236,12 +235,7 @@ function resetSelectedFilter() {
   return { show: false, filter: null };
 }
 
-function MesheryFilters({
-  updateProgress,
-  user,
-  catalogVisibility,
-  // toggleCatalogContent,
-}) {
+function MesheryFilters() {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -255,6 +249,7 @@ function MesheryFilters({
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
+  const { user } = useSelector((state) => state.ui);
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
@@ -282,7 +277,7 @@ function MesheryFilters({
   const catalogContentRef = useRef();
   const catalogVisibilityRef = useRef();
   const disposeConfSubscriptionRef = useRef(null);
-
+  const { catalogVisibility } = useSelector((state) => state.ui);
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const {
@@ -469,33 +464,6 @@ function MesheryFilters({
   useEffect(() => {
     if (viewType === 'grid') setSearch('');
   }, [viewType]);
-
-  // const handleCatalogPreference = (catalogPref) => {
-  //   let body = Object.assign({}, extensionPreferences);
-  //   body['catalogContent'] = catalogPref;
-
-  //   dataFetch(
-  //     '/api/user/prefs',
-  //     {
-  //       method: 'POST',
-  //       credentials: 'include',
-  //       body: JSON.stringify({ usersExtensionPreferences: body }),
-  //     },
-  //     () => {
-  //       notify({
-  //         message: `Catalog Content was ${catalogPref ? 'enab' : 'disab'}led`,
-  //         event_type: EVENT_TYPES.SUCCESS,
-  //       });
-  //     },
-  //     (err) => console.error(err),
-  //   );
-  // };
-
-  // const handleCatalogVisibility = () => {
-  //   handleCatalogPreference(!catalogVisibilityRef.current);
-  //   catalogVisibilityRef.current = !catalogVisibility;
-  //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
-  // };
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
@@ -1285,7 +1253,7 @@ function MesheryFilters({
                     currentUser={user}
                     formSchema={publishSchema}
                     meshModels={meshModels}
-                    patternFetcher={() => getFilters()}
+                    patternFetcher={getFilters}
                   />
                 )}
               <_PromptComponent ref={modalRef} />
@@ -1353,17 +1321,4 @@ const PublishModal = React.memo((props) => {
   );
 });
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  return {
-    user: state.get('user')?.toObject(),
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-    catalogVisibility: state.get('catalogVisibility'),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryFilters);
+export default MesheryFilters;
