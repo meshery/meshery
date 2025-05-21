@@ -398,23 +398,11 @@ const Header = ({
 }) => {
   const { notify } = useNotification;
 
-  const dispatch = useDispatch();
   const {
     data: providerCapabilities,
-    isSuccess: isProviderCapabilitiesSuccess,
     isError: isProviderCapabilitiesError,
     error: providerCapabilitiesError,
   } = useGetProviderCapabilitiesQuery();
-
-  const collaboratorExt = () => {
-    if (isProviderCapabilitiesSuccess) {
-      dispatch(updateCapabilities({ capabilitiesRegistry: providerCapabilities }));
-      return ExtensionPointSchemaValidator('collaborator')(
-        providerCapabilities?.extensions?.collaborator,
-      );
-    }
-    return null;
-  };
 
   if (isProviderCapabilitiesError) {
     notify({
