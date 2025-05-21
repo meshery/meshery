@@ -11,7 +11,6 @@ import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { createPathForRemoteComponent } from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
@@ -63,7 +62,7 @@ import {
 } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCapabilities, updateK8SConfig } from '@/store/slices/mesheryUi';
+import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { ErrorBoundary } from '@layer5/sistent';
 
 async function loadActiveK8sContexts() {
@@ -398,23 +397,11 @@ const Header = ({
 }) => {
   const { notify } = useNotification;
 
-  const dispatch = useDispatch();
   const {
     data: providerCapabilities,
-    isSuccess: isProviderCapabilitiesSuccess,
     isError: isProviderCapabilitiesError,
     error: providerCapabilitiesError,
   } = useGetProviderCapabilitiesQuery();
-
-  const collaboratorExt = () => {
-    if (isProviderCapabilitiesSuccess) {
-      dispatch(updateCapabilities({ capabilitiesRegistry: providerCapabilities }));
-      return ExtensionPointSchemaValidator('collaborator')(
-        providerCapabilities?.extensions?.collaborator,
-      );
-    }
-    return null;
-  };
 
   if (isProviderCapabilitiesError) {
     notify({
