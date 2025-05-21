@@ -56,7 +56,7 @@ mesheryctl component view [component-name]
 
 		url := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, componentDefinition)
 
-		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](url)
+		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](urlPath)
 		if err != nil {
 			return err
 		}
