@@ -32,6 +32,7 @@ import {
   Hidden,
   NoSsr,
   useTheme,
+  useMediaQuery,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
@@ -53,6 +54,7 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
+  SettingsWrapper,
 } from './Header.styles';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -420,11 +422,12 @@ const Header = ({
 
   // const loaderType = 'circular';
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
-          <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
+          <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
             <Grid container alignItems="center">
               <Hidden smUp>
                 <Grid item style={{ display: 'none' }}>
@@ -472,15 +475,17 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
-
-                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
+                  <SettingsWrapper
+                    isDesktop={isDesktop}
+                    data-testid="settings-button"
+                    aria-describedby={abilityUpdated}
+                  >
                     <CanShow Key={keys.VIEW_SETTINGS}>
                       <IconButton onClick={() => Router.push('/settings')}>
                         <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
                       </IconButton>
                     </CanShow>
-                  </div>
-
+                  </SettingsWrapper>
                   <div data-testid="notification-button">
                     <NotificationDrawerButton />
                   </div>
