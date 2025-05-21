@@ -15,4 +15,4 @@ jobs:
               username: root
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
-                kubectl -n staging-fullstack set image deployment/meshery meshery=layer5/meshery:edge-latest
+                kubectl -n staging-fullstack rollout restart deployment/meshery
