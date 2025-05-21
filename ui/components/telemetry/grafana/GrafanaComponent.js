@@ -80,7 +80,7 @@ const GrafanaComponent = (props) => {
   };
 
   const isValidGrafanaURL = (url) => {
-    const urlStr = typeof url === 'string' ? url : url?.value || '';
+    const urlStr = url?.value;
     return (
       Boolean(urlStr) &&
       (urlStr.toLowerCase().startsWith('http://') || urlStr.toLowerCase().startsWith('https://'))
@@ -138,7 +138,7 @@ const GrafanaComponent = (props) => {
   const submitGrafanaConfigure = async () => {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } =
       state;
-    const urlStr = typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value || '';
+    const urlStr = grafanaURL?.value;
     if (!urlStr) return;
 
     // Build URL-encoded params (using URLSearchParams for brevity)
@@ -395,7 +395,7 @@ const GrafanaComponent = (props) => {
       <NoSsr>
         <>
           <GrafanaSelectionComponent
-            grafanaURL={typeof grafanaURL === 'string' ? grafanaURL : grafanaURL?.value || ''}
+            grafanaURL={grafanaURL?.valu}
             grafanaBoards={grafanaBoards}
             grafanaBoardSearch={grafanaBoardSearch}
             handleGrafanaBoardSearchChange={handleChange}
