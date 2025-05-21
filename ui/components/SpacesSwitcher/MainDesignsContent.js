@@ -222,7 +222,7 @@ const MainDesignsContent = ({
     },
     DELETE_DESIGN: {
       id: workspaceId ? 'move' : 'delete',
-      title: workspaceId ? 'Move Design' : 'Delete Design',
+      title: workspaceId ? 'Remove Design' : 'Delete Design',
       icon: workspaceId ? (
         <MoveFileIcon fill={theme.palette.icon.default} />
       ) : (

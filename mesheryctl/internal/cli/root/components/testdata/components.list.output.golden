@@ -1,5 +1,4 @@
-[90;47;1mTotal number of components: 1[0;0;22m
-[H[2J[3J
-
-  [1mMODEL           [0m  [1mKIND[0m  [1mVERSION                           [0m  
-  component-test-0  Test  memorydb.aws.kubeform.com/v1alpha1  
+[H[2J[3J[90;47;1mTotal number of components: 1[0;0;22m
+[90;47;1mPage: 1[0m
+  [1mMODEL           [0m  [1mCATEGORY[0m  [1mVERSION                           [0m  
+  component-test-0  Test      memorydb.aws.kubeform.com/v1alpha1  
