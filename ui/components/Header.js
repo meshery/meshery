@@ -424,7 +424,6 @@ const Header = ({
 
   const remoteProviderUrl = providerCapabilities?.provider_url;
 
-
   const loaderType = 'circular';
   const theme = useTheme();
   return (
@@ -464,7 +463,7 @@ const Header = ({
                 }}
               >
                 {/* According to the capabilities load the component */}
-                <ErrorBoundary customFallback={()=>null}>
+                <ErrorBoundary customFallback={() => null}>
                   {collaboratorExt && (
                     <ExtensionSandbox
                       type="collaborator"
