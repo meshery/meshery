@@ -30,7 +30,7 @@ const DesignFormatter = ({ value }) => {
         }}
         target="_self"
       >
-        "{name}"
+        &quot;{name}&quot;
         <sup>
           <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
         </sup>
@@ -84,6 +84,12 @@ export const PropertyFormatters = {
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
+  Long_Description: (value) => (
+    <SectionBody
+      body={value}
+      style={{ marginBlock: '0.5rem', color: theme.palette.text.default, fontWeight: 'normal' }}
+    />
+  ),
 };
 
 export const LinkFormatters = {
