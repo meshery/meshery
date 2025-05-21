@@ -54,7 +54,7 @@ mesheryctl component view [component-name]
 		outFormatFlag, _ := cmd.Flags().GetString("output-format")
 		componentDefinition := args[0]
 
-		url := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, componentDefinition)
+		urlPath := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, componentDefinition)
 
 		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](urlPath)
 		if err != nil {
