@@ -15,9 +15,7 @@
 package components
 
 import (
-	"fmt"
-
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/spf13/cobra"
 )
 
@@ -38,12 +36,25 @@ mesheryctl component list --page [page-number]
 mesheryctl component list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return listComponents(cmd, fmt.Sprintf("%s?%s", componentApiPath, utils.GetPageQueryParameter(cmd, pageNumberFlag)))
+		page, _ := cmd.Flags().GetInt("page")
+		pageSize, _ := cmd.Flags().GetInt("pagesize")
+		modelData := display.DisplayDataAsync{
+			UrlPath:          componentApiPath,
+			DataType:         "component",
+			Header:           []string{"Model", "Category", "Version"},
+			Page:             page,
+			PageSize:         pageSize,
+			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: cmd.Flags().Changed("count"),
+		}
+
+		return display.ListAsyncPagination(modelData, generateComponentDataToDisplay)
 	},
 }
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
 	listComponentCmd.Flags().IntP("page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	listComponentCmd.Flags().IntP("pagesize", "s", 0, "(optional) List next set of components with --pagesize (default = 0)")
 	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }

@@ -1,6 +1,6 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Box, FormControl, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
+import { Box, FormControl, Grid, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
 import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
@@ -134,31 +134,33 @@ const RecentContent = () => {
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Box display={'flex'} alignItems="center" gap={'1rem'}>
-          <StyledSearchBar
-            sx={{
-              backgroundColor: 'transparent',
-            }}
-            width="auto"
-            placeholder={filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'}
-            value={filters.searchQuery}
-            onChange={onSearchChange}
-            endAdornment={
-              filters.type === RESOURCE_TYPE.DESIGN ? (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Designs: {designsData?.total_count ?? 0}
-                </p>
-              ) : (
-                <p style={{ color: theme.palette.text.default }}>
-                  Total Views: {viewsData?.total_count ?? 0}
-                </p>
-              )
-            }
-          />{' '}
-          {filters.type == RESOURCE_TYPE.DESIGN && <ImportButton />}
-        </Box>
-        <Box display={'flex'} alignItems="center" marginBottom="1rem" gap={'1rem'}>
-          <Box sx={{ minWidth: 120 }}>
+        <Grid container spacing={2} alignItems="center">
+          {/* Search Bar */}
+          <Grid item xs={12} sm={12} md={6} lg={4}>
+            <StyledSearchBar
+              sx={{ backgroundColor: 'transparent' }}
+              width="auto"
+              placeholder={
+                filters.type === RESOURCE_TYPE.DESIGN ? 'Search Designs' : 'Search Views'
+              }
+              value={filters.searchQuery}
+              onChange={onSearchChange}
+              endAdornment={
+                filters.type === RESOURCE_TYPE.DESIGN ? (
+                  <p style={{ color: theme.palette.text.default }}>
+                    Total Designs: {designsData?.total_count ?? 0}
+                  </p>
+                ) : (
+                  <p style={{ color: theme.palette.text.default }}>
+                    Total Views: {viewsData?.total_count ?? 0}
+                  </p>
+                )
+              }
+            />
+          </Grid>
+
+          {/* Type Select */}
+          <Grid item xs={6} sm={6} md={3} lg={1.5}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -175,25 +177,38 @@ const RecentContent = () => {
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
-          </Box>
+          </Grid>
 
-          <Box sx={{ minWidth: 120 }}>
+          {/* Sort By */}
+          <Grid item xs={6} sm={6} md={3} lg={1.5}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-          </Box>
-          <Box sx={{ minWidth: 300 }}>
+          </Grid>
+
+          {/* Author Search */}
+          <Grid item xs={12} sm={6} md={6} lg={2.5}>
             <FormControl fullWidth>
               <UserSearchAutoComplete handleAuthorChange={handleAuthorChange} />
             </FormControl>
-          </Box>
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+
+          {/* Visibility */}
+          <Grid item xs={6} sm={3} md={3} lg={1.5}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
-          </Box>
-        </Box>
-        <Box minWidth={'50rem'}>
+          </Grid>
+
+          {/* Import Button */}
+          {filters.type === RESOURCE_TYPE.DESIGN && (
+            <Grid item xs={6} sm={3} md={3} lg={1}>
+              <ImportButton />
+            </Grid>
+          )}
+        </Grid>
+
+        <>
           <TableListHeader />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
@@ -224,7 +239,7 @@ const RecentContent = () => {
               refetch={() => setViewsPage(0)}
             />
           )}
-        </Box>
+        </>
       </Box>
     </>
   );

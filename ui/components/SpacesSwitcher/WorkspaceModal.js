@@ -366,7 +366,14 @@ const WorkspaceModal = ({ workspaceModal, closeWorkspaceModal }) => {
       closeModal={closeWorkspaceModal}
       fullScreen
       fullWidth
-      sx={{ margin: '5rem 8rem' }}
+      sx={{
+        margin: {
+          xs: '1rem',
+          sm: '2rem',
+          md: '4rem',
+          lg: '5rem 8rem',
+        },
+      }}
       open={workspaceModal}
       headerIcon={headerInfo.icon}
       title={headerInfo.title}
