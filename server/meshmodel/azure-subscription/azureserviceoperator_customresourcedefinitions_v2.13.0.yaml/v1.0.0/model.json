@@ -1,0 +1,45 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "azure-subscription",
+  "displayName": "Azure Subscription",
+  "status": "ignored",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "github",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Uncategorized"
+  },
+  "subCategory": "Uncategorized",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" cx=\"-36.63\" cy=\"17.12\" r=\"11.18\" gradientTransform=\"matrix(.94 0 0 .94 41.88 -7.4)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".27\" stop-color=\"#ffd70f\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".49\" stop-color=\"#ffcb12\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".88\" stop-color=\"#feac19\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fea11b\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.56 7.19a2.07 2.07 0 000-2.93L10 .69a2.06 2.06 0 00-2.92 0L3.52 4.26a2.09 2.09 0 000 2.93l3 3a.61.61 0 01.17.41v5.52a.7.7 0 00.2.5l1.35 1.35a.45.45 0 00.66 0l1.31-1.31.77-.77a.26.26 0 000-.38l-.55-.56a.29.29 0 010-.42l.55-.56a.26.26 0 000-.38L10.4 13a.28.28 0 010-.41L11 12a.26.26 0 000-.38l-.77-.78v-.28zm-5-5.64a1.18 1.18 0 11-1.19 1.18 1.17 1.17 0 011.17-1.18z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M7.62 16.21A.25.25 0 008 16v-4.45a.27.27 0 00-.11-.22.25.25 0 00-.39.22V16a.27.27 0 00.12.21z\" fill=\"#ff9300\" opacity=\".75\"\u003e\u003c/path\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"5.69\" y=\"5.45\" width=\"5.86\" height=\".69\" rx=\".32\" fill=\"#ff9300\" opacity=\".75\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"5.69\" y=\"6.57\" width=\"5.86\" height=\".69\" rx=\".32\" fill=\"#ff9300\" opacity=\".75\"\u003e\u003c/rect\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" cx=\"-36.63\" cy=\"17.12\" r=\"11.18\" gradientTransform=\"matrix(.94 0 0 .94 41.88 -7.4)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".27\" stop-color=\"#ffd70f\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".49\" stop-color=\"#ffcb12\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".88\" stop-color=\"#feac19\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fea11b\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.56 7.19a2.07 2.07 0 000-2.93L10 .69a2.06 2.06 0 00-2.92 0L3.52 4.26a2.09 2.09 0 000 2.93l3 3a.61.61 0 01.17.41v5.52a.7.7 0 00.2.5l1.35 1.35a.45.45 0 00.66 0l1.31-1.31.77-.77a.26.26 0 000-.38l-.55-.56a.29.29 0 010-.42l.55-.56a.26.26 0 000-.38L10.4 13a.28.28 0 010-.41L11 12a.26.26 0 000-.38l-.77-.78v-.28zm-5-5.64a1.18 1.18 0 11-1.19 1.18 1.17 1.17 0 011.17-1.18z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M7.62 16.21A.25.25 0 008 16v-4.45a.27.27 0 00-.11-.22.25.25 0 00-.39.22V16a.27.27 0 00.12.21z\" fill=\"#ff9300\" opacity=\".75\"\u003e\u003c/path\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"5.69\" y=\"5.45\" width=\"5.86\" height=\".69\" rx=\".32\" fill=\"#ff9300\" opacity=\".75\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"5.69\" y=\"6.57\" width=\"5.86\" height=\".69\" rx=\".32\" fill=\"#ff9300\" opacity=\".75\"\u003e\u003c/rect\u003e\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

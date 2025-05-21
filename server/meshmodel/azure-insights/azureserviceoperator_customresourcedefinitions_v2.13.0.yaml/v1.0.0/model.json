@@ -1,0 +1,45 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "azure-insights",
+  "displayName": "Azure Insights",
+  "status": "ignored",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "github",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Observability and Analysis"
+  },
+  "subCategory": "Monitoring",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" cx=\"9\" cy=\"7.35\" r=\"6.42\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#b77af4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".21\" stop-color=\"#b378f2\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".43\" stop-color=\"#a672ed\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".65\" stop-color=\"#9267e4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".88\" stop-color=\"#7559d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#624fd0\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"9.02\" y1=\"3.91\" x2=\"9.08\" y2=\"11.49\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#f2f2f2\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".23\" stop-color=\"#f1f1f2\" stop-opacity=\".99\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".37\" stop-color=\"#ededf1\" stop-opacity=\".95\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".48\" stop-color=\"#e7e5f0\" stop-opacity=\".89\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".58\" stop-color=\"#dedbee\" stop-opacity=\".81\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".67\" stop-color=\"#d3ceeb\" stop-opacity=\".7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".76\" stop-color=\"#c4bee8\" stop-opacity=\".57\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".84\" stop-color=\"#b4abe5\" stop-opacity=\".41\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".92\" stop-color=\"#a095e1\" stop-opacity=\".22\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".99\" stop-color=\"#8b7ddc\" stop-opacity=\".02\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#897bdc\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M10.23 17.39l.81-.87V14.2H7v2.32l.81.87a.32.32 0 00.19.11h2a.32.32 0 00.23-.11z\" fill=\"#cecece\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9 .5a5.89 5.89 0 00-5.91 6.57c.27 2.47 2.62 3.62 3.29 6.75a.49.49 0 00.47.38h4.3a.49.49 0 00.47-.38c.67-3.13 3-4.28 3.29-6.75A5.89 5.89 0 009 .5zM7 14.2\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M11.46 3.79a1.4 1.4 0 00-1.35 1.44V6H8v-.77a1.41 1.41 0 00-1.41-1.44 1.4 1.4 0 00-1.35 1.44 1.41 1.41 0 001.35 1.45h.64v6a.36.36 0 00.72 0v-6h2.16v6a.36.36 0 10.72 0v-6h.63a1.4 1.4 0 001.35-1.45 1.4 1.4 0 00-1.35-1.44zM7.23 6h-.68a.74.74 0 01-.68-.77.74.74 0 01.68-.77.74.74 0 01.68.77zm4.28 0h-.68v-.81a.68.68 0 111.35 0 .73.73 0 01-.67.81z\" fill=\"url(#b)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#999\" d=\"M6.96 15.8l4.08-.79v-.45l-4.08.8v.44zM11.04 16.11v-.44l-4.08.81v.04l.31.34 3.77-.75z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" cx=\"9\" cy=\"7.35\" r=\"6.42\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#b77af4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".21\" stop-color=\"#b378f2\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".43\" stop-color=\"#a672ed\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".65\" stop-color=\"#9267e4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".88\" stop-color=\"#7559d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#624fd0\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"9.02\" y1=\"3.91\" x2=\"9.08\" y2=\"11.49\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#f2f2f2\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".23\" stop-color=\"#f1f1f2\" stop-opacity=\".99\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".37\" stop-color=\"#ededf1\" stop-opacity=\".95\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".48\" stop-color=\"#e7e5f0\" stop-opacity=\".89\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".58\" stop-color=\"#dedbee\" stop-opacity=\".81\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".67\" stop-color=\"#d3ceeb\" stop-opacity=\".7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".76\" stop-color=\"#c4bee8\" stop-opacity=\".57\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".84\" stop-color=\"#b4abe5\" stop-opacity=\".41\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".92\" stop-color=\"#a095e1\" stop-opacity=\".22\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".99\" stop-color=\"#8b7ddc\" stop-opacity=\".02\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#897bdc\" stop-opacity=\"0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M10.23 17.39l.81-.87V14.2H7v2.32l.81.87a.32.32 0 00.19.11h2a.32.32 0 00.23-.11z\" fill=\"#cecece\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9 .5a5.89 5.89 0 00-5.91 6.57c.27 2.47 2.62 3.62 3.29 6.75a.49.49 0 00.47.38h4.3a.49.49 0 00.47-.38c.67-3.13 3-4.28 3.29-6.75A5.89 5.89 0 009 .5zM7 14.2\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M11.46 3.79a1.4 1.4 0 00-1.35 1.44V6H8v-.77a1.41 1.41 0 00-1.41-1.44 1.4 1.4 0 00-1.35 1.44 1.41 1.41 0 001.35 1.45h.64v6a.36.36 0 00.72 0v-6h2.16v6a.36.36 0 10.72 0v-6h.63a1.4 1.4 0 001.35-1.45 1.4 1.4 0 00-1.35-1.44zM7.23 6h-.68a.74.74 0 01-.68-.77.74.74 0 01.68-.77.74.74 0 01.68.77zm4.28 0h-.68v-.81a.68.68 0 111.35 0 .73.73 0 01-.67.81z\" fill=\"url(#b)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#999\" d=\"M6.96 15.8l4.08-.79v-.45l-4.08.8v.44zM11.04 16.11v-.44l-4.08.81v.04l.31.34 3.77-.75z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

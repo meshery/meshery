@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Cluster",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "azure-kusto",
+    "displayName": "Azure Kusto",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Kubernetes",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2384f1",
+      "secondaryColor": "#3990f2",
+      "shape": "rectangle",
+      "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 32\"\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003efile_type_kusto\u003c/title\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"0.55\" y=\"22.339\" width=\"15.433\" height=\"2.796\" rx=\"0.439\" transform=\"translate(-14.363 12.797) rotate(-44.999)\" style=\"fill:#b8d432\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"1.372\" y=\"16.382\" width=\"9.859\" height=\"2.796\" rx=\"0.439\" transform=\"translate(-10.727 9.663) rotate(-44.999)\" style=\"fill:#b8d432\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"9.232\" y=\"24.301\" width=\"9.859\" height=\"2.796\" rx=\"0.439\" transform=\"translate(-14.024 17.541) rotate(-44.999)\" style=\"fill:#b8d432\"\u003e\u003c/rect\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"30 2 2 2 30 29.999 30 2\" style=\"fill:#0078d4\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"10.282 10.282 21.718 21.718 30 13.436 30 2 18.564 2 10.282 10.282\" style=\"fill:#59b4d9\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"30 29.999 30 2 16 16 30 29.999\" style=\"fill:#ffffff;opacity:0.20000000298023224;isolation:isolate\"\u003e\u003c/polygon\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"16.226\" y=\"9.001\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(-2.192 15.507) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"20.18\" y=\"5.048\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(1.762 17.146) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"20.18\" y=\"12.955\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(-3.829 19.461) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"24.133\" y=\"9.002\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(0.124 21.099) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 32\"\u003e\u003ctitle xmlns=\"http://www.w3.org/2000/svg\"\u003efile_type_kusto\u003c/title\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"0.55\" y=\"22.339\" width=\"15.433\" height=\"2.796\" rx=\"0.439\" transform=\"translate(-14.363 12.797) rotate(-44.999)\" style=\"fill:#b8d432\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"1.372\" y=\"16.382\" width=\"9.859\" height=\"2.796\" rx=\"0.439\" transform=\"translate(-10.727 9.663) rotate(-44.999)\" style=\"fill:#b8d432\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"9.232\" y=\"24.301\" width=\"9.859\" height=\"2.796\" rx=\"0.439\" transform=\"translate(-14.024 17.541) rotate(-44.999)\" style=\"fill:#b8d432\"\u003e\u003c/rect\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"30 2 2 2 30 29.999 30 2\" style=\"fill:#0078d4\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"10.282 10.282 21.718 21.718 30 13.436 30 2 18.564 2 10.282 10.282\" style=\"fill:#59b4d9\"\u003e\u003c/polygon\u003e\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" points=\"30 29.999 30 2 16 16 30 29.999\" style=\"fill:#ffffff;opacity:0.20000000298023224;isolation:isolate\"\u003e\u003c/polygon\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"16.226\" y=\"9.001\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(-2.192 15.507) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"20.18\" y=\"5.048\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(1.762 17.146) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"20.18\" y=\"12.955\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(-3.829 19.461) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"24.133\" y=\"9.002\" width=\"2.796\" height=\"2.796\" rx=\"0.622\" transform=\"translate(0.124 21.099) rotate(-44.999)\" style=\"fill:#fff\"\u003e\u003c/rect\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "configuration": null,
+  "component": {
+    "version": "kusto.azure.com/v1api20230815",
+    "kind": "Cluster",
+    "schema": "{\n \"description\": \"Generator information:\\n- Generated from: /azure-kusto/resource-manager/Microsoft.Kusto/stable/2023-08-15/kusto.json\\n- ARM URI: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Kusto/clusters/{clusterName}\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"acceptedAudiences\": {\n     \"description\": \"AcceptedAudiences: The cluster's accepted audiences.\",\n     \"items\": {\n      \"description\": \"Represents an accepted audience trusted by the cluster.\",\n      \"properties\": {\n       \"value\": {\n        \"description\": \"Value: GUID or valid URL representing an accepted audience.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"allowedFqdnList\": {\n     \"description\": \"AllowedFqdnList: List of allowed FQDNs(Fully Qualified Domain Name) for egress from Cluster.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"allowedIpRangeList\": {\n     \"description\": \"AllowedIpRangeList: The list of ips in the format of CIDR allowed to connect to the cluster.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"azureName\": {\n     \"description\": \"AzureName: The name of the resource in Azure. This is often the same as the name of the resource in Kubernetes but it\\ndoesn't have to be.\",\n     \"pattern\": \"^.*$\",\n     \"type\": \"string\"\n    },\n    \"enableAutoStop\": {\n     \"description\": \"EnableAutoStop: A boolean value that indicates if the cluster could be automatically stopped (due to lack of data or no\\nactivity for many days).\",\n     \"type\": \"boolean\"\n    },\n    \"enableDiskEncryption\": {\n     \"description\": \"EnableDiskEncryption: A boolean value that indicates if the cluster's disks are encrypted.\",\n     \"type\": \"boolean\"\n    },\n    \"enableDoubleEncryption\": {\n     \"description\": \"EnableDoubleEncryption: A boolean value that indicates if double encryption is enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"enablePurge\": {\n     \"description\": \"EnablePurge: A boolean value that indicates if the purge operations are enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"enableStreamingIngest\": {\n     \"description\": \"EnableStreamingIngest: A boolean value that indicates if the streaming ingest is enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"engineType\": {\n     \"description\": \"EngineType: The engine type\",\n     \"enum\": [\n      \"V2\",\n      \"V3\"\n     ],\n     \"type\": \"string\"\n    },\n    \"identity\": {\n     \"description\": \"Identity: The identity of the cluster, if configured.\",\n     \"properties\": {\n      \"type\": {\n       \"description\": \"Type: The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an implicitly created\\nidentity and a set of user-assigned identities. The type 'None' will remove all identities.\",\n       \"enum\": [\n        \"None\",\n        \"SystemAssigned\",\n        \"SystemAssigned, UserAssigned\",\n        \"UserAssigned\"\n       ],\n       \"type\": \"string\"\n      },\n      \"userAssignedIdentities\": {\n       \"description\": \"UserAssignedIdentities: The list of user identities associated with the Kusto cluster. The user identity dictionary key\\nreferences will be ARM resource ids in the form:\\n'/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.\",\n       \"items\": {\n        \"description\": \"Information about the user assigned identity for the resource\",\n        \"properties\": {\n         \"reference\": {\n          \"description\": \"ResourceReference represents a resource reference, either to a Kubernetes resource or directly to an Azure resource via ARMID\",\n          \"properties\": {\n           \"armId\": {\n            \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n            \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n            \"type\": \"string\"\n           },\n           \"group\": {\n            \"description\": \"Group is the Kubernetes group of the resource.\",\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"description\": \"Kind is the Kubernetes kind of the resource.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name is the Kubernetes name of the resource.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"keyVaultProperties\": {\n     \"description\": \"KeyVaultProperties: KeyVault properties for the cluster encryption.\",\n     \"properties\": {\n      \"keyName\": {\n       \"description\": \"KeyName: The name of the key vault key.\",\n       \"type\": \"string\"\n      },\n      \"keyVaultUri\": {\n       \"description\": \"KeyVaultUri: The Uri of the key vault.\",\n       \"type\": \"string\"\n      },\n      \"keyVersion\": {\n       \"description\": \"KeyVersion: The version of the key vault key.\",\n       \"type\": \"string\"\n      },\n      \"userIdentityReference\": {\n       \"description\": \"UserIdentityReference: The user assigned identity (ARM resource id) that has access to the key.\",\n       \"properties\": {\n        \"armId\": {\n         \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n         \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n         \"type\": \"string\"\n        },\n        \"group\": {\n         \"description\": \"Group is the Kubernetes group of the resource.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind is the Kubernetes kind of the resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the Kubernetes name of the resource.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"languageExtensions\": {\n     \"description\": \"LanguageExtensions: List of the cluster's language extensions.\",\n     \"properties\": {\n      \"value\": {\n       \"description\": \"Value: The list of language extensions.\",\n       \"items\": {\n        \"description\": \"The language extension object.\",\n        \"properties\": {\n         \"languageExtensionCustomImageName\": {\n          \"description\": \"LanguageExtensionCustomImageName: The language extension custom image name.\",\n          \"type\": \"string\"\n         },\n         \"languageExtensionImageName\": {\n          \"description\": \"LanguageExtensionImageName: The language extension image name.\",\n          \"enum\": [\n           \"Python3_10_8\",\n           \"Python3_10_8_DL\",\n           \"Python3_6_5\",\n           \"PythonCustomImage\",\n           \"R\"\n          ],\n          \"type\": \"string\"\n         },\n         \"languageExtensionName\": {\n          \"description\": \"LanguageExtensionName: The language extension name.\",\n          \"enum\": [\n           \"PYTHON\",\n           \"R\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Location: The geo-location where the resource lives\",\n     \"type\": \"string\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The specification for configuring operator behavior. This field is interpreted by the operator and not\\npassed directly to Azure\",\n     \"properties\": {\n      \"configMapExpressions\": {\n       \"description\": \"ConfigMapExpressions: configures where to place operator written dynamic ConfigMaps (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secretExpressions\": {\n       \"description\": \"SecretExpressions: configures where to place operator written dynamic secrets (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"optimizedAutoscale\": {\n     \"description\": \"OptimizedAutoscale: Optimized auto scale definition.\",\n     \"properties\": {\n      \"isEnabled\": {\n       \"description\": \"IsEnabled: A boolean value that indicate if the optimized autoscale feature is enabled or not.\",\n       \"type\": \"boolean\"\n      },\n      \"maximum\": {\n       \"description\": \"Maximum: Maximum allowed instances count.\",\n       \"type\": \"integer\"\n      },\n      \"minimum\": {\n       \"description\": \"Minimum: Minimum allowed instances count.\",\n       \"type\": \"integer\"\n      },\n      \"version\": {\n       \"description\": \"Version: The version of the template defined, for instance 1.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"isEnabled\",\n      \"maximum\",\n      \"minimum\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a resources.azure.com/ResourceGroup resource\",\n     \"properties\": {\n      \"armId\": {\n       \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"publicIPType\": {\n     \"description\": \"PublicIPType: Indicates what public IP type to create - IPv4 (default), or DualStack (both IPv4 and IPv6)\",\n     \"enum\": [\n      \"DualStack\",\n      \"IPv4\"\n     ],\n     \"type\": \"string\"\n    },\n    \"publicNetworkAccess\": {\n     \"description\": \"PublicNetworkAccess: Public network access to the cluster is enabled by default. When disabled, only private endpoint\\nconnection to the cluster is allowed\",\n     \"enum\": [\n      \"Disabled\",\n      \"Enabled\"\n     ],\n     \"type\": \"string\"\n    },\n    \"restrictOutboundNetworkAccess\": {\n     \"description\": \"RestrictOutboundNetworkAccess: Whether or not to restrict outbound network access.  Value is optional but if passed in,\\nmust be 'Enabled' or 'Disabled'\",\n     \"enum\": [\n      \"Disabled\",\n      \"Enabled\"\n     ],\n     \"type\": \"string\"\n    },\n    \"sku\": {\n     \"description\": \"Sku: The SKU of the cluster.\",\n     \"properties\": {\n      \"capacity\": {\n       \"description\": \"Capacity: The number of instances of the cluster.\",\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"description\": \"Name: SKU name.\",\n       \"enum\": [\n        \"Dev(No SLA)_Standard_D11_v2\",\n        \"Dev(No SLA)_Standard_E2a_v4\",\n        \"Standard_D11_v2\",\n        \"Standard_D12_v2\",\n        \"Standard_D13_v2\",\n        \"Standard_D14_v2\",\n        \"Standard_D16d_v5\",\n        \"Standard_D32d_v4\",\n        \"Standard_D32d_v5\",\n        \"Standard_DS13_v2+1TB_PS\",\n        \"Standard_DS13_v2+2TB_PS\",\n        \"Standard_DS14_v2+3TB_PS\",\n        \"Standard_DS14_v2+4TB_PS\",\n        \"Standard_E16a_v4\",\n        \"Standard_E16ads_v5\",\n        \"Standard_E16as_v4+3TB_PS\",\n        \"Standard_E16as_v4+4TB_PS\",\n        \"Standard_E16as_v5+3TB_PS\",\n        \"Standard_E16as_v5+4TB_PS\",\n        \"Standard_E16d_v4\",\n        \"Standard_E16d_v5\",\n        \"Standard_E16s_v4+3TB_PS\",\n        \"Standard_E16s_v4+4TB_PS\",\n        \"Standard_E16s_v5+3TB_PS\",\n        \"Standard_E16s_v5+4TB_PS\",\n        \"Standard_E2a_v4\",\n        \"Standard_E2ads_v5\",\n        \"Standard_E2d_v4\",\n        \"Standard_E2d_v5\",\n        \"Standard_E4a_v4\",\n        \"Standard_E4ads_v5\",\n        \"Standard_E4d_v4\",\n        \"Standard_E4d_v5\",\n        \"Standard_E64i_v3\",\n        \"Standard_E80ids_v4\",\n        \"Standard_E8a_v4\",\n        \"Standard_E8ads_v5\",\n        \"Standard_E8as_v4+1TB_PS\",\n        \"Standard_E8as_v4+2TB_PS\",\n        \"Standard_E8as_v5+1TB_PS\",\n        \"Standard_E8as_v5+2TB_PS\",\n        \"Standard_E8d_v4\",\n        \"Standard_E8d_v5\",\n        \"Standard_E8s_v4+1TB_PS\",\n        \"Standard_E8s_v4+2TB_PS\",\n        \"Standard_E8s_v5+1TB_PS\",\n        \"Standard_E8s_v5+2TB_PS\",\n        \"Standard_EC16ads_v5\",\n        \"Standard_EC16as_v5+3TB_PS\",\n        \"Standard_EC16as_v5+4TB_PS\",\n        \"Standard_EC8ads_v5\",\n        \"Standard_EC8as_v5+1TB_PS\",\n        \"Standard_EC8as_v5+2TB_PS\",\n        \"Standard_L16as_v3\",\n        \"Standard_L16s\",\n        \"Standard_L16s_v2\",\n        \"Standard_L16s_v3\",\n        \"Standard_L32as_v3\",\n        \"Standard_L32s_v3\",\n        \"Standard_L4s\",\n        \"Standard_L8as_v3\",\n        \"Standard_L8s\",\n        \"Standard_L8s_v2\",\n        \"Standard_L8s_v3\"\n       ],\n       \"type\": \"string\"\n      },\n      \"tier\": {\n       \"description\": \"Tier: SKU tier.\",\n       \"enum\": [\n        \"Basic\",\n        \"Standard\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"tier\"\n     ],\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Tags: Resource tags.\",\n     \"type\": \"object\"\n    },\n    \"trustedExternalTenants\": {\n     \"description\": \"TrustedExternalTenants: The cluster's external tenants.\",\n     \"items\": {\n      \"description\": \"Represents a tenant ID that is trusted by the cluster.\",\n      \"properties\": {\n       \"value\": {\n        \"description\": \"Value: GUID representing an external tenant.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"virtualClusterGraduationProperties\": {\n     \"description\": \"VirtualClusterGraduationProperties: Virtual Cluster graduation properties\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key is the key in the Kubernetes secret being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the Kubernetes secret being referenced.\\nThe secret must be in the same namespace as the resource\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"virtualNetworkConfiguration\": {\n     \"description\": \"VirtualNetworkConfiguration: Virtual network definition.\",\n     \"properties\": {\n      \"dataManagementPublicIpReference\": {\n       \"description\": \"DataManagementPublicIpReference: Data management's service public IP address resource id.\",\n       \"properties\": {\n        \"armId\": {\n         \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n         \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n         \"type\": \"string\"\n        },\n        \"group\": {\n         \"description\": \"Group is the Kubernetes group of the resource.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind is the Kubernetes kind of the resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the Kubernetes name of the resource.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"enginePublicIpReference\": {\n       \"description\": \"EnginePublicIpReference: Engine service's public IP address resource id.\",\n       \"properties\": {\n        \"armId\": {\n         \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n         \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n         \"type\": \"string\"\n        },\n        \"group\": {\n         \"description\": \"Group is the Kubernetes group of the resource.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind is the Kubernetes kind of the resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the Kubernetes name of the resource.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"state\": {\n       \"description\": \"State: When enabled, the cluster is deployed into the configured subnet, when disabled it will be removed from the\\nsubnet.\",\n       \"enum\": [\n        \"Disabled\",\n        \"Enabled\"\n       ],\n       \"type\": \"string\"\n      },\n      \"subnetReference\": {\n       \"description\": \"SubnetReference: The subnet resource id.\",\n       \"properties\": {\n        \"armId\": {\n         \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n         \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n         \"type\": \"string\"\n        },\n        \"group\": {\n         \"description\": \"Group is the Kubernetes group of the resource.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind is the Kubernetes kind of the resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the Kubernetes name of the resource.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"dataManagementPublicIpReference\",\n      \"enginePublicIpReference\",\n      \"subnetReference\"\n     ],\n     \"type\": \"object\"\n    },\n    \"zones\": {\n     \"description\": \"Zones: The availability zones of the cluster.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"owner\",\n    \"sku\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Cluster\",\n \"type\": \"object\"\n}"
+  }
+}
