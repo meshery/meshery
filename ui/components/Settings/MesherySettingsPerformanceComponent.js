@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import { connect } from 'react-redux';
-import { durationOptions } from '../lib/prePopulatedOptions';
-import { useNotification, withNotify } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
+import { durationOptions } from '../../lib/prePopulatedOptions';
+import { useNotification, withNotify } from '../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
 import {
   FormControl,
   CircularProgress,

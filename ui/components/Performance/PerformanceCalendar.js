@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import GenericModal from '../GenericModal';
+import GenericModal from '../General/Modals/GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
 import { Typography, Paper } from '@layer5/sistent';

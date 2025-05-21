@@ -11,9 +11,9 @@ import {
   PrimaryActionButtons,
   Modal as SistentModal,
 } from '@layer5/sistent';
-import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
+import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@mui/icons-material';
-import { getSchema } from './MesheryMeshInterface/PatternService/helper';
+import { getSchema } from '../../MesheryMeshInterface/PatternService/helper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 

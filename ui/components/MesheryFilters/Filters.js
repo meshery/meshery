@@ -6,29 +6,29 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import CloseIcon from '@mui/icons-material/Close';
 import EditIcon from '@mui/icons-material/Edit';
-import _PromptComponent from './PromptComponent';
+import _PromptComponent from '../PromptComponent';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
-import ViewSwitch from './ViewSwitch';
-import FiltersGrid from './MesheryFilters/FiltersGrid';
-import { trueRandom } from '../lib/trueRandom';
+import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../../utils/Enum';
+import ViewSwitch from '../ViewSwitch';
+import FiltersGrid from './FiltersGrid';
+import { trueRandom } from '../../lib/trueRandom';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import PublicIcon from '@mui/icons-material/Public';
 import PublishIcon from '@mui/icons-material/Publish';
-import downloadContent from '../utils/fileDownloader';
-import CloneIcon from '../public/static/img/CloneIcon';
+import downloadContent from '../../utils/fileDownloader';
+import CloneIcon from '../../public/static/img/CloneIcon';
 import SaveIcon from '@mui/icons-material/Save';
-import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
-import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
-import { iconMedium } from '../css/icons.styles';
-import { RJSFModalWrapper } from './Modal';
-import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../utils/utils';
-import Filter from '../public/static/img/drawer-icons/filter_svg.js';
-import { getMeshModels } from '../api/meshmodel';
+import ConfigurationSubscription from '../graphql/subscriptions/ConfigurationSubscription';
+import fetchCatalogFilter from '../graphql/queries/CatalogFilterQuery';
+import { iconMedium } from '../../css/icons.styles';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
+import { getUnit8ArrayDecodedFile, modifyRJSFSchema } from '../../utils/utils';
+import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
+import { getMeshModels } from '../../api/meshmodel';
 import _ from 'lodash';
-import { useNotification } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
 import {
   CustomColumnVisibilityControl,
   CustomTooltip,
@@ -50,14 +50,14 @@ import {
   styled,
   PROMPT_VARIANTS,
 } from '@layer5/sistent';
-import { updateVisibleColumns } from '../utils/responsive-column';
-import { useWindowDimensions } from '../utils/dimension';
-import InfoModal from './Modals/Information/InfoModal';
+import { updateVisibleColumns } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
+import InfoModal from '../General/Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { DefaultTableCell, SortableTableCell } from './connections/common/index.js';
+import { DefaultTableCell, SortableTableCell } from '../connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import DefaultError from './General/error-404/index';
+import DefaultError from '../General/error-404/index';
 import { Modal as SistentModal } from '@layer5/sistent';
 import {
   useGetFiltersQuery,
@@ -68,7 +68,7 @@ import {
   useUpdateFilterFileMutation,
   useUploadFilterFileMutation,
 } from '@/rtk-query/filter';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
+import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useSelector } from 'react-redux';

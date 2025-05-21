@@ -21,7 +21,7 @@ import React, { useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
 import { FileUpload } from '@mui/icons-material';
-import { ImportDesignModal } from '../MesheryPatterns';
+import { ImportDesignModal } from '../MesheryPatterns/MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';

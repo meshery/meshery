@@ -12,7 +12,7 @@ import {
   Modal,
   useTheme,
 } from '@layer5/sistent';
-import { RJSFModalWrapper } from '../Modal';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';

@@ -3,7 +3,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import Cookies from 'universal-cookie';
-import { mesheryExtensionRoute } from '../pages/_app';
+import { mesheryExtensionRoute } from '../../pages/_app';
 import { Colors } from '@/themes/app';
 import { EXTENSION_NAMES, EXTENSIONS } from '@/utils/Enum';
 import { useSelector } from 'react-redux';

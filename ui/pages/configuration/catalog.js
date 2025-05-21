@@ -6,7 +6,7 @@ import { VISIBILITY } from '../../utils/Enum';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404';
-import MesheryPatterns from '@/components/MesheryPatterns';
+import MesheryPatterns from '@/components/MesheryPatterns/MesheryPatterns';
 import { useDispatch } from 'react-redux';
 import { updatePage } from '@/store/slices/mesheryUi';
 

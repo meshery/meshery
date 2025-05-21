@@ -18,21 +18,21 @@ import {
   MendeleyIcon,
   useTheme,
 } from '@layer5/sistent';
-import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
+import DashboardMeshModelGraph from '../Dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
-import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
-import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
-import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
-import _PromptComponent from './PromptComponent';
-import { iconMedium } from '../css/icons.styles';
+import GrafanaComponent from '../telemetry/grafana/GrafanaComponent';
+import MeshAdapterConfigComponent from '../MeshAdapterConfigComponent';
+import PrometheusComponent from '../telemetry/prometheus/PrometheusComponent';
+import _PromptComponent from '../PromptComponent';
+import { iconMedium } from '../../css/icons.styles';
 import MeshModelComponent from './Registry/MeshModelComponent';
-import DatabaseSummary from './DatabaseSummary';
+import DatabaseSummary from '../DatabaseSummary';
 import {
   getComponentsDetail,
   getMeshModels,
   getRelationshipsDetail,
   getMeshModelRegistrants,
-} from '../api/meshmodel';
+} from '../../api/meshmodel';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import {
@@ -45,10 +45,10 @@ import {
   OVERVIEW,
 } from '@/constants/navigator';
 import { removeDuplicateVersions } from './Registry/helper';
-import DefaultError from './General/error-404';
-import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
-import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
-import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
+import DefaultError from '../General/error-404';
+import MesheryConfigurationChart from '../Dashboard/charts/MesheryConfigurationCharts';
+import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
+import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useSelector } from 'react-redux';
 
 const StyledPaper = styled(Paper)(() => ({

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import { iconMedium } from '../css/icons.styles';
+import { iconMedium } from '../../css/icons.styles';
 import { OutlinedVisibilityOnIcon, OutlinedVisibilityOffIcon, Button } from '@layer5/sistent';
 
 function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog, classes }) {
