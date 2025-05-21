@@ -9,7 +9,7 @@ import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
-import ExtensionSandbox from './ExtensionSandbox';
+import { createPathForRemoteComponent } from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -425,6 +425,7 @@ const Header = ({
   }
 
   const remoteProviderUrl = providerCapabilities?.provider_url;
+  const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';
   const theme = useTheme();
@@ -467,20 +468,13 @@ const Header = ({
               >
                 {/* According to the capabilities load the component */}
                 <ErrorBoundary customFallback={() => null}>
-                  {collaboratorExt && (
-                    <ExtensionSandbox
-                      type="collaborator"
-                      Extension={(url) =>
-                        RemoteComponent({
-                          url,
-                          loaderType,
-                          props: {
-                            providerUrl: remoteProviderUrl,
-                            getUserAccessToken,
-                            getUserProfile,
-                          },
-                        })
-                      }
+                  {collaboratorExtensionUri && (
+                    <RemoteComponent
+                      url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
+                      loaderType={loaderType}
+                      providerUrl={remoteProviderUrl}
+                      getUserAccessToken={getUserAccessToken}
+                      getUserProfile={getUserProfile}
                     />
                   )}
                 </ErrorBoundary>
