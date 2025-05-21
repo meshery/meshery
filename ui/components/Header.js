@@ -9,8 +9,8 @@ import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
-// import ExtensionSandbox from './ExtensionSandbox';
-// import RemoteComponent from './RemoteComponent';
+import ExtensionSandbox from './ExtensionSandbox';
+import RemoteComponent from './RemoteComponent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
@@ -54,10 +54,15 @@ import {
   StyledToolbar,
   UserInfoContainer,
 } from './Header.styles';
-import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import {
+  getUserAccessToken,
+  getUserProfile,
+  useGetProviderCapabilitiesQuery,
+} from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCapabilities, updateK8SConfig } from '@/store/slices/mesheryUi';
+import { ErrorBoundary } from '@layer5/sistent';
 
 async function loadActiveK8sContexts() {
   try {
@@ -408,7 +413,6 @@ const Header = ({
     }
     return null;
   };
-  console.log('collab ext', collaboratorExt);
 
   if (isProviderCapabilitiesError) {
     notify({
@@ -418,7 +422,10 @@ const Header = ({
     });
   }
 
-  // const loaderType = 'circular';
+  const remoteProviderUrl = providerCapabilities?.provider_url;
+
+
+  const loaderType = 'circular';
   const theme = useTheme();
   return (
     <NoSsr>
@@ -457,12 +464,24 @@ const Header = ({
                 }}
               >
                 {/* According to the capabilities load the component */}
-                {/*collaboratorExt && (
-                  <ExtensionSandbox
-                    type="collaborator"
-                    Extension={(url) => RemoteComponent({ url, loaderType })}
-                  />
-                )*/}
+                <ErrorBoundary customFallback={()=>null}>
+                  {collaboratorExt && (
+                    <ExtensionSandbox
+                      type="collaborator"
+                      Extension={(url) =>
+                        RemoteComponent({
+                          url,
+                          loaderType,
+                          props: {
+                            providerUrl: remoteProviderUrl,
+                            getUserAccessToken,
+                            getUserProfile,
+                          },
+                        })
+                      }
+                    />
+                  )}
+                </ErrorBoundary>
                 <UserInfoContainer>
                   <UserSpan style={{ position: 'relative' }}>
                     <K8sContextMenu
