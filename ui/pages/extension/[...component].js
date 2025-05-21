@@ -91,7 +91,7 @@ function RemoteExtension() {
   return (
     <NoSsr>
       <Head>
-        <title>{`${componentTitle} | Meshery` || ''}</title>
+        <title>{`${componentTitle} | Meshery`}</title>
       </Head>
       <DynamicFullScrrenLoader isLoading={isLoading}>
         {capabilitiesRegistry !== null && extensionType ? (

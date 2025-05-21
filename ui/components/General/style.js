@@ -12,6 +12,7 @@ import {
   Drawer,
   charcoal,
   CaretDownIcon,
+  ListItemButton,
 } from '@layer5/sistent';
 import { disabledStyleWithOutOpacity } from '../../css/disableComponent.styles';
 
@@ -149,7 +150,7 @@ export const NavigatorList = styled(List)({
   padding: 0,
 });
 
-export const NavigatorListItem = styled(ListItem, {
+export const NavigatorListItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed' && prop !== 'isActive',
 })(({ theme, isDrawerCollapsed, isActive }) => ({
   paddingLeft: isDrawerCollapsed ? theme.spacing(2) : '',
@@ -169,7 +170,7 @@ export const NavigatorListItem = styled(ListItem, {
   paddingBottom: 4,
 }));
 
-export const NavigatorListItemII = styled(ListItem, {
+export const NavigatorListItemII = styled(ListItemButton, {
   shouldForwardProp: (prop) =>
     prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive',
 })(({ theme, depth, isDrawerCollapsed, isActive }) => ({
@@ -194,7 +195,7 @@ export const NavigatorListItemII = styled(ListItem, {
   paddingBottom: 4,
 }));
 
-export const NavigatorListItemIII = styled(ListItem, {
+export const NavigatorListItemIII = styled(ListItemButton, {
   shouldForwardProp: (prop) =>
     prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive' && prop !== 'isShow',
 })(({ theme, depth, isDrawerCollapsed, isActive, isShow }) => ({
@@ -221,7 +222,7 @@ export const NavigatorListItemIII = styled(ListItem, {
   opacity: isShow ? 0.5 : '',
 }));
 
-export const SideBarListItem = styled(ListItem, {
+export const SideBarListItem = styled(ListItemButton, {
   shouldForwardProp: (prop) => prop !== 'link' && prop !== 'isActive' && prop !== 'isShow',
 })(({ link, isActive, isShow, theme }) => ({
   color: isActive
