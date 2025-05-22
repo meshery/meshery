@@ -1,1 +1,7 @@
-fmt.Println("Vivek Vishal")
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Vivek Vishal")
+}
