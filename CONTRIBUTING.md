@@ -221,7 +221,7 @@ Users can now test their code changes on their local machine against the CI chec
 To test code changes on your local machine, run the following command:
 
 ```
-make golangci-run
+make golangci
 ```
 
 #### Building Docker image
