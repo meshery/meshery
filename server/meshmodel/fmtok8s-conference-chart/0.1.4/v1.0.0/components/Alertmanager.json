@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://salaboy.github.io/helm/fmtok8s-conference-chart-v0.1.4.tgz"
   },
   "configuration": null,
   "component": {

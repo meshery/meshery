@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://backube.github.io/helm-charts/scribe-0.2.0.tgz"
   },
   "configuration": null,
   "component": {

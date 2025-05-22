@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/richminchukio/helm-aks-appgw-fe/archive/refs/tags/aks-appgw-fe-1.0.0-rc1.tar.gz"
   },
   "configuration": null,
   "component": {

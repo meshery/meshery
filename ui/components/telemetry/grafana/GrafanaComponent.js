@@ -81,10 +81,13 @@ const GrafanaComponent = (props) => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   };
 
-  const isValidGrafanaURL = (url) =>
-    Boolean(url) &&
-    (url.toLowerCase().startsWith('http://') || url.toLowerCase().startsWith('https://'));
-
+  const isValidGrafanaURL = (url) => {
+    const urlStr = url?.value;
+    return (
+      Boolean(urlStr) &&
+      (urlStr.toLowerCase().startsWith('http://') || urlStr.toLowerCase().startsWith('https://'))
+    );
+  };
   // Validates the URL and triggers configuration submission
   const handleGrafanaConfigure = () => {
     const { grafanaURL } = state;
@@ -137,10 +140,11 @@ const GrafanaComponent = (props) => {
   const submitGrafanaConfigure = async () => {
     const { grafanaURL, grafanaAPIKey, grafanaBoards, grafanaBoardSearch, selectedBoardsConfigs } =
       state;
-    if (!grafanaURL) return;
+    const urlStr = grafanaURL?.value;
+    if (!urlStr) return;
 
     // Build URL-encoded params (using URLSearchParams for brevity)
-    const params = new URLSearchParams({ grafanaURL: grafanaURL.value, grafanaAPIKey }).toString();
+    const params = new URLSearchParams({ grafanaURL: urlStr, grafanaAPIKey }).toString();
     updateProgress({ showProgress: true });
 
     try {
@@ -153,7 +157,7 @@ const GrafanaComponent = (props) => {
         updateState({ grafanaConfigSuccess: true });
         dispatch(
           updateGrafanaConfig({
-            grafanaURL,
+            grafanaURL: urlStr,
             grafanaAPIKey,
             grafanaBoardSearch,
             grafanaBoards,
@@ -395,7 +399,7 @@ const GrafanaComponent = (props) => {
       <NoSsr>
         <>
           <GrafanaSelectionComponent
-            grafanaURL={grafanaURL}
+            grafanaURL={grafanaURL?.valu}
             grafanaBoards={grafanaBoards}
             grafanaBoardSearch={grafanaBoardSearch}
             handleGrafanaBoardSearchChange={handleChange}

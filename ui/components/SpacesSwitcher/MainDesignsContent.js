@@ -222,7 +222,7 @@ const MainDesignsContent = ({
     },
     DELETE_DESIGN: {
       id: workspaceId ? 'move' : 'delete',
-      title: workspaceId ? 'Move Design' : 'Delete Design',
+      title: workspaceId ? 'Remove Design' : 'Delete Design',
       icon: workspaceId ? (
         <MoveFileIcon fill={theme.palette.icon.default} />
       ) : (
@@ -286,7 +286,7 @@ const MainDesignsContent = ({
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
-  const activeUsers = useRoomActivity({
+  const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,

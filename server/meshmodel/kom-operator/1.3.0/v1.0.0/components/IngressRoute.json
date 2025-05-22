@@ -179,7 +179,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://kaiso.github.io/helm-charts/kom-operator-1.3.0.tgz"
   },
   "configuration": null,
   "component": {

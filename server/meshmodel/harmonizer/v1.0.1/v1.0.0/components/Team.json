@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "git://github.com/ibexmonj/harmonizer/main/config/crd/bases"
   },
   "configuration": null,
   "component": {

@@ -275,7 +275,7 @@
             - title: Dashboard Widgets
               url: project/contributing/contributing-ui-widgets
             - title: Schema-Driven UI in Meshery
-              url: project/contributing/contributing-schemas-ui
+              url: project/contributing/contributing-ui-schemas
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Policies

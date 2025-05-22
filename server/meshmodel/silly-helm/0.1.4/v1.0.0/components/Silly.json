@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/dirien/silly-helm-chart/releases/download/0.1.4-helm/silly-helm-0.1.4.tgz"
   },
   "configuration": null,
   "component": {

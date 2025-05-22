@@ -179,7 +179,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://jenkins-x-charts.github.io/v2/charts/jx-app-flagger-0.0.5.tgz"
   },
   "configuration": null,
   "component": {

@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://charts.softonic.io/charts/rate-limit-operator-1.1.0.tgz"
   },
   "configuration": null,
   "component": {
