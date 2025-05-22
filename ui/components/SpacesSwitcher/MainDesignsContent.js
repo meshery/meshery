@@ -19,7 +19,11 @@ import {
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll, { handleUpdatePatternVisibility, useContentDelete } from './hooks';
+import useInfiniteScroll, {
+  handleUpdatePatternVisibility,
+  useContentDelete,
+  useContentDownload,
+} from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
@@ -80,33 +84,18 @@ const MainDesignsContent = ({
   });
 
   const handleDesignDownloadModal = (design) => {
-    setDownloadModal((prevState) => ({
-      ...prevState,
+    setDownloadModal({
       open: true,
       content: design,
-    }));
+    });
   };
   const handleDownloadDialogClose = () => {
-    setDownloadModal((prevState) => ({
-      ...prevState,
+    setDownloadModal({
       open: false,
       content: null,
-    }));
+    });
   };
-
-  const handleDownload = (e, design, source_type, params) => {
-    e.stopPropagation();
-    updateProgress({ showProgress: true });
-    try {
-      let id = design.id;
-      let name = design.name;
-      downloadContent({ id, name, type: 'pattern', source_type, params });
-      updateProgress({ showProgress: false });
-      notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
-    } catch (e) {
-      console.error(e);
-    }
-  };
+  const { handleDesignDownload } = useContentDownload();
 
   const handleRemove = async (design) => {
     setMoveModal(true);
@@ -335,7 +324,7 @@ const MainDesignsContent = ({
       <ExportModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadDialogClose}
-        handleDesignDownload={handleDownload}
+        handleDesignDownload={handleDesignDownload}
       />
       {shareModal && (
         <ShareModal

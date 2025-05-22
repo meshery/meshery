@@ -13,7 +13,11 @@ import {
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll, { handleUpdateViewVisibility, useContentDelete } from './hooks';
+import useInfiniteScroll, {
+  handleUpdateViewVisibility,
+  useContentDelete,
+  useContentDownload,
+} from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
@@ -95,14 +99,14 @@ const MainViewsContent = ({
 
   const theme = useTheme();
 
+  const { handleViewDownload } = useContentDownload();
   const VIEW_ACTIONS = {
     EXPORT_VIEW: {
       id: 'EXPORT_VIEW',
       title: 'Export View',
       icon: <GetAppIcon style={{ fill: theme.palette.icon.default }} />,
-      handler: async ({ view }) => {
-        const res = await getView({ viewId: view.id });
-        downloadFileFromContent(JSON.stringify(res.data), `${view.name}.json`, 'application/json');
+      handler: ({ view }) => {
+        handleViewDownload(view);
       },
       enabled: () => true,
     },

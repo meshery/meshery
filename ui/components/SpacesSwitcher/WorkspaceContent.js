@@ -6,6 +6,7 @@ import {
   Button,
   DeleteIcon,
   DesignIcon,
+  DownloadIcon,
   EnvironmentIcon,
   FormControl,
   Grid,
@@ -13,6 +14,7 @@ import {
   MenuItem,
   PromptComponent,
   Select,
+  ShareIcon,
   Typography,
   useDesignAssignment,
   useTheme,
@@ -37,15 +39,16 @@ import {
   useUnassignDesignFromWorkspaceMutation,
   useUnassignViewFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import { getDefaultFilterType, useContentDelete } from './hooks';
+import { getDefaultFilterType, useContentDelete, useContentDownload } from './hooks';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
 import { iconMedium } from 'css/icons.styles';
+import ExportModal from '../ExportModal';
+import { DESIGN } from '@/constants/navigator';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
-
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
 
   const [filters, setFilters] = useState({
@@ -166,6 +169,24 @@ const WorkspaceContent = ({ workspace }) => {
   const [workspaceContentMoveModal, setWorkspaceContentMoveModal] = useState(false);
   const modalRef = useRef(null);
   const { handleDelete } = useContentDelete(modalRef);
+  const [downloadModal, setDownloadModal] = useState({
+    open: false,
+    content: null,
+  });
+  const handleDownloadModalOpen = (content) => {
+    setDownloadModal({
+      open: true,
+      content: content,
+    });
+  };
+  const handleDownloadModalClose = () => {
+    setDownloadModal({
+      open: false,
+      content: null,
+    });
+  };
+  const { handleDesignDownload, handleViewDownload } = useContentDownload();
+
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -289,7 +310,19 @@ const WorkspaceContent = ({ workspace }) => {
                   disabled={!multiSelectedContent.length}
                 >
                   Move
-                </Button>{' '}
+                </Button>
+                <Button
+                  variant="contained"
+                  startIcon={<DownloadIcon style={iconMedium} fill={theme.palette.common.white} />}
+                  onClick={() =>
+                    filters.type === RESOURCE_TYPE.DESIGN
+                      ? handleDownloadModalOpen(multiSelectedContent)
+                      : handleViewDownload(multiSelectedContent)
+                  }
+                  disabled={!multiSelectedContent.length}
+                >
+                  Download
+                </Button>
                 <Button
                   color="error"
                   variant="contained"
@@ -404,6 +437,11 @@ const WorkspaceContent = ({ workspace }) => {
         showViews={false}
       />
       <PromptComponent ref={modalRef} />
+      <ExportModal
+        downloadModal={downloadModal}
+        handleDownloadDialogClose={handleDownloadModalClose}
+        handleDesignDownload={handleDesignDownload}
+      />
     </>
   );
 };

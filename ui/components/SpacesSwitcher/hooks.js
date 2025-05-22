@@ -8,6 +8,8 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { DesignIcon, PROMPT_VARIANTS, useTheme, ViewIcon } from '@layer5/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import { iconMedium } from 'css/icons.styles';
+import { updateProgress } from '@/store/slices/mesheryUi';
+import downloadContent, { downloadFileFromContent } from '@/utils/fileDownloader';
 
 const useInfiniteScroll = ({ isLoading, hasMore, onLoadMore }) => {
   const loadingRef = useRef(null);
@@ -203,4 +205,42 @@ export const useContentDelete = (modalRef) => {
   };
 
   return { handleDelete };
+};
+
+export const useContentDownload = () => {
+  const { notify } = useNotification();
+  const handleDesignDownload = (e, designs, source_type, params) => {
+    e.stopPropagation();
+
+    try {
+      designs = Array.isArray(designs) ? designs : [designs];
+      designs.forEach((design) => {
+        updateProgress({ showProgress: true });
+        let id = design.id;
+        let name = design.name;
+        downloadContent({ id, name, type: 'pattern', source_type, params });
+        updateProgress({ showProgress: false });
+        notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleViewDownload = (views) => {
+    try {
+      views = Array.isArray(views) ? views : [views];
+      views.forEach((view) => {
+        updateProgress({ showProgress: true });
+        let name = view.name;
+        downloadFileFromContent(JSON.stringify(view), `${name}.json`, 'application/json');
+        updateProgress({ showProgress: false });
+        notify({ message: `"${name}" view downloaded`, event_type: EVENT_TYPES.INFO });
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  return { handleDesignDownload, handleViewDownload };
 };
