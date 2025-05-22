@@ -7,11 +7,14 @@ export const WorkspaceModalContext = React.createContext({
   selectedWorkspace: { id: '', name: '' },
   setSelectedWorkspace: () => {},
   openModalWithDefault: () => {},
+  multiSelectedContent: [],
+  setMultiSelectedContent: () => {},
 });
 
 const WorkspaceModalContextProvider = ({ children }) => {
   const [workspaceModal, setWorkspaceModal] = useState(false);
   const [selectedWorkspace, setSelectedWorkspace] = useState({ id: '', name: '' });
+  const [multiSelectedContent, setMultiSelectedContent] = useState([]);
   return (
     <WorkspaceModalContext.Provider
       value={{
@@ -26,6 +29,8 @@ const WorkspaceModalContextProvider = ({ children }) => {
         },
         selectedWorkspace,
         setSelectedWorkspace,
+        multiSelectedContent,
+        setMultiSelectedContent,
       }}
     >
       {children}
