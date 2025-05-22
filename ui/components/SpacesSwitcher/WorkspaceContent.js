@@ -14,7 +14,6 @@ import {
   MenuItem,
   PromptComponent,
   Select,
-  ShareIcon,
   Typography,
   useDesignAssignment,
   useTheme,
@@ -25,13 +24,7 @@ import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
-import {
-  AssignDesignViewButton,
-  ImportButton,
-  SortBySelect,
-  TableListHeader,
-  VisibilitySelect,
-} from './components';
+import { ImportButton, SortBySelect, TableListHeader, VisibilitySelect } from './components';
 import {
   useAssignDesignToWorkspaceMutation,
   useAssignViewToWorkspaceMutation,
@@ -46,7 +39,6 @@ import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
 import { iconMedium } from 'css/icons.styles';
 import ExportModal from '../ExportModal';
-import { DESIGN } from '@/constants/navigator';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);

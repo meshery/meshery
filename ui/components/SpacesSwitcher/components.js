@@ -18,8 +18,6 @@ import {
   OutlinedInput,
   FormControlLabel,
   FormGroup,
-  DesignIcon,
-  ViewIcon,
 } from '@layer5/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
@@ -33,9 +31,7 @@ import { useImportPatternMutation } from '@/rtk-query/design';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { RESOURCE_TYPE } from '@/utils/Enum';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
-import { iconMedium } from 'css/icons.styles';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);

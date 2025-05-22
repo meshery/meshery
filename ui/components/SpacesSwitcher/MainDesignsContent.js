@@ -1,14 +1,9 @@
-import {
-  getDesign,
-  useDeletePatternFileMutation,
-  useUpdatePatternFileMutation,
-} from '@/rtk-query/design';
+import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import { getUserAccessToken, getUserProfile, useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   ListItem,
   ListItemText,
   Divider,
-  PROMPT_VARIANTS,
   PromptComponent,
   OutlinedPatternIcon,
   useModal,
@@ -27,13 +22,12 @@ import useInfiniteScroll, {
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
 import InfoModal from '../Modals/Information/InfoModal';
-import { modelUniqueKey, useGetMeshModelsQuery } from '@/rtk-query/meshModel';
+import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
 import Router from 'next/router';
 import CAN from '@/utils/can';
@@ -42,7 +36,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';

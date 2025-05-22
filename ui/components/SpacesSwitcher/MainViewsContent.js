@@ -6,7 +6,6 @@ import {
   ShareIcon,
   InfoIcon,
   DeleteIcon,
-  PROMPT_VARIANTS,
   PromptComponent,
   useTheme,
   useRoomActivity,
@@ -22,8 +21,7 @@ import { MenuComponent } from './MenuComponent';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
-import { downloadFileFromContent } from '@/utils/fileDownloader';
-import { getView, useDeleteViewMutation, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
+import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
 import { ViewInfoModal } from '../ViewInfoModal';
 import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
