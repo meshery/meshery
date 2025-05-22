@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://charts.softonic.io/charts/hierarchical-namespace-controller-0.2.1.tgz"
   },
   "configuration": null,
   "component": {

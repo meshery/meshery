@@ -34,6 +34,7 @@
     "metadata": {
       "isAnnotation": false,
       "primaryColor": "#005FEE",
+      "secondaryColor": "#376384",
       "shape": "circle",
       "source_uri": "git://github.com/cert-manager/cert-manager/master/deploy/crds",
       "styleOverrides": "",

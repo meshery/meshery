@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://charts.crossplane.io/master/oam-kubernetes-runtime-legacy-0.4.0-rc1.18.g64a2994.tgz"
   },
   "configuration": null,
   "component": {

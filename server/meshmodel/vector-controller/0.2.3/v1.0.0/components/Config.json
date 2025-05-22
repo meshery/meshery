@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://kubevela.github.io/charts/vector-controller-0.2.3.tgz"
   },
   "configuration": null,
   "component": {

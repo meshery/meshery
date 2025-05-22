@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/sagikazarmark/helm-charts/releases/download/rabbitmq-operator-0.0.3/rabbitmq-operator-0.0.3.tgz"
   },
   "configuration": null,
   "component": {

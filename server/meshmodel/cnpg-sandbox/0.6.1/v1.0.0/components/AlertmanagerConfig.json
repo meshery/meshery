@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://cloudnative-pg.github.io/charts/cnpg-sandbox-0.6.1.tgz"
   },
   "configuration": null,
   "component": {

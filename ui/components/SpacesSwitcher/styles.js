@@ -8,6 +8,7 @@ import {
   DARK_BLUE_GRAY,
   Box,
   Avatar,
+  Grid,
 } from '@layer5/sistent';
 
 const DRAWER_WIDTH = 300;
@@ -128,20 +129,9 @@ export const StyledListItem = styled(ListItem)({
   position: 'relative',
 });
 
-export const StyledTextContainer = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  width: '40%',
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-});
+export const StyledTextContainer = styled(Grid)({});
 
-export const StyledUserInfoContainer = styled('div')({
-  display: 'flex',
-  gap: '1rem',
-  width: '30%',
-});
+export const StyledUserInfoContainer = styled(Grid)({});
 
 export const StyledUserDetailsContainer = styled('div')({
   display: 'flex',
@@ -151,15 +141,9 @@ export const StyledUserDetailsContainer = styled('div')({
   gap: '0.1rem',
 });
 
-export const StyledVisibilityContainer = styled('div')({
-  width: '10%',
-});
+export const StyledVisibilityContainer = styled(Grid)({});
 
-export const StyledActionsContainer = styled('div')({
-  width: '20%',
-  display: 'flex',
-  gap: '0.5rem',
-});
+export const StyledActionsContainer = styled(Grid)({});
 
 export const StyledAvatarContainer = styled('div')({
   display: 'flex',

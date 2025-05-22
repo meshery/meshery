@@ -1,6 +1,6 @@
 module github.com/layer5io/meshery
 
-go 1.23.4
+go 1.23.8
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
@@ -80,7 +80,6 @@ require (
 )
 
 require (
-	github.com/OneOfOne/xxhash v1.2.8 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/tchap/go-patricia/v2 v2.3.2 // indirect
@@ -112,7 +111,7 @@ require (
 	github.com/Masterminds/squirrel v1.5.4 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.1.5 // indirect
-	github.com/agnivade/levenshtein v1.2.0 // indirect
+	github.com/agnivade/levenshtein v1.2.1 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.34.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.29.2 // indirect
@@ -149,6 +148,7 @@ require (
 	github.com/cyphar/filepath-securejoin v0.4.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/deckarep/golang-set v1.8.0 // indirect
+	github.com/dgryski/go-farm v0.0.0-20240924180020-3414d57e47da // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/distribution/reference v0.6.0 // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
@@ -206,7 +206,7 @@ require (
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.24.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.1 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
@@ -226,7 +226,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.17.11 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/kortschak/goroutine v1.1.2 // indirect
 	github.com/kubernetes/kompose v1.35.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect
@@ -265,9 +265,9 @@ require (
 	github.com/novln/docker-parser v1.0.0 // indirect
 	github.com/oapi-codegen/runtime v1.1.1 // indirect
 	github.com/oklog/ulid v1.3.1 // indirect
-	github.com/open-policy-agent/opa v1.0.1 // indirect
+	github.com/open-policy-agent/opa v1.4.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
-	github.com/opencontainers/image-spec v1.1.0 // indirect
+	github.com/opencontainers/image-spec v1.1.1 // indirect
 	github.com/openshift/api v3.9.0+incompatible // indirect
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
@@ -307,13 +307,13 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.60.0 // indirect
 	go.opentelemetry.io/otel v1.35.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.29.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.33.0 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.33.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.35.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.35.0 // indirect
 	go.opentelemetry.io/otel/metric v1.35.0 // indirect
 	go.opentelemetry.io/otel/sdk v1.35.0 // indirect
 	go.opentelemetry.io/otel/sdk/metric v1.35.0 // indirect
 	go.opentelemetry.io/otel/trace v1.35.0 // indirect
-	go.opentelemetry.io/proto/otlp v1.4.0 // indirect
+	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.37.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect

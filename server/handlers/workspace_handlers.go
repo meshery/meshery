@@ -232,7 +232,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
-	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
