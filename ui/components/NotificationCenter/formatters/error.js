@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { Typography, Grid, Box, List, ListItem, RenderMarkdown } from '@layer5/sistent';
 import { FormatStructuredData } from '../../DataFormatter';
 
@@ -24,9 +24,8 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
             const isLongError = error.length > 300;
             const [expanded, setExpanded] = useState(false);
 
-            const displayContent = isLongError && !expanded 
-              ? `${error.substring(0, 300)}...` 
-              : error;
+            const displayContent =
+              isLongError && !expanded ? `${error.substring(0, 300)}...` : error;
 
             return (
               <ListItem
@@ -42,14 +41,14 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
               >
                 <RenderMarkdown content={displayContent} />
                 {isLongError && (
-                  <Typography 
-                    variant="caption" 
-                    color="primary" 
-                    sx={{ 
-                      cursor: 'pointer', 
+                  <Typography
+                    variant="caption"
+                    color="primary"
+                    sx={{
+                      cursor: 'pointer',
                       display: 'block',
                       mt: 0.5,
-                      fontWeight: 'medium'
+                      fontWeight: 'medium',
                     }}
                     onClick={() => setExpanded(!expanded)}
                   >
