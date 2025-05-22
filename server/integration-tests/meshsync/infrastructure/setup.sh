@@ -118,10 +118,6 @@ setup_cluster() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
   echo ""
 
-  echo "Waiting for broker to be ready"
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready statefulset/meshery-broker --timeout=64s
-  echo ""
-
   echo "Outputing cluster resources..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
