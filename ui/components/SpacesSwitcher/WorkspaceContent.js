@@ -27,6 +27,7 @@ import MainViewsContent from './MainViewsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import {
   AssignDesignViewButton,
+  ImportButton,
   SortBySelect,
   TableListHeader,
   VisibilitySelect,
@@ -251,7 +252,7 @@ const WorkspaceContent = ({ workspace }) => {
 
           {/* Assign Button */}
           <Grid item xs={12} sm={6} md={3} lg={2}>
-            <AssignDesignViewButton
+            {/* <AssignDesignViewButton
               type={filters.type}
               handleAssign={(e) => {
                 e.stopPropagation();
@@ -272,8 +273,8 @@ const WorkspaceContent = ({ workspace }) => {
                       keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
                     )
               }
-            />
-            {/* {filters.type == RESOURCE_TYPE.DESIGN && (
+            /> */}
+            {filters.type == RESOURCE_TYPE.DESIGN && (
               <ImportButton
                 workspaceId={workspace?.id}
                 disabled={
@@ -283,7 +284,7 @@ const WorkspaceContent = ({ workspace }) => {
                   )
                 }
               />
-            )} */}
+            )}
           </Grid>
         </Grid>
 
