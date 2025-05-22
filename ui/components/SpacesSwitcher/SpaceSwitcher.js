@@ -22,7 +22,7 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-import _ from 'lodash';
+import _, { min, pad } from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrganization, setKeys } from '@/store/slices/mesheryUi';
@@ -218,7 +218,7 @@ function SpaceSwitcher() {
       <StyledSwitcher>
         <Button
           onClick={() => setOrgOpen(!orgOpen)}
-          style={{ marginRight: orgOpen ? '1rem' : '0' }}
+          style={{ marginRight: orgOpen ? '1rem' : '0', padding: '5px', minWidth: '0' }}
         >
           <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
         </Button>
@@ -231,7 +231,7 @@ function SpaceSwitcher() {
         /
         <Button
           onClick={() => setWorkspaceOpen(!workspaceOpen)}
-          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+          style={{ marginRight: workspaceOpen ? '1rem' : '0', padding: '9px', minWidth: '0' }}
         >
           <WorkspaceIcon
             {...iconLarge}
@@ -240,7 +240,7 @@ function SpaceSwitcher() {
           />
         </Button>
         <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0.5rem' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
       </StyledSwitcher>
     </NoSsr>
