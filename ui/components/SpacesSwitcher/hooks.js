@@ -2,6 +2,12 @@ import { APP_MODE, RESOURCE_TYPE } from '@/utils/Enum';
 import { isInOperatorMode, JsonParse } from '@/utils/utils';
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
+import { useDeletePatternFileMutation } from '@/rtk-query/design';
+import { useDeleteViewMutation } from '@/rtk-query/view';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { DesignIcon, PROMPT_VARIANTS, useTheme, ViewIcon } from '@layer5/sistent';
+import { EVENT_TYPES } from 'lib/event-types';
+import { iconMedium } from 'css/icons.styles';
 
 const useInfiniteScroll = ({ isLoading, hasMore, onLoadMore }) => {
   const loadingRef = useRef(null);
@@ -143,4 +149,58 @@ export const getDefaultFilterType = () => {
     return RESOURCE_TYPE.VIEW;
   }
   return RESOURCE_TYPE.DESIGN;
+};
+
+export const useGetIconBasedOnMode = ({ mode, designStyles, viewStyles }) => {
+  const theme = useTheme();
+  if (mode === RESOURCE_TYPE.DESIGN) {
+    return <DesignIcon {...designStyles} />;
+  } else if (mode == RESOURCE_TYPE.VIEW) {
+    return <ViewIcon {...viewStyles} fill={theme.palette.icon.brand} {...iconMedium} />;
+  }
+};
+
+export const useContentDelete = (modalRef) => {
+  const [deleteView] = useDeleteViewMutation();
+  const [deletePatternFile] = useDeletePatternFileMutation();
+  const { notify } = useNotification();
+
+  const handleDelete = async (items, type = RESOURCE_TYPE.DESIGN) => {
+    const isDesign = type === RESOURCE_TYPE.DESIGN;
+    const itemType = isDesign ? 'Design' : 'View';
+    const deleteMutation = isDesign ? deletePatternFile : deleteView;
+
+    const response = await modalRef.current.show({
+      title: `Delete catalog item?`,
+      subtitle: `Are you sure you want to delete ${
+        items.length > 1
+          ? `${items.length} ${itemType.toLowerCase()}s`
+          : `the "${items[0].name}" ${itemType.toLowerCase()}`
+      }?`,
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+
+    if (response === 'DELETE') {
+      items.forEach((item) => {
+        const { name, id } = item;
+        deleteMutation({ id })
+          .unwrap()
+          .then(() => {
+            notify({
+              message: `"${name}" ${itemType} deleted`,
+              event_type: EVENT_TYPES.SUCCESS,
+            });
+          })
+          .catch(() => {
+            notify({
+              message: `Unable to delete "${name}" ${itemType}`,
+              event_type: EVENT_TYPES.ERROR,
+            });
+          });
+      });
+    }
+  };
+
+  return { handleDelete };
 };

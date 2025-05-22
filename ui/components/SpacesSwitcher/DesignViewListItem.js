@@ -33,7 +33,7 @@ import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { Grid } from '@layer5/sistent';
-import { useGetIconBasedOnMode } from './components';
+import { useGetIconBasedOnMode } from './hooks';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -76,14 +76,14 @@ const DesignViewListItem = ({
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={multiSelectedContent.some((item) => item === selectedItem.id)}
+                    checked={multiSelectedContent.some((item) => item.id === selectedItem.id)}
                     onChange={(e) => {
                       e.stopPropagation();
                       if (e.target.checked) {
-                        setMultiSelectedContent((prev) => [...prev, selectedItem.id]);
+                        setMultiSelectedContent((prev) => [...prev, selectedItem]);
                       } else {
                         setMultiSelectedContent((prev) =>
-                          prev.filter((item) => item !== selectedItem.id),
+                          prev.filter((item) => item.id !== selectedItem.id),
                         );
                       }
                     }}

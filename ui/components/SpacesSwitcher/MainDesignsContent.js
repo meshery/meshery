@@ -19,7 +19,7 @@ import {
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
+import useInfiniteScroll, { handleUpdatePatternVisibility, useContentDelete } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
@@ -29,7 +29,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
 import InfoModal from '../Modals/Information/InfoModal';
-import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
+import { modelUniqueKey, useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
 import Router from 'next/router';
 import CAN from '@/utils/can';
@@ -62,7 +62,8 @@ const MainDesignsContent = ({
   const [moveModal, setMoveModal] = useState(false);
   const { notify } = useNotification();
   const modalRef = useRef(true);
-  const [deletePatternFile] = useDeletePatternFileMutation();
+  const { handleDelete } = useContentDelete(modalRef);
+
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
     setPage(page + 1);
@@ -104,31 +105,6 @@ const MainDesignsContent = ({
       notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
     } catch (e) {
       console.error(e);
-    }
-  };
-
-  const handleDelete = async (design) => {
-    const response = await modalRef.current.show({
-      title: `Delete catalog item?`,
-      subtitle: `Are you sure you want to delete ${design?.name}?`,
-      primaryOption: 'DELETE',
-      variant: PROMPT_VARIANTS.DANGER,
-      showInfoIcon:
-        "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
-    });
-    if (response === 'DELETE') {
-      const selectedPattern = design;
-      const { name, id } = selectedPattern;
-      deletePatternFile({
-        id: id,
-      })
-        .unwrap()
-        .then(() => {
-          notify({ message: `"${name}" Design deleted`, event_type: EVENT_TYPES.SUCCESS });
-        })
-        .catch(() => {
-          notify({ message: `Unable to delete "${name}" Design`, event_type: EVENT_TYPES.ERROR });
-        });
     }
   };
 
@@ -255,7 +231,7 @@ const MainDesignsContent = ({
       },
       {
         ...DESIGN_ACTIONS.DELETE_DESIGN,
-        handler: () => handleDelete(design),
+        handler: () => handleDelete([design]),
       },
       {
         ...DESIGN_ACTIONS.SHARE_DESIGN,

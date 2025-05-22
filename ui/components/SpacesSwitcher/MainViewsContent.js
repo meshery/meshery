@@ -13,7 +13,7 @@ import {
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll, { handleUpdateViewVisibility } from './hooks';
+import useInfiniteScroll, { handleUpdateViewVisibility, useContentDelete } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
@@ -77,29 +77,7 @@ const MainViewsContent = ({
   };
 
   const modalRef = useRef(true);
-
-  const handleOpenDeleteModal = async (view) => {
-    const response = await modalRef.current.show({
-      title: `Delete catalog item?`,
-      subtitle: `Are you sure you want to delete ${view?.name}?`,
-      primaryOption: 'DELETE',
-      variant: PROMPT_VARIANTS.DANGER,
-    });
-    if (response === 'DELETE') {
-      const selectedView = view;
-      const { name, id } = selectedView;
-      deleteView({
-        id: id,
-      })
-        .unwrap()
-        .then(() => {
-          notify({ message: `"${name}" View deleted`, event_type: EVENT_TYPES.SUCCESS });
-        })
-        .catch(() => {
-          notify({ message: `Unable to delete "${name}" View`, event_type: EVENT_TYPES.ERROR });
-        });
-    }
-  };
+  const { handleDelete } = useContentDelete(modalRef);
 
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
@@ -115,7 +93,6 @@ const MainViewsContent = ({
   const ghostRef = useRef(null);
   const ghostTextNodeRef = useRef(null);
 
-  const [deleteView] = useDeleteViewMutation();
   const theme = useTheme();
 
   const VIEW_ACTIONS = {
@@ -163,7 +140,7 @@ const MainViewsContent = ({
     handleMoveModal,
     handleOpenInfoModal,
     handleOpenShareModal,
-    handleOpenDeleteModal,
+    handleDelete,
   }) => {
     const options = [
       {
@@ -172,7 +149,7 @@ const MainViewsContent = ({
       },
       {
         ...VIEW_ACTIONS.DELETE_VIEW,
-        handler: () => handleOpenDeleteModal(view),
+        handler: () => handleDelete([view], RESOURCE_TYPE.VIEW),
       },
 
       {
@@ -254,7 +231,7 @@ const MainViewsContent = ({
                         handleMoveModal,
                         handleOpenInfoModal,
                         handleOpenShareModal,
-                        handleOpenDeleteModal,
+                        handleDelete,
                       })}
                     />
                   }

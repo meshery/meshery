@@ -212,7 +212,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
                   }
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setMultiSelectedContent(content.map((item) => item.id));
+                      setMultiSelectedContent(content);
                     } else {
                       setMultiSelectedContent([]);
                     }
@@ -355,13 +355,4 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
       {type === 'design' ? 'Manage Designs' : 'Manage Views'}
     </Button>
   );
-};
-
-export const useGetIconBasedOnMode = ({ mode, designStyles, viewStyles }) => {
-  const theme = useTheme();
-  if (mode === RESOURCE_TYPE.DESIGN) {
-    return <DesignIcon {...designStyles} />;
-  } else if (mode == RESOURCE_TYPE.VIEW) {
-    return <ViewIcon {...viewStyles} fill={theme.palette.icon.brand} {...iconMedium} />;
-  }
 };
