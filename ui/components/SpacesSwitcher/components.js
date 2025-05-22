@@ -37,6 +37,7 @@ import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import { iconMedium } from 'css/icons.styles';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
+import { StyledResponsiveButton } from './styles';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
@@ -323,20 +324,20 @@ export const ImportButton = ({ workspaceId, disabled = false }) => {
           handleImportDesign={handleImportDesign}
         />
       )}
-      <Button
+      <StyledResponsiveButton
         color="primary"
         variant="contained"
         onClick={handleImportModalOpen}
         disabled={disabled}
         sx={{
           minWidth: 'fit-content',
-          padding: '0.85rem',
+          padding: '0.85rem !important',
           width: '100%',
         }}
         startIcon={<FileUpload color={theme.palette.common.white} />}
       >
-        Import
-      </Button>
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Import</Box>
+      </StyledResponsiveButton>
     </>
   );
 };
@@ -386,16 +387,16 @@ export const MultiContentSelectToolbar = ({
           </Typography>
           <Box style={{ display: 'flex', gap: '0.5rem' }}>
             {handleContentMove && (
-              <Button
+              <StyledResponsiveButton
                 variant="contained"
                 startIcon={<MoveFileIcon style={iconMedium} />}
                 onClick={() => handleContentMove(true)}
                 disabled={!multiSelectedContent.length}
               >
-                Move
-              </Button>
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Move</Box>
+              </StyledResponsiveButton>
             )}
-            <Button
+            <StyledResponsiveButton
               variant="contained"
               startIcon={<DownloadIcon style={iconMedium} fill={theme.palette.common.white} />}
               onClick={() =>
@@ -405,9 +406,9 @@ export const MultiContentSelectToolbar = ({
               }
               disabled={!multiSelectedContent.length}
             >
-              Download
-            </Button>
-            <Button
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Download</Box>
+            </StyledResponsiveButton>
+            <StyledResponsiveButton
               color="error"
               variant="contained"
               onClick={() => {
@@ -421,8 +422,8 @@ export const MultiContentSelectToolbar = ({
               }}
               startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
             >
-              Delete
-            </Button>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Delete</Box>
+            </StyledResponsiveButton>
           </Box>
         </Box>
       )}

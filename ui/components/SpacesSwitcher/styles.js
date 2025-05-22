@@ -9,6 +9,7 @@ import {
   Box,
   Avatar,
   Grid,
+  Button,
 } from '@layer5/sistent';
 
 const DRAWER_WIDTH = 300;
@@ -195,4 +196,16 @@ export const StyledSmallAvatar = styled(Avatar)(({ borderColor }) => ({
   height: '23px',
   width: '23px',
   border: borderColor ? `2px solid ${borderColor}` : undefined,
+}));
+
+export const StyledResponsiveButton = styled(Button)(({ theme }) => ({
+  '& .MuiButton-startIcon': {
+    [theme.breakpoints.down('sm')]: {
+      margin: 0,
+    },
+  },
+  [theme.breakpoints.down('sm')]: {
+    minWidth: '40px',
+    padding: '8px',
+  },
 }));
