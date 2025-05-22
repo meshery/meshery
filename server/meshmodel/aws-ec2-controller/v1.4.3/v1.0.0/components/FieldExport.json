@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Field Export",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-ec2-controller",
+    "displayName": "AWS EC2",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Provisioning"
+    },
+    "subCategory": "Compute",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#ED7100",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.4.3"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#ED7100",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Compute\" fill=\"#ED7100\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cpath d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_Amazon-EC2_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cpath d=\"M26.052,27 L26,13.948 L13,14 L13,27.052 L26.052,27 Z M27,14 L29,14 L29,15 L27,15 L27,17 L29,17 L29,18 L27,18 L27,20 L29,20 L29,21 L27,21 L27,23 L29,23 L29,24 L27,24 L27,26 L29,26 L29,27 L27,27 L27,27.052 C27,27.575 26.574,28 26.052,28 L26,28 L26,30 L25,30 L25,28 L23,28 L23,30 L22,30 L22,28 L20,28 L20,30 L19,30 L19,28 L17,28 L17,30 L16,30 L16,28 L14,28 L14,30 L13,30 L13,28 L12.948,28 C12.426,28 12,27.575 12,27.052 L12,27 L10,27 L10,26 L12,26 L12,24 L10,24 L10,23 L12,23 L12,21 L10,21 L10,20 L12,20 L12,18 L10,18 L10,17 L12,17 L12,15 L10,15 L10,14 L12,14 L12,13.948 C12,13.425 12.426,13 12.948,13 L13,13 L13,11 L14,11 L14,13 L16,13 L16,11 L17,11 L17,13 L19,13 L19,11 L20,11 L20,13 L22,13 L22,11 L23,11 L23,13 L25,13 L25,11 L26,11 L26,13 L26.052,13 C26.574,13 27,13.425 27,13.948 L27,14 Z M21,33 L7,33 L7,19 L9,19 L9,18 L7.062,18 C6.477,18 6,18.477 6,19.062 L6,32.938 C6,33.523 6.477,34 7.062,34 L20.939,34 C21.524,34 22,33.523 22,32.938 L22,31 L21,31 L21,33 Z M34,7.062 L34,20.938 C34,21.523 33.524,22 32.939,22 L30,22 L30,21 L33,21 L33,7 L19,7 L19,10 L18,10 L18,7.062 C18,6.477 18.477,6 19.062,6 L32.939,6 C33.524,6 34,6.477 34,7.062 L34,7.062 Z\" id=\"Amazon-EC2_Icon_32_Squid\" fill=\"#FFFFFF\"\u003e\u003c/path\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/ec2-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "services.k8s.aws/v1alpha1",
+    "kind": "FieldExport",
+    "schema": "{\n \"description\": \"FieldExport is the schema for the FieldExport API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FieldExportSpec defines the desired state of the FieldExport.\",\n   \"properties\": {\n    \"from\": {\n     \"description\": \"ResourceFieldSelector provides the values necessary to identify an individual\\nfield on an individual K8s resource.\",\n     \"properties\": {\n      \"path\": {\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"description\": \"NamespacedResource provides all the values necessary to identify an ACK\\nresource of a given type (within the same namespace as the custom resource\\ncontaining this type).\",\n       \"properties\": {\n        \"group\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"group\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\",\n      \"resource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"FieldExportTarget provides the values necessary to identify the\\noutput path for a field export.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key overrides the default value (`\\u003cnamespace\\u003e.\\u003cFieldExport-resource-name\\u003e`) for the FieldExport target\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"FieldExportOutputType represents all types that can be produced by a field\\nexport operation\",\n       \"enum\": [\n        \"configmap\",\n        \"secret\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is marked as optional, so we cannot compose `NamespacedName`\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"from\",\n    \"to\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Field Export\",\n \"type\": \"object\"\n}"
+  }
+}

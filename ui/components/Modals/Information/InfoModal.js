@@ -1,58 +1,53 @@
-/* eslint-disable react/display-name */
-import React, { useEffect, useRef, useState } from 'react';
-import CloseIcon from '@mui/icons-material/Close';
-import PatternIcon from '../../../assets/icons/Pattern';
-import {
-  Typography,
-  IconButton,
-  Button,
-  Grid,
-  Avatar,
-  CustomTooltip,
-  Box,
-  CircularProgress,
-} from '@layer5/sistent';
-import { ActionContainer, CreatAtContainer, CopyLinkButton, ResourceName } from './styles';
-import { iconMedium, iconSmall } from '../../../css/icons.styles';
-import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
-import moment from 'moment';
-import Application from '../../../public/static/img/drawer-icons/application_svg.js';
-import { useSnackbar } from 'notistack';
-import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
-import {
-  PATTERN_ENDPOINT,
-  FILTER_ENDPOINT,
-  MESHERY_CLOUD_PROD,
-} from '../../../constants/endpoints';
-import { useNotification } from '../../../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import axios from 'axios';
-import _ from 'lodash';
-import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
-import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
-import {
-  Modal,
-  ModalFooter,
-  ModalButtonPrimary,
-  ModalButtonSecondary,
-  ModalBody,
-  VisibilityChipMenu,
-  Link,
-  Skeleton,
-} from '@layer5/sistent';
+import { usePublishPatternMutation, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import TooltipButton from '@/utils/TooltipButton';
-import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
-import { Lock, Public } from '@mui/icons-material';
+import { keys } from '@/utils/permission_constants';
+import {
+  Avatar,
+  Box,
+  Button,
+  CircularProgress,
+  CustomTooltip,
+  getFormatDate,
+  Grid,
+  IconButton,
+  Link,
+  Modal,
+  ModalBody,
+  ModalButtonPrimary,
+  ModalButtonSecondary,
+  ModalFooter,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
+  Skeleton,
+  Typography,
+  VisibilityChipMenu,
+} from '@layer5/sistent';
+import CloseIcon from '@mui/icons-material/Close';
 import yaml from 'js-yaml';
-
-const APPLICATION_PLURAL = 'applications';
-const FILTER_PLURAL = 'filters';
-const PATTERN_PLURAL = 'patterns';
+import _ from 'lodash';
+import { useSnackbar } from 'notistack';
+import React, { useEffect, useRef, useState } from 'react';
+import PatternIcon from '../../../assets/icons/Pattern';
+import { MESHERY_CLOUD_PROD } from '../../../constants/endpoints';
+import { iconMedium, iconSmall } from '../../../css/icons.styles';
+import { EVENT_TYPES } from '../../../lib/event-types';
+import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
+import { useNotification } from '../../../utils/hooks/useNotification';
+import {
+  getDesignVersion,
+  getSharableCommonHostAndprotocolLink,
+  modifyRJSFSchema,
+} from '../../../utils/utils';
+import { ActionContainer, CopyLinkButton, CreatAtContainer, ResourceName } from './styles';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
+import { updateProgress } from '@/store/slices/mesheryUi';
+import { getMeshModels } from '@/api/meshmodel';
+import { useSelector } from 'react-redux';
+import { Lock, Public } from '@mui/icons-material';
+import RJSFWrapper from '@/components/MesheryMeshInterface/PatternService/RJSF_wrapper';
 
 export const VIEW_VISIBILITY = {
   PUBLIC: 'public',
@@ -64,16 +59,12 @@ const InfoModal_ = React.memo((props) => {
     infoModalOpen,
     handleInfoModalClose,
     resourceOwnerID,
-    dataName,
     selectedResource,
-    currentUser,
     patternFetcher,
-    formSchema,
-    handlePublish,
-    meshModels = [],
     isReadOnly = false,
   } = props;
 
+  const { user: currentUser } = useSelector((state) => state.ui);
   const formRef = React.createRef();
   const formStateRef = useRef();
   const [isCatalogDataEqual, setIsCatalogDataEqual] = useState(false);
@@ -82,29 +73,97 @@ const InfoModal_ = React.memo((props) => {
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
-  const formatDate = (date) => {
-    return moment(date).utc().format('MMMM Do YYYY');
-  };
+
+  const [updatePattern] = useUpdatePatternFileMutation();
   const currentUserID = currentUser?.id;
   const isAdmin = currentUser?.role_names?.includes('admin') || false;
   const { data: resourceUserProfile } = useGetUserByIdQuery(resourceOwnerID);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const isOwner = currentUserID === resourceOwnerID;
+  const [meshModels, setMeshModels] = useState([]);
+  const [publishSchema, setPublishSchema] = useState({});
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      const { models } = await getMeshModels();
+      const modelNames = _.uniqBy(
+        models?.map((model) => {
+          if (model.displayName && model.displayName !== '') {
+            return model.displayName;
+          }
+        }),
+        _.toLower,
+      );
+      modelNames.sort();
+
+      // Modify the schema using the utility function
+      const modifiedSchema = modifyRJSFSchema(
+        publishCatalogItemSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
+      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      setMeshModels(models);
+    };
+    fetchModels();
+  }, []);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(getSharableCommonHostAndprotocolLink(selectedResource));
     enqueueSnackbar(`Link to "${selectedResource.name}" is copied to clipboard`, {
       variant: 'info',
       action: (key) => (
-        <IconButton
-          // key={`closeevent-${id}`}
-          aria-label="Close"
-          color="inherit"
-          onClick={() => closeSnackbar(key)}
-        >
+        <IconButton aria-label="Close" color="inherit" onClick={() => closeSnackbar(key)}>
           <CloseIcon style={iconMedium} />
         </IconButton>
       ),
     });
+  };
+
+  const [publishCatalog] = usePublishPatternMutation();
+
+  const handlePublish = (formData) => {
+    const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
+      ?.filter((model) =>
+        formData?.compatibility?.some((comp) => _.toLower(comp) === _.toLower(model.displayName)),
+      )
+      ?.map((model) => model.name);
+
+    const payload = {
+      id: selectedResource?.id,
+      catalog_data: {
+        ...formData,
+        compatibility: compatibilityStore,
+        type: _.toLower(formData?.type),
+      },
+    };
+    updateProgress({ showProgress: true });
+    publishCatalog({
+      publishBody: JSON.stringify(payload),
+    })
+      .unwrap()
+      .then(() => {
+        updateProgress({ showProgress: false });
+        if (currentUser.role_names.includes('admin')) {
+          notify({
+            message: `${selectedResource.name} Design Published`,
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        } else {
+          notify({
+            message:
+              'Design queued for publishing into Meshery Catalog. Maintainers notified for review',
+            event_type: EVENT_TYPES.SUCCESS,
+          });
+        }
+      })
+      .catch(() => {
+        updateProgress({ showProgress: false });
+        notify({
+          message: `Error while publishing ${selectedResource.name} Design`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      });
   };
 
   const handleSubmit = () => {
@@ -123,41 +182,23 @@ const InfoModal_ = React.memo((props) => {
       type: formStateRef.current?.type?.toLowerCase(),
       compatibility: compatibilityStore,
     };
-    if (dataName === PATTERN_PLURAL) {
-      body = JSON.stringify({
-        name: selectedResource.name,
-        catalog_data: modifiedData,
-        design_file: yaml.load(selectedResource.pattern_file),
-        id: selectedResource.id,
-        visibility: visibility,
-      });
-    } else if (dataName === FILTER_PLURAL) {
-      setSaveFormLoading(true);
-      let config = '';
-      if (selectedResource?.filter_resource && selectedResource?.filter_resource !== '') {
-        config = JSON.parse(selectedResource.filter_resource).settings.config; // send the config in order to prevent over-write of the config
-      }
-      body = JSON.stringify({
-        filter_data: {
-          catalog_data: modifiedData,
-          id: selectedResource.id,
-          name: selectedResource.name,
-          filter_file: selectedResource.filter_file,
-        },
-        config: config,
-        save: true,
-      });
-    }
 
-    axios
-      .post(dataName === PATTERN_PLURAL ? PATTERN_ENDPOINT : FILTER_ENDPOINT, body)
+    body = JSON.stringify({
+      name: selectedResource.name,
+      catalog_data: modifiedData,
+      design_file: yaml.load(selectedResource.pattern_file),
+      id: selectedResource.id,
+      visibility: visibility,
+    });
+
+    updatePattern({ updateBody: body })
       .then(() => {
         setSaveFormLoading(false);
         notify({
           message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        patternFetcher()();
+        patternFetcher && patternFetcher();
         handleInfoModalClose();
       })
       .catch((error) => {
@@ -182,7 +223,6 @@ const InfoModal_ = React.memo((props) => {
       }) || []
     );
   }
-
   // Function to compare objects while normalizing case in compatibility array
   function isEqualIgnoringCase(obj1, obj2) {
     // Check each property one by one
@@ -225,7 +265,6 @@ const InfoModal_ = React.memo((props) => {
           compatibility: filteredCompatibilityArray,
         };
         formStateRef.current = filterEmptyFields(modifiedData);
-        formStateRef.current.compatibility = filteredCompatibilityArray;
       }
     } else {
       formStateRef.current = filterEmptyFields(selectedResource?.catalog_data);
@@ -233,14 +272,8 @@ const InfoModal_ = React.memo((props) => {
   }, [selectedResource?.catalog_data, meshModels]);
 
   useEffect(() => {
-    if (formSchema) {
-      const newUiSchema = { ...formSchema.uiSchema };
-
-      // if (!isAdmin) {
-      //   selectedResource?.visibility === 'private' ? null : (
-      //     currentUserID !== resourceOwnerID &&
-      //     (newUiSchema['ui:readonly'] = currentUserID !== resourceOwnerID));
-      // }
+    if (publishSchema) {
+      const newUiSchema = { ...publishSchema.uiSchema };
 
       if (isReadOnly) {
         newUiSchema['ui:readonly'] = true;
@@ -248,19 +281,7 @@ const InfoModal_ = React.memo((props) => {
 
       setUiSchema(newUiSchema);
     }
-  }, [resourceOwnerID, formSchema, currentUserID]);
-
-  const renderIcon = () => {
-    if (dataName === PATTERN_PLURAL) {
-      return <PatternIcon style={{ ...iconSmall }} fill="#FFF" />;
-    }
-    if (dataName === APPLICATION_PLURAL) {
-      return <Application style={{ ...iconSmall }} fill="#FFF" />;
-    }
-    if (dataName === FILTER_PLURAL) {
-      return <Filter style={{ ...iconSmall }} fill="#FFF" />;
-    }
-  };
+  }, [resourceOwnerID, publishSchema, currentUserID]);
 
   const shouldRenderSaveButton = () => {
     if (!isAdmin) {
@@ -273,7 +294,7 @@ const InfoModal_ = React.memo((props) => {
   };
 
   const handlePublishController = () => {
-    formRef.current.state.schema['required'] = formSchema.rjsfSchema.required;
+    formRef.current.state.schema['required'] = publishSchema.rjsfSchema.required;
     if (formRef.current && formRef.current.validateForm()) {
       setSaveFormLoading(true);
       handleInfoModalClose();
@@ -289,13 +310,14 @@ const InfoModal_ = React.memo((props) => {
   const handleError = () => {
     setImageError(true);
   };
+
   return (
     <div style={{ marginBottom: '1rem' }}>
       <Modal
         open={infoModalOpen}
         closeModal={handleInfoModalClose}
         title={selectedResource?.name}
-        headerIcon={renderIcon()}
+        headerIcon={<PatternIcon style={{ ...iconSmall }} fill="#FFF" />}
         maxWidth={false}
         sx={{
           '& .MuiDialog-container': {
@@ -344,7 +366,7 @@ const InfoModal_ = React.memo((props) => {
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Created</CreatAtContainer>
                   <CreatAtContainer isBold={false}>
-                    {formatDate(selectedResource?.created_at)}
+                    {getFormatDate(selectedResource?.created_at)}
                   </CreatAtContainer>
                 </Typography>
               </Grid>
@@ -352,7 +374,7 @@ const InfoModal_ = React.memo((props) => {
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
                   <CreatAtContainer idBold={false}>
-                    {formatDate(selectedResource?.updated_at)}
+                    {getFormatDate(selectedResource?.updated_at)}
                   </CreatAtContainer>
                 </Typography>
               </Grid>
@@ -367,7 +389,7 @@ const InfoModal_ = React.memo((props) => {
             </Grid>
             <Grid item xs={8} lg>
               <Grid container spacing={2}>
-                <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
+                <Grid item xs={6}>
                   <Typography gutterBottom variant="subtitle1">
                     <CustomTooltip
                       title={`Owner: ${
@@ -382,7 +404,7 @@ const InfoModal_ = React.memo((props) => {
                 </Grid>
                 <Grid
                   item
-                  xs={dataName === APPLICATION_PLURAL ? 12 : 6}
+                  xs={6}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
                 >
                   <Typography
@@ -404,29 +426,28 @@ const InfoModal_ = React.memo((props) => {
                     />
                   </Typography>
                 </Grid>
-                {dataName === APPLICATION_PLURAL && formSchema ? null : (
-                  <Grid
-                    item
-                    style={{
-                      marginLeft: '-1rem',
-                      marginTop: '-1rem',
-                      maxWidth: '39rem',
+
+                <Grid
+                  item
+                  style={{
+                    marginLeft: '-1rem',
+                    marginTop: '-1rem',
+                    maxWidth: '39rem',
+                  }}
+                >
+                  <RJSFWrapper
+                    formData={formStateRef.current}
+                    jsonSchema={{
+                      ...publishSchema.rjsfSchema,
+                      required: [],
                     }}
-                  >
-                    <RJSFWrapper
-                      formData={formStateRef.current}
-                      jsonSchema={{
-                        ...formSchema.rjsfSchema,
-                        required: [],
-                      }}
-                      uiSchema={uiSchema}
-                      onChange={handleFormChange}
-                      liveValidate={false}
-                      formRef={formRef}
-                      hideTitle={true}
-                    />
-                  </Grid>
-                )}
+                    uiSchema={uiSchema}
+                    onChange={handleFormChange}
+                    liveValidate={false}
+                    formRef={formRef}
+                    hideTitle={true}
+                  />
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -482,6 +503,8 @@ const InfoModal_ = React.memo((props) => {
   );
 });
 
+InfoModal_.displayName = 'InfoModal_';
+
 const OwnerChip = ({ userProfile }) => {
   return (
     <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
@@ -501,9 +524,9 @@ const OwnerChip = ({ userProfile }) => {
 
 const InfoModal = (props) => {
   return (
-    <Provider store={store}>
+    <ProviderStoreWrapper>
       <InfoModal_ {...props} />
-    </Provider>
+    </ProviderStoreWrapper>
   );
 };
 

@@ -56,10 +56,9 @@ A specific remote provider can be enforced in a Meshery instance by passing the 
 Name: **"Meshery"** (default)
 
 - Enforces user authentication.
-- Long-term term persistence of test results.
+- Long-term term persistence.
 - Save environment setup.
 - Retrieve performance test results.
-- Retrieve conformance test results.
 - Events are stored locally and can be published to remote provider. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
@@ -73,7 +72,6 @@ Name: **“None”**
 - Container-local storage of test results. Ephemeral.
 - Environment setup not saved.
 - No performance test result history.
-- No conformance test result history.
 - Server events are stored locally in database. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 

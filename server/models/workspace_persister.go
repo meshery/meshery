@@ -404,7 +404,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string, visibility []string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {

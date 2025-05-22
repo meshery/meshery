@@ -1,0 +1,3 @@
+'invalidCommand' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationship --help' to display usage guide.
+
+See https://docs.meshery.io/reference/mesheryctl/relationships for usage details

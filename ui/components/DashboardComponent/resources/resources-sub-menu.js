@@ -1,6 +1,4 @@
 import React from 'react';
-import { withRouter } from 'next/router';
-import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
 
@@ -24,7 +22,6 @@ const DashboardIconText = styled('div')({
 
 const ResourcesSubMenu = (props) => {
   const {
-    updateProgress,
     k8sConfig,
     resource,
     selectedK8sContexts,
@@ -33,6 +30,7 @@ const ResourcesSubMenu = (props) => {
     CRDsKeys,
     isCRDS,
   } = props;
+
   const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
   const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
   if (!selectedResource) {
@@ -109,7 +107,6 @@ const ResourcesSubMenu = (props) => {
           <ResourcesTable
             key={index}
             workloadType={key}
-            updateProgress={updateProgress}
             k8sConfig={k8sConfig}
             resourceConfig={resource.tableConfig}
             submenu={resource.submenu}
@@ -121,4 +118,4 @@ const ResourcesSubMenu = (props) => {
   );
 };
 
-export default withRouter(withNotify(ResourcesSubMenu));
+export default ResourcesSubMenu;

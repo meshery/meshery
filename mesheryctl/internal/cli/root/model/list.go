@@ -1,16 +1,10 @@
 package model
 
 import (
-	"fmt"
-
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var listModelCmd = &cobra.Command{
@@ -28,30 +22,31 @@ mesheryctl model list --page [page-number]
 // Display number of available models in Meshery
 mesheryctl model list --count
     `,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 0 {
 			return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
 		}
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
-
-		baseUrl := mctlCfg.GetBaseMesheryURL()
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 		page, _ := cmd.Flags().GetInt("page")
-		url := fmt.Sprintf("%s/%s?%s", baseUrl, modelsApiPath, utils.GetPageQueryParameter(cmd, page))
-
-		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
-
-		if err != nil {
-			return err
+		pageSize, _ := cmd.Flags().GetInt("pagesize")
+		modelData := display.DisplayDataAsync{
+			UrlPath:          modelsApiPath,
+			DataType:         "model",
+			Header:           []string{"Model", "Category", "Version"},
+			Page:             page,
+			PageSize:         pageSize,
+			IsPage:           cmd.Flags().Changed("page"),
+			DisplayCountOnly: cmd.Flags().Changed("count"),
 		}
 
-		return displayModels(modelsResponse, cmd)
+		return display.ListAsyncPagination(modelData, generateModelDataToDisplay)
 	},
 }
 
 func init() {
-	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
+	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 0)")
+	listModelCmd.Flags().IntP("pagesize", "s", 0, "(optional) List next set of models with --pagesize (default = 0)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
 }

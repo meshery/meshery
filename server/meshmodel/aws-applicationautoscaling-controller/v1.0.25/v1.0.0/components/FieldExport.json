@@ -1,0 +1,191 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Field Export",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-applicationautoscaling-controller",
+    "displayName": "AWS Applilcation Autoscaling",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Provisioning"
+    },
+    "subCategory": "Management Governance",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#E7157B",
+      "shape": "circle",
+      "source_uri": "git://github.com/aws-controllers-k8s/applicationautoscaling-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Application-Auto-Scaling_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Management-Governance\" fill=\"#E7157B\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/AWS-Application-Auto-Scaling_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.854,13.14625 C7.049,13.34125 7.049,13.65825 6.854,13.85325 L3.354,17.35325 L2.647,16.64625 L5.293,14.00025 L1.77635684e-15,14.00025 L1.77635684e-15,13.00025 L5.293,13.00025 L2.647,10.35325 L3.354,9.64625 L6.854,13.14625 Z M28,14.00025 L22.708,14.00025 L25.354,16.64625 L24.647,17.35325 L21.147,13.85325 C20.952,13.65825 20.952,13.34125 21.147,13.14625 L24.647,9.64625 L25.354,10.35325 L22.708,13.00025 L28,13.00025 L28,14.00025 Z M17.647,23.64625 L18.354,24.35325 L14.854,27.85325 C14.756,27.95125 14.628,28.00025 14.5,28.00025 C14.373,28.00025 14.245,27.95125 14.147,27.85325 L10.647,24.35325 L11.354,23.64625 L14,26.29225 L14,22.00025 L15,22.00025 L15,26.29225 L17.647,23.64625 Z M11.354,4.35325 L10.647,3.64625 L14.147,0.14625 C14.342,-0.04875 14.659,-0.04875 14.854,0.14625 L18.354,3.64625 L17.647,4.35325 L15,1.70725 L15,6.00025 L14,6.00025 L14,1.70725 L11.354,4.35325 Z M18,10.79325 C17.524,10.64925 16.991,10.68625 16.494,10.91725 C16.115,11.09525 15.809,11.39825 15.632,11.77225 C15.317,12.44025 15.351,13.16425 15.726,13.75625 C16.202,14.50725 17.169,14.85325 18,14.60025 L18,17.00025 L15.5,17.00025 C15.295,17.00025 15.112,17.12425 15.036,17.31425 C14.96,17.50425 15.008,17.72225 15.157,17.86225 C15.292,17.99225 15.717,18.45225 15.45,18.95125 C15.379,19.08325 15.254,19.26025 15.06,19.35125 C14.568,19.58125 14.198,19.42625 14.019,19.31325 C13.731,19.12925 13.559,18.81725 13.559,18.47925 C13.559,18.22425 13.634,18.06325 13.844,17.86225 C13.993,17.72125 14.041,17.50425 13.965,17.31425 C13.889,17.12425 13.706,17.00025 13.5,17.00025 L10,17.00025 L10,9.50025 C10,9.30725 10.274,9.00025 10.5,9.00025 L18,9.00025 L18,10.79325 Z M18.5,8.00025 L10.5,8.00025 C9.744,8.00025 9,8.74325 9,9.50025 L9,17.50025 C9,17.77625 9.224,18.00025 9.5,18.00025 L12.619,18.00025 C12.579,18.15025 12.559,18.30925 12.559,18.47925 C12.559,19.16125 12.904,19.78825 13.482,20.15625 C13.81,20.36525 14.178,20.47025 14.555,20.47025 C14.864,20.47025 15.18,20.39925 15.485,20.25725 C15.835,20.09225 16.128,19.80425 16.333,19.42225 C16.57,18.97725 16.593,18.47325 16.422,18.00025 L18.5,18.00025 C18.777,18.00025 19,17.77625 19,17.50025 L19,13.72225 C19,13.51825 18.876,13.33425 18.687,13.25825 C18.498,13.18125 18.283,13.22825 18.14,13.37525 C17.705,13.82925 16.902,13.74225 16.571,13.22225 C16.46,13.04725 16.309,12.68225 16.537,12.19925 C16.614,12.03625 16.75,11.90225 16.917,11.82325 C17.368,11.61325 17.823,11.68525 18.14,12.01525 C18.281,12.16225 18.498,12.21025 18.687,12.13325 C18.876,12.05725 19,11.87325 19,11.66925 L19,8.50025 C19,8.22325 18.777,8.00025 18.5,8.00025 L18.5,8.00025 Z\" id=\"AWS-Application-Auto-Scaling_32_Squid\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_AWS-Application-Auto-Scaling_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/AWS-Application-Auto-Scaling_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.854,13.14625 C7.049,13.34125 7.049,13.65825 6.854,13.85325 L3.354,17.35325 L2.647,16.64625 L5.293,14.00025 L1.77635684e-15,14.00025 L1.77635684e-15,13.00025 L5.293,13.00025 L2.647,10.35325 L3.354,9.64625 L6.854,13.14625 Z M28,14.00025 L22.708,14.00025 L25.354,16.64625 L24.647,17.35325 L21.147,13.85325 C20.952,13.65825 20.952,13.34125 21.147,13.14625 L24.647,9.64625 L25.354,10.35325 L22.708,13.00025 L28,13.00025 L28,14.00025 Z M17.647,23.64625 L18.354,24.35325 L14.854,27.85325 C14.756,27.95125 14.628,28.00025 14.5,28.00025 C14.373,28.00025 14.245,27.95125 14.147,27.85325 L10.647,24.35325 L11.354,23.64625 L14,26.29225 L14,22.00025 L15,22.00025 L15,26.29225 L17.647,23.64625 Z M11.354,4.35325 L10.647,3.64625 L14.147,0.14625 C14.342,-0.04875 14.659,-0.04875 14.854,0.14625 L18.354,3.64625 L17.647,4.35325 L15,1.70725 L15,6.00025 L14,6.00025 L14,1.70725 L11.354,4.35325 Z M18,10.79325 C17.524,10.64925 16.991,10.68625 16.494,10.91725 C16.115,11.09525 15.809,11.39825 15.632,11.77225 C15.317,12.44025 15.351,13.16425 15.726,13.75625 C16.202,14.50725 17.169,14.85325 18,14.60025 L18,17.00025 L15.5,17.00025 C15.295,17.00025 15.112,17.12425 15.036,17.31425 C14.96,17.50425 15.008,17.72225 15.157,17.86225 C15.292,17.99225 15.717,18.45225 15.45,18.95125 C15.379,19.08325 15.254,19.26025 15.06,19.35125 C14.568,19.58125 14.198,19.42625 14.019,19.31325 C13.731,19.12925 13.559,18.81725 13.559,18.47925 C13.559,18.22425 13.634,18.06325 13.844,17.86225 C13.993,17.72125 14.041,17.50425 13.965,17.31425 C13.889,17.12425 13.706,17.00025 13.5,17.00025 L10,17.00025 L10,9.50025 C10,9.30725 10.274,9.00025 10.5,9.00025 L18,9.00025 L18,10.79325 Z M18.5,8.00025 L10.5,8.00025 C9.744,8.00025 9,8.74325 9,9.50025 L9,17.50025 C9,17.77625 9.224,18.00025 9.5,18.00025 L12.619,18.00025 C12.579,18.15025 12.559,18.30925 12.559,18.47925 C12.559,19.16125 12.904,19.78825 13.482,20.15625 C13.81,20.36525 14.178,20.47025 14.555,20.47025 C14.864,20.47025 15.18,20.39925 15.485,20.25725 C15.835,20.09225 16.128,19.80425 16.333,19.42225 C16.57,18.97725 16.593,18.47325 16.422,18.00025 L18.5,18.00025 C18.777,18.00025 19,17.77625 19,17.50025 L19,13.72225 C19,13.51825 18.876,13.33425 18.687,13.25825 C18.498,13.18125 18.283,13.22825 18.14,13.37525 C17.705,13.82925 16.902,13.74225 16.571,13.22225 C16.46,13.04725 16.309,12.68225 16.537,12.19925 C16.614,12.03625 16.75,11.90225 16.917,11.82325 C17.368,11.61325 17.823,11.68525 18.14,12.01525 C18.281,12.16225 18.498,12.21025 18.687,12.13325 C18.876,12.05725 19,11.87325 19,11.66925 L19,8.50025 C19,8.22325 18.777,8.00025 18.5,8.00025 L18.5,8.00025 Z\" id=\"AWS-Application-Auto-Scaling_32_Squid\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.0.25"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#E7157B",
+    "shape": "circle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e        \u003cg id=\"Icon-Architecture/32/Arch_AWS-Application-Auto-Scaling_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e        \u003cg id=\"Icon-Architecture-BG/32/Management-Governance\" fill=\"#E7157B\"\u003e            \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e        \u003c/g\u003e        \u003cg id=\"Icon-Service/32/AWS-Application-Auto-Scaling_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e            \u003cpath d=\"M6.854,13.14625 C7.049,13.34125 7.049,13.65825 6.854,13.85325 L3.354,17.35325 L2.647,16.64625 L5.293,14.00025 L1.77635684e-15,14.00025 L1.77635684e-15,13.00025 L5.293,13.00025 L2.647,10.35325 L3.354,9.64625 L6.854,13.14625 Z M28,14.00025 L22.708,14.00025 L25.354,16.64625 L24.647,17.35325 L21.147,13.85325 C20.952,13.65825 20.952,13.34125 21.147,13.14625 L24.647,9.64625 L25.354,10.35325 L22.708,13.00025 L28,13.00025 L28,14.00025 Z M17.647,23.64625 L18.354,24.35325 L14.854,27.85325 C14.756,27.95125 14.628,28.00025 14.5,28.00025 C14.373,28.00025 14.245,27.95125 14.147,27.85325 L10.647,24.35325 L11.354,23.64625 L14,26.29225 L14,22.00025 L15,22.00025 L15,26.29225 L17.647,23.64625 Z M11.354,4.35325 L10.647,3.64625 L14.147,0.14625 C14.342,-0.04875 14.659,-0.04875 14.854,0.14625 L18.354,3.64625 L17.647,4.35325 L15,1.70725 L15,6.00025 L14,6.00025 L14,1.70725 L11.354,4.35325 Z M18,10.79325 C17.524,10.64925 16.991,10.68625 16.494,10.91725 C16.115,11.09525 15.809,11.39825 15.632,11.77225 C15.317,12.44025 15.351,13.16425 15.726,13.75625 C16.202,14.50725 17.169,14.85325 18,14.60025 L18,17.00025 L15.5,17.00025 C15.295,17.00025 15.112,17.12425 15.036,17.31425 C14.96,17.50425 15.008,17.72225 15.157,17.86225 C15.292,17.99225 15.717,18.45225 15.45,18.95125 C15.379,19.08325 15.254,19.26025 15.06,19.35125 C14.568,19.58125 14.198,19.42625 14.019,19.31325 C13.731,19.12925 13.559,18.81725 13.559,18.47925 C13.559,18.22425 13.634,18.06325 13.844,17.86225 C13.993,17.72125 14.041,17.50425 13.965,17.31425 C13.889,17.12425 13.706,17.00025 13.5,17.00025 L10,17.00025 L10,9.50025 C10,9.30725 10.274,9.00025 10.5,9.00025 L18,9.00025 L18,10.79325 Z M18.5,8.00025 L10.5,8.00025 C9.744,8.00025 9,8.74325 9,9.50025 L9,17.50025 C9,17.77625 9.224,18.00025 9.5,18.00025 L12.619,18.00025 C12.579,18.15025 12.559,18.30925 12.559,18.47925 C12.559,19.16125 12.904,19.78825 13.482,20.15625 C13.81,20.36525 14.178,20.47025 14.555,20.47025 C14.864,20.47025 15.18,20.39925 15.485,20.25725 C15.835,20.09225 16.128,19.80425 16.333,19.42225 C16.57,18.97725 16.593,18.47325 16.422,18.00025 L18.5,18.00025 C18.777,18.00025 19,17.77625 19,17.50025 L19,13.72225 C19,13.51825 18.876,13.33425 18.687,13.25825 C18.498,13.18125 18.283,13.22825 18.14,13.37525 C17.705,13.82925 16.902,13.74225 16.571,13.22225 C16.46,13.04725 16.309,12.68225 16.537,12.19925 C16.614,12.03625 16.75,11.90225 16.917,11.82325 C17.368,11.61325 17.823,11.68525 18.14,12.01525 C18.281,12.16225 18.498,12.21025 18.687,12.13325 C18.876,12.05725 19,11.87325 19,11.66925 L19,8.50025 C19,8.22325 18.777,8.00025 18.5,8.00025 L18.5,8.00025 Z\" id=\"AWS-Application-Auto-Scaling_32_Squid\"\u003e\u003c/path\u003e        \u003c/g\u003e    \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\" width='40' height='40'\u003e  \u003cg id=\"Icon-Architecture/32/Arch_AWS-Application-Auto-Scaling_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e  \u003cg id=\"Icon-Service/32/AWS-Application-Auto-Scaling_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M6.854,13.14625 C7.049,13.34125 7.049,13.65825 6.854,13.85325 L3.354,17.35325 L2.647,16.64625 L5.293,14.00025 L1.77635684e-15,14.00025 L1.77635684e-15,13.00025 L5.293,13.00025 L2.647,10.35325 L3.354,9.64625 L6.854,13.14625 Z M28,14.00025 L22.708,14.00025 L25.354,16.64625 L24.647,17.35325 L21.147,13.85325 C20.952,13.65825 20.952,13.34125 21.147,13.14625 L24.647,9.64625 L25.354,10.35325 L22.708,13.00025 L28,13.00025 L28,14.00025 Z M17.647,23.64625 L18.354,24.35325 L14.854,27.85325 C14.756,27.95125 14.628,28.00025 14.5,28.00025 C14.373,28.00025 14.245,27.95125 14.147,27.85325 L10.647,24.35325 L11.354,23.64625 L14,26.29225 L14,22.00025 L15,22.00025 L15,26.29225 L17.647,23.64625 Z M11.354,4.35325 L10.647,3.64625 L14.147,0.14625 C14.342,-0.04875 14.659,-0.04875 14.854,0.14625 L18.354,3.64625 L17.647,4.35325 L15,1.70725 L15,6.00025 L14,6.00025 L14,1.70725 L11.354,4.35325 Z M18,10.79325 C17.524,10.64925 16.991,10.68625 16.494,10.91725 C16.115,11.09525 15.809,11.39825 15.632,11.77225 C15.317,12.44025 15.351,13.16425 15.726,13.75625 C16.202,14.50725 17.169,14.85325 18,14.60025 L18,17.00025 L15.5,17.00025 C15.295,17.00025 15.112,17.12425 15.036,17.31425 C14.96,17.50425 15.008,17.72225 15.157,17.86225 C15.292,17.99225 15.717,18.45225 15.45,18.95125 C15.379,19.08325 15.254,19.26025 15.06,19.35125 C14.568,19.58125 14.198,19.42625 14.019,19.31325 C13.731,19.12925 13.559,18.81725 13.559,18.47925 C13.559,18.22425 13.634,18.06325 13.844,17.86225 C13.993,17.72125 14.041,17.50425 13.965,17.31425 C13.889,17.12425 13.706,17.00025 13.5,17.00025 L10,17.00025 L10,9.50025 C10,9.30725 10.274,9.00025 10.5,9.00025 L18,9.00025 L18,10.79325 Z M18.5,8.00025 L10.5,8.00025 C9.744,8.00025 9,8.74325 9,9.50025 L9,17.50025 C9,17.77625 9.224,18.00025 9.5,18.00025 L12.619,18.00025 C12.579,18.15025 12.559,18.30925 12.559,18.47925 C12.559,19.16125 12.904,19.78825 13.482,20.15625 C13.81,20.36525 14.178,20.47025 14.555,20.47025 C14.864,20.47025 15.18,20.39925 15.485,20.25725 C15.835,20.09225 16.128,19.80425 16.333,19.42225 C16.57,18.97725 16.593,18.47325 16.422,18.00025 L18.5,18.00025 C18.777,18.00025 19,17.77625 19,17.50025 L19,13.72225 C19,13.51825 18.876,13.33425 18.687,13.25825 C18.498,13.18125 18.283,13.22825 18.14,13.37525 C17.705,13.82925 16.902,13.74225 16.571,13.22225 C16.46,13.04725 16.309,12.68225 16.537,12.19925 C16.614,12.03625 16.75,11.90225 16.917,11.82325 C17.368,11.61325 17.823,11.68525 18.14,12.01525 C18.281,12.16225 18.498,12.21025 18.687,12.13325 C18.876,12.05725 19,11.87325 19,11.66925 L19,8.50025 C19,8.22325 18.777,8.00025 18.5,8.00025 L18.5,8.00025 Z\" id=\"AWS-Application-Auto-Scaling_32_Squid\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/applicationautoscaling-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "services.k8s.aws/v1alpha1",
+    "kind": "FieldExport",
+    "schema": "{\n \"description\": \"FieldExport is the schema for the FieldExport API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FieldExportSpec defines the desired state of the FieldExport.\",\n   \"properties\": {\n    \"from\": {\n     \"description\": \"ResourceFieldSelector provides the values necessary to identify an individual\\nfield on an individual K8s resource.\",\n     \"properties\": {\n      \"path\": {\n       \"type\": \"string\"\n      },\n      \"resource\": {\n       \"description\": \"NamespacedResource provides all the values necessary to identify an ACK\\nresource of a given type (within the same namespace as the custom resource\\ncontaining this type).\",\n       \"properties\": {\n        \"group\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"group\",\n        \"kind\",\n        \"name\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\",\n      \"resource\"\n     ],\n     \"type\": \"object\"\n    },\n    \"to\": {\n     \"description\": \"FieldExportTarget provides the values necessary to identify the\\noutput path for a field export.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key overrides the default value (`\\u003cnamespace\\u003e.\\u003cFieldExport-resource-name\\u003e`) for the FieldExport target\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"FieldExportOutputType represents all types that can be produced by a field\\nexport operation\",\n       \"enum\": [\n        \"configmap\",\n        \"secret\"\n       ],\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace is marked as optional, so we cannot compose `NamespacedName`\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"from\",\n    \"to\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Field Export\",\n \"type\": \"object\"\n}"
+  }
+}

@@ -112,7 +112,7 @@ func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBu
 
 	if errorParsingToMeshkitError == nil {
 		rw.WriteHeader(http.StatusBadRequest)
-		rw.Write(body)
+		_, _ = rw.Write(body)
 		h.log.Error(&meshkitErr)
 		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 			"error": meshkitErr,
@@ -128,7 +128,6 @@ func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBu
 
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
-	return
 }
 
 // swagger:route POST /api/pattern PatternsAPI idPostPatternFile

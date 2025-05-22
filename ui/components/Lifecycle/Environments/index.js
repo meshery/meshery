@@ -8,12 +8,10 @@ import { Delete } from '@mui/icons-material';
 import { NoSsr } from '@layer5/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { updateProgress, useLegacySelector } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { RJSFModalWrapper } from '../../Modal';
 import _PromptComponent from '../../PromptComponent';
@@ -47,6 +45,8 @@ import {
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -54,9 +54,7 @@ const ACTION_TYPES = {
 };
 
 const Environments = () => {
-  const organization = useLegacySelector((state) =>
-    state.get('organization')?.toJS ? state.get('organization').toJS() : state.get('organization'),
-  );
+  const { organization } = useSelector((state) => state.ui);
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},

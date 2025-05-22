@@ -42,6 +42,14 @@ mesheryctl system check --preflight
 </div>
 </pre> 
 
+Run Pre-mesh deployment checks (Docker and Kubernetes)
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl system check --pre
+
+</div>
+</pre> 
+
 Run checks on specific mesh adapter
 <pre class='codeblock-pre'>
 <div class='codeblock'>
@@ -50,7 +58,6 @@ mesheryctl system check --adapter meshery-istio:10000
 </div>
 </pre> 
 
-or
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapter meshery-istio
