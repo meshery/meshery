@@ -24,7 +24,13 @@ import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
-import { ImportButton, SortBySelect, TableListHeader, VisibilitySelect } from './components';
+import {
+  ImportButton,
+  MultiContentSelectToolbar,
+  SortBySelect,
+  TableListHeader,
+  VisibilitySelect,
+} from './components';
 import {
   useAssignDesignToWorkspaceMutation,
   useAssignViewToWorkspaceMutation,
@@ -143,22 +149,7 @@ const WorkspaceContent = ({ workspace }) => {
   );
 
   const theme = useTheme();
-  const viewAssignment = useViewAssignment({
-    workspaceId: workspace?.id,
-    useGetViewsOfWorkspaceQuery,
-    useUnassignViewFromWorkspaceMutation,
-    useAssignViewToWorkspaceMutation,
-    isViewsVisible: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
-  });
 
-  const designAssignment = useDesignAssignment({
-    workspaceId: workspace?.id,
-    useAssignDesignToWorkspaceMutation,
-    useUnassignDesignFromWorkspaceMutation,
-    useGetDesignsOfWorkspaceQuery: useGetDesignsOfWorkspaceQuery,
-    isDesignsVisible: CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject),
-  });
-  const { multiSelectedContent } = useContext(WorkspaceModalContext);
   const [workspaceContentMoveModal, setWorkspaceContentMoveModal] = useState(false);
   const modalRef = useRef(null);
   const { handleDelete } = useContentDelete(modalRef);
@@ -258,62 +249,13 @@ const WorkspaceContent = ({ workspace }) => {
         </Grid>
 
         <>
-          {multiSelectedContent.length > 0 && (
-            <Box
-              width={'100%'}
-              sx={{ backgroundColor: theme.palette.background.default }}
-              height={'4rem'}
-              borderRadius={'0.5rem'}
-              display={'flex'}
-              justifyContent={'space-between'}
-              alignItems={'center'}
-              paddingInline={'1rem'}
-            >
-              <Typography>
-                {multiSelectedContent.length} {filters.type} selected
-              </Typography>
-              <Box style={{ display: 'flex', gap: '0.5rem' }}>
-                <Button
-                  variant="contained"
-                  startIcon={<MoveFileIcon style={iconMedium} />}
-                  onClick={() => setWorkspaceContentMoveModal(true)}
-                  disabled={!multiSelectedContent.length}
-                >
-                  Move
-                </Button>
-                <Button
-                  variant="contained"
-                  startIcon={<DownloadIcon style={iconMedium} fill={theme.palette.common.white} />}
-                  onClick={() =>
-                    filters.type === RESOURCE_TYPE.DESIGN
-                      ? handleDownloadModalOpen(multiSelectedContent)
-                      : handleViewDownload(multiSelectedContent)
-                  }
-                  disabled={!multiSelectedContent.length}
-                >
-                  Download
-                </Button>
-                <Button
-                  color="error"
-                  variant="contained"
-                  onClick={() => {
-                    handleDelete(
-                      multiSelectedContent,
-                      filters.type === RESOURCE_TYPE.DESIGN
-                        ? RESOURCE_TYPE.DESIGN
-                        : RESOURCE_TYPE.VIEW,
-                    );
-                  }}
-                  sx={{
-                    backgroundColor: `${theme.palette.error.dark} !important`,
-                  }}
-                  startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
-                >
-                  Delete
-                </Button>
-              </Box>
-            </Box>
-          )}
+          <MultiContentSelectToolbar
+            type={filters.type}
+            handleDelete={handleDelete}
+            handleDownload={handleDownloadModalOpen}
+            handleViewDownload={handleViewDownload}
+            handleContentMove={setWorkspaceContentMoveModal}
+          />
           <WorkspaceContentMoveModal
             workspaceContentMoveModal={workspaceContentMoveModal}
             setWorkspaceContentMoveModal={setWorkspaceContentMoveModal}
@@ -358,59 +300,6 @@ const WorkspaceContent = ({ workspace }) => {
           )}
         </>
       </Box>
-      <AssignmentModal
-        open={viewAssignment.assignModal}
-        onClose={viewAssignment.handleAssignModalClose}
-        title={`Assign Views to ${workspace?.name}`}
-        headerIcon={<EnvironmentIcon height="40" width="40" fill={'white'} />}
-        name="Views"
-        assignableData={viewAssignment.data}
-        handleAssignedData={viewAssignment.handleAssignData}
-        originalAssignedData={viewAssignment.workspaceData}
-        emptyStateIcon={<EnvironmentIcon height="5rem" width="5rem" fill={'#808080'} />}
-        handleAssignablePage={viewAssignment.handleAssignablePage}
-        handleAssignedPage={viewAssignment.handleAssignedPage}
-        originalLeftCount={viewAssignment.data?.length || 0}
-        originalRightCount={viewsData?.total_count || 0}
-        onAssign={viewAssignment.handleAssign}
-        disableTransfer={viewAssignment.disableTransferButton}
-        helpText={`Assign Views to ${workspace?.name}`}
-        isAssignAllowed={CAN(
-          keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-          keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-        )}
-        isRemoveAllowed={CAN(
-          keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
-          keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
-        )}
-      />
-      <AssignmentModal
-        open={designAssignment.assignModal}
-        onClose={designAssignment.handleAssignModalClose}
-        title={`Assign Designs to ${workspace?.name}`}
-        headerIcon={<DesignIcon height="40" width="40" />}
-        name="Designs"
-        assignableData={designAssignment.data}
-        handleAssignedData={designAssignment.handleAssignData}
-        originalAssignedData={designAssignment.workspaceData}
-        emptyStateIcon={<DesignIcon height="5rem" width="5rem" secondaryFill={'#808080'} />}
-        handleAssignablePage={designAssignment.handleAssignablePage}
-        handleAssignedPage={designAssignment.handleAssignedPage}
-        originalLeftCount={designAssignment.data?.length || 0}
-        originalRightCount={designAssignment.assignedItems?.length || 0}
-        onAssign={designAssignment.handleAssign}
-        disableTransfer={designAssignment.disableTransferButton}
-        helpText={`Assign Designs to ${workspace?.name}`}
-        isAssignAllowed={CAN(
-          keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-          keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-        )}
-        isRemoveAllowed={CAN(
-          keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
-          keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
-        )}
-        showViews={false}
-      />
       <PromptComponent ref={modalRef} />
       <ExportModal
         downloadModal={downloadModal}

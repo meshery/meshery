@@ -18,6 +18,8 @@ import {
   OutlinedInput,
   FormControlLabel,
   FormGroup,
+  DownloadIcon,
+  DeleteIcon,
 } from '@layer5/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
@@ -32,6 +34,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
+import { RESOURCE_TYPE } from '@/utils/Enum';
+import { iconMedium } from 'css/icons.styles';
+import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
@@ -349,7 +354,78 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
       }}
       startIcon={<SettingsIcon />}
     >
-      {type === 'design' ? 'Manage Designs' : 'Manage Views'}
+      {type === RESOURCE_TYPE.DESIGN ? 'Manage Designs' : 'Manage Views'}
     </Button>
+  );
+};
+
+export const MultiContentSelectToolbar = ({
+  type,
+  handleContentMove,
+  handleDownload,
+  handleViewDownload,
+  handleDelete,
+}) => {
+  const theme = useTheme();
+  const { multiSelectedContent } = useContext(WorkspaceModalContext);
+  return (
+    <>
+      {multiSelectedContent.length > 0 && (
+        <Box
+          width={'100%'}
+          sx={{ backgroundColor: theme.palette.background.default }}
+          height={'4rem'}
+          borderRadius={'0.5rem'}
+          display={'flex'}
+          justifyContent={'space-between'}
+          alignItems={'center'}
+          paddingInline={'1rem'}
+        >
+          <Typography>
+            {multiSelectedContent.length} {type} selected
+          </Typography>
+          <Box style={{ display: 'flex', gap: '0.5rem' }}>
+            {handleContentMove && (
+              <Button
+                variant="contained"
+                startIcon={<MoveFileIcon style={iconMedium} />}
+                onClick={() => handleContentMove(true)}
+                disabled={!multiSelectedContent.length}
+              >
+                Move
+              </Button>
+            )}
+            <Button
+              variant="contained"
+              startIcon={<DownloadIcon style={iconMedium} fill={theme.palette.common.white} />}
+              onClick={() =>
+                type === RESOURCE_TYPE.DESIGN
+                  ? handleDownload(multiSelectedContent)
+                  : handleViewDownload(multiSelectedContent)
+              }
+              disabled={!multiSelectedContent.length}
+            >
+              Download
+            </Button>
+            <Button
+              color="error"
+              variant="contained"
+              onClick={() => {
+                handleDelete(
+                  multiSelectedContent,
+                  type === RESOURCE_TYPE.DESIGN ? RESOURCE_TYPE.DESIGN : RESOURCE_TYPE.VIEW,
+                );
+              }}
+              sx={{
+                backgroundColor: `${theme.palette.error.dark} !important`,
+              }}
+              startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
+            >
+              Delete
+            </Button>
+          </Box>
+        </Box>
+      )}
+    </>
   );
 };

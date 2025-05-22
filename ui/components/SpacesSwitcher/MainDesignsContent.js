@@ -169,12 +169,7 @@ const MainDesignsContent = ({
       icon: <GetAppIcon style={{ fill: theme.palette.icon.default }} />,
       enabled: () => CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
     },
-    DELETE_DESIGN: {
-      id: 'delete',
-      title: 'Delete Design',
-      icon: <DeleteIcon fill={theme.palette.icon.default} />,
-      enabled: () => CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
-    },
+
     REMOVE_DESIGN: {
       id: 'move',
       title: 'Move Design',
@@ -196,6 +191,12 @@ const MainDesignsContent = ({
       icon: <InfoIcon fill={theme.palette.icon.default} />,
       enabled: () => true,
     },
+    DELETE_DESIGN: {
+      id: 'delete',
+      title: 'Delete Design',
+      icon: <DeleteIcon fill={theme.palette.icon.default} />,
+      enabled: () => CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+    },
   };
 
   const getMenuOptions = ({
@@ -211,10 +212,7 @@ const MainDesignsContent = ({
         ...DESIGN_ACTIONS.EXPORT_DESIGN,
         handler: () => handleDesignDownloadModal(design),
       },
-      {
-        ...DESIGN_ACTIONS.DELETE_DESIGN,
-        handler: () => handleDelete([design]),
-      },
+
       {
         ...DESIGN_ACTIONS.SHARE_DESIGN,
         handler: () => handleShare(design),
@@ -223,6 +221,10 @@ const MainDesignsContent = ({
       {
         ...DESIGN_ACTIONS.INFO_DESIGN,
         handler: () => handleInfoModal(design),
+      },
+      {
+        ...DESIGN_ACTIONS.DELETE_DESIGN,
+        handler: () => handleDelete([design]),
       },
     ];
 

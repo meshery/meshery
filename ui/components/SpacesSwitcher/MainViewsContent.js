@@ -108,13 +108,7 @@ const MainViewsContent = ({
       },
       enabled: () => true,
     },
-    DELETE_VIEW: {
-      id: 'DELETE_VIEW',
-      title: 'Delete View',
-      icon: <DeleteIcon fill={theme.palette.icon.default} />,
-      enabled: ({ view, userId }) =>
-        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
-    },
+
     MOVE_VIEW: {
       id: 'MOVE_VIEW',
       title: 'Move View',
@@ -135,6 +129,13 @@ const MainViewsContent = ({
       icon: <ShareIcon fill={theme.palette.icon.default} />,
       enabled: () => true,
     },
+    DELETE_VIEW: {
+      id: 'DELETE_VIEW',
+      title: 'Delete View',
+      icon: <DeleteIcon fill={theme.palette.icon.default} />,
+      enabled: ({ view, userId }) =>
+        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
+    },
   };
   const getMenuOptions = ({
     view,
@@ -149,10 +150,6 @@ const MainViewsContent = ({
         ...VIEW_ACTIONS.EXPORT_VIEW,
         handler: () => VIEW_ACTIONS.EXPORT_VIEW.handler({ view }),
       },
-      {
-        ...VIEW_ACTIONS.DELETE_VIEW,
-        handler: () => handleDelete([view], RESOURCE_TYPE.VIEW),
-      },
 
       {
         ...VIEW_ACTIONS.SHARE_VIEW,
@@ -161,6 +158,10 @@ const MainViewsContent = ({
       {
         ...VIEW_ACTIONS.VIEW_INFO,
         handler: () => handleOpenInfoModal(view, user),
+      },
+      {
+        ...VIEW_ACTIONS.DELETE_VIEW,
+        handler: () => handleDelete([view], RESOURCE_TYPE.VIEW),
       },
     ];
     if (workspace) {

@@ -1,11 +1,17 @@
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { Box, Grid, useTheme } from '@layer5/sistent';
-import React, { useCallback, useState } from 'react';
+import { Box, Grid, PromptComponent, useTheme } from '@layer5/sistent';
+import React, { useCallback, useRef, useState } from 'react';
 import { useFetchViewsQuery } from '@/rtk-query/view';
-import { VISIBILITY } from '@/utils/Enum';
+import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import MainViewsContent from './MainViewsContent';
 import { StyledSearchBar } from '@layer5/sistent';
-import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
+import {
+  MultiContentSelectToolbar,
+  SortBySelect,
+  TableListHeader,
+  VisibilitySelect,
+} from './components';
+import { useContentDelete, useContentDownload } from './hooks';
 
 const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
@@ -72,6 +78,9 @@ const MyViewsContent = () => {
   const hasMore = viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1);
   const total_count = viewsData?.total_count || 0;
   const theme = useTheme();
+  const modalRef = useRef(null);
+  const { handleDelete } = useContentDelete(modalRef);
+  const { handleViewDownload } = useContentDownload();
   return (
     <Box display={'flex'} flexDirection="column" gap="1rem">
       <Grid container spacing={2} alignItems="center" marginBottom="1rem">
@@ -102,8 +111,12 @@ const MyViewsContent = () => {
           />
         </Grid>
       </Grid>
-
-      <TableListHeader />
+      <MultiContentSelectToolbar
+        type={RESOURCE_TYPE.VIEW}
+        handleDelete={handleDelete}
+        handleViewDownload={handleViewDownload}
+      />
+      <TableListHeader isMultiSelectMode content={views} />
       <MainViewsContent
         key={'my-views'}
         page={filters.page}
@@ -114,7 +127,9 @@ const MyViewsContent = () => {
         views={views}
         total_count={total_count}
         refetch={() => setPage(0)}
+        isMultiSelectMode={true}
       />
+      <PromptComponent ref={modalRef} />
     </Box>
   );
 };
