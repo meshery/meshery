@@ -185,7 +185,7 @@ const WorkspaceContent = ({ workspace }) => {
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <Grid container spacing={2} alignItems="center">
           {/* Search Bar */}
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={5}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
@@ -242,7 +242,7 @@ const WorkspaceContent = ({ workspace }) => {
             />
           </Grid>
 
-          <Grid item xs={3} md={2}>
+          <Grid item xs={3} md={1}>
             {filters.type == RESOURCE_TYPE.DESIGN && (
               <ImportButton
                 workspaceId={workspace?.id}
@@ -321,7 +321,12 @@ const WorkspaceContent = ({ workspace }) => {
             type={filters.type}
           />
 
-          <TableListHeader content={designsData?.designs} isMultiSelectMode={true} />
+          <TableListHeader
+            content={
+              RESOURCE_TYPE.DESIGN === filters.type ? designsData?.designs : viewsData?.views
+            }
+            isMultiSelectMode={true}
+          />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent

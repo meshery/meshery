@@ -257,7 +257,7 @@ const MainDesignsContent = ({
               <React.Fragment key={`${design?.id}-${design?.name}`}>
                 <DesignViewListItem
                   activeUsers={activeUsers?.[design?.id]}
-                  type="design"
+                  type={RESOURCE_TYPE.DESIGN}
                   selectedItem={design}
                   handleItemClick={() => {
                     handleOpenDesignInDesigner(design?.id, design?.name);

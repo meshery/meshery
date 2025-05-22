@@ -30,7 +30,10 @@ const WorkspaceModalContextProvider = ({ children }) => {
           setSelectedWorkspace({ id: '', name: '' });
         },
         selectedWorkspace,
-        setSelectedWorkspace,
+        setSelectedWorkspace: ({ id, name }) => {
+          setMultiSelectedContent([]);
+          setSelectedWorkspace({ id, name });
+        },
         multiSelectedContent,
         setMultiSelectedContent,
       }}

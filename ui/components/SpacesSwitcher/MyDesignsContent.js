@@ -76,7 +76,7 @@ const MyDesignsContent = () => {
     <Box display={'flex'} flexDirection="column" gap="1rem">
       <Grid container spacing={2} alignItems="center" marginBottom="1rem">
         {/* Search Bar */}
-        <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={7}>
           <StyledSearchBar
             sx={{ backgroundColor: 'transparent' }}
             placeholder="Search Designs"
@@ -103,7 +103,7 @@ const MyDesignsContent = () => {
         </Grid>
 
         {/* Import Button */}
-        <Grid item xs={4} md={2}>
+        <Grid item xs={4} md={1}>
           <ImportButton />
         </Grid>
       </Grid>
