@@ -111,7 +111,15 @@ setup_cluster() {
     --namespace $MESHERY_K8S_NAMESPACE \
     --set image.tag=$DOCKER_IMAGE_TAG \
     --set image.pullPolicy=Never
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout=60s
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout=64s
+  echo ""
+
+  echo "Waiting for meshsync to be available"
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
+  echo ""
+
+  echo "Waiting for broker to be ready"
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready statefulset/meshery-broker --timeout=64s
   echo ""
 
   echo "Outputing cluster resources..."
