@@ -18,7 +18,7 @@ import {
 } from '@layer5/sistent';
 import React, { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetIconBasedOnMode } from './components';
+import { useGetIconBasedOnMode } from './hooks';
 
 const WorkspaceItem = styled('div')(({ theme, selected }) => ({
   padding: '12px 16px',
@@ -123,16 +123,16 @@ const WorkspaceContentMoveModal = ({
               {
                 if (RESOURCE_TYPE.DESIGN === type) {
                   multiSelectedContent.length > 0 &&
-                    multiSelectedContent.map((id) => {
+                    multiSelectedContent.map((design) => {
                       return assignDesignToWorkspace({
                         workspaceId: selectedWorkspaceForMove.id,
-                        designId: id,
+                        designId: design.id,
                       })
                         .unwrap()
                         .then(() => {
                           unAssignDesignFromWorkspace({
                             workspaceId: currentWorkspace.id,
-                            designId: id,
+                            designId: design.id,
                           });
                         })
                         .then(() => {
@@ -154,16 +154,16 @@ const WorkspaceContentMoveModal = ({
                   }
                 } else {
                   multiSelectedContent.length > 0 &&
-                    multiSelectedContent.map((id) => {
+                    multiSelectedContent.map((view) => {
                       return assignViewToWorkspace({
                         workspaceId: selectedWorkspaceForMove.id,
-                        viewId: id,
+                        viewId: view.id,
                       })
                         .unwrap()
                         .then(() => {
                           unAssignViewFromWorkspace({
                             workspaceId: currentWorkspace.id,
-                            viewId: id,
+                            viewId: view.id,
                           });
                         })
                         .then(() => {

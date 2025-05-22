@@ -22,6 +22,8 @@ const WorkspaceModalContextProvider = ({ children }) => {
         openModal: () => setWorkspaceModal(true),
         closeModal: () => {
           setWorkspaceModal(false);
+          setSelectedWorkspace({ id: '', name: '' });
+          setMultiSelectedContent([]);
         },
         openModalWithDefault: () => {
           setWorkspaceModal(true);

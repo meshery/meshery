@@ -4,19 +4,21 @@ import {
   AssignmentModal,
   Box,
   Button,
+  DeleteIcon,
   DesignIcon,
   EnvironmentIcon,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
+  PromptComponent,
   Select,
   Typography,
   useDesignAssignment,
   useTheme,
   useViewAssignment,
 } from '@layer5/sistent';
-import React, { useCallback, useContext, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
@@ -35,10 +37,11 @@ import {
   useUnassignDesignFromWorkspaceMutation,
   useUnassignViewFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
-import { getDefaultFilterType } from './hooks';
+import { getDefaultFilterType, useContentDelete } from './hooks';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
+import { iconMedium } from 'css/icons.styles';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
@@ -161,6 +164,8 @@ const WorkspaceContent = ({ workspace }) => {
   });
   const { multiSelectedContent } = useContext(WorkspaceModalContext);
   const [workspaceContentMoveModal, setWorkspaceContentMoveModal] = useState(false);
+  const modalRef = useRef(null);
+  const { handleDelete } = useContentDelete(modalRef);
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -276,14 +281,34 @@ const WorkspaceContent = ({ workspace }) => {
               <Typography>
                 {multiSelectedContent.length} {filters.type} selected
               </Typography>
-              <Button
-                variant="contained"
-                startIcon={<MoveFileIcon />}
-                onClick={() => setWorkspaceContentMoveModal(true)}
-                disabled={!multiSelectedContent.length}
-              >
-                Move
-              </Button>
+              <Box style={{ display: 'flex', gap: '0.5rem' }}>
+                <Button
+                  variant="contained"
+                  startIcon={<MoveFileIcon style={iconMedium} />}
+                  onClick={() => setWorkspaceContentMoveModal(true)}
+                  disabled={!multiSelectedContent.length}
+                >
+                  Move
+                </Button>{' '}
+                <Button
+                  color="error"
+                  variant="contained"
+                  onClick={() => {
+                    handleDelete(
+                      multiSelectedContent,
+                      filters.type === RESOURCE_TYPE.DESIGN
+                        ? RESOURCE_TYPE.DESIGN
+                        : RESOURCE_TYPE.VIEW,
+                    );
+                  }}
+                  sx={{
+                    backgroundColor: `${theme.palette.error.dark} !important`,
+                  }}
+                  startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
+                >
+                  Delete
+                </Button>
+              </Box>
             </Box>
           )}
           <WorkspaceContentMoveModal
@@ -292,6 +317,7 @@ const WorkspaceContent = ({ workspace }) => {
             currentWorkspace={workspace}
             type={filters.type}
           />
+
           <TableListHeader content={designsData?.designs} isMultiSelectMode={true} />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
@@ -377,6 +403,7 @@ const WorkspaceContent = ({ workspace }) => {
         )}
         showViews={false}
       />
+      <PromptComponent ref={modalRef} />
     </>
   );
 };
