@@ -8,12 +8,13 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/broker/nats"
+	"github.com/layer5io/meshkit/broker"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/controllers"
 	"github.com/layer5io/meshkit/utils"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	libmeshsync "github.com/n2h9/fork-meshery-meshsync/pkg/lib/meshsync"
 	"github.com/spf13/viper"
 )
 
@@ -89,36 +90,62 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
-		controllerHandlers := mch.ctxControllerHandlers
+		// controllerHandlers := mch.ctxControllerHandlers
 
-		// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
-		// do something if broker is being deployed , maybe try again after sometime
-		brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
-		if brokerEndpoint == "" {
-			if err != nil {
-				mch.log.Warn(err)
-			}
-			mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
-			return mch
-		}
-		brokerHandler, err := nats.New(nats.Options{
-			// URLS: []string{"localhost:4222"},
-			URLS:           []string{brokerEndpoint},
-			ConnectionName: MesheryServerBrokerConnection,
-			Username:       "",
-			Password:       "",
-			ReconnectWait:  2 * time.Second,
-			MaxReconnect:   60,
-		})
-		if err != nil {
-			mch.log.Warn(err)
-			mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
-			return mch
-		}
-		mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+		// // // brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
+		// // // do something if broker is being deployed , maybe try again after sometime
+		// // brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
+		// // if brokerEndpoint == "" {
+		// // 	if err != nil {
+		// // 		mch.log.Warn(err)
+		// // 	}
+		// // 	mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
+		// // 	return mch
+		// // }
+		// // brokerHandler, err := nats.New(nats.Options{
+		// // 	// URLS: []string{"localhost:4222"},
+		// // 	URLS:           []string{brokerEndpoint},
+		// // 	ConnectionName: MesheryServerBrokerConnection,
+		// // 	Username:       "",
+		// // 	Password:       "",
+		// // 	ReconnectWait:  2 * time.Second,
+		// // 	MaxReconnect:   60,
+		// // })
+		// // if err != nil {
+		// // 	mch.log.Warn(err)
+		// // 	mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
+		// // 	return mch
+		// // }
+		// // mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+
 		token, _ := ctx.Value(TokenCtxKey).(string)
-		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
-		err = msDataHandler.Run()
+
+		transport := make(chan *broker.Message, 1024)
+
+		go func() {
+			duration := 64 * time.Second
+			runOptions := make([]libmeshsync.OptionsSetter, 1)
+			runOptions = append(runOptions, libmeshsync.WithOutputMode("channel"))
+			runOptions = append(runOptions, libmeshsync.WithTransportChannel(transport))
+			runOptions = append(runOptions, libmeshsync.WithStopAfterDuration(duration))
+
+			err := libmeshsync.Run(
+				mch.log,
+				runOptions...,
+			)
+			if err != nil {
+				mch.log.Error(
+					fmt.Errorf("error running meshsync lib %v", err),
+				)
+			} else {
+				mch.log.Infof("meshkit run stops after %s", duration)
+			}
+		}()
+
+		// msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
+		msDataHandler := NewMeshsyncDataHandler(NewTmpMeshsyncBrokerHandler(transport), *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
+
+		err := msDataHandler.Run()
 		if err != nil {
 			mch.log.Warn(err)
 			mch.log.Info(fmt.Sprintf("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error()))
