@@ -185,7 +185,7 @@ const WorkspaceContent = ({ workspace }) => {
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <Grid container spacing={2} alignItems="center">
           {/* Search Bar */}
-          <Grid item xs={12} sm={12} md={6} lg={5}>
+          <Grid item xs={12} md={4}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
@@ -209,7 +209,7 @@ const WorkspaceContent = ({ workspace }) => {
           </Grid>
 
           {/* Type Select */}
-          <Grid item xs={6} sm={6} md={2} lg={1.5}>
+          <Grid item xs={3} md={2}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -229,12 +229,12 @@ const WorkspaceContent = ({ workspace }) => {
           </Grid>
 
           {/* Sort By */}
-          <Grid item xs={6} sm={6} md={2} lg={1.5}>
+          <Grid item xs={3} md={2}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
           </Grid>
 
           {/* Visibility Select */}
-          <Grid item xs={12} sm={6} md={2} lg={2}>
+          <Grid item xs={3} md={2}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
@@ -242,30 +242,7 @@ const WorkspaceContent = ({ workspace }) => {
             />
           </Grid>
 
-          {/* Assign Button */}
-          <Grid item xs={12} sm={6} md={3} lg={2}>
-            {/* <AssignDesignViewButton
-              type={filters.type}
-              handleAssign={(e) => {
-                e.stopPropagation();
-                if (filters.type === RESOURCE_TYPE.DESIGN) {
-                  designAssignment.handleAssignModal();
-                } else {
-                  viewAssignment.handleAssignModal();
-                }
-              }}
-              disabled={
-                filters.type === RESOURCE_TYPE.DESIGN
-                  ? !CAN(
-                      keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-                      keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-                    )
-                  : !CAN(
-                      keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-                      keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-                    )
-              }
-            /> */}
+          <Grid item xs={3} md={2}>
             {filters.type == RESOURCE_TYPE.DESIGN && (
               <ImportButton
                 workspaceId={workspace?.id}

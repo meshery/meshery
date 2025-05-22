@@ -298,7 +298,7 @@ export const ImportButton = ({ workspaceId, disabled = false }) => {
           handleImportModalClose();
           assignDesignToWorkspace({
             workspaceId: workspaceId,
-            designId: data.id,
+            designId: data[0].id,
           });
         }
       })
@@ -326,6 +326,7 @@ export const ImportButton = ({ workspaceId, disabled = false }) => {
         sx={{
           minWidth: 'fit-content',
           padding: '0.85rem',
+          width: '100%',
         }}
         startIcon={<FileUpload color={theme.palette.common.white} />}
       >
