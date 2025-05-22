@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/odpi/egeria-charts/releases/download/odpi-egeria-lab-4.3.0/odpi-egeria-lab-4.3.0.tgz"
   },
   "configuration": null,
   "component": {

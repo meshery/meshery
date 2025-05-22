@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/kiaedev/helm-charts/releases/download/kiae-0.1.6/kiae-0.1.6.tgz"
   },
   "configuration": null,
   "component": {

@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://charts.beezlabs.app/cloudflare-tunnel-operator/cloudflare-tunnel-operator-0.2.0.tgz"
   },
   "configuration": null,
   "component": {

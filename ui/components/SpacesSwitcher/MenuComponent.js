@@ -70,7 +70,7 @@ export const MenuComponent = ({ options = [] }) => {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }} onClick={handleClick}>
-        <CustomTooltip title="Single-click Actions">
+        <CustomTooltip title="Quick Actions">
           <MoreVert
             style={{
               cursor: 'pointer',

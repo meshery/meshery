@@ -17,7 +17,10 @@ package components
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
@@ -39,6 +42,32 @@ mesheryctl component search [query-text]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		return listComponents(cmd, fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, args[0]))
+		componentsResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, args[0]))
+
+		if err != nil {
+			return err
+		}
+
+		header := []string{"Model", "kind", "Version"}
+
+		rows, componentsCount := generateComponentDataToDisplay(componentsResponse)
+
+		count, _ := cmd.Flags().GetBool("count")
+
+		dataToDisplay := display.DisplayedData{
+			DataType:         "components",
+			Header:           header,
+			Rows:             rows,
+			Count:            componentsCount,
+			DisplayCountOnly: count,
+			IsPage:           cmd.Flags().Changed("page"),
+		}
+
+		err = display.List(dataToDisplay)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }

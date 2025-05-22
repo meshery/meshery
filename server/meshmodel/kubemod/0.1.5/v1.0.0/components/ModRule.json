@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/wiremind/wiremind-helm-charts/releases/download/kubemod-0.1.5/kubemod-0.1.5.tgz"
   },
   "configuration": null,
   "component": {

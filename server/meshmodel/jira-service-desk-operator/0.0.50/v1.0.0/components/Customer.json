@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://stakater.github.io/stakater-charts/jira-service-desk-operator-0.0.50.tgz"
   },
   "configuration": null,
   "component": {

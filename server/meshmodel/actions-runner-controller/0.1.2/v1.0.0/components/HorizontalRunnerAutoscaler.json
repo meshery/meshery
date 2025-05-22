@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/snowplow-devops/helm-charts/releases/download/github-actions-runners-0.1.2/github-actions-runners-0.1.2.tgz"
   },
   "configuration": null,
   "component": {

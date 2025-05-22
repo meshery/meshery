@@ -21,15 +21,12 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
@@ -53,17 +50,13 @@ mesheryctl component view [component-name]
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
+		outFormatFlag, _ := cmd.Flags().GetString("output-format")
 		componentDefinition := args[0]
 
-		url := fmt.Sprintf("%s/%s?search=%s&pagesize=all", baseUrl, componentApiPath, componentDefinition)
+		urlPath := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, componentDefinition)
 
-		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](url)
+		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](urlPath)
 		if err != nil {
 			return err
 		}
@@ -84,7 +77,6 @@ mesheryctl component view [component-name]
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
 		outFormatFlag = strings.ToLower(outFormatFlag)
-
 		if outFormatFlag != "json" && outFormatFlag != "yaml" {
 			return errors.New("output-format choice is invalid or not provided, use [json|yaml]")
 		}
