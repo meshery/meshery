@@ -138,8 +138,8 @@ export const K8sContextConnectionChip = K8sContextConnectionChip_;
 function K8sContextMenu({
   contexts = {},
   activeContexts = [],
-  setActiveContexts = () => { },
-  searchContexts = () => { },
+  setActiveContexts = () => {},
+  searchContexts = () => {},
 }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
@@ -263,7 +263,7 @@ function K8sContextMenu({
                 className="k8s-image"
                 src={
                   connectionMetadataState &&
-                    connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                     ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                     : '/static/img/kubernetes.svg'
                 }
@@ -432,7 +432,7 @@ const Header = ({
               <Grid
                 item
                 xs={12}
-                md="auto" 
+                md="auto"
                 container
                 justifyContent={isMdDown ? 'flex-start' : 'space-between'}
                 alignItems="center"
@@ -459,13 +459,7 @@ const Header = ({
                   <SpaceSwitcher />
                 </Grid>
               </Grid>
-              <Grid
-                item
-                xs={12}
-                md="auto"
-                container
-                justifyContent='flex-end'
-              >
+              <Grid item xs={12} md="auto" container justifyContent="flex-end">
                 <Box
                   component={UserContainer}
                   style={{
@@ -503,7 +497,9 @@ const Header = ({
                     >
                       <CanShow Key={keys.VIEW_SETTINGS}>
                         <IconButton onClick={() => Router.push('/settings')}>
-                          <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
+                          <SettingsIcon
+                            style={{ ...iconMedium, fill: theme.palette.common.white }}
+                          />
                         </IconButton>
                       </CanShow>
                     </SettingsWrapper>
