@@ -42,6 +42,7 @@ import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
 
 const MainDesignsContent = ({
   page,
@@ -51,14 +52,15 @@ const MainDesignsContent = ({
   designs,
   hasMore,
   total_count,
-  workspaceId,
+  workspace,
   refetch,
+  isMultiSelectMode,
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
-  const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
+  const [moveModal, setMoveModal] = useState(false);
   const { notify } = useNotification();
   const modalRef = useRef(true);
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -131,19 +133,9 @@ const MainDesignsContent = ({
     }
   };
 
-  const handleRemove = async (design, workspaceId) => {
-    unassignDesignFromWorkspace({
-      workspaceId,
-      designId: design?.id,
-    })
-      .unwrap()
-      .then(() => {
-        setPage(0);
-        notify({
-          message: 'Design removed from workspace',
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      });
+  const handleRemove = async (design) => {
+    setMoveModal(true);
+    setSelectedDesign(design);
   };
 
   const handleShare = async (design) => {
@@ -221,20 +213,17 @@ const MainDesignsContent = ({
       enabled: () => CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
     },
     DELETE_DESIGN: {
-      id: workspaceId ? 'move' : 'delete',
-      title: workspaceId ? 'Remove Design' : 'Delete Design',
-      icon: workspaceId ? (
-        <MoveFileIcon fill={theme.palette.icon.default} />
-      ) : (
-        <DeleteIcon fill={theme.palette.icon.default} />
-      ),
+      id: 'delete',
+      title: 'Delete Design',
+      icon: <DeleteIcon fill={theme.palette.icon.default} />,
+      enabled: () => CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+    },
+    REMOVE_DESIGN: {
+      id: 'move',
+      title: 'Move Design',
+      icon: <MoveFileIcon fill={theme.palette.icon.default} />,
       enabled: () =>
-        workspaceId
-          ? CAN(
-              keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
-              keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
-            )
-          : CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+        CAN(keys.REMOVE_DESIGNS_FROM_WORKSPACE.action, keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject),
     },
     SHARE_DESIGN: {
       id: 'share',
@@ -267,18 +256,25 @@ const MainDesignsContent = ({
       },
       {
         ...DESIGN_ACTIONS.DELETE_DESIGN,
-        handler: () => (workspaceId ? handleRemove(design, workspaceId) : handleDelete(design)),
+        handler: () => handleDelete(design),
       },
       {
         ...DESIGN_ACTIONS.SHARE_DESIGN,
         handler: () => handleShare(design),
       },
+
       {
         ...DESIGN_ACTIONS.INFO_DESIGN,
         handler: () => handleInfoModal(design),
       },
     ];
 
+    if (workspace) {
+      options.unshift({
+        ...DESIGN_ACTIONS.REMOVE_DESIGN,
+        handler: () => handleRemove(design),
+      });
+    }
     return options.filter((option) => option.enabled({ design }));
   };
   const isInitialFetch = isFetching && page === 0;
@@ -330,6 +326,7 @@ const MainDesignsContent = ({
                       })}
                     />
                   }
+                  isMultiSelectMode={isMultiSelectMode}
                 />
                 <Divider light />
               </React.Fragment>
@@ -386,6 +383,15 @@ const MainDesignsContent = ({
         </Modal>
       )}
       <PromptComponent ref={modalRef} />
+      {moveModal && (
+        <WorkspaceContentMoveModal
+          currentWorkspace={workspace}
+          setWorkspaceContentMoveModal={setMoveModal}
+          type={RESOURCE_TYPE.DESIGN}
+          workspaceContentMoveModal={moveModal}
+          selectedContent={selectedDesign}
+        />
+      )}
     </>
   );
 };

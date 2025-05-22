@@ -32,6 +32,7 @@ import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
 
 const MainViewsContent = ({
   page,
@@ -41,12 +42,14 @@ const MainViewsContent = ({
   views,
   hasMore,
   total_count,
-  workspaceId,
+  workspace,
   refetch,
+  isMultiSelectMode,
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setinfoModal] = useState(null);
+  const [moveModal, setMoveModal] = useState(false);
   const [unassignViewFromWorkspace] = useUnassignViewFromWorkspaceMutation();
 
   const [selectedView, setSetselectedView] = useState(null);
@@ -69,6 +72,10 @@ const MainViewsContent = ({
   const handleCloseInfoModal = () => {
     setSetselectedView(null);
     setinfoModal(false);
+  };
+  const handleMoveModal = (view) => {
+    setSetselectedView(view);
+    setMoveModal(true);
   };
 
   const modalRef = useRef(true);
@@ -94,20 +101,6 @@ const MainViewsContent = ({
           notify({ message: `Unable to delete "${name}" View`, event_type: EVENT_TYPES.ERROR });
         });
     }
-  };
-  const handleRemove = async (view, workspaceId) => {
-    unassignViewFromWorkspace({
-      workspaceId: workspaceId,
-      viewId: view.id,
-    })
-      .unwrap()
-      .then(() => {
-        setPage(0);
-        notify({
-          message: 'View removed from workspace',
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      });
   };
 
   const loadNextPage = useCallback(() => {
@@ -139,17 +132,18 @@ const MainViewsContent = ({
       enabled: () => true,
     },
     DELETE_VIEW: {
-      id: workspaceId ? 'MOVE_VIEW' : 'DELETE_VIEW',
-      title: workspaceId ? 'Move View' : 'Delete View',
-      icon: workspaceId ? (
-        <MoveFileIcon fill={theme.palette.icon.default} />
-      ) : (
-        <DeleteIcon fill={theme.palette.icon.default} />
-      ),
+      id: 'DELETE_VIEW',
+      title: 'Delete View',
+      icon: <DeleteIcon fill={theme.palette.icon.default} />,
       enabled: ({ view, userId }) =>
-        workspaceId
-          ? CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject)
-          : CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
+        CAN(keys.DELETE_VIEW.action, keys.DELETE_VIEW.subject) && view.user_id === userId,
+    },
+    MOVE_VIEW: {
+      id: 'MOVE_VIEW',
+      title: 'Move View',
+      icon: <MoveFileIcon fill={theme.palette.icon.default} />,
+      enabled: () =>
+        CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject),
     },
 
     VIEW_INFO: {
@@ -168,7 +162,7 @@ const MainViewsContent = ({
   const getMenuOptions = ({
     view,
     user,
-    handleRemove,
+    handleMoveModal,
     handleOpenInfoModal,
     handleOpenShareModal,
     handleOpenDeleteModal,
@@ -180,8 +174,7 @@ const MainViewsContent = ({
       },
       {
         ...VIEW_ACTIONS.DELETE_VIEW,
-        handler: () =>
-          workspaceId ? handleRemove(view, workspaceId) : handleOpenDeleteModal(view),
+        handler: () => handleOpenDeleteModal(view),
       },
 
       {
@@ -193,7 +186,12 @@ const MainViewsContent = ({
         handler: () => handleOpenInfoModal(view, user),
       },
     ];
-
+    if (workspace) {
+      options.unshift({
+        ...VIEW_ACTIONS.MOVE_VIEW,
+        handler: () => handleMoveModal(view),
+      });
+    }
     return options.filter((option) => option.enabled({ view, userId: user?.id }));
   };
   const isKanvasDesignerAvailable = useIsOperatorEnabled();
@@ -255,7 +253,7 @@ const MainViewsContent = ({
                       options={getMenuOptions({
                         view,
                         user: currentUser,
-                        handleRemove,
+                        handleMoveModal,
                         handleOpenInfoModal,
                         handleOpenShareModal,
                         handleOpenDeleteModal,
@@ -263,6 +261,7 @@ const MainViewsContent = ({
                     />
                   }
                   activeUsers={activeUsers?.[view?.id]}
+                  isMultiSelectMode={isMultiSelectMode}
                 />
                 <Divider light />
               </React.Fragment>
@@ -307,6 +306,15 @@ const MainViewsContent = ({
           view_id={selectedView?.id}
           view_name={selectedView?.name}
           metadata={selectedView?.metadata}
+        />
+      )}
+      {moveModal && (
+        <WorkspaceContentMoveModal
+          currentWorkspace={workspace}
+          selectedContent={selectedView}
+          setWorkspaceContentMoveModal={setMoveModal}
+          type={RESOURCE_TYPE.VIEW}
+          workspaceContentMoveModal={moveModal}
         />
       )}
       <PromptComponent ref={modalRef} />

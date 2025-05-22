@@ -3,6 +3,8 @@ import { keys } from '@/utils/permission_constants';
 import {
   AssignmentModal,
   Box,
+  Button,
+  DeleteIcon,
   DesignIcon,
   EnvironmentIcon,
   FormControl,
@@ -10,17 +12,19 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Typography,
   useDesignAssignment,
   useTheme,
   useViewAssignment,
 } from '@layer5/sistent';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import {
   AssignDesignViewButton,
+  ImportButton,
   SortBySelect,
   TableListHeader,
   VisibilitySelect,
@@ -34,6 +38,9 @@ import {
   useUnassignViewFromWorkspaceMutation,
 } from '@/rtk-query/workspace';
 import { getDefaultFilterType } from './hooks';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import MoveFileIcon from '@/assets/icons/MoveFileIcon';
+import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
@@ -154,6 +161,8 @@ const WorkspaceContent = ({ workspace }) => {
     useGetDesignsOfWorkspaceQuery: useGetDesignsOfWorkspaceQuery,
     isDesignsVisible: CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject),
   });
+  const { multiSelectedContent } = useContext(WorkspaceModalContext);
+  const [workspaceContentMoveModal, setWorkspaceContentMoveModal] = useState(false);
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -240,11 +249,52 @@ const WorkspaceContent = ({ workspace }) => {
                     )
               }
             />
+            {/* {filters.type == RESOURCE_TYPE.DESIGN && (
+              <ImportButton
+                workspaceId={workspace?.id}
+                disabled={
+                  !CAN(
+                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+                  )
+                }
+              />
+            )} */}
           </Grid>
         </Grid>
 
         <>
-          <TableListHeader />
+          {multiSelectedContent.length > 0 && (
+            <Box
+              width={'100%'}
+              sx={{ backgroundColor: theme.palette.background.default }}
+              height={'4rem'}
+              borderRadius={'0.5rem'}
+              display={'flex'}
+              justifyContent={'space-between'}
+              alignItems={'center'}
+              paddingInline={'1rem'}
+            >
+              <Typography>
+                {multiSelectedContent.length} {filters.type} selected
+              </Typography>
+              <Button
+                variant="contained"
+                startIcon={<MoveFileIcon />}
+                onClick={() => setWorkspaceContentMoveModal(true)}
+                disabled={!multiSelectedContent.length}
+              >
+                Move
+              </Button>
+            </Box>
+          )}
+          <WorkspaceContentMoveModal
+            workspaceContentMoveModal={workspaceContentMoveModal}
+            setWorkspaceContentMoveModal={setWorkspaceContentMoveModal}
+            currentWorkspace={workspace}
+            type={filters.type}
+          />
+          <TableListHeader content={designsData?.designs} isMultiSelectMode={true} />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
@@ -255,8 +305,9 @@ const WorkspaceContent = ({ workspace }) => {
               designs={designsData?.designs}
               hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
               total_count={designsData?.total_count}
-              workspaceId={workspace?.id}
+              workspace={workspace}
               refetch={() => setDesignsPage(0)}
+              isMultiSelectMode={true}
             />
           )}
           {filters.type == RESOURCE_TYPE.VIEW && (
@@ -268,8 +319,9 @@ const WorkspaceContent = ({ workspace }) => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
-              workspaceId={workspace?.id}
+              workspace={workspace}
               refetch={() => setViewsPage(0)}
+              isMultiSelectMode={true}
             />
           )}
         </>
