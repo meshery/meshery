@@ -6,9 +6,6 @@ import {
   VisibilityChipMenu,
   getRelativeTime,
   getFullFormattedTime,
-  DesignIcon,
-  ViewIcon,
-  useTheme,
   AvatarGroup,
   FormControlLabel,
   Checkbox,
@@ -36,7 +33,7 @@ import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { Grid } from '@layer5/sistent';
-import { getIconBasedOnMode } from './components';
+import { useGetIconBasedOnMode } from './components';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -51,9 +48,7 @@ const DesignViewListItem = ({
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
   });
-  const theme = useTheme();
   const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
-  console.log('amit multiSelectedContent', multiSelectedContent);
   return (
     <>
       <StyledListItem
@@ -102,7 +97,7 @@ const DesignViewListItem = ({
 
         <StyledTextContainer item xs={6} md={5} lg={5}>
           <StyledAvatarContainer>
-            <StyledListIcon>{getIconBasedOnMode({ mode: type })}</StyledListIcon>
+            <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
             <StyledListItemText
               primary={selectedItem.name || ''}
               primaryTypographyProps={{ fontSize: '0.9rem' }}

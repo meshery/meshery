@@ -24,7 +24,7 @@ import {
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
-import { CheckBox, FileUpload } from '@mui/icons-material';
+import { FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
@@ -357,7 +357,7 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
   );
 };
 
-export const getIconBasedOnMode = ({ mode, designStyles, viewStyles }) => {
+export const useGetIconBasedOnMode = ({ mode, designStyles, viewStyles }) => {
   const theme = useTheme();
   if (mode === RESOURCE_TYPE.DESIGN) {
     return <DesignIcon {...designStyles} />;

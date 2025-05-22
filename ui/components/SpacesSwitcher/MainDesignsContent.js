@@ -38,7 +38,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoIcon from '@mui/icons-material/Info';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
-import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';

@@ -4,7 +4,6 @@ import {
   AssignmentModal,
   Box,
   Button,
-  DeleteIcon,
   DesignIcon,
   EnvironmentIcon,
   FormControl,
@@ -24,7 +23,6 @@ import MainViewsContent from './MainViewsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import {
   AssignDesignViewButton,
-  ImportButton,
   SortBySelect,
   TableListHeader,
   VisibilitySelect,

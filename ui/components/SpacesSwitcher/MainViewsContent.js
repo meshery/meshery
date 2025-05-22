@@ -28,7 +28,6 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { Router } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { useUnassignViewFromWorkspaceMutation } from '@/rtk-query/workspace';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
@@ -50,7 +49,6 @@ const MainViewsContent = ({
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setinfoModal] = useState(null);
   const [moveModal, setMoveModal] = useState(false);
-  const [unassignViewFromWorkspace] = useUnassignViewFromWorkspaceMutation();
 
   const [selectedView, setSetselectedView] = useState(null);
   const [updateView] = useUpdateViewVisibilityMutation();

@@ -1,4 +1,3 @@
-import PatternIcon from '@/assets/icons/Pattern';
 import {
   useAssignDesignToWorkspaceMutation,
   useAssignViewToWorkspaceMutation,
@@ -10,20 +9,16 @@ import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProv
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import {
   CircularProgress,
-  DesignIcon,
   Modal,
   ModalBody,
   ModalFooter,
   PrimaryActionButtons,
-  Skeleton,
   styled,
   Typography,
-  ViewIcon,
 } from '@layer5/sistent';
-import { iconMedium } from 'css/icons.styles';
 import React, { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getIconBasedOnMode } from './components';
+import { useGetIconBasedOnMode } from './components';
 
 const WorkspaceItem = styled('div')(({ theme, selected }) => ({
   padding: '12px 16px',
@@ -90,7 +85,7 @@ const WorkspaceContentMoveModal = ({
   return (
     <Modal
       open={workspaceContentMoveModal}
-      headerIcon={getIconBasedOnMode({ mode: type })}
+      headerIcon={useGetIconBasedOnMode({ mode: type })}
       closeModal={() => {
         setWorkspaceContentMoveModal(false);
       }}
