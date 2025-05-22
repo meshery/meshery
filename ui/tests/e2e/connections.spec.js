@@ -29,7 +29,11 @@ const transitionTests = [
 ];
 
 test.describe.serial('Connection Management Tests', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page, provider}) => {
+    if(provider === 'Meshery') {
+      test.skip('Skipping test as provider is Meshery');
+      return;
+    }
     await page.goto('/');
     await page.getByRole('button', { name: 'Lifecycle' }).click();
     await page.getByTestId('connection-addCluster').waitFor();
@@ -148,23 +152,5 @@ test.describe.serial('Connection Management Tests', () => {
 
       await waitForSnackBar(page, 'Connection status updated');
     });
-  });
-});
-
-test.describe('Cleanup', () => {
-  test('Delete all test connections', async ({ page, provider }) => {
-    // todo -remove after test user data is cleaned up
-    if(provider === 'None') {
-      test.skip('Skipping test as provider is None');
-      return;
-    }
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Lifecycle' }).click();
-    await page.getByTestId('connection-addCluster').waitFor();
-
-    await page.locator('input[type="checkbox"][data-indeterminate="false"]').first().check();
-    await page.getByTestId('Button-delete-connections').click();
-    await page.getByText('Delete Connections').click();
-    await page.getByRole('button', { name: 'DELETE' }).click();
   });
 });
