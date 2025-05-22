@@ -16,11 +16,15 @@ import {
   useTheme,
   PersonIcon,
   OutlinedInput,
+  FormControlLabel,
+  FormGroup,
+  DesignIcon,
+  ViewIcon,
 } from '@layer5/sistent';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
-import { FileUpload } from '@mui/icons-material';
+import { CheckBox, FileUpload } from '@mui/icons-material';
 import { ImportDesignModal } from '../MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
@@ -28,6 +32,10 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { RESOURCE_TYPE } from '@/utils/Enum';
+import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
+import { iconMedium } from 'css/icons.styles';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
@@ -188,29 +196,43 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
   );
 };
 
-export const TableListHeader = () => {
+export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => {
+  const { setMultiSelectedContent, multiSelectedContent } = useContext(WorkspaceModalContext);
   return (
-    <Grid
-      container
-      width="100%"
-      paddingInline="1rem"
-      spacing={2}
-      alignItems="center"
-      wrap="nowrap"
-      marginTop={0}
-    >
+    <Grid container width="100%" paddingInline="1rem" spacing={2} alignItems="center" wrap="nowrap">
+      {isMultiSelectMode && (
+        <Grid item xs={0.6} md={0.5} lg={0.25} zeroMinWidth>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={
+                    multiSelectedContent.length != 0 &&
+                    multiSelectedContent.length === content.length
+                  }
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setMultiSelectedContent(content.map((item) => item.id));
+                    } else {
+                      setMultiSelectedContent([]);
+                    }
+                  }}
+                />
+              }
+            />
+          </FormGroup>
+        </Grid>
+      )}
       <Grid item xs={6} md={5} lg={5} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Name
         </Typography>
       </Grid>
-
       <Grid item xs={4} md={4} lg={4} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Author
         </Typography>
       </Grid>
-
       <Grid
         item
         md={2}
@@ -221,7 +243,6 @@ export const TableListHeader = () => {
           Visibility
         </Typography>
       </Grid>
-
       <Grid item xs={3} sm={2} md={1} lg={2} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Actions
@@ -231,11 +252,12 @@ export const TableListHeader = () => {
   );
 };
 
-export const ImportButton = () => {
+export const ImportButton = ({ workspaceId, disabled = false }) => {
   const [importModal, setImportModal] = useState(false);
   const handleImportModalOpen = () => {
     setImportModal(true);
   };
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
   const handleImportModalClose = () => {
     setImportModal(false);
   };
@@ -270,13 +292,19 @@ export const ImportButton = () => {
       importBody: requestBody,
     })
       .unwrap()
-      .then(() => {
+      .then((data) => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        // getPattern();
+        if (workspaceId) {
+          handleImportModalClose();
+          assignDesignToWorkspace({
+            workspaceId: workspaceId,
+            designId: data.id,
+          });
+        }
       })
       .catch(() => {
         updateProgress({ showProgress: false });
@@ -298,6 +326,7 @@ export const ImportButton = () => {
         color="primary"
         variant="contained"
         onClick={handleImportModalOpen}
+        disabled={disabled}
         sx={{
           minWidth: 'fit-content',
           padding: '0.85rem',
@@ -326,4 +355,13 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
       {type === 'design' ? 'Manage Designs' : 'Manage Views'}
     </Button>
   );
+};
+
+export const getIconBasedOnMode = ({ mode, designStyles, viewStyles }) => {
+  const theme = useTheme();
+  if (mode === RESOURCE_TYPE.DESIGN) {
+    return <DesignIcon {...designStyles} />;
+  } else if (mode == RESOURCE_TYPE.VIEW) {
+    return <ViewIcon {...viewStyles} fill={theme.palette.icon.brand} {...iconMedium} />;
+  }
 };
