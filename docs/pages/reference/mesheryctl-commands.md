@@ -569,9 +569,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-    {% assign subcommand6 = command7.subcommands.onboard %}
+    {% assign subcommand6 = command7.subcommands.deploy %}
       <tr>
-        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/design/onboard">{{ subcommand6.name }}</a></td>
+        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/design/deploy">{{ subcommand6.name }}</a></td>
         <td></td>
         <td>{{ subcommand6.description }}</td>
       </tr>
@@ -593,9 +593,9 @@ Installation, troubleshooting and debugging of Meshery and its adapters
           <td>{{ flag.description }}</td>
         </tr>
       {% endfor %}
-    {% assign subcommand7 = command7.subcommands.offboard %}
+    {% assign subcommand7 = command7.subcommands.undeploy %}
       <tr>
-        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/design/offboard">{{ subcommand7.name }}</a></td>
+        <td rowspan=2><a href="{{ site.baseurl }}/reference/mesheryctl/design/undeploy">{{ subcommand7.name }}</a></td>
         <td></td>
         <td>{{ subcommand7.description }}</td>
       </tr>

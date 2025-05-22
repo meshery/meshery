@@ -11,12 +11,12 @@ import (
 )
 
 func clearAllFlags() {
-	onboardCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+	deployCmd.Flags().VisitAll(func(flag *pflag.Flag) {
 		_ = flag.Value.Set("")
 	})
 }
 
-func TestOnboardCmd(t *testing.T) {
+func TestDeployCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -44,9 +44,9 @@ func TestOnboardCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Onboard Design",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			Name:             "Deploy Design",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -57,7 +57,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/Kubernetes%20Manifest",
-					Response:     "onboard.applicationSave.response.golden",
+					Response:     "deploy.applicationSave.response.golden",
 					ResponseCode: 200,
 				},
 				{
@@ -69,7 +69,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "onboard.designdeploy.response.golden",
+					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
@@ -77,9 +77,9 @@ func TestOnboardCmd(t *testing.T) {
 			ExpectError: false,
 		},
 		{
-			Name:             "Onboard design with --skip-save",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
-			ExpectedResponse: "onboard.output.golden",
+			Name:             "Deploy design with --skip-save",
+			Args:             []string{"deploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
+			ExpectedResponse: "deploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
@@ -96,7 +96,7 @@ func TestOnboardCmd(t *testing.T) {
 				{
 					Method:       "POST",
 					URL:          testContext.BaseURL + "/api/design/deploy",
-					Response:     "onboard.designdeploy.response.golden",
+					Response:     "deploy.designdeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},

@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestOffboardCmd(t *testing.T) {
+func TestUndeployCmd(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -37,9 +37,9 @@ func TestOffboardCmd(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Offboard Application",
-			Args:             []string{"offboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
-			ExpectedResponse: "offboard.output.golden",
+			Name:             "Undeploy Application",
+			Args:             []string{"undeploy", "-f", filepath.Join(fixturesDir, "sampleDesign.golden")},
+			ExpectedResponse: "undeploy.output.golden",
 			URLs: []utils.MockURL{
 				{
 					Method:       "POST",
@@ -50,7 +50,7 @@ func TestOffboardCmd(t *testing.T) {
 				{
 					Method:       "DELETE",
 					URL:          testContext.BaseURL + "/api/pattern/deploy",
-					Response:     "offboard.response.golden",
+					Response:     "undeploy.response.golden",
 					ResponseCode: 200,
 				},
 			},
