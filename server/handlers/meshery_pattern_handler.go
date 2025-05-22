@@ -200,6 +200,7 @@ func (h *Handler) handlePatternPOST(
 		"design": map[string]interface{}{
 			"name": requestPayload.DesignFile.Name,
 			"id":   requestPayload.DesignFile.Id.String(),
+			"version": requestPayload.DesignFile.Version,
 		},
 		"doclink": "https://docs.meshery.io/concepts/logical/designs",
 	}

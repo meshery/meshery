@@ -16,7 +16,7 @@ import { ChipWrapper } from '../connections/styles';
 
 const DesignFormatter = ({ value }) => {
   const theme = useTheme();
-  const { name, id } = value;
+  const { name, id, version } = value;
 
   return (
     <span>
@@ -35,7 +35,7 @@ const DesignFormatter = ({ value }) => {
           <LaunchIcon style={{ width: '1rem', height: '1rem' }} />
         </sup>
       </a>
-      {id && (
+      {version && (
         <span
           style={{
             fontSize: '0.75rem',
@@ -48,7 +48,7 @@ const DesignFormatter = ({ value }) => {
             height: '1.2rem',
           }}
         >
-          v: {id}
+          v: {version}
         </span>
       )}
     </span>
@@ -56,6 +56,16 @@ const DesignFormatter = ({ value }) => {
 };
 
 const ShortDescriptionFormatter = ({ value }) => {
+  const theme = useTheme();
+  return (
+    <SectionBody
+      body={value}
+      style={{ marginBlock: '0.5rem', color: theme.palette.text.default, fontWeight: 'normal' }}
+    />
+  );
+};
+
+const LongDescriptionFormatter = ({ value }) => {
   const theme = useTheme();
   return (
     <SectionBody
@@ -84,12 +94,7 @@ export const PropertyFormatters = {
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
-  Long_Description: (value) => (
-    <SectionBody
-      body={value}
-      style={{ marginBlock: '0.5rem', color: theme.palette.text.default, fontWeight: 'normal' }}
-    />
-  ),
+  Long_Description: (value) => <LongDescriptionFormatter value={value} />,
 };
 
 export const LinkFormatters = {
