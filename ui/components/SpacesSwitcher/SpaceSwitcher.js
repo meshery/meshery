@@ -22,7 +22,7 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-import _, { min, pad } from 'lodash';
+import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 import { useDispatch, useSelector } from 'react-redux';
 import { setOrganization, setKeys } from '@/store/slices/mesheryUi';
