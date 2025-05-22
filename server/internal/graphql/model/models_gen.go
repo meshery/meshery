@@ -3,6 +3,7 @@
 package model
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"strconv"
@@ -46,28 +47,28 @@ type ApplicationResult struct {
 }
 
 type CatalogFilter struct {
-	ID             string                 `json:"id"`
-	Name           string                 `json:"name"`
-	FilterFile     string                 `json:"filter_file"`
-	UserID         string                 `json:"user_id"`
-	Location       *Location              `json:"location"`
-	FilterResource string                 `json:"filter_resource"`
-	Visibility     string                 `json:"visibility"`
-	CatalogData    map[string]interface{} `json:"catalog_data,omitempty"`
-	CreatedAt      *string                `json:"created_at,omitempty"`
-	UpdatedAt      *string                `json:"updated_at,omitempty"`
+	ID             string         `json:"id"`
+	Name           string         `json:"name"`
+	FilterFile     string         `json:"filter_file"`
+	UserID         string         `json:"user_id"`
+	Location       *Location      `json:"location"`
+	FilterResource string         `json:"filter_resource"`
+	Visibility     string         `json:"visibility"`
+	CatalogData    map[string]any `json:"catalog_data,omitempty"`
+	CreatedAt      *string        `json:"created_at,omitempty"`
+	UpdatedAt      *string        `json:"updated_at,omitempty"`
 }
 
 type CatalogPattern struct {
-	ID          string                 `json:"id"`
-	Name        string                 `json:"name"`
-	UserID      string                 `json:"user_id"`
-	PatternFile string                 `json:"pattern_file"`
-	Location    *Location              `json:"location"`
-	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
-	CreatedAt   *string                `json:"created_at,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty"`
+	ID          string         `json:"id"`
+	Name        string         `json:"name"`
+	UserID      string         `json:"user_id"`
+	PatternFile string         `json:"pattern_file"`
+	Location    *Location      `json:"location"`
+	Visibility  string         `json:"visibility"`
+	CatalogData map[string]any `json:"catalog_data,omitempty"`
+	CreatedAt   *string        `json:"created_at,omitempty"`
+	UpdatedAt   *string        `json:"updated_at,omitempty"`
 }
 
 type CatalogSelector struct {
@@ -101,7 +102,7 @@ type Container struct {
 	Image                  string           `json:"image"`
 	Status                 *ContainerStatus `json:"status,omitempty"`
 	Ports                  []*ContainerPort `json:"ports,omitempty"`
-	Resources              interface{}      `json:"resources,omitempty"`
+	Resources              any              `json:"resources,omitempty"`
 }
 
 type ContainerPort struct {
@@ -111,15 +112,15 @@ type ContainerPort struct {
 }
 
 type ContainerStatus struct {
-	ContainerStatusName string      `json:"containerStatusName"`
-	Image               string      `json:"image"`
-	State               interface{} `json:"state,omitempty"`
-	LastState           interface{} `json:"lastState,omitempty"`
-	Ready               bool        `json:"ready"`
-	RestartCount        interface{} `json:"restartCount,omitempty"`
-	Started             bool        `json:"started"`
-	ImageID             interface{} `json:"imageID,omitempty"`
-	ContainerID         interface{} `json:"containerID,omitempty"`
+	ContainerStatusName string `json:"containerStatusName"`
+	Image               string `json:"image"`
+	State               any    `json:"state,omitempty"`
+	LastState           any    `json:"lastState,omitempty"`
+	Ready               bool   `json:"ready"`
+	RestartCount        any    `json:"restartCount,omitempty"`
+	Started             bool   `json:"started"`
+	ImageID             any    `json:"imageID,omitempty"`
+	ContainerID         any    `json:"containerID,omitempty"`
 }
 
 type ControlPlane struct {
@@ -146,20 +147,20 @@ type Error struct {
 }
 
 type Event struct {
-	ID          string                 `json:"id"`
-	UserID      string                 `json:"userID"`
-	ActedUpon   string                 `json:"actedUpon"`
-	OperationID string                 `json:"operationID"`
-	SystemID    string                 `json:"systemID"`
-	Severity    Severity               `json:"severity"`
-	Action      string                 `json:"action"`
-	Status      string                 `json:"status"`
-	Category    string                 `json:"category"`
-	Description string                 `json:"description"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty"`
-	CreatedAt   time.Time              `json:"createdAt"`
-	UpdatedAt   time.Time              `json:"updatedAt"`
-	DeletedAt   *time.Time             `json:"deletedAt,omitempty"`
+	ID          string         `json:"id"`
+	UserID      string         `json:"userID"`
+	ActedUpon   string         `json:"actedUpon"`
+	OperationID string         `json:"operationID"`
+	SystemID    string         `json:"systemID"`
+	Severity    Severity       `json:"severity"`
+	Action      string         `json:"action"`
+	Status      string         `json:"status"`
+	Category    string         `json:"category"`
+	Description string         `json:"description"`
+	Metadata    map[string]any `json:"metadata,omitempty"`
+	CreatedAt   time.Time      `json:"createdAt"`
+	UpdatedAt   time.Time      `json:"updatedAt"`
+	DeletedAt   *time.Time     `json:"deletedAt,omitempty"`
 }
 
 type FilterPage struct {
@@ -170,16 +171,16 @@ type FilterPage struct {
 }
 
 type FilterResult struct {
-	ID             string                 `json:"id"`
-	Name           string                 `json:"name"`
-	FilterFile     string                 `json:"filter_file"`
-	FilterResource string                 `json:"filter_resource"`
-	UserID         string                 `json:"user_id"`
-	Location       *Location              `json:"location"`
-	Visibility     string                 `json:"visibility"`
-	CatalogData    map[string]interface{} `json:"catalog_data,omitempty"`
-	CreatedAt      *string                `json:"created_at,omitempty"`
-	UpdatedAt      *string                `json:"updated_at,omitempty"`
+	ID             string         `json:"id"`
+	Name           string         `json:"name"`
+	FilterFile     string         `json:"filter_file"`
+	FilterResource string         `json:"filter_resource"`
+	UserID         string         `json:"user_id"`
+	Location       *Location      `json:"location"`
+	Visibility     string         `json:"visibility"`
+	CatalogData    map[string]any `json:"catalog_data,omitempty"`
+	CreatedAt      *string        `json:"created_at,omitempty"`
+	UpdatedAt      *string        `json:"updated_at,omitempty"`
 }
 
 type K8sContext struct {
@@ -234,9 +235,9 @@ type MeshModelSummarySelector struct {
 }
 
 type MeshSyncEvent struct {
-	Type         string      `json:"type"`
-	Object       interface{} `json:"object"`
-	ConnectionID string      `json:"connectionID"`
+	Type         string `json:"type"`
+	Object       any    `json:"object"`
+	ConnectionID string `json:"connectionID"`
 }
 
 type MesheryControllersStatusListItem struct {
@@ -247,18 +248,18 @@ type MesheryControllersStatusListItem struct {
 }
 
 type MesheryResult struct {
-	MesheryID          *string                `json:"meshery_id,omitempty"`
-	Name               *string                `json:"name,omitempty"`
-	Mesh               *string                `json:"mesh,omitempty"`
-	PerformanceProfile *string                `json:"performance_profile,omitempty"`
-	TestID             *string                `json:"test_id,omitempty"`
-	RunnerResults      map[string]interface{} `json:"runner_results,omitempty"`
-	ServerMetrics      *string                `json:"server_metrics,omitempty"`
-	ServerBoardConfig  *string                `json:"server_board_config,omitempty"`
-	TestStartTime      *string                `json:"test_start_time,omitempty"`
-	UserID             *string                `json:"user_id,omitempty"`
-	UpdatedAt          *string                `json:"updated_at,omitempty"`
-	CreatedAt          *string                `json:"created_at,omitempty"`
+	MesheryID          *string        `json:"meshery_id,omitempty"`
+	Name               *string        `json:"name,omitempty"`
+	Mesh               *string        `json:"mesh,omitempty"`
+	PerformanceProfile *string        `json:"performance_profile,omitempty"`
+	TestID             *string        `json:"test_id,omitempty"`
+	RunnerResults      map[string]any `json:"runner_results,omitempty"`
+	ServerMetrics      *string        `json:"server_metrics,omitempty"`
+	ServerBoardConfig  *string        `json:"server_board_config,omitempty"`
+	TestStartTime      *string        `json:"test_start_time,omitempty"`
+	UserID             *string        `json:"user_id,omitempty"`
+	UpdatedAt          *string        `json:"updated_at,omitempty"`
+	CreatedAt          *string        `json:"created_at,omitempty"`
 }
 
 type Mutation struct {
@@ -307,18 +308,18 @@ type PatternPageResult struct {
 }
 
 type PatternResult struct {
-	ID          string                 `json:"id"`
-	Name        string                 `json:"name"`
-	UserID      string                 `json:"user_id"`
-	Location    *Location              `json:"location"`
-	PatternFile string                 `json:"pattern_file"`
-	Visibility  string                 `json:"visibility"`
-	CatalogData map[string]interface{} `json:"catalog_data,omitempty"`
-	CanSupport  bool                   `json:"canSupport"`
-	Errmsg      *string                `json:"errmsg,omitempty"`
-	CreatedAt   *string                `json:"created_at,omitempty"`
-	UpdatedAt   *string                `json:"updated_at,omitempty"`
-	Type        *NullString            `json:"type,omitempty"`
+	ID          string         `json:"id"`
+	Name        string         `json:"name"`
+	UserID      string         `json:"user_id"`
+	Location    *Location      `json:"location"`
+	PatternFile string         `json:"pattern_file"`
+	Visibility  string         `json:"visibility"`
+	CatalogData map[string]any `json:"catalog_data,omitempty"`
+	CanSupport  bool           `json:"canSupport"`
+	Errmsg      *string        `json:"errmsg,omitempty"`
+	CreatedAt   *string        `json:"created_at,omitempty"`
+	UpdatedAt   *string        `json:"updated_at,omitempty"`
+	Type        *NullString    `json:"type,omitempty"`
 }
 
 type PerfPageProfiles struct {
@@ -336,24 +337,24 @@ type PerfPageResult struct {
 }
 
 type PerfProfile struct {
-	ConcurrentRequest int                    `json:"concurrent_request"`
-	CreatedAt         *string                `json:"created_at,omitempty"`
-	Duration          string                 `json:"duration"`
-	Endpoints         []*string              `json:"endpoints,omitempty"`
-	ID                string                 `json:"id"`
-	LastRun           *string                `json:"last_run,omitempty"`
-	LoadGenerators    []*string              `json:"load_generators,omitempty"`
-	Name              *string                `json:"name,omitempty"`
-	QPS               *int                   `json:"qps,omitempty"`
-	TotalResults      *int                   `json:"total_results,omitempty"`
-	UpdatedAt         *string                `json:"updated_at,omitempty"`
-	UserID            string                 `json:"user_id"`
-	RequestHeaders    *string                `json:"request_headers,omitempty"`
-	RequestCookies    *string                `json:"request_cookies,omitempty"`
-	RequestBody       *string                `json:"request_body,omitempty"`
-	ContentType       *string                `json:"content_type,omitempty"`
-	ServiceMesh       *string                `json:"service_mesh,omitempty"`
-	Metadata          map[string]interface{} `json:"metadata,omitempty"`
+	ConcurrentRequest int            `json:"concurrent_request"`
+	CreatedAt         *string        `json:"created_at,omitempty"`
+	Duration          string         `json:"duration"`
+	Endpoints         []*string      `json:"endpoints,omitempty"`
+	ID                string         `json:"id"`
+	LastRun           *string        `json:"last_run,omitempty"`
+	LoadGenerators    []*string      `json:"load_generators,omitempty"`
+	Name              *string        `json:"name,omitempty"`
+	QPS               *int           `json:"qps,omitempty"`
+	TotalResults      *int           `json:"total_results,omitempty"`
+	UpdatedAt         *string        `json:"updated_at,omitempty"`
+	UserID            string         `json:"user_id"`
+	RequestHeaders    *string        `json:"request_headers,omitempty"`
+	RequestCookies    *string        `json:"request_cookies,omitempty"`
+	RequestBody       *string        `json:"request_body,omitempty"`
+	ContentType       *string        `json:"content_type,omitempty"`
+	ServiceMesh       *string        `json:"service_mesh,omitempty"`
+	Metadata          map[string]any `json:"metadata,omitempty"`
 }
 
 type Query struct {
@@ -410,7 +411,7 @@ func (e MeshSyncEventType) String() string {
 	return string(e)
 }
 
-func (e *MeshSyncEventType) UnmarshalGQL(v interface{}) error {
+func (e *MeshSyncEventType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -425,6 +426,20 @@ func (e *MeshSyncEventType) UnmarshalGQL(v interface{}) error {
 
 func (e MeshSyncEventType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *MeshSyncEventType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e MeshSyncEventType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type MeshType string
@@ -477,7 +492,7 @@ func (e MeshType) String() string {
 	return string(e)
 }
 
-func (e *MeshType) UnmarshalGQL(v interface{}) error {
+func (e *MeshType) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -492,6 +507,20 @@ func (e *MeshType) UnmarshalGQL(v interface{}) error {
 
 func (e MeshType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *MeshType) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e MeshType) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type MesheryController string
@@ -520,7 +549,7 @@ func (e MesheryController) String() string {
 	return string(e)
 }
 
-func (e *MesheryController) UnmarshalGQL(v interface{}) error {
+func (e *MesheryController) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -535,6 +564,20 @@ func (e *MesheryController) UnmarshalGQL(v interface{}) error {
 
 func (e MesheryController) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *MesheryController) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e MesheryController) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type MesheryControllerStatus string
@@ -573,7 +616,7 @@ func (e MesheryControllerStatus) String() string {
 	return string(e)
 }
 
-func (e *MesheryControllerStatus) UnmarshalGQL(v interface{}) error {
+func (e *MesheryControllerStatus) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -588,6 +631,20 @@ func (e *MesheryControllerStatus) UnmarshalGQL(v interface{}) error {
 
 func (e MesheryControllerStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *MesheryControllerStatus) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e MesheryControllerStatus) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type Severity string
@@ -624,7 +681,7 @@ func (e Severity) String() string {
 	return string(e)
 }
 
-func (e *Severity) UnmarshalGQL(v interface{}) error {
+func (e *Severity) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -639,6 +696,20 @@ func (e *Severity) UnmarshalGQL(v interface{}) error {
 
 func (e Severity) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Severity) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Severity) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
 
 type Status string
@@ -671,7 +742,7 @@ func (e Status) String() string {
 	return string(e)
 }
 
-func (e *Status) UnmarshalGQL(v interface{}) error {
+func (e *Status) UnmarshalGQL(v any) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
@@ -686,4 +757,18 @@ func (e *Status) UnmarshalGQL(v interface{}) error {
 
 func (e Status) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+func (e *Status) UnmarshalJSON(b []byte) error {
+	s, err := strconv.Unquote(string(b))
+	if err != nil {
+		return err
+	}
+	return e.UnmarshalGQL(s)
+}
+
+func (e Status) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	e.MarshalGQL(&buf)
+	return buf.Bytes(), nil
 }
