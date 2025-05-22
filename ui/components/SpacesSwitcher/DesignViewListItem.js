@@ -10,6 +10,9 @@ import {
   ViewIcon,
   useTheme,
   AvatarGroup,
+  FormControlLabel,
+  Checkbox,
+  FormGroup,
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
@@ -27,10 +30,13 @@ import {
   StyledUserInfoContainer,
   StyledVisibilityContainer,
 } from './styles';
-import React from 'react';
+import React, { useContext } from 'react';
 import { iconMedium } from 'css/icons.styles';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { Grid } from '@layer5/sistent';
+import { getIconBasedOnMode } from './components';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -40,12 +46,14 @@ const DesignViewListItem = ({
   canChangeVisibility,
   type = RESOURCE_TYPE.DESIGN,
   activeUsers = [],
+  isMultiSelectMode = false,
 }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
   });
   const theme = useTheme();
-
+  const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
+  console.log('amit multiSelectedContent', multiSelectedContent);
   return (
     <>
       <StyledListItem
@@ -67,15 +75,34 @@ const DesignViewListItem = ({
           }
         }}
       >
+        {isMultiSelectMode && (
+          <Grid item xs={0.6} md={0.5} lg={0.25} zeroMinWidth>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={multiSelectedContent.some((item) => item === selectedItem.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      if (e.target.checked) {
+                        setMultiSelectedContent((prev) => [...prev, selectedItem.id]);
+                      } else {
+                        setMultiSelectedContent((prev) =>
+                          prev.filter((item) => item !== selectedItem.id),
+                        );
+                      }
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                }
+              />
+            </FormGroup>
+          </Grid>
+        )}
+
         <StyledTextContainer item xs={6} md={5} lg={5}>
           <StyledAvatarContainer>
-            <StyledListIcon>
-              {type === RESOURCE_TYPE.DESIGN ? (
-                <DesignIcon />
-              ) : (
-                <ViewIcon {...iconMedium} fill={theme.palette.icon.brand} />
-              )}
-            </StyledListIcon>
+            <StyledListIcon>{getIconBasedOnMode({ mode: type })}</StyledListIcon>
             <StyledListItemText
               primary={selectedItem.name || ''}
               primaryTypographyProps={{ fontSize: '0.9rem' }}
@@ -91,11 +118,9 @@ const DesignViewListItem = ({
             />
           </StyledAvatarContainer>
         </StyledTextContainer>
-
         <StyledUserInfoContainer item xs={4} md={4} lg={4}>
           {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
         </StyledUserInfoContainer>
-
         <StyledVisibilityContainer
           item
           md={2}
@@ -112,7 +137,6 @@ const DesignViewListItem = ({
             ]}
           />
         </StyledVisibilityContainer>
-
         <StyledActionsContainer item xs={1} md={1} lg={2} zeroMinWidth>
           {MenuComponent}
         </StyledActionsContainer>
