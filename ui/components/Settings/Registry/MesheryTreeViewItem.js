@@ -1,5 +1,5 @@
 import React from 'react';
-import { MODELS } from '../../constants/navigator';
+import { MODELS } from '../../../constants/navigator';
 import StyledTreeItem from './StyledTreeItem';
 
 import { StyledTreeItemDiv, StyledTreeItemNameDiv } from './MeshModel.style';

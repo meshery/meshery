@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import {
   MeshModelToolbar,
   MainContainer,
@@ -22,7 +22,7 @@ import {
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
 import { Button, NoSsr } from '@layer5/sistent';
-import { iconSmall } from '../../css/icons.styles';
+import { iconSmall } from 'css/icons.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
