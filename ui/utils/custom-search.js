@@ -50,7 +50,14 @@ const SearchTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' }) => {
+const SearchBar = ({
+  onSearch,
+  placeholder,
+  expanded,
+  setExpanded,
+  value = '',
+  setModelsFilters,
+}) => {
   const [searchText, setSearchText] = useState(value);
   const searchRef = useRef(null);
 
@@ -62,6 +69,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
   };
 
   const handleClearIconClick = () => {
+    setModelsFilters({ page: 0 });
     setSearchText('');
     debouncedOnSearch('');
     setExpanded(false);
