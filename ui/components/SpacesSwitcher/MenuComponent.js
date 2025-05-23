@@ -49,6 +49,7 @@ export const MenuComponent = ({ options = [] }) => {
         {options.map((option) => (
           <CustomTooltip key={option.title} title={option.title}>
             <IconButton
+              disabled={option.disabled}
               style={{ cursor: 'pointer' }}
               onClick={(event) => {
                 event.stopPropagation();
@@ -108,6 +109,7 @@ export const MenuComponent = ({ options = [] }) => {
             <StyledMenuDiv>
               <CustomTooltip key={option.title} title={option.title}>
                 <StyledMenuItem
+                  disabled={option.disabled}
                   key={option.title}
                   onClick={(event) => {
                     event.stopPropagation();

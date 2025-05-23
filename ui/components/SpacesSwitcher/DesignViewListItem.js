@@ -6,10 +6,10 @@ import {
   VisibilityChipMenu,
   getRelativeTime,
   getFullFormattedTime,
-  DesignIcon,
-  ViewIcon,
-  useTheme,
   AvatarGroup,
+  FormControlLabel,
+  Checkbox,
+  FormGroup,
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
@@ -27,10 +27,13 @@ import {
   StyledUserInfoContainer,
   StyledVisibilityContainer,
 } from './styles';
-import React from 'react';
+import React, { useContext } from 'react';
 import { iconMedium } from 'css/icons.styles';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { Grid } from '@layer5/sistent';
+import { useGetIconBasedOnMode } from './hooks';
 
 const DesignViewListItem = ({
   selectedItem,
@@ -40,12 +43,12 @@ const DesignViewListItem = ({
   canChangeVisibility,
   type = RESOURCE_TYPE.DESIGN,
   activeUsers = [],
+  isMultiSelectMode = false,
 }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
   });
-  const theme = useTheme();
-
+  const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <>
       <StyledListItem
@@ -67,15 +70,34 @@ const DesignViewListItem = ({
           }
         }}
       >
+        {isMultiSelectMode && (
+          <Grid item xs={0.3} md={0.25} zeroMinWidth>
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={multiSelectedContent.some((item) => item.id === selectedItem.id)}
+                    onChange={(e) => {
+                      e.stopPropagation();
+                      if (e.target.checked) {
+                        setMultiSelectedContent((prev) => [...prev, selectedItem]);
+                      } else {
+                        setMultiSelectedContent((prev) =>
+                          prev.filter((item) => item.id !== selectedItem.id),
+                        );
+                      }
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                }
+              />
+            </FormGroup>
+          </Grid>
+        )}
+
         <StyledTextContainer item xs={6} md={5} lg={5}>
           <StyledAvatarContainer>
-            <StyledListIcon>
-              {type === RESOURCE_TYPE.DESIGN ? (
-                <DesignIcon />
-              ) : (
-                <ViewIcon {...iconMedium} fill={theme.palette.icon.brand} />
-              )}
-            </StyledListIcon>
+            <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
             <StyledListItemText
               primary={selectedItem.name || ''}
               primaryTypographyProps={{ fontSize: '0.9rem' }}
@@ -91,11 +113,9 @@ const DesignViewListItem = ({
             />
           </StyledAvatarContainer>
         </StyledTextContainer>
-
         <StyledUserInfoContainer item xs={4} md={4} lg={4}>
           {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
         </StyledUserInfoContainer>
-
         <StyledVisibilityContainer
           item
           md={2}
@@ -112,7 +132,6 @@ const DesignViewListItem = ({
             ]}
           />
         </StyledVisibilityContainer>
-
         <StyledActionsContainer item xs={1} md={1} lg={2} zeroMinWidth>
           {MenuComponent}
         </StyledActionsContainer>
@@ -156,10 +175,15 @@ const DesignViewListItem = ({
 
 export default DesignViewListItem;
 
-export const DesignViewListItemSkeleton = () => {
+export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
   return (
     <>
       <StyledListItem>
+        {isMultiSelectMode && (
+          <Grid item xs={0.3} md={0.25} zeroMinWidth>
+            <Skeleton variant="rectangular" animation="wave" {...iconMedium} />
+          </Grid>
+        )}
         <StyledTextContainer item xs={6} md={5} lg={5}>
           <StyledAvatarContainer>
             <Skeleton variant="circular" animation="wave" width={24} height={24} />
