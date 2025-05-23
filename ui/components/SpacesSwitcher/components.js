@@ -40,7 +40,7 @@ import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import { iconMedium } from 'css/icons.styles';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
-import { StyledResponsiveButton } from './styles';
+import { StyledMuiDoubleCheckbox, StyledResponsiveButton } from './styles';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
@@ -210,7 +210,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           <FormGroup>
             <FormControlLabel
               control={
-                <Checkbox
+                <StyledMuiDoubleCheckbox
                   checked={
                     multiSelectedContent.length != 0 &&
                     multiSelectedContent.length === content.length

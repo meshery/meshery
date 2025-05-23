@@ -10,6 +10,7 @@ import {
   Avatar,
   Grid,
   Button,
+  Checkbox,
 } from '@layer5/sistent';
 
 const DRAWER_WIDTH = 300;
@@ -207,5 +208,16 @@ export const StyledResponsiveButton = styled(Button)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     minWidth: '40px',
     padding: '8px',
+  },
+}));
+
+export const StyledMuiDoubleCheckbox = styled(Checkbox)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  '&.Mui-checked': {
+    color: theme.palette.text.secondary,
+  },
+  '& .MuiSvgIcon-root': {
+    width: '1.25rem',
+    height: '1.25rem',
   },
 }));
