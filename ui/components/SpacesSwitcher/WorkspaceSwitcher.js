@@ -1,10 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { FormControl, FormControlLabel, FormGroup, Grid, styled, MenuItem } from '@layer5/sistent';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
 import { StyledSelect } from './SpaceSwitcher';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
-import { iconMedium } from 'css/icons.styles';
 import WorkspaceModal from './WorkspaceModal';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
@@ -14,22 +12,6 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
   justifyContent: 'space-between',
   alignItems: 'center',
   gap: '1rem',
-  '& .setting-icon': {
-    visibility: 'hidden',
-    display: 'flex',
-  },
-  '&:hover .setting-icon': {
-    visibility: 'visible',
-  },
-}));
-
-const SettingsIconWrapper = styled('div')(({ theme }) => ({
-  '& svg': {
-    color: theme.palette.icon.secondary,
-  },
-  '& svg:hover': {
-    fill: theme.palette.icon.secondary + ' !important',
-  },
 }));
 
 function WorkspaceSwitcher({ open }) {
@@ -119,6 +101,7 @@ function WorkspaceSwitcher({ open }) {
                           <HoverMenuItem
                             key={works.id}
                             value={works.id}
+                            selected={works.id === _defaultWorkspace?.id}
                             onClick={() => {
                               if (works.id === _defaultWorkspace?.id) {
                                 handleChangeWorkspace({ target: { value: works.id } });
@@ -126,9 +109,6 @@ function WorkspaceSwitcher({ open }) {
                             }}
                           >
                             <span>{works.name}</span>
-                            <SettingsIconWrapper className="setting-icon">
-                              <SettingsIcon {...iconMedium} />
-                            </SettingsIconWrapper>
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>

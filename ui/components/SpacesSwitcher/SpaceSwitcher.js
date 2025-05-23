@@ -168,7 +168,11 @@ function OrgMenu(props) {
                         }}
                       >
                         {uniqueOrgs?.map((org) => (
-                          <StyledMenuItem key={org.id} value={org.id}>
+                          <StyledMenuItem
+                            key={org.id}
+                            value={org.id}
+                            selected={org.id === organization.id}
+                          >
                             <OrgOutlinedIcon
                               width="24"
                               height="24"
