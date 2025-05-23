@@ -119,7 +119,7 @@ function WorkspaceSwitcher({ open }) {
                           <HoverMenuItem
                             key={works.id}
                             value={works.id}
-                            selected={works.id === _defaultWorkspace?.id}
+                            selected={works.id === selectedWorkspace?.id}
                             onClick={() => {
                               if (works.id === selectedWorkspace?.id) {
                                 handleChangeWorkspace({ target: { value: works.id } });
