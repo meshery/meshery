@@ -95,6 +95,7 @@ const SharedContent = () => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: refetchDesigns,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
@@ -116,6 +117,7 @@ const SharedContent = () => {
     data: viewsData,
     isLoading: isViewLoading,
     isFetching: isViewFetching,
+    refetch: refetchViews,
   } = useFetchViewsQuery(
     {
       page: filters.viewsPage,
@@ -130,7 +132,15 @@ const SharedContent = () => {
       skip: filters.type !== RESOURCE_TYPE.VIEW,
     },
   );
-
+  const refetch = useCallback(() => {
+    if (filters.type === RESOURCE_TYPE.DESIGN) {
+      if (filters.designsPage > 0) setDesignsPage(0);
+      else refetchDesigns();
+    } else {
+      if (filters.viewsPage > 0) setViewsPage(0);
+      else refetchViews();
+    }
+  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
   const theme = useTheme();
 
   return (
@@ -218,7 +228,7 @@ const SharedContent = () => {
                 designsData?.total_count > (filters.designsPage + 1) * designsData?.page_size
               }
               total_count={designsData?.total_count}
-              refetch={() => setDesignsPage(0)}
+              refetch={refetch}
             />
           )}
           {filters.type == RESOURCE_TYPE.VIEW && (
@@ -231,7 +241,7 @@ const SharedContent = () => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
-              refetch={() => setViewsPage(0)}
+              refetch={refetch}
             />
           )}
         </>

@@ -95,6 +95,7 @@ const WorkspaceContent = ({ workspace }) => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: refetchDesigns,
   } = useGetDesignsOfWorkspaceQuery(
     {
       infiniteScroll: true,
@@ -114,6 +115,7 @@ const WorkspaceContent = ({ workspace }) => {
     data: viewsData,
     isLoading: isViewLoading,
     isFetching: isViewFetching,
+    refetch: refetchViews,
   } = useGetViewsOfWorkspaceQuery(
     {
       infiniteScroll: true,
@@ -151,9 +153,17 @@ const WorkspaceContent = ({ workspace }) => {
     });
   };
   const { handleDesignDownload, handleViewDownload } = useContentDownload();
-  const refetch = () => {
-    filters.type === RESOURCE_TYPE.DESIGN ? setDesignsPage(0) : setViewsPage(0);
-  };
+
+  const refetch = useCallback(() => {
+    if (filters.type === RESOURCE_TYPE.DESIGN) {
+      if (filters.designsPage > 0) setDesignsPage(0);
+      else refetchDesigns();
+    } else {
+      if (filters.viewsPage > 0) setViewsPage(0);
+      else refetchViews();
+    }
+  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
+  
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -266,7 +276,7 @@ const WorkspaceContent = ({ workspace }) => {
               hasMore={designsData?.total_count > designsData?.page_size * (designsData?.page + 1)}
               total_count={designsData?.total_count}
               workspace={workspace}
-              refetch={() => setDesignsPage(0)}
+              refetch={refetch}
               isMultiSelectMode={true}
             />
           )}
@@ -280,7 +290,7 @@ const WorkspaceContent = ({ workspace }) => {
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
               workspace={workspace}
-              refetch={() => setViewsPage(0)}
+              refetch={refetch}
               isMultiSelectMode={true}
             />
           )}

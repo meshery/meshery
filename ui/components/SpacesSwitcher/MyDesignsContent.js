@@ -64,6 +64,7 @@ const MyDesignsContent = () => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: refetchDesigns,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
@@ -102,7 +103,10 @@ const MyDesignsContent = () => {
     });
   };
   const { handleDesignDownload } = useContentDownload();
-
+  const refetch = useCallback(() => {
+    if (filters.page > 0) setPage(0);
+    else refetchDesigns();
+  }, [filters.page, refetchDesigns, setPage]);
   return (
     <Box display={'flex'} flexDirection="column" gap="1rem">
       <Grid container spacing={2} alignItems="center" marginBottom="1rem">
@@ -135,14 +139,14 @@ const MyDesignsContent = () => {
 
         {/* Import Button */}
         <Grid item xs={4} md={1}>
-          <ImportButton refetch={() => setPage(0)} />
+          <ImportButton refetch={refetch} />
         </Grid>
       </Grid>
       <MultiContentSelectToolbar
         type={RESOURCE_TYPE.DESIGN}
         handleDelete={handleDelete}
         handleDownload={handleDownloadModalOpen}
-        refetch={() => setPage(0)}
+        refetch={refetch}
         handleShare={(multiSelectedContent) => {
           setShareModal({
             open: true,
@@ -160,7 +164,7 @@ const MyDesignsContent = () => {
         isLoading={isLoading}
         setPage={setPage}
         hasMore={hasMore}
-        refetch={() => setPage(0)}
+        refetch={refetch}
         isMultiSelectMode={true}
         total_count={total_count}
       />

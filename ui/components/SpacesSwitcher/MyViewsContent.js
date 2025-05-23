@@ -62,6 +62,7 @@ const MyViewsContent = () => {
     data: viewsData,
     isLoading,
     isFetching,
+    refetch: refetchViews,
   } = useFetchViewsQuery(
     {
       page: filters.page,
@@ -83,6 +84,15 @@ const MyViewsContent = () => {
   const modalRef = useRef(null);
   const { handleDelete } = useContentDelete(modalRef);
   const { handleViewDownload } = useContentDownload();
+
+  // Refetch function to reset the page to 0 and refetch the views
+  const refetch = useCallback(() => {
+    if (filters.page > 0) {
+      setPage(0);
+    }
+    refetchViews();
+  }, [filters.page, refetchViews, setPage]);
+
   return (
     <Box display={'flex'} flexDirection="column" gap="1rem">
       <Grid container spacing={2} alignItems="center" marginBottom="1rem">
@@ -117,7 +127,7 @@ const MyViewsContent = () => {
         type={RESOURCE_TYPE.VIEW}
         handleDelete={handleDelete}
         handleViewDownload={handleViewDownload}
-        refetch={() => setPage(0)}
+        refetch={refetch}
         handleShare={(multiSelectedContent) => {
           setShareModal({
             open: true,
@@ -135,7 +145,7 @@ const MyViewsContent = () => {
         setPage={setPage}
         views={views}
         total_count={total_count}
-        refetch={() => setPage(0)}
+        refetch={refetch}
         isMultiSelectMode={true}
       />
       <PromptComponent ref={modalRef} />
