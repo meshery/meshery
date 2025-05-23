@@ -25,19 +25,21 @@ import { useGetIconBasedOnMode } from './hooks';
 import { useRouter } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
-const WorkspaceItem = styled('div')(({ theme, selected }) => ({
+const WorkspaceItem = styled('div')(({ theme, selected, disabled }) => ({
   padding: '12px 16px',
   borderRadius: '8px',
-  cursor: 'pointer',
   marginBottom: '8px',
   transition: 'all 0.2s ease',
   backgroundColor: selected ? `${theme.palette.background.brand.default}20` : 'transparent',
   border: selected
     ? `1px solid ${theme.palette.background.brand.default}`
     : '1px solid transparent',
+  opacity: disabled ? 0.5 : 1,
   '&:hover': {
-    backgroundColor: `${theme.palette.background.brand.default}10`,
+    backgroundColor: disabled ? 'transparent' : `${theme.palette.background.brand.default}10`,
   },
 }));
 
@@ -79,6 +81,7 @@ const WorkspaceContentMoveModal = ({
   selectedContent,
 }) => {
   const router = useRouter();
+  const { notify } = useNotification();
   const { setMultiSelectedContent, multiSelectedContent, closeModal } =
     useContext(WorkspaceModalContext);
   const { organization: currentOrg } = useSelector((state) => state.ui);
@@ -103,47 +106,60 @@ const WorkspaceContentMoveModal = ({
   const [unAssignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
   const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
   const [unAssignViewFromWorkspace] = useUnassignViewFromWorkspaceMutation();
+
   const handleMove = async () => {
     setWorkspaceContentMoveModal(false);
 
-    const moveDesign = async (designId) => {
-      await assignDesignToWorkspace({
-        workspaceId: selectedWorkspaceForMove.id,
-        designId,
-      }).unwrap();
-      await unAssignDesignFromWorkspace({
-        workspaceId: currentWorkspace.id,
-        designId,
-      });
-    };
+    try {
+      const moveDesign = async (designId) => {
+        await assignDesignToWorkspace({
+          workspaceId: selectedWorkspaceForMove.id,
+          designId,
+        }).unwrap();
+        await unAssignDesignFromWorkspace({
+          workspaceId: currentWorkspace.id,
+          designId,
+        });
+      };
 
-    const moveView = async (viewId) => {
-      await assignViewToWorkspace({
-        workspaceId: selectedWorkspaceForMove.id,
-        viewId,
-      }).unwrap();
-      await unAssignViewFromWorkspace({
-        workspaceId: currentWorkspace.id,
-        viewId,
-      });
-    };
+      const moveView = async (viewId) => {
+        await assignViewToWorkspace({
+          workspaceId: selectedWorkspaceForMove.id,
+          viewId,
+        }).unwrap();
+        await unAssignViewFromWorkspace({
+          workspaceId: currentWorkspace.id,
+          viewId,
+        });
+      };
 
-    if (RESOURCE_TYPE.DESIGN === type) {
-      if (multiSelectedContent.length > 0) {
-        await Promise.all(multiSelectedContent.map((design) => moveDesign(design.id)));
-        setMultiSelectedContent([]);
+      if (RESOURCE_TYPE.DESIGN === type) {
+        if (multiSelectedContent.length > 0) {
+          await Promise.all(multiSelectedContent.map((design) => moveDesign(design.id)));
+          setMultiSelectedContent([]);
+        }
+        if (selectedContent) {
+          await moveDesign(selectedContent.id);
+        }
+      } else {
+        if (multiSelectedContent.length > 0) {
+          await Promise.all(multiSelectedContent.map((view) => moveView(view.id)));
+          setMultiSelectedContent([]);
+        }
+        if (selectedContent) {
+          await moveView(selectedContent.id);
+        }
       }
-      if (selectedContent) {
-        await moveDesign(selectedContent.id);
-      }
-    } else {
-      if (multiSelectedContent.length > 0) {
-        await Promise.all(multiSelectedContent.map((view) => moveView(view.id)));
-        setMultiSelectedContent([]);
-      }
-      if (selectedContent) {
-        await moveView(selectedContent.id);
-      }
+
+      notify({
+        message: `Successfully moved ${type === RESOURCE_TYPE.DESIGN ? 'design' : 'view'}${multiSelectedContent.length > 1 ? 's' : ''} to ${selectedWorkspaceForMove.name}`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
+    } catch (error) {
+      notify({
+        message: `Failed to move ${type === RESOURCE_TYPE.DESIGN ? 'design' : 'view'}. Please try again.`,
+        event_type: EVENT_TYPES.ERROR,
+      });
     }
   };
 
@@ -152,7 +168,17 @@ const WorkspaceContentMoveModal = ({
     setWorkspaceContentMoveModal(false);
     router.push('/management/workspaces');
   };
-  const theme = useTheme();
+
+  const isMoveDesignAllowed =
+    CAN(keys.ASSIGN_DESIGNS_TO_WORKSPACE.action, keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject) &&
+    CAN(keys.REMOVE_DESIGNS_FROM_WORKSPACE.action, keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject);
+
+  const isMoveViewAllowed =
+    CAN(keys.ASSIGN_VIEWS_TO_WORKSPACE.action, keys.ASSIGN_VIEWS_TO_WORKSPACE.subject) &&
+    CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject);
+
+  const isMoveAllowed = type === RESOURCE_TYPE.DESIGN ? isMoveDesignAllowed : isMoveViewAllowed;
+
   return (
     <Modal
       open={workspaceContentMoveModal}
@@ -186,7 +212,8 @@ const WorkspaceContentMoveModal = ({
               <WorkspaceItem
                 key={workspace.id}
                 selected={selectedWorkspaceForMove?.id === workspace.id}
-                onClick={() => setSelectedWorkspaceForMove(workspace)}
+                onClick={() => isMoveAllowed && setSelectedWorkspaceForMove(workspace)}
+                disabled={!isMoveAllowed}
               >
                 {workspace.name}
               </WorkspaceItem>
@@ -200,7 +227,11 @@ const WorkspaceContentMoveModal = ({
           secondaryText="Cancel"
           primaryButtonProps={{
             onClick: handleMove,
-            disabled: isLoading || !selectedWorkspaceForMove || !filteredWorkspaces?.length,
+            disabled:
+              isLoading ||
+              !selectedWorkspaceForMove ||
+              !filteredWorkspaces?.length ||
+              !isMoveAllowed,
           }}
           secondaryButtonProps={{
             onClick: () => setWorkspaceContentMoveModal(false),
