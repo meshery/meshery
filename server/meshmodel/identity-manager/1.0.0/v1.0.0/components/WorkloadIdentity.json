@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/invisibl-cloud/helm-charts/releases/download/identity-manager-1.0.0/identity-manager-1.0.0.tgz"
   },
   "configuration": null,
   "component": {

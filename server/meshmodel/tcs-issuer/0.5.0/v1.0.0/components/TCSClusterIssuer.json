@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/intel/helm-charts/releases/download/tcs-issuer-0.5.0/tcs-issuer-0.5.0.tgz"
   },
   "configuration": null,
   "component": {

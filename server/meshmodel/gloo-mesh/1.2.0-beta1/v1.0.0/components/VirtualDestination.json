@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://storage.googleapis.com/gloo-mesh/gloo-mesh/gloo-mesh-1.2.0-beta1.tgz"
   },
   "configuration": null,
   "component": {

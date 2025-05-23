@@ -12,7 +12,7 @@ import {
   FormGroup,
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
-import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
+import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
   StyledActionsContainer,
   StyledAvatarContainer,

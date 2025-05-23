@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/DoodleScheduling/k8svault-controller/releases/download/k8svault-controller-0.1.2/k8svault-controller-0.1.2.tgz"
   },
   "configuration": null,
   "component": {

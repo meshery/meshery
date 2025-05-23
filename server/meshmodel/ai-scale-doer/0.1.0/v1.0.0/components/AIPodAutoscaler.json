@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/dysnix/charts/releases/download/ai-scale-doer-0.1.0/ai-scale-doer-0.1.0.tgz"
   },
   "configuration": null,
   "component": {

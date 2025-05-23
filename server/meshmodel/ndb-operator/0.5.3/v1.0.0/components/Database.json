@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/nutanix/helm/releases/download/ndb-operator-0.5.3/ndb-operator-0.5.3.tgz"
   },
   "configuration": null,
   "component": {

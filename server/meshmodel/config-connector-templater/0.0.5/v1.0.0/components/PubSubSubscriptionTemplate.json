@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/slamdev/helm-charts/releases/download/config-connector-templater-0.0.5/config-connector-templater-0.0.5.tgz"
   },
   "configuration": null,
   "component": {

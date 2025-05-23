@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://helm-charts.bitpoke.io/mysql-operator-0.6.3.tgz"
   },
   "configuration": null,
   "component": {

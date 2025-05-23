@@ -180,7 +180,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/startechnica/apps/releases/download/mayastor-0.2.0/mayastor-0.2.0.tgz"
   },
   "configuration": null,
   "component": {

@@ -34,7 +34,7 @@ import {
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
 import { useNotification, useNotificationHandlers } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../Modal';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
 import _PromptComponent from '../../PromptComponent';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { keys } from '@/utils/permission_constants';

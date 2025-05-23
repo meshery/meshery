@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/dergeberl/kubeteach-charts/releases/download/kubeteach-exerciseset1-0.2.3/kubeteach-exerciseset1-0.2.3.tgz"
   },
   "configuration": null,
   "component": {

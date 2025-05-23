@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://helm.wso2.com/charts/kubernetes-pipeline-1.2.0.tgz"
   },
   "configuration": null,
   "component": {

@@ -23,7 +23,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
-import Modal from '@/components/Modal';
+import Modal from '@/components/General/Modals/Modal';
 import { useNotification } from '@/utils/hooks/useNotification';
 import ExportModal from '@/components/ExportModal';
 import { EVENT_TYPES } from 'lib/event-types';
