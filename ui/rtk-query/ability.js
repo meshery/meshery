@@ -4,7 +4,14 @@ import _ from 'lodash';
 import CustomErrorMessage from '@/components/ErrorPage';
 import DefaultError from '@/components/General/error-404';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
-import { useSelector } from 'react-redux';
+import {
+  useGetSelectedOrganization,
+  useGetUserPrefQuery,
+  useUpdateSelectedOrganizationMutation,
+  useUpdateUserPrefMutation,
+} from './user';
+import { useGetOrgsQuery } from './organization';
+import { useEffect } from 'react';
 
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
@@ -39,19 +46,56 @@ export const useGetCurrentAbilities = (org) => {
   return res;
 };
 
-export const LoadSessionGuard = ({ children }) => {
-  // this assumes that the organization is already loaded at the app mount time
-  // otherwise, this will not work
-  const { organization: org } = useSelector((state) => state.ui);
-  const { isLoading, error } = useGetCurrentAbilities(org, () => {});
+const SelectedOrganizationProvider = ({ children }) => {
+  const {
+    selectedOrganization,
+    didFallback,
+    isLoading: isFetchingSelectedOrg,
+    error: errorFetchingSelectedOrg,
+  } = useGetSelectedOrganization();
 
-  if (error) {
+  const selectedOrganizationId = selectedOrganization?.id;
+
+  const [updatePrefs] = useUpdateSelectedOrganizationMutation();
+
+  const { isLoading: isLoadingAbilities, error: errorLoadingAbilities } = useGetCurrentAbilities({
+    id: selectedOrganizationId,
+  });
+
+  useEffect(() => {
+    console.log('[loadSession] selectedOrganization', selectedOrganization);
+    if (
+      didFallback &&
+      selectedOrganizationId &&
+      !errorFetchingSelectedOrg &&
+      !isFetchingSelectedOrg
+    ) {
+      console.log('[loadSession] setting default org');
+      const res = updatePrefs(selectedOrganizationId);
+      console.log('updatePrefs', res);
+    }
+  }, [didFallback, selectedOrganizationId, errorFetchingSelectedOrg, isFetchingSelectedOrg]);
+
+  if (errorFetchingSelectedOrg || (!isFetchingSelectedOrg && !selectedOrganization)) {
+    return (
+      <>
+        <DefaultError />
+        <CustomErrorMessage
+          message={'Error occurred while fetching your current organization'}
+          showImage={false}
+        />
+      </>
+    );
+  }
+
+  if (errorLoadingAbilities) {
     return (
       <>
         <DefaultError />
         <CustomErrorMessage
           message={
-            error.message || 'An error occurred while fetching your organization permissions'
+            errorLoadingAbilities.message ||
+            'An error occurred while fetching your organization permissions'
           }
           showImage={false}
         />
@@ -59,7 +103,10 @@ export const LoadSessionGuard = ({ children }) => {
     );
   }
 
-  return (
-    <DynamicFullScrrenLoader isLoading={isLoading || !org?.id}>{children}</DynamicFullScrrenLoader>
-  );
+  const isLoading = isFetchingSelectedOrg || isLoadingAbilities;
+  return <DynamicFullScrrenLoader isLoading={isLoading}>{children}</DynamicFullScrrenLoader>;
+};
+
+export const LoadSessionGuard = ({ children }) => {
+  return <SelectedOrganizationProvider>{children}</SelectedOrganizationProvider>;
 };
