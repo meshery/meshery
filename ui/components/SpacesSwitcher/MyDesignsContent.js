@@ -62,7 +62,6 @@ const MyDesignsContent = () => {
     data: designsData,
     isLoading,
     isFetching,
-    refetch,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
