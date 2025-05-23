@@ -11,6 +11,9 @@ import {
   ShareIcon,
   useTheme,
   useRoomActivity,
+  ExportIcon,
+  DeleteIcon,
+  InfoIcon,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -32,9 +35,6 @@ import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
 import Router from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import DeleteIcon from '@mui/icons-material/Delete';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import InfoIcon from '@mui/icons-material/Info';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
@@ -166,7 +166,7 @@ const MainDesignsContent = ({
     EXPORT_DESIGN: {
       id: 'export_design',
       title: 'Export Design',
-      icon: <GetAppIcon style={{ fill: theme.palette.icon.default }} />,
+      icon: <ExportIcon fill={theme.palette.icon.default} />,
       enabled: () => CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
     },
 

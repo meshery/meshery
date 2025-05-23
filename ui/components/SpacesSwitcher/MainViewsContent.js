@@ -9,6 +9,7 @@ import {
   PromptComponent,
   useTheme,
   useRoomActivity,
+  ExportIcon,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -19,7 +20,6 @@ import useInfiniteScroll, {
 } from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { RESOURCE_TYPE } from '@/utils/Enum';
-import GetAppIcon from '@mui/icons-material/GetApp';
 import { DesignList, LoadingContainer, GhostContainer, GhostImage, GhostText } from './styles';
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import ShareModal from './ShareModal';
@@ -102,7 +102,7 @@ const MainViewsContent = ({
     EXPORT_VIEW: {
       id: 'EXPORT_VIEW',
       title: 'Export View',
-      icon: <GetAppIcon style={{ fill: theme.palette.icon.default }} />,
+      icon: <ExportIcon fill={theme.palette.icon.default} />,
       handler: ({ view }) => {
         handleViewDownload(view);
       },
