@@ -402,7 +402,7 @@ export const MultiContentSelectToolbar = ({
             {handleContentMove && (
               <StyledResponsiveButton
                 variant="contained"
-                startIcon={<MoveFileIcon style={iconMedium} />}
+                startIcon={<MoveFileIcon style={iconMedium} fill={theme.palette.common.white} />}
                 onClick={() => {
                   handleContentMove(true);
                 }}
