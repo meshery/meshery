@@ -1,13 +1,4 @@
 import {
-  useAssignDesignToWorkspaceMutation,
-  useAssignViewToWorkspaceMutation,
-  useGetWorkspacesQuery,
-  useUnassignDesignFromWorkspaceMutation,
-  useUnassignViewFromWorkspaceMutation,
-} from '@/rtk-query/workspace';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { RESOURCE_TYPE } from '@/utils/Enum';
-import {
   Button,
   CircularProgress,
   Modal,
@@ -16,7 +7,19 @@ import {
   PrimaryActionButtons,
   styled,
   Typography,
+  List,
+  ListItem,
+  ListItemText,
 } from '@layer5/sistent';
+import {
+  useAssignDesignToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
+  useGetWorkspacesQuery,
+  useUnassignDesignFromWorkspaceMutation,
+  useUnassignViewFromWorkspaceMutation,
+} from '@/rtk-query/workspace';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { RESOURCE_TYPE } from '@/utils/Enum';
 import React, { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useGetIconBasedOnMode } from './hooks';
@@ -25,29 +28,15 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
+import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
-const WorkspaceItem = styled('div')(({ theme, selected, disabled }) => ({
-  padding: '12px 16px',
+const WorkspaceItem = styled(ListItem)(({ theme, selected }) => ({
   borderRadius: '8px',
-  marginBottom: '8px',
-  transition: 'all 0.2s ease',
-  backgroundColor: selected ? `${theme.palette.background.brand.default}20` : 'transparent',
-  border: selected
-    ? `1px solid ${theme.palette.background.brand.default}`
-    : '1px solid transparent',
-  opacity: disabled ? 0.5 : 1,
-  '&:hover': {
-    backgroundColor: disabled ? 'transparent' : `${theme.palette.background.brand.default}10`,
-  },
 }));
 
-const CurrentWorkspaceSection = styled('div')(({ theme }) => ({
-  padding: '1rem',
-  borderRadius: '0.5rem',
+const CurrentWorkspaceSection = styled(Typography)(({ theme }) => ({
   marginBottom: '1rem',
-  display: 'flex',
-  border: `1px solid ${theme.palette.border.strong}`,
-  fontWeight: 'bolder',
+  color: theme.palette.text.secondary,
 }));
 
 const NoWorkspacesContainer = styled('div')(({ theme }) => ({
@@ -183,13 +172,13 @@ const WorkspaceContentMoveModal = ({
   return (
     <Modal
       open={workspaceContentMoveModal}
-      headerIcon={useGetIconBasedOnMode({ mode: type })}
+      headerIcon={<MoveFileIcon />}
       closeModal={() => setWorkspaceContentMoveModal(false)}
       title={getModalTitle(type, selectedContent, multiSelectedContent)}
     >
       <ModalBody>
         <CurrentWorkspaceSection>
-          Current Workspace: {currentWorkspace.name}
+          Current Workspace: <strong>{currentWorkspace.name}</strong>
         </CurrentWorkspaceSection>
 
         {isLoading ? (
@@ -209,16 +198,19 @@ const WorkspaceContentMoveModal = ({
         ) : (
           <>
             <Typography style={{ marginBottom: '0.5rem' }}>Select destination workspace</Typography>
-            {filteredWorkspaces.map((workspace) => (
-              <WorkspaceItem
-                key={workspace.id}
-                selected={selectedWorkspaceForMove?.id === workspace.id}
-                onClick={() => isMoveAllowed && setSelectedWorkspaceForMove(workspace)}
-                disabled={!isMoveAllowed}
-              >
-                {workspace.name}
-              </WorkspaceItem>
-            ))}
+            <List>
+              {filteredWorkspaces.map((workspace) => (
+                <WorkspaceItem
+                  key={workspace.id}
+                  selected={selectedWorkspaceForMove?.id === workspace.id}
+                  onClick={() => isMoveAllowed && setSelectedWorkspaceForMove(workspace)}
+                  disabled={!isMoveAllowed}
+                  button
+                >
+                  <ListItemText primary={workspace.name} />
+                </WorkspaceItem>
+              ))}
+            </List>
           </>
         )}
       </ModalBody>
