@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { reactJsonTheme } from '../Registry/helper';
+import { reactJsonTheme } from '../Settings/Registry/helper';
 import dynamic from 'next/dynamic';
 import { SectionBody, ArrayFormatter } from '../DataFormatter';
 import _ from 'lodash';

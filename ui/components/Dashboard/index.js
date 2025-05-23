@@ -29,7 +29,7 @@ import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
-import Popup from '../Popup';
+import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
@@ -69,7 +69,7 @@ const useDashboardRouter = () => {
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
-const DashboardComponent = () => {
+const Dashboard = () => {
   const { data: userData, isLoading } = useGetUserPrefQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
   const defaultLayout = isLoading
@@ -418,4 +418,4 @@ const DashboardComponent = () => {
   );
 };
 
-export default DashboardComponent;
+export default Dashboard;

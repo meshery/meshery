@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { NoSsr } from '@layer5/sistent';
-import MesheryFilters from '../../components/Filters';
+import MesheryFilters from '../../components/MesheryFilters/Filters';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { Box } from '@layer5/sistent';

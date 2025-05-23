@@ -39,7 +39,7 @@ import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './Modals/ConnectionModal';
+import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,

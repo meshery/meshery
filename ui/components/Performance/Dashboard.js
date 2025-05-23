@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import MesheryMetrics from '../MesheryMetrics';
+import MesheryMetrics from './MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
 import MesheryPerformanceComponent from './index';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';

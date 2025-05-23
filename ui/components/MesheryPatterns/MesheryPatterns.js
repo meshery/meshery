@@ -29,50 +29,50 @@ import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import SaveIcon from '@mui/icons-material/Save';
-import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
+import CustomToolbarSelect from './CustomToolbarSelect';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
-import ViewSwitch from './ViewSwitch';
-import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
-import UndeployIcon from '../public/static/img/UndeployIcon';
+import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../../utils/utils';
+import ViewSwitch from '../ViewSwitch';
+import MesheryPatternGrid from './MesheryPatternGridView';
+import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 import PublicIcon from '@mui/icons-material/Public';
 import PublishIcon from '@mui/icons-material/Publish';
-import _PromptComponent from './PromptComponent';
-import LoadingScreen from './LoadingComponents/LoadingComponent';
-import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
-import CloneIcon from '../public/static/img/CloneIcon';
+import _PromptComponent from '../PromptComponent';
+import LoadingScreen from '../LoadingComponents/LoadingComponent';
+import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../../utils/Enum';
+import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { RJSFModalWrapper } from './Modal';
-import downloadContent from '../utils/fileDownloader';
-import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
-import Pattern from '../public/static/img/drawer-icons/pattern_svg.js';
-import { useNotification } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
+import downloadContent from '../../utils/fileDownloader';
+import ConfigurationSubscription from '../graphql/subscriptions/ConfigurationSubscription';
+import Pattern from '../../public/static/img/drawer-icons/pattern_svg.js';
+import { useNotification } from '../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../lib/event-types';
 import _ from 'lodash';
-import { getMeshModels } from '../api/meshmodel';
-import { modifyRJSFSchema } from '../utils/utils';
+import { getMeshModels } from '../../api/meshmodel';
+import { modifyRJSFSchema } from '../../utils/utils';
 import { Edit as EditIcon } from '@mui/icons-material';
-import { updateVisibleColumns } from '../utils/responsive-column';
-import { useWindowDimensions } from '../utils/dimension';
-import InfoModal from './Modals/Information/InfoModal';
+import { updateVisibleColumns } from '../../utils/responsive-column';
+import { useWindowDimensions } from '../../utils/dimension';
+import InfoModal from '../General/Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { DefaultTableCell, SortableTableCell } from './connections/common/index.js';
-import DefaultError from './General/error-404/index';
+import { DefaultTableCell, SortableTableCell } from '../connections/common/index.js';
+import DefaultError from '../General/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import ExportModal from './ExportModal';
+import ExportModal from '../ExportModal';
 import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { useActorRef } from '@xstate/react';
 import { designValidationMachine } from 'machines/validator/designValidator';
-import { UnDeployStepper, DeployStepper } from './DesignLifeCycle/DeployStepper';
-import { DryRunDesign } from './DesignLifeCycle/DryRun';
-import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
+import { UnDeployStepper, DeployStepper } from '../DesignLifeCycle/DeployStepper';
+import { DryRunDesign } from '../DesignLifeCycle/DryRun';
+import { DEPLOYMENT_TYPE } from '../DesignLifeCycle/common';
 import {
   useClonePatternMutation,
   useDeletePatternFileMutation,
@@ -87,14 +87,14 @@ import {
   useUploadPatternFileMutation,
 } from '@/rtk-query/design';
 import CheckIcon from '@/assets/icons/CheckIcon';
-import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
+import { ValidateDesign } from '../DesignLifeCycle/ValidateDesign';
 import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import yaml from 'js-yaml';
-import ActionPopover from './MesheryPatterns/ActionPopover';
+import ActionPopover from './ActionPopover';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
@@ -242,7 +242,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       <DialogActions>
         {isReadOnly ? null : (
           <>
-            <CustomTooltip title="Update Pattern">
+            <CustomTooltip title="Update Design">
               <IconButton
                 aria-label="Update"
                 disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}

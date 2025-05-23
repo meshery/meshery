@@ -1,5 +1,5 @@
 import React from 'react';
-import { EnvironmentComponent } from '../Lifecycle';
+import { EnvironmentComponent } from '../../Lifecycle';
 
 import { EnvironmentIcon, Modal, ModalBody, useTheme, Box } from '@layer5/sistent';
 

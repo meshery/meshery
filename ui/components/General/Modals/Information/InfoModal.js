@@ -30,17 +30,17 @@ import yaml from 'js-yaml';
 import _ from 'lodash';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef, useState } from 'react';
-import PatternIcon from '../../../assets/icons/Pattern';
-import { MESHERY_CLOUD_PROD } from '../../../constants/endpoints';
-import { iconMedium, iconSmall } from '../../../css/icons.styles';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
-import { useNotification } from '../../../utils/hooks/useNotification';
+import PatternIcon from '../../../../assets/icons/Pattern';
+import { MESHERY_CLOUD_PROD } from '../../../../constants/endpoints';
+import { iconMedium, iconSmall } from '../../../../css/icons.styles';
+import { EVENT_TYPES } from '../../../../lib/event-types';
+import { useGetUserByIdQuery } from '../../../../rtk-query/user.js';
+import { useNotification } from '../../../../utils/hooks/useNotification';
 import {
   getDesignVersion,
   getSharableCommonHostAndprotocolLink,
   modifyRJSFSchema,
-} from '../../../utils/utils';
+} from '../../../../utils/utils';
 import { ActionContainer, CopyLinkButton, CreatAtContainer, ResourceName } from './styles';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { updateProgress } from '@/store/slices/mesheryUi';

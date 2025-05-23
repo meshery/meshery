@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography, Button, styled } from '@layer5/sistent';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
-import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
-import { iconMedium } from '../css/icons.styles';
+import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
+import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
@@ -39,7 +39,7 @@ function MesheryMetrics({
     return (
       <>
         <MetricsTitle align="center" variant="h6">
-          Service Mesh Metrics
+          Performance Metrics
         </MetricsTitle>
         <GrafanaCustomCharts
           enableGrafanaChip

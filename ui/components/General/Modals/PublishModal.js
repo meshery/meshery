@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Modal from '../Modal';
+import Modal from './Modal';
 import PublicIcon from '@mui/icons-material/Public';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';

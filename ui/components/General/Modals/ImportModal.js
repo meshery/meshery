@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import RJSFModal from '../Modal';
+import RJSFModal from './Modal';
 import { Button } from '@layer5/sistent';
 import { capitalize } from 'lodash';
 

@@ -13,7 +13,7 @@ import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { useNotification } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../Modal';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
 import _PromptComponent from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
