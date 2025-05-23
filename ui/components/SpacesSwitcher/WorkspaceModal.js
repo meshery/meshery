@@ -13,7 +13,6 @@ import {
   Box,
   DesignIcon,
   ViewIcon,
-  Collapse,
   useMediaQuery,
   Divider,
   ErrorBoundary,
@@ -23,8 +22,6 @@ import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
 import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
@@ -77,11 +74,15 @@ const getNavItem = (theme) => {
 };
 
 const NavItem = ({ item, open, selectedId, onSelect }) => {
+  const { setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <ListItem disablePadding sx={{ display: 'block' }}>
       <ListItemButton
         selected={selectedId === item.id}
-        onClick={() => onSelect(item.id)}
+        onClick={() => {
+          setMultiSelectedContent([]);
+          onSelect(item.id);
+        }}
         sx={{
           minHeight: 48,
           px: 2.5,

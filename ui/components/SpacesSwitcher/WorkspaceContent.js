@@ -1,25 +1,16 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import {
-  AssignmentModal,
   Box,
-  Button,
-  DeleteIcon,
-  DesignIcon,
-  DownloadIcon,
-  EnvironmentIcon,
   FormControl,
   Grid,
   InputLabel,
   MenuItem,
   PromptComponent,
   Select,
-  Typography,
-  useDesignAssignment,
   useTheme,
-  useViewAssignment,
 } from '@layer5/sistent';
-import React, { useCallback, useContext, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import MainViewsContent from './MainViewsContent';
@@ -31,19 +22,9 @@ import {
   TableListHeader,
   VisibilitySelect,
 } from './components';
-import {
-  useAssignDesignToWorkspaceMutation,
-  useAssignViewToWorkspaceMutation,
-  useGetDesignsOfWorkspaceQuery,
-  useGetViewsOfWorkspaceQuery,
-  useUnassignDesignFromWorkspaceMutation,
-  useUnassignViewFromWorkspaceMutation,
-} from '@/rtk-query/workspace';
+import { useGetDesignsOfWorkspaceQuery, useGetViewsOfWorkspaceQuery } from '@/rtk-query/workspace';
 import { getDefaultFilterType, useContentDelete, useContentDownload } from './hooks';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
-import { iconMedium } from 'css/icons.styles';
 import ExportModal from '../ExportModal';
 
 const WorkspaceContent = ({ workspace }) => {
@@ -97,6 +78,7 @@ const WorkspaceContent = ({ workspace }) => {
   }, []);
 
   const setDesignsPage = useCallback((page) => {
+    console.log('amit this is page', page);
     setFilters((prev) => ({
       ...prev,
       designsPage: page,
@@ -236,6 +218,9 @@ const WorkspaceContent = ({ workspace }) => {
           <Grid item xs={3} md={1}>
             {filters.type == RESOURCE_TYPE.DESIGN && (
               <ImportButton
+                refetch={() => {
+                  filters.type === RESOURCE_TYPE.DESIGN ? setDesignsPage(0) : setViewsPage(0);
+                }}
                 workspaceId={workspace?.id}
                 disabled={
                   !CAN(
@@ -255,6 +240,9 @@ const WorkspaceContent = ({ workspace }) => {
             handleDownload={handleDownloadModalOpen}
             handleViewDownload={handleViewDownload}
             handleContentMove={setWorkspaceContentMoveModal}
+            refetch={() => {
+              filters.type === RESOURCE_TYPE.DESIGN ? setDesignsPage(0) : setViewsPage(0);
+            }}
           />
           <WorkspaceContentMoveModal
             workspaceContentMoveModal={workspaceContentMoveModal}
