@@ -14,11 +14,13 @@ import {
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
 import ExportModal from '../ExportModal';
+import ShareModal from './ShareModal';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE, VISIBILITY.PUBLISHED];
   // const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const [shareModal, setShareModal] = useState({ open: false, content: null });
   const [filters, setFilters] = useState({
     visibility: visibilityItems,
     searchQuery: '',
@@ -141,6 +143,12 @@ const MyDesignsContent = () => {
         handleDelete={handleDelete}
         handleDownload={handleDownloadModalOpen}
         refetch={() => setPage(0)}
+        handleShare={(multiSelectedContent) => {
+          setShareModal({
+            open: true,
+            content: multiSelectedContent,
+          });
+        }}
       />
 
       <TableListHeader isMultiSelectMode={true} content={designsData?.patterns} />
@@ -162,6 +170,13 @@ const MyDesignsContent = () => {
         handleDownloadDialogClose={handleDownloadModalClose}
         handleDesignDownload={handleDesignDownload}
       />
+      {shareModal.open && (
+        <ShareModal
+          resource={shareModal.content}
+          handleClose={() => setShareModal(false)}
+          type={RESOURCE_TYPE.DESIGN}
+        />
+      )}
     </Box>
   );
 };

@@ -20,6 +20,7 @@ import {
   FormGroup,
   DownloadIcon,
   DeleteIcon,
+  ShareIcon,
 } from '@layer5/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
@@ -369,6 +370,7 @@ export const MultiContentSelectToolbar = ({
   handleDownload,
   handleViewDownload,
   handleDelete,
+  handleShare,
   refetch,
 }) => {
   const theme = useTheme();
@@ -414,7 +416,20 @@ export const MultiContentSelectToolbar = ({
               disabled={!multiSelectedContent.length}
             >
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Download</Box>
-            </StyledResponsiveButton>
+            </StyledResponsiveButton>{' '}
+            {handleShare && (
+              <StyledResponsiveButton
+                variant="contained"
+                startIcon={<ShareIcon style={iconMedium} fill={theme.palette.common.white} />}
+                onClick={() => {
+                  handleShare(multiSelectedContent);
+                  setMultiSelectedContent([]);
+                }}
+                disabled={!multiSelectedContent.length}
+              >
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Share</Box>
+              </StyledResponsiveButton>
+            )}
             <StyledResponsiveButton
               color="error"
               variant="contained"

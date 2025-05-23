@@ -12,10 +12,12 @@ import {
   VisibilitySelect,
 } from './components';
 import { useContentDelete, useContentDownload } from './hooks';
+import ShareModal from './ShareModal';
 
 const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
+  const [shareModal, setShareModal] = useState({ open: false, content: null });
 
   const [filters, setFilters] = useState({
     visibility: visibilityItems,
@@ -116,6 +118,12 @@ const MyViewsContent = () => {
         handleDelete={handleDelete}
         handleViewDownload={handleViewDownload}
         refetch={() => setPage(0)}
+        handleShare={(multiSelectedContent) => {
+          setShareModal({
+            open: true,
+            content: multiSelectedContent,
+          });
+        }}
       />
       <TableListHeader isMultiSelectMode content={views} />
       <MainViewsContent
@@ -131,6 +139,13 @@ const MyViewsContent = () => {
         isMultiSelectMode={true}
       />
       <PromptComponent ref={modalRef} />
+      {shareModal.open && (
+        <ShareModal
+          resource={shareModal.content}
+          handleClose={() => setShareModal(false)}
+          type={RESOURCE_TYPE.VIEW}
+        />
+      )}
     </Box>
   );
 };
