@@ -17,7 +17,6 @@ function Settings() {
       <Head>
         <title>Settings | Meshery</title>
       </Head>
-
       <MesherySettings />
     </NoSsr>
   );

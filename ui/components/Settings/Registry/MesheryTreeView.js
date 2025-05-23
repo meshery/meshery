@@ -6,17 +6,17 @@ import {
   CircularProgress,
   Typography,
 } from '@layer5/sistent';
-import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
-import SearchBar from '../../utils/custom-search';
-import debounce from '../../utils/debounce';
-import { useWindowDimensions } from '../../utils/dimension';
+import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
+import SearchBar from '@/utils/custom-search';
+import debounce from '@/utils/debounce';
+import { useWindowDimensions } from '@/utils/dimension';
 import { getFilteredDataForDetailsComponent } from './helper';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
+import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
-import { Colors } from '../../themes/app';
+import { Colors } from '@/themes/app';
 import { JustifyAndAlignCenter, MesheryTreeViewWrapper } from './MeshModel.style';
 import { useRegistryRouter } from './hooks';
 import MesheryTreeViewModel from './MesheryTreeViewModel';

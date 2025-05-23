@@ -12,7 +12,7 @@ import {
   Modal,
   useTheme,
 } from '@layer5/sistent';
-import { RJSFModalWrapper } from '../General/Modals/Modal';
+import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
@@ -20,12 +20,12 @@ import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
 import React, { useState, useEffect, useContext } from 'react';
 import { capitalize } from 'lodash';
 import { Loading } from '@/components/DesignLifeCycle/common';
-import { NotificationCenterContext } from '../NotificationCenter';
+import { NotificationCenterContext } from '@/components/NotificationCenter';
 import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
 import {
   ModelImportedSection,
   ModelImportMessages,
-} from '../NotificationCenter/formatters/model_registration';
+} from '@/components/NotificationCenter/formatters/model_registration';
 import { StyledDocsRedirectLink } from './Stepper/style';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
