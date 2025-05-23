@@ -8,7 +8,6 @@ import {
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import {
-  AddCircleIcon,
   Button,
   CircularProgress,
   Modal,
@@ -17,7 +16,6 @@ import {
   PrimaryActionButtons,
   styled,
   Typography,
-  useTheme,
 } from '@layer5/sistent';
 import React, { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
@@ -79,6 +77,7 @@ const WorkspaceContentMoveModal = ({
   currentWorkspace,
   type,
   selectedContent,
+  refetch,
 }) => {
   const router = useRouter();
   const { notify } = useNotification();
@@ -115,7 +114,7 @@ const WorkspaceContentMoveModal = ({
         await assignDesignToWorkspace({
           workspaceId: selectedWorkspaceForMove.id,
           designId,
-        }).unwrap();
+        });
         await unAssignDesignFromWorkspace({
           workspaceId: currentWorkspace.id,
           designId,
@@ -126,7 +125,7 @@ const WorkspaceContentMoveModal = ({
         await assignViewToWorkspace({
           workspaceId: selectedWorkspaceForMove.id,
           viewId,
-        }).unwrap();
+        });
         await unAssignViewFromWorkspace({
           workspaceId: currentWorkspace.id,
           viewId,
@@ -150,7 +149,9 @@ const WorkspaceContentMoveModal = ({
           await moveView(selectedContent.id);
         }
       }
-
+      if (refetch) {
+        refetch();
+      }
       notify({
         message: `Successfully moved ${type === RESOURCE_TYPE.DESIGN ? 'design' : 'view'}${multiSelectedContent.length > 1 ? 's' : ''} to ${selectedWorkspaceForMove.name}`,
         event_type: EVENT_TYPES.SUCCESS,

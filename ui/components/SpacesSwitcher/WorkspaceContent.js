@@ -78,7 +78,6 @@ const WorkspaceContent = ({ workspace }) => {
   }, []);
 
   const setDesignsPage = useCallback((page) => {
-    console.log('amit this is page', page);
     setFilters((prev) => ({
       ...prev,
       designsPage: page,
@@ -152,7 +151,9 @@ const WorkspaceContent = ({ workspace }) => {
     });
   };
   const { handleDesignDownload, handleViewDownload } = useContentDownload();
-
+  const refetch = () => {
+    filters.type === RESOURCE_TYPE.DESIGN ? setDesignsPage(0) : setViewsPage(0);
+  };
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -218,9 +219,7 @@ const WorkspaceContent = ({ workspace }) => {
           <Grid item xs={3} md={1}>
             {filters.type == RESOURCE_TYPE.DESIGN && (
               <ImportButton
-                refetch={() => {
-                  filters.type === RESOURCE_TYPE.DESIGN ? setDesignsPage(0) : setViewsPage(0);
-                }}
+                refetch={refetch}
                 workspaceId={workspace?.id}
                 disabled={
                   !CAN(
@@ -240,15 +239,14 @@ const WorkspaceContent = ({ workspace }) => {
             handleDownload={handleDownloadModalOpen}
             handleViewDownload={handleViewDownload}
             handleContentMove={setWorkspaceContentMoveModal}
-            refetch={() => {
-              filters.type === RESOURCE_TYPE.DESIGN ? setDesignsPage(0) : setViewsPage(0);
-            }}
+            refetch={refetch}
           />
           <WorkspaceContentMoveModal
             workspaceContentMoveModal={workspaceContentMoveModal}
             setWorkspaceContentMoveModal={setWorkspaceContentMoveModal}
             currentWorkspace={workspace}
             type={filters.type}
+            refetch={refetch}
           />
 
           <TableListHeader

@@ -296,6 +296,7 @@ const MainViewsContent = ({
           setWorkspaceContentMoveModal={setMoveModal}
           type={RESOURCE_TYPE.VIEW}
           workspaceContentMoveModal={moveModal}
+          refetch={refetch}
         />
       )}
       <PromptComponent ref={modalRef} />

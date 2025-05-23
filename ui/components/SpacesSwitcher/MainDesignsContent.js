@@ -353,6 +353,7 @@ const MainDesignsContent = ({
           type={RESOURCE_TYPE.DESIGN}
           workspaceContentMoveModal={moveModal}
           selectedContent={selectedDesign}
+          refetch={refetch}
         />
       )}
     </>
