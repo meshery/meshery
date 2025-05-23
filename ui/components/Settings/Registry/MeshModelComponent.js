@@ -399,6 +399,7 @@ const MeshModelComponent_ = ({
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
               setResourcesDetail={setResourcesDetail}
+              setModelsFilters={setModelsFilters}
               lastItemRef={{
                 [MODELS]: lastModelRef,
                 [REGISTRANTS]: lastRegistrantRef,

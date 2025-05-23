@@ -36,6 +36,7 @@ const MesheryTreeView = React.memo(
     setShowDetailsData,
     showDetailsData,
     setResourcesDetail,
+    setModelsFilters,
     lastItemRef,
     isFetching,
     isLoading,
@@ -263,6 +264,7 @@ const MesheryTreeView = React.memo(
             setExpanded={setSearchExpand}
             placeholder="Search"
             value={searchText}
+            setModelsFilters={setModelsFilters}
           />
         </div>
       </div>
