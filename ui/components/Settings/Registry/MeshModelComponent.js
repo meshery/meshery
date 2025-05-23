@@ -29,10 +29,10 @@ import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
 
 const MeshModelComponent_ = ({
-  modelsCount,
-  componentsCount,
-  relationshipsCount,
-  registrantCount,
+  modelsCount: initialModelsCount,
+  componentsCount: initialComponentsCount,
+  relationshipsCount: initialRelationshipsCount,
+  registrantCount: initialRegistrantCount,
   settingsRouter,
 }) => {
   const router = useRouter();
@@ -45,6 +45,14 @@ const MeshModelComponent_ = ({
     Relationships: 0,
     Registrants: 0,
   });
+
+  const [counts, setCounts] = useState({
+    models: initialModelsCount,
+    components: initialComponentsCount,
+    relationships: initialRelationshipsCount,
+    registrants: initialRegistrantCount,
+  });
+  console.log(counts);
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   const [view, setView] = useState(selectedTab ?? 'Models');
@@ -132,6 +140,12 @@ const MeshModelComponent_ = ({
             },
             true, // arg to use cache as default
           );
+          if (response.data && response.data.total_count !== undefined) {
+            setCounts((prevCounts) => ({
+              ...prevCounts,
+              models: response.data.total_count,
+            }));
+          }
           break;
         case COMPONENTS:
           response = await getComponentsData(
@@ -145,6 +159,12 @@ const MeshModelComponent_ = ({
             },
             true,
           );
+          if (response.data && response.data.total_count !== undefined) {
+            setCounts((prevCounts) => ({
+              ...prevCounts,
+              components: response.data.total_count,
+            }));
+          }
           break;
         case RELATIONSHIPS:
           response = await getRelationshipsData(
@@ -157,9 +177,21 @@ const MeshModelComponent_ = ({
             },
             true,
           );
+          if (response.data && response.data.total_count !== undefined) {
+            setCounts((prevCounts) => ({
+              ...prevCounts,
+              relationships: response.data.total_count,
+            }));
+          }
           break;
         case REGISTRANTS:
           response = await getRegistrants();
+          if (response.data && response.data.registrants) {
+            setCounts((prevCounts) => ({
+              ...prevCounts,
+              registrants: response.data.registrants.length,
+            }));
+          }
           break;
         default:
           break;
@@ -324,25 +356,25 @@ const MeshModelComponent_ = ({
         <InnerContainer>
           <TabCard
             label="Models"
-            count={modelsCount}
+            count={counts.models}
             active={view === MODELS}
             onClick={() => handleTabClick(MODELS)}
           />
           <TabCard
             label="Components"
-            count={componentsCount}
+            count={counts.components}
             active={view === COMPONENTS}
             onClick={() => handleTabClick(COMPONENTS)}
           />
           <TabCard
             label="Relationships"
-            count={relationshipsCount}
+            count={counts.relationships}
             active={view === RELATIONSHIPS}
             onClick={() => handleTabClick(RELATIONSHIPS)}
           />
           <TabCard
             label="Registrants"
-            count={registrantCount}
+            count={counts.registrants}
             active={view === REGISTRANTS}
             onClick={() => handleTabClick(REGISTRANTS)}
           />
