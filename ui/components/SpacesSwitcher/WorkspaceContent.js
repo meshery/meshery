@@ -163,7 +163,7 @@ const WorkspaceContent = ({ workspace }) => {
       else refetchViews();
     }
   }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
-  
+
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
