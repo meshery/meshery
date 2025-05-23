@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { CircularProgress } from '@layer5/sistent';
-import { COMPONENTS } from '../../constants/navigator';
+import { COMPONENTS } from '../../../constants/navigator';
 import StyledTreeItem from './StyledTreeItem';
 import { getFilteredDataForDetailsComponent } from './helper';
 import { useGetComponentsFromModalQuery } from '@/rtk-query/meshModel';

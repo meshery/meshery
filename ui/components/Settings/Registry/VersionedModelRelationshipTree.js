@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { CircularProgress } from '@layer5/sistent';
-import { MODELS } from '../../constants/navigator';
+import { MODELS } from '../../../constants/navigator';
 import StyledTreeItem from './StyledTreeItem';
 import { groupRelationshipsByKind } from './helper';
 import { useGetRelationshipsFromModalQuery } from '@/rtk-query/meshModel';
