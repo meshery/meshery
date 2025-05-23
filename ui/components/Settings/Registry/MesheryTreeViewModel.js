@@ -1,9 +1,9 @@
 import React from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
 import { CircularProgress, Box } from '@layer5/sistent';
-import MinusSquare from '../../assets/icons/MinusSquare';
-import PlusSquare from '../../assets/icons/PlusSquare';
-import DotSquare from '../../assets/icons/DotSquare';
+import MinusSquare from '../../../assets/icons/MinusSquare';
+import PlusSquare from '../../../assets/icons/PlusSquare';
+import DotSquare from '../../../assets/icons/DotSquare';
 import MesheryTreeViewItem from './MesheryTreeViewItem';
 
 const MesheryTreeViewModel = ({

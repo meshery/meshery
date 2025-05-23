@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { OVERVIEW, MODELS, GRAFANA, PROMETHEUS, REGISTRY } from '../../constants/navigator';
+import { OVERVIEW, MODELS, GRAFANA, PROMETHEUS, REGISTRY } from '../../../constants/navigator';
 import { useRouter } from 'next/router';
 import { useRef } from 'react';
 
