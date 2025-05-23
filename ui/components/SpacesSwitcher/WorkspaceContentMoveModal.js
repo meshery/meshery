@@ -10,6 +10,8 @@ import {
   List,
   ListItem,
   ListItemText,
+  Divider,
+  Box,
 } from '@layer5/sistent';
 import {
   useAssignDesignToWorkspaceMutation,
@@ -22,7 +24,6 @@ import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProv
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import React, { useContext, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useGetIconBasedOnMode } from './hooks';
 import { useRouter } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -30,9 +31,9 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 
-const WorkspaceItem = styled(ListItem)(({ theme, selected }) => ({
+const WorkspaceItem = styled(ListItem)({
   borderRadius: '8px',
-}));
+});
 
 const CurrentWorkspaceSection = styled(Typography)(({ theme }) => ({
   marginBottom: '1rem',
@@ -180,39 +181,44 @@ const WorkspaceContentMoveModal = ({
         <CurrentWorkspaceSection>
           Current Workspace: <strong>{currentWorkspace.name}</strong>
         </CurrentWorkspaceSection>
+        <Divider />
+        <Box display="flex" flexDirection="column" marginTop={'1rem'}>
+          {isLoading ? (
+            <CircularProgress size={24} />
+          ) : !filteredWorkspaces?.length ? (
+            <NoWorkspacesContainer>
+              <Typography>No other workspaces available to move content to.</Typography>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleCreateWorkspace}
+                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+              >
+                Create Workspace
+              </Button>
+            </NoWorkspacesContainer>
+          ) : (
+            <>
+              <Typography style={{ marginBottom: '0.5rem' }}>
+                Select destination workspace
+              </Typography>
 
-        {isLoading ? (
-          <CircularProgress size={24} />
-        ) : !filteredWorkspaces?.length ? (
-          <NoWorkspacesContainer>
-            <Typography>No other workspaces available to move content to.</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleCreateWorkspace}
-              disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
-            >
-              Create Workspace
-            </Button>
-          </NoWorkspacesContainer>
-        ) : (
-          <>
-            <Typography style={{ marginBottom: '0.5rem' }}>Select destination workspace</Typography>
-            <List>
-              {filteredWorkspaces.map((workspace) => (
-                <WorkspaceItem
-                  key={workspace.id}
-                  selected={selectedWorkspaceForMove?.id === workspace.id}
-                  onClick={() => isMoveAllowed && setSelectedWorkspaceForMove(workspace)}
-                  disabled={!isMoveAllowed}
-                  button
-                >
-                  <ListItemText primary={workspace.name} />
-                </WorkspaceItem>
-              ))}
-            </List>
-          </>
-        )}
+              <List>
+                {filteredWorkspaces.map((workspace) => (
+                  <WorkspaceItem
+                    key={workspace.id}
+                    selected={selectedWorkspaceForMove?.id === workspace.id}
+                    onClick={() => isMoveAllowed && setSelectedWorkspaceForMove(workspace)}
+                    disabled={!isMoveAllowed}
+                    button
+                  >
+                    <ListItemText primary={workspace.name} />
+                  </WorkspaceItem>
+                ))}
+              </List>
+            </>
+          )}
+        </Box>
       </ModalBody>
       <ModalFooter variant="filled">
         <PrimaryActionButtons
