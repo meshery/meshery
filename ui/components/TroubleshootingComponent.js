@@ -1,6 +1,6 @@
 import * as React from 'react';
 import TroubleshootingModal from './TroubleshootingModalComponent';
-import { RJSFModalWrapper } from './ConfirmationModal';
+import { RJSFModalWrapper } from './General/Modals/Modal';
 import {
   Modal,
   helpAndSupportModalSchema,
