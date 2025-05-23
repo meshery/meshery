@@ -18,9 +18,11 @@ import {
   OutlinedInput,
   FormControlLabel,
   FormGroup,
-  DownloadIcon,
   DeleteIcon,
   ShareIcon,
+  ExportIcon,
+  IconButton,
+  CloseIcon,
 } from '@layer5/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
@@ -388,9 +390,14 @@ export const MultiContentSelectToolbar = ({
           alignItems={'center'}
           paddingInline={'1rem'}
         >
-          <Typography>
-            {multiSelectedContent.length} {type} selected
-          </Typography>
+          <Box display={'flex'} alignItems={'center'} gap={'0.5rem'}>
+            <IconButton onClick={() => setMultiSelectedContent([])}>
+              <CloseIcon />
+            </IconButton>
+            <Typography>
+              {multiSelectedContent.length} {type} selected
+            </Typography>
+          </Box>
           <Box style={{ display: 'flex', gap: '0.5rem' }}>
             {handleContentMove && (
               <StyledResponsiveButton
@@ -406,7 +413,7 @@ export const MultiContentSelectToolbar = ({
             )}
             <StyledResponsiveButton
               variant="contained"
-              startIcon={<DownloadIcon style={iconMedium} fill={theme.palette.common.white} />}
+              startIcon={<ExportIcon style={iconMedium} fill={theme.palette.common.white} />}
               onClick={() => {
                 type === RESOURCE_TYPE.DESIGN
                   ? handleDownload(multiSelectedContent)
