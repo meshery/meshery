@@ -3,10 +3,7 @@ import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import {
-  useLazyPingPrometheusQuery,
-  useLazyPingGrafanaQuery,
-} from '@/services/pingApi';
+import { useLazyPingPrometheusQuery, useLazyPingGrafanaQuery } from '@/services/pingApi';
 
 export function useTelemetryHook(connectionType) {
   switch (connectionType) {

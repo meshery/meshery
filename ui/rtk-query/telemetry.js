@@ -78,17 +78,17 @@ const telemetryApi = api.injectEndpoints({
       }),
     }),
     pingPrometheus: builder.query({
-      query: ({connectionId}) => ({
+      query: ({ connectionId }) => ({
         url: `telemetry/metrics/ping/${connectionId}`,
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       }),
     }),
     pingGrafana: builder.query({
-      query: ({connectionId}) => ({
+      query: ({ connectionId }) => ({
         url: `telemetry/metrics/grafana/ping/${connectionId}`,
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       }),
     }),
   }),
