@@ -1,11 +1,22 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { FormControl, FormControlLabel, FormGroup, Grid, styled, MenuItem } from '@layer5/sistent';
+import React, { useContext } from 'react';
+import {
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  styled,
+  MenuItem,
+  CircularProgress,
+} from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
 import { StyledSelect } from './SpaceSwitcher';
-import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import WorkspaceModal from './WorkspaceModal';
-import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import {
+  useGetSelectedOrganization,
+  useGetSelectedWorkspace,
+  useUpdateSelectedWorkspaceMutation,
+} from '@/rtk-query/user';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -15,48 +26,58 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
 }));
 
 function WorkspaceSwitcher({ open }) {
-  const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
-  const { organization: currentOrg } = useSelector((state) => state.ui);
-  const { id: orgId } = currentOrg;
-  const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
-    {
-      page: 0,
-      pagesize: 'all',
-      order: 'updated_at desc',
-      orgId: orgId,
-    },
-    {
-      skip: !orgId ? true : false,
-    },
-  );
+  const { selectedOrganization } = useGetSelectedOrganization();
   const {
-    setSelectedWorkspace,
+    selectedWorkspace,
+    allWorkspaces,
+    error: workspaceError,
+    isLoading: isLoadingWorkspaces,
+  } = useGetSelectedWorkspace();
+
+  const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
+    useUpdateSelectedWorkspaceMutation();
+
+  const {
     open: workspaceModal,
+    setSelectedWorkspace,
     openModal: openWorkspaceModal,
     closeModal: closeWorkspaceModal,
   } = useContext(WorkspaceModalContext);
 
-  useEffect(() => {
-    if (workspacesData && workspacesData.workspaces?.length > 0) {
-      const defaultWorkspace = workspacesData.workspaces[0];
-      setDefaultWorkspace(defaultWorkspace);
-    }
-  }, [workspacesData]);
+  // useEffect(() => {
+  //   if (selectedWorkspace?.id) {
+  //     setSelectedWorkspace(selectedWorkspace);
+  //   }
+  // }, [selectedWorkspace, setSelectedWorkspace]);
 
   const handleChangeWorkspace = (e) => {
-    if (!workspacesData || !workspacesData.workspaces) return;
-
-    const selectedWorkspace = workspacesData.workspaces.find(
-      (workspace) => workspace.id === e.target.value,
+    const newId = e.target.value;
+    console.log(
+      'handleChangeWorkspace',
+      newId,
+      'oldId',
+      selectedWorkspace?.id,
+      'orgId',
+      selectedOrganization.id,
     );
-    setDefaultWorkspace(selectedWorkspace);
-    setSelectedWorkspace({ id: selectedWorkspace.id, name: selectedWorkspace.name });
+
+    console.log('selectedWorkspace', selectedWorkspace);
+    setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
+    updateSelectedWorkspace(selectedOrganization.id, newId);
     openWorkspaceModal(true);
   };
 
+  if (workspaceError) {
+    return <div>Error: {workspaceError.message}</div>;
+  }
+
+  if (isLoadingWorkspaces || isUpdatingSelectedWorkspace) {
+    return <CircularProgress height="1.5rem" width="1.5rem" />;
+  }
+
   return (
     <NoSsr>
-      {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
+      {!isLoadingWorkspaces && allWorkspaces?.length > 0 && (
         <div
           style={{
             width: open ? 'auto' : 0,
@@ -73,17 +94,14 @@ function WorkspaceSwitcher({ open }) {
                     <Grid item xs={12} data-cy="mesh-adapter-url">
                       <StyledSelect
                         size="small"
-                        value={_defaultWorkspace?.id || ''}
+                        value={selectedWorkspace?.id || ''}
                         onChange={(e) => {
-                          if (e.target.value !== _defaultWorkspace?.id) {
+                          if (e.target.value !== selectedWorkspace?.id) {
                             handleChangeWorkspace(e); // only call for new selection
                           }
                         }}
-                        renderValue={(selected) => {
-                          const workspace = workspacesData?.workspaces?.find(
-                            (w) => w.id === selected,
-                          );
-                          return workspace ? <span>{workspace.name}</span> : '';
+                        renderValue={() => {
+                          return selectedWorkspace?.name || '';
                         }}
                         MenuProps={{
                           anchorOrigin: {
@@ -97,13 +115,13 @@ function WorkspaceSwitcher({ open }) {
                           getContentAnchorEl: null,
                         }}
                       >
-                        {workspacesData?.workspaces?.map((works) => (
+                        {allWorkspaces?.map((works) => (
                           <HoverMenuItem
                             key={works.id}
                             value={works.id}
                             selected={works.id === _defaultWorkspace?.id}
                             onClick={() => {
-                              if (works.id === _defaultWorkspace?.id) {
+                              if (works.id === selectedWorkspace?.id) {
                                 handleChangeWorkspace({ target: { value: works.id } });
                               }
                             }}

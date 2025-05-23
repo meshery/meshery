@@ -10,7 +10,7 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from './Grid.styles';
-import { RJSFModalWrapper } from '../Modal';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';

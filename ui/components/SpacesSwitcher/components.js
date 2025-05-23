@@ -16,18 +16,31 @@ import {
   useTheme,
   PersonIcon,
   OutlinedInput,
+  FormControlLabel,
+  FormGroup,
+  DeleteIcon,
+  ShareIcon,
+  ExportIcon,
+  IconButton,
+  CloseIcon,
 } from '@layer5/sistent';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';
 import { FileUpload } from '@mui/icons-material';
-import { ImportDesignModal } from '../MesheryPatterns';
+import { ImportDesignModal } from '../MesheryPatterns/MesheryPatterns';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { getUnit8ArrayDecodedFile } from '@/utils/utils';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useImportPatternMutation } from '@/rtk-query/design';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { useAssignDesignToWorkspaceMutation } from '@/rtk-query/workspace';
+import { RESOURCE_TYPE } from '@/utils/Enum';
+import { iconMedium } from 'css/icons.styles';
+import MoveFileIcon from '@/assets/icons/MoveFileIcon';
+import { StyledMuiDoubleCheckbox, StyledResponsiveButton } from './styles';
 
 export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
   const [open, setOpen] = React.useState(false);
@@ -156,12 +169,12 @@ export const VisibilitySelect = ({ visibility, handleVisibilityChange, visibilit
 
 export const SortBySelect = ({ sortBy, handleSortByChange }) => {
   const sortOptions = [
-    { value: 'name asc', label: 'Name (A-Z)' },
-    { value: 'name desc', label: 'Name (Z-A)' },
-    { value: 'updated_at desc', label: 'Last Updated (Newest First)' },
-    { value: 'updated_at asc', label: 'Last Updated (Oldest First)' },
-    { value: 'created_at desc', label: 'Created At (Newest First)' },
-    { value: 'created_at asc', label: 'Created At (Oldest First)' },
+    { value: 'name asc', label: 'A to Z' },
+    { value: 'name desc', label: 'Z to A' },
+    { value: 'updated_at desc', label: 'Latest Update' },
+    { value: 'updated_at asc', label: 'Oldest Update' },
+    { value: 'created_at desc', label: 'Newest' },
+    { value: 'created_at asc', label: 'Oldest' },
   ];
 
   return (
@@ -188,29 +201,43 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
   );
 };
 
-export const TableListHeader = () => {
+export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => {
+  const { setMultiSelectedContent, multiSelectedContent } = useContext(WorkspaceModalContext);
   return (
-    <Grid
-      container
-      width="100%"
-      paddingInline="1rem"
-      spacing={2}
-      alignItems="center"
-      wrap="nowrap"
-      marginTop={0}
-    >
+    <Grid container width="100%" paddingInline="1rem" spacing={2} alignItems="center" wrap="nowrap">
+      {isMultiSelectMode && (
+        <Grid item xs={0.6} md={0.5} zeroMinWidth>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <StyledMuiDoubleCheckbox
+                  checked={
+                    multiSelectedContent.length != 0 &&
+                    multiSelectedContent.length === content.length
+                  }
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      setMultiSelectedContent(content);
+                    } else {
+                      setMultiSelectedContent([]);
+                    }
+                  }}
+                />
+              }
+            />
+          </FormGroup>
+        </Grid>
+      )}
       <Grid item xs={6} md={5} lg={5} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Name
         </Typography>
       </Grid>
-
       <Grid item xs={4} md={4} lg={4} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Author
         </Typography>
       </Grid>
-
       <Grid
         item
         md={2}
@@ -221,7 +248,6 @@ export const TableListHeader = () => {
           Visibility
         </Typography>
       </Grid>
-
       <Grid item xs={3} sm={2} md={1} lg={2} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Actions
@@ -231,11 +257,12 @@ export const TableListHeader = () => {
   );
 };
 
-export const ImportButton = () => {
+export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
   const [importModal, setImportModal] = useState(false);
   const handleImportModalOpen = () => {
     setImportModal(true);
   };
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
   const handleImportModalClose = () => {
     setImportModal(false);
   };
@@ -270,13 +297,22 @@ export const ImportButton = () => {
       importBody: requestBody,
     })
       .unwrap()
-      .then(() => {
+      .then((data) => {
         updateProgress({ showProgress: false });
         notify({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
-        // getPattern();
+        if (workspaceId) {
+          assignDesignToWorkspace({
+            workspaceId: workspaceId,
+            designId: data[0].id,
+          });
+        }
+        handleImportModalClose();
+        if (refetch) {
+          refetch();
+        }
       })
       .catch(() => {
         updateProgress({ showProgress: false });
@@ -294,18 +330,20 @@ export const ImportButton = () => {
           handleImportDesign={handleImportDesign}
         />
       )}
-      <Button
+      <StyledResponsiveButton
         color="primary"
         variant="contained"
         onClick={handleImportModalOpen}
+        disabled={disabled}
         sx={{
           minWidth: 'fit-content',
-          padding: '0.85rem',
+          padding: '0.85rem !important',
+          width: '100%',
         }}
         startIcon={<FileUpload color={theme.palette.common.white} />}
       >
-        Import
-      </Button>
+        <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Import</Box>
+      </StyledResponsiveButton>
     </>
   );
 };
@@ -323,7 +361,103 @@ export const AssignDesignViewButton = ({ type, handleAssign, disabled }) => {
       }}
       startIcon={<SettingsIcon />}
     >
-      {type === 'design' ? 'Manage Designs' : 'Manage Views'}
+      {type === RESOURCE_TYPE.DESIGN ? 'Manage Designs' : 'Manage Views'}
     </Button>
+  );
+};
+
+export const MultiContentSelectToolbar = ({
+  type,
+  handleContentMove,
+  handleDownload,
+  handleViewDownload,
+  handleDelete,
+  handleShare,
+  refetch,
+}) => {
+  const theme = useTheme();
+  const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
+  return (
+    <>
+      {multiSelectedContent.length > 0 && (
+        <Box
+          width={'100%'}
+          sx={{ backgroundColor: theme.palette.background.default }}
+          height={'4rem'}
+          borderRadius={'0.5rem'}
+          display={'flex'}
+          justifyContent={'space-between'}
+          alignItems={'center'}
+          paddingInline={'1rem'}
+        >
+          <Box display={'flex'} alignItems={'center'} gap={'0.5rem'}>
+            <IconButton onClick={() => setMultiSelectedContent([])}>
+              <CloseIcon />
+            </IconButton>
+            <Typography>
+              {multiSelectedContent.length} {type} selected
+            </Typography>
+          </Box>
+          <Box style={{ display: 'flex', gap: '0.5rem' }}>
+            {handleContentMove && (
+              <StyledResponsiveButton
+                variant="contained"
+                startIcon={<MoveFileIcon style={iconMedium} fill={theme.palette.common.white} />}
+                onClick={() => {
+                  handleContentMove(true);
+                }}
+                disabled={!multiSelectedContent.length}
+              >
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Move</Box>
+              </StyledResponsiveButton>
+            )}
+            <StyledResponsiveButton
+              variant="contained"
+              startIcon={<ExportIcon style={iconMedium} fill={theme.palette.common.white} />}
+              onClick={() => {
+                type === RESOURCE_TYPE.DESIGN
+                  ? handleDownload(multiSelectedContent)
+                  : handleViewDownload(multiSelectedContent);
+                setMultiSelectedContent([]);
+              }}
+              disabled={!multiSelectedContent.length}
+            >
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Download</Box>
+            </StyledResponsiveButton>{' '}
+            {handleShare && (
+              <StyledResponsiveButton
+                variant="contained"
+                startIcon={<ShareIcon style={iconMedium} fill={theme.palette.common.white} />}
+                onClick={() => {
+                  handleShare(multiSelectedContent);
+                  setMultiSelectedContent([]);
+                }}
+                disabled={!multiSelectedContent.length}
+              >
+                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Share</Box>
+              </StyledResponsiveButton>
+            )}
+            <StyledResponsiveButton
+              color="error"
+              variant="contained"
+              onClick={() => {
+                handleDelete(
+                  multiSelectedContent,
+                  type === RESOURCE_TYPE.DESIGN ? RESOURCE_TYPE.DESIGN : RESOURCE_TYPE.VIEW,
+                  refetch,
+                );
+                setMultiSelectedContent([]);
+              }}
+              sx={{
+                backgroundColor: `${theme.palette.error.dark} !important`,
+              }}
+              startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
+            >
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Delete</Box>
+            </StyledResponsiveButton>
+          </Box>
+        </Box>
+      )}
+    </>
   );
 };

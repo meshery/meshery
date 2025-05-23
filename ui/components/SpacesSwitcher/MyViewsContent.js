@@ -1,15 +1,23 @@
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { Box, Grid, useTheme } from '@layer5/sistent';
-import React, { useCallback, useState } from 'react';
+import { Box, Grid, PromptComponent, useTheme } from '@layer5/sistent';
+import React, { useCallback, useRef, useState } from 'react';
 import { useFetchViewsQuery } from '@/rtk-query/view';
-import { VISIBILITY } from '@/utils/Enum';
+import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
 import MainViewsContent from './MainViewsContent';
 import { StyledSearchBar } from '@layer5/sistent';
-import { SortBySelect, TableListHeader, VisibilitySelect } from './components';
+import {
+  MultiContentSelectToolbar,
+  SortBySelect,
+  TableListHeader,
+  VisibilitySelect,
+} from './components';
+import { useContentDelete, useContentDownload } from './hooks';
+import ShareModal from './ShareModal';
 
 const MyViewsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE];
+  const [shareModal, setShareModal] = useState({ open: false, content: null });
 
   const [filters, setFilters] = useState({
     visibility: visibilityItems,
@@ -54,6 +62,7 @@ const MyViewsContent = () => {
     data: viewsData,
     isLoading,
     isFetching,
+    refetch: refetchViews,
   } = useFetchViewsQuery(
     {
       page: filters.page,
@@ -72,6 +81,18 @@ const MyViewsContent = () => {
   const hasMore = viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1);
   const total_count = viewsData?.total_count || 0;
   const theme = useTheme();
+  const modalRef = useRef(null);
+  const { handleDelete } = useContentDelete(modalRef);
+  const { handleViewDownload } = useContentDownload();
+
+  // Refetch function to reset the page to 0 and refetch the views
+  const refetch = useCallback(() => {
+    if (filters.page > 0) {
+      setPage(0);
+    }
+    refetchViews();
+  }, [filters.page, refetchViews, setPage]);
+
   return (
     <Box display={'flex'} flexDirection="column" gap="1rem">
       <Grid container spacing={2} alignItems="center" marginBottom="1rem">
@@ -102,8 +123,19 @@ const MyViewsContent = () => {
           />
         </Grid>
       </Grid>
-
-      <TableListHeader />
+      <MultiContentSelectToolbar
+        type={RESOURCE_TYPE.VIEW}
+        handleDelete={handleDelete}
+        handleViewDownload={handleViewDownload}
+        refetch={refetch}
+        handleShare={(multiSelectedContent) => {
+          setShareModal({
+            open: true,
+            content: multiSelectedContent,
+          });
+        }}
+      />
+      <TableListHeader isMultiSelectMode content={views} />
       <MainViewsContent
         key={'my-views'}
         page={filters.page}
@@ -113,8 +145,17 @@ const MyViewsContent = () => {
         setPage={setPage}
         views={views}
         total_count={total_count}
-        refetch={() => setPage(0)}
+        refetch={refetch}
+        isMultiSelectMode={true}
       />
+      <PromptComponent ref={modalRef} />
+      {shareModal.open && (
+        <ShareModal
+          resource={shareModal.content}
+          handleClose={() => setShareModal(false)}
+          type={RESOURCE_TYPE.VIEW}
+        />
+      )}
     </Box>
   );
 };

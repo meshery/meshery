@@ -36,10 +36,10 @@ import {
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
+import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './Modals/ConnectionModal';
+import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
@@ -442,7 +442,7 @@ const Header = ({
                     justifyContent: 'center',
                   }}
                 ></div>
-                <SpaceSwitcher />
+                <OrganizationAndWorkSpaceSwitcher />
               </Grid>
               <Box
                 component={UserContainer}
