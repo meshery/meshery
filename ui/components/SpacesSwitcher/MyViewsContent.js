@@ -115,6 +115,7 @@ const MyViewsContent = () => {
         type={RESOURCE_TYPE.VIEW}
         handleDelete={handleDelete}
         handleViewDownload={handleViewDownload}
+        refetch={() => setPage(0)}
       />
       <TableListHeader isMultiSelectMode content={views} />
       <MainViewsContent

@@ -203,7 +203,11 @@ const RecentContent = () => {
           {/* Import Button */}
           {filters.type === RESOURCE_TYPE.DESIGN && (
             <Grid item xs={6} sm={3} md={3} lg={1}>
-              <ImportButton />
+              <ImportButton
+                refetch={() =>
+                  RESOURCE_TYPE.DESIGN == filters.type ? setDesignsPage(0) : setViewsPage(0)
+                }
+              />
             </Grid>
           )}
         </Grid>

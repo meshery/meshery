@@ -203,7 +203,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
   return (
     <Grid container width="100%" paddingInline="1rem" spacing={2} alignItems="center" wrap="nowrap">
       {isMultiSelectMode && (
-        <Grid item xs={0.6} md={0.5} lg={0.25} zeroMinWidth>
+        <Grid item xs={0.6} md={0.5} zeroMinWidth>
           <FormGroup>
             <FormControlLabel
               control={
@@ -254,7 +254,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
   );
 };
 
-export const ImportButton = ({ workspaceId, disabled = false }) => {
+export const ImportButton = ({ workspaceId, disabled = false, refetch }) => {
   const [importModal, setImportModal] = useState(false);
   const handleImportModalOpen = () => {
     setImportModal(true);
@@ -301,11 +301,14 @@ export const ImportButton = ({ workspaceId, disabled = false }) => {
           event_type: EVENT_TYPES.SUCCESS,
         });
         if (workspaceId) {
-          handleImportModalClose();
           assignDesignToWorkspace({
             workspaceId: workspaceId,
             designId: data[0].id,
           });
+        }
+        handleImportModalClose();
+        if (refetch) {
+          refetch();
         }
       })
       .catch(() => {
@@ -366,9 +369,10 @@ export const MultiContentSelectToolbar = ({
   handleDownload,
   handleViewDownload,
   handleDelete,
+  refetch,
 }) => {
   const theme = useTheme();
-  const { multiSelectedContent } = useContext(WorkspaceModalContext);
+  const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <>
       {multiSelectedContent.length > 0 && (
@@ -390,7 +394,9 @@ export const MultiContentSelectToolbar = ({
               <StyledResponsiveButton
                 variant="contained"
                 startIcon={<MoveFileIcon style={iconMedium} />}
-                onClick={() => handleContentMove(true)}
+                onClick={() => {
+                  handleContentMove(true);
+                }}
                 disabled={!multiSelectedContent.length}
               >
                 <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Move</Box>
@@ -399,11 +405,12 @@ export const MultiContentSelectToolbar = ({
             <StyledResponsiveButton
               variant="contained"
               startIcon={<DownloadIcon style={iconMedium} fill={theme.palette.common.white} />}
-              onClick={() =>
+              onClick={() => {
                 type === RESOURCE_TYPE.DESIGN
                   ? handleDownload(multiSelectedContent)
-                  : handleViewDownload(multiSelectedContent)
-              }
+                  : handleViewDownload(multiSelectedContent);
+                setMultiSelectedContent([]);
+              }}
               disabled={!multiSelectedContent.length}
             >
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>Download</Box>
@@ -415,7 +422,9 @@ export const MultiContentSelectToolbar = ({
                 handleDelete(
                   multiSelectedContent,
                   type === RESOURCE_TYPE.DESIGN ? RESOURCE_TYPE.DESIGN : RESOURCE_TYPE.VIEW,
+                  refetch,
                 );
+                setMultiSelectedContent([]);
               }}
               sx={{
                 backgroundColor: `${theme.palette.error.dark} !important`,

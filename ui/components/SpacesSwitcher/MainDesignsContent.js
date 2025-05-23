@@ -90,12 +90,12 @@ const MainDesignsContent = ({
   };
   const { handleDesignDownload } = useContentDownload();
 
-  const handleRemove = async (design) => {
+  const handleRemove = (design) => {
     setMoveModal(true);
     setSelectedDesign(design);
   };
 
-  const handleShare = async (design) => {
+  const handleShare = (design) => {
     setShareModal(true);
     setSelectedDesign(design);
   };
@@ -206,6 +206,7 @@ const MainDesignsContent = ({
     handleRemove,
     handleShare,
     handleInfoModal,
+    refetch,
   }) => {
     const options = [
       {
@@ -224,14 +225,14 @@ const MainDesignsContent = ({
       },
       {
         ...DESIGN_ACTIONS.DELETE_DESIGN,
-        handler: () => handleDelete([design]),
+        handler: () => handleDelete([design], RESOURCE_TYPE.DESIGN, refetch),
       },
     ];
 
     if (workspace) {
       options.unshift({
         ...DESIGN_ACTIONS.REMOVE_DESIGN,
-        handler: () => handleRemove(design),
+        handler: () => handleRemove(design, refetch),
       });
     }
     return options.filter((option) => option.enabled({ design }));
@@ -282,6 +283,7 @@ const MainDesignsContent = ({
                         handleDesignDownloadModal,
                         handleShare,
                         handleInfoModal,
+                        refetch,
                       })}
                     />
                   }
@@ -296,9 +298,11 @@ const MainDesignsContent = ({
           {isLoading || isInitialFetch ? (
             Array(10)
               .fill(null)
-              .map((_, index) => <DesignViewListItemSkeleton key={index} />)
+              .map((_, index) => (
+                <DesignViewListItemSkeleton key={index} isMultiSelectMode={isMultiSelectMode} />
+              ))
           ) : isFetching ? (
-            <DesignViewListItemSkeleton />
+            <DesignViewListItemSkeleton isMultiSelectMode={isMultiSelectMode} />
           ) : null}
 
           {!hasMore && !isLoading && !isFetching && designs?.length > 0 && !isEmpty && (

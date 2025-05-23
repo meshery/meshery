@@ -71,7 +71,7 @@ const DesignViewListItem = ({
         }}
       >
         {isMultiSelectMode && (
-          <Grid item xs={0.6} md={0.5} lg={0.25} zeroMinWidth>
+          <Grid item xs={0.3} md={0.25} zeroMinWidth>
             <FormGroup>
               <FormControlLabel
                 control={
@@ -175,10 +175,15 @@ const DesignViewListItem = ({
 
 export default DesignViewListItem;
 
-export const DesignViewListItemSkeleton = () => {
+export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
   return (
     <>
       <StyledListItem>
+        {isMultiSelectMode && (
+          <Grid item xs={0.3} md={0.25} zeroMinWidth>
+            <Skeleton variant="rectangular" animation="wave" {...iconMedium} />
+          </Grid>
+        )}
         <StyledTextContainer item xs={6} md={5} lg={5}>
           <StyledAvatarContainer>
             <Skeleton variant="circular" animation="wave" width={24} height={24} />

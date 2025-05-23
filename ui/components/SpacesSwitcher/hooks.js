@@ -167,7 +167,7 @@ export const useContentDelete = (modalRef) => {
   const [deletePatternFile] = useDeletePatternFileMutation();
   const { notify } = useNotification();
 
-  const handleDelete = async (items, type = RESOURCE_TYPE.DESIGN) => {
+  const handleDelete = async (items, type = RESOURCE_TYPE.DESIGN, refetch) => {
     const isDesign = type === RESOURCE_TYPE.DESIGN;
     const itemType = isDesign ? 'Design' : 'View';
     const deleteMutation = isDesign ? deletePatternFile : deleteView;
@@ -184,23 +184,31 @@ export const useContentDelete = (modalRef) => {
     });
 
     if (response === 'DELETE') {
-      items.forEach((item) => {
-        const { name, id } = item;
-        deleteMutation({ id })
-          .unwrap()
-          .then(() => {
-            notify({
-              message: `"${name}" ${itemType} deleted`,
-              event_type: EVENT_TYPES.SUCCESS,
-            });
-          })
-          .catch(() => {
-            notify({
-              message: `Unable to delete "${name}" ${itemType}`,
-              event_type: EVENT_TYPES.ERROR,
-            });
-          });
-      });
+      try {
+        await Promise.all(
+          items.map(async (item) => {
+            const { name, id } = item;
+            try {
+              await deleteMutation({ id }).unwrap();
+              notify({
+                message: `"${name}" ${itemType} deleted`,
+                event_type: EVENT_TYPES.SUCCESS,
+              });
+            } catch (err) {
+              notify({
+                message: `Unable to delete "${name}" ${itemType}`,
+                event_type: EVENT_TYPES.ERROR,
+              });
+            }
+          }),
+        );
+
+        if (refetch) {
+          refetch();
+        }
+      } catch (error) {
+        console.error('Error during batch deletion:', error);
+      }
     }
   };
 

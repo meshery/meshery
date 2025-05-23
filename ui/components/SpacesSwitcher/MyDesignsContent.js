@@ -12,15 +12,13 @@ import {
   TableListHeader,
   VisibilitySelect,
 } from './components';
-import { useSelector } from 'react-redux';
-import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
 import { useContentDelete, useContentDownload } from './hooks';
 import ExportModal from '../ExportModal';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE, VISIBILITY.PUBLISHED];
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  // const { organization: currentOrganization } = useSelector((state) => state.ui);
   const [filters, setFilters] = useState({
     visibility: visibilityItems,
     searchQuery: '',
@@ -64,6 +62,7 @@ const MyDesignsContent = () => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
@@ -74,7 +73,7 @@ const MyDesignsContent = () => {
       metrics: true,
       visibility: filters.visibility,
       search: filters.searchQuery,
-      orgId: currentOrganization?.id,
+      // orgId: currentOrganization?.id,
     },
     {
       skip: !currentUser?.id,
@@ -135,13 +134,14 @@ const MyDesignsContent = () => {
 
         {/* Import Button */}
         <Grid item xs={4} md={1}>
-          <ImportButton />
+          <ImportButton refetch={() => setPage(0)} />
         </Grid>
       </Grid>
       <MultiContentSelectToolbar
         type={RESOURCE_TYPE.DESIGN}
         handleDelete={handleDelete}
         handleDownload={handleDownloadModalOpen}
+        refetch={() => setPage(0)}
       />
 
       <TableListHeader isMultiSelectMode={true} content={designsData?.patterns} />
@@ -154,6 +154,7 @@ const MyDesignsContent = () => {
         setPage={setPage}
         hasMore={hasMore}
         refetch={() => setPage(0)}
+        isMultiSelectMode={true}
         total_count={total_count}
       />
       <PromptComponent ref={modalRef} />

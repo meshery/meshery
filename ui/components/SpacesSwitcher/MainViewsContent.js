@@ -52,29 +52,29 @@ const MainViewsContent = ({
   const [infoModal, setinfoModal] = useState(null);
   const [moveModal, setMoveModal] = useState(false);
 
-  const [selectedView, setSetselectedView] = useState(null);
+  const [selectedView, setSelectedView] = useState(null);
   const [updateView] = useUpdateViewVisibilityMutation();
   const handleOpenShareModal = (view) => {
-    setSetselectedView(view);
+    setSelectedView(view);
     setShareModal(true);
   };
 
   const handleCloseShareModal = () => {
-    setSetselectedView(null);
+    setSelectedView(null);
     setShareModal(false);
   };
 
   const handleOpenInfoModal = (view) => {
-    setSetselectedView(view);
+    setSelectedView(view);
     setinfoModal(true);
   };
 
   const handleCloseInfoModal = () => {
-    setSetselectedView(null);
+    setSelectedView(null);
     setinfoModal(false);
   };
   const handleMoveModal = (view) => {
-    setSetselectedView(view);
+    setSelectedView(view);
     setMoveModal(true);
   };
 
@@ -144,6 +144,7 @@ const MainViewsContent = ({
     handleOpenInfoModal,
     handleOpenShareModal,
     handleDelete,
+    refetch,
   }) => {
     const options = [
       {
@@ -161,7 +162,7 @@ const MainViewsContent = ({
       },
       {
         ...VIEW_ACTIONS.DELETE_VIEW,
-        handler: () => handleDelete([view], RESOURCE_TYPE.VIEW),
+        handler: () => handleDelete([view], RESOURCE_TYPE.VIEW, refetch),
       },
     ];
     if (workspace) {
@@ -235,6 +236,7 @@ const MainViewsContent = ({
                         handleOpenInfoModal,
                         handleOpenShareModal,
                         handleDelete,
+                        refetch,
                       })}
                     />
                   }
@@ -249,9 +251,11 @@ const MainViewsContent = ({
           {isLoading || isInitialFetch ? (
             Array(10)
               .fill()
-              .map((_, index) => <DesignViewListItemSkeleton key={index} />)
+              .map((_, index) => (
+                <DesignViewListItemSkeleton key={index} isMultiSelectMode={isMultiSelectMode} />
+              ))
           ) : isFetching ? (
-            <DesignViewListItemSkeleton />
+            <DesignViewListItemSkeleton isMultiSelectMode={isMultiSelectMode} />
           ) : (
             <></>
           )}
