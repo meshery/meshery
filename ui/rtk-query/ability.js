@@ -6,12 +6,12 @@ import DefaultError from '@/components/General/error-404';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 import {
   useGetSelectedOrganization,
-  useGetUserPrefQuery,
+  // useGetUserPrefQuery,
   useUpdateSelectedOrganizationMutation,
-  useUpdateUserPrefMutation,
+  // useUpdateUserPrefMutation,
 } from './user';
-import { useGetOrgsQuery } from './organization';
-import { useEffect } from 'react';
+
+import { useEffect, useRef } from 'react';
 
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
@@ -62,8 +62,14 @@ const SelectedOrganizationProvider = ({ children }) => {
     id: selectedOrganizationId,
   });
 
+  const prefUpdatedToFallback = useRef(false);
+
   useEffect(() => {
     console.log('[loadSession] selectedOrganization', selectedOrganization);
+
+    if (prefUpdatedToFallback.current) {
+      return;
+    }
     if (
       didFallback &&
       selectedOrganizationId &&
@@ -72,6 +78,7 @@ const SelectedOrganizationProvider = ({ children }) => {
     ) {
       console.log('[loadSession] setting default org');
       const res = updatePrefs(selectedOrganizationId);
+      prefUpdatedToFallback.current = true;
       console.log('updatePrefs', res);
     }
   }, [didFallback, selectedOrganizationId, errorFetchingSelectedOrg, isFetchingSelectedOrg]);

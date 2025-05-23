@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {
   FormControl,
   FormControlLabel,
@@ -62,11 +62,11 @@ function WorkspaceSwitcher({ open }) {
     closeModal: closeWorkspaceModal,
   } = useContext(WorkspaceModalContext);
 
-  useEffect(() => {
-    if (selectedWorkspace?.id) {
-      setSelectedWorkspace(selectedWorkspace);
-    }
-  }, [selectedWorkspace, setSelectedWorkspace]);
+  // useEffect(() => {
+  //   if (selectedWorkspace?.id) {
+  //     setSelectedWorkspace(selectedWorkspace);
+  //   }
+  // }, [selectedWorkspace, setSelectedWorkspace]);
 
   const handleChangeWorkspace = (e) => {
     const newId = e.target.value;
