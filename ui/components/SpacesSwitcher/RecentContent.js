@@ -95,6 +95,7 @@ const RecentContent = () => {
     data: designsData,
     isLoading,
     isFetching,
+    refetch: refetchDesigns,
   } = useGetUserDesignsQuery(
     {
       expandUser: true,
@@ -115,6 +116,7 @@ const RecentContent = () => {
     data: viewsData,
     isLoading: isViewLoading,
     isFetching: isViewFetching,
+    refetch: refetchViews,
   } = useFetchViewsQuery(
     {
       page: filters.viewsPage,
@@ -130,6 +132,15 @@ const RecentContent = () => {
   );
 
   const theme = useTheme();
+  const refetch = useCallback(() => {
+    if (filters.type === RESOURCE_TYPE.DESIGN) {
+      if (filters.designsPage > 0) setDesignsPage(0);
+      else refetchDesigns();
+    } else {
+      if (filters.viewsPage > 0) setViewsPage(0);
+      else refetchViews();
+    }
+  }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
 
   return (
     <>
@@ -203,7 +214,7 @@ const RecentContent = () => {
           {/* Import Button */}
           {filters.type === RESOURCE_TYPE.DESIGN && (
             <Grid item xs={6} sm={3} md={3} lg={1}>
-              <ImportButton />
+              <ImportButton refetch={refetch} />
             </Grid>
           )}
         </Grid>
@@ -223,7 +234,7 @@ const RecentContent = () => {
                 designsData?.total_count > (filters.designsPage + 1) * designsData?.page_size
               }
               total_count={designsData?.total_count}
-              refetch={() => setDesignsPage(0)}
+              refetch={refetch}
             />
           )}
           {filters.type == RESOURCE_TYPE.VIEW && (
@@ -236,7 +247,7 @@ const RecentContent = () => {
               views={viewsData?.views}
               hasMore={viewsData?.total_count > viewsData?.page_size * (viewsData?.page + 1)}
               total_count={viewsData?.total_count}
-              refetch={() => setViewsPage(0)}
+              refetch={refetch}
             />
           )}
         </>

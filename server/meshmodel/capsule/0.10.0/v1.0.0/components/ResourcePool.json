@@ -1,0 +1,78 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Resource Pool",
+  "description": "Orchestration \u0026 Management",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "capsule",
+    "displayName": "Capsule",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Scheduling \u0026 Orchestration",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://projectcapsule.github.io/charts/capsule-0.10.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.10.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "",
+    "secondaryColor": "circle",
+    "shape": "Scheduling \u0026 Orchestration",
+    "svgColor": "#00B39F",
+    "svgComplete": "",
+    "svgWhite": "#00D3A9"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "https://projectcapsule.github.io/charts/capsule-0.10.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "FALSE",
+    "kind": "ResourcePool",
+    "schema": "{\n \"description\": \"Resourcepools allows you to define a set of resources as known from ResoureQuotas. The Resourcepools are defined at cluster-scope an should\\nbe administrated by cluster-administrators. However they create an interface, where cluster-administrators can define\\nfrom which namespaces resources from a Resourcepool can be claimed. The claiming is done via a namespaced CRD called ResourcePoolClaim. Then\\nit's up the group of users within these namespaces, to manage the resources they consume per namespace. Each Resourcepool provisions a ResourceQuotainto all the selected namespaces. Then essentially the ResourcePoolClaims, when they can be assigned to the ResourcePool stack resources on top of that\\nResourceQuota based on the namspace, where the ResourcePoolClaim was made from.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourcePoolSpec.\",\n   \"properties\": {\n    \"config\": {\n     \"default\": {},\n     \"description\": \"Additional Configuration\",\n     \"properties\": {\n      \"defaultsZero\": {\n       \"default\": false,\n       \"description\": \"With this option all resources which can be allocated are set to 0 for the resourcequota defaults.\",\n       \"type\": \"boolean\"\n      },\n      \"deleteBoundResources\": {\n       \"default\": false,\n       \"description\": \"When a resourcepool is deleted, the resourceclaims bound to it are disassociated from the resourcepool but not deleted.\\nBy Enabling this option, the resourceclaims will be deleted when the resourcepool is deleted, if they are in bound state.\",\n       \"type\": \"boolean\"\n      },\n      \"orderedQueue\": {\n       \"default\": false,\n       \"description\": \"Claims are queued whenever they are allocated to a pool. A pool tries to allocate claims in order based on their\\ncreation date. But no matter their creation time, if a claim is requesting too much resources it's put into the queue\\nbut if a lower priority claim still has enough space in the available resources, it will be able to claim them. Eventough\\nit's priority was lower\\nEnabling this option respects to Order. Meaning the Creationtimestamp matters and if a resource is put into the queue, no\\nother claim can claim the same resources with lower priority.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"defaults\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"The Defaults given for each namespace, the default is not counted towards the total allocation\\nWhen you use claims it's recommended to provision Defaults as the prevent the scheduling of any resources\",\n     \"type\": \"object\"\n    },\n    \"quota\": {\n     \"description\": \"Define the resourcequota served by this resourcepool.\",\n     \"properties\": {\n      \"hard\": {\n       \"additionalProperties\": {\n        \"anyOf\": [\n         {\n          \"type\": \"integer\"\n         },\n         {\n          \"type\": \"string\"\n         }\n        ],\n        \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n        \"x-kubernetes-int-or-string\": true\n       },\n       \"description\": \"hard is the set of desired hard limits for each named resource.\\nMore info: https://kubernetes.io/docs/concepts/policy/resource-quotas/\",\n       \"type\": \"object\"\n      },\n      \"scopeSelector\": {\n       \"description\": \"scopeSelector is also a collection of filters like scopes that must match each object tracked by a quota\\nbut expressed using ScopeSelectorOperator in combination with possible values.\\nFor a resource to match, both scopes AND scopeSelector (if specified in spec), must be matched.\",\n       \"properties\": {\n        \"matchExpressions\": {\n         \"description\": \"A list of scope selector requirements by scope of the resources.\",\n         \"items\": {\n          \"description\": \"A scoped-resource selector requirement is a selector that contains values, a scope name, and an operator\\nthat relates the scope name and values.\",\n          \"properties\": {\n           \"operator\": {\n            \"description\": \"Represents a scope's relationship to a set of values.\\nValid operators are In, NotIn, Exists, DoesNotExist.\",\n            \"type\": \"string\"\n           },\n           \"scopeName\": {\n            \"description\": \"The name of the scope that the selector applies to.\",\n            \"type\": \"string\"\n           },\n           \"values\": {\n            \"description\": \"An array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty.\\nThis array is replaced during a strategic merge patch.\",\n            \"items\": {\n             \"type\": \"string\"\n            },\n            \"type\": \"array\",\n            \"x-kubernetes-list-type\": \"atomic\"\n           }\n          },\n          \"required\": [\n           \"operator\",\n           \"scopeName\"\n          ],\n          \"type\": \"object\"\n         },\n         \"type\": \"array\",\n         \"x-kubernetes-list-type\": \"atomic\"\n        }\n       },\n       \"type\": \"object\",\n       \"x-kubernetes-map-type\": \"atomic\"\n      },\n      \"scopes\": {\n       \"description\": \"A collection of filters that must match each object tracked by a quota.\\nIf not specified, the quota matches all objects.\",\n       \"items\": {\n        \"description\": \"A ResourceQuotaScope defines a filter that must match each object tracked by a quota\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\",\n       \"x-kubernetes-list-type\": \"atomic\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"selectors\": {\n     \"description\": \"Selector to match the namespaces that should be managed by the GlobalResourceQuota\",\n     \"items\": {\n      \"description\": \"Selector for resources and their labels or selecting origin namespaces\",\n      \"properties\": {\n       \"matchExpressions\": {\n        \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n        \"items\": {\n         \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that\\nrelates the key and values.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"key is the label key that the selector applies to.\",\n           \"type\": \"string\"\n          },\n          \"operator\": {\n           \"description\": \"operator represents a key's relationship to a set of values.\\nValid operators are In, NotIn, Exists and DoesNotExist.\",\n           \"type\": \"string\"\n          },\n          \"values\": {\n           \"description\": \"values is an array of string values. If the operator is In or NotIn,\\nthe values array must be non-empty. If the operator is Exists or DoesNotExist,\\nthe values array must be empty. This array is replaced during a strategic\\nmerge patch.\",\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\",\n           \"x-kubernetes-list-type\": \"atomic\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"operator\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\",\n        \"x-kubernetes-list-type\": \"atomic\"\n       },\n       \"matchLabels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels\\nmap is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the\\noperator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\",\n      \"x-kubernetes-map-type\": \"atomic\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"quota\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Pool\",\n \"type\": \"object\"\n}"
+  }
+}
