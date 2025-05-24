@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"sort"
 	"time"
 
 	"github.com/layer5io/meshery/server/models"
@@ -14,7 +15,6 @@ import (
 	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
-	"gorm.io/gorm/clause"
 )
 
 // swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
@@ -38,37 +38,67 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	var tables []*models.SqliteSchema
 	var recordCount int
 	var totalTables int64
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, sortDir, _ := getPaginationParams(r)
 
-	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
-		Where("type = ?", "table")
+	tableFinder := h.dbHandler.DB.Table("sqlite_schema").Where("type = ?", "table")
 
 	if search != "" {
 		tableFinder = tableFinder.Where("name LIKE ?", "%"+search+"%")
 	}
 
-	tableFinder.Count(&totalTables)
+	if order == "count" {
+		tableFinder.Find(&tables)
+		totalTables = int64(len(tables))
 
-	if limit != 0 {
-		tableFinder = tableFinder.Limit(limit)
-	}
-	if offset != 0 {
-		tableFinder = tableFinder.Offset(offset)
-	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	if order != "" {
-		if sort == "desc" {
-			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
-			tableFinder = tableFinder.Order(order)
+		for _, table := range tables {
+			h.dbHandler.DB.Table(table.Name).Count(&table.Count)
+			recordCount += int(table.Count)
 		}
-	}
 
-	tableFinder.Find(&tables)
+		sort.Slice(tables, func(i, j int) bool {
+			if sortDir == "desc" {
+				return tables[i].Count > tables[j].Count
+			}
+			return tables[i].Count < tables[j].Count
+		})
 
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+		start := offset
+		end := offset + limit
+		if end > len(tables) {
+			end = len(tables)
+		}
+		if start > len(tables) {
+			start = len(tables)
+		}
+		tables = tables[start:end]
+	} else {
+		tableFinder.Count(&totalTables)
+
+		combinedOrder := ""
+		if order != "" && sortDir != "" {
+			combinedOrder = fmt.Sprintf("%s %s", order, sortDir)
+		}
+
+		validColumns := []string{"created_at", "updated_at", "name", "count"}
+		sanitizedOrder := models.SanitizeOrderInput(combinedOrder, validColumns)
+
+		if sanitizedOrder != "" {
+			tableFinder = tableFinder.Order(sanitizedOrder)
+		}
+
+		if limit != 0 {
+			tableFinder = tableFinder.Limit(limit)
+		}
+		if offset != 0 {
+			tableFinder = tableFinder.Offset(offset)
+		}
+
+		tableFinder.Find(&tables)
+
+		for _, table := range tables {
+			h.dbHandler.DB.Table(table.Name).Count(&table.Count)
+			recordCount += int(table.Count)
+		}
 	}
 
 	databaseSummary := &models.DatabaseSummary{
