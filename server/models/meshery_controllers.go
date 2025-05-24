@@ -126,6 +126,11 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		// meshsync as a library, right now, is able to connect to k8s cluster,
 		// because it has access to my local .kube/config;
 		// We need an option to provide kube config to meshsync as a library;
+		//
+		// TODO
+		// as we will be running per connection base,
+		// we need to double check that the state is not shared anywhere in meshsync internally,
+		// otherwise we will have hard to detect errors.
 		go func() {
 			// TODO
 			// Right now this duration only stops the top level goroutine of meshsync as a library,
