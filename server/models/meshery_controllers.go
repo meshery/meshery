@@ -123,20 +123,24 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		transport := make(chan *broker.Message, 1024)
 
 		// TODO
-		// meshsync as a library right now is able to connect to k8s cluster
-		// because it has access to my local .kube/config
-		// need an option to provide kube config to meshsync as a library
+		// meshsync as a library, right now, is able to connect to k8s cluster,
+		// because it has access to my local .kube/config;
+		// We need an option to provide kube config to meshsync as a library;
 		go func() {
 			// TODO
-			// right now this duration only stops the top level go routine of meshsync as a library
-			// need to enhance meshsync functionality to halt all internal go routines
-			// (means it right now not stops, and continues to receive events from k8s)
+			// Right now this duration only stops the top level goroutine of meshsync as a library,
+			// we need to enhance meshsync functionality to halt all internal goroutines
+			// (means it right now does not stop, and continues to receive events from k8s).
 			duration := 64 * time.Second
 
 			if err := libmeshsync.Run(
 				mch.log,
 				libmeshsync.WithOutputMode("channel"),
-				// TODO do we need an option to have a channel per subject inside meshsync as library?
+				// TODO
+				// do we need an option to have a channel per subject inside meshsync as a library?
+				// there are right now more than one subject, f.e. MeshsyncStoreUpdatesSubject
+				// which is obsolete or has a different purpose, or smth else?
+				// it expects (line 122) Object to be an array, which meshsync sends as a single entity.
 				libmeshsync.WithTransportChannel(transport),
 				libmeshsync.WithStopAfterDuration(duration),
 			); err != nil {
@@ -150,6 +154,9 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 		brokerHandler := NewTmpMeshsyncBrokerHandler(
 			map[string]<-chan *broker.Message{
+				// TODO
+				// this is hardcoded because it is hardcoded in meshsync_events.go
+				// do not add any updates there for now.
 				"meshery.meshsync.core": transport,
 			},
 		)
