@@ -504,5 +504,4 @@ type Provider interface {
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string, visibility []string) ([]byte, error)
 	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
-	RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
 }
