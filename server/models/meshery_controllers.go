@@ -122,26 +122,38 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 		transport := make(chan *broker.Message, 1024)
 
+		// TODO
+		// meshsync as a library right now is able to connect to k8s cluster
+		// because it has access to my local .kube/config
+		// need an option to provide kube config to meshsync as a library
 		go func() {
+			// TODO
+			// right now this duration only stops the top level go routine of meshsync as a library
+			// need to enhance meshsync functionality to halt all internal go routines
+			// (means it right now not stops, and continues to receive events from k8s)
 			duration := 64 * time.Second
 
-			err := libmeshsync.Run(
+			if err := libmeshsync.Run(
 				mch.log,
 				libmeshsync.WithOutputMode("channel"),
+				// TODO do we need an option to have a channel per subject inside meshsync as library?
 				libmeshsync.WithTransportChannel(transport),
 				libmeshsync.WithStopAfterDuration(duration),
-			)
-			if err != nil {
+			); err != nil {
 				mch.log.Error(
 					fmt.Errorf("error running meshsync lib %v", err),
 				)
 			} else {
-				mch.log.Infof("meshkit run stops after %s", duration)
+				mch.log.Infof("meshsync lib run stops after %s", duration)
 			}
 		}()
 
-		// msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
-		msDataHandler := NewMeshsyncDataHandler(NewTmpMeshsyncBrokerHandler(transport), *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
+		brokerHandler := NewTmpMeshsyncBrokerHandler(
+			map[string]<-chan *broker.Message{
+				"meshery.meshsync.core": transport,
+			},
+		)
+		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
 
 		err := msDataHandler.Run()
 		if err != nil {

@@ -5,12 +5,15 @@ import (
 )
 
 type TmpMeshsyncBrokerHandler struct {
-	transport <-chan *broker.Message
+	// instead of return messages from nats subject
+	// return message from channel related to this subject
+	// multiple queue are not supported
+	channelPerSubject map[string]<-chan *broker.Message
 }
 
-func NewTmpMeshsyncBrokerHandler(transport <-chan *broker.Message) *TmpMeshsyncBrokerHandler {
+func NewTmpMeshsyncBrokerHandler(channelPerSubject map[string]<-chan *broker.Message) *TmpMeshsyncBrokerHandler {
 	return &TmpMeshsyncBrokerHandler{
-		transport: transport,
+		channelPerSubject: channelPerSubject,
 	}
 }
 func (h *TmpMeshsyncBrokerHandler) ConnectedEndpoints() (endpoints []string) {
@@ -43,12 +46,15 @@ func (h *TmpMeshsyncBrokerHandler) Subscribe(subject, queue string, message []by
 
 // SubscribeWithChannel will publish all the messages received to the given channel
 func (h *TmpMeshsyncBrokerHandler) SubscribeWithChannel(subject, queue string, msgch chan *broker.Message) error {
-	go func() {
-		for val := range h.transport {
-			msgch <- val
-		}
-	}()
+	transport := h.channelPerSubject[subject]
+	if transport != nil {
+		go func(ch <-chan *broker.Message) {
+			for val := range ch {
+				msgch <- val
+			}
+		}(transport)
 
+	}
 	return nil
 }
 
