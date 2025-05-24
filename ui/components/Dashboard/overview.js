@@ -73,14 +73,16 @@ const Overview = ({ isEditMode }) => {
   }
 
   return (
-    <NoSsr>
-      <HoneycombComponent
-        kinds={clusterSummary?.kinds}
-        isClusterLoading={isClusterLoading}
-        isClusterIdsEmpty={isClusterIdsEmpty}
-        isEditMode={isEditMode}
-      />
-    </NoSsr>
+    <div data-testid="cluster-res-overview">
+      <NoSsr>
+        <HoneycombComponent
+          kinds={clusterSummary?.kinds}
+          isClusterLoading={isClusterLoading}
+          isClusterIdsEmpty={isClusterIdsEmpty}
+          isEditMode={isEditMode}
+        />
+      </NoSsr>
+    </div>
   );
 };
 

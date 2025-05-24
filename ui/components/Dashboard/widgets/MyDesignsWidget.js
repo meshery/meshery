@@ -47,34 +47,36 @@ const MyDesignsWidget = (props) => {
 
   return (
     <>
-      <DesignCard
-        isPatternsFetching={isPatternsFetching}
-        cardData={cardData}
-        resources={
-          patternsData?.patterns?.map((pattern) => {
-            return {
-              name: pattern.name,
-              timestamp: pattern.updated_at,
-              link: `/extension/meshmap?mode=design&design=${pattern.id}`,
-              icon: '/static/img/designs.svg',
-            };
-          }) || []
-        }
-        icon={
-          <DesignIcon
-            {...props.iconsProps}
-            fill={theme.palette.icon.default}
-            primaryFill={theme.palette.icon.default}
-            secondaryFill={theme.palette.icon.default}
-          />
-        }
-        title="MY RECENT DESIGNS"
-        actionButton={true}
-        href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
-        btnTitle="See All Designs"
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-      />
+      <div data-testid="my-recent-designs">
+        <DesignCard
+          isPatternsFetching={isPatternsFetching}
+          cardData={cardData}
+          resources={
+            patternsData?.patterns?.map((pattern) => {
+              return {
+                name: pattern.name,
+                timestamp: pattern.updated_at,
+                link: `/extension/meshmap?mode=design&design=${pattern.id}`,
+                icon: '/static/img/designs.svg',
+              };
+            }) || []
+          }
+          icon={
+            <DesignIcon
+              {...props.iconsProps}
+              fill={theme.palette.icon.default}
+              primaryFill={theme.palette.icon.default}
+              secondaryFill={theme.palette.icon.default}
+            />
+          }
+          title="MY RECENT DESIGNS"
+          actionButton={true}
+          href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
+          btnTitle="See All Designs"
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+        />
+      </div>
     </>
   );
 };

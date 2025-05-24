@@ -146,7 +146,7 @@ export function MesheryExtensionEarlyAccessCard({
 
   return (
     <>
-      <StyledPaper style={rootStyle}>
+      <StyledPaper style={rootStyle} data-testid="styled-paper">
         <StyledHeaderWrapper>
           <Typography
             sx={{
@@ -205,6 +205,7 @@ export function MesheryExtensionEarlyAccessCard({
                 fontSize: '0.8rem',
               }}
               onClick={(e) => handleButtonClick(e)}
+              data-testid="open-kanvas-button"
             >
               {buttonText}
             </Button>

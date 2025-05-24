@@ -27,40 +27,47 @@ const GetStarted = (props) => {
   const { id: org_id } = currentOrg;
   return (
     <>
-      <ActionButtonCard
-        title="GETTING STARTED"
-        description="New here? Follow along these guided tasks to help you get the most of your account."
-        onClick={() => setOpenModal(true)}
-        profileData={profileData}
-        btnTitle="Start"
-        icon={
-          <GetStartedIcon {...props.iconsProps} {...iconMedium} fill={theme.palette.icon.default} />
-        }
-        showProgress={true}
-        completedSteps={profileData?.preferences?.remoteProviderPreferences?.getstarted || []}
-        totalSteps={stepsData.length}
-      />
-
-      <GetStartedModal
-        open={openModal}
-        handleClose={() => setOpenModal(false)}
-        handleOpen={() => setOpenModal(true)}
-        stepsData={stepsData}
-        profileData={profileData}
-        useUpdateUserPrefMutation={useUpdateUserPrefMutation}
-        currentOrgId={org_id}
-        useGetOrgsQuery={useGetOrgsQuery}
-        useGetUserOrgRolesQuery={useGetUserOrgRolesQuery}
-        useHandleUserInviteMutation={useHandleUserInviteMutation}
-        useNotificationHandlers={useNotificationHandlers}
-        isAssignUserRolesAllowed={CAN(
-          keys.ASSIGN_USER_ROLES.action,
-          keys.ASSIGN_USER_ROLES.subject,
-        )}
-        useLazyGetTeamsQuery={useLazyGetTeamsQuery}
-        embedDesignPath="/static/img/getting-started/embedded-design-edge-stack.js"
-        isFromMeshery={true}
-      />
+      <div data-testid="getting-started">
+        <ActionButtonCard
+          title="GETTING STARTED"
+          description="New here? Follow along these guided tasks to help you get the most of your account."
+          onClick={() => setOpenModal(true)}
+          profileData={profileData}
+          btnTitle="Start"
+          icon={
+            <GetStartedIcon
+              {...props.iconsProps}
+              {...iconMedium}
+              fill={theme.palette.icon.default}
+            />
+          }
+          showProgress={true}
+          completedSteps={profileData?.preferences?.remoteProviderPreferences?.getstarted || []}
+          totalSteps={stepsData.length}
+        />
+        <div data-testid="getstarted-modal">
+          <GetStartedModal
+            open={openModal}
+            handleClose={() => setOpenModal(false)}
+            handleOpen={() => setOpenModal(true)}
+            stepsData={stepsData}
+            profileData={profileData}
+            useUpdateUserPrefMutation={useUpdateUserPrefMutation}
+            currentOrgId={org_id}
+            useGetOrgsQuery={useGetOrgsQuery}
+            useGetUserOrgRolesQuery={useGetUserOrgRolesQuery}
+            useHandleUserInviteMutation={useHandleUserInviteMutation}
+            useNotificationHandlers={useNotificationHandlers}
+            isAssignUserRolesAllowed={CAN(
+              keys.ASSIGN_USER_ROLES.action,
+              keys.ASSIGN_USER_ROLES.subject,
+            )}
+            useLazyGetTeamsQuery={useLazyGetTeamsQuery}
+            embedDesignPath="/static/img/getting-started/embedded-design-edge-stack.js"
+            isFromMeshery={true}
+          />
+        </div>
+      </div>
     </>
   );
 };
