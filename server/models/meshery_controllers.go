@@ -124,14 +124,12 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 		go func() {
 			duration := 64 * time.Second
-			runOptions := make([]libmeshsync.OptionsSetter, 1)
-			runOptions = append(runOptions, libmeshsync.WithOutputMode("channel"))
-			runOptions = append(runOptions, libmeshsync.WithTransportChannel(transport))
-			runOptions = append(runOptions, libmeshsync.WithStopAfterDuration(duration))
 
 			err := libmeshsync.Run(
 				mch.log,
-				runOptions...,
+				libmeshsync.WithOutputMode("channel"),
+				libmeshsync.WithTransportChannel(transport),
+				libmeshsync.WithStopAfterDuration(duration),
 			)
 			if err != nil {
 				mch.log.Error(
