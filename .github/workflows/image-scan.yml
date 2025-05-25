@@ -2,9 +2,6 @@ name: Trivy Container Image Scan
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - ci/image-scan
 
 jobs:
   scan:
