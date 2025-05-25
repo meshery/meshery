@@ -138,6 +138,14 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 			// (means it right now does not stop, and continues to receive events from k8s).
 			duration := 64 * time.Second
 
+			kubeConfig, err := k8scontext.GenerateKubeConfig()
+			if err != nil {
+				mch.log.Error(
+					fmt.Errorf("error generating kube config from context %v", err),
+				)
+				return
+			}
+
 			if err := libmeshsync.Run(
 				mch.log,
 				libmeshsync.WithOutputMode("channel"),
@@ -147,6 +155,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				// which is obsolete or has a different purpose, or smth else?
 				// it expects (line 122) Object to be an array, which meshsync sends as a single entity.
 				libmeshsync.WithTransportChannel(transport),
+				libmeshsync.WithKubeConfig(kubeConfig),
 				libmeshsync.WithStopAfterDuration(duration),
 			); err != nil {
 				mch.log.Error(
