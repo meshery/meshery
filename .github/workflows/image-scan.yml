@@ -1,0 +1,27 @@
+name: Trivy Container Image Scan
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    name: Scan Container Image
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Pull latest Meshery image
+        run: |
+          docker pull layer5/meshery:stable-latest
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'layer5/meshery:stable-latest'
+          format: 'json'
+          output: 'trivy-scan-results.json'
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-scan-results
+          path: trivy-scan-results.json
