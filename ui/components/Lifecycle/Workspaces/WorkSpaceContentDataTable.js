@@ -37,7 +37,7 @@ import {
   useIsKanvasDesignerEnabled,
   useIsOperatorEnabled,
 } from '@/utils/utils';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import { useContext } from 'react';
 import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import { getView, useUpdateViewVisibilityMutation } from '@/rtk-query/view';
@@ -132,17 +132,15 @@ const WorkSpaceContentDataTable = ({ workspaceId, workspaceName }) => {
   };
 
   const shouldRenderTabs = isDesignsVisible && isViewVisible;
+  const router = useRouter();
 
   const handleOpenDesignInDesigner = (designId, designName) => {
-    if (!isKanvasDesignerAvailable) {
-      notify({
-        message: 'Kanvas Designer is not available',
-        event_type: EVENT_TYPES.ERROR,
-      });
-      return;
-    }
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
+    }
+    if (!isKanvasDesignerAvailable) {
+      router.push(`/configuration/designs/configurator?design_id=${designId}`);
+      return;
     }
 
     openDesignInKanvas(designId, designName, Router);

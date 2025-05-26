@@ -15,11 +15,12 @@ import {
 import { useContentDelete, useContentDownload } from './hooks';
 import ExportModal from '../ExportModal';
 import ShareModal from './ShareModal';
+import { useSelector } from 'react-redux';
 
 const MyDesignsContent = () => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const visibilityItems = [VISIBILITY.PUBLIC, VISIBILITY.PRIVATE, VISIBILITY.PUBLISHED];
-  // const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
   const [shareModal, setShareModal] = useState({ open: false, content: null });
   const [filters, setFilters] = useState({
     visibility: visibilityItems,
@@ -75,7 +76,7 @@ const MyDesignsContent = () => {
       metrics: true,
       visibility: filters.visibility,
       search: filters.searchQuery,
-      // orgId: currentOrganization?.id,
+      orgID: currentOrganization?.id,
     },
     {
       skip: !currentUser?.id,

@@ -25,14 +25,12 @@ import useInfiniteScroll, {
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
 import InfoModal from '../General/Modals/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
@@ -57,7 +55,6 @@ const MainDesignsContent = ({
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
   const [moveModal, setMoveModal] = useState(false);
-  const { notify } = useNotification();
   const modalRef = useRef(true);
   const { handleDelete } = useContentDelete(modalRef);
 
@@ -146,17 +143,14 @@ const MainDesignsContent = ({
   const [updatePatterns] = useUpdatePatternFileMutation();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-
+  const router = useRouter();
   const handleOpenDesignInDesigner = (designId, designName) => {
-    if (!isKanvasDesignerAvailable) {
-      notify({
-        message: 'Kanvas Designer is not available',
-        event_type: EVENT_TYPES.ERROR,
-      });
-      return;
-    }
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
+    }
+    if (!isKanvasDesignerAvailable) {
+      router.push(`/configuration/designs/configurator?design_id=${designId}`);
+      return;
     }
 
     openDesignInKanvas(designId, designName, Router);
