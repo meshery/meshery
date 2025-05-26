@@ -74,16 +74,16 @@ const WorkspaceContentMoveModal = ({
   const { setMultiSelectedContent, multiSelectedContent, closeModal } =
     useContext(WorkspaceModalContext);
   const { organization: currentOrg } = useSelector((state) => state.ui);
-  const { id: orgId } = currentOrg;
+  const { id: orgID } = currentOrg;
   const { data: workspaceData, isLoading } = useGetWorkspacesQuery(
     {
       page: 0,
       pagesize: 'all',
       order: 'updated_at desc',
-      orgId: orgId,
+      orgID: orgID,
     },
     {
-      skip: !orgId,
+      skip: !orgID,
     },
   );
 
