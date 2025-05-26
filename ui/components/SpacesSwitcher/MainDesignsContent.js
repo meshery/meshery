@@ -32,7 +32,7 @@ import ShareModal from './ShareModal';
 import InfoModal from '../General/Modals/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
@@ -146,17 +146,14 @@ const MainDesignsContent = ({
   const [updatePatterns] = useUpdatePatternFileMutation();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-
+  const router = useRouter();
   const handleOpenDesignInDesigner = (designId, designName) => {
-    if (!isKanvasDesignerAvailable) {
-      notify({
-        message: 'Kanvas Designer is not available',
-        event_type: EVENT_TYPES.ERROR,
-      });
-      return;
-    }
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
+    }
+    if (!isKanvasDesignerAvailable) {
+      router.push(`/configuration/designs/configurator?design_id=${designId}`);
+      return;
     }
 
     openDesignInKanvas(designId, designName, Router);
