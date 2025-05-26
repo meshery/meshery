@@ -8,6 +8,7 @@ import {
   MenuItem,
   CircularProgress,
   useTheme,
+  OpenFileIcon,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
 import { StyledSelect } from './SpaceSwitcher';
@@ -18,7 +19,6 @@ import {
   useGetSelectedWorkspace,
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
-import OpenFileIcon from '@/assets/icons/OpenFileIcon';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
