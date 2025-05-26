@@ -40,7 +40,7 @@ import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
-import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
+import MesherySettingsPerformanceComponent from '../Settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -52,7 +52,7 @@ import {
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
-import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
+import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 

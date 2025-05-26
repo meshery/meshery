@@ -144,15 +144,12 @@ export const designsApi = api
           method: 'POST',
           body: queryArg.importBody,
         }),
-        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       deletePatternFile: builder.mutation({
         query: (queryArg) => ({
           url: `pattern/${queryArg.id}`,
           method: 'DELETE',
         }),
-        providesTags: () => [{ type: TAGS.DESIGNS }],
-        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       updatePatternFile: builder.mutation({
         query: (queryArg) => ({

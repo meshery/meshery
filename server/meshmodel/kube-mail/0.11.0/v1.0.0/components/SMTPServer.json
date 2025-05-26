@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://helm.mittwald.de/charts/kube-mail-0.11.0.tgz"
   },
   "configuration": null,
   "component": {

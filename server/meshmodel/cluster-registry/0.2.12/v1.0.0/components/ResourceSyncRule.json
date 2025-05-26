@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://cisco-open.github.io/cluster-registry-controller/cluster-registry-0.2.12.tgz"
   },
   "configuration": null,
   "component": {

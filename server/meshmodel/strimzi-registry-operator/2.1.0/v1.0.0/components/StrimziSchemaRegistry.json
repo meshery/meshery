@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/lsst-sqre/charts/releases/download/strimzi-registry-operator-2.1.0/strimzi-registry-operator-2.1.0.tgz"
   },
   "configuration": null,
   "component": {

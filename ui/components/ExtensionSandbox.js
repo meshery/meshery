@@ -270,7 +270,7 @@ function getComponentURIFromPathForCollaborator(extensions) {
  * @param {string} componentName
  * @returns {string} url
  */
-function createPathForRemoteComponent(componentName) {
+export function createPathForRemoteComponent(componentName) {
   let prefix = '/api/provider/extension';
   return prefix + normalizeURI(componentName);
 }

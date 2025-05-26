@@ -9,9 +9,8 @@ import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
-// import ExtensionSandbox from './ExtensionSandbox';
-// import RemoteComponent from './RemoteComponent';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import { createPathForRemoteComponent } from './ExtensionSandbox';
+import RemoteComponent from './RemoteComponent';
 import { useNotification } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
@@ -32,6 +31,7 @@ import {
   Hidden,
   NoSsr,
   useTheme,
+  useMediaQuery,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
@@ -39,7 +39,7 @@ import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './Modals/ConnectionModal';
+import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
@@ -53,11 +53,17 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
+  SettingsWrapper,
 } from './Header.styles';
-import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import {
+  getUserAccessToken,
+  getUserProfile,
+  useGetProviderCapabilitiesQuery,
+} from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateCapabilities, updateK8SConfig } from '@/store/slices/mesheryUi';
+import { updateK8SConfig } from '@/store/slices/mesheryUi';
+import { ErrorBoundary } from '@layer5/sistent';
 
 async function loadActiveK8sContexts() {
   try {
@@ -391,24 +397,11 @@ const Header = ({
 }) => {
   const { notify } = useNotification;
 
-  const dispatch = useDispatch();
   const {
     data: providerCapabilities,
-    isSuccess: isProviderCapabilitiesSuccess,
     isError: isProviderCapabilitiesError,
     error: providerCapabilitiesError,
   } = useGetProviderCapabilitiesQuery();
-
-  const collaboratorExt = () => {
-    if (isProviderCapabilitiesSuccess) {
-      dispatch(updateCapabilities({ capabilitiesRegistry: providerCapabilities }));
-      return ExtensionPointSchemaValidator('collaborator')(
-        providerCapabilities?.extensions?.collaborator,
-      );
-    }
-    return null;
-  };
-  console.log('collab ext', collaboratorExt);
 
   if (isProviderCapabilitiesError) {
     notify({
@@ -418,13 +411,17 @@ const Header = ({
     });
   }
 
-  // const loaderType = 'circular';
+  const remoteProviderUrl = providerCapabilities?.provider_url;
+  const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
+
+  const loaderType = 'circular';
   const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
-          <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
+          <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
             <Grid container alignItems="center">
               <Hidden smUp>
                 <Grid item style={{ display: 'none' }}>
@@ -457,12 +454,17 @@ const Header = ({
                 }}
               >
                 {/* According to the capabilities load the component */}
-                {/*collaboratorExt && (
-                  <ExtensionSandbox
-                    type="collaborator"
-                    Extension={(url) => RemoteComponent({ url, loaderType })}
-                  />
-                )*/}
+                <ErrorBoundary customFallback={() => null}>
+                  {collaboratorExtensionUri && (
+                    <RemoteComponent
+                      url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
+                      loaderType={loaderType}
+                      providerUrl={remoteProviderUrl}
+                      getUserAccessToken={getUserAccessToken}
+                      getUserProfile={getUserProfile}
+                    />
+                  )}
+                </ErrorBoundary>
                 <UserInfoContainer>
                   <UserSpan style={{ position: 'relative' }}>
                     <K8sContextMenu
@@ -472,15 +474,17 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
-
-                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
+                  <SettingsWrapper
+                    isDesktop={isDesktop}
+                    data-testid="settings-button"
+                    aria-describedby={abilityUpdated}
+                  >
                     <CanShow Key={keys.VIEW_SETTINGS}>
                       <IconButton onClick={() => Router.push('/settings')}>
                         <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
                       </IconButton>
                     </CanShow>
-                  </div>
-
+                  </SettingsWrapper>
                   <div data-testid="notification-button">
                     <NotificationDrawerButton />
                   </div>
