@@ -103,7 +103,7 @@ const columnList = [
   },
 ];
 
-const Workspaces = () => {
+const Workspaces = ({ onSelectWorkspace }) => {
   const theme = useTheme();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
@@ -122,11 +122,6 @@ const Workspaces = () => {
     id: '',
     name: '',
   });
-  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-  if (workspaceSwitcherContext.selectedWorkspace.id) {
-    selectedWorkspace = workspaceSwitcherContext.selectedWorkspace;
-    setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
-  }
   const [viewType, setViewType] = useState('table');
   const [teamsModal, setTeamsModal] = useState({
     open: false,
@@ -146,6 +141,12 @@ const Workspaces = () => {
       id: workspaceId,
       name: workspaceName,
     });
+    if (onSelectWorkspace) {
+      onSelectWorkspace({
+        id: workspaceId,
+        name: workspaceName,
+      });
+    }
   };
   const ref = useRef(null);
   const bulkDeleteRef = useRef(null);
@@ -544,10 +545,10 @@ const Workspaces = () => {
   );
 };
 
-const WorkspacesPageWithErrorBoundary = (props) => {
+const WorkspacesPageWithErrorBoundary = ({ onSelectWorkspace }) => {
   return (
     <NoSsr>
-      <Workspaces {...props} />
+      <Workspaces onSelectWorkspace={onSelectWorkspace} />
     </NoSsr>
   );
 };

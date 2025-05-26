@@ -195,7 +195,7 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
   );
 };
 
-const WorkspaceContentWrapper = ({ id, workspacesData }) => {
+const WorkspaceContentWrapper = ({ id, workspacesData, onSelectWorkspace }) => {
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const theme = useTheme();
 
@@ -214,9 +214,8 @@ const WorkspaceContentWrapper = ({ id, workspacesData }) => {
   if (mainItem && mainItem.content) {
     return mainItem.content;
   }
-
   if (id === 'All Workspaces') {
-    return <WorkspacesComponent />;
+    return <WorkspacesComponent onSelectWorkspace={onSelectWorkspace} />;
   }
 
   const foundWorkspace = workspacesData?.workspaces?.find((workspace) => workspace.id === id);
@@ -250,7 +249,13 @@ const Navigation = ({ setHeaderInfo }) => {
       skip: !currentOrganization?.id,
     },
   );
-
+  const onSelectWorkspace = ({ id, name }) => {
+    setSelectedId(id);
+    workspaceSwitcherContext.setSelectedWorkspace({
+      id: id,
+      name: name,
+    });
+  };
   useEffect(() => {
     setOpen(!isMobile);
   }, [isMobile]);
@@ -342,7 +347,11 @@ const Navigation = ({ setHeaderInfo }) => {
       </ErrorBoundary>
       <ErrorBoundary>
         <StyledMainContent>
-          <WorkspaceContentWrapper id={selectedId} workspacesData={workspacesData} />
+          <WorkspaceContentWrapper
+            id={selectedId}
+            workspacesData={workspacesData}
+            onSelectWorkspace={onSelectWorkspace}
+          />
         </StyledMainContent>
       </ErrorBoundary>
     </Box>
