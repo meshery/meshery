@@ -7,6 +7,7 @@ import {
   styled,
   MenuItem,
   CircularProgress,
+  useTheme,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
 import { StyledSelect } from './SpaceSwitcher';
@@ -17,6 +18,7 @@ import {
   useGetSelectedWorkspace,
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
+import OpenFileIcon from '@/assets/icons/OpenFileIcon';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -26,6 +28,7 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
 }));
 
 function WorkspaceSwitcher({ open }) {
+  const theme = useTheme();
   const { selectedOrganization } = useGetSelectedOrganization();
   const {
     selectedWorkspace,
@@ -64,7 +67,7 @@ function WorkspaceSwitcher({ open }) {
     console.log('selectedWorkspace', selectedWorkspace);
     setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
     updateSelectedWorkspace(selectedOrganization.id, newId);
-    openWorkspaceModal(true);
+    // openWorkspaceModal(true);
   };
 
   if (workspaceError) {
@@ -120,13 +123,32 @@ function WorkspaceSwitcher({ open }) {
                             key={works.id}
                             value={works.id}
                             selected={works.id === selectedWorkspace?.id}
-                            onClick={() => {
-                              if (works.id === selectedWorkspace?.id) {
-                                handleChangeWorkspace({ target: { value: works.id } });
-                              }
-                            }}
                           >
                             <span>{works.name}</span>
+                            <span
+                              onClick={(e) => {
+                                if (works.id === selectedWorkspace?.id) {
+                                  e.stopPropagation();
+                                }
+                                openWorkspaceModal(true);
+                              }}
+                              style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                            >
+                              <OpenFileIcon
+                                fill={
+                                  works.id === selectedWorkspace?.id
+                                    ? 'currentColor'
+                                    : theme.palette.grey[600]
+                                }
+                                style={{
+                                  transition: 'none',
+                                  fill:
+                                    works.id === selectedWorkspace?.id
+                                      ? 'currentColor'
+                                      : theme.palette.grey[600],
+                                }}
+                              />
+                            </span>
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>
