@@ -3,7 +3,6 @@ import { api } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
-import { useEffect } from 'react';
 
 const Tags = {
   USER_PREF: 'userPref',
