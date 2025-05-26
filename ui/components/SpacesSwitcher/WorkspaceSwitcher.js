@@ -70,16 +70,6 @@ function WorkspaceSwitcher({ open }) {
 
   const handleChangeWorkspace = (e) => {
     const newId = e.target.value;
-    console.log(
-      'handleChangeWorkspace',
-      newId,
-      'oldId',
-      selectedWorkspace?.id,
-      'orgId',
-      selectedOrganization.id,
-    );
-
-    console.log('selectedWorkspace', selectedWorkspace);
     setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
     updateSelectedWorkspace(selectedOrganization.id, newId);
     openWorkspaceModal(true);

@@ -48,7 +48,11 @@ const WorkspaceDataTable = ({
     ['id', 'na'],
     ['name', 'xs'],
     ['owner_email', 'na'],
-    ['description', 'm'],
+    ['description', 'na'],
+    ['designCount', 'xs'],
+    ['viewCount', 'xs'],
+    ['teamCount', 'xs'],
+    ['environmentCount', 'na'],
     ['owner', 'xs'],
     ['actions', 'xs'],
     ['environments', 'm'],
@@ -69,9 +73,10 @@ const WorkspaceDataTable = ({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    orgId: org_id,
+    orgID: org_id,
+    expandInfo: true,
   });
-
+  console.log('amit workspaces', workspaces);
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
 
   const columns = [
@@ -117,6 +122,7 @@ const WorkspaceDataTable = ({
         },
       },
     },
+
     {
       name: 'description',
       label: 'Description',
@@ -206,6 +212,34 @@ const WorkspaceDataTable = ({
             />
           );
         },
+      },
+    },
+    {
+      name: 'designCount',
+      label: 'Designs',
+      options: {
+        sort: false,
+      },
+    },
+    {
+      name: 'viewCount',
+      label: 'Views',
+      options: {
+        sort: false,
+      },
+    },
+    {
+      name: 'teamCount',
+      label: 'Teams',
+      options: {
+        sort: false,
+      },
+    },
+    {
+      name: 'environmentCount',
+      label: 'Environments',
+      options: {
+        sort: false,
       },
     },
     {
