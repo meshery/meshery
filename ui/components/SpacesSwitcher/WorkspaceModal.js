@@ -243,7 +243,7 @@ const Navigation = ({ setHeaderInfo }) => {
       page: 0,
       pagesize: 'all',
       order: 'updated_at desc',
-      orgId: currentOrganization?.id,
+      orgID: currentOrganization?.id,
     },
     {
       skip: !currentOrganization?.id,

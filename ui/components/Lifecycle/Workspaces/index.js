@@ -22,7 +22,7 @@ import {
 } from '@layer5/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -49,7 +49,6 @@ import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -84,6 +83,22 @@ const columnList = [
   {
     name: 'owner',
     label: 'Owner',
+  },
+  {
+    name: 'teamCount',
+    label: 'Teams',
+  },
+  {
+    name: 'designCount',
+    label: 'Designs',
+  },
+  {
+    name: 'viewCount',
+    label: 'Views',
+  },
+  {
+    name: 'environmentCount',
+    label: 'Environments Count',
   },
   {
     name: 'environments',
@@ -158,7 +173,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       pagesize: pageSize,
       search: search,
       order: sortOrder,
-      orgId: organization?.id,
+      orgID: organization?.id,
     },
     {
       skip: !organization?.id ? true : false,

@@ -25,8 +25,6 @@ import useInfiniteScroll, {
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
 import InfoModal from '../General/Modals/Information/InfoModal';
@@ -57,7 +55,6 @@ const MainDesignsContent = ({
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
   const [moveModal, setMoveModal] = useState(false);
-  const { notify } = useNotification();
   const modalRef = useRef(true);
   const { handleDelete } = useContentDelete(modalRef);
 
