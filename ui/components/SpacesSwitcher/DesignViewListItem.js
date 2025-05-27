@@ -28,7 +28,7 @@ import { iconMedium } from 'css/icons.styles';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { Grid } from '@layer5/sistent';
+import { Grid2 } from '@layer5/sistent';
 import { useGetIconBasedOnMode } from './hooks';
 
 const DesignViewListItem = ({
@@ -66,9 +66,9 @@ const DesignViewListItem = ({
           }
         }}
       >
-        <Grid container alignItems="center">
+        <Grid2 container alignItems="center" size="grow">
           {isMultiSelectMode && (
-            <Grid item xs={1} md={0.25} zeroMinWidth>
+            <Grid2 size={{ xs: 1, md: 0.25 }}>
               <FormGroup>
                 <FormControlLabel
                   control={
@@ -89,10 +89,10 @@ const DesignViewListItem = ({
                   }
                 />
               </FormGroup>
-            </Grid>
+            </Grid2>
           )}
 
-          <Grid item xs={6} md={5} lg={5}>
+          <Grid2 size={{ xs: 6, md: 5, lg: 5 }}>
             <StyledAvatarContainer>
               <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
               <StyledListItemText
@@ -111,16 +111,11 @@ const DesignViewListItem = ({
                 }
               />
             </StyledAvatarContainer>
-          </Grid>
-          <Grid item xs={4} md={4} lg={4}>
+          </Grid2>
+          <Grid2 size={{ xs: 4, md: 4, lg: 4 }}>
             {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
-          </Grid>
-          <Grid
-            item
-            md={2}
-            lg={1}
-            sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
-          >
+          </Grid2>
+          <Grid2 size={{ xs: 0, sm: 0, md: 2, lg: 1 }}>
             <VisibilityChipMenu
               value={selectedItem?.visibility}
               onChange={(value) => onVisibilityChange(value, selectedItem)}
@@ -130,10 +125,8 @@ const DesignViewListItem = ({
                 [VIEW_VISIBILITY.PRIVATE, Lock],
               ]}
             />
-          </Grid>
-          <Grid item xs={1} md={0.75} lg={1.75} zeroMinWidth>
-            {MenuComponent}
-          </Grid>
+          </Grid2>
+          <Grid2 size={{ xs: 1, md: 0.75, lg: 1.75 }}>{MenuComponent}</Grid2>
           {activeUsers && (
             <StyledSmallAvatarContainer
               id={`${type}-avatar-${selectedItem.id}`}
@@ -166,7 +159,7 @@ const DesignViewListItem = ({
               </AvatarGroup>
             </StyledSmallAvatarContainer>
           )}
-        </Grid>
+        </Grid2>
       </StyledListItem>
       <Divider light />
     </>
@@ -179,13 +172,13 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
   return (
     <>
       <StyledListItem>
-        <Grid container alignItems={'center'}>
+        <Grid2 container alignItems={'center'} size="grow">
           {isMultiSelectMode && (
-            <Grid item xs={1} md={0.25}>
+            <Grid2 size={{ xs: 1, md: 0.25 }}>
               <Skeleton variant="rectangular" animation="wave" {...iconMedium} />
-            </Grid>
+            </Grid2>
           )}
-          <Grid item xs={5} md={5} lg={5}>
+          <Grid2 size={{ xs: 5, md: 5, lg: 5 }}>
             <StyledAvatarContainer>
               <Skeleton variant="circular" animation="wave" width={24} height={24} />
               <div style={{ width: '100%', paddingLeft: '1rem' }}>
@@ -193,28 +186,18 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
                 <Skeleton animation="wave" height={16} width="40%" />
               </div>
             </StyledAvatarContainer>
-          </Grid>
+          </Grid2>
 
-          <Grid item xs={4} md={4} lg={4}>
+          <Grid2 size={{ xs: 4, md: 4, lg: 4 }}>
             <AvatarSkeleton />
-          </Grid>
+          </Grid2>
 
-          <Grid
-            item
-            md={2}
-            lg={1}
-            sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
-          >
+          <Grid2 size={{ xs: 0, sm: 0, md: 2, lg: 1 }}>
             <Skeleton animation="wave" height={32} width="70%" />
-          </Grid>
+          </Grid2>
 
-          <Grid
-            item
-            xs={2}
-            sm={3}
-            md={0.75}
-            lg={1.75}
-            zeroMinWidth
+          <Grid2
+            size={{ xs: 2, sm: 3, md: 0.75, lg: 1.75 }}
             sx={{
               display: 'flex',
               alignItems: 'center',
@@ -227,8 +210,8 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
               .map((_, index) => (
                 <Skeleton key={index} variant="circular" animation="wave" {...iconMedium} />
               ))}
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </StyledListItem>
       <Divider light />
     </>

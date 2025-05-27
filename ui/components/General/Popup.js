@@ -1,4 +1,4 @@
-import { Button, Grid, IconButton, Typography, styled, useTheme } from '@layer5/sistent';
+import { Button, Grid2, IconButton, Typography, styled, useTheme } from '@layer5/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -195,7 +195,7 @@ export function MesheryExtensionEarlyAccessCard({
           </i>
         </Typography>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Grid>
+          <Grid2>
             <Button
               variant="contained"
               sx={{
@@ -208,7 +208,7 @@ export function MesheryExtensionEarlyAccessCard({
             >
               {buttonText}
             </Button>
-          </Grid>
+          </Grid2>
         </div>
       </StyledPaper>
     </>

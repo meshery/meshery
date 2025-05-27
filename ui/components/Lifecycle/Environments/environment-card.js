@@ -5,7 +5,7 @@ import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Grid, useTheme } from '@layer5/sistent';
+import { Grid2, useTheme } from '@layer5/sistent';
 
 import {
   Name,
@@ -34,7 +34,7 @@ export const TransferButton = ({ title, count, onAssign, disabled }) => {
   const theme = useTheme();
   return (
     <PopupButton disabled={disabled} onClick={onAssign} s>
-      <Grid>
+      <Grid2>
         <TabCount>{count}</TabCount>
         <TabTitle>{title}</TabTitle>
         <SyncAltIcon
@@ -45,7 +45,7 @@ export const TransferButton = ({ title, count, onAssign, disabled }) => {
             color: theme.palette.background?.neutral?.default,
           }}
         />
-      </Grid>
+      </Grid2>
     </PopupButton>
   );
 };
@@ -100,19 +100,26 @@ const EnvironmentCard = ({
               borderRadius: 2,
             }}
           >
-            <Grid sx={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
+            <Grid2 sx={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
               <Name variant="body2" onClick={(e) => e.stopPropagation()}>
                 {environmentDetails?.name}
               </Name>
-            </Grid>
-            <Grid
+            </Grid2>
+            <Grid2
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-start',
               }}
             >
-              <Grid xs={12} sm={9} md={12} sx={{ display: 'flex', justifyContent: 'flex-start' }}>
+              <Grid2
+                sx={{ display: 'flex', justifyContent: 'flex-start' }}
+                size={{
+                  xs: 12,
+                  sm: 9,
+                  md: 12,
+                }}
+              >
                 {environmentDetails.description ? (
                   <DescriptionLabel
                     onClick={(e) => e.stopPropagation()}
@@ -132,9 +139,11 @@ const EnvironmentCard = ({
                     No description
                   </EmptyDescription>
                 )}
-              </Grid>
-              <Grid
-                xs={12}
+              </Grid2>
+              <Grid2
+                size={{
+                  xs: 12,
+                }}
                 sx={{
                   paddingTop: '15px',
                   display: 'flex',
@@ -164,8 +173,8 @@ const EnvironmentCard = ({
                     />
                   </AllocationButton>
                 )} */}
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </CardWrapper>
         }
         backComponents={
@@ -176,8 +185,8 @@ const EnvironmentCard = ({
               background: 'linear-gradient(180deg, #007366 0%, #000 100%)',
             }}
           >
-            <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row' }}>
-              <Grid xs={6} sx={{ display: 'flex', alignItems: 'flex-start' }}>
+            <Grid2 sx={{ display: 'flex', flexDirection: 'row' }} size={{ xs: 12 }}>
+              <Grid2 sx={{ display: 'flex', alignItems: 'flex-start' }} size={{ xs: 6 }}>
                 <BulkSelectCheckbox
                   onClick={(e) => e.stopPropagation()}
                   onChange={onSelect}
@@ -190,9 +199,9 @@ const EnvironmentCard = ({
                 >
                   {environmentDetails?.name}
                 </CardTitle>
-              </Grid>
-              <Grid
-                xs={6}
+              </Grid2>
+              <Grid2
+                size={{ xs: 6 }}
                 sx={{
                   display: 'flex',
                   alignItems: 'flex-start',
@@ -219,20 +228,20 @@ const EnvironmentCard = ({
                 >
                   <Delete sx={{ color: 'white', margin: '0 2px' }} />
                 </IconButton>
-              </Grid>
-            </Grid>
-            <Grid sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
-              <Grid xs={6} sx={{ textAlign: 'left' }}>
+              </Grid2>
+            </Grid2>
+            <Grid2 sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
+              <Grid2 size={{ xs: 6 }} sx={{ textAlign: 'left' }}>
                 <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
                   Updated At: {formattoLongDate(environmentDetails?.updated_at)}
                 </DateLabel>
-              </Grid>
-              <Grid xs={6} sx={{ textAlign: 'left' }}>
+              </Grid2>
+              <Grid2 size={{ xs: 6 }} sx={{ textAlign: 'left' }}>
                 <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
                   Created At: {formattoLongDate(environmentDetails?.created_at)}
                 </DateLabel>
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </CardWrapper>
         }
       />

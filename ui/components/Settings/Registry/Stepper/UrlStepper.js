@@ -9,7 +9,6 @@ import {
   TextField,
   ModalButtonSecondary,
   ModalButtonPrimary,
-  Grid,
   Select,
   InputLabel,
   FormControlLabel,
@@ -19,7 +18,9 @@ import {
   RadioGroup,
   MenuItem,
   Radio,
+  Grid2,
 } from '@layer5/sistent';
+
 import {
   StyledSummaryBox,
   StyledSummaryItem,
@@ -197,8 +198,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
                 hyphens, not whitespaces) and <strong>Model Display Name</strong> for your model.
               </Typography>
             </Box>
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
+            <Grid2 container spacing={2} size="grow">
+              <Grid2 size={{ xs: 6 }}>
                 <FormControl fullWidth>
                   <TextField
                     required
@@ -215,8 +216,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     variant="outlined"
                   />
                 </FormControl>
-              </Grid>
-              <Grid item xs={6}>
+              </Grid2>
+              <Grid2 size={{ xs: 6 }}>
                 <FormControl fullWidth>
                   <TextField
                     required
@@ -233,8 +234,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     variant="outlined"
                   />
                 </FormControl>
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </div>
         ),
         icon: DescriptionIcon,
@@ -270,8 +271,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Typography>
             </Box>
 
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
+            <Grid2 container spacing={2} size="grow">
+              <Grid2 size={{ xs: 6 }}>
                 <FormControl fullWidth variant="outlined" data-testid="UrlStepper-Select-Category">
                   <InputLabel id="category-label">Category</InputLabel>
                   <Select
@@ -291,8 +292,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
-              <Grid item xs={6}>
+              </Grid2>
+              <Grid2 size={{ xs: 6 }}>
                 <FormControl
                   fullWidth
                   variant="outlined"
@@ -316,8 +317,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </div>
         ),
         icon: CategoryIcon,
@@ -360,8 +361,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
               </Typography>
             </Box>
 
-            <Grid container spacing={1}>
-              <Grid item xs={6}>
+            <Grid2 container spacing={1} size="grow">
+              <Grid2 size={{ xs: 6 }}>
                 <FormControl
                   fullWidth
                   variant="outlined"
@@ -377,9 +378,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     label=" "
                   />
                 </FormControl>
-              </Grid>
+              </Grid2>
 
-              <Grid item xs={6}>
+              <Grid2 size={{ xs: 6 }}>
                 <FormControl fullWidth data-testid="UrlStepper-Select-Logo-Light-Theme">
                   <Typography>Logo (Light Theme)</Typography>
                   <input
@@ -390,9 +391,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     style={{ marginTop: '1rem' }}
                   />
                 </FormControl>
-              </Grid>
+              </Grid2>
 
-              <Grid item xs={6} style={{ marginTop: '2rem' }}>
+              <Grid2 size={{ xs: 6 }} style={{ marginTop: '2rem' }}>
                 <FormControl fullWidth data-testid="UrlStepper-Select-Primary-Color">
                   <Typography>Primary Color</Typography>
                   <input
@@ -403,9 +404,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     style={{ width: '100%', marginTop: '1rem' }}
                   />
                 </FormControl>
-              </Grid>
+              </Grid2>
 
-              <Grid item xs={6} style={{ marginTop: '2rem' }}>
+              <Grid2 size={{ xs: 6 }} style={{ marginTop: '2rem' }}>
                 <FormControl fullWidth data-testid="UrlStepper-Select-Secondary-Color">
                   <Typography>Secondary Color</Typography>
                   <input
@@ -416,9 +417,9 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     style={{ width: '100%', marginTop: '1rem' }}
                   />
                 </FormControl>
-              </Grid>
+              </Grid2>
 
-              <Grid item xs={12} style={{ marginTop: '1rem' }}>
+              <Grid2 size={{ xs: 12 }} style={{ marginTop: '1rem' }}>
                 <FormControl fullWidth variant="outlined" data-testid="UrlStepper-Select-Shape">
                   <InputLabel id="shape-label">Shape</InputLabel>
                   <Select
@@ -438,8 +439,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
                     ))}
                   </Select>
                 </FormControl>
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </div>
         ),
         icon: BrushIcon,
@@ -545,7 +546,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
       },
       {
         component: (
-          <Grid item xs={12} style={{ marginTop: '1rem' }}>
+          <Grid2 size={{ xs: 12 }} style={{ marginTop: '1rem' }}>
             <FormControl component="fieldset">
               <FormControlLabel
                 style={{ marginLeft: '0' }}
@@ -562,7 +563,7 @@ const UrlStepper = React.memo(({ handleClose }) => {
                 }
               />
             </FormControl>
-          </Grid>
+          </Grid2>
         ),
         icon: AppRegistrationIcon,
         label: 'Additional Details',
@@ -591,24 +592,24 @@ const UrlStepper = React.memo(({ handleClose }) => {
 
             <StyledSummaryBox>
               <SectionHeading variant="subtitle1">Basic Information</SectionHeading>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+              <Grid2 container spacing={2} size="grow">
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="Model Name" value={modelName} />
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="Display Name" value={modelDisplayName} />
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="Category" value={modelCategory} />
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="Subcategory" value={modelSubcategory} />
-                </Grid>
-              </Grid>
+                </Grid2>
+              </Grid2>
 
               <SectionHeading variant="subtitle1">Styling</SectionHeading>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+              <Grid2 container spacing={2} size="grow">
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <StyledSummaryItem>
                     <Typography variant="textB2SemiBold" color="textSecondary">
                       Primary Color
@@ -618,8 +619,8 @@ const UrlStepper = React.memo(({ handleClose }) => {
                       <Typography>{primaryColor}</Typography>
                     </Box>
                   </StyledSummaryItem>
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <StyledSummaryItem>
                     <Typography variant="textB2SemiBold" color="textSecondary">
                       Secondary Color
@@ -629,51 +630,51 @@ const UrlStepper = React.memo(({ handleClose }) => {
                       <Typography>{secondaryColor}</Typography>
                     </Box>
                   </StyledSummaryItem>
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="Shape" value={modelShape} />
-                </Grid>
-              </Grid>
+                </Grid2>
+              </Grid2>
 
               <SectionHeading variant="subtitle1">Logos</SectionHeading>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+              <Grid2 container spacing={2} size="grow">
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <StyledSummaryItem>
                     <Typography variant="textB2SemiBold" color="textSecondary">
                       Light Theme Logo
                     </Typography>
                     <SvgLogoDisplay svgContent={logoLightThemePath} />
                   </StyledSummaryItem>
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <StyledSummaryItem>
                     <Typography variant="textB2SemiBold" color="textSecondary">
                       Dark Theme Logo
                     </Typography>
                     <SvgLogoDisplay svgContent={logoDarkThemePath} />
                   </StyledSummaryItem>
-                </Grid>
-              </Grid>
+                </Grid2>
+              </Grid2>
 
               <SectionHeading variant="subtitle1">Source</SectionHeading>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
+              <Grid2 container spacing={2} size="grow">
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="Source Type" value={capitalize(modelSource || '')} />
-                </Grid>
-                <Grid item xs={12} md={6}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   <SummaryField label="URL" value={modelUrl} />
-                </Grid>
-              </Grid>
+                </Grid2>
+              </Grid2>
 
               <SectionHeading variant="subtitle1">Additional Configuration</SectionHeading>
-              <Grid container spacing={2}>
-                <Grid item xs={12}>
+              <Grid2 container spacing={2} size="grow">
+                <Grid2 size={{ xs: 12 }}>
                   <SummaryField
                     label="Visual Annotation Only"
                     value={isAnnotation ? 'Yes' : 'No'}
                   />
-                </Grid>
-              </Grid>
+                </Grid2>
+              </Grid2>
             </StyledSummaryBox>
 
             <Box sx={{ marginTop: '1rem' }}>

@@ -3,7 +3,7 @@ import { keys } from '@/utils/permission_constants';
 import {
   Box,
   FormControl,
-  Grid,
+  Grid2,
   InputLabel,
   MenuItem,
   PromptComponent,
@@ -181,9 +181,9 @@ const WorkspaceContent = ({ workspace }) => {
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Grid container spacing={2} alignItems="center">
+        <Grid2 container spacing={2} alignItems="center" size="grow">
           {/* Search Bar */}
-          <Grid item xs={12} md={5}>
+          <Grid2 size={{ xs: 12, md: 5 }}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
@@ -204,10 +204,10 @@ const WorkspaceContent = ({ workspace }) => {
                 )
               }
             />
-          </Grid>
+          </Grid2>
 
           {/* Type Select */}
-          <Grid item xs={3} md={2}>
+          <Grid2 size={{ xs: 3, md: 2 }}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -224,23 +224,23 @@ const WorkspaceContent = ({ workspace }) => {
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
-          </Grid>
+          </Grid2>
 
           {/* Sort By */}
-          <Grid item xs={3} md={2}>
+          <Grid2 size={{ xs: 3, md: 2 }}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-          </Grid>
+          </Grid2>
 
           {/* Visibility Select */}
-          <Grid item xs={3} md={2}>
+          <Grid2 size={{ xs: 3, md: 2 }}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
-          </Grid>
+          </Grid2>
 
-          <Grid item xs={3} md={1}>
+          <Grid2 size={{ xs: 3, md: 1 }}>
             {filters.type == RESOURCE_TYPE.DESIGN && (
               <ImportButton
                 refetch={refetch}
@@ -253,8 +253,8 @@ const WorkspaceContent = ({ workspace }) => {
                 }
               />
             )}
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         <>
           <MultiContentSelectToolbar

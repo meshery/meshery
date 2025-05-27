@@ -8,7 +8,7 @@ import {
   CircularProgress,
   FormControlLabel,
   Link,
-  Grid,
+  Grid2,
   CustomTooltip,
   ModalBody,
   ModalFooter,
@@ -853,8 +853,8 @@ const MesheryPerformanceComponent_ = (props) => {
           <React.Fragment>
             {/* <div className={classes.wrapperClss} style={props.style || {}}> */}
             <ModalBody>
-              <Grid container spacing={1}>
-                <Grid item xs={12} md={6}>
+              <Grid2 container spacing={1} size="grow">
+                <Grid2 size={{ xs: 12, md: 6 }}>
                   <TextField
                     id="profileName"
                     name="profileName"
@@ -875,9 +875,9 @@ const MesheryPerformanceComponent_ = (props) => {
                       ),
                     }}
                   />
-                </Grid>
+                </Grid2>
 
-                <Grid item xs={12} md={6}>
+                <Grid2 size={{ xs: 12, md: 6 }}>
                   <TextField
                     select
                     id="meshName"
@@ -903,8 +903,8 @@ const MesheryPerformanceComponent_ = (props) => {
                         </MenuItem>
                       ))}
                   </TextField>
-                </Grid>
-                <Grid item xs={12}>
+                </Grid2>
+                <Grid2 size={{ xs: 12 }}>
                   <TextField
                     required
                     id="url"
@@ -926,8 +926,8 @@ const MesheryPerformanceComponent_ = (props) => {
                       ),
                     }}
                   />
-                </Grid>
-                <Grid item xs={12} md={4}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <TextField
                     required
                     id="c"
@@ -949,8 +949,8 @@ const MesheryPerformanceComponent_ = (props) => {
                       ),
                     }}
                   />
-                </Grid>
-                <Grid item xs={12} md={4}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <TextField
                     required
                     id="qps"
@@ -972,8 +972,8 @@ const MesheryPerformanceComponent_ = (props) => {
                       ),
                     }}
                   />
-                </Grid>
-                <Grid item xs={12} md={4}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <CustomTooltip
                     title={
                       "Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."
@@ -1007,8 +1007,8 @@ const MesheryPerformanceComponent_ = (props) => {
                       }}
                     />
                   </CustomTooltip>
-                </Grid>
-                <Grid item xs={12} md={12}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 12 }}>
                   <ExpansionPanelComponent>
                     <AccordionSummary expanded={true} expandIcon={<ExpandMoreIcon />}>
                       <Typography align="center" color="textSecondary" variant="h6">
@@ -1016,8 +1016,8 @@ const MesheryPerformanceComponent_ = (props) => {
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
-                      <Grid container spacing={1}>
-                        <Grid item xs={12}>
+                      <Grid2 container spacing={1} size="grow">
+                        <Grid2 size={{ xs: 12 }}>
                           <TextField
                             id="headers"
                             name="headers"
@@ -1029,8 +1029,8 @@ const MesheryPerformanceComponent_ = (props) => {
                             variant="outlined"
                             onChange={handleChange('headers')}
                           ></TextField>
-                        </Grid>
-                        <Grid item xs={12}>
+                        </Grid2>
+                        <Grid2 size={{ xs: 12 }}>
                           <TextField
                             id="cookies"
                             name="cookies"
@@ -1042,8 +1042,8 @@ const MesheryPerformanceComponent_ = (props) => {
                             variant="outlined"
                             onChange={handleChange('cookies')}
                           ></TextField>
-                        </Grid>
-                        <Grid item xs={12}>
+                        </Grid2>
+                        <Grid2 size={{ xs: 12 }}>
                           <TextField
                             id="contentType"
                             name="contentType"
@@ -1055,8 +1055,8 @@ const MesheryPerformanceComponent_ = (props) => {
                             variant="outlined"
                             onChange={handleChange('contentType')}
                           ></TextField>
-                        </Grid>
-                        <Grid item xs={12} md={12}>
+                        </Grid2>
+                        <Grid2 size={{ xs: 12 }}>
                           <TextField
                             id="cookies"
                             name="cookies"
@@ -1068,9 +1068,9 @@ const MesheryPerformanceComponent_ = (props) => {
                             variant="outlined"
                             onChange={handleChange('reqBody')}
                           ></TextField>
-                        </Grid>
-                        <Grid container xs={12} md={12}>
-                          <Grid item xs={6}>
+                        </Grid2>
+                        <Grid2 container size="grow">
+                          <Grid2 size={{ xs: 6 }}>
                             <TextField
                               id="additional_options"
                               name="additional_options"
@@ -1089,8 +1089,8 @@ const MesheryPerformanceComponent_ = (props) => {
                               size="small"
                               onChange={handleChange('additional_options')}
                             />
-                          </Grid>
-                          <Grid item xs={6}>
+                          </Grid2>
+                          <Grid2 size={{ xs: 6 }}>
                             <label
                               htmlFor="upload-additional-options"
                               style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
@@ -1117,10 +1117,10 @@ const MesheryPerformanceComponent_ = (props) => {
                                 <HelpIcon />
                               </CustomTooltip>
                             </label>
-                          </Grid>
-                        </Grid>
-                        <Grid container xs={12} md={12}>
-                          <Grid item xs={6}>
+                          </Grid2>
+                        </Grid2>
+                        <Grid2 container size="grow">
+                          <Grid2 size={{ xs: 6 }}>
                             <TextField
                               size="small"
                               variant="outlined"
@@ -1132,8 +1132,8 @@ const MesheryPerformanceComponent_ = (props) => {
                               style={{ width: '100%', margin: '0.5rem 0' }}
                               value={metadataState?.ca_certificate.name}
                             />
-                          </Grid>
-                          <Grid item xs={6}>
+                          </Grid2>
+                          <Grid2 size={{ xs: 6 }}>
                             <label
                               htmlFor="upload-cacertificate"
                               style={{ paddingLeft: '0.7rem', paddingTop: '8px' }}
@@ -1160,13 +1160,13 @@ const MesheryPerformanceComponent_ = (props) => {
                                 <HelpIcon />
                               </CustomTooltip>
                             </label>
-                          </Grid>
-                        </Grid>
-                      </Grid>
+                          </Grid2>
+                        </Grid2>
+                      </Grid2>
                     </AccordionDetails>
                   </ExpansionPanelComponent>
-                </Grid>
-                <Grid item xs={12} md={4}>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <FormContainer component="loadGenerator">
                     <FormLabel
                       component="loadGenerator"
@@ -1199,8 +1199,8 @@ const MesheryPerformanceComponent_ = (props) => {
                       ))}
                     </RadioGroup>
                   </FormContainer>
-                </Grid>
-              </Grid>
+                </Grid2>
+              </Grid2>
             </ModalBody>
             <ModalFooter variant="filled">
               <React.Fragment>

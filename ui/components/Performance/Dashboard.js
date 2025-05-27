@@ -13,7 +13,7 @@ import DefaultError from '@/components/General/error-404/index';
 import {
   Modal,
   Button,
-  Grid,
+  Grid2,
   Paper,
   Typography,
   useTheme,
@@ -161,9 +161,15 @@ function Dashboard() {
     <>
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
-          <Grid container spacing={2} style={{ padding: '0.5rem' }} alignContent="space-around">
-            <Grid container item spacing={1} direction="column" lg xs={12}>
-              <Grid item>
+          <Grid2
+            container
+            spacing={2}
+            style={{ padding: '0.5rem' }}
+            alignContent="space-around"
+            size="grow"
+          >
+            <Grid2 cspacing={1} direction="column" size={{ xs: 12, lg: 6 }}>
+              <Grid2>
                 <StyledPaper>
                   <ResultContainer>
                     <StyledPaper sx={{ boxShadow: 'none' }}>
@@ -230,14 +236,14 @@ function Dashboard() {
                     </StyledPaper>
                   </ResultContainer>
                 </StyledPaper>
-              </Grid>
-              <Grid item>
+              </Grid2>
+              <Grid2>
                 <StyledPaper>
                   <PerformanceCalendar style={{ height: '40rem', margin: '2rem 0 0' }} />
                 </StyledPaper>
-              </Grid>
-            </Grid>
-            <Grid item lg xs={12}>
+              </Grid2>
+            </Grid2>
+            <Grid2 size={{ xs: 12, lg: 6 }}>
               <StyledPaper style={{ height: '100%' }}>
                 <MesheryMetrics
                   boardConfigs={grafana.selectedBoardsConfigs}
@@ -246,8 +252,8 @@ function Dashboard() {
                   handleGrafanaChartAddition={() => router.push('/settings/#metrics')}
                 />
               </StyledPaper>
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
 
           <Modal
             open={!!runTest}

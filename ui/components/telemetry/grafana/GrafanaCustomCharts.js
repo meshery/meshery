@@ -6,7 +6,7 @@ import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { StyledAccordion, StyledAccordionSummary } from '../../StyledAccordion';
 import GrafanaCustomChart from './GrafanaCustomChart';
 import {
-  Grid,
+  Grid2,
   AccordionDetails,
   Typography,
   Dialog,
@@ -245,12 +245,12 @@ const GrafanaCustomCharts = (props) => {
                 )}
               </StyledAccordionSummary>
               <AccordionDetails>
-                <Grid container spacing={3}>
+                <Grid2 container spacing={3} size="grow">
                   {config.panels.map(
                     (panel, i) => (
                       // if(panel.type === 'graph'){
 
-                      <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
+                      <Grid2 key={`grafana-chart-${i}`} size={{ lg: sparkline ? 12 : 6, xs: 12 }}>
                         <GrafanaCustomChart
                           connectionID={connectionID}
                           board={config}
@@ -279,11 +279,11 @@ const GrafanaCustomCharts = (props) => {
                               : {}
                           }
                         />
-                      </Grid>
+                      </Grid2>
                     ),
                     // } else return '';
                   )}
-                </Grid>
+                </Grid2>
               </AccordionDetails>
             </StyledAccordion>
           ))}
