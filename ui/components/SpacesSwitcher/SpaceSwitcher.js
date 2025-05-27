@@ -5,7 +5,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  Grid,
+  Grid2,
   MenuItem,
   styled,
   TextField,
@@ -129,8 +129,8 @@ function OrgMenu(props) {
               <FormControlLabel
                 key="OrgPreferences"
                 control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                  <Grid2 container spacing={1} alignItems="flex-end" size="grow">
+                    <Grid2 data-cy="mesh-adapter-url" size={{ xs: 12 }}>
                       <StyledSelect
                         value={organization.id}
                         onChange={handleOrgSelect}
@@ -171,8 +171,8 @@ function OrgMenu(props) {
                           </StyledMenuItem>
                         ))}
                       </StyledSelect>
-                    </Grid>
-                  </Grid>
+                    </Grid2>
+                  </Grid2>
                 }
               />
             </FormGroup>

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Grid, Paper, Button, IconButton, Typography, styled } from '@layer5/sistent';
+import { Box, Grid2, Paper, Button, IconButton, Typography, styled } from '@layer5/sistent';
 import AddIcon from '@mui/icons-material/Add';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -67,17 +67,17 @@ const DefaultArrayItem = (props) => {
 
   return (
     <SimpleAccordion heading={props.heading} childProps={props}>
-      <Grid container={true} key={props.key} alignItems="center">
-        <Grid item={true} xs>
+      <Grid2 container={true} key={props.key} alignItems="center" size="grow">
+        <Grid2 size={{ xs: 12 }}>
           <Box mb={2} style={{ border: '0.5px solid black' }}>
             <Paper elevation={0}>
               <Box p={2}>{props.children}</Box>
             </Paper>
           </Box>
-        </Grid>
+        </Grid2>
 
         {props.hasToolbar && (
-          <Grid item={true}>
+          <Grid2>
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconButton
                 icon="arrow-up"
@@ -100,9 +100,9 @@ const DefaultArrayItem = (props) => {
                 onClick={props.onReorderClick(props.index, props.index + 1)}
               />
             )}
-          </Grid>
+          </Grid2>
         )}
-      </Grid>
+      </Grid2>
     </SimpleAccordion>
   );
 };
@@ -157,15 +157,13 @@ const DefaultNormalArrayFieldTemplate = (props) => {
   return (
     <StyledRoot elevation={0}>
       <Box p={1}>
-        <Grid
-          item
-          container
+        <Grid2
           alignItems="center"
-          xs={12}
           justify="space-between"
           style={{ marginBottom: '0.3rem' }}
+          size="grow"
         >
-          <Grid item xs={4}>
+          <Grid2 size={{ xs: 4 }}>
             <ArrayFieldTitle
               key={`array-field-title-${props.idSchema.$id}`}
               TitleField={props.TitleField}
@@ -208,11 +206,11 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 </IconButton>
               </CustomTextTooltip>
             )}
-          </Grid>
-          <Grid item xs={4}>
+          </Grid2>
+          <Grid2 size={{ xs: 4 }}>
             {props.canAdd && (
-              <Grid container justify="flex-end">
-                <Grid item={true}>
+              <Grid2 container justify="flex-end">
+                <Grid2 item={true}>
                   <Box mt={2}>
                     <IconButton
                       className="array-item-add"
@@ -222,13 +220,13 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                       <AddIcon width="18px" height="18px" fill="gray" />
                     </IconButton>
                   </Box>
-                </Grid>
-              </Grid>
+                </Grid2>
+              </Grid2>
             )}
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
-        <Grid container={true} key={`array-item-list-${props.idSchema.$id}`}>
+        <Grid2 container={true} key={`array-item-list-${props.idSchema.$id}`} size={'grow'}>
           {props.items &&
             props.items.map((item, idx) => {
               return (
@@ -239,7 +237,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                 />
               );
             })}
-        </Grid>
+        </Grid2>
       </Box>
     </StyledRoot>
   );

@@ -1,6 +1,6 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
+import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
 import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
@@ -146,9 +146,9 @@ const SharedContent = () => {
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Grid container spacing={2} alignItems="center">
+        <Grid2 container spacing={2} alignItems="center" size="grow">
           {/* Search Bar */}
-          <Grid item xs={12} sm={12} md={10} lg={5}>
+          <Grid2 size={{ xs: 12, sm: 12, md: 10, lg: 5 }}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
@@ -169,10 +169,10 @@ const SharedContent = () => {
                 )
               }
             />
-          </Grid>
+          </Grid2>
 
           {/* Type Select */}
-          <Grid item xs={6} sm={6} md={2} lg={1.5}>
+          <Grid2 size={{ xs: 12, sm: 12, md: 2, lg: 1.5 }}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -189,29 +189,29 @@ const SharedContent = () => {
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
-          </Grid>
+          </Grid2>
 
           {/* Sort By Select */}
-          <Grid item xs={6} sm={6} md={4} lg={1.5}>
+          <Grid2 size={{ xs: 12, sm: 12, md: 4, lg: 1.5 }}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-          </Grid>
+          </Grid2>
 
           {/* Author Search */}
-          <Grid item xs={12} sm={6} md={4} lg={2.5}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 4, lg: 2.5 }}>
             <FormControl fullWidth>
               <UserSearchAutoComplete handleAuthorChange={handleAuthorChange} />
             </FormControl>
-          </Grid>
+          </Grid2>
 
           {/* Visibility Select */}
-          <Grid item xs={12} sm={6} md={4} lg={1.5}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 4, lg: 1.5 }}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         <>
           <TableListHeader />

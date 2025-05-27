@@ -1,7 +1,7 @@
 import { createTheme } from '@layer5/sistent';
-import createBreakpoints from '@mui/system/createTheme/createBreakpoints';
+import { unstable_createBreakpoints } from '@mui/material';
 
-const breakpoints = createBreakpoints({});
+const breakpoints = unstable_createBreakpoints({});
 
 export const rjsfTheme = createTheme({
   palette: {

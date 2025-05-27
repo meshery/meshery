@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   Divider,
-  Grid,
+  Grid2,
   IconButton,
   Typography,
   Tooltip,
@@ -246,7 +246,7 @@ function FiltersCard_({
                 </Tooltip>
               </CardHeaderRight>
             </YamlDialogTitleGrid>
-            <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
+            <Grid2 size={{ xs: 12 }} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
 
               {catalogContentKeys.length === 0 ? (
@@ -273,9 +273,9 @@ function FiltersCard_({
                   </>
                 ))
               )}
-            </Grid>
+            </Grid2>
 
-            <Grid item xs={8}>
+            <Grid2 size={{ xs: 8 }}>
               <div style={{ marginRight: '0.5rem' }}>
                 <div>
                   {created_at ? (
@@ -285,9 +285,9 @@ function FiltersCard_({
                   ) : null}
                 </div>
               </div>
-            </Grid>
+            </Grid2>
 
-            <Grid item xs={12}>
+            <Grid2 size={{ xs: 12 }}>
               <UpdateDeleteButtons>
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
@@ -309,7 +309,7 @@ function FiltersCard_({
                   </IconButton>
                 </Tooltip>
               </UpdateDeleteButtons>
-            </Grid>
+            </Grid2>
           </CardBackGrid>
         </>
       </FlipCard>

@@ -12,7 +12,7 @@ import {
   Select,
   TextField,
   Typography,
-  Grid,
+  Grid2,
   useTheme,
   PersonIcon,
   OutlinedInput,
@@ -91,15 +91,15 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
       getOptionLabel={(option) => option.email || ''}
       renderOption={(props, option) => (
         <Box component="li" sx={{ '& > img': { mr: 2, flexShrink: 0 } }} {...props}>
-          <Grid container alignItems="center">
-            <Grid item>
+          <Grid2 container alignItems="center" size="grow">
+            <Grid2>
               <Box sx={{ color: 'text.secondary', mr: 2 }}>
                 <Avatar alt={option.first_name} src={option.avatar_url}>
                   {option.avatar_url ? '' : <PersonIcon />}
                 </Avatar>
               </Box>
-            </Grid>
-            <Grid item xs>
+            </Grid2>
+            <Grid2 size={{ sx: 12 }}>
               {option.deleted_at?.Valid ? (
                 <Typography variant="body2" color="text.secondary">
                   {option.email} (deleted)
@@ -114,8 +114,8 @@ export const UserSearchAutoComplete = ({ handleAuthorChange }) => {
                   </Typography>
                 </>
               )}
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
         </Box>
       )}
       renderInput={(params) => (
@@ -204,9 +204,17 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
 export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => {
   const { setMultiSelectedContent, multiSelectedContent } = useContext(WorkspaceModalContext);
   return (
-    <Grid container width="100%" paddingInline="1rem" spacing={2} alignItems="center" wrap="nowrap">
+    <Grid2
+      container
+      width="100%"
+      size="grow"
+      paddingInline="1rem"
+      spacing={2}
+      alignItems="center"
+      wrap="nowrap"
+    >
       {isMultiSelectMode && (
-        <Grid item xs={1} md={0.25} zeroMinWidth>
+        <Grid2 size={{ xs: 1, md: 0.25 }}>
           <FormGroup>
             <FormControlLabel
               control={
@@ -226,34 +234,36 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
               }
             />
           </FormGroup>
-        </Grid>
+        </Grid2>
       )}
-      <Grid item xs={5} md={5} lg={5} zeroMinWidth>
+      <Grid2 size={{ xs: 5, md: 5, lg: 5 }}>
         <Typography variant="body1" noWrap>
           Name
         </Typography>
-      </Grid>
-      <Grid item xs={4} md={4} lg={4} zeroMinWidth>
+      </Grid2>
+      <Grid2 size={{ xs: 4, md: 4, lg: 4 }}>
         <Typography variant="body1" noWrap>
           Author
         </Typography>
-      </Grid>
-      <Grid
-        item
-        md={2}
-        lg={1}
-        sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
+      </Grid2>
+      <Grid2
+        size={{
+          xs: 0,
+          sm: 0,
+          md: 2,
+          lg: 1,
+        }}
       >
         <Typography variant="body1" noWrap>
           Visibility
         </Typography>
-      </Grid>
-      <Grid item xs={3} sm={2} md={0.75} lg={1.75} zeroMinWidth>
+      </Grid2>
+      <Grid2 size={{ xs: 3, sm: 2, md: 0.75, lg: 1.75 }}>
         <Typography variant="body1" noWrap>
           Actions
         </Typography>
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

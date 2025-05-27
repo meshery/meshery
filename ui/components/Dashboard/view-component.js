@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { SectionBody, ArrayFormatter } from '../DataFormatter';
 import _ from 'lodash';
 import {
-  Grid,
+  Grid2,
   useTheme,
   Typography,
   StatusFormatter,
@@ -91,9 +91,9 @@ const ResourceDynamicFormatter = ({ data }) => {
 
       if (propertyFormatters?.[title]) {
         return (
-          <Grid key={title} sm={12}>
+          <Grid2 key={title} size={{ sm: 12 }}>
             {propertyFormatters[title](data, data)}
-          </Grid>
+          </Grid2>
         );
       }
 
@@ -102,10 +102,11 @@ const ResourceDynamicFormatter = ({ data }) => {
       }
 
       return (
-        <Grid
-          item
+        <Grid2
           key={title}
-          sm={12}
+          size={{
+            sm: 12,
+          }}
           style={{
             marginBlock: '0.25rem',
           }}
@@ -114,7 +115,7 @@ const ResourceDynamicFormatter = ({ data }) => {
           <Level>
             <ResourceDynamicFormatter data={data} />
           </Level>
-        </Grid>
+        </Grid2>
       );
     });
   }
@@ -336,16 +337,17 @@ const ResourceDetailFormatData = ({ data }) => {
         propertyFormatters: propertyFormatter,
       }}
     >
-      <Grid
+      <Grid2
         container
         style={{
           wordBreak: 'break-word',
           overflowWrap: 'break-word',
           gap: '0.3rem 1rem',
         }}
+        size="grow"
       >
         <ResourceDynamicFormatter data={data} />
-      </Grid>
+      </Grid2>
     </FormatterContext.Provider>
   );
 };

@@ -8,7 +8,6 @@ import {
   DARK_BLUE_GRAY,
   Box,
   Avatar,
-  Grid,
   Button,
   Checkbox,
 } from '@layer5/sistent';
@@ -138,7 +137,6 @@ export const StyledUserDetailsContainer = styled('div')({
   marginLeft: '1rem',
   gap: '0.1rem',
 });
-
 
 export const StyledAvatarContainer = styled('div')({
   display: 'flex',

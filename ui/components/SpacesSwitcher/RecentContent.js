@@ -1,6 +1,6 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Box, FormControl, Grid, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
+import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
 import React, { useCallback, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
 import MainDesignsContent from './MainDesignsContent';
@@ -145,9 +145,9 @@ const RecentContent = () => {
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <Grid container spacing={2} alignItems="center">
+        <Grid2 container spacing={2} alignItems="center" size="grow">
           {/* Search Bar */}
-          <Grid item xs={12} sm={12} md={6} lg={4}>
+          <Grid2 size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
@@ -168,10 +168,10 @@ const RecentContent = () => {
                 )
               }
             />
-          </Grid>
+          </Grid2>
 
           {/* Type Select */}
-          <Grid item xs={6} sm={6} md={3} lg={1.5}>
+          <Grid2 size={{ xs: 6, sm: 6, md: 3, lg: 1.5 }}>
             <FormControl fullWidth>
               <InputLabel>Type</InputLabel>
               <Select
@@ -188,36 +188,36 @@ const RecentContent = () => {
                 {isViewVisible && <MenuItem value={RESOURCE_TYPE.VIEW}>View</MenuItem>}
               </Select>
             </FormControl>
-          </Grid>
+          </Grid2>
 
           {/* Sort By */}
-          <Grid item xs={6} sm={6} md={3} lg={1.5}>
+          <Grid2 size={{ xs: 6, sm: 6, md: 3, lg: 1.5 }}>
             <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-          </Grid>
+          </Grid2>
 
           {/* Author Search */}
-          <Grid item xs={12} sm={6} md={6} lg={2.5}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 6, lg: 2.5 }}>
             <FormControl fullWidth>
               <UserSearchAutoComplete handleAuthorChange={handleAuthorChange} />
             </FormControl>
-          </Grid>
+          </Grid2>
 
           {/* Visibility */}
-          <Grid item xs={6} sm={3} md={3} lg={1.5}>
+          <Grid2 size={{ xs: 6, sm: 3, md: 3, lg: 1.5 }}>
             <VisibilitySelect
               visibility={filters.visibility}
               handleVisibilityChange={handleVisibilityChange}
               visibilityItems={visibilityItems}
             />
-          </Grid>
+          </Grid2>
 
           {/* Import Button */}
           {filters.type === RESOURCE_TYPE.DESIGN && (
-            <Grid item xs={6} sm={3} md={3} lg={1}>
+            <Grid2 size={{ xs: 6, sm: 3, md: 3, lg: 1 }}>
               <ImportButton refetch={refetch} />
-            </Grid>
+            </Grid2>
           )}
-        </Grid>
+        </Grid2>
 
         <>
           <TableListHeader />
