@@ -1907,18 +1907,24 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		l.Log.Error(ErrDataRead(err, "respone body"))
-		return nil, ErrDataRead(err, "design:"+patternID)
+		return bdr, ErrDataRead(err, "design:"+patternID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+
+	if string(bdr) != "null" && string(bdr) != "" {
+		return bdr, errors.New(string(bdr))
+	}
+
+	err = fmt.Errorf("Failed to get the design with id %s: %s", patternID, bdr)
 	l.Log.Error(err)
-	return nil, err
+	return bdr, err
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
