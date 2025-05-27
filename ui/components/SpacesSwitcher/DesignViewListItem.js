@@ -14,18 +14,14 @@ import {
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
-  StyledActionsContainer,
   StyledAvatarContainer,
   StyledListIcon,
   StyledListItem,
   StyledListItemText,
   StyledSmallAvatar,
   StyledSmallAvatarContainer,
-  StyledTextContainer,
   StyledUpdatedText,
   StyledUserDetailsContainer,
-  StyledUserInfoContainer,
-  StyledVisibilityContainer,
 } from './styles';
 import React, { useContext } from 'react';
 import { iconMedium } from 'css/icons.styles';
@@ -70,103 +66,107 @@ const DesignViewListItem = ({
           }
         }}
       >
-        {isMultiSelectMode && (
-          <Grid item xs={0.3} md={0.25} zeroMinWidth>
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={multiSelectedContent.some((item) => item.id === selectedItem.id)}
-                    onChange={(e) => {
-                      e.stopPropagation();
-                      if (e.target.checked) {
-                        setMultiSelectedContent((prev) => [...prev, selectedItem]);
-                      } else {
-                        setMultiSelectedContent((prev) =>
-                          prev.filter((item) => item.id !== selectedItem.id),
-                        );
-                      }
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                  />
+        <Grid container alignItems="center">
+          {isMultiSelectMode && (
+            <Grid item xs={1} md={0.25} zeroMinWidth>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={multiSelectedContent.some((item) => item.id === selectedItem.id)}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        if (e.target.checked) {
+                          setMultiSelectedContent((prev) => [...prev, selectedItem]);
+                        } else {
+                          setMultiSelectedContent((prev) =>
+                            prev.filter((item) => item.id !== selectedItem.id),
+                          );
+                        }
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  }
+                />
+              </FormGroup>
+            </Grid>
+          )}
+
+          <Grid item xs={6} md={5} lg={5}>
+            <StyledAvatarContainer>
+              <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
+              <StyledListItemText
+                primary={selectedItem.name || ''}
+                primaryTypographyProps={{ fontSize: '0.9rem' }}
+                secondary={
+                  <CustomTooltip
+                    variant="small"
+                    title={getFullFormattedTime(selectedItem.updated_at)}
+                    placement="bottom"
+                  >
+                    <StyledUpdatedText>
+                      {getRelativeTime(selectedItem.updated_at)}
+                    </StyledUpdatedText>
+                  </CustomTooltip>
                 }
               />
-            </FormGroup>
+            </StyledAvatarContainer>
           </Grid>
-        )}
-
-        <StyledTextContainer item xs={6} md={5} lg={5}>
-          <StyledAvatarContainer>
-            <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
-            <StyledListItemText
-              primary={selectedItem.name || ''}
-              primaryTypographyProps={{ fontSize: '0.9rem' }}
-              secondary={
-                <CustomTooltip
-                  variant="small"
-                  title={getFullFormattedTime(selectedItem.updated_at)}
-                  placement="bottom"
-                >
-                  <StyledUpdatedText>{getRelativeTime(selectedItem.updated_at)}</StyledUpdatedText>
-                </CustomTooltip>
-              }
-            />
-          </StyledAvatarContainer>
-        </StyledTextContainer>
-        <StyledUserInfoContainer item xs={4} md={4} lg={4}>
-          {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
-        </StyledUserInfoContainer>
-        <StyledVisibilityContainer
-          item
-          md={2}
-          lg={1}
-          sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
-        >
-          <VisibilityChipMenu
-            value={selectedItem?.visibility}
-            onChange={(value) => onVisibilityChange(value, selectedItem)}
-            enabled={canChangeVisibility}
-            options={[
-              [VIEW_VISIBILITY.PUBLIC, Public],
-              [VIEW_VISIBILITY.PRIVATE, Lock],
-            ]}
-          />
-        </StyledVisibilityContainer>
-        <StyledActionsContainer item xs={1} md={1} lg={2} zeroMinWidth>
-          {MenuComponent}
-        </StyledActionsContainer>
-        {activeUsers && (
-          <StyledSmallAvatarContainer
-            id={`${type}-avatar-${selectedItem.id}`}
-            transform="translate(0px, -12px)"
-            clipPath="polygon(0 0, 100% 0, 100% 33%, 0 33%)"
+          <Grid item xs={4} md={4} lg={4}>
+            {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
+          </Grid>
+          <Grid
+            item
+            md={2}
+            lg={1}
+            sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
           >
-            <AvatarGroup
-              max={7}
-              className="root"
-              componentsProps={{
-                additionalAvatar: {
-                  style: {
-                    height: '23px',
-                    width: '23px',
-                  },
-                },
-              }}
+            <VisibilityChipMenu
+              value={selectedItem?.visibility}
+              onChange={(value) => onVisibilityChange(value, selectedItem)}
+              enabled={canChangeVisibility}
+              options={[
+                [VIEW_VISIBILITY.PUBLIC, Public],
+                [VIEW_VISIBILITY.PRIVATE, Lock],
+              ]}
+            />
+          </Grid>
+          <Grid item xs={1} md={0.75} lg={1.75} zeroMinWidth>
+            {MenuComponent}
+          </Grid>
+          {activeUsers && (
+            <StyledSmallAvatarContainer
+              id={`${type}-avatar-${selectedItem.id}`}
+              transform="translate(0px, -12px)"
+              clipPath="polygon(0 0, 100% 0, 100% 33%, 0 33%)"
             >
-              {activeUsers.map((user) => (
-                <CustomTooltip key={user.client_id} title={user.name}>
-                  <StyledSmallAvatar
-                    borderColor={user.color}
-                    key={user.client_id}
-                    alt={user.name}
-                    src={user.avatar_url}
-                    imgProps={{ referrerPolicy: 'no-referrer' }}
-                  />
-                </CustomTooltip>
-              ))}
-            </AvatarGroup>
-          </StyledSmallAvatarContainer>
-        )}
+              <AvatarGroup
+                max={7}
+                className="root"
+                componentsProps={{
+                  additionalAvatar: {
+                    style: {
+                      height: '23px',
+                      width: '23px',
+                    },
+                  },
+                }}
+              >
+                {activeUsers.map((user) => (
+                  <CustomTooltip key={user.client_id} title={user.name}>
+                    <StyledSmallAvatar
+                      borderColor={user.color}
+                      key={user.client_id}
+                      alt={user.name}
+                      src={user.avatar_url}
+                      imgProps={{ referrerPolicy: 'no-referrer' }}
+                    />
+                  </CustomTooltip>
+                ))}
+              </AvatarGroup>
+            </StyledSmallAvatarContainer>
+          )}
+        </Grid>
       </StyledListItem>
       <Divider light />
     </>
@@ -179,54 +179,56 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
   return (
     <>
       <StyledListItem>
-        {isMultiSelectMode && (
-          <Grid item xs={0.3} md={0.25} zeroMinWidth>
-            <Skeleton variant="rectangular" animation="wave" {...iconMedium} />
+        <Grid container alignItems={'center'}>
+          {isMultiSelectMode && (
+            <Grid item xs={1} md={0.25}>
+              <Skeleton variant="rectangular" animation="wave" {...iconMedium} />
+            </Grid>
+          )}
+          <Grid item xs={5} md={5} lg={5}>
+            <StyledAvatarContainer>
+              <Skeleton variant="circular" animation="wave" width={24} height={24} />
+              <div style={{ width: '100%', paddingLeft: '1rem' }}>
+                <Skeleton animation="wave" height={24} width="80%" />
+                <Skeleton animation="wave" height={16} width="40%" />
+              </div>
+            </StyledAvatarContainer>
           </Grid>
-        )}
-        <StyledTextContainer item xs={6} md={5} lg={5}>
-          <StyledAvatarContainer>
-            <Skeleton variant="circular" animation="wave" width={24} height={24} />
-            <div style={{ width: '100%', paddingLeft: '1rem' }}>
-              <Skeleton animation="wave" height={24} width="80%" />
-              <Skeleton animation="wave" height={16} width="40%" />
-            </div>
-          </StyledAvatarContainer>
-        </StyledTextContainer>
 
-        <StyledUserInfoContainer item xs={4} md={4} lg={4}>
-          <AvatarSkeleton />
-        </StyledUserInfoContainer>
+          <Grid item xs={4} md={4} lg={4}>
+            <AvatarSkeleton />
+          </Grid>
 
-        <StyledVisibilityContainer
-          item
-          md={2}
-          lg={1}
-          sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
-        >
-          <Skeleton animation="wave" height={32} width="70%" />
-        </StyledVisibilityContainer>
+          <Grid
+            item
+            md={2}
+            lg={1}
+            sx={{ display: { xs: 'none', sm: 'none', md: 'block' }, minWidth: 0 }}
+          >
+            <Skeleton animation="wave" height={32} width="70%" />
+          </Grid>
 
-        <StyledActionsContainer
-          item
-          xs={2}
-          sm={3}
-          md={1}
-          lg={2}
-          zeroMinWidth
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '1rem',
-            paddingLeft: '0.5rem',
-          }}
-        >
-          {Array(4)
-            .fill()
-            .map((_, index) => (
-              <Skeleton key={index} variant="circular" animation="wave" {...iconMedium} />
-            ))}
-        </StyledActionsContainer>
+          <Grid
+            item
+            xs={2}
+            sm={3}
+            md={0.75}
+            lg={1.75}
+            zeroMinWidth
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '1rem',
+              paddingLeft: '0.5rem',
+            }}
+          >
+            {Array(4)
+              .fill()
+              .map((_, index) => (
+                <Skeleton key={index} variant="circular" animation="wave" {...iconMedium} />
+              ))}
+          </Grid>
+        </Grid>
       </StyledListItem>
       <Divider light />
     </>

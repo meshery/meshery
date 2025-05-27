@@ -131,10 +131,6 @@ export const StyledListItem = styled(ListItem)({
   position: 'relative',
 });
 
-export const StyledTextContainer = styled(Grid)({});
-
-export const StyledUserInfoContainer = styled(Grid)({});
-
 export const StyledUserDetailsContainer = styled('div')({
   display: 'flex',
   alignItems: 'start',
@@ -143,9 +139,6 @@ export const StyledUserDetailsContainer = styled('div')({
   gap: '0.1rem',
 });
 
-export const StyledVisibilityContainer = styled(Grid)({});
-
-export const StyledActionsContainer = styled(Grid)({});
 
 export const StyledAvatarContainer = styled('div')({
   display: 'flex',

@@ -14,6 +14,7 @@ import {
   ExportIcon,
   DeleteIcon,
   InfoIcon,
+  WorkspaceContentMoveModal,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -36,7 +37,12 @@ import { keys } from '@/utils/permission_constants';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
+import {
+  useAssignDesignToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
+  useGetWorkspacesQuery,
+} from '@/rtk-query/workspace';
+import { useNotification } from '@/utils/hooks/useNotification';
 
 const MainDesignsContent = ({
   page,
@@ -143,7 +149,6 @@ const MainDesignsContent = ({
   const [updatePatterns] = useUpdatePatternFileMutation();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-  const router = useRouter();
   const handleOpenDesignInDesigner = (designId, designName) => {
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
@@ -235,12 +240,17 @@ const MainDesignsContent = ({
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
+  const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
+  const { notify } = useNotification();
+  const router = useRouter();
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -348,6 +358,25 @@ const MainDesignsContent = ({
           workspaceContentMoveModal={moveModal}
           selectedContent={selectedDesign}
           refetch={refetch}
+          useGetWorkspacesQuery={useGetWorkspacesQuery}
+          WorkspaceModalContext={WorkspaceModalContext}
+          assignDesignToWorkspace={assignDesignToWorkspace}
+          assignViewToWorkspace={assignViewToWorkspace}
+          isCreateWorkspaceAllowed={CAN(
+            keys.CREATE_WORKSPACE.action,
+            keys.CREATE_WORKSPACE.subject,
+          )}
+          isMoveDesignAllowed={CAN(
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+          )}
+          isMoveViewAllowed={CAN(
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+          )}
+          currentOrgId={currentOrganization?.id}
+          notify={notify}
+          router={router}
         />
       )}
     </>

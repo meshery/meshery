@@ -9,6 +9,7 @@ import {
   PromptComponent,
   Select,
   useTheme,
+  WorkspaceContentMoveModal,
 } from '@layer5/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import { StyledSearchBar } from '@layer5/sistent';
@@ -22,10 +23,19 @@ import {
   TableListHeader,
   VisibilitySelect,
 } from './components';
-import { useGetDesignsOfWorkspaceQuery, useGetViewsOfWorkspaceQuery } from '@/rtk-query/workspace';
+import {
+  useGetDesignsOfWorkspaceQuery,
+  useGetViewsOfWorkspaceQuery,
+  useGetWorkspacesQuery,
+  useAssignDesignToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
+} from '@/rtk-query/workspace';
 import { getDefaultFilterType, useContentDelete, useContentDownload } from './hooks';
-import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
 import ExportModal from '../ExportModal';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { useNotification } from '@/utils/hooks/useNotification';
 
 const WorkspaceContent = ({ workspace }) => {
   const isViewVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
@@ -163,7 +173,11 @@ const WorkspaceContent = ({ workspace }) => {
       else refetchViews();
     }
   }, [filters.type, filters.designsPage, filters.viewsPage, refetchDesigns, refetchViews]);
-
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
+  const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
+  const router = useRouter();
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const { notify } = useNotification();
   return (
     <>
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -257,6 +271,25 @@ const WorkspaceContent = ({ workspace }) => {
             currentWorkspace={workspace}
             type={filters.type}
             refetch={refetch}
+            useGetWorkspacesQuery={useGetWorkspacesQuery}
+            WorkspaceModalContext={WorkspaceModalContext}
+            assignDesignToWorkspace={assignDesignToWorkspace}
+            assignViewToWorkspace={assignViewToWorkspace}
+            isCreateWorkspaceAllowed={CAN(
+              keys.CREATE_WORKSPACE.action,
+              keys.CREATE_WORKSPACE.subject,
+            )}
+            isMoveDesignAllowed={CAN(
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+            )}
+            isMoveViewAllowed={CAN(
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+            )}
+            currentOrgId={currentOrganization?.id}
+            notify={notify}
+            router={router}
           />
 
           <TableListHeader
