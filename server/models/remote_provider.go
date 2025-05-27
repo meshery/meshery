@@ -1918,8 +1918,8 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		return bdr, nil
 	}
 
-	if string(bdr) != "null" || string(bdr) != "" {
-		return bdr, fmt.Errorf(string(bdr))
+	if string(bdr) != "null" && string(bdr) != "" {
+		return bdr, errors.New(string(bdr))
 	}
 
 	err = fmt.Errorf("Failed to get the design with id %s: %s", patternID, bdr)
