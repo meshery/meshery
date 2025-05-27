@@ -206,7 +206,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
   return (
     <Grid container width="100%" paddingInline="1rem" spacing={2} alignItems="center" wrap="nowrap">
       {isMultiSelectMode && (
-        <Grid item xs={0.6} md={0.5} zeroMinWidth>
+        <Grid item xs={1} md={0.25} zeroMinWidth>
           <FormGroup>
             <FormControlLabel
               control={
@@ -228,7 +228,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           </FormGroup>
         </Grid>
       )}
-      <Grid item xs={6} md={5} lg={5} zeroMinWidth>
+      <Grid item xs={5} md={5} lg={5} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Name
         </Typography>
@@ -248,7 +248,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           Visibility
         </Typography>
       </Grid>
-      <Grid item xs={3} sm={2} md={1} lg={2} zeroMinWidth>
+      <Grid item xs={3} sm={2} md={0.75} lg={1.75} zeroMinWidth>
         <Typography variant="body1" noWrap>
           Actions
         </Typography>

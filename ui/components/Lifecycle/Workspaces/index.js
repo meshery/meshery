@@ -407,7 +407,9 @@ const Workspaces = ({ onSelectWorkspace }) => {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
+                onClick={(e) =>
+                  handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
+                }
                 sx={{
                   backgroundColor: '#607d8b',
                   padding: '8px',
