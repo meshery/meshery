@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 26th 2025, 6:35:24 am
+- Testing started at: May 27th 2025, 1:08:19 am
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
+- ✅ 68 passed
 - ❌ 1 failed
-- ⚠️ 5 flaked
+- ⚠️ 4 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 46 seconds_
+⌛ _Duration: 6 minutes and 54 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -33,7 +33,6 @@
 | 10 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
 | 11 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 12 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 13 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
 
 </div>
 </details>
