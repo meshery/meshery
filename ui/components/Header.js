@@ -8,7 +8,7 @@ import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers
 import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import _PromptComponent from './PromptComponent';
-import { iconMedium, iconSmall } from '../css/icons.styles';
+import { iconMedium, iconSmall, iconXLarge } from '../css/icons.styles';
 import { createPathForRemoteComponent } from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import { useNotification } from '../utils/hooks/useNotification';
@@ -138,8 +138,8 @@ export const K8sContextConnectionChip = K8sContextConnectionChip_;
 function K8sContextMenu({
   contexts = {},
   activeContexts = [],
-  setActiveContexts = () => {},
-  searchContexts = () => {},
+  setActiveContexts = () => { },
+  searchContexts = () => { },
 }) {
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
@@ -263,7 +263,7 @@ function K8sContextMenu({
                 className="k8s-image"
                 src={
                   connectionMetadataState &&
-                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                    connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                     ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                     : '/static/img/kubernetes.svg'
                 }
@@ -417,86 +417,110 @@ const Header = ({
   const loaderType = 'circular';
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   return (
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid2 container alignItems="center" size="grow">
-              <Hidden smUp>
-                <Grid2 style={{ display: 'none' }}>
-                  <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
-                    <HeaderIcons style={iconMedium} />
-                  </MenuIconButton>
-                </Grid2>
-              </Hidden>
-              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
-                {/* Extension Point for   Logo */}
-                <div
-                  id="nav-header-logo"
-                  style={{
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    minWidth: '34px',
-                    justifyContent: 'center',
-                  }}
-                ></div>
-                <OrganizationAndWorkSpaceSwitcher />
-              </Grid2>
-              <Box
-                component={UserContainer}
-                style={{
-                  position: 'relative',
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  gap: '1rem 0.5rem',
-                }}
+            <Grid2
+              container
+              width="100%"
+              justifyContent={isMdDown ? 'flex-start' : 'space-between'}
+              direction={isMdDown ? 'column' : 'row'}
+            >
+              <Grid2
+                item
+                xs={12}
+                md="auto"
+                container
+                justifyContent={isMdDown ? 'flex-start' : 'space-between'}
+                alignItems="center"
               >
-                {/* According to the capabilities load the component */}
-                <ErrorBoundary customFallback={() => null}>
-                  {collaboratorExtensionUri && (
-                    <RemoteComponent
-                      url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
-                      loaderType={loaderType}
-                      providerUrl={remoteProviderUrl}
-                      getUserAccessToken={getUserAccessToken}
-                      getUserProfile={getUserProfile}
-                    />
-                  )}
-                </ErrorBoundary>
-                <UserInfoContainer>
-                  <UserSpan style={{ position: 'relative' }}>
-                    <K8sContextMenu
-                      contexts={contexts}
-                      activeContexts={activeContexts}
-                      setActiveContexts={setActiveContexts}
-                      searchContexts={searchContexts}
-                    />
-                  </UserSpan>
-                  <SettingsWrapper
-                    isDesktop={isDesktop}
-                    data-testid="settings-button"
-                    aria-describedby={abilityUpdated}
-                  >
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')}>
-                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
-                      </IconButton>
-                    </CanShow>
-                  </SettingsWrapper>
-                  <div data-testid="notification-button">
-                    <NotificationDrawerButton />
-                  </div>
+                <Hidden smUp>
+                  <Grid2 style={{ display: 'none' }}>
+                    <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
+                      <HeaderIcons style={iconXLarge} />
+                    </MenuIconButton>
+                  </Grid2>
+                </Hidden>
+                <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
+                  {/* Extension Point for   Logo */}
+                  <div
+                    id="nav-header-logo"
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      minWidth: '34px',
+                      justifyContent: 'center',
+                    }}
+                  ></div>
+                  <OrganizationAndWorkSpaceSwitcher />
+                </Grid2>
+              </Grid2>
+              <Grid2
+                item
+                xs={12}
+                md="auto"
+                container
+                justifyContent='flex-end'
+              >
+                <Box
+                  component={UserContainer}
+                  style={{
+                    position: 'relative',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    flexWrap: 'wrap',
+                    gap: '1rem 0.5rem',
+                  }}
+                >
+                  {/* According to the capabilities load the component */}
+                  <ErrorBoundary customFallback={() => null}>
+                    {collaboratorExtensionUri && (
+                      <RemoteComponent
+                        url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
+                        loaderType={loaderType}
+                        providerUrl={remoteProviderUrl}
+                        getUserAccessToken={getUserAccessToken}
+                        getUserProfile={getUserProfile}
+                      />
+                    )}
+                  </ErrorBoundary>
+                  <UserInfoContainer>
+                    <UserSpan style={{ position: 'relative' }}>
+                      <K8sContextMenu
+                        contexts={contexts}
+                        activeContexts={activeContexts}
+                        setActiveContexts={setActiveContexts}
+                        searchContexts={searchContexts}
+                      />
+                    </UserSpan>
+                    <SettingsWrapper
+                      isDesktop={isDesktop}
+                      data-testid="settings-button"
+                      aria-describedby={abilityUpdated}
+                    >
+                      <CanShow Key={keys.VIEW_SETTINGS}>
+                        <IconButton onClick={() => Router.push('/settings')}>
+                          <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
+                        </IconButton>
+                      </CanShow>
+                    </SettingsWrapper>
+                    <div data-testid="notification-button">
+                      <NotificationDrawerButton />
+                    </div>
 
-                  <UserSpan>
-                    <User />
-                  </UserSpan>
-                  <UserSpan data-testid="header-menu">
-                    <HeaderMenu />
-                  </UserSpan>
-                </UserInfoContainer>
-              </Box>
+                    <UserSpan>
+                      <User />
+                    </UserSpan>
+                    <UserSpan data-testid="header-menu">
+                      <HeaderMenu />
+                    </UserSpan>
+                  </UserInfoContainer>
+                </Box>
+              </Grid2>
             </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
