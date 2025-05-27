@@ -5,6 +5,7 @@ import {
   TextField,
   InputAdornment,
   Tooltip,
+  Grid,
   Grid2,
   Box,
   styled,
@@ -243,8 +244,6 @@ const ShowDiscoveredContexts = ({
       direction="column"
       justifyContent="center"
       alignItems="center"
-      size="grow"
-      container
       spacing={2}
       columns={1}
       data-testid={dataTestid}
@@ -279,18 +278,18 @@ const ShowDiscoveredContexts = ({
 const K8sConnectionItems = ({ status, contexts, ping }) => {
   const classes = styles();
   return (
-    <Grid2 container spacing={2} size="grow">
+    <Grid2 container spacing={2} size={'grow'}>
       {contexts.map((context) => (
         <Grid2
           direction="column"
           alignContent="center"
           alignItems="center"
           container
+          size="grow"
           spacing={1}
           id={context.connection_id}
           key={context.connection_id}
           className={classes.chip}
-          size={{ xs: 16 }}
         >
           <Box minWidth="25%" maxWidth="50%">
             <Tooltip title={`Server: ${context.server}`}>
