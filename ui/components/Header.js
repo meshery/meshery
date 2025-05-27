@@ -416,57 +416,30 @@ const Header = ({
 
   const loaderType = 'circular';
   const theme = useTheme();
-  const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid2
-              container
-              alignItems="center"
-              justifyContent={isMdDown ? 'flex-start' : 'space-between'}
-              direction={isMdDown ? 'column' : 'row'}
-            >
-              <Grid2
-                item
-                xs={12}
-                md="auto"
-                container
-                justifyContent={isMdDown ? 'flex-start' : 'space-between'}
-                alignItems="center"
-              >
-                <Hidden smUp>
-                  <Grid item style={{ display: 'none' }}>
-                    <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
-                      <HeaderIcons style={iconMedium} />
-                    </MenuIconButton>
-                  </Grid>
-                </Hidden>
-                <Grid2 item xs container alignItems="center" component={PageTitleWrapper}>
-                  {/* Extension Point for   Logo */}
-                  <div
-                    id="nav-header-logo"
-                    style={{
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      minWidth: '34px',
-                      justifyContent: 'center',
-                    }}
-                  ></div>
-                  <SpaceSwitcher />
-                </Grid>
-              </Grid>
-              <Grid item xs={12} md="auto" container justifyContent="flex-end">
-                <Box
-                  component={UserContainer}
+            <Grid2 container alignItems="center" size="grow">
+              <Hidden smUp>
+                <Grid2 style={{ display: 'none' }}>
+                  <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
+                    <HeaderIcons style={iconMedium} />
+                  </MenuIconButton>
+                </Grid2>
+              </Hidden>
+              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
+                {/* Extension Point for   Logo */}
+                <div
+                  id="nav-header-logo"
                   style={{
-                    position: 'relative',
+                    height: '100%',
                     display: 'flex',
-                    flexWrap: 'wrap',
-                    gap: '1rem 0.5rem',
+                    alignItems: 'center',
+                    minWidth: '34px',
+                    justifyContent: 'center',
                   }}
                 ></div>
                 <OrganizationAndWorkSpaceSwitcher />
