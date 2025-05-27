@@ -76,7 +76,7 @@ const WorkspaceDataTable = ({
     orgID: org_id,
     expandInfo: true,
   });
-  console.log('amit workspaces', workspaces);
+
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
 
   const columns = [
@@ -381,6 +381,7 @@ const WorkspaceDataTable = ({
               <WorkSpaceContentDataTable
                 workspaceId={selectedWorkspace?.id}
                 workspaceName={selectedWorkspace?.name}
+                workspace={selectedWorkspace}
               />
             )}
           </div>

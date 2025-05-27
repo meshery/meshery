@@ -10,6 +10,7 @@ import {
   useTheme,
   useRoomActivity,
   ExportIcon,
+  WorkspaceContentMoveModal,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -27,13 +28,17 @@ import { ViewInfoModal } from '../ViewInfoModal';
 import { openViewInKanvas, useIsOperatorEnabled } from '@/utils/utils';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { Router } from 'next/router';
+import { Router, useRouter } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
+import {
+  useAssignDesignToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
+  useGetWorkspacesQuery,
+} from '@/rtk-query/workspace';
 
 const MainViewsContent = ({
   page,
@@ -194,12 +199,16 @@ const MainViewsContent = ({
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
+  const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
+  const router = useRouter();
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -297,6 +306,25 @@ const MainViewsContent = ({
           type={RESOURCE_TYPE.VIEW}
           workspaceContentMoveModal={moveModal}
           refetch={refetch}
+          useGetWorkspacesQuery={useGetWorkspacesQuery}
+          WorkspaceModalContext={WorkspaceModalContext}
+          assignDesignToWorkspace={assignDesignToWorkspace}
+          assignViewToWorkspace={assignViewToWorkspace}
+          isCreateWorkspaceAllowed={CAN(
+            keys.CREATE_WORKSPACE.action,
+            keys.CREATE_WORKSPACE.subject,
+          )}
+          isMoveDesignAllowed={CAN(
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+          )}
+          isMoveViewAllowed={CAN(
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+          )}
+          currentOrgId={currentOrganization?.id}
+          notify={notify}
+          router={router}
         />
       )}
       <PromptComponent ref={modalRef} />
