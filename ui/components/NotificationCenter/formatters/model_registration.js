@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Grid, Box } from '@layer5/sistent';
+import { Typography, Grid2, Box } from '@layer5/sistent';
 import { ErrorMetadataFormatter } from './error';
 import { TitleLink } from './common';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
@@ -42,7 +42,7 @@ const checkImageExists = async (url) => {
   try {
     const response = await fetch(url);
     return response.ok;
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -92,7 +92,7 @@ const ComponentWithIcon = ({ component }) => {
     : 'Version not available';
 
   return (
-    <Grid
+    <Grid2
       container
       alignItems="center"
       spacing={1}
@@ -101,8 +101,9 @@ const ComponentWithIcon = ({ component }) => {
         marginLeft: '1rem',
         marginTop: '8px',
       }}
+      size="grow"
     >
-      <Grid item>
+      <Grid2>
         <div
           style={{
             maxWidth: '30px',
@@ -114,16 +115,16 @@ const ComponentWithIcon = ({ component }) => {
         >
           <img src={finalPath} {...iconMedium} alt={DisplayName} />
         </div>
-      </Grid>
-      <Grid item>
+      </Grid2>
+      <Grid2>
         <Typography variant="body1" component="span">
           {DisplayName}
         </Typography>
         <Typography variant="body1" component="span" style={{ marginLeft: '1rem' }}>
           {version}
         </Typography>
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 
@@ -138,8 +139,8 @@ const RelationshipDetail = ({ relationship }) => {
             <Typography variant="body1">
               Kind of {Kind}, sub type {Subtype} and type {RelationshipType}
             </Typography>
-            <Grid container>
-              <Grid item xs={6}>
+            <Grid2 container size="grow">
+              <Grid2 size={{ xs: 6 }}>
                 <Typography variant="body2">
                   <strong>FROM</strong>
                 </Typography>
@@ -148,8 +149,8 @@ const RelationshipDetail = ({ relationship }) => {
                     {`${f.kind}`}
                   </Typography>
                 ))}
-              </Grid>
-              <Grid item xs={6}>
+              </Grid2>
+              <Grid2 size={{ xs: 6 }}>
                 <Typography variant="body2">
                   <strong>TO</strong>
                 </Typography>
@@ -158,8 +159,8 @@ const RelationshipDetail = ({ relationship }) => {
                     {`${t.kind}`}
                   </Typography>
                 ))}
-              </Grid>
-            </Grid>
+              </Grid2>
+            </Grid2>
           </React.Fragment>
         </div>
       );

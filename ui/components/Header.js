@@ -26,8 +26,8 @@ import {
   TextField,
   ClickAwayListener,
   IconButton,
-  Grid,
   Slide,
+  Grid2,
   Hidden,
   NoSsr,
   useTheme,
@@ -36,10 +36,10 @@ import {
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
+import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './Modals/ConnectionModal';
+import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
@@ -423,13 +423,13 @@ const Header = ({
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid
+            <Grid2
               container
               alignItems="center"
               justifyContent={isMdDown ? 'flex-start' : 'space-between'}
               direction={isMdDown ? 'column' : 'row'}
             >
-              <Grid
+              <Grid2
                 item
                 xs={12}
                 md="auto"
@@ -444,7 +444,7 @@ const Header = ({
                     </MenuIconButton>
                   </Grid>
                 </Hidden>
-                <Grid item xs container alignItems="center" component={PageTitleWrapper}>
+                <Grid2 item xs container alignItems="center" component={PageTitleWrapper}>
                   {/* Extension Point for   Logo */}
                   <div
                     id="nav-header-logo"
@@ -468,55 +468,63 @@ const Header = ({
                     flexWrap: 'wrap',
                     gap: '1rem 0.5rem',
                   }}
-                >
-                  {/* According to the capabilities load the component */}
-                  <ErrorBoundary customFallback={() => null}>
-                    {collaboratorExtensionUri && (
-                      <RemoteComponent
-                        url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
-                        loaderType={loaderType}
-                        providerUrl={remoteProviderUrl}
-                        getUserAccessToken={getUserAccessToken}
-                        getUserProfile={getUserProfile}
-                      />
-                    )}
-                  </ErrorBoundary>
-                  <UserInfoContainer>
-                    <UserSpan style={{ position: 'relative' }}>
-                      <K8sContextMenu
-                        contexts={contexts}
-                        activeContexts={activeContexts}
-                        setActiveContexts={setActiveContexts}
-                        searchContexts={searchContexts}
-                      />
-                    </UserSpan>
-                    <SettingsWrapper
-                      isDesktop={isDesktop}
-                      data-testid="settings-button"
-                      aria-describedby={abilityUpdated}
-                    >
-                      <CanShow Key={keys.VIEW_SETTINGS}>
-                        <IconButton onClick={() => Router.push('/settings')}>
-                          <SettingsIcon
-                            style={{ ...iconMedium, fill: theme.palette.common.white }}
-                          />
-                        </IconButton>
-                      </CanShow>
-                    </SettingsWrapper>
-                    <div data-testid="notification-button">
-                      <NotificationDrawerButton />
-                    </div>
+                ></div>
+                <OrganizationAndWorkSpaceSwitcher />
+              </Grid2>
+              <Box
+                component={UserContainer}
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '1rem 0.5rem',
+                }}
+              >
+                {/* According to the capabilities load the component */}
+                <ErrorBoundary customFallback={() => null}>
+                  {collaboratorExtensionUri && (
+                    <RemoteComponent
+                      url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
+                      loaderType={loaderType}
+                      providerUrl={remoteProviderUrl}
+                      getUserAccessToken={getUserAccessToken}
+                      getUserProfile={getUserProfile}
+                    />
+                  )}
+                </ErrorBoundary>
+                <UserInfoContainer>
+                  <UserSpan style={{ position: 'relative' }}>
+                    <K8sContextMenu
+                      contexts={contexts}
+                      activeContexts={activeContexts}
+                      setActiveContexts={setActiveContexts}
+                      searchContexts={searchContexts}
+                    />
+                  </UserSpan>
+                  <SettingsWrapper
+                    isDesktop={isDesktop}
+                    data-testid="settings-button"
+                    aria-describedby={abilityUpdated}
+                  >
+                    <CanShow Key={keys.VIEW_SETTINGS}>
+                      <IconButton onClick={() => Router.push('/settings')}>
+                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
+                      </IconButton>
+                    </CanShow>
+                  </SettingsWrapper>
+                  <div data-testid="notification-button">
+                    <NotificationDrawerButton />
+                  </div>
 
-                    <UserSpan>
-                      <User />
-                    </UserSpan>
-                    <UserSpan data-testid="header-menu">
-                      <HeaderMenu />
-                    </UserSpan>
-                  </UserInfoContainer>
-                </Box>
-              </Grid>
-            </Grid>
+                  <UserSpan>
+                    <User />
+                  </UserSpan>
+                  <UserSpan data-testid="header-menu">
+                    <HeaderMenu />
+                  </UserSpan>
+                </UserInfoContainer>
+              </Box>
+            </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
       </>

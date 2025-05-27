@@ -13,7 +13,7 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
     let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
-    } catch (ex) {
+    } catch {
       console.error('Unexpected Error');
     }
 

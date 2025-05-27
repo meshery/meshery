@@ -1,13 +1,24 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { FormControl, FormControlLabel, FormGroup, Grid, styled, MenuItem } from '@layer5/sistent';
+import React, { useContext } from 'react';
+import {
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  Grid2,
+  styled,
+  MenuItem,
+  CircularProgress,
+} from '@layer5/sistent';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
 import { StyledSelect } from './SpaceSwitcher';
-import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { iconMedium } from 'css/icons.styles';
 import WorkspaceModal from './WorkspaceModal';
-import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import {
+  useGetSelectedOrganization,
+  useGetSelectedWorkspace,
+  useUpdateSelectedWorkspaceMutation,
+} from '@/rtk-query/user';
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
@@ -33,48 +44,48 @@ const SettingsIconWrapper = styled('div')(({ theme }) => ({
 }));
 
 function WorkspaceSwitcher({ open }) {
-  const [_defaultWorkspace, setDefaultWorkspace] = useState(null);
-  const { organization: currentOrg } = useSelector((state) => state.ui);
-  const { id: orgId } = currentOrg;
-  const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
-    {
-      page: 0,
-      pagesize: 'all',
-      order: 'updated_at desc',
-      orgId: orgId,
-    },
-    {
-      skip: !orgId ? true : false,
-    },
-  );
+  const { selectedOrganization } = useGetSelectedOrganization();
   const {
-    setSelectedWorkspace,
+    selectedWorkspace,
+    allWorkspaces,
+    error: workspaceError,
+    isLoading: isLoadingWorkspaces,
+  } = useGetSelectedWorkspace();
+
+  const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
+    useUpdateSelectedWorkspaceMutation();
+
+  const {
     open: workspaceModal,
+    setSelectedWorkspace,
     openModal: openWorkspaceModal,
     closeModal: closeWorkspaceModal,
   } = useContext(WorkspaceModalContext);
 
-  useEffect(() => {
-    if (workspacesData && workspacesData.workspaces?.length > 0) {
-      const defaultWorkspace = workspacesData.workspaces[0];
-      setDefaultWorkspace(defaultWorkspace);
-    }
-  }, [workspacesData]);
+  // useEffect(() => {
+  //   if (selectedWorkspace?.id) {
+  //     setSelectedWorkspace(selectedWorkspace);
+  //   }
+  // }, [selectedWorkspace, setSelectedWorkspace]);
 
   const handleChangeWorkspace = (e) => {
-    if (!workspacesData || !workspacesData.workspaces) return;
-
-    const selectedWorkspace = workspacesData.workspaces.find(
-      (workspace) => workspace.id === e.target.value,
-    );
-    setDefaultWorkspace(selectedWorkspace);
-    setSelectedWorkspace({ id: selectedWorkspace.id, name: selectedWorkspace.name });
+    const newId = e.target.value;
+    setSelectedWorkspace(allWorkspaces.find((w) => w.id === newId));
+    updateSelectedWorkspace(selectedOrganization.id, newId);
     openWorkspaceModal(true);
   };
 
+  if (workspaceError) {
+    return <div>Error: {workspaceError.message}</div>;
+  }
+
+  if (isLoadingWorkspaces || isUpdatingSelectedWorkspace) {
+    return <CircularProgress height="1.5rem" width="1.5rem" />;
+  }
+
   return (
     <NoSsr>
-      {!isWorkspacesError && workspacesData && workspacesData.workspaces && (
+      {!isLoadingWorkspaces && allWorkspaces?.length > 0 && (
         <div
           style={{
             width: open ? 'auto' : 0,
@@ -87,21 +98,18 @@ function WorkspaceSwitcher({ open }) {
               <FormControlLabel
                 key="SpacesPreferences"
                 control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                  <Grid2 container spacing={1} alignItems="flex-end" size="grow">
+                    <Grid2 size={{ xs: 12 }} data-cy="mesh-adapter-url">
                       <StyledSelect
                         size="small"
-                        value={_defaultWorkspace?.id || ''}
+                        value={selectedWorkspace?.id || ''}
                         onChange={(e) => {
-                          if (e.target.value !== _defaultWorkspace?.id) {
+                          if (e.target.value !== selectedWorkspace?.id) {
                             handleChangeWorkspace(e); // only call for new selection
                           }
                         }}
-                        renderValue={(selected) => {
-                          const workspace = workspacesData?.workspaces?.find(
-                            (w) => w.id === selected,
-                          );
-                          return workspace ? <span>{workspace.name}</span> : '';
+                        renderValue={() => {
+                          return selectedWorkspace?.name || '';
                         }}
                         MenuProps={{
                           anchorOrigin: {
@@ -115,12 +123,12 @@ function WorkspaceSwitcher({ open }) {
                           getContentAnchorEl: null,
                         }}
                       >
-                        {workspacesData?.workspaces?.map((works) => (
+                        {allWorkspaces?.map((works) => (
                           <HoverMenuItem
                             key={works.id}
                             value={works.id}
                             onClick={() => {
-                              if (works.id === _defaultWorkspace?.id) {
+                              if (works.id === selectedWorkspace?.id) {
                                 handleChangeWorkspace({ target: { value: works.id } });
                               }
                             }}
@@ -132,8 +140,8 @@ function WorkspaceSwitcher({ open }) {
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>
-                    </Grid>
-                  </Grid>
+                    </Grid2>
+                  </Grid2>
                 }
               />
             </FormGroup>

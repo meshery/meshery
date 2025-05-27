@@ -3,7 +3,7 @@ import {
   AvatarGroup,
   CircularProgress,
   FormControl,
-  Grid,
+  Grid2,
   IconButton,
   MenuItem,
   TextField,
@@ -212,9 +212,9 @@ export default function DesignConfigurator() {
           )}
         </Toolbar>
       </AppBarComponent>
-      <Grid container spacing={3}>
+      <Grid2 container spacing={3} size="grow">
         {meshmodelComponents?.[selectedModel] && (
-          <Grid item xs={12} md={6}>
+          <Grid2 size={{ xs: 12, md: 6 }}>
             {meshmodelComponents[selectedModel]?.[0]?.components?.map(
               function ShowRjsfComponentsLazily(trimmedComponent, idx) {
                 const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
@@ -229,9 +229,9 @@ export default function DesignConfigurator() {
                 );
               },
             )}
-          </Grid>
+          </Grid2>
         )}
-        <Grid item xs={12} md={selectedCategory && selectedModel ? 6 : 12}>
+        <Grid2 size={{ xs: 12, md: selectedCategory && selectedModel ? 6 : 12 }}>
           <CodeEditor
             yaml={designYaml}
             onChange={(_val, _view, update) => {
@@ -271,8 +271,8 @@ export default function DesignConfigurator() {
               )}
             </AvatarGroup>
           )}
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </NoSsr>
   );
 }
