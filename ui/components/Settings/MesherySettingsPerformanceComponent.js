@@ -12,7 +12,7 @@ import {
   RadioGroup,
   FormControlLabel,
   TextField,
-  Grid,
+  Grid2,
   Button,
   CustomTooltip,
   useTheme,
@@ -134,8 +134,8 @@ const MesherySettingsPerformanceComponent = () => {
           <label>
             <strong>Performance Load Test Defaults</strong>
           </label>
-          <Grid container spacing={3}>
-            <Grid item xs={12} lg={4}>
+          <Grid2 container spacing={3} size="grow">
+            <Grid2 size={{ xs: 12, lg: 4 }}>
               <TextField
                 required
                 id="c"
@@ -150,8 +150,8 @@ const MesherySettingsPerformanceComponent = () => {
                 onChange={handleChange('c')}
                 InputLabelProps={{ shrink: true }}
               />
-            </Grid>
-            <Grid item xs={12} lg={4}>
+            </Grid2>
+            <Grid2 size={{ xs: 12, lg: 4 }}>
               <TextField
                 required
                 id="qps"
@@ -166,8 +166,8 @@ const MesherySettingsPerformanceComponent = () => {
                 onChange={handleChange('qps')}
                 InputLabelProps={{ shrink: true }}
               />
-            </Grid>
-            <Grid item xs={12} lg={4}>
+            </Grid2>
+            <Grid2 size={{ xs: 12, lg: 4 }}>
               <CustomTooltip
                 placement="top"
                 title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}
@@ -193,8 +193,8 @@ const MesherySettingsPerformanceComponent = () => {
                   )}
                 />
               </CustomTooltip>
-            </Grid>
-            <Grid item xs={12} lg={4}>
+            </Grid2>
+            <Grid2 size={{ xs: 12, lg: 4 }}>
               <FormControlWrapper component="loadGenerator">
                 <label>
                   <strong>Default Load Generator</strong>
@@ -228,8 +228,8 @@ const MesherySettingsPerformanceComponent = () => {
                   ))}
                 </RadioGroup>
               </FormControlWrapper>
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
           <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               type="submit"

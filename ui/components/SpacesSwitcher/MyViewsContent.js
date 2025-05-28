@@ -1,5 +1,5 @@
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import { Box, Grid, PromptComponent, useTheme } from '@layer5/sistent';
+import { Box, Grid2, PromptComponent, useTheme } from '@layer5/sistent';
 import React, { useCallback, useRef, useState } from 'react';
 import { useFetchViewsQuery } from '@/rtk-query/view';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
@@ -95,9 +95,9 @@ const MyViewsContent = () => {
 
   return (
     <Box display={'flex'} flexDirection="column" gap="1rem">
-      <Grid container spacing={2} alignItems="center" marginBottom="1rem">
+      <Grid2 container spacing={2} alignItems="center" marginBottom="1rem" size="grow">
         {/* Search Bar */}
-        <Grid item xs={12} md={6}>
+        <Grid2 size={{ xs: 12, md: 6 }}>
           <StyledSearchBar
             sx={{ backgroundColor: 'transparent' }}
             placeholder="Search Views"
@@ -107,22 +107,22 @@ const MyViewsContent = () => {
               <p style={{ color: theme.palette.text.default }}>Total Views: {total_count}</p>
             }
           />
-        </Grid>
+        </Grid2>
 
         {/* Sort By Select */}
-        <Grid item xs={6} md={3}>
+        <Grid2 size={{ xs: 12, md: 3 }}>
           <SortBySelect sortBy={filters.sortBy} handleSortByChange={handleSortByChange} />
-        </Grid>
+        </Grid2>
 
         {/* Visibility Select */}
-        <Grid item xs={6} md={3}>
+        <Grid2 size={{ xs: 12, md: 3 }}>
           <VisibilitySelect
             visibility={filters.visibility}
             handleVisibilityChange={handleVisibilityChange}
             visibilityItems={visibilityItems}
           />
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
       <MultiContentSelectToolbar
         type={RESOURCE_TYPE.VIEW}
         handleDelete={handleDelete}

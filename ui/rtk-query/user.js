@@ -3,7 +3,6 @@ import { api } from './index';
 import { initiateQuery } from './utils';
 import { useGetOrgsQuery } from './organization';
 import { useGetWorkspacesQuery } from './workspace';
-import { useEffect } from 'react';
 
 const Tags = {
   USER_PREF: 'userPref',
@@ -353,7 +352,7 @@ export const useGetSelectedWorkspace = () => {
       page: 0,
       pagesize: 'all',
       order: 'updated_at desc',
-      orgId: selectedOrganization?.id,
+      orgID: selectedOrganization?.id,
     },
     {
       skip: !selectedOrganization?.id,

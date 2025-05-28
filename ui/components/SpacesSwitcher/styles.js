@@ -8,7 +8,6 @@ import {
   DARK_BLUE_GRAY,
   Box,
   Avatar,
-  Grid,
   Button,
   Checkbox,
 } from '@layer5/sistent';
@@ -131,10 +130,6 @@ export const StyledListItem = styled(ListItem)({
   position: 'relative',
 });
 
-export const StyledTextContainer = styled(Grid)({});
-
-export const StyledUserInfoContainer = styled(Grid)({});
-
 export const StyledUserDetailsContainer = styled('div')({
   display: 'flex',
   alignItems: 'start',
@@ -142,10 +137,6 @@ export const StyledUserDetailsContainer = styled('div')({
   marginLeft: '1rem',
   gap: '0.1rem',
 });
-
-export const StyledVisibilityContainer = styled(Grid)({});
-
-export const StyledActionsContainer = styled(Grid)({});
 
 export const StyledAvatarContainer = styled('div')({
   display: 'flex',

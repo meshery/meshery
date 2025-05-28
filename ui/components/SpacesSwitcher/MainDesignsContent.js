@@ -14,6 +14,7 @@ import {
   ExportIcon,
   DeleteIcon,
   InfoIcon,
+  WorkspaceContentMoveModal,
 } from '@layer5/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
@@ -25,20 +26,23 @@ import useInfiniteScroll, {
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
 import InfoModal from '../General/Modals/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import WorkspaceContentMoveModal from './WorkspaceContentMoveModal';
+import {
+  useAssignDesignToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
+  useGetWorkspacesQuery,
+} from '@/rtk-query/workspace';
+import { useNotification } from '@/utils/hooks/useNotification';
 
 const MainDesignsContent = ({
   page,
@@ -57,7 +61,6 @@ const MainDesignsContent = ({
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
   const [moveModal, setMoveModal] = useState(false);
-  const { notify } = useNotification();
   const modalRef = useRef(true);
   const { handleDelete } = useContentDelete(modalRef);
 
@@ -146,17 +149,13 @@ const MainDesignsContent = ({
   const [updatePatterns] = useUpdatePatternFileMutation();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-
   const handleOpenDesignInDesigner = (designId, designName) => {
-    if (!isKanvasDesignerAvailable) {
-      notify({
-        message: 'Kanvas Designer is not available',
-        event_type: EVENT_TYPES.ERROR,
-      });
-      return;
-    }
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
+    }
+    if (!isKanvasDesignerAvailable) {
+      router.push(`/configuration/designs/configurator?design_id=${designId}`);
+      return;
     }
 
     openDesignInKanvas(designId, designName, Router);
@@ -241,12 +240,17 @@ const MainDesignsContent = ({
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
+  const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
+  const { notify } = useNotification();
+  const router = useRouter();
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -354,6 +358,25 @@ const MainDesignsContent = ({
           workspaceContentMoveModal={moveModal}
           selectedContent={selectedDesign}
           refetch={refetch}
+          useGetWorkspacesQuery={useGetWorkspacesQuery}
+          WorkspaceModalContext={WorkspaceModalContext}
+          assignDesignToWorkspace={assignDesignToWorkspace}
+          assignViewToWorkspace={assignViewToWorkspace}
+          isCreateWorkspaceAllowed={CAN(
+            keys.CREATE_WORKSPACE.action,
+            keys.CREATE_WORKSPACE.subject,
+          )}
+          isMoveDesignAllowed={CAN(
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+          )}
+          isMoveViewAllowed={CAN(
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+          )}
+          currentOrgId={currentOrganization?.id}
+          notify={notify}
+          router={router}
         />
       )}
     </>
