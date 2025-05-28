@@ -10,6 +10,7 @@ import {
   FormControlLabel,
   Checkbox,
   FormGroup,
+  Typography,
 } from '@layer5/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
@@ -68,7 +69,7 @@ const DesignViewListItem = ({
       >
         <Grid2 container alignItems="center" size="grow">
           {isMultiSelectMode && (
-            <Grid2 size={{ xs: 1, md: 0.25 }}>
+            <Grid2 size={{ xs: 1, md: 0.5, lg: 0.25 }}>
               <FormGroup>
                 <FormControlLabel
                   control={
@@ -91,8 +92,7 @@ const DesignViewListItem = ({
               </FormGroup>
             </Grid2>
           )}
-
-          <Grid2 size={{ xs: 6, md: 5, lg: 5 }}>
+          <Grid2 size={{ xs: 6, md: 3.5, lg: 3 }}>
             <StyledAvatarContainer>
               <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
               <StyledListItemText
@@ -112,10 +112,17 @@ const DesignViewListItem = ({
               />
             </StyledAvatarContainer>
           </Grid2>
-          <Grid2 size={{ xs: 4, md: 4, lg: 4 }}>
+          <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
             {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
           </Grid2>
-          <Grid2 size={{ xs: 0, sm: 0, md: 2, lg: 1 }}>
+          <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Typography variant="body2">{selectedItem.organization_name}</Typography>
+          </Grid2>
+          <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
+            <Typography variant="body2">{selectedItem.workspace_name}</Typography>
+          </Grid2>
+
+          <Grid2 size={{ md: 1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
             <VisibilityChipMenu
               value={selectedItem?.visibility}
               onChange={(value) => onVisibilityChange(value, selectedItem)}
@@ -126,7 +133,17 @@ const DesignViewListItem = ({
               ]}
             />
           </Grid2>
-          <Grid2 size={{ xs: 1, md: 0.75, lg: 1.75 }}>{MenuComponent}</Grid2>
+
+          <Grid2
+            size={{ xs: 1, lg: 2 }}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            {MenuComponent}
+          </Grid2>
           {activeUsers && (
             <StyledSmallAvatarContainer
               id={`${type}-avatar-${selectedItem.id}`}
@@ -174,11 +191,11 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
       <StyledListItem>
         <Grid2 container alignItems={'center'} size="grow">
           {isMultiSelectMode && (
-            <Grid2 size={{ xs: 1, md: 0.25 }}>
+            <Grid2 size={{ xs: 1, md: 0.5, lg: 0.25 }}>
               <Skeleton variant="rectangular" animation="wave" {...iconMedium} />
             </Grid2>
           )}
-          <Grid2 size={{ xs: 5, md: 5, lg: 5 }}>
+          <Grid2 size={{ xs: 6, md: 3.5, lg: 3 }}>
             <StyledAvatarContainer>
               <Skeleton variant="circular" animation="wave" width={24} height={24} />
               <div style={{ width: '100%', paddingLeft: '1rem' }}>
@@ -187,22 +204,25 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
               </div>
             </StyledAvatarContainer>
           </Grid2>
-
-          <Grid2 size={{ xs: 4, md: 4, lg: 4 }}>
+          <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
             <AvatarSkeleton />
           </Grid2>
-
-          <Grid2 size={{ xs: 0, sm: 0, md: 2, lg: 1 }}>
+          <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
             <Skeleton animation="wave" height={32} width="70%" />
           </Grid2>
-
+          <Grid2 size={{ md: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Skeleton animation="wave" height={32} width="70%" />
+          </Grid2>{' '}
+          <Grid2 size={{ md: 1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Skeleton animation="wave" height={32} width="70%" />
+          </Grid2>
           <Grid2
-            size={{ xs: 2, sm: 3, md: 0.75, lg: 1.75 }}
+            size={{ xs: 1, lg: 2 }}
             sx={{
-              display: 'flex',
+              display: { xs: 'none', lg: 'flex' },
               alignItems: 'center',
+              justifyContent: 'center',
               gap: '1rem',
-              paddingLeft: '0.5rem',
             }}
           >
             {Array(4)
