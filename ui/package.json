@@ -102,11 +102,11 @@
     "@babel/core": "^7.26.10",
     "@babel/eslint-parser": "^7.27.0",
     "@babel/types": "^7.27.0",
-    "@next/eslint-plugin-next": "^15.2.4",
+    "@next/eslint-plugin-next": "^13.1.2",
     "@playwright/test": "^1.51.1",
     "@types/node": "^22.13.14",
     "ajv": "^8.17.1",
-    "babel-loader": "^10.0.0",
+    "babel-loader": "^9.1.2",
     "dotenv": "^16.4.7",
     "eslint": "^8.57.1",
     "eslint-config-next": "^13.1.2",
@@ -124,7 +124,7 @@
     "relay-compiler": "^18.2.0",
     "start-server-and-test": "^2.0.11",
     "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^5.1.4"
   },
   "engines": {
     "node": "^18 || ^20"
