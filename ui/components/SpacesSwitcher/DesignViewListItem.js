@@ -219,7 +219,7 @@ export const DesignViewListItemSkeleton = ({ isMultiSelectMode = false }) => {
           <Grid2
             size={{ xs: 1, lg: 2 }}
             sx={{
-              display: 'flex',
+              display: { xs: 'none', lg: 'flex' },
               alignItems: 'center',
               justifyContent: 'center',
               gap: '1rem',
