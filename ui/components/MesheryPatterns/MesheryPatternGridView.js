@@ -1,4 +1,4 @@
-import { Grid, Pagination } from '@layer5/sistent';
+import { Grid2, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
@@ -40,7 +40,7 @@ function PatternCardGridItem({
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <Grid item {...gridProps}>
+    <Grid2 size={gridProps}>
       <MesheryPatternCard
         id={pattern.id}
         user={user}
@@ -85,7 +85,7 @@ function PatternCardGridItem({
         hideVisibility={hideVisibility}
         isReadOnly={isReadOnly}
       />
-    </Grid>
+    </Grid2>
   );
 }
 
@@ -204,7 +204,7 @@ function MesheryPatternGrid({
         />
       )}
       {!selectedPattern.show && (
-        <Grid container spacing={3}>
+        <Grid2 container spacing={3} size="grow">
           {patterns.map((pattern) => (
             <PatternCardGridItem
               key={pattern.id}
@@ -233,7 +233,7 @@ function MesheryPatternGrid({
               isReadOnly={arePatternsReadOnly}
             />
           ))}
-        </Grid>
+        </Grid2>
       )}
 
       {!selectedPattern.show && patterns.length === 0 && (

@@ -26,8 +26,8 @@ import {
   TextField,
   ClickAwayListener,
   IconButton,
-  Grid,
   Slide,
+  Grid2,
   Hidden,
   NoSsr,
   useTheme,
@@ -422,15 +422,15 @@ const Header = ({
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid container alignItems="center">
+            <Grid2 container alignItems="center" size="grow">
               <Hidden smUp>
-                <Grid item style={{ display: 'none' }}>
+                <Grid2 style={{ display: 'none' }}>
                   <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
                     <HeaderIcons style={iconMedium} />
                   </MenuIconButton>
-                </Grid>
+                </Grid2>
               </Hidden>
-              <Grid item xs container alignItems="center" component={PageTitleWrapper}>
+              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
                 {/* Extension Point for   Logo */}
                 <div
                   id="nav-header-logo"
@@ -443,7 +443,7 @@ const Header = ({
                   }}
                 ></div>
                 <OrganizationAndWorkSpaceSwitcher />
-              </Grid>
+              </Grid2>
               <Box
                 component={UserContainer}
                 style={{
@@ -497,7 +497,7 @@ const Header = ({
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
-            </Grid>
+            </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
       </>

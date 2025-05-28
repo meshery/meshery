@@ -17,7 +17,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Typography, useTheme, Grid } from '@layer5/sistent';
+import { Typography, useTheme, Grid2 } from '@layer5/sistent';
 
 function MeshModelContructs() {
   const params = {
@@ -186,15 +186,15 @@ function MeshModelCategories() {
 
 const MeshModelGraph = () => {
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
+    <Grid2 container spacing={2} size="grow">
+      <Grid2 style={{ marginBottom: '0.5rem' }} size={{ xs: 12, md: 6 }}>
         <MeshModelCategories />
-      </Grid>
+      </Grid2>
 
-      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
+      <Grid2 style={{ marginBottom: '0.5rem' }} size={{ xs: 12, md: 6 }}>
         <MeshModelContructs />
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

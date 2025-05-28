@@ -3,7 +3,7 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  Grid,
+  Grid2,
   styled,
   MenuItem,
   CircularProgress,
@@ -98,8 +98,8 @@ function WorkspaceSwitcher({ open }) {
               <FormControlLabel
                 key="SpacesPreferences"
                 control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                  <Grid2 container spacing={1} alignItems="flex-end" size="grow">
+                    <Grid2 size={{ xs: 12 }} data-cy="mesh-adapter-url">
                       <StyledSelect
                         size="small"
                         value={selectedWorkspace?.id || ''}
@@ -140,8 +140,8 @@ function WorkspaceSwitcher({ open }) {
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>
-                    </Grid>
-                  </Grid>
+                    </Grid2>
+                  </Grid2>
                 }
               />
             </FormGroup>

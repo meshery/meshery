@@ -12,7 +12,7 @@ import {
   IconButton,
   Typography,
   Table,
-  Grid,
+  Grid2,
   Button,
   FormControl,
   useTheme,
@@ -694,8 +694,8 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           return (
             isEnvironmentsSuccess && (
               <div onClick={(e) => e.stopPropagation()}>
-                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                     <MultiSelectWrapper
                       updating={updatingEnvs}
                       onChange={(selected, unselected) =>
@@ -719,8 +719,8 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                         )
                       }
                     />
-                  </Grid>
-                </Grid>
+                  </Grid2>
+                </Grid2>
               </div>
             )
           );
@@ -1109,14 +1109,14 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
               <Table>
                 <TableRow style={{ padding: 0 }}>
                   <TableCell style={{ overflowX: 'hidden', padding: 0 }}>
-                    <Grid container style={{ textTransform: 'lowercase' }}>
-                      <ContentContainer item xs={12} md={12}>
+                    <Grid2 container style={{ textTransform: 'lowercase' }} size="grow">
+                      <ContentContainer size={{ xs: 12 }}>
                         <FormatConnectionMetadata
                           connection={connection}
                           meshsyncControllerState={meshsyncControllerState}
                         />
                       </ContentContainer>
-                    </Grid>
+                    </Grid2>
                   </TableCell>
                 </TableRow>
               </Table>

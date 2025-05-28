@@ -13,7 +13,7 @@ import {
   AuthorCell,
   Box,
   CustomTooltip,
-  Grid,
+  Grid2,
   IconButton,
   ResponsiveDataTable,
   TableCell,
@@ -76,7 +76,7 @@ const WorkspaceDataTable = ({
     orgID: org_id,
     expandInfo: true,
   });
-  console.log('amit workspaces', workspaces);
+
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
 
   const columns = [
@@ -165,8 +165,8 @@ const WorkspaceDataTable = ({
           return (
             <>
               <TableCell>
-                <Grid style={{ display: 'flex' }}>
-                  <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                <Grid2 style={{ display: 'flex' }}>
+                  <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography>
                       <b>{column.label}</b>
                     </Typography>
@@ -188,8 +188,8 @@ const WorkspaceDataTable = ({
                         </IconButton>
                       </Typography>
                     </CustomTooltip>
-                  </Grid>
-                </Grid>
+                  </Grid2>
+                </Grid2>
               </TableCell>
             </>
           );
@@ -372,25 +372,18 @@ const WorkspaceDataTable = ({
     <ErrorBoundary>
       <div key={`list-view-${viewType}`}>
         <Slide direction="left" in={selectedWorkspace.id ? true : false}>
-          <div
-            style={{
-              marginTop: '1rem',
-            }}
-          >
+          <div>
             {selectedWorkspace?.id && (
               <WorkSpaceContentDataTable
                 workspaceId={selectedWorkspace?.id}
                 workspaceName={selectedWorkspace?.name}
+                workspace={selectedWorkspace}
               />
             )}
           </div>
         </Slide>
         <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
-          <div
-            style={{
-              marginTop: '1rem',
-            }}
-          >
+          <div>
             {!selectedWorkspace?.id && (
               <ResponsiveDataTable
                 columns={columns}
