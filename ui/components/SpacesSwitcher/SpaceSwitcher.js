@@ -222,7 +222,7 @@ function OrganizationAndWorkSpaceSwitcher() {
         <OrgMenu open={orgOpen} organization={organization} />/
         <Button
           onClick={() => setWorkspaceOpen(!workspaceOpen)}
-          style={{ marginRight: workspaceOpen ? '1rem' : '0', padding: '9px', minWidth: '0' }}
+          style={{ marginRight: workspaceOpen ? '1rem' : '0', padding: '6px', minWidth: '0' }}
         >
           <WorkspaceIcon
             {...(isMobile ? iconSmall : iconLarge)}
@@ -231,7 +231,7 @@ function OrganizationAndWorkSpaceSwitcher() {
           />
         </Button>
         <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0.5rem' : '' }} />
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0.2rem' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
       </StyledSwitcher>
     </NoSsr>

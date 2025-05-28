@@ -418,6 +418,7 @@ const Header = ({
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'));
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'));
   return (
     <NoSsr>
       <>
@@ -426,6 +427,7 @@ const Header = ({
             <Grid2
               container
               width="100%"
+              marginLeft="12px"
               justifyContent={isMdDown ? 'flex-start' : 'space-between'}
               direction={isMdDown ? 'column' : 'row'}
             >
@@ -454,6 +456,7 @@ const Header = ({
                       alignItems: 'center',
                       minWidth: '34px',
                       justifyContent: 'center',
+                      marginRight: isLgDown ? '10px' : 'undefined',
                     }}
                   ></div>
                   <OrganizationAndWorkSpaceSwitcher />
