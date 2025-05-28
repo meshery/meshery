@@ -209,8 +209,8 @@ const MesheryWorkspaceCard = ({
           CAN(keys.ASSIGN_VIEWS_TO_WORKSPACE.action, keys.ASSIGN_VIEWS_TO_WORKSPACE.subject) ||
           CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject)
         }
-        isViewsVisible={isViewsVisible}
-        isDesignsVisible={isDesignsVisible}
+        isViewsVisible={false}
+        isDesignsVisible={false}
         isTeamsVisible={isTeamsVisible}
         isEnvironmentsVisible={isEnvironmentsVisible}
       />
