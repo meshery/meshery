@@ -1,8 +1,6 @@
 # Manoj Tirukovela
 
-📞 +1 (205)-563-3582  
-✉ manoj.tirukovela@outlook.com  
-🌐 [tirukovelamanoj.github.io](https://manojtirukovela.me/)  
+🌐 [tirukovelamanoj.github.io](https://manojtirukovela.me/)
 🔗 [LinkedIn](https://www.linkedin.com/in/manojtirukovela/)
 
 ---
