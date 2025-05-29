@@ -12,7 +12,7 @@ const (
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
 	ErrModelInitCode                    = "mesheryctl-1148"
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
-	ErrModelBuildCode                   = "replace_me"
+	ErrModelBuildCode                   = "mesheryctl-1151"
 )
 
 func ErrExportModel(err error, name string) error {
