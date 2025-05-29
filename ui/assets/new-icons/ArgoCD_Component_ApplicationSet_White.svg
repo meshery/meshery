@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <!-- Main circle background -->
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+  
+  <!-- ArgoCD logo elements -->
+  <path d="M32 14C25.373 14 20 19.373 20 26C20 32.627 25.373 38 32 38C38.627 38 44 32.627 44 26C44 19.373 38.627 14 32 14Z" fill="#FFFFFF"/>
+  <circle cx="32" cy="27" r="4" fill="#FFFFFF" stroke="#FFFFFF" stroke-width="1"/>
+  
+  <!-- Application Set elements -->
+  <g transform="translate(12, 30)">
+    <!-- First application card -->
+    <rect x="0" y="0" width="12" height="16" rx="2" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <rect x="2" y="2" width="8" height="2" rx="1" fill="#FFFFFF"/>
+    <rect x="2" y="6" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+    <rect x="2" y="9" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+    <rect x="2" y="12" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+  </g>
+  
+  <g transform="translate(26, 30)">
+    <!-- Second application card -->
+    <rect x="0" y="0" width="12" height="16" rx="2" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <rect x="2" y="2" width="8" height="2" rx="1" fill="#FFFFFF"/>
+    <rect x="2" y="6" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+    <rect x="2" y="9" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+    <rect x="2" y="12" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+  </g>
+  
+  <g transform="translate(40, 30)">
+    <!-- Third application card -->
+    <rect x="0" y="0" width="12" height="16" rx="2" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+    <rect x="2" y="2" width="8" height="2" rx="1" fill="#FFFFFF"/>
+    <rect x="2" y="6" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+    <rect x="2" y="9" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+    <rect x="2" y="12" width="8" height="1" rx="0.5" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- Connection lines -->
+  <path d="M32 38C32 40 32 42 32 44" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M18 44H46" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M18 44C18 46 18 48 18 50" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M32 44C32 46 32 48 32 50" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M46 44C46 46 46 48 46 50" stroke="#FFFFFF" stroke-width="1.5" stroke-linecap="round"/>
+</svg>
