@@ -8,7 +8,7 @@ import {
   Avatar,
   Button,
   useTheme,
-  Grid,
+  Grid2,
   IconButton,
   Link,
   Table,
@@ -270,7 +270,7 @@ function PerformanceCard({
 
       {/* BACK PART */}
       <>
-        <Grid
+        <Grid2
           sx={{
             marginBottom: '0.25rem',
             minHeight: '6rem',
@@ -279,13 +279,14 @@ function PerformanceCard({
           spacing={1}
           alignContent="space-between"
           alignItems="center"
+          size="grow"
         >
-          <Grid item xs={8}>
+          <Grid2 size={{ xs: 8 }}>
             <Typography variant="h6" gutterBottom>
               {name} Details
             </Typography>
-          </Grid>
-          <Grid item xs={4}>
+          </Grid2>
+          <Grid2 size={{ xs: 4 }}>
             <div
               style={{
                 width: 'fit-content',
@@ -315,8 +316,8 @@ function PerformanceCard({
                 </IconButton>
               </CustomTooltip>
             </div>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
         <Table size="small" dense>
           {tableData.map(function renderDesignTableRow(data) {
             const { name, value, omitEmpty } = data;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
-import { TextField, Grid, Button, styled } from '@layer5/sistent';
+import { TextField, Grid2, Button, styled } from '@layer5/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -57,8 +57,8 @@ function GrafanaConfigComponent({
     <NoSsr>
       <React.Fragment>
         <Wrapper>
-          <Grid container spacing={1}>
-            <Grid item xs={12} md={6}>
+          <Grid2 container spacing={1} size="grow">
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <InputContainer>
                 <ReactSelectWrapper
                   onChange={(select) => handleChange('grafanaURL')(select)}
@@ -74,8 +74,8 @@ function GrafanaConfigComponent({
                   noOptionsMessage="No Grafana servers discovered"
                 />
               </InputContainer>
-            </Grid>
-            <Grid item xs={12} md={6}>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 6 }}>
               <TextField
                 id="grafanaAPIKey"
                 name="grafanaAPIKey"
@@ -88,8 +88,8 @@ function GrafanaConfigComponent({
                 onKeyDown={(e) => e.key === 'Enter' && handleGrafanaConfigure()}
                 onChange={handleChangeApiKey}
               />
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
           <ButtonContainer>
             <StyledButton
               type="submit"

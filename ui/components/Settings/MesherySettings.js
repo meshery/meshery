@@ -10,7 +10,7 @@ import {
   Tabs,
   Tab,
   Paper,
-  Grid,
+  Grid2,
   LeftArrowIcon,
   PollIcon,
   DatabaseIcon,
@@ -327,14 +327,14 @@ const MesherySettings = () => {
                 <NoSsr>
                   <RootClass>
                     <DashboardMeshModelGraph />
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
+                    <Grid2 container spacing={2} size="grow">
+                      <Grid2 size={{ xs: 12, md: 6 }}>
                         <ConnectionStatsChart />
-                      </Grid>
-                      <Grid item xs={12} md={6}>
+                      </Grid2>
+                      <Grid2 size={{ xs: 12, md: 6 }}>
                         <MesheryConfigurationChart />
-                      </Grid>
-                    </Grid>
+                      </Grid2>
+                    </Grid2>
                   </RootClass>
                 </NoSsr>
               </TabContainer>

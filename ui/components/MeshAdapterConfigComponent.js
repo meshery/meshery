@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Grid, Chip, Button, TextField, Tooltip, Avatar, styled } from '@layer5/sistent';
+import { Grid2, Chip, Button, TextField, Tooltip, Avatar, styled } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
 import ReactSelectWrapper from './ReactSelectWrapper';
 
@@ -402,8 +402,8 @@ const MeshAdapterConfigComponent = () => {
         <WrapperStyledDiv data-cy="mesh-adapter-connections">
           {showAdapters}
 
-          <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs={12} data-cy="mesh-adapter-url">
+          <Grid2 container spacing={1} alignItems="flex-end" size="grow">
+            <Grid2 data-cy="mesh-adapter-url" size={{ xs: 12 }}>
               <ReactSelectWrapper
                 onChange={handleMeshLocURLChange}
                 options={setAdapterURLs}
@@ -412,8 +412,8 @@ const MeshAdapterConfigComponent = () => {
                 label="Mesh Adapter URL"
                 error={meshLocationURLError}
               />
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
           <React.Fragment>
             <AdapterButtons>
               <AdapterButton
@@ -446,8 +446,14 @@ const MeshAdapterConfigComponent = () => {
               </AdapterButton>
             </AdapterButtons>
           </React.Fragment>
-          <Grid container spacing={1} alignItems="flex-end" style={{ marginTop: '50px' }}>
-            <Grid item xs={12}>
+          <Grid2
+            container
+            spacing={1}
+            alignItems="flex-end"
+            style={{ marginTop: '50px' }}
+            size="grow"
+          >
+            <Grid2 size={{ xs: 12 }}>
               <ReactSelectWrapper
                 onChange={handleAvailableAdapterChange}
                 options={availableAdapters}
@@ -457,9 +463,9 @@ const MeshAdapterConfigComponent = () => {
                 data-testid="adapters-available-label"
                 error={selectedAvailableAdapterError}
               />
-            </Grid>
-          </Grid>
-          <Grid container spacing={1} alignItems="flex-end" justifyContent="flex-end">
+            </Grid2>
+          </Grid2>
+          <Grid2 container spacing={1} alignItems="flex-end" justifyContent="flex-end" size="grow">
             <div ref={labelRef}>
               <TextField
                 id="deployPort"
@@ -491,7 +497,7 @@ const MeshAdapterConfigComponent = () => {
                 </AdapterButton>
               </AdapterButtons>
             </React.Fragment>
-          </Grid>
+          </Grid2>
         </WrapperStyledDiv>
       </NoSsr>
     );

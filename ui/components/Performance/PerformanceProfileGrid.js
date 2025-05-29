@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PerformanceCard from './PerformanceCard';
-import { Grid, Pagination } from '@layer5/sistent';
+import { Grid2, Pagination } from '@layer5/sistent';
 
 import { PaginationWrapper } from './style';
 
@@ -10,7 +10,7 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, t
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
 
   return (
-    <Grid item {...gridProps}>
+    <Grid2 size={gridProps}>
       <PerformanceCard
         profile={profile}
         handleEdit={() => setProfileForModal(profile)}
@@ -20,7 +20,7 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, t
         requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
       />
-    </Grid>
+    </Grid2>
   );
 }
 
@@ -54,7 +54,7 @@ function PerformanceProfileGrid({
 }) {
   return (
     <>
-      <Grid container spacing={2} style={{ padding: '1rem' }}>
+      <Grid2 container spacing={2} style={{ padding: '1rem' }}>
         {profiles.map((profile) => (
           <PerformanceCardGridItem
             key={profile.id}
@@ -64,7 +64,7 @@ function PerformanceProfileGrid({
             setProfileForModal={setProfileForModal}
           />
         ))}
-      </Grid>
+      </Grid2>
       {profiles.length ? (
         <PaginationWrapper>
           <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
