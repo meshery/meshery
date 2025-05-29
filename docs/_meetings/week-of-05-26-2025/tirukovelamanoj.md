@@ -1,6 +1,6 @@
 # Manoj Tirukovela
 
-🌐 [tirukovelamanoj.github.io](https://manojtirukovela.me/)
+🌐 [manojtirukovela.me](https://manojtirukovela.me/)
 🔗 [LinkedIn](https://www.linkedin.com/in/manojtirukovela/)
 
 ---
