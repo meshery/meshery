@@ -22,10 +22,6 @@ func TestDeleteCmd(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
-	testToken := filepath.Join(currDir, "fixtures", "auth.json")
-
-	// Mock responses directly
-	profileURL := testContext.BaseURL + "/api/user/performance/profiles"
 
 	tests := []struct {
 		name               string
@@ -36,6 +32,10 @@ func TestDeleteCmd(t *testing.T) {
 		deleteStatusCode   int
 		silent             bool
 		expectError        bool
+		tokenPath          string
+		profileURL         string
+		deleteURL          string
+		profileID          string
 	}{
 		{
 			name: "Profile found and deleted",
@@ -60,6 +60,10 @@ func TestDeleteCmd(t *testing.T) {
 			deleteStatusCode:   200,
 			silent:             true,
 			expectError:        false,
+			tokenPath:          filepath.Join(currDir, "fixtures", "auth.json"),
+			profileURL:         testContext.BaseURL + "/api/user/performance/profiles",
+			deleteURL:          testContext.BaseURL + "/api/user/performance/profiles/11111111-1111-1111-1111-111111111111",
+			profileID:          "11111111-1111-1111-1111-111111111111",
 		},
 		{
 			name:               "Profile not found",
@@ -67,20 +71,23 @@ func TestDeleteCmd(t *testing.T) {
 			profilesResponse:   `{"page": 0, "page_size": 10, "total_count": 0, "profiles": []}`,
 			profilesStatusCode: 200,
 			expectError:        false,
+			tokenPath:          filepath.Join(currDir, "fixtures", "auth.json"),
+			profileURL:         testContext.BaseURL + "/api/user/performance/profiles",
+			deleteURL:          "",
+			profileID:          "",
 		},
 	}
 
 	// Run test cases
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			utils.TokenFlag = testToken
+			utils.TokenFlag = tt.tokenPath
 
-			httpmock.RegisterResponder("GET", profileURL,
+			httpmock.RegisterResponder("GET", tt.profileURL,
 				httpmock.NewStringResponder(tt.profilesStatusCode, tt.profilesResponse))
 
-			if tt.deleteResponse != "" {
-				deleteURL := testContext.BaseURL + "/api/user/performance/profiles/11111111-1111-1111-1111-111111111111"
-				httpmock.RegisterResponder("DELETE", deleteURL,
+			if tt.deleteResponse != "" && tt.deleteURL != "" {
+				httpmock.RegisterResponder("DELETE", tt.deleteURL,
 					httpmock.NewStringResponder(tt.deleteStatusCode, tt.deleteResponse))
 			}
 
