@@ -39,8 +39,8 @@ import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProv
 const getNavItem = (theme) => {
   return [
     {
-      id: 'Recent',
-      label: 'Recent',
+      id: 'Recents (Global)',
+      label: 'Recents (Global)',
       icon: <AccessTimeFilledIcon />,
       content: <RecentContent />,
     },
@@ -234,7 +234,7 @@ const Navigation = ({ setHeaderInfo }) => {
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
-  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
+  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recents (Global)');
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
 
