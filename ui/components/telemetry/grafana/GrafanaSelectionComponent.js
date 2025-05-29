@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
-import { TextField, Grid, Button, Chip, MenuItem, useTheme, styled, Box } from '@layer5/sistent';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import { TextField, Grid2, Button, Chip, MenuItem, useTheme, styled, Box } from '@layer5/sistent';
 import dataFetch from '../../../lib/data-fetch';
-import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
@@ -58,7 +56,6 @@ function GrafanaSelectionComponent(props) {
     handleGrafanaClick,
     addSelectedBoardPanelConfig: addSelectedBoardPanelConfigProp,
     handleError,
-    updateProgress,
     grafanaBoards: propGrafanaBoards,
   } = props;
 
@@ -234,8 +231,8 @@ function GrafanaSelectionComponent(props) {
             variant="outlined"
           />
         </AlignRight>
-        <Grid container spacing={1}>
-          <Grid item xs={12} sm={6}>
+        <Grid2 container spacing={1} size="grow">
+          <Grid2 size={{ xs: 12, sm: 6 }}>
             <StyledTextField
               id="grafanaBoardSearch"
               name="grafanaBoardSearch"
@@ -245,8 +242,8 @@ function GrafanaSelectionComponent(props) {
               variant="outlined"
               onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')}
             />
-          </Grid>
-          <Grid item xs={12} sm={6}>
+          </Grid2>
+          <Grid2 size={{ xs: 12, sm: 6 }}>
             <StyledTextField
               select
               id="grafanaBoard"
@@ -263,13 +260,13 @@ function GrafanaSelectionComponent(props) {
                 </MenuItem>
               ))}
             </StyledTextField>
-          </Grid>
+          </Grid2>
 
           {templateVars.length > 0 &&
             templateVars.map(({ name }, ind) => {
               if (ind === 0 || typeof getSelectedTemplateVar(ind - 1) !== 'undefined') {
                 return (
-                  <Grid item xs={12} sm={4} key={ind}>
+                  <Grid2 size={{ xs: 12, sm: 4 }} key={ind}>
                     <StyledTextField
                       select
                       id={`template_var_${ind}`}
@@ -293,13 +290,13 @@ function GrafanaSelectionComponent(props) {
                         </MenuItem>
                       ))}
                     </StyledTextField>
-                  </Grid>
+                  </Grid2>
                 );
               }
               return null;
             })}
 
-          <Grid item xs={12}>
+          <Grid2 size={{ xs: 12 }}>
             <StyledTextField
               select
               id="panels"
@@ -334,8 +331,8 @@ function GrafanaSelectionComponent(props) {
                 </MenuItem>
               ))}
             </StyledTextField>
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
 
         <ButtonContainer>
           <StyledButton
@@ -363,9 +360,4 @@ GrafanaSelectionComponent.propTypes = {
   updateProgress: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-const mapStateToProps = () => ({});
-
-export default connect(mapStateToProps, mapDispatchToProps)(GrafanaSelectionComponent);
+export default GrafanaSelectionComponent;

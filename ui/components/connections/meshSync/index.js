@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Grid, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
+import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -31,6 +31,8 @@ import {
 } from '@/rtk-query/meshsync';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -40,13 +42,7 @@ const ACTION_TYPES = {
 };
 
 export default function MeshSyncTable(props) {
-  const {
-    updateProgress,
-    selectedK8sContexts,
-    k8sconfig,
-    selectedResourceId,
-    updateUrlWithResourceId,
-  } = props;
+  const { selectedResourceId, updateUrlWithResourceId } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -58,6 +54,8 @@ export default function MeshSyncTable(props) {
   const [kindFilter, setKindFilter] = useState();
   const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
+  const { k8sConfig } = useSelector((state) => state.ui);
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
   const [selectedFilters, setSelectedFilters] = useState({
     kind: 'All',
     model: 'All',
@@ -87,7 +85,7 @@ export default function MeshSyncTable(props) {
     kind: kindFilter,
     model: modelFilter,
     namespace: namespaceFilter,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
   });
   if (isError) {
     if (isError) {
@@ -103,7 +101,7 @@ export default function MeshSyncTable(props) {
     pagesize: 'all',
     search: search,
     order: sortOrder,
-    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig),
+    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig),
   });
   const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
   const availableModels = [
@@ -513,11 +511,11 @@ export default function MeshSyncTable(props) {
             <Table>
               <TableRow>
                 <TableCell>
-                  <Grid container style={{ textTransform: 'lowercase' }}>
+                  <Grid2 container style={{ textTransform: 'lowercase' }} size="grow">
                     <ContentContainer
-                      item
-                      xs={12}
-                      md={12}
+                      size={{
+                        xs: 12,
+                      }}
                       style={{
                         display: 'flex',
                         flexWrap: 'wrap',
@@ -527,7 +525,7 @@ export default function MeshSyncTable(props) {
                     >
                       <MeshSyncDataFormatter metadata={metadata} />
                     </ContentContainer>
-                  </Grid>
+                  </Grid2>
                 </TableCell>
               </TableRow>
             </Table>

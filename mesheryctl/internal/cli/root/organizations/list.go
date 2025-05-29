@@ -17,7 +17,9 @@ package organizations
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/spf13/cobra"
 )
 
@@ -38,7 +40,7 @@ mesheryctl exp organizations list --page [page-number]
 mesheryctl exp organizations list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		orgs, err := getAllOrganizations()
+		orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?all=true", organizationsApiPath))
 		if err != nil {
 			return err
 		}

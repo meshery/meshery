@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/redpanda-data/redpanda/releases/download/v23.2.6/redpanda-operator-v23.2.6.tgz"
   },
   "configuration": null,
   "component": {

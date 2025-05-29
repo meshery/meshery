@@ -25,6 +25,14 @@ const telemetryApi = api.injectEndpoints({
       }),
     }),
 
+    getStaticPrometheusBoardConfig: builder.query({
+      query: () => ({
+        url: `telemetry/metrics/static-board`,
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+
     updateGrafanaBoards: builder.mutation({
       query: ({ connectionID, selectedBoardsConfigs }) => ({
         url: `telemetry/metrics/grafana/boards/${connectionID}`,
@@ -46,6 +54,43 @@ const telemetryApi = api.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: TAGS.GRAFANA }],
     }),
+    getPrometheusConfig: builder.query({
+      query: () => ({
+        url: 'telemetry/metrics/config',
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+    postBoardImport: builder.mutation({
+      query: ({ connectionID, body }) => ({
+        url: `/telemetry/metrics/board_import/${connectionID}`,
+        method: 'POST',
+        body,
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    }),
+    queryTemplateVars: builder.query({
+      query: ({ connectionID, query }) => ({
+        url: `/telemetry/metrics/query/${connectionID}?${query}`,
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+    pingPrometheus: builder.query({
+      query: ({ connectionId }) => ({
+        url: `telemetry/metrics/ping/${connectionId}`,
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
+    pingGrafana: builder.query({
+      query: ({ connectionId }) => ({
+        url: `telemetry/metrics/grafana/ping/${connectionId}`,
+        method: 'GET',
+        credentials: 'include',
+      }),
+    }),
   }),
 });
 
@@ -53,6 +98,12 @@ export const {
   useGetGrafanaBoardsQuery,
   useLazyGetGrafanaBoardsQuery,
   useGetGrafanaConfigQuery,
+  useGetStaticPrometheusBoardConfigQuery,
   useUpdateGrafanaBoardsMutation,
   useConfigureGrafanaMutation,
+  useGetPrometheusConfigQuery,
+  usePostBoardImportMutation,
+  useLazyQueryTemplateVarsQuery,
+  useLazyPingPrometheusQuery,
+  useLazyPingGrafanaQuery,
 } = telemetryApi;

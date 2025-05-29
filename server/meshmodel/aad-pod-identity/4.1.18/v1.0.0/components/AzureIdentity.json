@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://raw.githubusercontent.com/Azure/aad-pod-identity/master/charts/aad-pod-identity-4.1.18.tgz"
   },
   "configuration": null,
   "component": {

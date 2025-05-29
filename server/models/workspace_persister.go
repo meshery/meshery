@@ -354,6 +354,14 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 }
 
 func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+
+	// delete any existing mapping for the design in the workspace
+	_, err := wp.DeleteDesignFromWorkspace(workspaceID, designID)
+
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing design mapping: %w", err)
+	}
+
 	wsDesignMapping := workspace.WorkspacesDesignsMapping{
 		DesignId:    designID,
 		WorkspaceId: workspaceID,
@@ -404,7 +412,7 @@ func (wp *WorkspacePersister) DeleteDesignFromWorkspace(workspaceID, designID uu
 	return wsJSON, nil
 }
 
-func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string) ([]byte, error) {
+func (wp *WorkspacePersister) GetWorkspaceDesigns(workspaceID uuid.UUID, search, order, page, pageSize, filter string, visibility []string) ([]byte, error) {
 	// Sanitize the order input
 	order = SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order == "" {

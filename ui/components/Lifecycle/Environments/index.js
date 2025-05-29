@@ -8,14 +8,12 @@ import { Delete } from '@mui/icons-material';
 import { NoSsr } from '@layer5/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { updateProgress, useLegacySelector } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../Modal';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
 import _PromptComponent from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
@@ -28,7 +26,7 @@ import {
   createAndEditEnvironmentUiSchema,
   ErrorBoundary,
   Button,
-  Grid,
+  Grid2,
   Typography,
   SearchBar,
   PROMPT_VARIANTS,
@@ -47,6 +45,8 @@ import {
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const ACTION_TYPES = {
   CREATE: 'create',
@@ -54,9 +54,7 @@ const ACTION_TYPES = {
 };
 
 const Environments = () => {
-  const organization = useLegacySelector((state) =>
-    state.get('organization')?.toJS ? state.get('organization').toJS() : state.get('organization'),
-  );
+  const { organization } = useSelector((state) => state.ui);
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -505,9 +503,9 @@ const Environments = () => {
           )}
           {environments.length > 0 ? (
             <>
-              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+              <Grid2 container spacing={2} sx={{ marginTop: '10px' }} size="grow">
                 {environments.map((environment) => (
-                  <Grid item xs={12} md={6} key={environment.id}>
+                  <Grid2 key={environment.id} size={{ xs: 12, md: 6 }}>
                     <EnvironmentCard
                       // classes={classes}
                       environmentDetails={environment}
@@ -517,15 +515,16 @@ const Environments = () => {
                       onSelect={(e) => handleBulkSelect(e, environment.id)}
                       onAssignConnection={(e) => handleonAssignConnectionModalOpen(e, environment)}
                     />
-                  </Grid>
+                  </Grid2>
                 ))}
-              </Grid>
-              <Grid
+              </Grid2>
+              <Grid2
                 container
                 sx={{ padding: '2rem 0', marginTop: '20px' }}
                 flex
                 justifyContent="center"
                 spacing={2}
+                size="grow"
               >
                 <Pagination
                   count={Math.ceil(environmentsData?.total_count / pageSize)}
@@ -539,7 +538,7 @@ const Environments = () => {
                     />
                   )}
                 />
-              </Grid>
+              </Grid2>
             </>
           ) : (
             <EmptyState

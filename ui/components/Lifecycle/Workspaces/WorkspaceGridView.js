@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Grid,
+  Grid2,
   L5DeleteIcon,
   Modal,
   Pagination,
@@ -10,6 +10,7 @@ import {
   ModalFooter,
   ModalButtonSecondary,
   useTheme,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -71,8 +72,8 @@ const WorkspaceGridView = ({
 
   const theme = useTheme();
   return (
-    <>
-      <Grid container spacing={2} sx={{ marginTop: '-16px' }}>
+    <ErrorBoundary>
+      <Grid2 container spacing={2} size="grow">
         {selectedWorkspaces?.length > 0 && (
           <UserCommonBox
             sx={{
@@ -100,7 +101,7 @@ const WorkspaceGridView = ({
           </UserCommonBox>
         )}
         {workspacesData?.map((workspace) => (
-          <Grid item xs={12} md={6} key={workspace.id}>
+          <Grid2 key={workspace.id} size={{ xs: 12, sm: 6 }}>
             <MesheryWorkspaceCard
               key={workspace.id}
               workspaceDetails={workspace}
@@ -109,11 +110,12 @@ const WorkspaceGridView = ({
               handleBulkSelect={handleBulkSelect}
               selectedWorkspaces={selectedWorkspaces}
             />
-          </Grid>
+          </Grid2>
         ))}
-      </Grid>
-      <Grid
+      </Grid2>
+      <Grid2
         container
+        size="grow"
         sx={{ padding: '2rem 0' }}
         flex
         justifyContent="center"
@@ -132,7 +134,7 @@ const WorkspaceGridView = ({
             />
           )}
         />
-      </Grid>
+      </Grid2>
       {CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) && (
         <Modal
           open={deleteWorkspacesModal}
@@ -164,7 +166,7 @@ const WorkspaceGridView = ({
           </ModalFooter>
         </Modal>
       )}
-    </>
+    </ErrorBoundary>
   );
 };
 

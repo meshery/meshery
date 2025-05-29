@@ -1015,34 +1015,37 @@ environment:
           example: mesheryctl environment view --save "bookInfo.yaml" --output-format yaml
 
 exp:
-  connections:
-    name: connections
+  connection:
+    name: connection
     description: Manage Meshery connections
-    usage: mesheryctl exp connections [command] [flags]
+    usage: mesheryctl exp connection [command] [flags]
     flags:
       help:
         name: --help, -h
-        description: help for exp connections
-        usage: mesheryctl exp connections --help
-        example: mesheryctl exp connections --help
+        description: help for exp connection
+        usage: mesheryctl exp connection --help
+        example: mesheryctl exp connection --help
+      count:
+        name: --count
+        description: (optional) Get the number of exp connection in total
     subcommands:
       delete:
         name: delete
         description: delete a connection
-        usage: mesheryctl exp connections delete [connection_id]
+        usage: mesheryctl exp connection delete [connection_id]
       list:
         name: list
         description: list all the connections
-        usage: mesheryctl exp connections list [flags]
+        usage: mesheryctl exp connection list [flags]
         flags:
           page:
             name: -p, --page
-            description: "(optional) List next set of exp connections list with --page (default = 1) (default 1)."
-            usage: mesheryctl exp connections list --page [page number]
-            example: mesheryctl exp connections list --page 2
+            description: "(optional) List next set of exp connection list with --page (default = 1) (default 1)."
+            usage: mesheryctl exp connection list --page [page number]
+            example: mesheryctl exp connection list --page 2
           count:
             name: --count
-            description: (optional) Get the number of exp connections in total
+            description: (optional) Get the number of exp connection in total
   
   relationship:
     name: relationship

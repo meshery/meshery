@@ -1,11 +1,11 @@
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { Grid, Typography, TableCell, TableSortLabel } from '@layer5/sistent';
+import { Grid2, Typography, TableCell, TableSortLabel } from '@layer5/sistent';
 
 export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
   return (
     <TableCell key={index} onClick={onSort}>
-      <Grid style={{ display: 'flex' }}>
-        <Grid style={{ display: 'flex', alignItems: 'center' }}>
+      <Grid2 style={{ display: 'flex' }}>
+        <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
           <Typography>
             <b>{columnData.label}</b>
           </Typography>
@@ -18,12 +18,12 @@ export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon,
           ) : (
             ''
           )}
-        </Grid>
+        </Grid2>
         <TableSortLabel
           active={columnMeta.name === columnData.name}
           direction={columnMeta.direction || 'asc'}
         ></TableSortLabel>
-      </Grid>
+      </Grid2>
     </TableCell>
   );
 };
@@ -31,8 +31,8 @@ export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon,
 export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
   return (
     <TableCell>
-      <Grid style={{ display: 'flex' }}>
-        <Grid style={{ display: 'flex', alignItems: 'center' }}>
+      <Grid2 style={{ display: 'flex' }}>
+        <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
           <Typography>
             <b>{columnData.label}</b>
           </Typography>
@@ -45,8 +45,8 @@ export const DefaultTableCell = ({ columnData, icon, tooltip }) => {
           ) : (
             ''
           )}
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
     </TableCell>
   );
 };

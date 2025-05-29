@@ -14,7 +14,13 @@ category: kanvas
 
 As a best practice, users are encouraged to select an existing or create acustom shape for their components to best visually signify the function of their component.
 
-Currently, the circle is used as the default shape for new components. However, if users or contributors have alternative shapes they believe better suit a particular component, they are encouraged to create new custom components using the Shape Builder extension at [https://shapes.meshery.io](https://shapes.meshery.io).
+Currently, the circle is used as the default shape for new components. However, if users or contributors have alternative shapes they believe better suit a particular component, they are encouraged to create new custom components.
+
+<!-- Tool not ready for use
+
+using the Shape Builder extension at [https://shapes.meshery.io](https://shapes.meshery.io).
+
+-->
 
 Although the usage of the components is divided into categories, some shapes serve as a universal representation of particular components.
 

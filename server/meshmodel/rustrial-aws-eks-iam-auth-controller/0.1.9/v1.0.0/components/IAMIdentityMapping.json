@@ -38,7 +38,7 @@
       "shape": "circle",
       "source_uri": "https://github.com/rustrial/aws-eks-iam-auth-controller/releases/download/rustrial-aws-eks-iam-auth-controller-0.1.9/rustrial-aws-eks-iam-auth-controller-0.1.9.tgz",
       "styleOverrides": "",
-      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e ",
+      "svgColor": "",
       "svgComplete": "",
       "svgWhite": ""
     },
@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/rustrial/aws-eks-iam-auth-controller/releases/download/rustrial-aws-eks-iam-auth-controller-0.1.9/rustrial-aws-eks-iam-auth-controller-0.1.9.tgz"
   },
   "configuration": null,
   "component": {

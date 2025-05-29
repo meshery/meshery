@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/k8s-at-home/charts/releases/download/multus-3.5.2/multus-3.5.2.tgz"
   },
   "configuration": null,
   "component": {

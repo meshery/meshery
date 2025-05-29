@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@layer5/sistent';
+import { Grid2, Typography } from '@layer5/sistent';
 import React from 'react';
 import CurvedArrowIcon from './curvedArrowIcon';
 
@@ -23,7 +23,7 @@ const EmptyState = ({ icon, message, pointerLabel }) => {
         minHeight: '50vh',
       }}
     >
-      <Grid style={{ display: 'flex', width: '100%', padding: '0 40px' }}>
+      <Grid2 style={{ display: 'flex', width: '100%', padding: '0 40px' }}>
         <CurvedArrowIcon />
         <Typography
           style={{
@@ -40,8 +40,8 @@ const EmptyState = ({ icon, message, pointerLabel }) => {
         >
           {pointerLabel}
         </Typography>
-      </Grid>
-      <Grid style={{ marginTop: '120px' }}>
+      </Grid2>
+      <Grid2 style={{ marginTop: '120px' }}>
         {icon}
         <Typography
           style={{
@@ -54,7 +54,7 @@ const EmptyState = ({ icon, message, pointerLabel }) => {
         >
           {message}
         </Typography>
-      </Grid>
+      </Grid2>
     </div>
   );
 };

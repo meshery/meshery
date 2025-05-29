@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { withRouter } from 'next/router';
 import {
   Tab,
   Tabs,
   Typography,
-  Grid,
+  Grid2,
   FormGroup,
   FormControlLabel,
   Switch,
@@ -17,6 +14,7 @@ import {
   NoSsr,
   TachometerIcon,
   useTheme,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
@@ -37,13 +35,12 @@ import {
   FormContainerWrapper,
   FormGroupWrapper,
 } from './style';
-import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
 import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
 import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
-import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
+import MesherySettingsPerformanceComponent from '../Settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -55,8 +52,9 @@ import {
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
-
-import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
+import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
 const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
@@ -91,7 +89,8 @@ const UserPreference = (props) => {
   const [value, setValue] = useState(0);
   const [providerInfo, setProviderInfo] = useState({});
   const theme = useTheme();
-
+  const dispatch = useDispatch();
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
   const {
     data: userData,
     isSuccess: isUserDataFetched,
@@ -112,8 +111,7 @@ const UserPreference = (props) => {
   };
 
   const handleCatalogContentToggle = () => {
-    props.toggleCatalogContent({ catalogVisibility: !catalogContent });
-
+    dispatch(toggleCatalogContent({ catalogVisibility: !catalogContent }));
     setCatalogContent(!catalogContent);
     handleCatalogPreference(!catalogContent);
   };
@@ -145,8 +143,7 @@ const UserPreference = (props) => {
   };
 
   const handleError = (name) => () => {
-    props.updateProgress({ showProgress: false });
-
+    updateProgress({ showProgress: false });
     notify({ message: name, event_type: EVENT_TYPES.ERROR });
   };
 
@@ -168,11 +165,11 @@ const UserPreference = (props) => {
       anonymousPerfResults: name === 'anonymousPerfResults' ? val : perfResultStats,
     });
 
-    props.updateProgress({ showProgress: true });
+    updateProgress({ showProgress: true });
     updateUserPrefWithContext({ body: requestBody })
       .unwrap()
       .then((result) => {
-        props.updateProgress({ showProgress: false });
+        updateProgress({ showProgress: false });
         if (typeof result !== 'undefined') {
           notify({ message: msg, event_type: val ? EVENT_TYPES.SUCCESS : EVENT_TYPES.INFO });
         }
@@ -187,16 +184,14 @@ const UserPreference = (props) => {
   };
 
   useEffect(() => {
-    if (props.capabilitiesRegistry && !capabilitiesLoaded) {
+    if (capabilitiesRegistry && !capabilitiesLoaded) {
       setCapabilitiesLoaded(true); // to prevent re-compute
       setUserPrefs(
-        ExtensionPointSchemaValidator('user_prefs')(
-          props.capabilitiesRegistry?.extensions?.user_prefs,
-        ),
+        ExtensionPointSchemaValidator('user_prefs')(capabilitiesRegistry?.extensions?.user_prefs),
       );
-      setProviderType(props.capabilitiesRegistry?.provider_type);
+      setProviderType(capabilitiesRegistry?.provider_type);
     }
-  }, [props.capabilitiesRegistry]);
+  }, [capabilitiesRegistry]);
 
   useEffect(() => {
     if (isUserDataFetched && userData) {
@@ -240,91 +235,92 @@ const UserPreference = (props) => {
 
     return (
       <NoSsr>
-        <>
+        <ErrorBoundary>
           <RootContainer>
             <Typography variant="h5">Provider Information</Typography>
-            <Grid container spacing={2}>
+            <ErrorBoundary>
+              <Grid2 container spacing={2} size="grow">
+                {providerInfo &&
+                  Object.entries(providerInfo).map(
+                    ([providerName, provider], index) =>
+                      (index < 2 || index === 3) && (
+                        <Grid2 key={index} size={{ xs: 12, md: 4 }}>
+                          <ProviderCard>
+                            <CardHeader
+                              title={
+                                <Typography
+                                  variant="h6"
+                                  style={{
+                                    textDecoration: 'underline',
+                                    textDecorationColor: 'rgba(116,147,161,0.5)',
+                                    textUnderlineOffset: 10,
+                                  }}
+                                >
+                                  {convertToTitleCase(providerName)}
+                                </Typography>
+                              }
+                            />
+                            <CardContent>
+                              {' '}
+                              <BoxWrapper>
+                                <Typography
+                                  variant="body1"
+                                  component={HideScrollbar}
+                                  style={{ marginRight: '20px' }}
+                                >
+                                  {provider}
+                                </Typography>
+                              </BoxWrapper>
+                            </CardContent>
+                          </ProviderCard>
+                        </Grid2>
+                      ),
+                  )}
+              </Grid2>
               {providerInfo &&
                 Object.entries(providerInfo).map(
                   ([providerName, provider], index) =>
-                    (index < 2 || index === 3) && (
-                      <Grid key={index} item md={4} xs={12}>
-                        <ProviderCard>
-                          <CardHeader
-                            title={
-                              <Typography
-                                variant="h6"
-                                style={{
-                                  textDecoration: 'underline',
-                                  textDecorationColor: 'rgba(116,147,161,0.5)',
-                                  textUnderlineOffset: 10,
-                                }}
+                    (index === 2 || index === 5) && (
+                      <ProviderCard key={index} sx={{ margin: '20px' }}>
+                        <CardHeader
+                          title={
+                            <Typography
+                              variant="h6"
+                              style={{
+                                textDecoration: 'underline',
+                                textDecorationColor: 'rgba(116,147,161,0.5)',
+                                textUnderlineOffset: 10,
+                              }}
+                            >
+                              {convertToTitleCase(providerName)}
+                            </Typography>
+                          }
+                        />
+                        <CardContent>
+                          {' '}
+                          <BoxWrapper>
+                            <Typography
+                              variant="body1"
+                              component={HideScrollbar}
+                              style={{ marginRight: '20px' }}
+                            >
+                              {provider}
+                            </Typography>
+
+                            <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                              <IconButton
+                                onClick={() => copyToClipboard(provider)}
+                                style={{ padding: '0.25rem', float: 'right' }}
                               >
-                                {convertToTitleCase(providerName)}
-                              </Typography>
-                            }
-                          />
-                          <CardContent>
-                            {' '}
-                            <BoxWrapper>
-                              <Typography
-                                variant="body1"
-                                component={HideScrollbar}
-                                style={{ marginRight: '20px' }}
-                              >
-                                {provider}
-                              </Typography>
-                            </BoxWrapper>
-                          </CardContent>
-                        </ProviderCard>
-                      </Grid>
+                                <CopyIcon />
+                              </IconButton>
+                            </CustomTooltip>
+                          </BoxWrapper>
+                        </CardContent>
+                      </ProviderCard>
                     ),
                 )}
-            </Grid>
-            {providerInfo &&
-              Object.entries(providerInfo).map(
-                ([providerName, provider], index) =>
-                  (index === 2 || index === 5) && (
-                    <ProviderCard key={index} sx={{ margin: '20px' }}>
-                      <CardHeader
-                        title={
-                          <Typography
-                            variant="h6"
-                            style={{
-                              textDecoration: 'underline',
-                              textDecorationColor: 'rgba(116,147,161,0.5)',
-                              textUnderlineOffset: 10,
-                            }}
-                          >
-                            {convertToTitleCase(providerName)}
-                          </Typography>
-                        }
-                      />
-                      <CardContent>
-                        {' '}
-                        <BoxWrapper>
-                          <Typography
-                            variant="body1"
-                            component={HideScrollbar}
-                            style={{ marginRight: '20px' }}
-                          >
-                            {provider}
-                          </Typography>
-
-                          <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
-                            <IconButton
-                              onClick={() => copyToClipboard(provider)}
-                              style={{ padding: '0.25rem', float: 'right' }}
-                            >
-                              <CopyIcon />
-                            </IconButton>
-                          </CustomTooltip>
-                        </BoxWrapper>
-                      </CardContent>
-                    </ProviderCard>
-                  ),
-              )}
-
+            </ErrorBoundary>
             <ProviderCard>
               <CardHeader
                 title={
@@ -359,14 +355,13 @@ const UserPreference = (props) => {
               Capabilities
             </Typography>
 
-            <Grid
+            <Grid2
               container
-              spacing={2}
+              size="grow"
               style={{ display: 'flex', justifyContent: 'space-between' }}
             >
               <GridCapabilityHeader
-                item
-                xs={6}
+                size={{ xs: 6 }}
                 style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
               >
                 <Typography variant="body1" style={{ fontWeight: 'bold' }}>
@@ -374,8 +369,7 @@ const UserPreference = (props) => {
                 </Typography>
               </GridCapabilityHeader>
               <GridCapabilityHeader
-                item
-                xs={6}
+                size={{ xs: 6 }}
                 style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
               >
                 <Typography variant="body1" style={{ fontWeight: 'bold' }}>
@@ -386,9 +380,8 @@ const UserPreference = (props) => {
                 providerInfo.capabilities.map((capability, index) => (
                   <>
                     <GridCapabilityHeader
-                      item
                       key={`${index}-${capability.feature}`}
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',
                         backgroundColor:
@@ -404,9 +397,8 @@ const UserPreference = (props) => {
                       <Typography variant="body1">{capability.feature}</Typography>
                     </GridCapabilityHeader>
                     <GridCapabilityHeader
-                      item
                       key={`${index}-${capability.endpoint}`}
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',
                         backgroundColor:
@@ -423,7 +415,7 @@ const UserPreference = (props) => {
                     </GridCapabilityHeader>
                   </>
                 ))}
-            </Grid>
+            </Grid2>
             <Divider />
             <Typography variant="h5" style={{ margin: '20px 0' }}>
               Extensions
@@ -432,10 +424,9 @@ const UserPreference = (props) => {
               Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
                 <div key={index} margin="20px 0px">
                   <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
-                  <Grid container spacing={2} style={{ margin: '10px 0 20px 0' }}>
+                  <Grid2 container spacing={2} size="grow" style={{ margin: '10px 0 20px 0' }}>
                     <GridExtensionHeader
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '10px 0 0 0',
                         padding: '10px 20px',
@@ -446,8 +437,7 @@ const UserPreference = (props) => {
                       </Typography>
                     </GridExtensionHeader>
                     <GridExtensionHeader
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '0 10px 0 0',
                         padding: '10px 20px',
@@ -459,8 +449,7 @@ const UserPreference = (props) => {
                     </GridExtensionHeader>
 
                     <GridExtensionItem
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '0 0 0 10px',
                         padding: '20px 20px',
@@ -469,8 +458,7 @@ const UserPreference = (props) => {
                       <Typography variant="body1">{extension[0].component}</Typography>
                     </GridExtensionItem>
                     <GridExtensionItem
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '0 0 10px 0',
                         padding: '20px 20px',
@@ -480,11 +468,11 @@ const UserPreference = (props) => {
                         {convertToTitleCase(extension[0].type)}
                       </Typography>
                     </GridExtensionItem>
-                  </Grid>
+                  </Grid2>
                 </div>
               ))}
           </RootContainer>
-        </>
+        </ErrorBoundary>
       </NoSsr>
     );
   };
@@ -638,21 +626,4 @@ const UserPreference = (props) => {
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateUser: bindActionCreators(updateUser, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
-});
-
-const mapStateToProps = (state) => {
-  const selectedK8sContexts = state.get('selectedK8sContexts');
-  const catalogVisibility = state.get('catalogVisibility');
-  const capabilitiesRegistry = state.get('capabilitiesRegistry');
-  return {
-    selectedK8sContexts,
-    catalogVisibility,
-    capabilitiesRegistry,
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference));
+export default UserPreference;

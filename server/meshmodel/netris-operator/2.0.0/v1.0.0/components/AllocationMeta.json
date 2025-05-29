@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-2.0.0/netris-operator-2.0.0.tgz"
   },
   "configuration": null,
   "component": {

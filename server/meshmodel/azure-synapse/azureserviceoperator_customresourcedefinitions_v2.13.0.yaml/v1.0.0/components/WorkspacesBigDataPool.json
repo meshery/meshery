@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Workspaces Big Data Pool",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "azure-synapse",
+    "displayName": "Azure Synapse",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Observability and Analysis"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2384f1",
+      "secondaryColor": "#3990f2",
+      "shape": "rectangle",
+      "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"9\" y1=\"5.38\" x2=\"9\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".199\" stop-color=\"#005ba1\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"9\" y1=\"12.713\" x2=\"9\" y2=\"5.287\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#198ab3\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".172\" stop-color=\"#32bedd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#50e6ff\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#4fe4fd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#4bddf8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#44d2ee\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#3ac1e0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#2dabce\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#1d90b8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#198ab3\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".662\" stop-color=\"#32bedd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".975\" stop-color=\"#50e6ff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9 0L1.15 4.49v8.97L9 18l7.85-4.49v-9zm6.4 12.57L9 16.27l-6.4-3.661V5.38L9 1.68l6.4 3.71z\" fill=\"#0078d4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#a)\" d=\"M9 0L1.15 4.49l1.45.89L9 1.68l6.4 3.7 1.45-.89L9 0z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.74 10.475a.73.73 0 00-.323-.286 5.835 5.835 0 00-4.478-3.346L14.416 3.1l-1.506-.864L5.534 6.5a.75.75 0 00.376 1.4.684.684 0 00.09-.023l.125.523a4.319 4.319 0 014.837 2.238l-7.349 4.247 1.5.866 7.353-4.251a.729.729 0 00.242-.236l.075-.018c-.007-.029-.018-.055-.025-.084a.735.735 0 00-.018-.687z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.091 9.013a1.85 1.85 0 101.85 1.85 1.85 1.85 0 00-1.85-1.85zM5.909 5.267a1.85 1.85 0 101.85 1.85 1.85 1.85 0 00-1.85-1.85z\" fill=\"url(#b)\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"9\" y1=\"5.38\" x2=\"9\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".199\" stop-color=\"#005ba1\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"9\" y1=\"12.713\" x2=\"9\" y2=\"5.287\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#198ab3\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".172\" stop-color=\"#32bedd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#50e6ff\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#4fe4fd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#4bddf8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#44d2ee\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#3ac1e0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#2dabce\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#1d90b8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".5\" stop-color=\"#198ab3\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".662\" stop-color=\"#32bedd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".975\" stop-color=\"#50e6ff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M9 0L1.15 4.49v8.97L9 18l7.85-4.49v-9zm6.4 12.57L9 16.27l-6.4-3.661V5.38L9 1.68l6.4 3.71z\" fill=\"#0078d4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#a)\" d=\"M9 0L1.15 4.49l1.45.89L9 1.68l6.4 3.7 1.45-.89L9 0z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.74 10.475a.73.73 0 00-.323-.286 5.835 5.835 0 00-4.478-3.346L14.416 3.1l-1.506-.864L5.534 6.5a.75.75 0 00.376 1.4.684.684 0 00.09-.023l.125.523a4.319 4.319 0 014.837 2.238l-7.349 4.247 1.5.866 7.353-4.251a.729.729 0 00.242-.236l.075-.018c-.007-.029-.018-.055-.025-.084a.735.735 0 00-.018-.687z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.091 9.013a1.85 1.85 0 101.85 1.85 1.85 1.85 0 00-1.85-1.85zM5.909 5.267a1.85 1.85 0 101.85 1.85 1.85 1.85 0 00-1.85-1.85z\" fill=\"url(#b)\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "configuration": null,
+  "component": {
+    "version": "synapse.azure.com/v1api20210601",
+    "kind": "WorkspacesBigDataPool",
+    "schema": "{\n \"description\": \"Generator information:\\n- Generated from: /synapse/resource-manager/Microsoft.Synapse/stable/2021-06-01/bigDataPool.json\\n- ARM URI: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Synapse/workspaces/{workspaceName}/bigDataPools/{bigDataPoolName}\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"autoPause\": {\n     \"description\": \"AutoPause: Auto-pausing properties\",\n     \"properties\": {\n      \"delayInMinutes\": {\n       \"description\": \"DelayInMinutes: Number of minutes of idle time before the Big Data pool is automatically paused.\",\n       \"type\": \"integer\"\n      },\n      \"enabled\": {\n       \"description\": \"Enabled: Whether auto-pausing is enabled for the Big Data pool.\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"autoScale\": {\n     \"description\": \"AutoScale: Auto-scaling properties\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"Enabled: Whether automatic scaling is enabled for the Big Data pool.\",\n       \"type\": \"boolean\"\n      },\n      \"maxNodeCount\": {\n       \"description\": \"MaxNodeCount: The maximum number of nodes the Big Data pool can support.\",\n       \"type\": \"integer\"\n      },\n      \"minNodeCount\": {\n       \"description\": \"MinNodeCount: The minimum number of nodes the Big Data pool can support.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"azureName\": {\n     \"description\": \"AzureName: The name of the resource in Azure. This is often the same as the name of the resource in Kubernetes but it\\ndoesn't have to be.\",\n     \"type\": \"string\"\n    },\n    \"cacheSize\": {\n     \"description\": \"CacheSize: The cache size\",\n     \"type\": \"integer\"\n    },\n    \"customLibraries\": {\n     \"description\": \"CustomLibraries: List of custom libraries/packages associated with the spark pool.\",\n     \"items\": {\n      \"description\": \"Library/package information of a Big Data pool powered by Apache Spark\",\n      \"properties\": {\n       \"containerName\": {\n        \"description\": \"ContainerName: Storage blob container name.\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name: Name of the library.\",\n        \"type\": \"string\"\n       },\n       \"path\": {\n        \"description\": \"Path: Storage blob path of library.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"Type: Type of the library.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultSparkLogFolder\": {\n     \"description\": \"DefaultSparkLogFolder: The default folder where Spark logs will be written.\",\n     \"type\": \"string\"\n    },\n    \"dynamicExecutorAllocation\": {\n     \"description\": \"DynamicExecutorAllocation: Dynamic Executor Allocation\",\n     \"properties\": {\n      \"enabled\": {\n       \"description\": \"Enabled: Indicates whether Dynamic Executor Allocation is enabled or not.\",\n       \"type\": \"boolean\"\n      },\n      \"maxExecutors\": {\n       \"description\": \"MaxExecutors: The maximum number of executors alloted\",\n       \"type\": \"integer\"\n      },\n      \"minExecutors\": {\n       \"description\": \"MinExecutors: The minimum number of executors alloted\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"isAutotuneEnabled\": {\n     \"description\": \"IsAutotuneEnabled: Whether autotune is required or not.\",\n     \"type\": \"boolean\"\n    },\n    \"isComputeIsolationEnabled\": {\n     \"description\": \"IsComputeIsolationEnabled: Whether compute isolation is required or not.\",\n     \"type\": \"boolean\"\n    },\n    \"libraryRequirements\": {\n     \"description\": \"LibraryRequirements: Library version requirements\",\n     \"properties\": {\n      \"content\": {\n       \"description\": \"Content: The library requirements.\",\n       \"type\": \"string\"\n      },\n      \"filename\": {\n       \"description\": \"Filename: The filename of the library requirements file.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"location\": {\n     \"description\": \"Location: The geo-location where the resource lives\",\n     \"type\": \"string\"\n    },\n    \"nodeCount\": {\n     \"description\": \"NodeCount: The number of nodes in the Big Data pool.\",\n     \"type\": \"integer\"\n    },\n    \"nodeSize\": {\n     \"description\": \"NodeSize: The level of compute power that each node in the Big Data pool has.\",\n     \"enum\": [\n      \"Large\",\n      \"Medium\",\n      \"None\",\n      \"Small\",\n      \"XLarge\",\n      \"XXLarge\",\n      \"XXXLarge\"\n     ],\n     \"type\": \"string\"\n    },\n    \"nodeSizeFamily\": {\n     \"description\": \"NodeSizeFamily: The kind of nodes that the Big Data pool provides.\",\n     \"enum\": [\n      \"HardwareAcceleratedFPGA\",\n      \"HardwareAcceleratedGPU\",\n      \"MemoryOptimized\",\n      \"None\"\n     ],\n     \"type\": \"string\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The specification for configuring operator behavior. This field is interpreted by the operator and not\\npassed directly to Azure\",\n     \"properties\": {\n      \"configMapExpressions\": {\n       \"description\": \"ConfigMapExpressions: configures where to place operator written dynamic ConfigMaps (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secretExpressions\": {\n       \"description\": \"SecretExpressions: configures where to place operator written dynamic secrets (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a synapse.azure.com/Workspace resource\",\n     \"properties\": {\n      \"armId\": {\n       \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"provisioningState\": {\n     \"description\": \"ProvisioningState: The state of the Big Data pool.\",\n     \"type\": \"string\"\n    },\n    \"sessionLevelPackagesEnabled\": {\n     \"description\": \"SessionLevelPackagesEnabled: Whether session level packages enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"sparkConfigProperties\": {\n     \"description\": \"SparkConfigProperties: Spark configuration file to specify additional properties\",\n     \"properties\": {\n      \"configurationType\": {\n       \"description\": \"ConfigurationType: The type of the spark config properties file.\",\n       \"enum\": [\n        \"Artifact\",\n        \"File\"\n       ],\n       \"type\": \"string\"\n      },\n      \"content\": {\n       \"description\": \"Content: The spark config properties.\",\n       \"type\": \"string\"\n      },\n      \"filename\": {\n       \"description\": \"Filename: The filename of the spark config properties file.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sparkEventsFolder\": {\n     \"description\": \"SparkEventsFolder: The Spark events folder\",\n     \"type\": \"string\"\n    },\n    \"sparkVersion\": {\n     \"description\": \"SparkVersion: The Apache Spark version.\",\n     \"type\": \"string\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Tags: Resource tags.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"owner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Workspaces Big Data Pool\",\n \"type\": \"object\"\n}"
+  }
+}

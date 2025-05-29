@@ -1,19 +1,16 @@
 import { isNil, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
-import { withRouter } from 'next/router';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../../lib/store';
 import { ADAPTER_STATUS, adaptersList } from './constants';
 import changeAdapterState from '../../graphql/mutations/AdapterStatusMutation';
 import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { Grid, Switch, Typography, useTheme } from '@layer5/sistent';
+import { Grid2, Switch, Typography, useTheme } from '@layer5/sistent';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
-const Adapters = ({ updateProgress }) => {
+const Adapters = () => {
   // States.
   const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
 
@@ -113,7 +110,7 @@ const Adapters = ({ updateProgress }) => {
   return (
     <>
       {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
-        <Grid item {...LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
+        <Grid2 size={LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
           <CardContainer>
             <Typography variant="h5" component="div">
               Meshery Adapter for {adapter.name}
@@ -131,10 +128,11 @@ const Adapters = ({ updateProgress }) => {
               </div>
             </FrontSideDescription>
 
-            <Grid
+            <Grid2
               container
               spacing={2}
               direction="row"
+              size="grow"
               justifyContent="space-between"
               alignItems="baseline"
               style={{
@@ -167,16 +165,12 @@ const Adapters = ({ updateProgress }) => {
                   color="primary"
                 />
               </div>
-            </Grid>
+            </Grid2>
           </CardContainer>
-        </Grid>
+        </Grid2>
       ))}
     </>
   );
 };
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-export default connect(() => {}, mapDispatchToProps)(withRouter(Adapters));
+export default Adapters;

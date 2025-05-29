@@ -1,4 +1,4 @@
-import { Grid, Pagination } from '@layer5/sistent';
+import { Grid2, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
@@ -10,10 +10,7 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from './Grid.styles';
-import { RJSFModalWrapper } from '../Modal';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { updateProgress } from '../../lib/store';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
 import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
@@ -43,7 +40,7 @@ function PatternCardGridItem({
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <Grid item {...gridProps}>
+    <Grid2 size={gridProps}>
       <MesheryPatternCard
         id={pattern.id}
         user={user}
@@ -88,7 +85,7 @@ function PatternCardGridItem({
         hideVisibility={hideVisibility}
         isReadOnly={isReadOnly}
       />
-    </Grid>
+    </Grid2>
   );
 }
 
@@ -207,7 +204,7 @@ function MesheryPatternGrid({
         />
       )}
       {!selectedPattern.show && (
-        <Grid container spacing={3}>
+        <Grid2 container spacing={3} size="grow">
           {patterns.map((pattern) => (
             <PatternCardGridItem
               key={pattern.id}
@@ -236,7 +233,7 @@ function MesheryPatternGrid({
               isReadOnly={arePatternsReadOnly}
             />
           ))}
-        </Grid>
+        </Grid2>
       )}
 
       {!selectedPattern.show && patterns.length === 0 && (
@@ -292,9 +289,4 @@ function MesheryPatternGrid({
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
-
-// @ts-ignore
-export default connect(mapDispatchToProps)(MesheryPatternGrid);
+export default MesheryPatternGrid;

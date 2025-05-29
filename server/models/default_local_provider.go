@@ -1506,15 +1506,9 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
 }
 
-func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
-	designId, _ := uuid.FromString(designID)
-	return l.WorkspacePersister.DeleteDesignFromWorkspace(workspaceId, designId)
-}
-
-func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter)
+	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
 }
 
 // GetOrganization returns the organization for the given organizationID

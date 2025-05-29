@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { NoSsr } from '@layer5/sistent';
-import MesheryFilters from '../../components/Filters';
-import { updatepagepath } from '../../lib/store';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import MesheryFilters from '../../components/MesheryFilters/Filters';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { Box } from '@layer5/sistent';
+import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
 
-function NewFilters(props) {
+function NewFilters() {
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    props.updatepagepath({ path: getPath() });
+    dispatch(updatePage({ path: getPath(), title: 'Filters' }));
   }, []);
-
   return (
     <NoSsr>
       <Head>
@@ -31,8 +31,4 @@ function NewFilters(props) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(NewFilters);
+export default NewFilters;

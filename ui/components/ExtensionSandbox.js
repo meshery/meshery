@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { toggleDrawer } from '../lib/store';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import normalizeURI from '../utils/normalizeURI';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
@@ -9,6 +6,8 @@ import {
   useLazyGetExtensionsByTypeQuery,
   useLazyGetFullPageExtensionsQuery,
 } from '@/rtk-query/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { toggleDrawer } from '@/store/slices/mesheryUi';
 /**
  * getPath returns the current pathname
  * @returns {string}
@@ -271,7 +270,7 @@ function getComponentURIFromPathForCollaborator(extensions) {
  * @param {string} componentName
  * @returns {string} url
  */
-function createPathForRemoteComponent(componentName) {
+export function createPathForRemoteComponent(componentName) {
   let prefix = '/api/provider/extension';
   return prefix + normalizeURI(componentName);
 }
@@ -288,18 +287,16 @@ function createPathForRemoteComponent(componentName) {
  * @param {{ type: "navigator" | "user_prefs" | "account" | "collaborator", Extension: JSX.Element }} props
  */
 const ExtensionSandbox = React.memo(
-  function MemoizedExtensionSandbox({
-    type,
-    Extension,
-    isDrawerCollapsed,
-    toggleDrawer,
-    capabilitiesRegistry,
-  }) {
+  function MemoizedExtensionSandbox({ type, Extension }) {
     const [extension, setExtension] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const { capabilitiesRegistry } = useSelector((state) => state.ui);
+    const { isDrawerCollapsed } = useSelector((state) => state.ui);
+    const dispatch = useDispatch();
+
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
-        toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
+        dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
       }
 
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
@@ -308,7 +305,7 @@ const ExtensionSandbox = React.memo(
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
           setExtension(processedData);
           setIsLoading(false);
-        } catch (error) {
+        } catch {
           setExtension([]);
           setIsLoading(false);
         }
@@ -365,13 +362,4 @@ const ExtensionSandbox = React.memo(
     prevProps.capabilitiesRegistry === nextProps.capabilitiesRegistry,
 );
 
-const mapDispatchToProps = (dispatch) => ({
-  toggleDrawer: bindActionCreators(toggleDrawer, dispatch),
-});
-
-const mapStateToProps = (state) => ({
-  isDrawerCollapsed: state.get('isDrawerCollapsed'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ExtensionSandbox);
+export default ExtensionSandbox;

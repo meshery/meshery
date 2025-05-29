@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/mmontes11/charts/releases/download/echoperator-0.0.2/echoperator-0.0.2.tgz"
   },
   "configuration": null,
   "component": {

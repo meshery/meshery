@@ -104,6 +104,15 @@ jobs:
       RELEASE_CHANNEL: "edge"
     runs-on: ubuntu-24.04
     steps:
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+          sudo apt-get clean
+          sudo rm -rf /var/lib/apt/lists/*
+          docker system prune -af
       - name: Fetch latest tag
         run: |
           echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
@@ -128,8 +137,8 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
 
-  # update-staging-playground:
-  #   needs:
-  #     - docker-build-push
-  #   uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
-  #   secrets: inherit
+  update-staging-playground:
+    needs:
+      - docker-build-push
+    uses: meshery/meshery/.github/workflows/cncf-staging-playground-deploy-meshery.yaml@master
+    secrets: inherit

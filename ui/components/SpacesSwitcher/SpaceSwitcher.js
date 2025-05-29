@@ -1,13 +1,11 @@
 import { useGetOrgsQuery } from '@/rtk-query/organization';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   FormControl,
   FormControlLabel,
   FormGroup,
-  Grid,
+  Grid2,
   MenuItem,
   styled,
   TextField,
@@ -15,20 +13,20 @@ import {
   Select,
   useTheme,
   WorkspaceIcon,
+  CircularProgress,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
-import { setKeys, setOrganization } from '../../lib/store';
-import { connect, Provider } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { store } from '../../store';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
-import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
+import { useSelector } from 'react-redux';
+import {
+  useGetSelectedOrganization,
+  useUpdateSelectedOrganizationMutation,
+} from '@/rtk-query/user';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -98,33 +96,30 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
 }));
 
 function OrgMenu(props) {
-  const {
-    data: orgsResponse,
-    isSuccess: isOrgsSuccess,
-    isError: isOrgsError,
-    error: orgsError,
-  } = useGetOrgsQuery({});
+  const { data: orgsResponse, isSuccess: isOrgsSuccess } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
 
-  const { organization, setOrganization, open, setKeys } = props;
-  const { notify } = useNotification();
-  useGetCurrentAbilities(organization, setKeys);
-  useEffect(() => {
-    if (isOrgsError) {
-      notify({
-        message: `There was an error fetching available data ${orgsError?.data}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-  }, [isOrgsError, notify, orgsError]);
+  const theme = useTheme();
+  const { selectedOrganization } = useGetSelectedOrganization();
+
+  const [updateSelectedOrg, { isLoading: isUpdatingOrg }] = useUpdateSelectedOrganizationMutation();
+
+  if (isUpdatingOrg) {
+    return <CircularProgress size={24} style={{ color: theme.palette.background.brand.default }} />;
+  }
+
+  if (!selectedOrganization) return null;
+
+  const organization = selectedOrganization;
+  const { open } = props;
+
+  console.log('selectedOrganization', organization);
 
   const handleOrgSelect = (e) => {
     const id = e.target.value;
-    const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
+    updateSelectedOrg(id);
   };
-  const theme = useTheme();
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && open && (
@@ -132,10 +127,10 @@ function OrgMenu(props) {
           <FormControl component="fieldset">
             <FormGroup>
               <FormControlLabel
-                key="SpacesPreferences"
+                key="OrgPreferences"
                 control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                  <Grid2 container spacing={1} alignItems="flex-end" size="grow">
+                    <Grid2 data-cy="mesh-adapter-url" size={{ xs: 12 }}>
                       <StyledSelect
                         value={organization.id}
                         onChange={handleOrgSelect}
@@ -176,8 +171,8 @@ function OrgMenu(props) {
                           </StyledMenuItem>
                         ))}
                       </StyledSelect>
-                    </Grid>
-                  </Grid>
+                    </Grid2>
+                  </Grid2>
                 }
               />
             </FormGroup>
@@ -197,51 +192,45 @@ function DefaultHeader({ title, isBeta }) {
   );
 }
 
-function SpaceSwitcher(props) {
+function OrganizationAndWorkSpaceSwitcher() {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
+  const router = useRouter();
+  const { organization } = useSelector((state) => state.ui);
+  const { isBeta } = useSelector((state) => state.ui.page);
+  const { title } = useSelector((state) => state.ui.page);
+  const { selectedOrganization } = useGetSelectedOrganization();
+
+  if (!selectedOrganization) return null;
+
   return (
     <NoSsr>
-      <Provider store={store}>
-        <StyledSwitcher>
-          <Button
-            onClick={() => setOrgOpen(!orgOpen)}
-            style={{ marginRight: orgOpen ? '1rem' : '0' }}
-          >
-            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-          </Button>
-          <OrgMenu {...props} open={orgOpen} />/
-          <Button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-          >
-            <WorkspaceIcon
-              {...iconLarge}
-              secondaryFill={theme.palette.common.white}
-              fill={theme.palette.common.white}
-            />
-          </Button>
-          <WorkspaceSwitcher {...props} open={workspaceOpen} />/
-          <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
-          {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
-        </StyledSwitcher>
-      </Provider>
+      <StyledSwitcher>
+        <Button
+          onClick={() => setOrgOpen(!orgOpen)}
+          style={{ marginRight: orgOpen ? '1rem' : '0' }}
+        >
+          <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+        </Button>
+        <OrgMenu open={orgOpen} organization={organization} />/
+        <Button
+          onClick={() => setWorkspaceOpen(!workspaceOpen)}
+          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+        >
+          <WorkspaceIcon
+            {...iconLarge}
+            secondaryFill={theme.palette.common.white}
+            fill={theme.palette.common.white}
+          />
+        </Button>
+        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
+      </StyledSwitcher>
     </NoSsr>
   );
 }
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  setOrganization: bindActionCreators(setOrganization, dispatch),
-  setKeys: bindActionCreators(setKeys, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SpaceSwitcher));
+export default OrganizationAndWorkSpaceSwitcher;

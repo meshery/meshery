@@ -8,23 +8,25 @@ import {
   OrgNameDisabled,
   StyledTypographyDisabled,
 } from './styles';
-import { connect } from 'react-redux';
-import { withRouter } from 'next/router';
-import { Provider } from 'react-redux';
-import { store } from '../../../store';
 import { NoSsr } from '@layer5/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../ErrorBoundary';
+import { useGetSelectedOrganization } from '@/rtk-query/user';
 
-const CurrentSessionInfo = (props) => {
-  const { organization } = props;
+const CurrentSessionInfo = () => {
+  const { selectedOrganization } = useGetSelectedOrganization();
+  console.log('selectedOrganization error page', selectedOrganization);
+
   const {
     data: rolesRes,
     // isSuccess: isRolesSuccess,
     // isError: isRolesError,
     // error: rolesError,
-  } = useGetUserOrgRolesQuery({ orgId: organization?.id }, { skip: !organization?.id });
+  } = useGetUserOrgRolesQuery(
+    { orgId: selectedOrganization?.id },
+    { skip: !selectedOrganization?.id },
+  );
 
   const {
     data: providerRolesRes,
@@ -32,6 +34,8 @@ const CurrentSessionInfo = (props) => {
     // isError: isProviderRolesError,
     // error: providerRolesError,
   } = useGetUserProviderRolesQuery();
+
+  console.log('rolesRes', rolesRes, 'providerRolesRes', providerRolesRes);
 
   return (
     <ErrorSectionContent>
@@ -41,7 +45,7 @@ const CurrentSessionInfo = (props) => {
         </StyledTypographyDisabled>
         <StyledBox>
           <OrgIcon width="24" height="24" secondaryFill={'#294957'} />
-          <OrgNameDisabled>{organization?.name}</OrgNameDisabled>
+          <OrgNameDisabled>{selectedOrganization?.name}</OrgNameDisabled>
         </StyledBox>
       </div>
       <div>
@@ -50,7 +54,7 @@ const CurrentSessionInfo = (props) => {
         </StyledTypographyDisabled>
         <StyledBox>
           {rolesRes
-            ? rolesRes?.roles.map((role) => <StyledChip key={role.id} label={role.role_name} />)
+            ? rolesRes?.roles?.map?.((role) => <StyledChip key={role.id} label={role.role_name} />)
             : 'No roles found'}
         </StyledBox>
       </div>
@@ -60,7 +64,7 @@ const CurrentSessionInfo = (props) => {
         </StyledTypographyDisabled>
         <StyledBox>
           {providerRolesRes
-            ? providerRolesRes?.role_names.map((role, index) => (
+            ? providerRolesRes?.role_names?.map?.((role, index) => (
                 <StyledChip key={index} label={role} />
               ))
             : 'No roles found'}
@@ -70,23 +74,14 @@ const CurrentSessionInfo = (props) => {
   );
 };
 
-const CurrentSessionInfoWithErrorBoundary = (props) => {
+const CurrentSessionInfoWithErrorBoundary = () => {
   return (
     <NoSsr>
       <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <CurrentSessionInfo {...props} />
-        </Provider>
+        <CurrentSessionInfo />
       </ErrorBoundary>
     </NoSsr>
   );
 };
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
-export default connect(mapStateToProps)(withRouter(CurrentSessionInfoWithErrorBoundary));
+export default CurrentSessionInfoWithErrorBoundary;

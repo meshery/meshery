@@ -232,7 +232,7 @@ func (h *Handler) GetEnvironmentsOfWorkspaceHandler(w http.ResponseWriter, req *
 func (h *Handler) GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	workspaceID := mux.Vars(req)["id"]
 	q := req.URL.Query()
-	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"))
+	resp, err := provider.GetDesignsOfWorkspace(req, workspaceID, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("filter"), q["visibility"])
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
@@ -291,25 +291,6 @@ func (h *Handler) AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.R
 	workspaceID := mux.Vars(req)["id"]
 	designID := mux.Vars(req)["designID"]
 	resp, err := provider.AddDesignToWorkspace(req, workspaceID, designID)
-	if err != nil {
-		h.log.Error(ErrGetResult(err))
-		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	fmt.Fprint(w, string(resp))
-}
-
-// swagger:route DELETE /api/workspaces/{id}/designs/{designID} WorkspacesAPI idRemoveMesheryDesignFromWorkspace
-// Handle DELETE request for removing a meshery design from a workspace
-//
-// Removes a meshery design from a workspace
-// responses:
-// 201: workspaceDesignsMappingResponseWrapper
-func (h *Handler) RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-	workspaceID := mux.Vars(req)["id"]
-	designID := mux.Vars(req)["designID"]
-	resp, err := provider.RemoveDesignFromWorkspace(req, workspaceID, designID)
 	if err != nil {
 		h.log.Error(ErrGetResult(err))
 		http.Error(w, ErrGetResult(err).Error(), http.StatusInternalServerError)

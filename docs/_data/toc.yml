@@ -185,6 +185,8 @@
           url: guides/tutorials/deploy-php-redis
         - title: Deploying AWS EC2 Instances
           url: guides/tutorials/deploy-aws-ec2-instances-with-meshery
+        - title: Deploying Azure Storage Account
+          url: guides/tutorials/deploy-azure-storage-account-with-meshery
         - title: Exploring Kubernetes Deployments
           url: guides/tutorials/kubernetes-deployments
         - title: Deploying Apache Cassandra with StatefulSets
@@ -226,7 +228,7 @@
             - title: Working with Tags
               url: extensions/working-with-tags
         - title: Kanvas Snapshot
-          url: extensions/kanvas-snapshot 
+          url: extensions/kanvas-snapshot
 
 - title: 🧑‍💻 Contributing & Community
   url: project
@@ -272,6 +274,8 @@
               url: project/contributing/contributing-ui-tests
             - title: Dashboard Widgets
               url: project/contributing/contributing-ui-widgets
+            - title: Schema-Driven UI in Meshery
+              url: project/contributing/contributing-ui-schemas
         - title: Docker Extension
           url: project/contributing/contributing-docker-extension
         - title: Policies

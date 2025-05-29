@@ -15,7 +15,6 @@ import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
-import { useLegacySelector } from 'lib/store';
 import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeploymentTarget';
 import { FinalizeDeployment } from './finalizeDeployment';
 import { selectAllSelectedK8sConnections } from '@/store/slices/globalEnvironmentContext';
@@ -23,7 +22,7 @@ import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
 } from 'machines/validator/designValidator';
-import { useSelectorRtk } from '@/store/hooks';
+import { useSelector } from 'react-redux';
 import { styled } from '@layer5/sistent';
 import { useTheme } from '@layer5/sistent';
 import { EnvironmentIcon } from '@layer5/sistent';
@@ -35,9 +34,10 @@ import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
 import { SEVERITY } from '../NotificationCenter/constants';
-import EnvironmentModal from '../Modals/EnvironmentModal';
+import EnvironmentModal from '../General/Modals/EnvironmentModal';
 import { openViewScopedToDesignInOperator } from '@/utils/utils';
 import { useRouter } from 'next/router';
+import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 
 export const ValidateContent = {
   btnText: 'Next',
@@ -120,11 +120,10 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
 };
 
 const SelectTargetStep = () => {
-  const organization = useLegacySelector((state) => state.get('organization'));
-  const connectionMetadataState = useLegacySelector((state) =>
-    state.get('connectionMetadataState'),
-  );
-  const meshsyncControllerState = useLegacySelector((state) => state.get('controllerState'));
+  const { organization } = useSelector((state) => state.ui);
+  const { connectionMetadataState } = useSelector((state) => state.ui);
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
+
   const [isEnvrionmentModalOpen, setIsEnvrionmentModalOpen] = useState(false);
   return (
     <DeploymentTargetContext.Provider
@@ -201,7 +200,8 @@ export const UpdateDeploymentStepper = ({
   const isDryRunning = useIsValidatingDryRun(validationMachine);
   const theme = useTheme();
 
-  const selectedK8sConnections = useSelectorRtk(selectAllSelectedK8sConnections);
+  const selectedK8sConnections = useSelector(selectAllSelectedK8sConnections);
+
   const selectedDeployableK8scontextIds = selectedK8sConnections.map(
     (k8sConnection) => k8sConnection.metadata.id,
   );
@@ -365,21 +365,25 @@ export const UpdateDeploymentStepper = ({
 };
 
 export const DeployStepper = ({ handleClose, design, validationMachine, handleDeploy }) => (
-  <UpdateDeploymentStepper
-    handleClose={handleClose}
-    design={design}
-    handlePerformDeployment={handleDeploy}
-    validationMachine={validationMachine}
-    deployment_type={DEPLOYMENT_TYPE.DEPLOY}
-  />
+  <ProviderStoreWrapper>
+    <UpdateDeploymentStepper
+      handleClose={handleClose}
+      design={design}
+      handlePerformDeployment={handleDeploy}
+      validationMachine={validationMachine}
+      deployment_type={DEPLOYMENT_TYPE.DEPLOY}
+    />
+  </ProviderStoreWrapper>
 );
 
 export const UnDeployStepper = ({ handleClose, design, handleUndeploy, validationMachine }) => (
-  <UpdateDeploymentStepper
-    handleClose={handleClose}
-    design={design}
-    handlePerformDeployment={handleUndeploy}
-    validationMachine={validationMachine}
-    deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
-  />
+  <ProviderStoreWrapper>
+    <UpdateDeploymentStepper
+      handleClose={handleClose}
+      design={design}
+      handlePerformDeployment={handleUndeploy}
+      validationMachine={validationMachine}
+      deployment_type={DEPLOYMENT_TYPE.UNDEPLOY}
+    />
+  </ProviderStoreWrapper>
 );

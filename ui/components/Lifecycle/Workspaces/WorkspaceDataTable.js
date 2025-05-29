@@ -13,7 +13,7 @@ import {
   AuthorCell,
   Box,
   CustomTooltip,
-  Grid,
+  Grid2,
   IconButton,
   ResponsiveDataTable,
   TableCell,
@@ -24,12 +24,13 @@ import {
   WorkspaceEnvironmentSelection,
   WorkspaceIcon,
   Slide,
+  ErrorBoundary,
 } from '@layer5/sistent';
-import { useLegacySelector } from 'lib/store';
 import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';
 import WorkspaceActionList from './WorkspaceActionList';
+import { useSelector } from 'react-redux';
 
 const WorkspaceDataTable = ({
   handleWorkspaceModalOpen,
@@ -47,7 +48,11 @@ const WorkspaceDataTable = ({
     ['id', 'na'],
     ['name', 'xs'],
     ['owner_email', 'na'],
-    ['description', 'm'],
+    ['description', 'na'],
+    ['designCount', 'xs'],
+    ['viewCount', 'xs'],
+    ['teamCount', 'xs'],
+    ['environmentCount', 'na'],
     ['owner', 'xs'],
     ['actions', 'xs'],
     ['environments', 'm'],
@@ -58,11 +63,8 @@ const WorkspaceDataTable = ({
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('updated_at desc');
-  const org_id = useLegacySelector((state) => {
-    return typeof state?.get === 'function'
-      ? state.get('organization')?.id
-      : state?.organization?.id || '';
-  });
+  const { organization } = useSelector((state) => state.ui);
+  const { id: org_id } = organization;
 
   const theme = useTheme();
 
@@ -71,7 +73,8 @@ const WorkspaceDataTable = ({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    orgId: org_id,
+    orgID: org_id,
+    expandInfo: true,
   });
 
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
@@ -119,6 +122,7 @@ const WorkspaceDataTable = ({
         },
       },
     },
+
     {
       name: 'description',
       label: 'Description',
@@ -161,8 +165,8 @@ const WorkspaceDataTable = ({
           return (
             <>
               <TableCell>
-                <Grid style={{ display: 'flex' }}>
-                  <Grid style={{ display: 'flex', alignItems: 'center' }}>
+                <Grid2 style={{ display: 'flex' }}>
+                  <Grid2 style={{ display: 'flex', alignItems: 'center' }}>
                     <Typography>
                       <b>{column.label}</b>
                     </Typography>
@@ -184,8 +188,8 @@ const WorkspaceDataTable = ({
                         </IconButton>
                       </Typography>
                     </CustomTooltip>
-                  </Grid>
-                </Grid>
+                  </Grid2>
+                </Grid2>
               </TableCell>
             </>
           );
@@ -208,6 +212,34 @@ const WorkspaceDataTable = ({
             />
           );
         },
+      },
+    },
+    {
+      name: 'designCount',
+      label: 'Designs',
+      options: {
+        sort: false,
+      },
+    },
+    {
+      name: 'viewCount',
+      label: 'Views',
+      options: {
+        sort: false,
+      },
+    },
+    {
+      name: 'teamCount',
+      label: 'Teams',
+      options: {
+        sort: false,
+      },
+    },
+    {
+      name: 'environmentCount',
+      label: 'Environments',
+      options: {
+        sort: false,
       },
     },
     {
@@ -337,40 +369,35 @@ const WorkspaceDataTable = ({
   const [tableCols, updateCols] = useState(columns);
 
   return (
-    <div key={`list-view-${viewType}`}>
-      <Slide direction="left" in={selectedWorkspace.id ? true : false}>
-        <div
-          style={{
-            marginTop: '1rem',
-          }}
-        >
-          {selectedWorkspace?.id && (
-            <WorkSpaceContentDataTable
-              workspaceId={selectedWorkspace?.id}
-              workspaceName={selectedWorkspace?.name}
-            />
-          )}
-        </div>
-      </Slide>
-      <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
-        <div
-          style={{
-            marginTop: '1rem',
-          }}
-        >
-          {!selectedWorkspace?.id && (
-            <ResponsiveDataTable
-              columns={columns}
-              data={workspacesData}
-              options={options}
-              columnVisibility={columnVisibility}
-              tableCols={tableCols}
-              updateCols={updateCols}
-            />
-          )}
-        </div>
-      </Slide>
-    </div>
+    <ErrorBoundary>
+      <div key={`list-view-${viewType}`}>
+        <Slide direction="left" in={selectedWorkspace.id ? true : false}>
+          <div>
+            {selectedWorkspace?.id && (
+              <WorkSpaceContentDataTable
+                workspaceId={selectedWorkspace?.id}
+                workspaceName={selectedWorkspace?.name}
+                workspace={selectedWorkspace}
+              />
+            )}
+          </div>
+        </Slide>
+        <Slide direction="right" in={!selectedWorkspace.id ? true : false}>
+          <div>
+            {!selectedWorkspace?.id && (
+              <ResponsiveDataTable
+                columns={columns}
+                data={workspacesData}
+                options={options}
+                columnVisibility={columnVisibility}
+                tableCols={tableCols}
+                updateCols={updateCols}
+              />
+            )}
+          </div>
+        </Slide>
+      </div>
+    </ErrorBoundary>
   );
 };
 
