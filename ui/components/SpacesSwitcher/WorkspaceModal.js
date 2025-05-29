@@ -28,7 +28,7 @@ import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
 import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
 import WorkspaceContent from './WorkspaceContent';
-import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
 import { useSelector } from 'react-redux';
@@ -234,19 +234,18 @@ const Navigation = ({ setHeaderInfo }) => {
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
-  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recents (Global)');
   const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
-
+  const { selectedOrganization } = useGetSelectedOrganization();
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
     {
       page: 0,
       pagesize: 'all',
       order: 'updated_at desc',
-      orgID: currentOrganization?.id,
+      orgID: selectedOrganization?.id,
     },
     {
-      skip: !currentOrganization?.id,
+      skip: !selectedOrganization?.id,
     },
   );
   const onSelectWorkspace = ({ id, name }) => {
