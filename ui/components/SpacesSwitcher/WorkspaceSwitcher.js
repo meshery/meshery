@@ -18,15 +18,11 @@ import {
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
 
-export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
+export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   gap: '1rem',
-
-  "&:hover": {
-    backgroundColor: theme.palette.primary.light,
-    },
 }));
 
 function WorkspaceSwitcher({ open }) {
@@ -111,7 +107,6 @@ function WorkspaceSwitcher({ open }) {
                       >
                         {allWorkspaces?.map((works) => (
                           <HoverMenuItem
-                            selected={works.id === selectedWorkspace?.id}
                             key={works.id}
                             value={works.id}
                             onClick={() => {
