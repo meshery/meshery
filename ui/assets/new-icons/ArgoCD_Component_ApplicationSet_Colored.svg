@@ -9,13 +9,15 @@
   <circle cx="32" cy="27" r="4" fill="#090B0B"/>
   
   <!-- Application Set elements -->
-  <g transform="translate(12, 30)">
-    <!-- First application card -->
-    <rect x="0" y="0" width="12" height="16" rx="2" fill="#B5D2F3"/>
+  <symbol id="appCard" viewBox="0 0 12 16">
+    <rect width="12" height="16" rx="2" fill="#B5D2F3"/>
     <rect x="2" y="2" width="8" height="2" rx="1" fill="#FE733E"/>
     <rect x="2" y="6" width="8" height="1" rx="0.5" fill="#FE733E"/>
     <rect x="2" y="9" width="8" height="1" rx="0.5" fill="#FE733E"/>
     <rect x="2" y="12" width="8" height="1" rx="0.5" fill="#FE733E"/>
+  </symbol>
+  <g transform="translate(12, 30)">
+    <use href="#appCard"/>
   </g>
   
   <g transform="translate(26, 30)">
