@@ -52,7 +52,7 @@ const MeshModelComponent_ = ({
     relationships: initialRelationshipsCount,
     registrants: initialRegistrantCount,
   });
- 
+
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   const [view, setView] = useState(selectedTab ?? 'Models');

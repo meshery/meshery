@@ -20,7 +20,6 @@ const MesheryTreeViewRegistrants = ({
   isRegistrantFetching,
   showDetailsData,
 }) => {
- 
   return (
     <TreeView
       aria-label="controlled"
