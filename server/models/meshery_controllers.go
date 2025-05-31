@@ -37,6 +37,13 @@ const (
 	MesheryOperator
 )
 
+type MeshsyncDeploymentMode string
+
+const (
+	MeshsyncDeploymentModeOperator MeshsyncDeploymentMode = "operator"
+	MeshsyncDeploymentModeLibrary  MeshsyncDeploymentMode = "library"
+)
+
 type MesheryControllersHelper struct {
 	// context that is being manged by a particular controllerHelper instance
 	contextID string
@@ -53,6 +60,8 @@ type MesheryControllersHelper struct {
 	log          logger.Handler
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
+
+	meshsyncDeploymentMode MeshsyncDeploymentMode
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
@@ -78,7 +87,12 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 		// Resetting this value results in again subscribing to the Broker.
 		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
+		meshsyncDeploymentMode: MeshsyncDeploymentModeOperator,
 	}
+}
+
+func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value MeshsyncDeploymentMode) {
+	mch.meshsyncDeploymentMode = value
 }
 
 // initializes Meshsync data handler for the contexts for whom it has not been
@@ -91,14 +105,16 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
-		// TODO
-		// logic which broker to use to be implemented
-		useMeshSyncWithNatsBroker := false
 		var brokerHandler broker.Handler
-		if useMeshSyncWithNatsBroker {
+		if mch.meshsyncDeploymentMode == MeshsyncDeploymentModeOperator {
 			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext)
-		} else {
+		} else if mch.meshsyncDeploymentMode == MeshsyncDeploymentModeLibrary {
 			brokerHandler = mch.meshsynDataHandlersChannelBroker(k8scontext)
+		} else {
+			mch.log.Warnf(
+				"MesheryControllersHelper unsupported meshsyncDeploymentMode %s",
+				mch.meshsyncDeploymentMode,
+			)
 		}
 		if brokerHandler == nil {
 			// all messages has been logged already
