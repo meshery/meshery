@@ -8,10 +8,8 @@ import {
   MenuItem,
   CircularProgress,
 } from '@layer5/sistent';
-import SettingsIcon from '@mui/icons-material/Settings';
 import { NoSsr } from '@layer5/sistent';
 import { StyledSelect } from './SpaceSwitcher';
-import { iconMedium } from 'css/icons.styles';
 import WorkspaceModal from './WorkspaceModal';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import {
@@ -25,22 +23,6 @@ export const HoverMenuItem = styled(MenuItem)(() => ({
   justifyContent: 'space-between',
   alignItems: 'center',
   gap: '1rem',
-  '& .setting-icon': {
-    visibility: 'hidden',
-    display: 'flex',
-  },
-  '&:hover .setting-icon': {
-    visibility: 'visible',
-  },
-}));
-
-const SettingsIconWrapper = styled('div')(({ theme }) => ({
-  '& svg': {
-    color: theme.palette.icon.secondary,
-  },
-  '& svg:hover': {
-    fill: theme.palette.icon.secondary + ' !important',
-  },
 }));
 
 function WorkspaceSwitcher({ open }) {
@@ -134,9 +116,6 @@ function WorkspaceSwitcher({ open }) {
                             }}
                           >
                             <span>{works.name}</span>
-                            <SettingsIconWrapper className="setting-icon">
-                              <SettingsIcon {...iconMedium} />
-                            </SettingsIconWrapper>
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>
