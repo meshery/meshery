@@ -91,12 +91,18 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
+		// TODO
+		// logic which broker to use to be implemented
 		useMeshSyncWithNatsBroker := false
 		var brokerHandler broker.Handler
 		if useMeshSyncWithNatsBroker {
 			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext)
 		} else {
 			brokerHandler = mch.meshsynDataHandlersChannelBroker(k8scontext)
+		}
+		if brokerHandler == nil {
+			// all messages has been logged already
+			return mch
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
 		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
