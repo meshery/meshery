@@ -34,7 +34,12 @@ const MesheryTreeViewRegistrants = ({
       selected={selected}
     >
       {data
-        ?.filter((item) => item?.id && (item?.summary || item?.models))
+        ?.filter((item) => item?.summary || item?.models)
+        ?.map((registrant) => (
+          <StyledTreeItem
+            key={registrant.id}
+            nodeId={registrant.id}
+            data-id={registrant.id}
             top
             labelText={registrant?.name}
             newParentId={registrant.id}
