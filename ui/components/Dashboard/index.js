@@ -285,6 +285,7 @@ const Dashboard = () => {
             allowScrollButtonsMobile
             scrollButtons
             textColor="primary"
+            data-testid={getResourceCategory(resourceCategory)}
           >
             {ResourceCategoryTabs.map((resource, idx) => {
               return (
@@ -306,6 +307,7 @@ const Dashboard = () => {
                       )
                     }
                     label={resource}
+                    data-testid={resource}
                   />
                 </CustomTooltip>
               );
@@ -387,7 +389,12 @@ const Dashboard = () => {
           }
 
           return (
-            <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
+            <TabPanel
+              value={resourceCategory}
+              index={resource}
+              key={`${resource}-${idx}`}
+              data-testid={`${resource}-${idx}`}
+            >
               {ResourcesConfig[resource].submenu ? (
                 <ResourcesSubMenu
                   key={idx}
