@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NoSsr } from '@layer5/sistent';
-import MesheryPerformanceComponent from '../../components/MesheryPerformance/Dashboard';
-import { updatepagepath } from '../../lib/store';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import MesheryPerformanceComponent from '../../components/Performance/Dashboard';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
+import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
+import { useEffect } from 'react';
 
-function Performance({ updatepagepath }) {
+function Performance() {
+  const dispatch = useDispatch();
+
   useEffect(() => {
-    updatepagepath({ path: getPath() });
-  }, [updatepagepath]);
+    dispatch(updatePage({ path: getPath(), title: 'Performance' }));
+  }, []);
 
   return (
     <NoSsr>
@@ -22,8 +24,4 @@ function Performance({ updatepagepath }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-});
-
-export default connect(null, mapDispatchToProps)(Performance);
+export default Performance;

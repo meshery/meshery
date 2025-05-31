@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Afd Origin Group",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "azure-cdn",
+    "displayName": "Azure CDN",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Storage"
+    },
+    "subCategory": "Content Delivery Network",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2384f1",
+      "secondaryColor": "#3990f2",
+      "shape": "rectangle",
+      "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" data-name=\"fluent_icons\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"10.79\" y1=\"2.17\" x2=\"10.79\" y2=\"16.56\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".18\" stop-color=\"#5ea0ef\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"3.7\" y=\"5.49\" width=\"1.18\" height=\"5.26\" rx=\".52\" transform=\"rotate(-90 4.29 8.12)\" fill=\"#b3b3b3\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"2.04\" y=\"7.88\" width=\"1.18\" height=\"5.26\" rx=\".52\" transform=\"rotate(-90 2.63 10.51)\" fill=\"#a3a3a3\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"3.7\" y=\"10.26\" width=\"1.18\" height=\"5.26\" rx=\".52\" transform=\"rotate(-90 4.295 12.895)\" fill=\"#7a7a7a\"\u003e\u003c/rect\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18 11a3.28 3.28 0 00-2.81-3.18 4.13 4.13 0 00-4.21-4 4.23 4.23 0 00-4 2.8 3.89 3.89 0 00-3.38 3.8 4 4 0 004.06 3.86h7.11A3.32 3.32 0 0018 11z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" data-name=\"fluent_icons\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"10.79\" y1=\"2.17\" x2=\"10.79\" y2=\"16.56\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".18\" stop-color=\"#5ea0ef\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"3.7\" y=\"5.49\" width=\"1.18\" height=\"5.26\" rx=\".52\" transform=\"rotate(-90 4.29 8.12)\" fill=\"#b3b3b3\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"2.04\" y=\"7.88\" width=\"1.18\" height=\"5.26\" rx=\".52\" transform=\"rotate(-90 2.63 10.51)\" fill=\"#a3a3a3\"\u003e\u003c/rect\u003e\u003crect xmlns=\"http://www.w3.org/2000/svg\" x=\"3.7\" y=\"10.26\" width=\"1.18\" height=\"5.26\" rx=\".52\" transform=\"rotate(-90 4.295 12.895)\" fill=\"#7a7a7a\"\u003e\u003c/rect\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18 11a3.28 3.28 0 00-2.81-3.18 4.13 4.13 0 00-4.21-4 4.23 4.23 0 00-4 2.8 3.89 3.89 0 00-3.38 3.8 4 4 0 004.06 3.86h7.11A3.32 3.32 0 0018 11z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "circle",
+    "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 576 576\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#2380f2;}.cls-2{fill:#30e0df;}.cls-3{fill:url(#未命名的渐变);}\u003c/style\u003e\u003clinearGradient id=\"未命名的渐变\" x1=\"-598.82068\" y1=\"30.58735\" x2=\"-598.82068\" y2=\"27.72976\" gradientTransform=\"matrix(54.12373, 0, 0, -172.99139, 32499.13428, 5332.32946)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#35eed7\"/\u003e\u003cstop offset=\"1\" stop-color=\"#22b1fd\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cg id=\"正稿\"\u003e\u003cg id=\"编组\"\u003e\u003cpath id=\"路径\" class=\"cls-1\" d=\"M426.57318,268.07554l-.49873.21028A214.92961,214.92961,0,0,0,377.388,296.94744c-51.47433,40.62945-81.2012,104.36467-81.2999,196.22946q-.02378,22.38263,1.88707,42.144h-68.7577q-1.733-20.27023-1.7122-42.21728c.12142-112.45435,39.14463-196.12117,107.39138-249.98937A285.65158,285.65158,0,0,1,408.51007,201.374Q420.83352,231.2059,426.57318,268.07554Z\"/\u003e\u003cpath id=\"路径-2\" data-name=\"路径\" class=\"cls-2\" d=\"M240.93685,243.11423c68.24675,53.8682,107.27,137.535,107.39138,249.98937q.02283,21.94251-1.7122,42.21728h-68.7577q1.91543-19.77132,1.88707-42.144c-.0987-91.86479-29.82557-155.6-81.2999-196.22946a214.04937,214.04937,0,0,0-46.04681-27.51494q6.91446-36.59784,20.11145-65.98987A284.45232,284.45232,0,0,1,240.93685,243.11423Z\"/\u003e\u003cpath id=\"路径-3\" data-name=\"路径\" class=\"cls-3\" d=\"M111.23333,40.98064l54.82658,45.70592C68.28913,179.24247,66.409,379.09983,105.001,535.31983H36.40107C-7.00852,380.02391-.93753,157.32034,111.23333,40.98064Z\"/\u003e\u003cpath id=\"路径-4\" data-name=\"路径\" class=\"cls-1\" d=\"M465.52417,39.63568c113.4296,115.96149,119.71591,339.789,76.138,495.6872H473.06111c38.7651-156.91214,36.69721-357.857-62.367-449.86432Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 576 576\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#ccc;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"编组-2\"\u003e\u003cg id=\"编组备份\"\u003e\u003cpath id=\"路径\" class=\"cls-1\" d=\"M427.03534,267.999l-.49828.21009a214.731,214.731,0,0,0-48.64139,28.63512c-51.42673,40.59189-81.12612,104.26817-81.22473,196.048q-.02374,22.36192,1.88532,42.105H229.86214q-1.73144-20.2515-1.71061-42.17824c.1213-112.35038,39.10843-195.93984,107.29208-249.75823a285.38747,285.38747,0,0,1,73.54532-41.70162Q421.301,231.16346,427.03534,267.999Z\"/\u003e\u003cpath id=\"路径-2\" data-name=\"路径\" class=\"cls-2\" d=\"M241.57064,243.06078C309.75429,296.87917,348.74143,380.46863,348.86273,492.819q.0228,21.92221-1.71062,42.17824H278.458q1.91366-19.75305,1.88532-42.105c-.0986-91.77986-29.798-155.45614-81.22472-196.048a213.85173,213.85173,0,0,0-46.00424-27.4895q6.90805-36.564,20.09285-65.92886A284.18909,284.18909,0,0,1,241.57064,243.06078Z\"/\u003e\u003cpath id=\"路径-3\" data-name=\"路径\" class=\"cls-2\" d=\"M111.98705,41.11407l54.77588,45.66367c-97.68037,92.47033-99.55874,292.1429-61.00248,448.21846H37.224C-6.14547,379.84387-.08009,157.34621,111.98705,41.11407Z\"/\u003e\u003cpath id=\"路径-4\" data-name=\"路径\" class=\"cls-1\" d=\"M465.95031,39.77036C579.275,155.62464,585.55553,379.24516,542.018,534.99925H473.48028c38.72926-156.76706,36.66328-357.5261-62.30932-449.44838Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "configuration": null,
+  "component": {
+    "version": "cdn.azure.com/v1api20230501",
+    "kind": "AfdOriginGroup",
+    "schema": "{\n \"description\": \"Generator information:\\n- Generated from: /cdn/resource-manager/Microsoft.Cdn/stable/2023-05-01/afdx.json\\n- ARM URI: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Cdn/profiles/{profileName}/originGroups/{originGroupName}\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"azureName\": {\n     \"description\": \"AzureName: The name of the resource in Azure. This is often the same as the name of the resource in Kubernetes but it\\ndoesn't have to be.\",\n     \"type\": \"string\"\n    },\n    \"healthProbeSettings\": {\n     \"description\": \"HealthProbeSettings: Health probe settings to the origin that is used to determine the health of the origin.\",\n     \"properties\": {\n      \"probeIntervalInSeconds\": {\n       \"description\": \"ProbeIntervalInSeconds: The number of seconds between health probes.Default is 240sec.\",\n       \"maximum\": 255,\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"probePath\": {\n       \"description\": \"ProbePath: The path relative to the origin that is used to determine the health of the origin.\",\n       \"type\": \"string\"\n      },\n      \"probeProtocol\": {\n       \"description\": \"ProbeProtocol: Protocol to use for health probe.\",\n       \"enum\": [\n        \"Http\",\n        \"Https\",\n        \"NotSet\"\n       ],\n       \"type\": \"string\"\n      },\n      \"probeRequestType\": {\n       \"description\": \"ProbeRequestType: The type of health probe request that is made.\",\n       \"enum\": [\n        \"GET\",\n        \"HEAD\",\n        \"NotSet\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"loadBalancingSettings\": {\n     \"description\": \"LoadBalancingSettings: Load balancing settings for a backend pool\",\n     \"properties\": {\n      \"additionalLatencyInMilliseconds\": {\n       \"description\": \"AdditionalLatencyInMilliseconds: The additional latency in milliseconds for probes to fall into the lowest latency bucket\",\n       \"type\": \"integer\"\n      },\n      \"sampleSize\": {\n       \"description\": \"SampleSize: The number of samples to consider for load balancing decisions\",\n       \"type\": \"integer\"\n      },\n      \"successfulSamplesRequired\": {\n       \"description\": \"SuccessfulSamplesRequired: The number of samples within the sample period that must succeed\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The specification for configuring operator behavior. This field is interpreted by the operator and not\\npassed directly to Azure\",\n     \"properties\": {\n      \"configMapExpressions\": {\n       \"description\": \"ConfigMapExpressions: configures where to place operator written dynamic ConfigMaps (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secretExpressions\": {\n       \"description\": \"SecretExpressions: configures where to place operator written dynamic secrets (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a cdn.azure.com/Profile resource\",\n     \"properties\": {\n      \"armId\": {\n       \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"sessionAffinityState\": {\n     \"description\": \"SessionAffinityState: Whether to allow session affinity on this host. Valid options are 'Enabled' or 'Disabled'\",\n     \"enum\": [\n      \"Disabled\",\n      \"Enabled\"\n     ],\n     \"type\": \"string\"\n    },\n    \"trafficRestorationTimeToHealedOrNewEndpointsInMinutes\": {\n     \"description\": \"TrafficRestorationTimeToHealedOrNewEndpointsInMinutes: Time in minutes to shift the traffic to the endpoint gradually\\nwhen an unhealthy endpoint comes healthy or a new endpoint is added. Default is 10 mins. This property is currently not\\nsupported.\",\n     \"maximum\": 50,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"owner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Afd Origin Group\",\n \"type\": \"object\"\n}"
+  }
+}

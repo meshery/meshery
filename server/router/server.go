@@ -345,8 +345,6 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 		Methods("GET")
 	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.AddDesignToWorkspaceHandler), models.ProviderAuth))).
 		Methods("POST")
-	gMux.Handle("/api/workspaces/{id}/designs/{designID}", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.RemoveDesignFromWorkspaceHandler), models.ProviderAuth))).
-		Methods("DELETE")
 
 	gMux.Handle("/api/identity/orgs", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(h.GetOrganizations), models.ProviderAuth))).
 		Methods("GET")

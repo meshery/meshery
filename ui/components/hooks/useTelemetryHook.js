@@ -1,9 +1,9 @@
+import { useDispatch } from 'react-redux';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { useNotification } from '@/utils/hooks/useNotification';
-import dataFetch from 'lib/data-fetch';
 import { EVENT_TYPES } from 'lib/event-types';
-import { updateProgress } from 'lib/store';
-import { useDispatch } from 'react-redux';
+import { useLazyPingGrafanaQuery, useLazyPingPrometheusQuery } from '@/rtk-query/telemetry';
 
 export function useTelemetryHook(connectionType) {
   switch (connectionType) {
@@ -17,70 +17,65 @@ export function useTelemetryHook(connectionType) {
 function PingPrometheus() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
+  const [triggerPingPrometheus] = useLazyPingPrometheusQuery();
 
-  const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
+  const ping = async (name, server, connectionID) => {
+    dispatch(updateProgressAction({ showProgress: true }));
 
-    dataFetch(
-      `/api/telemetry/metrics/ping/${connectionID}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          notify({
-            message: `Prometheus connection "${name}" pinged at ${server}`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
-      },
-      (error) => {
-        let cleanErrorMessage = 'There was an error communicating with Prometheus';
-        let serverError;
-        if (error && typeof error === 'string') {
-          serverError = error.replace(/^Status Code: \d+\.\s*/, '').trim();
-        } else if (error.message) {
-          serverError = error;
-        }
+    try {
+      const result = await triggerPingPrometheus({ connectionId: connectionID }).unwrap();
+      if (typeof result !== 'undefined') {
         notify({
-          message: `${cleanErrorMessage}: ${serverError}`,
-          event_type: EVENT_TYPES.ERROR,
+          message: `Prometheus connection "${name}" pinged at ${server}`,
+          event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-    );
+      }
+    } catch (error) {
+      let cleanErrorMessage = 'There was an error communicating with Prometheus';
+      let serverError;
+      if (error && typeof error.data === 'string') {
+        serverError = error.data.replace(/^Status Code: \d+\.\s*/, '').trim();
+      } else if (error.error) {
+        serverError = error.error;
+      }
+      notify({
+        message: `${cleanErrorMessage}: ${serverError || ''}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
 
-    dispatch(updateProgress({ showProgress: false }));
+    dispatch(updateProgressAction({ showProgress: false }));
   };
+
   return ping;
 }
 
 function PingGrafana() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
-  const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
-    dataFetch(
-      `/api/telemetry/metrics/grafana/ping/${connectionID}`,
-      {
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          notify({
-            message: `Grafana connection "${name}" pinged at ${server}`,
-            event_type: EVENT_TYPES.SUCCESS,
-          });
-        }
-      },
-      () => {
+  const [triggerPingGrafana] = useLazyPingGrafanaQuery();
+
+  const ping = async (name, server, connectionID) => {
+    dispatch(updateProgressAction({ showProgress: true }));
+
+    try {
+      const result = await triggerPingGrafana({ connectionId: connectionID }).unwrap();
+      if (typeof result !== 'undefined') {
         notify({
-          message: 'There was an error communicating with Grafana',
-          event_type: EVENT_TYPES.ERROR,
+          message: `Grafana connection "${name}" pinged at ${server}`,
+          event_type: EVENT_TYPES.SUCCESS,
         });
-      },
-    );
-    dispatch(updateProgress({ showProgress: false }));
+      }
+    } catch {
+      notify({
+        message: 'There was an error communicating with Grafana',
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+
+    dispatch(updateProgressAction({ showProgress: false }));
   };
+
   return ping;
 }
 

@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://franklinpashok.github.io/bottlerocket-update-operator/bottlerocket-update-operator-0.3.0.tgz"
   },
   "configuration": null,
   "component": {

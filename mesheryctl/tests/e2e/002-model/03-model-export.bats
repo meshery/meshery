@@ -1,18 +1,16 @@
 #!/usr/bin/env bats
 
 setup() {
-  
- load "$E2E_HELPERS_PATH/tests_helpers"
-	_tests_helper
-  MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
-  export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/"
+   load "$E2E_HELPERS_PATH/bats_libraries"
+	_load_bats_libraries
 
-  [ -d "$TESTDATA_DIR" ] || mkdir -p "$TESTDATA_DIR"
+  export TESTDATA_DIR="$TEMP_DATA_DIR/testdata/model"
+  mkdir -p "$TESTDATA_DIR"
+
+  export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures"
 }
 
-teardown() {
- [ -d "$TESTDATA_DIR" ] && rm -rf "$TESTDATA_DIR"
-}
+
 
 @test "mesheryctl model export displays usage instructions when no model name provided" {
   run $MESHERYCTL_BIN model export
@@ -23,7 +21,7 @@ teardown() {
 }
 
 @test "mesheryctl model export succeeds with default options" {
-  run $MESHERYCTL_BIN model export accurate -l $TESTDATA_DIR
+  run $MESHERYCTL_BIN model export accurate -l "$TESTDATA_DIR"
   assert_success
 
   assert_output --partial "Exported model to $TESTDATA_DIR"

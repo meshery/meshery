@@ -1,0 +1,78 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Resource Pool Claim",
+  "description": "Orchestration \u0026 Management",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "capsule",
+    "displayName": "Capsule",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Scheduling \u0026 Orchestration",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://projectcapsule.github.io/charts/capsule-0.10.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.10.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "",
+    "secondaryColor": "circle",
+    "shape": "Scheduling \u0026 Orchestration",
+    "svgColor": "#00B39F",
+    "svgComplete": "",
+    "svgWhite": "#00D3A9"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://projectcapsule.github.io/charts/capsule-0.10.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "FALSE",
+    "kind": "ResourcePoolClaim",
+    "schema": "{\n \"description\": \"ResourcePoolClaim is the Schema for the resourcepoolclaims API.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"claim\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"Amount which should be claimed for the resourcequota\",\n     \"type\": \"object\"\n    },\n    \"pool\": {\n     \"description\": \"If there's the possability to claim from multiple global Quotas\\nYou must be specific about which one you want to claim resources from\\nOnce bound to a ResourcePool, this field is immutable\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"claim\",\n    \"pool\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Pool Claim\",\n \"type\": \"object\"\n}"
+  }
+}

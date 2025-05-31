@@ -1,0 +1,45 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "azure-machine-learning-services",
+  "displayName": "Azure Machine Learning Services",
+  "status": "ignored",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "github",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Machine Learning"
+  },
+  "subCategory": "Machine Learning",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"20\" height=\"20\" viewBox=\"0 0 64 64\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" cx=\"24.04\" cy=\"2101.86\" r=\"23.44\" gradientTransform=\"translate(1.76 -2104)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0e90cf\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#006daa\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" cx=\"30.72\" cy=\"2151.5\" r=\"29.47\" gradientTransform=\"translate(1.76 -2104)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#1a447a\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".27\" stop-color=\"#163e68\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".72\" stop-color=\"#103651\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0e3348\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"c\" cx=\".25\" cy=\"2151.79\" r=\"29.65\" gradientTransform=\"translate(1.76 -2104)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#49bdea\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".36\" stop-color=\"#2ea4de\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".75\" stop-color=\"#178ed3\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0e86cf\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"d\" cx=\"42.3\" cy=\"2131.97\" r=\"18.61\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\"\u003e\u003c/radialGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#a)\" d=\"M23.96 0h15.96v24.02H23.96z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#b)\" d=\"M58.04 64H5.96L2 48.03h60L58.04 64z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#c)\" d=\"M5.96 64L2 48.03l21.96-24.01h16.08L5.96 64z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#d)\" d=\"M58.04 64l-24-24.02 9.96-12 18 20.05L58.04 64z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"20\" height=\"20\" viewBox=\"0 0 64 64\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" cx=\"24.04\" cy=\"2101.86\" r=\"23.44\" gradientTransform=\"translate(1.76 -2104)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#0e90cf\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#006daa\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" cx=\"30.72\" cy=\"2151.5\" r=\"29.47\" gradientTransform=\"translate(1.76 -2104)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#1a447a\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".27\" stop-color=\"#163e68\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".72\" stop-color=\"#103651\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0e3348\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"c\" cx=\".25\" cy=\"2151.79\" r=\"29.65\" gradientTransform=\"translate(1.76 -2104)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#49bdea\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".36\" stop-color=\"#2ea4de\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".75\" stop-color=\"#178ed3\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#0e86cf\"\u003e\u003c/stop\u003e\u003c/radialGradient\u003e\u003cradialGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"d\" cx=\"42.3\" cy=\"2131.97\" r=\"18.61\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\"\u003e\u003c/radialGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#a)\" d=\"M23.96 0h15.96v24.02H23.96z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#b)\" d=\"M58.04 64H5.96L2 48.03h60L58.04 64z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#c)\" d=\"M5.96 64L2 48.03l21.96-24.01h16.08L5.96 64z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#d)\" d=\"M58.04 64l-24-24.02 9.96-12 18 20.05L58.04 64z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+  },
+  "model": {
+    "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "components_count": 0,
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
+}

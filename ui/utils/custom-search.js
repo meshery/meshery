@@ -50,7 +50,14 @@ const SearchTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' }) => {
+const SearchBar = ({
+  onSearch,
+  placeholder,
+  expanded,
+  setExpanded,
+  value = '',
+  setModelsFilters,
+}) => {
   const [searchText, setSearchText] = useState(value);
   const searchRef = useRef(null);
 
@@ -62,6 +69,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
   };
 
   const handleClearIconClick = () => {
+    setModelsFilters({ page: 0 });
     setSearchText('');
     debouncedOnSearch('');
     setExpanded(false);
@@ -122,7 +130,7 @@ const SearchBar = ({ onSearch, placeholder, expanded, setExpanded, value = '' })
         </ClickAwayListener>
       ) : (
         <CustomTooltip title="Search">
-          <IconButton onClick={handleSearchIconClick}>
+          <IconButton onClick={handleSearchIconClick} data-testid="search-icon">
             <SearchIcon fill={theme.palette.icon.secondary} height={'1.5rem'} width={'1.5rem'} />
           </IconButton>
         </CustomTooltip>

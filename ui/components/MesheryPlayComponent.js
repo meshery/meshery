@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { connect } from 'react-redux';
 import {
   Button,
   Divider,
   MenuItem,
   TextField,
-  Grid,
+  Grid2,
   Typography,
   styled,
   useTheme,
@@ -13,12 +12,11 @@ import {
   charcoal,
   NoSsr,
 } from '@layer5/sistent';
-import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
-import { bindActionCreators } from 'redux';
-import { setAdapter } from '../lib/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAdapter } from '@/store/slices/adapter';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -55,13 +53,13 @@ const AlreadyConfigured = styled('div')({
   flexDirection: 'column',
 });
 
-const MesheryPlayComponent = (props) => {
-  const { meshAdapters } = props;
+const MesheryPlayComponent = () => {
   const router = useRouter();
-
+  const dispatch = useDispatch();
+  const { meshAdapters } = useSelector((state) => state.adapter);
   // Initialize state
   const [adapter, setAdapterState] = useState(() => {
-    if (meshAdapters && meshAdapters.size > 0) {
+    if (meshAdapters && meshAdapters.length > 0) {
       return meshAdapters[0];
     }
     return {};
@@ -76,8 +74,8 @@ const MesheryPlayComponent = (props) => {
       if (selectedAdapter) {
         setAdapterState(selectedAdapter);
       }
-    } else if (meshAdapters.size > 0) {
-      setAdapterState(meshAdapters.get(0));
+    } else if (meshAdapters.length > 0) {
+      setAdapterState(meshAdapters[0]);
     }
   };
 
@@ -90,10 +88,10 @@ const MesheryPlayComponent = (props) => {
   }, [router.events]);
 
   useEffect(() => {
-    if (meshAdapters?.size > 0) {
+    if (meshAdapters?.length > 0) {
       handleRouteChange();
     }
-  }, [meshAdapters?.size]);
+  }, [meshAdapters?.length]);
 
   const handleConfigure = () => {
     router.push('/settings?settingsCategory=Adapters');
@@ -111,14 +109,13 @@ const MesheryPlayComponent = (props) => {
 
   const handleAdapterChange = () => {
     return (event) => {
-      const { setAdapter } = props;
       if (event.target.value !== '') {
         const selectedAdapter = meshAdapters.filter(
           ({ adapter_location }) => adapter_location === event.target.value,
         );
         if (selectedAdapter && selectedAdapter.size === 1) {
-          setAdapterState(selectedAdapter.get(0));
-          setAdapter({ selectedAdapter: selectedAdapter.get(0).name });
+          setAdapterState(selectedAdapter[0]);
+          dispatch(setAdapter({ selectedAdapter: selectedAdapter[0].name }));
         }
       }
     };
@@ -128,7 +125,7 @@ const MesheryPlayComponent = (props) => {
     let adapCount = 0;
     let adapter;
     meshAdapters.forEach((adap) => {
-      if (adap.adapter_location === props.adapter) {
+      if (adap.adapter_location === adapter) {
         adapter = adap;
         meshAdapters.forEach((ad) => {
           if (ad.name == adap.name) adapCount += 1;
@@ -150,7 +147,7 @@ const MesheryPlayComponent = (props) => {
     return '';
   };
 
-  if (meshAdapters.size === 0) {
+  if (meshAdapters.length === 0) {
     return (
       <NoSsr>
         <>
@@ -172,7 +169,7 @@ const MesheryPlayComponent = (props) => {
     );
   }
 
-  if (props.adapter && props.adapter !== '') {
+  if (adapter && adapter !== '') {
     const indContent = renderIndividualAdapter();
     if (indContent !== '') {
       return indContent;
@@ -185,8 +182,8 @@ const MesheryPlayComponent = (props) => {
     <>
       <NoSsr>
         <PlayRoot>
-          <Grid container>
-            <Grid item xs={12}>
+          <Grid2 container size="grow">
+            <Grid2 size={{ xs: 12 }}>
               <PaneSection>
                 <TextField
                   select
@@ -231,8 +228,8 @@ const MesheryPlayComponent = (props) => {
                   ))}
                 </TextField>
               </PaneSection>
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
         </PlayRoot>
         <Divider variant="fullWidth" light />
         {adapter && adapter.adapter_location && (
@@ -243,22 +240,4 @@ const MesheryPlayComponent = (props) => {
   );
 };
 
-MesheryPlayComponent.propTypes = {
-  meshAdapters: PropTypes.object.isRequired,
-  setAdapter: PropTypes.func.isRequired,
-  adapter: PropTypes.string,
-};
-
-const mapStateToProps = (state) => {
-  const k8sconfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters');
-  const meshAdaptersts = state.get('meshAdaptersts');
-  const selectedAdapter = state.get('selectedAdapter');
-  return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
-};
-
-const mapDispatchToProps = (dispatch) => ({
-  setAdapter: bindActionCreators(setAdapter, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(MesheryPlayComponent);
+export default MesheryPlayComponent;

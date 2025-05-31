@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid, IconButton, Typography, Link, useTheme } from '@layer5/sistent';
+import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@layer5/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@layer5/sistent';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Save from '@mui/icons-material/Save';
@@ -31,8 +31,6 @@ import { Edit, Lock, Public } from '@mui/icons-material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
-import { Provider } from 'react-redux';
-import { store } from '../../store';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
@@ -41,7 +39,7 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import { VISIBILITY } from '@/utils/Enum';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge, iconMedium } from 'css/icons.styles';
-import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
+import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({
@@ -98,7 +96,7 @@ function MesheryPatternCard_({
     try {
       const jsonData = JSON.parse(file);
       return JSON.stringify(jsonData, null, 1);
-    } catch (err) {
+    } catch {
       return file;
     }
   };
@@ -337,7 +335,7 @@ function MesheryPatternCard_({
                 </CustomTooltip>
               </CardHeaderRight>
             </YamlDialogTitleGrid>
-            <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
+            <Grid2 size={{ xs: 12 }} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
               {catalogContentKeys.length === 0 ? (
                 <StyledCodeMirrorWrapper fullScreen={fullScreen}>
@@ -364,9 +362,9 @@ function MesheryPatternCard_({
                   </>
                 ))
               )}
-            </Grid>
+            </Grid2>
 
-            <Grid item xs={8}>
+            <Grid2 size={{ xs: 8 }}>
               <div style={{ marginRight: '0.5rem' }}>
                 <div>
                   {created_at ? (
@@ -384,8 +382,8 @@ function MesheryPatternCard_({
                   ) : null}
                 </div>
               </div>
-            </Grid>
-            <Grid item xs={12}>
+            </Grid2>
+            <Grid2 size={{ xs: 12 }}>
               {isReadOnly ? null : (
                 <UpdateDeleteButtons>
                   {/* Save button */}
@@ -409,7 +407,7 @@ function MesheryPatternCard_({
                   </CustomTooltip>
                 </UpdateDeleteButtons>
               )}
-            </Grid>
+            </Grid2>
           </CardBackGrid>
         </>
       </FlipCard>
@@ -418,12 +416,7 @@ function MesheryPatternCard_({
 }
 
 export const MesheryPatternCard = (props) => {
-  return (
-    <Provider store={store}>
-      <MesheryPatternCard_ {...props} />
-    </Provider>
-  );
+  return <MesheryPatternCard_ {...props} />;
 };
 
-// @ts-ignore
 export default MesheryPatternCard;

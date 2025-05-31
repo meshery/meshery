@@ -428,21 +428,6 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 			eventBuilder.WithAction("undeploy")
 		}
 
-		if strings.Contains(event.Summary, "Smi conformance test") {
-			result := &models.SmiResult{}
-			err := json.Unmarshal([]byte(event.Details), result)
-			if err != nil {
-				log.Error(models.ErrUnmarshal(err, "event"))
-				return
-			}
-
-			id, err := p.PublishSmiResults(result)
-			if err != nil {
-				log.Error(ErrPublishSmiResults(err))
-				return
-			}
-			event.Details = fmt.Sprintf("Result-Id: %s", id)
-		}
 		if eventType == "ERROR" {
 			err := errors.New(event.ErrorCode, errors.Alert, []string{event.Summary}, []string{event.Details}, []string{event.ProbableCause}, []string{event.SuggestedRemediation})
 			eventBuilder.WithMetadata(map[string]interface{}{

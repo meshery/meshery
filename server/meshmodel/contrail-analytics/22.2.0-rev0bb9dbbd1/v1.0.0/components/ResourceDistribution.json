@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://jeffreymarshall.github.io/cn2-analytics-test/contrail-analytics-22.2.0.93.tgz"
   },
   "configuration": null,
   "component": {

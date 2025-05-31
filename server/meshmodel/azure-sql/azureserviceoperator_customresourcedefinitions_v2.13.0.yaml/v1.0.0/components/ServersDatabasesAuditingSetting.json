@@ -1,0 +1,193 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Servers Databases Auditing Setting",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "azure-sql",
+    "displayName": "Azure SQL",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Database"
+    },
+    "subCategory": "Database",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2384f1",
+      "secondaryColor": "#3990f2",
+      "shape": "rectangle",
+      "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\".5\" y1=\"10.04\" x2=\"13.18\" y2=\"10.04\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#005ba1\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".07\" stop-color=\"#0060a9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".36\" stop-color=\"#0071c8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".52\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".64\" stop-color=\"#0074cd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".82\" stop-color=\"#006abb\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#005ba1\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.84 5.09c-3.5 0-6.34-1-6.34-2.3V15c0 1.26 2.79 2.28 6.25 2.3h.09c3.5 0 6.34-1 6.34-2.3V2.79c0 1.27-2.84 2.3-6.34 2.3z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.18 2.79c0 1.27-2.84 2.3-6.34 2.3S.5 4.06.5 2.79 3.34.49 6.84.49s6.34 1 6.34 2.3\" fill=\"#e8e8e8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M11.7 2.6c0 .81-2.18 1.46-4.86 1.46S2 3.41 2 2.6s2.16-1.46 4.84-1.46 4.86.66 4.86 1.46\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.84 2.94A12 12 0 003 3.49a11.25 11.25 0 003.85.57 11.25 11.25 0 003.85-.57 12 12 0 00-3.86-.55z\" fill=\"#198ab3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M10.74 11.1V7.72h-.93v4.14h2.46v-.76zM3.59 9.43a1.92 1.92 0 01-.51-.31A.44.44 0 013 8.8a.38.38 0 01.16-.31.72.72 0 01.42-.11 1.67 1.67 0 011 .29v-.86a2.67 2.67 0 00-1-.16 1.74 1.74 0 00-1.2.35 1.13 1.13 0 00-.41.9c0 .51.32.91 1 1.21a2.9 2.9 0 01.61.36.4.4 0 01.16.32.38.38 0 01-.16.31.75.75 0 01-.45.12A1.6 1.6 0 012 10.77v.93a2.29 2.29 0 001.07.23 2 2 0 001.18-.32 1.1 1.1 0 00.43-.92 1 1 0 00-.25-.7 2.42 2.42 0 00-.84-.56zM8.79 11a2.4 2.4 0 00.33-1.27 2.32 2.32 0 00-.25-1.1 1.81 1.81 0 00-.7-.75 2 2 0 00-1-.26 2.18 2.18 0 00-1.09.27 1.87 1.87 0 00-.73.77 2.41 2.41 0 00-.26 1.15 2.26 2.26 0 00.24 1.05 1.83 1.83 0 00.68.75 2 2 0 001 .29l.85 1h1.19l-1.2-1.11a1.81 1.81 0 00.94-.79zm-.93-.26a1 1 0 01-1.53 0 1.51 1.51 0 01-.28-1 1.48 1.48 0 01.29-1 .92.92 0 01.78-.37.89.89 0 01.75.37 1.62 1.62 0 01.27 1 1.46 1.46 0 01-.28 1.03z\" fill=\"#f2f2f2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.81 17.49l.24-.79.47-.27.81.36.52-.53v-.06l-.37-.71.22-.5.81-.29h.09v-.73h-.1l-.8-.24-.26-.46.35-.82-.53-.51h-.06l-.71.36L15 12l-.32-.89h-.74v.11l-.24.79-.51.22-.87-.4-.51.53.05.1.38.74-.2.51-.94.29v.74h.11l.79.24.22.51-.39.86.53.52.09-.05.74-.38.51.2.34.89h.73zm-1.2-2.36a1.06 1.06 0 111.49-1.52 1.06 1.06 0 01-1.49 1.52z\" fill=\"#949494\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\".5\" y1=\"10.04\" x2=\"13.18\" y2=\"10.04\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#005ba1\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".07\" stop-color=\"#0060a9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".36\" stop-color=\"#0071c8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".52\" stop-color=\"#0078d4\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".64\" stop-color=\"#0074cd\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".82\" stop-color=\"#006abb\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#005ba1\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.84 5.09c-3.5 0-6.34-1-6.34-2.3V15c0 1.26 2.79 2.28 6.25 2.3h.09c3.5 0 6.34-1 6.34-2.3V2.79c0 1.27-2.84 2.3-6.34 2.3z\" fill=\"url(#a)\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.18 2.79c0 1.27-2.84 2.3-6.34 2.3S.5 4.06.5 2.79 3.34.49 6.84.49s6.34 1 6.34 2.3\" fill=\"#e8e8e8\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M11.7 2.6c0 .81-2.18 1.46-4.86 1.46S2 3.41 2 2.6s2.16-1.46 4.84-1.46 4.86.66 4.86 1.46\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.84 2.94A12 12 0 003 3.49a11.25 11.25 0 003.85.57 11.25 11.25 0 003.85-.57 12 12 0 00-3.86-.55z\" fill=\"#198ab3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M10.74 11.1V7.72h-.93v4.14h2.46v-.76zM3.59 9.43a1.92 1.92 0 01-.51-.31A.44.44 0 013 8.8a.38.38 0 01.16-.31.72.72 0 01.42-.11 1.67 1.67 0 011 .29v-.86a2.67 2.67 0 00-1-.16 1.74 1.74 0 00-1.2.35 1.13 1.13 0 00-.41.9c0 .51.32.91 1 1.21a2.9 2.9 0 01.61.36.4.4 0 01.16.32.38.38 0 01-.16.31.75.75 0 01-.45.12A1.6 1.6 0 012 10.77v.93a2.29 2.29 0 001.07.23 2 2 0 001.18-.32 1.1 1.1 0 00.43-.92 1 1 0 00-.25-.7 2.42 2.42 0 00-.84-.56zM8.79 11a2.4 2.4 0 00.33-1.27 2.32 2.32 0 00-.25-1.1 1.81 1.81 0 00-.7-.75 2 2 0 00-1-.26 2.18 2.18 0 00-1.09.27 1.87 1.87 0 00-.73.77 2.41 2.41 0 00-.26 1.15 2.26 2.26 0 00.24 1.05 1.83 1.83 0 00.68.75 2 2 0 001 .29l.85 1h1.19l-1.2-1.11a1.81 1.81 0 00.94-.79zm-.93-.26a1 1 0 01-1.53 0 1.51 1.51 0 01-.28-1 1.48 1.48 0 01.29-1 .92.92 0 01.78-.37.89.89 0 01.75.37 1.62 1.62 0 01.27 1 1.46 1.46 0 01-.28 1.03z\" fill=\"#f2f2f2\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M14.81 17.49l.24-.79.47-.27.81.36.52-.53v-.06l-.37-.71.22-.5.81-.29h.09v-.73h-.1l-.8-.24-.26-.46.35-.82-.53-.51h-.06l-.71.36L15 12l-.32-.89h-.74v.11l-.24.79-.51.22-.87-.4-.51.53.05.1.38.74-.2.51-.94.29v.74h.11l.79.24.22.51-.39.86.53.52.09-.05.74-.38.51.2.34.89h.73zm-1.2-2.36a1.06 1.06 0 111.49-1.52 1.06 1.06 0 01-1.49 1.52z\" fill=\"#949494\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"b774912a-6f06-40f4-8e31-f2d4dd61d2af\" x1=\"13.398\" y1=\"1.747\" x2=\"13.398\" y2=\"7.447\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#5ea0ef\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"b0e57c80-1696-42e1-919b-c03f7e5b85f1\" x1=\"2.85\" y1=\"5.341\" x2=\"2.85\" y2=\"11.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#a67af4\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#773adc\" /\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"e7877f44-c141-4bbe-939d-1da5b61be46b\" x1=\"11.829\" y1=\"12.149\" x2=\"11.829\" y2=\"20.004\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop offset=\"0\" stop-color=\"#3cd4c2\" /\u003e\n\u003cstop offset=\"1\" stop-color=\"#258277\" /\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003cpath d=\"M14.428,6.615a.526.526,0,0,1-.438-.235L11.351,2.415a2.643,2.643,0,0,0-4.443,0L5.43,4.7a.525.525,0,0,1-.882-.57L6.026,1.839a3.694,3.694,0,0,1,6.2,0L14.865,5.8a.526.526,0,0,1-.437.817Z\" fill=\"#0078d4\" /\u003e\n\u003cpath d=\"M14.3,15.538H11.131a.526.526,0,0,1,0-1.051H14.3a2.644,2.644,0,0,0,2.22-4.078L15.342,8.581a.525.525,0,0,1,.883-.569L17.4,9.84a3.694,3.694,0,0,1-3.1,5.7Z\" fill=\"#37c2b1\" /\u003e\n\u003cpath d=\"M7.269,15.538H4.322a3.694,3.694,0,0,1-3.1-5.7L3.166,6.863a.525.525,0,0,1,.879.575L2.1,10.412a2.643,2.643,0,0,0,2.221,4.075H7.269a.526.526,0,0,1,0,1.051Z\" fill=\"#a67af4\" /\u003e\n\u003ccircle cx=\"13.398\" cy=\"4.597\" r=\"2.85\" fill=\"url(#b774912a-6f06-40f4-8e31-f2d4dd61d2af)\" /\u003e\n\u003cpath d=\"M2.849,5.382A2.85,2.85,0,1,0,5.7,8.231,2.85,2.85,0,0,0,2.849,5.382Z\" fill=\"url(#b0e57c80-1696-42e1-919b-c03f7e5b85f1)\" /\u003e\n\u003cpath d=\"M11.828,12.149A2.85,2.85,0,1,0,14.679,15,2.851,2.851,0,0,0,11.828,12.149Z\" fill=\"url(#e7877f44-c141-4bbe-939d-1da5b61be46b)\" /\u003e\n\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "configuration": null,
+  "component": {
+    "version": "sql.azure.com/v1api20211101",
+    "kind": "ServersDatabasesAuditingSetting",
+    "schema": "{\n \"description\": \"Generator information:\\n- Generated from: /sql/resource-manager/Microsoft.Sql/stable/2021-11-01/BlobAuditing.json\\n- ARM URI: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/auditingSettings/default\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"auditActionsAndGroups\": {\n     \"description\": \"AuditActionsAndGroups: Specifies the Actions-Groups and Actions to audit.\\nThe recommended set of action groups to use is the following combination - this will audit all the queries and stored\\nprocedures executed against the database, as well as successful and failed logins:\\nBATCH_COMPLETED_GROUP,\\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP,\\nFAILED_DATABASE_AUTHENTICATION_GROUP.\\nThis above combination is also the set that is configured by default when enabling auditing from the Azure portal.\\nThe supported action groups to audit are (note: choose only specific groups that cover your auditing needs. Using\\nunnecessary groups could lead to very large quantities of audit records):\\nAPPLICATION_ROLE_CHANGE_PASSWORD_GROUP\\nBACKUP_RESTORE_GROUP\\nDATABASE_LOGOUT_GROUP\\nDATABASE_OBJECT_CHANGE_GROUP\\nDATABASE_OBJECT_OWNERSHIP_CHANGE_GROUP\\nDATABASE_OBJECT_PERMISSION_CHANGE_GROUP\\nDATABASE_OPERATION_GROUP\\nDATABASE_PERMISSION_CHANGE_GROUP\\nDATABASE_PRINCIPAL_CHANGE_GROUP\\nDATABASE_PRINCIPAL_IMPERSONATION_GROUP\\nDATABASE_ROLE_MEMBER_CHANGE_GROUP\\nFAILED_DATABASE_AUTHENTICATION_GROUP\\nSCHEMA_OBJECT_ACCESS_GROUP\\nSCHEMA_OBJECT_CHANGE_GROUP\\nSCHEMA_OBJECT_OWNERSHIP_CHANGE_GROUP\\nSCHEMA_OBJECT_PERMISSION_CHANGE_GROUP\\nSUCCESSFUL_DATABASE_AUTHENTICATION_GROUP\\nUSER_CHANGE_PASSWORD_GROUP\\nBATCH_STARTED_GROUP\\nBATCH_COMPLETED_GROUP\\nDBCC_GROUP\\nDATABASE_OWNERSHIP_CHANGE_GROUP\\nDATABASE_CHANGE_GROUP\\nLEDGER_OPERATION_GROUP\\nThese are groups that cover all sql statements and stored procedures executed against the database, and should not be\\nused in combination with other groups as this will result in duplicate audit logs.\\nFor more information, see [Database-Level Audit Action\\nGroups](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-action-groups).\\nFor Database auditing policy, specific Actions can also be specified (note that Actions cannot be specified for Server\\nauditing policy). The supported actions to audit are:\\nSELECT\\nUPDATE\\nINSERT\\nDELETE\\nEXECUTE\\nRECEIVE\\nREFERENCES\\nThe general form for defining an action to be audited is:\\n{action} ON {object} BY {principal}\\nNote that \\u003cobject\\u003e in the above format can refer to an object like a table, view, or stored procedure, or an entire\\ndatabase or schema. For the latter cases, the forms DATABASE::{db_name} and SCHEMA::{schema_name} are used, respectively.\\nFor example:\\nSELECT on dbo.myTable by public\\nSELECT on DATABASE::myDatabase by public\\nSELECT on SCHEMA::mySchema by public\\nFor more information, see [Database-Level Audit\\nActions](https://docs.microsoft.com/en-us/sql/relational-databases/security/auditing/sql-server-audit-action-groups-and-actions#database-level-audit-actions)\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"isAzureMonitorTargetEnabled\": {\n     \"description\": \"IsAzureMonitorTargetEnabled: Specifies whether audit events are sent to Azure Monitor.\\nIn order to send the events to Azure Monitor, specify 'State' as 'Enabled' and 'IsAzureMonitorTargetEnabled' as true.\\nWhen using REST API to configure auditing, Diagnostic Settings with 'SQLSecurityAuditEvents' diagnostic logs category on\\nthe database should be also created.\\nNote that for server level audit you should use the 'master' database as {databaseName}.\\nDiagnostic Settings URI format:\\nPUT\\nhttps://management.azure.com/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.Sql/servers/{serverName}/databases/{databaseName}/providers/microsoft.insights/diagnosticSettings/{settingsName}?api-version=2017-05-01-preview\\nFor more information, see [Diagnostic Settings REST API](https://go.microsoft.com/fwlink/?linkid=2033207)\\nor [Diagnostic Settings PowerShell](https://go.microsoft.com/fwlink/?linkid=2033043)\",\n     \"type\": \"boolean\"\n    },\n    \"isManagedIdentityInUse\": {\n     \"description\": \"IsManagedIdentityInUse: Specifies whether Managed Identity is used to access blob storage\",\n     \"type\": \"boolean\"\n    },\n    \"isStorageSecondaryKeyInUse\": {\n     \"description\": \"IsStorageSecondaryKeyInUse: Specifies whether storageAccountAccessKey value is the storage's secondary key.\",\n     \"type\": \"boolean\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The specification for configuring operator behavior. This field is interpreted by the operator and not\\npassed directly to Azure\",\n     \"properties\": {\n      \"configMapExpressions\": {\n       \"description\": \"ConfigMapExpressions: configures where to place operator written dynamic ConfigMaps (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secretExpressions\": {\n       \"description\": \"SecretExpressions: configures where to place operator written dynamic secrets (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a sql.azure.com/ServersDatabase resource\",\n     \"properties\": {\n      \"armId\": {\n       \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"queueDelayMs\": {\n     \"description\": \"QueueDelayMs: Specifies the amount of time in milliseconds that can elapse before audit actions are forced to be\\nprocessed.\\nThe default minimum value is 1000 (1 second). The maximum is 2,147,483,647.\",\n     \"type\": \"integer\"\n    },\n    \"retentionDays\": {\n     \"description\": \"RetentionDays: Specifies the number of days to keep in the audit logs in the storage account.\",\n     \"type\": \"integer\"\n    },\n    \"state\": {\n     \"description\": \"State: Specifies the state of the audit. If state is Enabled, storageEndpoint or isAzureMonitorTargetEnabled are\\nrequired.\",\n     \"enum\": [\n      \"Disabled\",\n      \"Enabled\"\n     ],\n     \"type\": \"string\"\n    },\n    \"storageAccountAccessKey\": {\n     \"description\": \"StorageAccountAccessKey: Specifies the identifier key of the auditing storage account.\\nIf state is Enabled and storageEndpoint is specified, not specifying the storageAccountAccessKey will use SQL server\\nsystem-assigned managed identity to access the storage.\\nPrerequisites for using managed identity authentication:\\n1. Assign SQL Server a system-assigned managed identity in Azure Active Directory (AAD).\\n2. Grant SQL Server identity access to the storage account by adding 'Storage Blob Data Contributor' RBAC role to the\\nserver identity.\\nFor more information, see [Auditing to storage using Managed Identity\\nauthentication](https://go.microsoft.com/fwlink/?linkid=2114355)\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"Key is the key in the Kubernetes secret being referenced\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the name of the Kubernetes secret being referenced.\\nThe secret must be in the same namespace as the resource\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"key\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"storageAccountSubscriptionId\": {\n     \"description\": \"StorageAccountSubscriptionId: Specifies the blob storage subscription Id.\",\n     \"pattern\": \"^[0-9a-fA-F]{8}(-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$\",\n     \"type\": \"string\"\n    },\n    \"storageEndpoint\": {\n     \"description\": \"StorageEndpoint: Specifies the blob storage endpoint (e.g. https://MyAccount.blob.core.windows.net). If state is\\nEnabled, storageEndpoint or isAzureMonitorTargetEnabled is required.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"owner\",\n    \"state\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Servers Databases Auditing Setting\",\n \"type\": \"object\"\n}"
+  }
+}

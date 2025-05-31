@@ -1,8 +1,7 @@
-//@ts-check
 import React, { useState } from 'react';
 import {
   Divider,
-  Grid,
+  Grid2,
   IconButton,
   Typography,
   Tooltip,
@@ -35,14 +34,12 @@ import TooltipButton from '../../utils/TooltipButton.js';
 import { VISIBILITY } from '../../utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Provider } from 'react-redux';
-import { store } from '../../store';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@layer5/sistent';
-import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
+import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import { Public, Lock } from '@mui/icons-material';
 import { iconMedium } from 'css/icons.styles';
 
@@ -249,7 +246,7 @@ function FiltersCard_({
                 </Tooltip>
               </CardHeaderRight>
             </YamlDialogTitleGrid>
-            <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
+            <Grid2 size={{ xs: 12 }} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
 
               {catalogContentKeys.length === 0 ? (
@@ -276,9 +273,9 @@ function FiltersCard_({
                   </>
                 ))
               )}
-            </Grid>
+            </Grid2>
 
-            <Grid item xs={8}>
+            <Grid2 size={{ xs: 8 }}>
               <div style={{ marginRight: '0.5rem' }}>
                 <div>
                   {created_at ? (
@@ -288,9 +285,9 @@ function FiltersCard_({
                   ) : null}
                 </div>
               </div>
-            </Grid>
+            </Grid2>
 
-            <Grid item xs={12}>
+            <Grid2 size={{ xs: 12 }}>
               <UpdateDeleteButtons>
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
@@ -312,7 +309,7 @@ function FiltersCard_({
                   </IconButton>
                 </Tooltip>
               </UpdateDeleteButtons>
-            </Grid>
+            </Grid2>
           </CardBackGrid>
         </>
       </FlipCard>
@@ -321,12 +318,7 @@ function FiltersCard_({
 }
 
 export const FiltersCard = (props) => {
-  return (
-    <Provider store={store}>
-      <FiltersCard_ {...props} />
-    </Provider>
-  );
+  return <FiltersCard_ {...props} />;
 };
 
-// @ts-ignore
 export default FiltersCard;

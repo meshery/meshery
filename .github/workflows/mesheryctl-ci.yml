@@ -31,7 +31,7 @@ jobs:
           repository: meshery/meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
       - name: Setup go
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@v5
         with:
           go-version: "1.23"
           check-latest: "true"

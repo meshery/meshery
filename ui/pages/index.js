@@ -1,15 +1,15 @@
 import { NoSsr } from '@layer5/sistent';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import DashboardComponent from '../components/DashboardComponent';
+import Dashboard from '../components/Dashboard';
 import { getPath } from '../lib/path';
-import { updatepagepath } from '../lib/store';
+import { useDispatch } from 'react-redux';
+import { updatePage } from '@/store/slices/mesheryUi';
 
-function Index(props) {
+function Index() {
+  const dispatch = useDispatch();
   useEffect(() => {
-    props.updatepagepath({ path: getPath() });
+    dispatch(updatePage({ path: getPath(), title: 'Dashboard' }));
   }, []);
 
   return (
@@ -17,13 +17,13 @@ function Index(props) {
       <Head>
         <title>Dashboard | Meshery</title>
       </Head>
-      <DashboardComponent />
+      <Dashboard />
     </NoSsr>
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-});
+Index.getInitialProps = async () => {
+  return {};
+};
 
-export default connect(null, mapDispatchToProps)(Index);
+export default Index;

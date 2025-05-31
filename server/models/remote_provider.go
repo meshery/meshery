@@ -27,7 +27,8 @@ import (
 	"github.com/layer5io/meshkit/models/events"
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 )
@@ -731,6 +732,7 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		Kind:    "kubernetes",
 		Type:    "platform",
 		SubType: "orchestrator",
+		Name:    k8sContext.Name,
 		// Eventually the status would depend on other factors like, whether user administratively processed it or not
 		// Is clsuter reachable and other reasons.
 		Status:           connections.DISCOVERED,
@@ -1905,18 +1907,24 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		_ = resp.Body.Close()
 	}()
 	bdr, err := io.ReadAll(resp.Body)
+
 	if err != nil {
 		l.Log.Error(ErrDataRead(err, "respone body"))
-		return nil, ErrDataRead(err, "design:"+patternID)
+		return bdr, ErrDataRead(err, "design:"+patternID)
 	}
 
 	if resp.StatusCode == http.StatusOK {
 		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+
+	if string(bdr) != "null" && string(bdr) != "" {
+		return bdr, errors.New(string(bdr))
+	}
+
+	err = fmt.Errorf("Failed to get the design with id %s: %s", patternID, bdr)
 	l.Log.Error(err)
-	return nil, err
+	return bdr, err
 }
 
 // DeleteMesheryPattern deletes a meshery pattern with the given id
@@ -4745,7 +4753,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveEnvironment(req *http.Request, env *environment.EnvironmentPayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -4833,11 +4841,11 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
+func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	if !l.Capabilities.IsSupported(PersistEnvironments) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
+		return &environment.Environment{}, ErrInvalidCapability("Environment", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistEnvironments)
@@ -4872,7 +4880,7 @@ func (l *RemoteProvider) UpdateEnvironment(req *http.Request, env *v1beta1.Envir
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var environment v1beta1.Environment
+		var environment environment.Environment
 		if err = json.Unmarshal(bdr, &environment); err != nil {
 			return nil, err
 		}
@@ -5178,7 +5186,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	return nil, ErrFetch(fmt.Errorf("failed to get workspace by ID"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
+func (l *RemoteProvider) SaveWorkspace(req *http.Request, env *workspace.WorkspacePayload, token string, skipTokenCheck bool) ([]byte, error) {
 
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
@@ -5266,11 +5274,11 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
+func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
-		return &v1beta1.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
+		return &workspace.Workspace{}, ErrInvalidCapability("Workspace", l.ProviderName)
 	}
 
 	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
@@ -5305,7 +5313,7 @@ func (l *RemoteProvider) UpdateWorkspace(req *http.Request, env *v1beta1.Workspa
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		var workspace v1beta1.Workspace
+		var workspace workspace.Workspace
 		if err = json.Unmarshal(bdr, &workspace); err != nil {
 			return nil, err
 		}
@@ -5483,40 +5491,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 	return nil, ErrFetch(fmt.Errorf("failed to add design to workspace"), "Workspace", resp.StatusCode)
 }
 
-func (l *RemoteProvider) RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designId string) ([]byte, error) {
-	if !l.Capabilities.IsSupported(PersistWorkspaces) {
-		l.Log.Warn(ErrOperationNotAvaibale)
-
-		return []byte{}, ErrInvalidCapability("Workspace", l.ProviderName)
-	}
-
-	ep, _ := l.Capabilities.GetEndpointForFeature(PersistWorkspaces)
-	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep + "/" + workspaceID + "/designs/" + designId)
-	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
-	token, err := l.GetToken(req)
-	if err != nil {
-		return nil, err
-	}
-	resp, err := l.DoRequest(cReq, token)
-	if err != nil {
-		return nil, ErrFetch(err, "Workspace", resp.StatusCode)
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		l.Log.Error(ErrDataRead(err, "respone body"))
-		return nil, err
-	}
-	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Design removed from workspace")
-		return bdr, nil
-	}
-	return nil, ErrFetch(fmt.Errorf("failed to remove design from workspace"), "Workspace", resp.StatusCode)
-}
-
-func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
+func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistWorkspaces) {
 		l.Log.Warn(ErrOperationNotAvaibale)
 
@@ -5541,6 +5516,11 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 	}
 	if filter != "" {
 		q.Set("filter", filter)
+	}
+	if len(visibility) > 0 {
+		for _, v := range visibility {
+			q.Add("visibility", v)
+		}
 	}
 	remoteProviderURL.RawQuery = q.Encode()
 

@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/ctron/helm-charts/releases/download/hawkbit-operator-0.1.4/hawkbit-operator-0.1.4.tgz"
   },
   "configuration": null,
   "component": {

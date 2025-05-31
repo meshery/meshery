@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/lumenvox/helm-charts/releases/download/voice-biometrics-2.0.1/voice-biometrics-2.0.1.tgz"
   },
   "configuration": null,
   "component": {

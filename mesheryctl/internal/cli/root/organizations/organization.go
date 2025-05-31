@@ -5,11 +5,9 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -43,7 +41,7 @@ mesheryctl organizations list
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if count {
-			orgs, err := getAllOrganizations()
+			orgs, err := api.Fetch[models.OrganizationsPage](fmt.Sprintf("%s?all=true", organizationsApiPath))
 			if err != nil {
 				return err
 			}
@@ -62,17 +60,5 @@ mesheryctl organizations list
 func init() {
 	OrgCmd.Flags().BoolP("count", "", false, "total number of registered organizations")
 	OrgCmd.AddCommand(availableSubcommands...)
-
-}
-
-func getAllOrganizations() (*models.OrganizationsPage, error) {
-	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-	if err != nil {
-		return nil, utils.ErrLoadConfig(err)
-	}
-	baseUrl := mctlCfg.GetBaseMesheryURL()
-	url := fmt.Sprintf("%s/%s?all=true", baseUrl, organizationsApiPath)
-
-	return api.Fetch[models.OrganizationsPage](url)
 
 }

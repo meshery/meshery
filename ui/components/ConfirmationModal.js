@@ -2,31 +2,25 @@ import {
   Box,
   Button,
   Checkbox,
-  Chip,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle,
-  IconButton,
   TextField,
-  Tooltip,
   Typography,
   styled,
   Tab,
   Tabs,
-  CloseIcon,
   DoneAllIcon,
   DoneIcon,
   RemoveDoneIcon,
+  Modal,
+  ModalBody,
+  useTheme,
 } from '@layer5/sistent';
 import { Search } from '@mui/icons-material';
-import { connect } from 'react-redux';
-import { setK8sContexts, updateProgress } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
-import { bindActionCreators } from 'redux';
 import { useEffect, useState } from 'react';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
@@ -41,34 +35,11 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
-
-const ContextChip = styled(Chip)(({ theme }) => ({
-  height: '50px',
-  fontSize: '15px',
-  position: 'relative',
-  top: theme.spacing(0.5),
-  [theme.breakpoints.down('md')]: {
-    fontSize: '12px',
-  },
-}));
-
-const ContextIcon = styled('img')(({ theme }) => ({
-  display: 'inline',
-  verticalAlign: 'text-top',
-  width: theme.spacing(2.5),
-  marginLeft: theme.spacing(0.5),
-}));
-
-const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
-  textAlign: 'center',
-  padding: theme.spacing(1),
-  color: '#fff',
-  backgroundColor: theme.palette.background.tabs,
-  fontSize: '1rem',
-}));
+import { TooltipWrappedConnectionChip } from './connections/ConnectionChip';
+import { setK8sContexts, updateProgress } from '@/store/slices/mesheryUi';
+import { useDispatch, useSelector } from 'react-redux';
 
 const DialogSubtitle = styled(DialogContentText)({
-  minWidth: 400,
   overflowWrap: 'anywhere',
   textAlign: 'center',
   padding: '5px',
@@ -159,11 +130,8 @@ function ConfirmationMsg(props) {
     open,
     handleClose,
     submit,
-    selectedK8sContexts,
-    k8scontext,
     title,
     validationBody,
-    setK8sContexts,
     componentCount,
     tab,
     errors,
@@ -174,9 +142,12 @@ function ConfirmationMsg(props) {
   const [disabled, setDisabled] = useState(true);
   const [context, setContexts] = useState([]);
   const { notify } = useNotification();
+  const { selectedK8sContexts } = useSelector((state) => state.ui);
+  const { k8sConfig: k8scontext } = useSelector((state) => state.ui);
+
   let isDisabled =
     typeof selectedK8sContexts.length === 'undefined' || selectedK8sContexts.length === 0;
-
+  const dispatch = useDispatch();
   useEffect(() => {
     setTabVal(tab);
     setContexts(k8scontext);
@@ -236,47 +207,38 @@ function ConfirmationMsg(props) {
   const setContextViewer = (id) => {
     if (id === 'all') {
       if (selectedK8sContexts?.includes('all')) {
-        // updateProgress({ showProgress : true })
-        setK8sContexts({ selectedK8sContexts: [] });
+        dispatch(setK8sContexts({ selectedK8sContexts: [] }));
       } else {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
       }
       return;
     }
 
     if (selectedK8sContexts?.includes(id)) {
       const filteredContexts = selectedK8sContexts.filter((cid) => cid !== id);
-      setK8sContexts({ selectedK8sContexts: filteredContexts });
+      dispatch(setK8sContexts({ selectedK8sContexts: filteredContexts }));
     } else if (selectedK8sContexts[0] === 'all') {
       const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
-      setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) });
+      dispatch(setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) }));
     } else {
       if (selectedK8sContexts.length === k8scontext.length - 1) {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
         return;
       }
-      setK8sContexts({ selectedK8sContexts: [...selectedK8sContexts, id] });
+      dispatch(setK8sContexts({ selectedK8sContexts: [...selectedK8sContexts, id] }));
     }
   };
+  const theme = useTheme();
   return (
-    <Dialog
+    <Modal
       open={open}
-      onClose={handleClose}
       aria-labelledby="alert-dialog-title"
+      headerIcon={<PatternIcon style={{ ...iconMedium }} fill={'#FFFFFF'}></PatternIcon>}
+      closeModal={handleClose}
+      title={title ? title : 'Confirmation'}
       aria-describedby="alert-dialog-description"
     >
-      <>
-        <DialogTitleStyled id="alert-dialog-title">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <PatternIcon style={{ ...iconMedium }} fill={'#FFFFFF'}></PatternIcon>
-
-            {title}
-            <IconButton onClick={handleClose} disableRipple={true}>
-              <CloseIcon fill={'#FFFFFF'} style={{ ...iconMedium }}></CloseIcon>
-            </IconButton>
-          </div>
-        </DialogTitleStyled>
-
+      <ModalBody>
         <Tabs
           value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
           variant="scrollable"
@@ -290,9 +252,14 @@ function ConfirmationMsg(props) {
               data-cy="validate-btn-modal"
               onClick={(event) => handleTabValChange(event, 0)}
               label={
-                <div style={{ display: 'flex' }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <DoneIcon
-                    style={{ margin: '2px', paddingRight: '2px', ...iconSmall }}
+                    style={{
+                      margin: '2px',
+                      paddingRight: '2px',
+                      ...iconSmall,
+                    }}
+                    fill={theme.palette.icon.default}
                     fontSize="small"
                   />
                   <TabLabelWrapper>Validate</TabLabelWrapper>
@@ -319,10 +286,15 @@ function ConfirmationMsg(props) {
             data-cy="Undeploy-btn-modal"
             onClick={(event) => handleTabValChange(event, 1)}
             label={
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ margin: '2px', paddingRight: '2px' }}>
                   {' '}
-                  <RemoveDoneIcon style={iconSmall} width="20" height="20" />{' '}
+                  <RemoveDoneIcon
+                    style={iconSmall}
+                    width="20"
+                    height="20"
+                    fill={theme.palette.icon.default}
+                  />
                 </div>{' '}
                 <TabLabelWrapper>Undeploy</TabLabelWrapper>{' '}
               </div>
@@ -336,9 +308,10 @@ function ConfirmationMsg(props) {
             data-cy="deploy-btn-modal"
             onClick={(event) => handleTabValChange(event, 2)}
             label={
-              <div style={{ display: 'flex' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
                 <DoneAllIcon
                   style={{ margin: '2px', paddingRight: '2px', ...iconSmall }}
+                  fill={theme.palette.icon.default}
                   fontSize="small"
                 />
                 <TabLabelWrapper>Deploy</TabLabelWrapper>
@@ -354,7 +327,7 @@ function ConfirmationMsg(props) {
         </Tabs>
 
         {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) && (
-          <DialogContent>
+          <>
             <DialogSubtitle id="alert-dialog-description">
               <div style={{ height: '100%' }}>{dryRunComponent && dryRunComponent}</div>
               <div>
@@ -402,34 +375,28 @@ function ConfirmationMsg(props) {
 
                     <ContextsContainer>
                       {context.map((ctx) => (
-                        <ContextChip id={ctx.id} key={ctx.id}>
-                          <Tooltip title={`Server: ${ctx.server}`}>
-                            <div
-                              style={{
-                                display: 'flex',
-                                justifyContent: 'flex-wrap',
-                                alignItems: 'center',
-                              }}
-                            >
-                              <Checkbox
-                                checked={
-                                  selectedK8sContexts?.includes(ctx.id) ||
-                                  (selectedK8sContexts?.length > 0 &&
-                                    selectedK8sContexts[0] === 'all')
-                                }
-                                onChange={() => setContextViewer(ctx.id)}
-                                color="primary"
-                              />
-                              <ContextChip
-                                label={ctx.name}
-                                onClick={() => handleKubernetesClick(ctx.connection_id)}
-                                icon={<ContextIcon src="/static/img/kubernetes.svg" />}
-                                variant="outlined"
-                                data-cy="chipContextName"
-                              />
-                            </div>
-                          </Tooltip>
-                        </ContextChip>
+                        <div
+                          key={ctx.id}
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'flex-wrap',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <Checkbox
+                            checked={
+                              selectedK8sContexts?.includes(ctx.id) ||
+                              (selectedK8sContexts?.length > 0 && selectedK8sContexts[0] === 'all')
+                            }
+                            onChange={() => setContextViewer(ctx.id)}
+                            color="primary"
+                          />
+                          <TooltipWrappedConnectionChip
+                            title={ctx.name}
+                            handlePing={() => handleKubernetesClick(ctx.connection_id)}
+                            iconSrc={'/static/img/kubernetes.svg'}
+                          />
+                        </div>
                       ))}
                     </ContextsContainer>
                   </Typography>
@@ -438,7 +405,7 @@ function ConfirmationMsg(props) {
                 )}
               </div>
             </DialogSubtitle>
-          </DialogContent>
+          </>
         )}
         {tabVal === ACTIONS.VERIFY && (
           <DialogContent>
@@ -479,26 +446,15 @@ function ConfirmationMsg(props) {
             </ActionButton>
           )}
         </DialogStyledActions>
-      </>
-    </Dialog>
+      </ModalBody>
+    </Modal>
   );
 }
 
-const mapStateToProps = (state) => {
-  return {
-    selectedK8sContexts: state.get('selectedK8sContexts'),
-    k8scontext: state.get('k8sConfig'),
-  };
-};
+export default ConfirmationMsg;
 
-const mapDispatchToProps = (dispatch) => ({
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ConfirmationMsg);
-
-export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8sContexts }) => {
+export const SelectDeploymentTarget_ = ({ k8scontext, selectedK8sContexts }) => {
+  const dispatch = useDispatch();
   const deployableK8scontexts = useFilterK8sContexts(k8scontext, ({ operatorState }) => {
     return operatorState !== 'DISABLED';
   });
@@ -522,26 +478,25 @@ export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8
   const setContextViewer = (id) => {
     if (id === 'all') {
       if (selectedContexts?.includes('all')) {
-        // updateProgress({ showProgress : true })
-        setK8sContexts({ selectedK8sContexts: [] });
+        dispatch(setK8sContexts({ selectedK8sContexts: [] }));
       } else {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
       }
       return;
     }
 
     if (selectedContexts?.includes(id)) {
       const filteredContexts = selectedContexts.filter((cid) => cid !== id);
-      setK8sContexts({ selectedK8sContexts: filteredContexts });
+      dispatch(setK8sContexts({ selectedK8sContexts: filteredContexts }));
     } else if (selectedContexts[0] === 'all') {
       const allContextIds = getK8sConfigIdsFromK8sConfig(k8scontext);
-      setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) });
+      dispatch(setK8sContexts({ selectedK8sContexts: allContextIds.filter((cid) => cid !== id) }));
     } else {
       if (selectedContexts.length === k8scontext.length - 1) {
-        setK8sContexts({ selectedK8sContexts: ['all'] });
+        dispatch(setK8sContexts({ selectedK8sContexts: ['all'] }));
         return;
       }
-      setK8sContexts({ selectedK8sContexts: [...selectedContexts, id] });
+      dispatch(setK8sContexts({ selectedK8sContexts: [...selectedContexts, id] }));
     }
   };
 
@@ -596,7 +551,4 @@ export const SelectDeploymentTarget_ = ({ k8scontext, setK8sContexts, selectedK8
   );
 };
 
-export const SelectDeploymentTarget = connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(SelectDeploymentTarget_);
+export const SelectDeploymentTarget = SelectDeploymentTarget_;

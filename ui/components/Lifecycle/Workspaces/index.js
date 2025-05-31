@@ -1,6 +1,6 @@
 import {
   Breadcrumbs,
-  Link,
+  ErrorBoundary,
   NoSsr,
   WorkspaceRecentActivityModal,
   WorkspaceTeamsTable,
@@ -33,24 +33,22 @@ import {
   useUnassignTeamFromWorkspaceMutation,
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
-import { updateProgress, useLegacySelector } from '../../../lib/store';
 import { useNotification, useNotificationHandlers } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../Modal';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
 import _PromptComponent from '../../PromptComponent';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import DefaultError from '@/components/General/error-404/index';
-
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import ViewSwitch from '@/components/ViewSwitch';
 import { CreateButtonWrapper } from './styles';
 import WorkspaceGridView from './WorkspaceGridView';
 import RightArrowIcon from '@/assets/icons/RightArrowIcon';
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
-import { useRouter } from 'next/router';
 import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
+import { useSelector } from 'react-redux';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -87,6 +85,22 @@ const columnList = [
     label: 'Owner',
   },
   {
+    name: 'teamCount',
+    label: 'Teams',
+  },
+  {
+    name: 'designCount',
+    label: 'Designs',
+  },
+  {
+    name: 'viewCount',
+    label: 'Views',
+  },
+  {
+    name: 'environmentCount',
+    label: 'Environments Count',
+  },
+  {
     name: 'environments',
     label: 'Environments',
   },
@@ -104,14 +118,13 @@ const columnList = [
   },
 ];
 
-const Workspaces = () => {
+const Workspaces = ({ onSelectWorkspace }) => {
   const theme = useTheme();
-  const router = useRouter();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
     schema: {},
   });
-  const organization = useLegacySelector((state) => state.get('organization'));
+  const { organization } = useSelector((state) => state.ui);
   const [page, setPage] = useState(0);
   const pageSize = 10;
   const sortOrder = 'updated_at desc';
@@ -120,10 +133,11 @@ const Workspaces = () => {
   const [actionType, setActionType] = useState('');
   const [initialData, setInitialData] = useState({});
   const [editWorkspaceId, setEditWorkspaceId] = useState('');
-  const [selectedWorkspace, setSelectedWorkspace] = useState({
-    id: router.query.id || '',
-    name: router.query.name || '',
+  let [selectedWorkspace, setSelectedWorkspace] = useState({
+    id: '',
+    name: '',
   });
+  const [viewType, setViewType] = useState('table');
   const [teamsModal, setTeamsModal] = useState({
     open: false,
     workspaceId: '',
@@ -134,6 +148,7 @@ const Workspaces = () => {
     workspaceId: '',
     workspaceName: '',
   });
+
   const handleRowClick = (rowData) => {
     const workspaceId = rowData[0];
     const workspaceName = rowData[4].props.children.at(-1); // Get the last child of the name cell
@@ -141,14 +156,12 @@ const Workspaces = () => {
       id: workspaceId,
       name: workspaceName,
     });
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, view: 'table', id: workspaceId, name: workspaceName },
-      },
-      undefined,
-      { shallow: true },
-    );
+    if (onSelectWorkspace) {
+      onSelectWorkspace({
+        id: workspaceId,
+        name: workspaceName,
+      });
+    }
   };
   const ref = useRef(null);
   const bulkDeleteRef = useRef(null);
@@ -160,7 +173,7 @@ const Workspaces = () => {
       pagesize: pageSize,
       search: search,
       order: sortOrder,
-      orgId: organization?.id,
+      orgID: organization?.id,
     },
     {
       skip: !organization?.id ? true : false,
@@ -187,7 +200,6 @@ const Workspaces = () => {
       .catch((error) => handleError(`Workspace Create Error: ${error?.data}`));
     handleWorkspaceModalClose();
   };
-  const viewType = router.query.view === 'table' ? 'table' : 'grid';
 
   const handleEditWorkspace = ({ organization, name, description }) => {
     updateWorkspace({
@@ -353,51 +365,41 @@ const Workspaces = () => {
 
     setPage(0);
     setSelectedWorkspace({ id: '', name: '' });
-
-    router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, view: val },
-      },
-      undefined,
-      { shallow: true },
-    );
+    setViewType(val);
   };
 
   const [columnVisibility, setColumnVisibility] = useState({});
 
   return (
     <NoSsr>
-      {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
-        <>
-          <div style={{ marginBottom: '1.5rem' }}>
-            <Breadcrumbs
-              separator={
-                <RightArrowIcon height={20} width={20} primaryFill={theme.palette.icon.default} />
-              }
-              aria-label="breadcrumb"
+      <ErrorBoundary>
+        <div style={{ marginBottom: '1.5rem' }}>
+          <Breadcrumbs
+            separator={
+              <RightArrowIcon height={20} width={20} primaryFill={theme.palette.icon.default} />
+            }
+            aria-label="breadcrumb"
+          >
+            <div
+              style={{
+                cursor: selectedWorkspace.id ? 'pointer' : 'default',
+                color: selectedWorkspace.id
+                  ? theme.palette.background.brand.default
+                  : theme.palette.text.default,
+                textDecoration: 'none',
+              }}
+              onClick={() => {
+                if (selectedWorkspace.id) {
+                  setSelectedWorkspace({ id: '', name: '' });
+                }
+              }}
             >
-              <Link
-                style={{
-                  cursor: selectedWorkspace.id ? 'pointer' : 'default',
-                  color: selectedWorkspace.id
-                    ? theme.palette.background.brand.default
-                    : theme.palette.text.default,
-                  textDecoration: 'none',
-                }}
-                href="#"
-                onClick={() => {
-                  if (selectedWorkspace.id) {
-                    router.back();
-                    setSelectedWorkspace({ id: '', name: '' });
-                  }
-                }}
-              >
-                Workspace
-              </Link>
-              {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
-            </Breadcrumbs>
-          </div>
+              All Workspaces
+            </div>
+            {selectedWorkspace.id && <Typography>{selectedWorkspace.name}</Typography>}
+          </Breadcrumbs>
+        </div>
+        {!selectedWorkspace.id && (
           <ToolWrapper>
             <CreateButtonWrapper>
               <Button
@@ -405,7 +407,9 @@ const Workspaces = () => {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
+                onClick={(e) =>
+                  handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
+                }
                 sx={{
                   backgroundColor: '#607d8b',
                   padding: '8px',
@@ -453,117 +457,115 @@ const Workspaces = () => {
               />
             </Box>
           </ToolWrapper>
-          <>
-            {workspaces.length === 0 ? (
-              <EmptyState
-                icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
-                message="No workspace available"
-                pointerLabel="Click “Create” to establish your first workspace."
-              />
-            ) : viewType === 'grid' ? (
-              <WorkspaceGridView
-                handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
-                handleWorkspaceModalOpen={handleWorkspaceModalOpen}
-                page={page}
-                setPage={setPage}
-                totalPages={Math.ceil(workspacesData?.total_count / pageSize)}
-                workspacesData={workspaces}
-                key={`grid-view-${viewType}`}
-              />
-            ) : (
-              <WorkspaceDataTable
-                handleWorkspaceModalOpen={handleWorkspaceModalOpen}
-                handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
-                handleTeamsModalOpen={handleTeamsModalOpen}
-                handleActivityModalOpen={handleActivityModalOpen}
-                columnVisibility={columnVisibility}
-                handleRowClick={handleRowClick}
-                selectedWorkspace={selectedWorkspace}
-                setColumnVisibility={setColumnVisibility}
-              />
-            )}
-          </>
-          {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-            ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
-            : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
-            workspaceModal.open && (
-              <Modal
-                open={workspaceModal.open}
-                closeModal={handleWorkspaceModalClose}
-                title={
-                  actionType === WORKSPACE_ACTION_TYPES.CREATE
-                    ? 'Create Workspace'
-                    : 'Edit Workspace'
-                }
-              >
-                <RJSFModalWrapper
-                  schema={workspaceModal.schema.schema}
-                  uiSchema={workspaceModal.schema.uiSchema}
-                  handleSubmit={
-                    actionType === WORKSPACE_ACTION_TYPES.CREATE
-                      ? handleCreateWorkspace
-                      : handleEditWorkspace
-                  }
-                  submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                  initialData={initialData}
-                  handleClose={handleWorkspaceModalClose}
-                />
-              </Modal>
-            )}
-          <Modal
-            maxWidth="lg"
-            open={teamsModal.open}
-            closeModal={handleTeamsModalClose}
-            title={`Manage "${teamsModal.workspaceName}" Teams`}
-            headerIcon={<TeamsIcon {...iconMedium} primaryFill={theme.palette.common.white} />}
-          >
-            <WorkspaceTeamsTable
-              workspaceId={teamsModal.workspaceId}
-              isAssignTeamAllowed={CAN(
-                keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
-              )}
-              isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
-              isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
-              isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
-              useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
-              useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
-              useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
-              workspaceName={teamsModal.workspaceName}
-              fetchTeamUsers={() => {}}
-              org_id={organization?.id}
-              useGetUsersForOrgQuery={useGetUsersForOrgQuery}
-              useNotificationHandlers={useNotificationHandlers}
-              useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
-              isRemoveTeamFromWorkspaceAllowed={CAN(
-                keys.REMOVE_TEAM_FROM_WORKSPACE.action,
-                keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
-              )}
+        )}
+        <>
+          {workspaces.length === 0 ? (
+            <EmptyState
+              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+              message="No workspace available"
+              pointerLabel="Click “Create” to establish your first workspace."
             />
-            <ModalFooter variant="filled"></ModalFooter>
-          </Modal>
-          <WorkspaceRecentActivityModal
-            workspaceId={activityModal.workspaceId}
-            workspaceName={activityModal.workspaceName}
-            open={activityModal.open}
-            handleClose={handleActivityModalClose}
-            useGetEventsOfWorkspaceQuery={useGetEventsOfWorkspaceQuery}
-          />
-
-          <_PromptComponent ref={ref} />
-          <_PromptComponent ref={bulkDeleteRef} />
+          ) : viewType === 'grid' ? (
+            <WorkspaceGridView
+              handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+              handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+              page={page}
+              setPage={setPage}
+              totalPages={Math.ceil(workspacesData?.total_count / pageSize)}
+              workspacesData={workspaces}
+              key={`grid-view-${viewType}`}
+            />
+          ) : (
+            <WorkspaceDataTable
+              handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+              handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+              handleTeamsModalOpen={handleTeamsModalOpen}
+              handleActivityModalOpen={handleActivityModalOpen}
+              columnVisibility={columnVisibility}
+              handleRowClick={handleRowClick}
+              selectedWorkspace={selectedWorkspace}
+              setColumnVisibility={setColumnVisibility}
+              search={search}
+              viewType={viewType}
+            />
+          )}
         </>
-      ) : (
-        <DefaultError />
-      )}
+        {(actionType === WORKSPACE_ACTION_TYPES.CREATE
+          ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
+          : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+          workspaceModal.open && (
+            <Modal
+              open={workspaceModal.open}
+              closeModal={handleWorkspaceModalClose}
+              title={
+                actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'
+              }
+            >
+              <RJSFModalWrapper
+                schema={workspaceModal.schema.schema}
+                uiSchema={workspaceModal.schema.uiSchema}
+                handleSubmit={
+                  actionType === WORKSPACE_ACTION_TYPES.CREATE
+                    ? handleCreateWorkspace
+                    : handleEditWorkspace
+                }
+                submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                initialData={initialData}
+                handleClose={handleWorkspaceModalClose}
+              />
+            </Modal>
+          )}
+        <Modal
+          maxWidth="lg"
+          open={teamsModal.open}
+          closeModal={handleTeamsModalClose}
+          title={`Manage "${teamsModal.workspaceName}" Teams`}
+          headerIcon={<TeamsIcon {...iconMedium} primaryFill={theme.palette.common.white} />}
+        >
+          <WorkspaceTeamsTable
+            workspaceId={teamsModal.workspaceId}
+            isAssignTeamAllowed={CAN(
+              keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+              keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+            )}
+            isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
+            isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
+            isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
+            useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
+            useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
+            useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
+            workspaceName={teamsModal.workspaceName}
+            fetchTeamUsers={() => {}}
+            org_id={organization?.id}
+            useGetUsersForOrgQuery={useGetUsersForOrgQuery}
+            useNotificationHandlers={useNotificationHandlers}
+            useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
+            isRemoveTeamFromWorkspaceAllowed={CAN(
+              keys.REMOVE_TEAM_FROM_WORKSPACE.action,
+              keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+            )}
+          />
+          <ModalFooter variant="filled"></ModalFooter>
+        </Modal>
+        <WorkspaceRecentActivityModal
+          workspaceId={activityModal.workspaceId}
+          workspaceName={activityModal.workspaceName}
+          open={activityModal.open}
+          handleClose={handleActivityModalClose}
+          useGetEventsOfWorkspaceQuery={useGetEventsOfWorkspaceQuery}
+        />
+
+        <_PromptComponent ref={ref} />
+        <_PromptComponent ref={bulkDeleteRef} />
+      </ErrorBoundary>
     </NoSsr>
   );
 };
 
-const WorkspacesPageWithErrorBoundary = (props) => {
+const WorkspacesPageWithErrorBoundary = ({ onSelectWorkspace }) => {
   return (
     <NoSsr>
-      <Workspaces {...props} />
+      <Workspaces onSelectWorkspace={onSelectWorkspace} />
     </NoSsr>
   );
 };

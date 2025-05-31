@@ -1,4 +1,4 @@
-import { Card, FormControl, Paper, styled, Select, FormGroup, Grid } from '@layer5/sistent';
+import { Card, FormControl, Paper, styled, Select, FormGroup, Grid2 } from '@layer5/sistent';
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
@@ -115,15 +115,15 @@ export const BoxWrapper = styled('div')({
   paddingRight: '10px',
 });
 
-export const GridCapabilityHeader = styled(Grid)(({ theme }) => ({
+export const GridCapabilityHeader = styled(Grid2)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#293B43' : '#7493A1',
 }));
 
-export const GridExtensionHeader = styled(Grid)(({ theme }) => ({
+export const GridExtensionHeader = styled(Grid2)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#293B43' : '#C9DBE3',
 }));
 
-export const GridExtensionItem = styled(Grid)(({ theme }) => ({
+export const GridExtensionItem = styled(Grid2)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#3D4F57' : '#E7EFF3',
 }));
 

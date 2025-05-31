@@ -53,13 +53,14 @@
         "from": [
           {
             "id": null,
-            "kind": "Pod",
+            "kind": "Container",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "kubernetes",
+              "name": "meshery-core",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -96,7 +97,10 @@
                 [
                   "configuration",
                   "spec",
-                  "template"
+                  "template",
+                  "spec",
+                  "containers",
+                  "_"
                 ]
               ]
             }
@@ -107,6 +111,7 @@
             "id": null,
             "kind": "Deployment",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -148,7 +153,10 @@
                 [
                   "configuration",
                   "spec",
-                  "template"
+                  "template",
+                  "spec",
+                  "containers",
+                  "_"
                 ]
               ]
             }

@@ -35,9 +35,9 @@ import (
 	"github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/catalog"
-	modelsCore "github.com/meshery/schemas/models/core"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -97,6 +97,72 @@ func (h *Handler) PatternFileRequestHandler(
 	}
 }
 
+func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
+
+	var meshkitErr errors.Error
+	var event *events.Event
+	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
+
+	description := ""
+	if len(meshkitErr.ShortDescription) > 0 {
+		description = fmt.Sprintf("Failed To Save Design, %s", meshkitErr.ShortDescription[0])
+	} else {
+		description = "Failed to save design"
+	}
+
+	if errorParsingToMeshkitError == nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		_, _ = rw.Write(body)
+		h.log.Error(&meshkitErr)
+		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+			"error": meshkitErr,
+		}).Build()
+
+	} else {
+		h.log.Error(ErrSavePattern(err))
+		http.Error(rw, ErrSavePattern(err).Error(), http.StatusBadRequest)
+		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrSavePattern(err),
+		}).WithDescription(ErrSavePattern(err).Error()).Build()
+	}
+
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+}
+
+func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
+
+	var meshkitErr errors.Error
+	var event *events.Event
+	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
+
+	description := ""
+	if len(meshkitErr.ShortDescription) > 0 {
+		description = fmt.Sprintf("Failed to fetch Design, %s", meshkitErr.ShortDescription[0])
+	} else {
+		description = "Failed to fetch design"
+	}
+
+	if errorParsingToMeshkitError == nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		_, _ = rw.Write(body)
+		h.log.Error(&meshkitErr)
+		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+			"error": meshkitErr,
+		}).Build()
+
+	} else {
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrGetPattern(err),
+		}).WithDescription(ErrGetPattern(err).Error()).Build()
+	}
+
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+}
+
 // swagger:route POST /api/pattern PatternsAPI idPostPatternFile
 // Handle POST requests for patterns
 //
@@ -153,15 +219,7 @@ func (h *Handler) handlePatternPOST(
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &mesheryPatternRecord)
 
 	if err != nil {
-		h.log.Error(ErrSavePattern(err))
-		http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
-
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription(ErrSavePattern(err).Error()).Build()
-
-		_ = provider.PersistEvent(event)
-		go h.config.EventBroadcaster.Publish(userID, event)
+		h.handleProviderPatternSaveError(rw, eventBuilder, userID, savedDesignByt, err, provider)
 		return
 	}
 
@@ -170,8 +228,16 @@ func (h *Handler) handlePatternPOST(
 	} else {
 		eventBuilder = eventBuilder.WithAction(models.Create)
 	}
-
-	event := eventBuilder.WithDescription(fmt.Sprintf("Saved design '%s'", requestPayload.DesignFile.Name)).Build()
+	metadata := map[string]interface{}{
+		"design": map[string]interface{}{
+			"name": requestPayload.DesignFile.Name,
+			"id":   requestPayload.DesignFile.Id.String(),
+		},
+		"doclink": "https://docs.meshery.io/concepts/logical/designs",
+	}
+	event := eventBuilder.
+		WithMetadata(metadata).
+		Build()
 	_ = provider.PersistEvent(event)
 
 	_, _ = rw.Write(savedDesignByt)
@@ -188,7 +254,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 	provider models.Provider,
 ) error {
 	// Only proceed if we need to convert a non-design pattern that doesn't have a pattern file yet
-	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != modelsCore.IacFileTypes.MESHERY_DESIGN && mesheryPattern.PatternFile == "" {
+	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != string(coreV1.MesheryDesign) && mesheryPattern.PatternFile == "" {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 		sourceContent := mesheryPattern.SourceContent
@@ -570,7 +636,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errPatternDelete,
-		}).WithDescription("Error deleting pattern.").Build()
+		}).WithDescription("Error: Could not delete design.").Build()
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -612,15 +678,24 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
 
 	exportFormat := r.URL.Query().Get("export")
+	h.log.Info(fmt.Sprintf("Export format received: '%s'", exportFormat))
+
 	if exportFormat != "" {
 		var errConvert error
+		h.log.Info(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+
+		h.log.Info(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
+			converter.K8sManifest, converter.HelmChart))
+
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
+			h.log.Info(fmt.Sprintf("Failed to create converter: %v", errConvert))
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
+		h.log.Info(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
 	}
 
 	patternID := mux.Vars(r)["id"]
@@ -700,8 +775,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
-		rw.Header().Set("Content-Type", "application/yaml")
+		if exportFormat == string(coreV1.HelmChart) {
+			rw.Header().Set("Content-Type", "application/x-gzip")
+			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.tgz", pattern.Name))
+		} else {
+			rw.Header().Set("Content-Type", "application/yaml")
+			rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
+		}
 		_, err = fmt.Fprint(rw, patternFile)
 		if err != nil {
 			err = ErrWriteResponse(err)
@@ -1102,6 +1182,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
@@ -1314,11 +1395,10 @@ func (h *Handler) GetMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	userID := uuid.FromStringOrNil(user.ID)
-
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
-		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+		h.handleProviderPatternGetError(rw, eventBuilder, userID, resp, err, provider)
 		return
 	}
 

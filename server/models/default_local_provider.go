@@ -26,8 +26,9 @@ import (
 	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/walker"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
-	"github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
@@ -174,9 +175,9 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 	return l.EnvironmentPersister.DeleteEnvironmentByID(id)
 }
 
-func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
 	orgId, _ := uuid.FromString(environmentPayload.OrgId)
-	environment := &v1beta1.Environment{
+	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
@@ -187,10 +188,10 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 	return l.EnvironmentPersister.SaveEnvironment(environment)
 }
 
-func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *v1beta1.EnvironmentPayload, environmentID string) (*v1beta1.Environment, error) {
+func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
 	orgId, _ := uuid.FromString(environmentPayload.OrgId)
-	environment := &v1beta1.Environment{
+	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -1454,9 +1455,9 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
-func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *v1beta1.WorkspacePayload, _ string, _ bool) ([]byte, error) {
+func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
 	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
-	workspace := &v1beta1.Workspace{
+	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
 		Name:           workspacePayload.Name,
@@ -1467,10 +1468,10 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 	return l.WorkspacePersister.SaveWorkspace(workspace)
 }
 
-func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *v1beta1.WorkspacePayload, workspaceID string) (*v1beta1.Workspace, error) {
+func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	id, _ := uuid.FromString(workspaceID)
 	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
-	workspace := &v1beta1.Workspace{
+	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
@@ -1505,15 +1506,9 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
 }
 
-func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {
 	workspaceId, _ := uuid.FromString(workspaceID)
-	designId, _ := uuid.FromString(designID)
-	return l.WorkspacePersister.DeleteDesignFromWorkspace(workspaceId, designId)
-}
-
-func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter)
+	return l.WorkspacePersister.GetWorkspaceDesigns(workspaceId, search, order, page, pageSize, filter, visibility)
 }
 
 // GetOrganization returns the organization for the given organizationID

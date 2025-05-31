@@ -5,7 +5,7 @@ import {
   TextField,
   InputAdornment,
   Tooltip,
-  Grid,
+  Grid2,
   Box,
   styled,
   PROMPT_VARIANTS,
@@ -15,7 +15,6 @@ import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import _PromptComponent from './PromptComponent';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
@@ -25,6 +24,7 @@ import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
 import { useAddKubernetesConfigMutation } from '../rtk-query/connection';
+import { updateProgress } from '@/store/slices/mesheryUi';
 
 const styles = styled((theme) => ({
   ctxIcon: {
@@ -239,13 +239,12 @@ const ShowDiscoveredContexts = ({
   const ping = useKubernetesHook();
 
   return (
-    <Grid
+    <Grid2
       direction="column"
       justifyContent="center"
       alignItems="center"
       spacing={2}
       columns={1}
-      xs={16}
       data-testid={dataTestid}
     >
       {registeredContexts.length > 0 && (
@@ -263,30 +262,29 @@ const ShowDiscoveredContexts = ({
         />
       )}
       {ignoredContexts.length > 0 && (
-        <Grid item xs={8}>
+        <Grid2 size={{ xs: 8 }}>
           <K8sConnectionItems
             contexts={ignoredContexts}
             ping={ping}
             status={CONNECTION_STATES.IGNORED}
           />
-        </Grid>
+        </Grid2>
       )}
-    </Grid>
+    </Grid2>
   );
 };
 
 const K8sConnectionItems = ({ status, contexts, ping }) => {
   const classes = styles();
   return (
-    <Grid container xs={12} spacing={2}>
+    <Grid2 container spacing={2} size={'grow'}>
       {contexts.map((context) => (
-        <Grid
+        <Grid2
           direction="column"
           alignContent="center"
           alignItems="center"
           container
-          item
-          xs={16}
+          size="grow"
           spacing={1}
           id={context.connection_id}
           key={context.connection_id}
@@ -316,9 +314,9 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
           <Box minWidth="25%" maxWidth="50%">
             <ConnectionStateChip status={status} />
           </Box>
-        </Grid>
+        </Grid2>
       ))}
-    </Grid>
+    </Grid2>
   );
 };
 export default MesherySettingsEnvButtons;
