@@ -130,6 +130,39 @@ func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBu
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
+func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
+
+	var meshkitErr errors.Error
+	var event *events.Event
+	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
+
+	description := ""
+	if len(meshkitErr.ShortDescription) > 0 {
+		description = fmt.Sprintf("Failed to fetch Design, %s", meshkitErr.ShortDescription[0])
+	} else {
+		description = "Failed to fetch design"
+	}
+
+	if errorParsingToMeshkitError == nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		_, _ = rw.Write(body)
+		h.log.Error(&meshkitErr)
+		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+			"error": meshkitErr,
+		}).Build()
+
+	} else {
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrGetPattern(err),
+		}).WithDescription(ErrGetPattern(err).Error()).Build()
+	}
+
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+}
+
 // swagger:route POST /api/pattern PatternsAPI idPostPatternFile
 // Handle POST requests for patterns
 //
@@ -603,7 +636,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errPatternDelete,
-		}).WithDescription("Error deleting pattern.").Build()
+		}).WithDescription("Error: Could not delete design.").Build()
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -1149,6 +1182,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
@@ -1361,11 +1395,10 @@ func (h *Handler) GetMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	userID := uuid.FromStringOrNil(user.ID)
-
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
-		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+		h.handleProviderPatternGetError(rw, eventBuilder, userID, resp, err, provider)
 		return
 	}
 

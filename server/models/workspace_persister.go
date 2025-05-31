@@ -354,6 +354,14 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 }
 
 func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+
+	// delete any existing mapping for the design in the workspace
+	_, err := wp.DeleteDesignFromWorkspace(workspaceID, designID)
+
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing design mapping: %w", err)
+	}
+
 	wsDesignMapping := workspace.WorkspacesDesignsMapping{
 		DesignId:    designID,
 		WorkspaceId: workspaceID,

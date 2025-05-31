@@ -4,7 +4,7 @@ import {
   Divider,
   MenuItem,
   TextField,
-  Grid,
+  Grid2,
   Typography,
   styled,
   useTheme,
@@ -182,8 +182,8 @@ const MesheryPlayComponent = () => {
     <>
       <NoSsr>
         <PlayRoot>
-          <Grid container>
-            <Grid item xs={12}>
+          <Grid2 container size="grow">
+            <Grid2 size={{ xs: 12 }}>
               <PaneSection>
                 <TextField
                   select
@@ -228,8 +228,8 @@ const MesheryPlayComponent = () => {
                   ))}
                 </TextField>
               </PaneSection>
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
         </PlayRoot>
         <Divider variant="fullWidth" light />
         {adapter && adapter.adapter_location && (

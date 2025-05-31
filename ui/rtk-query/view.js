@@ -25,8 +25,6 @@ export const viewsApi = api
           url: `extensions/api/content/views/${id}`,
           method: 'DELETE',
         }),
-        providesTags: () => [{ type: TAGS.VIEWS }],
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
       updateViewVisibility: builder.mutation({
         query: ({ id, body }) => ({

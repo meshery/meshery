@@ -22,7 +22,7 @@ import {
 } from '@layer5/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
-import { useContext, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   useAssignTeamToWorkspaceMutation,
   useCreateWorkspaceMutation,
@@ -34,7 +34,7 @@ import {
   useUpdateWorkspaceMutation,
 } from '../../../rtk-query/workspace';
 import { useNotification, useNotificationHandlers } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../Modal';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
 import _PromptComponent from '../../PromptComponent';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { keys } from '@/utils/permission_constants';
@@ -49,7 +49,6 @@ import WorkspaceDataTable from './WorkspaceDataTable';
 import { iconMedium } from 'css/icons.styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const WORKSPACE_ACTION_TYPES = {
   CREATE: 'create',
@@ -86,6 +85,22 @@ const columnList = [
     label: 'Owner',
   },
   {
+    name: 'teamCount',
+    label: 'Teams',
+  },
+  {
+    name: 'designCount',
+    label: 'Designs',
+  },
+  {
+    name: 'viewCount',
+    label: 'Views',
+  },
+  {
+    name: 'environmentCount',
+    label: 'Environments Count',
+  },
+  {
     name: 'environments',
     label: 'Environments',
   },
@@ -103,7 +118,7 @@ const columnList = [
   },
 ];
 
-const Workspaces = () => {
+const Workspaces = ({ onSelectWorkspace }) => {
   const theme = useTheme();
   const [workspaceModal, setWorkspaceModal] = useState({
     open: false,
@@ -122,12 +137,7 @@ const Workspaces = () => {
     id: '',
     name: '',
   });
-  const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-  if (workspaceSwitcherContext.selectedWorkspace.id) {
-    selectedWorkspace = workspaceSwitcherContext.selectedWorkspace;
-    setSelectedWorkspace = workspaceSwitcherContext.setSelectedWorkspace;
-  }
-  const [viewType, setViewType] = useState(selectedWorkspace.id ? 'table' : 'grid');
+  const [viewType, setViewType] = useState('table');
   const [teamsModal, setTeamsModal] = useState({
     open: false,
     workspaceId: '',
@@ -146,6 +156,12 @@ const Workspaces = () => {
       id: workspaceId,
       name: workspaceName,
     });
+    if (onSelectWorkspace) {
+      onSelectWorkspace({
+        id: workspaceId,
+        name: workspaceName,
+      });
+    }
   };
   const ref = useRef(null);
   const bulkDeleteRef = useRef(null);
@@ -157,7 +173,7 @@ const Workspaces = () => {
       pagesize: pageSize,
       search: search,
       order: sortOrder,
-      orgId: organization?.id,
+      orgID: organization?.id,
     },
     {
       skip: !organization?.id ? true : false,
@@ -391,7 +407,9 @@ const Workspaces = () => {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
+                onClick={(e) =>
+                  handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE, selectedWorkspace)
+                }
                 sx={{
                   backgroundColor: '#607d8b',
                   padding: '8px',
@@ -544,10 +562,10 @@ const Workspaces = () => {
   );
 };
 
-const WorkspacesPageWithErrorBoundary = (props) => {
+const WorkspacesPageWithErrorBoundary = ({ onSelectWorkspace }) => {
   return (
     <NoSsr>
-      <Workspaces {...props} />
+      <Workspaces onSelectWorkspace={onSelectWorkspace} />
     </NoSsr>
   );
 };
