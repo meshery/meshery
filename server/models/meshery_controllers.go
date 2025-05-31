@@ -9,6 +9,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshkit/broker"
+	"github.com/layer5io/meshkit/broker/nats"
 	"github.com/layer5io/meshkit/database"
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/controllers"
@@ -90,87 +91,15 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
-		// controllerHandlers := mch.ctxControllerHandlers
-
-		// // // brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
-		// // // do something if broker is being deployed , maybe try again after sometime
-		// // brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
-		// // if brokerEndpoint == "" {
-		// // 	if err != nil {
-		// // 		mch.log.Warn(err)
-		// // 	}
-		// // 	mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
-		// // 	return mch
-		// // }
-		// // brokerHandler, err := nats.New(nats.Options{
-		// // 	// URLS: []string{"localhost:4222"},
-		// // 	URLS:           []string{brokerEndpoint},
-		// // 	ConnectionName: MesheryServerBrokerConnection,
-		// // 	Username:       "",
-		// // 	Password:       "",
-		// // 	ReconnectWait:  2 * time.Second,
-		// // 	MaxReconnect:   60,
-		// // })
-		// // if err != nil {
-		// // 	mch.log.Warn(err)
-		// // 	mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
-		// // 	return mch
-		// // }
-		// // mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
-
+		useMeshSyncWithNatsBroker := false
+		var brokerHandler broker.Handler
+		if useMeshSyncWithNatsBroker {
+			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext)
+		} else {
+			brokerHandler = mch.meshsynDataHandlersChannelBroker(k8scontext)
+		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
-
-		transport := make(chan *broker.Message, 1024)
-
-		// TODO
-		// as we will be running per connection base,
-		// we need to double check that the state is not shared anywhere in meshsync internally,
-		// otherwise we will have hard to detect errors.
-		go func() {
-			// TODO
-			// Right now this duration only stops the top level goroutine of meshsync as a library,
-			// we need to enhance meshsync functionality to halt all internal goroutines
-			// (means it right now does not stop, and continues to receive events from k8s).
-			duration := 64 * time.Second
-
-			kubeConfig, err := k8scontext.GenerateKubeConfig()
-			if err != nil {
-				mch.log.Error(
-					fmt.Errorf("error generating kube config from context %v", err),
-				)
-				return
-			}
-
-			if err := libmeshsync.Run(
-				mch.log,
-				libmeshsync.WithOutputMode("channel"),
-				// TODO
-				// do we need an option to have a channel per subject inside meshsync as a library?
-				// there are right now more than one subject, f.e. MeshsyncStoreUpdatesSubject
-				// which is obsolete or has a different purpose, or smth else?
-				// it expects (line 122) Object to be an array, which meshsync sends as a single entity.
-				libmeshsync.WithTransportChannel(transport),
-				libmeshsync.WithKubeConfig(kubeConfig),
-				libmeshsync.WithStopAfterDuration(duration),
-			); err != nil {
-				mch.log.Error(
-					fmt.Errorf("error running meshsync lib %v", err),
-				)
-			} else {
-				mch.log.Infof("meshsync lib run stops after %s", duration)
-			}
-		}()
-
-		brokerHandler := NewTmpMeshsyncBrokerHandler(
-			map[string]<-chan *broker.Message{
-				// TODO
-				// this is hardcoded because it is hardcoded in meshsync_events.go
-				// do not add any updates there for now.
-				"meshery.meshsync.core": transport,
-			},
-		)
 		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
-
 		err := msDataHandler.Run()
 		if err != nil {
 			mch.log.Warn(err)
@@ -179,12 +108,102 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		}
 		mch.ctxMeshsyncDataHandler = msDataHandler
 		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
-
 	}
 
 	// }(mch)
 
 	return mch
+}
+
+func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
+	k8scontext K8sContext,
+) broker.Handler {
+	ctxID := k8scontext.ID
+	controllerHandlers := mch.ctxControllerHandlers
+
+	// brokerStatus := controllerHandlers[MesheryBroker].GetStatus()
+	// do something if broker is being deployed , maybe try again after sometime
+	brokerEndpoint, err := controllerHandlers[MesheryBroker].GetPublicEndpoint()
+	if brokerEndpoint == "" {
+		if err != nil {
+			mch.log.Warn(err)
+		}
+		mch.log.Info(
+			fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID),
+		)
+		return nil
+	}
+	brokerHandler, err := nats.New(nats.Options{
+		// URLS: []string{"localhost:4222"},
+		URLS:           []string{brokerEndpoint},
+		ConnectionName: MesheryServerBrokerConnection,
+		Username:       "",
+		Password:       "",
+		ReconnectWait:  2 * time.Second,
+		MaxReconnect:   60,
+	})
+
+	if err != nil {
+		mch.log.Warn(err)
+		mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
+		return nil
+	}
+	mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+	return brokerHandler
+}
+
+func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
+	k8scontext K8sContext,
+) broker.Handler {
+	transport := make(chan *broker.Message, 1024)
+
+	// TODO
+	// as we will be running per connection base,
+	// we need to double check that the state is not shared anywhere in meshsync internally,
+	// otherwise we will have hard to detect errors.
+	go func() {
+		// TODO
+		// Right now this duration only stops the top level goroutine of meshsync as a library,
+		// we need to enhance meshsync functionality to halt all internal goroutines
+		// (means it right now does not stop, and continues to receive events from k8s).
+		duration := 64 * time.Second
+
+		kubeConfig, err := k8scontext.GenerateKubeConfig()
+		if err != nil {
+			mch.log.Error(
+				fmt.Errorf("error generating kube config from context %v", err),
+			)
+			return
+		}
+
+		if err := libmeshsync.Run(
+			mch.log,
+			libmeshsync.WithOutputMode("channel"),
+			// TODO
+			// do we need an option to have a channel per subject inside meshsync as a library?
+			// there are right now more than one subject, f.e. MeshsyncStoreUpdatesSubject
+			// which is obsolete or has a different purpose, or smth else?
+			// it expects (line 122) Object to be an array, which meshsync sends as a single entity.
+			libmeshsync.WithTransportChannel(transport),
+			libmeshsync.WithKubeConfig(kubeConfig),
+			libmeshsync.WithStopAfterDuration(duration),
+		); err != nil {
+			mch.log.Error(
+				fmt.Errorf("error running meshsync lib %v", err),
+			)
+		} else {
+			mch.log.Infof("meshsync lib run stops after %s", duration)
+		}
+	}()
+
+	return NewTmpMeshsyncBrokerHandler(
+		map[string]<-chan *broker.Message{
+			// TODO
+			// this is hardcoded because it is hardcoded in meshsync_events.go
+			// do not add any updates there for now.
+			"meshery.meshsync.core": transport,
+		},
+	)
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
