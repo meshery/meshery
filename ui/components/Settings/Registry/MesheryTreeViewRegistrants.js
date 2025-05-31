@@ -33,47 +33,53 @@ const MesheryTreeViewRegistrants = ({
       expanded={expanded}
       selected={selected}
     >
-      {data?.map((registrant) => (
-        <StyledTreeItem
-          key={registrant.id}
-          nodeId={registrant.id}
-          data-id={registrant.id}
-          top
-          labelText={registrant?.name}
-          newParentId={registrant.id}
-          onClick={() => {
-            setShowDetailsData({
-              type: REGISTRANTS,
-              data: registrant,
-            });
-          }}
-        >
-          <div>
-            <StyledTreeItem
-              nodeId={`${registrant.id}.1`}
-              data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.summary?.models})`}
-            >
-              {registrant.models
-                .filter((model) => model?.registrant?.kind == registrant?.kind)
-                ?.map((modelDef, index) => (
-                  <MesheryTreeViewItem
-                    key={index}
-                    modelDef={modelDef}
-                    handleToggle={handleToggle}
-                    handleSelect={handleSelect}
-                    expanded={expanded}
-                    selected={selected}
-                    setShow={setShow}
-                    registrantID={registrant.id}
-                    setShowDetailsData={setShowDetailsData}
-                    showDetailsData={showDetailsData}
-                  />
-                ))}
-            </StyledTreeItem>
-          </div>
-        </StyledTreeItem>
-      ))}
+      {data
+        ?.filter((item) => item?.summary || item?.models)
+        ?.map((registrant) => (
+          <StyledTreeItem
+            key={registrant.id}
+            nodeId={registrant.id}
+            data-id={registrant.id}
+            top
+            labelText={registrant?.name}
+            newParentId={registrant.id}
+            onClick={() => {
+              setShowDetailsData({
+                type: REGISTRANTS,
+                data: registrant,
+              });
+            }}
+          >
+            <div>
+              <StyledTreeItem
+                nodeId={`${registrant?.id || 'unknown'}.1`}
+                data-id={`${registrant?.id || 'unknown'}.1`}
+                labelText={
+                  registrant?.summary?.models !== undefined
+                    ? `Models (${registrant.summary.models})`
+                    : 'Models (0)'
+                }
+              >
+                {(registrant?.models || [])
+                  .filter((model) => model?.registrant?.kind === registrant?.kind)
+                  .map((modelDef, index) => (
+                    <MesheryTreeViewItem
+                      key={index}
+                      modelDef={modelDef}
+                      handleToggle={handleToggle}
+                      handleSelect={handleSelect}
+                      expanded={expanded}
+                      selected={selected}
+                      setShow={setShow}
+                      registrantID={registrant.id}
+                      setShowDetailsData={setShowDetailsData}
+                      showDetailsData={showDetailsData}
+                    />
+                  ))}
+              </StyledTreeItem>
+            </div>
+          </StyledTreeItem>
+        ))}
       <div ref={lastRegistrantRef} style={{ height: '3rem' }}></div>
       {isRegistrantFetching && <CircularProgress />}
     </TreeView>
