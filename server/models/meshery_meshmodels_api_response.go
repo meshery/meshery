@@ -76,6 +76,14 @@ type MeshmodelCategoriesAPIResponse struct {
 	Categories []entity.Entity `json:"categories"`
 }
 
+// API response model for meshmodel subCategories API
+type MeshmodelSubCategoriesAPIResponse struct {
+	Page       int             `json:"page"`
+	PageSize   int             `json:"page_size"`
+	Count      int64           `json:"total_count"`
+	SubCategories []entity.Entity `json:"sub_categories"`
+}
+
 // API response model for meshmodel relationships API
 type MeshmodelPoliciesAPIResponse struct {
 	Page     int             `json:"page"`
