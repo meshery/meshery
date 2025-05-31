@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: May 30th 2025, 6:26:18 am
+- Testing started at: May 31st 2025, 1:09:34 am
 
 **📦 Test Result Summary**
 
-- ✅ 63 passed
-- ❌ 2 failed
-- ⚠️ 2 flaked
-- ⏩ 6 skipped
+- ✅ 0 passed
+- ❌ 1 failed
+- ⚠️ 0 flaked
+- ⏩ 1 skipped
 
-⌛ _Duration: 4 minutes and 44 seconds_
+⌛ _Duration: 1 minutes and 4 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,23 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Search a Model and Export it |  | ❌ |
-| 2 | chromium-meshery-provider | Import a Model via File Import |  | ➖ |
-| 3 | chromium-meshery-provider | Import a Model via Url Import |  | ➖ |
-| 4 | chromium-meshery-provider | Import a Model via CSV Import |  | ➖ |
-| 5 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 6 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 7 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 8 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 9 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 10 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 11 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 12 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 13 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 14 | chromium-local-provider | Search a Model and Export it |  | ❌ |
-| 15 | chromium-local-provider | Import a Model via File Import |  | ➖ |
-| 16 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
-| 17 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 1 | setup | authenticate as Meshery provider |  | ❌ |
+| 2 | setup | authenticate as None provider |  | ➖ |
 
 </div>
 </details>
