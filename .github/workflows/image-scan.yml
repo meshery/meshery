@@ -2,39 +2,24 @@ name: Trivy Container Image Scan
 
 on:
   workflow_dispatch:
-  pull_request:
-    paths:
-      - 'Dockerfile'
-      - '**/Dockerfile'
-      - '.github/workflows/**'
-      - '**/*.sh'
-      - '**/*.yml'
-      - '**/*.yaml'
 
 permissions:
-  contents: read
   issues: write
 
 jobs:
-  build-and-scan:
-    name: Build & Scan Container Image
+  scan:
+    name: Scan Container Image
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Docker image
+      - name: Pull latest Meshery image
         run: |
-          docker build -f install/docker/Dockerfile -t local/meshery:test .
+          docker pull layer5/meshery:stable-latest
 
-      - name: Run Trivy scan on built image
+      - name: Run Trivy scan
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'local/meshery:test'
+          image-ref: 'layer5/meshery:stable-latest'
           format: 'json'
           output: 'trivy-scan-results.json'
 
