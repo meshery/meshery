@@ -74,7 +74,7 @@ jobs:
       - name: Generate Snyk SBOM
         run: snyk sbom --format=cyclonedx1.4+json > snyk-sbom.json || true
         env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+          SNYK_TOKEN: ${{ secrets.SNYK_CODE}}
 
   semgrep-sast:
     name: Semgrep SAST
