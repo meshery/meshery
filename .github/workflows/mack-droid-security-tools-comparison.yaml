@@ -2,15 +2,25 @@ name: Security Tools Comparison
 
 on:
   push:
-    branches: [main]
+    branches: [main] # or [main, develop, ...] for more branches
   pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: false
+        default: 'main'
 
 jobs:
   trivy-scan:
     name: Trivy SCA & Image Scan & SBOM
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Trivy FS Scan (SCA)
         run: trivy fs --format table .
       - name: Trivy Image Scan
@@ -23,8 +33,11 @@ jobs:
   grype-scan:
     name: Grype SCA & SBOM
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Grype FS Scan (SCA)
         run: grype dir:.
       - name: Build Docker Image
@@ -39,8 +52,11 @@ jobs:
   cyclonedx-sbom:
     name: CycloneDX SBOM Generation
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Generate CycloneDX SBOM (Node.js example)
         run: |
           npm install -g @cyclonedx/bom
@@ -49,8 +65,11 @@ jobs:
   openvex-report:
     name: OpenVEX VEX Reporting
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Generate SBOM with Syft
         run: syft dir:. -o cyclonedx-json > syft-sbom.json
       - name: Generate VEX with OpenVEX
@@ -62,8 +81,11 @@ jobs:
   snyk-scan:
     name: Snyk SCA
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Snyk Auth
         run: snyk auth ${{ secrets.SNYK_CODE }}
       - name: Snyk Test
@@ -74,24 +96,33 @@ jobs:
   semgrep-sast:
     name: Semgrep SAST
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Run Semgrep
         uses: returntocorp/semgrep-action@v1
 
   gitleaks-secrets:
     name: Gitleaks Secrets Scan
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
 
   trufflehog-secrets:
     name: TruffleHog Secrets Scan
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_dispatch' || github.ref == format('refs/heads/{0}', github.event.inputs.branch)
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
       - name: Run TruffleHog
         run: |
           pip install trufflehog
