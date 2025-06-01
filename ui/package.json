@@ -56,7 +56,7 @@
     "cross-env": "^7.0.3",
     "graphql": "^16.10.0",
     "graphql-ws": "^6.0.5",
-    "humanize-duration": "^3.32.1",
+    "humanize-duration": "^3.32.2",
     "isomorphic-unfetch": "^4.0.2",
     "js-yaml": "^4.1.0",
     "jsonlint-mod": "^1.7.6",
