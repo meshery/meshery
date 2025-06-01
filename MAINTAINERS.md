@@ -12,11 +12,12 @@
 
 | Name                | GitHub                 | Affiliation |
 | ------------------- | ---------------------- | --------------|
-| Nikhil Ladha        | @Nikhil-Ladha           | Red Hat       |
-| Antonette Caldwell  | @acald-creator          | Acquia        |
-| Aabid Sofi          | @aabidsofi19            | Layer5        |
-| Yash Sharma         | @Yashsharma1911         | Digital Ocean |
-| Sudhanshu Dasgupta  | @sudhanshutech          | SafeDep       |
+| [Nikhil Ladha](https://layer5.io/community/members/nikhil-ladha)        | @Nikhil-Ladha           | Red Hat       |
+| [Antonette Caldwell](https://layer5.io/community/members/antonette-caldwell)  | @acald-creator          | Acquia        |
+| [Aabid Sofi](https://layer5.io/community/members/aabid-sofi)          | @aabidsofi19            | Layer5        |
+| [Yash Sharma](https://layer5.io/community/members/yash-sharma)         | @Yashsharma1911         | Digital Ocean |
+| [Sudhanshu Dasgupta](https://layer5.io/community/members/sudhanshu-dasgupta)  | @sudhanshutech          | SafeDep       |
+| [Ian Whitney](https://layer5.io/community/members/ian-whitney) | @ianrwhitney | Intuit |
 
 ### Adapter Maintainers
 
