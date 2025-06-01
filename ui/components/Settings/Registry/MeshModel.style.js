@@ -61,14 +61,17 @@ export const StyledKeyValuePropertyDiv = styled('div')(() => ({
   display: 'flex',
   flexDirection: 'column',
   margin: '0.6rem 0',
+  textTransform: 'uppercase',
 }));
 
 export const StyledKeyValueProperty = styled('p')(({ theme }) => ({
   padding: '0',
   margin: '0 0.5rem 0 0',
-  fontSize: theme.typography.htmlFontSize,
+  fontSize: theme.typography.caption.fontSize,
+  color: theme.palette.text.secondary,
   fontWeight: theme.typography.fontWeightBold,
   fontFamily: theme.typography.fontFamily,
+  textTransform: 'uppercase',
 }));
 
 export const StyledKeyValueFormattedValue = styled('div')(({ theme }) => ({

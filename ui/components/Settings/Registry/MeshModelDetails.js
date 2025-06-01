@@ -121,12 +121,12 @@ const RenderContents = ({
 
 const ModelContents = ({ modelDef }) => {
   const PropertyFormattersLeft = {
-    version: (value) => <KeyValue property="API Version" value={value} />,
-    hostname: (value) => <KeyValue property="Registrant" value={value} />,
-    components: (value) => <KeyValue property="Components" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub-Category" value={value} />,
-    modelVersion: (value) => <KeyValue property="Model Version" value={value} />,
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
+    version: (value) => <KeyValue property="API VERSION" value={value} />,
+    hostname: (value) => <KeyValue property="REGISTRANT" value={value} />,
+    components: (value) => <KeyValue property="COMPONENTS" value={value} />,
+    subCategory: (value) => <KeyValue property="SUB-CATEGORY" value={value} />,
+    modelVersion: (value) => <KeyValue property="MODEL VERSION" value={value} />,
+    registrant: (value) => <KeyValue property="REGISTRANT" value={value} />,
   };
 
   const getCompRelValue = () => {
@@ -160,9 +160,9 @@ const ModelContents = ({ modelDef }) => {
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    category: (value) => <KeyValue property="Category" value={value} />,
-    duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
-    relationships: (value) => <KeyValue property="Relationships" value={value} />,
+    category: (value) => <KeyValue property="CATEGORY" value={value} />,
+    duplicates: (value) => <KeyValue property="DUPLICATES" value={value} />,
+    relationships: (value) => <KeyValue property="RELATIONSHIPS" value={value} />,
   };
 
   const metaDataRight = {
