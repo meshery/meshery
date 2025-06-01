@@ -1424,8 +1424,8 @@ github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f h1:y5//uYreIhSUg3J
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f/go.mod h1:ZdcZmHo+o7JKHSa8/e818NopupXU1YMK5fe1lsApnBw=
 github.com/myntra/pipeline v0.0.0-20180618182531-2babf4864ce8 h1:b2uniQevKsIAdAgonACj+tW6eTotNBI30zvPQSVOWwQ=
 github.com/myntra/pipeline v0.0.0-20180618182531-2babf4864ce8/go.mod h1:9Viqaf1D6mzC977KNzp496RvO4I819iz5Q6gjbXY7Ow=
-github.com/n2h9/fork-meshery-meshsync v0.0.0-20250525153906-4d835d17e55c h1:VgOQwwtLyncKWO/xSP9UmtoSX4BUjnKwhYunjKYA2JE=
-github.com/n2h9/fork-meshery-meshsync v0.0.0-20250525153906-4d835d17e55c/go.mod h1:zEk80FrRjwSe0vjiRx4f944YmU/XOOTgyhmCPieHYt8=
+github.com/n2h9/fork-meshery-meshsync v0.0.0-20250601171936-67879295f552 h1:eWkbcjIo0/+g5fqTpLPrzEIGP7mTVV5hWHhuSfS5s4M=
+github.com/n2h9/fork-meshery-meshsync v0.0.0-20250601171936-67879295f552/go.mod h1:zEk80FrRjwSe0vjiRx4f944YmU/XOOTgyhmCPieHYt8=
 github.com/nats-io/nats.go v1.38.0 h1:A7P+g7Wjp4/NWqDOOP/K6hfhr54DvdDQUznt5JFg9XA=
 github.com/nats-io/nats.go v1.38.0/go.mod h1:IGUM++TwokGnXPs82/wCuiHS02/aKrdYUQkU8If6yjw=
 github.com/nats-io/nkeys v0.4.9 h1:qe9Faq2Gxwi6RZnZMXfmGMZkg3afLLOtrU+gDZJ35b0=
