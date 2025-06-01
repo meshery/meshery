@@ -214,6 +214,8 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 		}
 
 		if err := libmeshsync.Run(
+			// TODO
+			// provide a mechanism to distinguish server logs from meshsync logs
 			mch.log,
 			libmeshsync.WithOutputMode("channel"),
 			// TODO
