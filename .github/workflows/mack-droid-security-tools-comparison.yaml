@@ -45,7 +45,6 @@ jobs:
     name: Scan Component - ${{ matrix.component }}
     runs-on: ubuntu-latest
     needs: setup-tools
-    if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
     strategy:
       matrix:
         component: ["meshery", "mesheryctl", "meshery-ui", "provider"]
@@ -65,12 +64,15 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch || github.ref }}
 
+      # Only run the rest of the steps if the component is selected
       - name: Build Docker image
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           cd ${{ matrix.path }}
           docker build -t ${{ matrix.component }}:latest .
 
       - name: Trivy Image Scan
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ matrix.component }}:latest
@@ -79,11 +81,13 @@ jobs:
           severity: CRITICAL,HIGH
 
       - name: Generate SBOM with Syft
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           cd ${{ matrix.path }}
           ../../syft . -o cyclonedx-json > ../../${{ matrix.component }}-sbom.json
 
       - name: Upload SBOM Artifact
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.component }}-sbom
