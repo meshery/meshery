@@ -20,26 +20,32 @@ jobs:
   setup-tools:
     name: Setup Security Tools
     runs-on: ubuntu-latest
-    outputs:
-      syft-path: ${{ steps.syft-path.outputs.path }}
-      trivy-path: ${{ steps.trivy-path.outputs.path }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch || github.ref }}
 
-      - name: Set up Syft
-        id: syft-path
+      - name: Install Syft
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . v0.105.0
-          echo "::set-output name=path::$(pwd)/syft"
+          sudo mv syft /usr/local/bin/syft
 
-      - name: Set up Trivy
-        id: trivy-path
+      - name: Install Grype
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . v0.78.0
+          sudo mv grype /usr/local/bin/grype
+
+      - name: Install Trivy
         uses: aquasecurity/trivy-action@master
         with:
           install-only: true
+
+      - name: Install OpenVEX
+        run: |
+          curl -LO https://github.com/openvex/openvex/releases/latest/download/openvex-linux-amd64
+          chmod +x openvex-linux-amd64
+          sudo mv openvex-linux-amd64 /usr/local/bin/openvex
 
   scan-components:
     name: Scan Component - ${{ matrix.component }}
@@ -64,7 +70,6 @@ jobs:
         with:
           ref: ${{ github.event.inputs.branch || github.ref }}
 
-      # Only run the rest of the steps if the component is selected
       - name: Build Docker image
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
@@ -73,6 +78,7 @@ jobs:
 
       - name: Trivy Image Scan
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
+        id: trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ matrix.component }}:latest
@@ -80,11 +86,17 @@ jobs:
           exit-code: 0
           severity: CRITICAL,HIGH
 
+      - name: Show Trivy Scan Summary
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
+        run: |
+          echo "Trivy scan for ${{ matrix.component }}:"
+          cat trivy-results.sarif || echo "No SARIF output found."
+
       - name: Generate SBOM with Syft
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           cd ${{ matrix.path }}
-          ../../syft . -o cyclonedx-json > ../../${{ matrix.component }}-sbom.json
+          syft . -o cyclonedx-json > ../../${{ matrix.component }}-sbom.json
 
       - name: Upload SBOM Artifact
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
@@ -93,73 +105,38 @@ jobs:
           name: ${{ matrix.component }}-sbom
           path: ${{ matrix.component }}-sbom.json
 
-  vex-generation:
-    name: Generate VEX for All Components
-    runs-on: ubuntu-latest
-    needs: scan-components
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch || github.ref }}
-
-      - name: Download SBOM Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./sboms
-
-      - name: Install OpenVEX
+      - name: Grype SBOM Scan (VEX Report)
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
-          curl -LO https://github.com/openvex/openvex/releases/latest/download/openvex-linux-amd64
-          chmod +x openvex-linux-amd64
-          mv openvex-linux-amd64 /usr/local/bin/openvex
+          grype sbom:../../${{ matrix.component }}-sbom.json -o cyclonedx-json > ../../${{ matrix.component }}-grype-vex.json
 
-      - name: Generate VEX from SBOMs
+      - name: Show Grype VEX Summary
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
-          for sbom in ./sboms/**/*.json; do
-            name=$(basename $sbom .json)
-            openvex generate --sbom $sbom --output ${name}-vex.json
-          done
+          echo "Grype VEX for ${{ matrix.component }}:"
+          head -20 ../../${{ matrix.component }}-grype-vex.json
 
-      - name: Upload VEX Artifacts
+      - name: Upload Grype VEX Artifact
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         uses: actions/upload-artifact@v4
         with:
-          name: vex-documents
-          path: ./*-vex.json
+          name: ${{ matrix.component }}-grype-vex
+          path: ${{ matrix.component }}-grype-vex.json
 
-  guac-ingestion:
-    name: Ingest to GUAC
-    runs-on: ubuntu-latest
-    needs: vex-generation
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch || github.ref }}
-
-      - name: Download VEX Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: vex-documents
-          path: ./vex
-
-      - name: Download SBOM Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: ./sboms
-
-      - name: Set up GUAC (local mode)
+      - name: OpenVEX from SBOM
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
-          git clone https://github.com/guacsec/guac.git
-          cd guac
-          docker-compose -f examples/docker-compose.local.yaml up -d
-          sleep 30
+          openvex generate --sbom ../../${{ matrix.component }}-sbom.json --output ../../${{ matrix.component }}-openvex.json
 
-      - name: Ingest into GUAC
+      - name: Show OpenVEX Summary
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
-          for sbom in ./sboms/**/*.json; do
-            curl -X POST -H "Content-Type: application/json" --data @$sbom http://localhost:8080/ingest
-          done
-          for vex in ./vex/*.json; do
-            curl -X POST -H "Content-Type: application/json" --data @$vex http://localhost:8080/ingest
-          done
+          echo "OpenVEX for ${{ matrix.component }}:"
+          head -20 ../../${{ matrix.component }}-openvex.json
+
+      - name: Upload OpenVEX Artifact
+        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.component }}-openvex
+          path: ${{ matrix.component }}-openvex.json
