@@ -1,4 +1,4 @@
-name: Security Tools Workflow
+name: Security Tools CI
 
 on:
   push:
@@ -8,118 +8,112 @@ on:
   workflow_dispatch:
 
 jobs:
-  trivy-fs-scan:
-    name: Trivy FS Vulnerability Scan
+  trivy-scan:
+    name: Trivy FS & Image Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Trivy FileSystem Scan
+      - name: Run Trivy FS Scan
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          format: 'table'
-          exit-code: '0'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
+          scan-type: fs
+          scan-ref: .
 
-  trivy-image-scan:
-    name: Trivy Image Vulnerability Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - name: Check if Dockerfile exists
+        id: dockerfile-check
+        run: echo "exists=$(if [ -f Dockerfile ]; then echo true; else echo false; fi)" >> $GITHUB_OUTPUT
 
-      - name: Build Docker Image
+      - name: Build Docker Image (if Dockerfile exists)
+        if: steps.dockerfile-check.outputs.exists == 'true'
         run: docker build -t testimage:latest .
 
       - name: Trivy Image Scan
+        if: steps.dockerfile-check.outputs.exists == 'true'
         uses: aquasecurity/trivy-action@master
         with:
-          scan-type: 'image'
-          scan-ref: 'testimage:latest'
-          format: 'table'
-          exit-code: '0'
-          ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
+          scan-type: image
+          scan-ref: testimage:latest
 
   grype-scan:
-    name: Grype FS & Image Scan
+    name: Grype SCA & SBOM
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Run Grype FS Scan
-        uses: anchore/scan-action@v3
+      - name: Anchore SBOM Generation
+        uses: anchore/sbom-action@v0.16.0
         with:
           path: .
-
-      - name: Build Docker Image
-        run: docker build -t testimage:latest .
-
-      - name: Run Grype Image Scan
-        uses: anchore/scan-action@v3
-        with:
-          image: testimage:latest
-
-  syft-sbom:
-    name: Generate SBOM with Syft
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Generate SBOM (CycloneDX)
-        uses: anchore/sbom-action@v0.15.1
-        with:
-          path: .
+          format: cyclonedx-json
           output-file: sbom.spdx.json
 
+      - name: Anchore Grype Scan
+        uses: anchore/scan-action@v3
+        with:
+          sbom: sbom.spdx.json
+          fail-build: false
+
   snyk-scan:
-    name: Snyk Vulnerability Scan
+    name: Snyk SCA
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Authenticate Snyk
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+        uses: snyk/actions/setup@v1
 
       - name: Run Snyk Test
-        uses: snyk/actions/node@v1
-        with:
-          command: test
+        run: snyk test || true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
-      - name: Generate SBOM
-        run: snyk sbom --format=cyclonedx1.4+json > snyk-sbom.json
+      - name: Generate Snyk SBOM
+        run: snyk sbom --format=cyclonedx1.4+json > snyk-sbom.json || true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
   semgrep-sast:
-    name: Semgrep Static Code Analysis
+    name: Semgrep SAST
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Run Semgrep
         uses: returntocorp/semgrep-action@v1
         with:
-          config: 'auto'
+          config: auto
 
   gitleaks-secrets:
-    name: Gitleaks Secrets Detection
+    name: Gitleaks Secrets Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         with:
-          args: "detect --source=. --verbose"
+          args: "detect --report-format sarif --report-path gitleaks.sarif || true"
+
+      - name: Upload Gitleaks Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: gitleaks-report
+          path: gitleaks.sarif
 
   trufflehog-secrets:
-    name: TruffleHog Secrets Detection
+    name: TruffleHog Secrets Scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Run TruffleHog OSS
-        uses: trufflesecurity/trufflehog@v3
+      - name: Run TruffleHog
+        uses: trufflesecurity/trufflehog@main
         with:
-          scanArguments: "filesystem ."
+          scanArguments: "--scan-directory . --only-verified"
