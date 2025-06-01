@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || github.ref }}
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
 
       - name: Install Syft
         run: |
@@ -68,74 +68,46 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.branch || github.ref }}
+          ref: ${{ github.event.inputs.branch || github.ref_name }}
 
       - name: Build Docker image
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
-        working-directory: ${{ matrix.path }}
         run: |
-          docker build -t ${{ matrix.component }}:latest .
+          docker build -t ${{ matrix.component }}:latest ${{ matrix.path }}
 
       - name: Trivy Image Scan
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         uses: aquasecurity/trivy-action@master
         with:
+          scan-type: image
           image-ref: ${{ matrix.component }}:latest
           format: table
           exit-code: 0
           severity: CRITICAL,HIGH
 
-      - name: Show Trivy Scan Summary
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
-        run: |
-          echo "Trivy scan for ${{ matrix.component }}:"
-          docker run --rm ${{ matrix.component }}:latest true || echo "Image exists."
-          trivy image --severity CRITICAL,HIGH --format table --no-progress ${{ matrix.component }}:latest | head -40
-
       - name: Generate SBOM with Syft
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
-        working-directory: ${{ matrix.path }}
         run: |
-          syft . -o cyclonedx-json > ../../${{ matrix.component }}-sbom.json
+          syft ${{ matrix.path }} -o cyclonedx-json > ${{ matrix.component }}-sbom.json
 
       - name: Upload SBOM Artifact
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.component }}-sbom
           path: ${{ matrix.component }}-sbom.json
 
       - name: Grype SBOM Scan (VEX Report)
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           grype sbom:${{ matrix.component }}-sbom.json -o cyclonedx-json > ${{ matrix.component }}-grype-vex.json
 
-      - name: Show Grype VEX Summary
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
-        run: |
-          echo "Grype VEX for ${{ matrix.component }}:"
-          head -20 ${{ matrix.component }}-grype-vex.json
-
       - name: Upload Grype VEX Artifact
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.component }}-grype-vex
           path: ${{ matrix.component }}-grype-vex.json
 
       - name: OpenVEX from SBOM
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           openvex generate --sbom ${{ matrix.component }}-sbom.json --output ${{ matrix.component }}-openvex.json
 
-      - name: Show OpenVEX Summary
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
-        run: |
-          echo "OpenVEX for ${{ matrix.component }}:"
-          head -20 ${{ matrix.component }}-openvex.json
-
       - name: Upload OpenVEX Artifact
-        if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.component }}-openvex
