@@ -270,7 +270,7 @@ function getComponentURIFromPathForCollaborator(extensions) {
  * @param {string} componentName
  * @returns {string} url
  */
-function createPathForRemoteComponent(componentName) {
+export function createPathForRemoteComponent(componentName) {
   let prefix = '/api/provider/extension';
   return prefix + normalizeURI(componentName);
 }
@@ -305,7 +305,7 @@ const ExtensionSandbox = React.memo(
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
           setExtension(processedData);
           setIsLoading(false);
-        } catch (error) {
+        } catch {
           setExtension([]);
           setIsLoading(false);
         }

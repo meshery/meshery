@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://redhat-developer.github.io/service-binding-operator-helm-chart/service-binding-operator-1.4.1.tgz"
   },
   "configuration": null,
   "component": {

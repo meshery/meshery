@@ -17,17 +17,64 @@ const workspacesApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       getWorkspaces: builder.query({
-        query: (queryArg) => ({
-          url: `workspaces`,
-          params: {
-            search: queryArg.search,
-            order: queryArg.order,
-            page: queryArg.page || 0,
-            pagesize: queryArg.pagesize || 'all',
-            orgID: queryArg.orgId,
-          },
-          method: 'GET',
-        }),
+        queryFn: async (queryArgs, { dispatch }, _extraOptions, baseQuery) => {
+          const { expandInfo, ...otherArgs } = queryArgs;
+          const params = urlEncodeParams(otherArgs);
+          const workspaces = await baseQuery({
+            url: `workspaces?${params}`,
+            method: 'GET',
+          });
+
+          if (expandInfo && workspaces.data && !workspaces.error) {
+            const modifiedWorkspaces = await Promise.all(
+              workspaces.data.workspaces.map(async (workspace) => {
+                const [designs, environments, views, teams] = await Promise.all([
+                  dispatch(
+                    workspacesApi.endpoints.getDesignsOfWorkspace.initiate({
+                      workspaceId: workspace.id,
+                      expandUser: true,
+                      infiniteScroll: false,
+                      page: 0,
+                      pagesize: 1,
+                    }),
+                  ),
+                  dispatch(
+                    workspacesApi.endpoints.getEnvironmentsOfWorkspace.initiate({
+                      workspaceId: workspace.id,
+                      page: 0,
+                      pagesize: 1,
+                    }),
+                  ),
+                  dispatch(
+                    workspacesApi.endpoints.getViewsOfWorkspace.initiate({
+                      workspaceId: workspace.id,
+                      page: 0,
+                      pagesize: 1,
+                    }),
+                  ),
+                  dispatch(
+                    workspacesApi.endpoints.getTeamsOfWorkspace.initiate({
+                      workspaceId: workspace.id,
+                      page: 0,
+                      pagesize: 1,
+                    }),
+                  ),
+                ]);
+
+                return {
+                  ...workspace,
+                  designCount: designs.data?.total_count || 0,
+                  environmentCount: environments.data?.total_count || 0,
+                  viewCount: views.data?.total_count || 0,
+                  teamCount: teams.data?.total_count || 0,
+                };
+              }),
+            );
+
+            return _.merge({}, workspaces, { data: { workspaces: modifiedWorkspaces } });
+          }
+          return workspaces;
+        },
         providesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
@@ -148,15 +195,12 @@ const workspacesApi = api
           return !_.eq(currentArg, previousArg);
         },
         providesTags: () => [{ type: TAGS.DESIGNS }],
-        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       assignDesignToWorkspace: builder.mutation({
         query: (queryArg) => ({
           url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'POST',
         }),
-
-        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
 
       unassignDesignFromWorkspace: builder.mutation({
@@ -164,7 +208,6 @@ const workspacesApi = api
           url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'DELETE',
         }),
-        invalidatesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       getViewsOfWorkspace: builder.query({
         queryFn: async (queryArg, { dispatch }, _extraOptions, baseQuery) => {
@@ -227,7 +270,6 @@ const workspacesApi = api
           url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
           method: 'POST',
         }),
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       unassignViewFromWorkspace: builder.mutation({
@@ -235,7 +277,6 @@ const workspacesApi = api
           url: `extensions/api/workspaces/${queryArg.workspaceId}/views/${queryArg.viewId}`,
           method: 'DELETE',
         }),
-        invalidatesTags: () => [{ type: TAGS.VIEWS }],
       }),
 
       getTeamsOfWorkspace: builder.query({

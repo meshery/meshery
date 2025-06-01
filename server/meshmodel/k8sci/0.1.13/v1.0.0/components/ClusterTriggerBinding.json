@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/keyporttech/helm-charts/releases/download/k8sci-0.1.13/k8sci-0.1.13.tgz"
   },
   "configuration": null,
   "component": {

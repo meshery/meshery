@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, Grid, Box, List, ListItem, RenderMarkdown } from '@layer5/sistent';
+import { Typography, Grid2, Box, List, ListItem, RenderMarkdown } from '@layer5/sistent';
 import { FormatStructuredData } from '../../DataFormatter';
 
 export const ErrorMetadataFormatter = ({ metadata, event }) => {
@@ -63,7 +63,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
     );
   };
   return (
-    <Grid container>
+    <Grid2 container size="grow">
       {' '}
       <div>
         {event?.description && <FormatStructuredData data={event.description} />}
@@ -78,8 +78,8 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
           />
         </div>
       </div>
-      <Grid container spacing={1} style={{ marginTop: '0.5rem' }}>
-        <Grid item sm={probableCause?.length > 0 ? 6 : 12}>
+      <Grid2 container spacing={1} style={{ marginTop: '0.5rem' }} size="grow">
+        <Grid2 size={{ sm: probableCause?.length > 0 ? 6 : 12 }}>
           <FormatStructuredData
             data={{
               'Probable Cause': probableCause,
@@ -90,8 +90,8 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
               ),
             }}
           />
-        </Grid>
-        <Grid item sm={suggestedRemediation?.length > 0 ? 6 : 12}>
+        </Grid2>
+        <Grid2 size={{ sm: suggestedRemediation?.length > 0 ? 6 : 12 }}>
           <FormatStructuredData
             data={{
               'Suggested Remediation': suggestedRemediation,
@@ -102,8 +102,8 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
               ),
             }}
           />
-        </Grid>
-      </Grid>
-    </Grid>
+        </Grid2>
+      </Grid2>
+    </Grid2>
   );
 };

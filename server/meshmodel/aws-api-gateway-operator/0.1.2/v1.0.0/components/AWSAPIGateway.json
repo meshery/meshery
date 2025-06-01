@@ -175,7 +175,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/mintel/helm-charts/releases/download/aws-api-gateway-operator-0.1.2/aws-api-gateway-operator-0.1.2.tgz"
   },
   "configuration": null,
   "component": {

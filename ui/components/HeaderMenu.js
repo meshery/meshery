@@ -55,6 +55,11 @@ const HeaderMenu = () => {
     handleClose();
   };
 
+  const handleSettings = () => {
+    router.push('/settings');
+    handleClose();
+  };
+
   const handleGetToken = () => {
     triggerGetToken()
       .unwrap()
@@ -122,6 +127,12 @@ const HeaderMenu = () => {
 
     // Always add these items
     defaultItems.push(
+      {
+        id: 'settings',
+        title: 'Settings',
+        onClick: handleSettings,
+        showOnWeb: false,
+      },
       {
         id: 'preferences',
         title: 'Preferences',

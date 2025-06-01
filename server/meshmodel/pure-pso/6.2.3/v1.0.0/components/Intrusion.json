@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://purestorage.github.io/pso-csi/pure-pso-6.2.3.tgz"
   },
   "configuration": null,
   "component": {

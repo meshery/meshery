@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
-    "published": false
+    "published": false,
+    "source_uri": "https://github.com/hellofresh/kangal/releases/download/kangal-2.3.0/kangal-2.3.0.tgz"
   },
   "configuration": null,
   "component": {

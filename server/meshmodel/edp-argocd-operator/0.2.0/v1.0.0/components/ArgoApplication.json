@@ -181,7 +181,8 @@
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
-    "published": false
+    "published": false,
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/edp-argocd-operator-0.2.0.tgz"
   },
   "configuration": null,
   "component": {
