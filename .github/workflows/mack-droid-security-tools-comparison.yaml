@@ -1,252 +1,125 @@
-name: Security Tools Comparison
+name: Security Tools Workflow
 
 on:
   push:
-    branches: [main, feat]
+    branches: [main]
   pull_request:
-    branches: [main, feat]
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to run the workflow on'
-        required: false
-        default: 'main'
 
 jobs:
-  setup:
-    name: Setup Environment
-    runs-on: ubuntu-latest
-    outputs:
-      ref: ${{ steps.setref.outputs.ref }}
-    steps:
-      - id: setref
-        run: echo "ref=${{ github.event.inputs.branch || github.ref_name }}" >> $GITHUB_OUTPUT
-
-  trivy-scan:
-    name: Trivy SCA & Image Scan & SBOM
-    needs: setup
+  trivy-fs-scan:
+    name: Trivy FS Vulnerability Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Trivy FileSystem Scan
+        uses: aquasecurity/trivy-action@master
         with:
-          ref: ${{ needs.setup.outputs.ref }}
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
 
-      - name: Install Trivy
-        run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
-          trivy --version
-
-      - name: Trivy FS Scan (SCA)
-        run: |
-          echo "## Trivy File System Scan Results" >> $GITHUB_STEP_SUMMARY
-          trivy fs --format table . | tee trivy-fs.txt >> $GITHUB_STEP_SUMMARY
-
-      - name: Trivy Image Scan
-        run: |
-          docker build -t testimage:latest .
-          echo "## Trivy Image Scan Results" >> $GITHUB_STEP_SUMMARY
-          trivy image --format table testimage:latest | tee trivy-image.txt >> $GITHUB_STEP_SUMMARY
-
-      - name: Trivy SBOM (CycloneDX)
-        run: |
-          trivy sbom --format cyclonedx --output trivy-sbom.json .
-          echo "✅ Trivy SBOM (CycloneDX) generated: trivy-sbom.json" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload Trivy Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-reports
-          path: |
-            trivy-fs.txt
-            trivy-image.txt
-            trivy-sbom.json
-
-  grype-scan:
-    name: Grype SCA & SBOM
-    needs: setup
+  trivy-image-scan:
+    name: Trivy Image Vulnerability Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.setup.outputs.ref }}
-
-      - name: Install Grype & Syft
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          grype version
-          syft version
-
-      - name: Grype FS Scan
-        run: |
-          echo "## Grype File System Scan Results" >> $GITHUB_STEP_SUMMARY
-          grype dir:. | tee grype-fs.txt >> $GITHUB_STEP_SUMMARY
 
       - name: Build Docker Image
         run: docker build -t testimage:latest .
 
-      - name: Grype Image Scan
-        run: |
-          echo "## Grype Image Scan Results" >> $GITHUB_STEP_SUMMARY
-          grype testimage:latest | tee grype-image.txt >> $GITHUB_STEP_SUMMARY
-
-      - name: Generate SBOM with Syft
-        run: |
-          syft dir:. -o cyclonedx-json > syft-sbom.json
-          echo "✅ Syft SBOM generated: syft-sbom.json" >> $GITHUB_STEP_SUMMARY
-
-      - name: Grype SBOM Scan
-        run: |
-          echo "## Grype SBOM Scan Results" >> $GITHUB_STEP_SUMMARY
-          grype sbom:syft-sbom.json | tee grype-sbom.txt >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload Grype Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Trivy Image Scan
+        uses: aquasecurity/trivy-action@master
         with:
-          name: grype-reports
-          path: |
-            grype-fs.txt
-            grype-image.txt
-            grype-sbom.txt
-            syft-sbom.json
+          scan-type: 'image'
+          scan-ref: 'testimage:latest'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
 
-  cyclonedx-sbom:
-    name: CycloneDX SBOM Generation
-    needs: setup
+  grype-scan:
+    name: Grype FS & Image Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Run Grype FS Scan
+        uses: anchore/scan-action@v3
         with:
-          ref: ${{ needs.setup.outputs.ref }}
+          path: .
 
-      - name: Install CycloneDX CLI
-        run: |
-          npm install -g @cyclonedx/bom
-          cyclonedx-bom --version
+      - name: Build Docker Image
+        run: docker build -t testimage:latest .
 
-      - name: Generate CycloneDX SBOM (Node.js example)
-        run: |
-          cyclonedx-bom -o cyclonedx-sbom.json
-          echo "✅ CycloneDX SBOM generated: cyclonedx-sbom.json" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload CycloneDX SBOM
-        uses: actions/upload-artifact@v4
+      - name: Run Grype Image Scan
+        uses: anchore/scan-action@v3
         with:
-          name: cyclonedx-sbom
-          path: cyclonedx-sbom.json
+          image: testimage:latest
 
-  openvex-report:
-    name: OpenVEX VEX Reporting
-    needs: setup
+  syft-sbom:
+    name: Generate SBOM with Syft
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Generate SBOM (CycloneDX)
+        uses: anchore/sbom-action@v0.15.1
         with:
-          ref: ${{ needs.setup.outputs.ref }}
-
-      - name: Install Syft & OpenVEX
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-          curl -LO https://github.com/openvex/openvex/releases/latest/download/openvex-linux-amd64
-          chmod +x openvex-linux-amd64 && mv openvex-linux-amd64 /usr/local/bin/openvex
-
-      - name: Generate SBOM with Syft
-        run: |
-          syft dir:. -o cyclonedx-json > syft-sbom.json
-          echo "✅ Syft SBOM generated: syft-sbom.json" >> $GITHUB_STEP_SUMMARY
-
-      - name: Generate VEX with OpenVEX
-        run: |
-          openvex generate --sbom syft-sbom.json --output openvex.json
-          echo "✅ OpenVEX report generated: openvex.json" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload OpenVEX Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: openvex-reports
-          path: |
-            syft-sbom.json
-            openvex.json
+          path: .
+          output-file: sbom.spdx.json
 
   snyk-scan:
-    name: Snyk SCA
-    needs: setup
+    name: Snyk Vulnerability Scan
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Authenticate Snyk
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Run Snyk Test
+        uses: snyk/actions/node@v1
         with:
-          ref: ${{ needs.setup.outputs.ref }}
+          command: test
 
-      - name: Install Snyk CLI
-        run: |
-          curl -sL https://snyk.io/install | bash
-          mv .snyk/snyk /usr/local/bin
-          snyk --version
-
-      - name: Authenticate with Snyk
-        run: snyk auth ${{ secrets.SNYK_CODE }}
-
-      - name: Snyk Test
-        run: |
-          echo "## Snyk Test Results" >> $GITHUB_STEP_SUMMARY
-          snyk test | tee snyk-results.txt >> $GITHUB_STEP_SUMMARY
-
-      - name: Generate Snyk SBOM
-        run: |
-          snyk sbom --format=cyclonedx1.4+json > snyk-sbom.json
-          echo "✅ Snyk SBOM generated: snyk-sbom.json" >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload Snyk Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: snyk-reports
-          path: |
-            snyk-results.txt
-            snyk-sbom.json
+      - name: Generate SBOM
+        run: snyk sbom --format=cyclonedx1.4+json > snyk-sbom.json
 
   semgrep-sast:
-    name: Semgrep SAST
-    needs: setup
+    name: Semgrep Static Code Analysis
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.setup.outputs.ref }}
 
-      - uses: returntocorp/semgrep-action@v1.21.0
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: 'auto'
 
   gitleaks-secrets:
-    name: Gitleaks Secrets Scan
-    needs: setup
+    name: Gitleaks Secrets Detection
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ needs.setup.outputs.ref }}
 
-      - uses: gitleaks/gitleaks-action@v2.3.2
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        with:
+          args: "detect --source=. --verbose"
 
   trufflehog-secrets:
-    name: TruffleHog Secrets Scan
-    needs: setup
+    name: TruffleHog Secrets Detection
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Run TruffleHog OSS
+        uses: trufflesecurity/trufflehog@v3
         with:
-          ref: ${{ needs.setup.outputs.ref }}
-
-      - name: Install TruffleHog
-        run: |
-          pip install --upgrade pip
-          pip install trufflehog==3.63.4
-
-      - name: Run TruffleHog
-        run: |
-          echo "## TruffleHog Secrets Scan Results" >> $GITHUB_STEP_SUMMARY
-          trufflehog filesystem . | tee trufflehog-results.txt >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload TruffleHog Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: trufflehog-reports
-          path: trufflehog-results.txt
+          scanArguments: "filesystem ."
