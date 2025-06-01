@@ -65,7 +65,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Snyk Auth
-        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+        run: snyk auth ${{ secrets.SNYK_CODE }}
       - name: Snyk Test
         run: snyk test
       - name: Snyk SBOM
