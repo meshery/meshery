@@ -2,9 +2,9 @@ name: Security Tools Comparison
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat]
   pull_request:
-    branches: [main]
+    branches: [main, feat]
   workflow_dispatch:
     inputs:
       branch:
