@@ -40,9 +40,23 @@ const (
 type MeshsyncDeploymentModeType string
 
 const (
-	MeshsyncDeploymentModeOperator MeshsyncDeploymentModeType = "operator"
-	MeshsyncDeploymentModeLibrary  MeshsyncDeploymentModeType = "library"
+	MeshsyncDeploymentModeUndefined MeshsyncDeploymentModeType = "undefined"
+	MeshsyncDeploymentModeOperator  MeshsyncDeploymentModeType = "operator"
+	MeshsyncDeploymentModeLibrary   MeshsyncDeploymentModeType = "library"
 )
+
+func MeshsyncDeploymentModeFromString(value string) MeshsyncDeploymentModeType {
+	switch value {
+	// if empty value, default to operator mode
+	case "", string(MeshsyncDeploymentModeOperator):
+		return MeshsyncDeploymentModeOperator
+	case string(MeshsyncDeploymentModeLibrary):
+		return MeshsyncDeploymentModeLibrary
+	// if some random string, undefined mode
+	default:
+		return MeshsyncDeploymentModeUndefined
+	}
+}
 
 type MesheryControllersHelper struct {
 	// context that is being manged by a particular controllerHelper instance
@@ -91,8 +105,9 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 	}
 }
 
-func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value MeshsyncDeploymentModeType) {
+func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value MeshsyncDeploymentModeType) *MesheryControllersHelper {
 	mch.meshsyncDeploymentMode = value
+	return mch
 }
 
 // initializes Meshsync data handler for the contexts for whom it has not been
@@ -268,6 +283,9 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 // should be called after AddCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
+	if mch.meshsyncDeploymentMode != MeshsyncDeploymentModeOperator {
+		return mch
+	}
 
 	if ot.IsUndeployed(mch.contextID) {
 		mch.ctxOperatorStatus = controllers.Undeployed
@@ -323,6 +341,9 @@ func (ot *OperatorTracker) IsUndeployed(ctxID string) bool {
 // it will deploy the operator only when it is in NotDeployed state
 func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTracker) *MesheryControllersHelper {
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
+		return mch
+	}
+	if mch.meshsyncDeploymentMode != MeshsyncDeploymentModeOperator {
 		return mch
 	}
 	// go func(mch *MesheryControllersHelper) {

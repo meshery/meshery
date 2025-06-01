@@ -280,6 +280,8 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		Status:           connections.DISCOVERED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
+		// TODO: pass from above
+		MeshsyncDeploymentMode: "library",
 	}
 	connectionCreated, err := l.SaveConnection(conn, "", true)
 	if err != nil {
@@ -1084,17 +1086,18 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		id = conn.ID
 	}
 	connection := &connections.Connection{
-		ID:           id,
-		Name:         conn.Name,
-		CredentialID: uuid.Nil,
-		Type:         conn.Type,
-		SubType:      conn.SubType,
-		Kind:         conn.Kind,
-		Metadata:     conn.MetaData,
-		Status:       conn.Status,
-		UserID:       &uuid.Nil,
-		CreatedAt:    time.Now(),
-		UpdatedAt:    time.Now(),
+		ID:                     id,
+		Name:                   conn.Name,
+		CredentialID:           uuid.Nil,
+		Type:                   conn.Type,
+		SubType:                conn.SubType,
+		Kind:                   conn.Kind,
+		Metadata:               conn.MetaData,
+		Status:                 conn.Status,
+		UserID:                 &uuid.Nil,
+		CreatedAt:              time.Now(),
+		UpdatedAt:              time.Now(),
+		MeshsyncDeploymentMode: conn.MeshsyncDeploymentMode,
 	}
 	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
 	if err != nil {

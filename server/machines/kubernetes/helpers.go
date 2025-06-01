@@ -62,8 +62,4 @@ func AssignClientSetToContext(machinectx *MachineCtx, eventBuilder *events.Event
 
 func AssignControllerHandlers(machinectx *MachineCtx) {
 	machinectx.MesheryCtrlsHelper = models.NewMesheryControllersHelper(machinectx.log, models.NewOperatorDeploymentConfig(adapterTracker), models.GetDBInstance())
-	// TODO
-	// propagate from top level, through context or smth like that
-	// or maybe better idea: through database, controller helper has db instance, can read once per context
-	machinectx.MesheryCtrlsHelper.SetMeshsyncDeploymentMode(models.MeshsyncDeploymentModeLibrary)
 }
