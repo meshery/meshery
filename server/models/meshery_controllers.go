@@ -37,11 +37,11 @@ const (
 	MesheryOperator
 )
 
-type MeshsyncDeploymentMode string
+type MeshsyncDeploymentModeType string
 
 const (
-	MeshsyncDeploymentModeOperator MeshsyncDeploymentMode = "operator"
-	MeshsyncDeploymentModeLibrary  MeshsyncDeploymentMode = "library"
+	MeshsyncDeploymentModeOperator MeshsyncDeploymentModeType = "operator"
+	MeshsyncDeploymentModeLibrary  MeshsyncDeploymentModeType = "library"
 )
 
 type MesheryControllersHelper struct {
@@ -61,7 +61,7 @@ type MesheryControllersHelper struct {
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
 
-	meshsyncDeploymentMode MeshsyncDeploymentMode
+	meshsyncDeploymentMode MeshsyncDeploymentModeType
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
@@ -91,7 +91,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 	}
 }
 
-func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value MeshsyncDeploymentMode) {
+func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value MeshsyncDeploymentModeType) {
 	mch.meshsyncDeploymentMode = value
 }
 
