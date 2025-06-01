@@ -1,0 +1,98 @@
+name: Security Tools Comparison
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  trivy-scan:
+    name: Trivy SCA & Image Scan & SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Trivy FS Scan (SCA)
+        run: trivy fs --format table .
+      - name: Trivy Image Scan
+        run: |
+          docker build -t testimage:latest .
+          trivy image --format table testimage:latest
+      - name: Trivy SBOM (CycloneDX)
+        run: trivy sbom --format cyclonedx --output trivy-sbom.json .
+
+  grype-scan:
+    name: Grype SCA & SBOM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Grype FS Scan (SCA)
+        run: grype dir:.
+      - name: Build Docker Image
+        run: docker build -t testimage:latest .
+      - name: Grype Image Scan
+        run: grype testimage:latest
+      - name: Generate SBOM with Syft
+        run: syft dir:. -o cyclonedx-json > syft-sbom.json
+      - name: Grype SBOM Scan
+        run: grype sbom:syft-sbom.json
+
+  cyclonedx-sbom:
+    name: CycloneDX SBOM Generation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate CycloneDX SBOM (Node.js example)
+        run: |
+          npm install -g @cyclonedx/bom
+          cyclonedx-bom -o cyclonedx-sbom.json
+
+  openvex-report:
+    name: OpenVEX VEX Reporting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate SBOM with Syft
+        run: syft dir:. -o cyclonedx-json > syft-sbom.json
+      - name: Generate VEX with OpenVEX
+        run: |
+          curl -LO https://github.com/openvex/openvex/releases/latest/download/openvex-linux-amd64
+          chmod +x openvex-linux-amd64
+          ./openvex-linux-amd64 generate --sbom syft-sbom.json --output openvex.json
+
+  snyk-scan:
+    name: Snyk SCA
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Snyk Auth
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+      - name: Snyk Test
+        run: snyk test
+      - name: Snyk SBOM
+        run: snyk sbom --format=cyclonedx1.4+json > snyk-sbom.json
+
+  semgrep-sast:
+    name: Semgrep SAST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+
+  gitleaks-secrets:
+    name: Gitleaks Secrets Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+
+  trufflehog-secrets:
+    name: TruffleHog Secrets Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run TruffleHog
+        run: |
+          pip install trufflehog
+          trufflehog filesystem .
