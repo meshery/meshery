@@ -72,13 +72,12 @@ jobs:
 
       - name: Build Docker image
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
+        working-directory: ${{ matrix.path }}
         run: |
-          cd ${{ matrix.path }}
           docker build -t ${{ matrix.component }}:latest .
 
       - name: Trivy Image Scan
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
-        id: trivy
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: ${{ matrix.component }}:latest
@@ -90,12 +89,13 @@ jobs:
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           echo "Trivy scan for ${{ matrix.component }}:"
-          cat trivy-results.sarif || echo "No SARIF output found."
+          docker run --rm ${{ matrix.component }}:latest true || echo "Image exists."
+          trivy image --severity CRITICAL,HIGH --format table --no-progress ${{ matrix.component }}:latest | head -40
 
       - name: Generate SBOM with Syft
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
+        working-directory: ${{ matrix.path }}
         run: |
-          cd ${{ matrix.path }}
           syft . -o cyclonedx-json > ../../${{ matrix.component }}-sbom.json
 
       - name: Upload SBOM Artifact
@@ -108,13 +108,13 @@ jobs:
       - name: Grype SBOM Scan (VEX Report)
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
-          grype sbom:../../${{ matrix.component }}-sbom.json -o cyclonedx-json > ../../${{ matrix.component }}-grype-vex.json
+          grype sbom:${{ matrix.component }}-sbom.json -o cyclonedx-json > ${{ matrix.component }}-grype-vex.json
 
       - name: Show Grype VEX Summary
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           echo "Grype VEX for ${{ matrix.component }}:"
-          head -20 ../../${{ matrix.component }}-grype-vex.json
+          head -20 ${{ matrix.component }}-grype-vex.json
 
       - name: Upload Grype VEX Artifact
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
@@ -126,13 +126,13 @@ jobs:
       - name: OpenVEX from SBOM
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
-          openvex generate --sbom ../../${{ matrix.component }}-sbom.json --output ../../${{ matrix.component }}-openvex.json
+          openvex generate --sbom ${{ matrix.component }}-sbom.json --output ${{ matrix.component }}-openvex.json
 
       - name: Show OpenVEX Summary
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
         run: |
           echo "OpenVEX for ${{ matrix.component }}:"
-          head -20 ../../${{ matrix.component }}-openvex.json
+          head -20 ${{ matrix.component }}-openvex.json
 
       - name: Upload OpenVEX Artifact
         if: ${{ github.event.inputs.components == 'all' || contains(github.event.inputs.components, matrix.component) }}
