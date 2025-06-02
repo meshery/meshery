@@ -51,7 +51,7 @@ Learn how to create, manage, and explore _Kubernetes Deployments_ within the con
 3. Click once to select the _Deployment_ component and choose **Configure**.
     ![](./kubernetes-deployments/2025-02-27_17-20.png)
 4. Change the **Name** of the deployment and the **Namespace** if required. For this demonstration, we will leave them as they are and deploy this to the _default_ namespace.
-5. A deployment consists of replicas. We must set a value for **Replicas**. If nothing is set, the default is 1. For this example we will set it to **2**. We must also set the _Selector_ property. To do this, expand **Selector** and click **MatchLabels**. Set a _matchLabel_ pair. Here we have set `tutorial:deployment`.
+5. A deployment consists of replicas. We must set a value for **Replicas**. If nothing is set, the default is 1. For this example we will set it to **2**. We must also set the _Selector_ property. To do this, expand **Selector** and click **TagSets**. Set a _matchLabel_ pair. Here we have set `tutorial:deployment`.
     ![](./kubernetes-deployments/2025-02-27_17-51.png)
 6. Next, expand **Templates** and open **Metadata** configuration modal. On the _metadata_ modal, click **+** next to **Labels** and set the label to the same key-value pair as in the previous step. Here it is `tutorial:deployment`.
     ![](./kubernetes-deployments/2025-02-27_18-21.png)
