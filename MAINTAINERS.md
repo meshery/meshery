@@ -17,6 +17,7 @@
 | Aabid Sofi          | @aabidsofi19            | Layer5        |
 | Yash Sharma         | @Yashsharma1911         | Digital Ocean |
 | Sudhanshu Dasgupta  | @sudhanshutech          | SafeDep       |
+| Ian Whitney         | @ianrwhitney            | Intuit |
 
 ### Adapter Maintainers
 
