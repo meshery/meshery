@@ -50,6 +50,7 @@ export const DryRunComponentLabel = styled(ListItem)({
 export const ValidationResultsListWrapper = styled(List)({
   width: '100%',
   maxHeight: '18rem',
+  overflowY: 'auto',
   marginBottom: '0.5rem',
   display: 'flex',
   flexDirection: 'column',
