@@ -9,17 +9,17 @@ import (
 	"github.com/gofrs/uuid"
 	gofrs "github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
-	mutils "github.com/layer5io/meshkit/utils"
+	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	"github.com/spf13/viper"
 
-	"github.com/layer5io/meshkit/models/events"
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	entity "github.com/layer5io/meshkit/models/meshmodel/entity"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/events"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	entity "github.com/meshery/meshkit/models/meshmodel/entity"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 )
 
 type EntityErrorCount struct {

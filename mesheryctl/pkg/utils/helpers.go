@@ -24,8 +24,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/logger"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -35,7 +35,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
 const (

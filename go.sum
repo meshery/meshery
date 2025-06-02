@@ -1364,8 +1364,10 @@ github.com/mattn/go-sqlite3 v1.14.24/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxU
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX48g9wI=
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
-github.com/meshery/schemas v0.8.20 h1:WXrLU7BtlRo8yKOuwYHUPxxxncELf9OezbfrOhFxamU=
-github.com/meshery/schemas v0.8.20/go.mod h1:JeRN+wqO3QdzTCyPy7RokFx6Lyqvxha3vHBtuSt48uA=
+github.com/meshery/meshkit v0.8.32 h1:zXyMLkOXcu2eIVcAxXBfw72vebpq4m8716RBYGhG1fM=
+github.com/meshery/meshkit v0.8.32/go.mod h1:Ym2z/5oSQn1jDQr+Qjmm9pBW7jv+8oXqp5+RYr9NXQI=
+github.com/meshery/schemas v0.8.22 h1:JQ7PoEheiXdkIG/h965L+DB7p/JdGEgs3i5r0EniSt4=
+github.com/meshery/schemas v0.8.22/go.mod h1:tuAmsG9WJRjZ0Iv12HIAhKZbWpfpkTRjfPNThKbr7HA=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
 github.com/miekg/pkcs11 v1.0.2/go.mod h1:XsNlhZGX73bx86s2hdc/FuaLm2CPZJemRLMA+WTFxgs=

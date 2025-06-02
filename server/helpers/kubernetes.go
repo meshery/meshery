@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"

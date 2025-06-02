@@ -15,7 +15,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 )
 
 func init() {
