@@ -39,7 +39,7 @@ import {
   CategoryDefinitionV1Beta1OpenApiSchema,
   ModelDefinitionV1Beta1OpenApiSchema,
   SubCategoryDefinitionV1Beta1OpenApiSchema,
-} from '@layer5/schemas';
+} from '@meshery/schemas';
 import FinishModelGenerateStep from './FinishModelGenerateStep';
 
 const UrlStepper = React.memo(({ handleClose }) => {

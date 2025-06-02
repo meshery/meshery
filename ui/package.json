@@ -32,7 +32,7 @@
     "@casl/react": "^5.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@layer5/schemas": "^0.0.6-14",
+    "@meshery/schemas": "*",
     "@sistent/sistent": "*",
     "@mui/icons-material": "^6.4.11",
     "@mui/material": "^6.4.11",

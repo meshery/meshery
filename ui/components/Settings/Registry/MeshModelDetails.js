@@ -2,7 +2,14 @@ import React from 'react';
 import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '@/components/DataFormatter';
-import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@sistent/sistent';
+import {
+  FormControl,
+  Select,
+  MenuItem,
+  CircularProgress,
+  useTheme,
+  Button,
+} from '@sistent/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
 import { REGISTRY_ITEM_STATES } from '@/utils/Enum';
 // import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
