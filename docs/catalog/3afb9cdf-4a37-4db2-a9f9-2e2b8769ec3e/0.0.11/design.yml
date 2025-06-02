@@ -317,7 +317,7 @@
                       "value": "None"
                     }
                   ],
-                  "image": "layer5/meshery:stable-latest",
+                  "image": "meshery/meshery:stable-latest",
                   "imagePullPolicy": "Always",
                   "name": "meshery",
                   "ports": [
