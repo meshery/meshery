@@ -16,7 +16,7 @@ list: include
 
 ## <a name="contributing-ui-sistent">Contributing to Meshery UI - Sistent</a>
 
-`Sistent` is the Layer5 Design System - an open source design system that offers building blocks to create consistent, accessible, and user-friendly interfaces. It's aimed at developers who want to design applications aligned with the same brand and ensure a uniform user experience across different products.
+`Sistent` is the design system used by Meshery UI. Sistent is an open source design system that offers building blocks to create consistent, accessible, and user-friendly interfaces. It's aimed at developers who want to design applications aligned with the same brand and ensure a uniform user experience across different products.
 
 Sistent leverages Material UI libraries and provides a custom theme on top of it for a consistent look and feel. It includes components, icons, and design tokens that developers can readily integrate into their applications. By using Sistent, developers can save time and effort while maintaining a high-quality user experience throughout Meshery.
 
