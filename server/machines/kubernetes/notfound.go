@@ -3,7 +3,7 @@ package kubernetes
 import (
 	"context"
 	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 )
 
 type NotFoundAction struct{}
