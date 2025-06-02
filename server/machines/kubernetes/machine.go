@@ -6,10 +6,10 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/machines"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils/kubernetes"
 )
 
 // One FSM per connection

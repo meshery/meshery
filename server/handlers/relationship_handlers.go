@@ -7,9 +7,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1alpha3 "github.com/layer5io/meshkit/models/meshmodel/registry/v1alpha3"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1alpha3 "github.com/meshery/meshkit/models/meshmodel/registry/v1alpha3"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 )
 

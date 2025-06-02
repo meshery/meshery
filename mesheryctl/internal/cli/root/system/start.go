@@ -39,8 +39,8 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/filters"
 
-	meshkitutils "github.com/layer5io/meshkit/utils"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitutils "github.com/meshery/meshkit/utils"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"

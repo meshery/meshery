@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )

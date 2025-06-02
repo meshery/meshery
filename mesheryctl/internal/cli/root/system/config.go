@@ -31,7 +31,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
 func getContexts(configFile string) ([]string, error) {

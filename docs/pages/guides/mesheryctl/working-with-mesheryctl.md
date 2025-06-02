@@ -95,13 +95,13 @@ Yes, if you need to establish a session with your Meshery Server, you can [authe
 ## Advanced Installation
 
 Users can control the specific container image and tag (version) of Meshery that they would like to run by editing their local _~/.meshery/meshery.yaml_ (a docker compose file).
-Aligned with the Meshery container image, instead of leaving the implicit :stable-latest tag behind image: layer5/meshery, users will instead identify a specific image tag like so:
+Aligned with the Meshery container image, instead of leaving the implicit :stable-latest tag behind image: meshery/meshery, users will instead identify a specific image tag like so:
 
 {% capture code_content %}bash
 version: '3'
 services:
   meshery:
-    image: layer5/meshery:v0.5.0
+    image: meshery/meshery:v0.5.0
     labels:
       - "com.centurylinklabs.watchtower.enable=true"{% endcapture %}
 {% include code.html code=code_content %}

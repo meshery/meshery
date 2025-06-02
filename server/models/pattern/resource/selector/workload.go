@@ -6,8 +6,8 @@ import (
 
 	"github.com/meshery/schemas/models/v1beta1/component"
 
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 func (s *Selector) GetDefinition(name string, version string, modelName string, apiVersion string, allowEmptyAPIVersion bool) (component.ComponentDefinition, error) {
