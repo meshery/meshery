@@ -24,7 +24,7 @@ The Meshery project is community-built and welcomes collaboration! <a href="http
 
 * Join any of the [community meetings](https://meshery.io/calendar). 
 * Subscribe to the [community calendar](https://meshery.io/calendar).
-* Fill-in a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
+* Fill-in a <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMLeZY6hZ46yYNkoKKV5OM-jCypjbYcqptbUNltEE73EqCjA/viewform?usp=sf_link">community member form</a> to gain access to community resources.
 
 ## Talking about Meshery?
 
@@ -32,5 +32,5 @@ Giving a talk or hosting a meetup about Meshery? Leverage existing slides or req
 
 <div class="wrapper">
     <a href="https://forms.gle/1jqY7HWveSFKCdnD6"><div class="overview">Share your event</div></a>
-    <a href="https://layer5.io/newcomers"><div class="overview">Access slides and resources</div></a>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdMLeZY6hZ46yYNkoKKV5OM-jCypjbYcqptbUNltEE73EqCjA/viewform?usp=sf_link"><div class="overview">Access slides and resources</div></a>
 </div>
