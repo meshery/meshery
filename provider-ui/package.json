@@ -12,7 +12,7 @@
     "clean": "rm -rf .next,out"
   },
   "keywords": [],
-  "author": "Layer5",
+  "author": "Meshery Authors",
   "repository": "https://github.com/meshery/meshery",
   "license": "Apache-2.0",
   "dependencies": {
@@ -21,7 +21,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.0",
-    "@sistent/sistent": "^0.14.183",
+    "@sistent/sistent": "^0.14.199",
     "babel-plugin-istanbul": "^7.0.0",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
