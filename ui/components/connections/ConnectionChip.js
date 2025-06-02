@@ -1,4 +1,4 @@
-import { Avatar, useTheme } from '@layer5/sistent';
+import { Avatar, useTheme } from '@sistent/sistent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -10,7 +10,7 @@ import { notificationColors } from '../../themes';
 import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
-import { CustomTooltip } from '@layer5/sistent';
+import { CustomTooltip } from '@sistent/sistent';
 import {
   ChipWrapper,
   ConnectedChip,

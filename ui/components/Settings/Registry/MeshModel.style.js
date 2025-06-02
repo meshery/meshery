@@ -1,4 +1,4 @@
-import { styled, Button, alpha } from '@layer5/sistent';
+import { styled, Button, alpha } from '@sistent/sistent';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 export const DisableButton = styled(Button)(({ theme }) => ({

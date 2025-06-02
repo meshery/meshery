@@ -38,7 +38,7 @@ import {
   CatalogCard,
   FeedbackButton,
   SistentThemeProviderWithoutBaseLine,
-} from "@layer5/sistent";
+} from "@sistent/sistent";
 import { MESHMAP, providerUrl } from "../utils/constants";
 
 const AuthenticatedMsg = "Authenticated";

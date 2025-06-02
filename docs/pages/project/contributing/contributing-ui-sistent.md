@@ -41,10 +41,10 @@ Additionally, it provides custom components like `Modal`, `TransferList`, and ot
 
 ### Usage
 
-- **Import any base or custom component from `@layer5/sistent`**. Here's how you can do it:
+- **Import any base or custom component from `@sistent/sistent`**. Here's how you can do it:
 
 ```javascript
-import {Button} from `@layer5/sistent`
+import {Button} from `@sistent/sistent`
 
 function MyComponent() {
     return (
@@ -80,12 +80,12 @@ Roles specify the context for applying colors. Different roles can share the sam
 
 #### How to use these tokens/colors from Sistent theme
 
-- Import the `useTheme` hook from `@layer5/sistent` to access the current theme.
+- Import the `useTheme` hook from `@sistent/sistent` to access the current theme.
 - Utilize the `useTheme` hook to access theme properties and apply them to your components, such as setting the background style of the `Button`.
 
 {% raw %}
 ```javascript
-import {Button, useTheme} from "@layer5/sistent";
+import {Button, useTheme} from "@sistent/sistent";
 
 function MyComponent() {
   const theme = useTheme();

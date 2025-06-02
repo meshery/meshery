@@ -1,4 +1,4 @@
-import { Tooltip, Fade } from '@layer5/sistent';
+import { Tooltip, Fade } from '@sistent/sistent';
 import {
   DockerIcon,
   GithubIcon,

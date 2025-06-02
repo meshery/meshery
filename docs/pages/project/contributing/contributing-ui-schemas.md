@@ -169,7 +169,7 @@ const validateDesign = (data) => {
 
 ### A. RJSF JSON Schemas
 
-Meshery uses [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) to render forms dynamically based on JSON schemas. All of Meshery’s RJSF schemas are defined in the `@layer5/sistent` package, which extends schemas from the `@layer5/schema` package.
+Meshery uses [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) to render forms dynamically based on JSON schemas. All of Meshery’s RJSF schemas are defined in the `@sistent/sistent` package, which extends schemas from the `@layer5/schema` package.
 
 This approach enables us to generate forms that automatically adapt to the schema structure without hardcoding field properties like type, enum, description, and others.
 

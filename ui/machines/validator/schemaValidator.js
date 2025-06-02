@@ -2,7 +2,7 @@ import { fromPromise } from 'xstate';
 import Ajv from 'ajv';
 import _ from 'lodash';
 
-import { dataValidatorMachine } from '@layer5/sistent';
+import { dataValidatorMachine } from '@sistent/sistent';
 
 const ajv = new Ajv({
   allErrors: true,

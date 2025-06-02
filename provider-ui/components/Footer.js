@@ -1,6 +1,6 @@
 import React, { Fragment } from "react";
-import { NoSsr } from '@layer5/sistent'
-import { FavoriteIcon, Typography, Paper, styled, accentGrey } from "@layer5/sistent";
+import { NoSsr } from '@sistent/sistent'
+import { FavoriteIcon, Typography, Paper, styled, accentGrey } from "@sistent/sistent";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: accentGrey[20],
   padding: theme.spacing(2),

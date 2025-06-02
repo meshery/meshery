@@ -19,7 +19,7 @@ import {
   MenuItem,
   Radio,
   Grid2,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 import {
   StyledSummaryBox,

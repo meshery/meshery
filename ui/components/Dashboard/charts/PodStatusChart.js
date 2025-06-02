@@ -8,7 +8,7 @@ import {
   DARK_SLATE_GRAY,
   TEAL_BLUE,
   Stack,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import BBChart from '@/components/BBChart';
 import { getLegendTemplate } from './utils';
 import ConnectCluster from './ConnectCluster';

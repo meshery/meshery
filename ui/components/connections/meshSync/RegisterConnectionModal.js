@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalBody } from '@layer5/sistent';
+import { Modal, ModalBody } from '@sistent/sistent';
 import CustomizedSteppers from './Stepper/index.js';
 
 import { useCancelConnectionRegisterMutation } from '@/rtk-query/connection.js';
