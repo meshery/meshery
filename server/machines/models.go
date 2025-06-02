@@ -8,8 +8,8 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
 )
 
 const (

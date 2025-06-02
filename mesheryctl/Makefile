@@ -45,11 +45,11 @@ clean:
 
 .PHONY: error
 error:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers
+	go run github.com/meshery/meshkit/cmd/errorutil -d . analyze -i ./helpers -o ./helpers
 
 ## Runs meshkit error utility to update error codes for mesheryctl.
 error-util:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . update -i ./helpers/ -o ./helpers
+	go run github.com/meshery/meshkit/cmd/errorutil -d . update -i ./helpers/ -o ./helpers
 
 # Check code quality at local by using golangci-lint and return the coverage
 .PHONY: lint

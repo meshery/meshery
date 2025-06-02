@@ -8,7 +8,7 @@ import (
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/connections"
 	"github.com/layer5io/meshery/server/models/environments"
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshkit/database"
 	"gorm.io/gorm"
 )
 
