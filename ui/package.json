@@ -35,7 +35,7 @@
     "@meshery/schemas": "*",
     "@sistent/sistent": "^0.14.199",
     "@mui/icons-material": "^6.4.11",
-    "@mui/material": "^6.4.11",
+    "@mui/material": "^7.1.1",
     "@mui/x-date-pickers": "^7.24.0",
     "@mui/x-tree-view": "^6.0.0-beta.0",
     "@open-policy-agent/opa-wasm": "^1.10.0",
