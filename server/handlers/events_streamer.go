@@ -15,10 +15,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	_events "github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	_events "github.com/meshery/meshkit/utils/events"
 )
 
 var (

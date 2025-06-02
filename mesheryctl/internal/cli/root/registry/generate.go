@@ -22,8 +22,8 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	mutils "github.com/layer5io/meshkit/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	mutils "github.com/meshery/meshkit/utils"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"

@@ -7,7 +7,7 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
 )
 
