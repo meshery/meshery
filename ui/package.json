@@ -33,7 +33,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@meshery/schemas": "*",
-    "@sistent/sistent": "*",
+    "@sistent/sistent": "^0.14.199",
     "@mui/icons-material": "^6.4.11",
     "@mui/material": "^6.4.11",
     "@mui/x-date-pickers": "^7.24.0",
