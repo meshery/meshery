@@ -51,7 +51,7 @@ import {
   Typography,
   Hidden,
   NoSsr,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';

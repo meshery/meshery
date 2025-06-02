@@ -29,8 +29,8 @@ import {
   accentGrey,
   CHINESE_SILVER,
   KEPPEL,
-} from "@layer5/sistent";
-import { CloseIcon, ClickAwayListener, DropDownIcon } from "@layer5/sistent";
+} from "@sistent/sistent";
+import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 

@@ -1,4 +1,4 @@
-import { styled, Box, Typography, Link } from '@layer5/sistent';
+import { styled, Box, Typography, Link } from '@sistent/sistent';
 
 export const StyledSummaryBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.blur?.heavy,

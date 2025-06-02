@@ -2,7 +2,7 @@ import React from 'react';
 import { randomLoadingMessage } from './loadingMessages';
 import LoadingScreen from './LoadingComponentServer';
 import { createPortal } from 'react-dom/cjs/react-dom.production.min';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 
 export const DynamicFullScrrenLoader = ({ children, ...props }) => {
   if (!props.isLoading) return children;

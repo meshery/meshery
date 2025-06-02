@@ -16,7 +16,7 @@ import {
   Modal,
   ModalBody,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { Search } from '@mui/icons-material';
 import { errorHandlerGenerator, successHandlerGenerator } from '../utils/helpers/common';
 import { pingKubernetes } from '../utils/helpers/kubernetesHelpers';

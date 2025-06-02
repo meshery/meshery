@@ -15,7 +15,7 @@ import {
   useTheme,
   styled,
   Chip,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ModelIcon from '@/assets/icons/ModelIcon';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';

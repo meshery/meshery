@@ -14,7 +14,7 @@ import {
   StyledDivider,
   ErrorLink,
 } from './styles';
-import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@layer5/sistent';
+import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@sistent/sistent';
 import OrgSwitcher from './OrgSwitcher';
 // import RequestForm from './RequestForm';
 import CurrentSessionInfo from './CurrentSession';

@@ -1,5 +1,5 @@
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
-import { useTheme, PlainCard, DocumentIcon } from '@layer5/sistent';
+import { useTheme, PlainCard, DocumentIcon } from '@sistent/sistent';
 import React from 'react';
 import { iconMedium } from 'css/icons.styles';
 

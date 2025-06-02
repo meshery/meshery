@@ -1,4 +1,4 @@
-import { BasicMarkdown, CircularProgress, styled, lighten, Box } from '@layer5/sistent';
+import { BasicMarkdown, CircularProgress, styled, lighten, Box } from '@sistent/sistent';
 import { SnackbarContent } from 'notistack';
 import { forwardRef } from 'react';
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';

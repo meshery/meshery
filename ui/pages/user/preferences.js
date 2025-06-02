@@ -4,7 +4,7 @@ import Head from 'next/head';
 import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { useDispatch, useSelector } from 'react-redux';
 import { updatePage } from '@/store/slices/mesheryUi';
 

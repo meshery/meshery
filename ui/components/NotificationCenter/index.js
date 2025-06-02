@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { CustomTooltip, NoSsr } from '@layer5/sistent';
+import { CustomTooltip, NoSsr } from '@sistent/sistent';
 import {
   Divider,
   ClickAwayListener,
@@ -11,7 +11,7 @@ import {
   Checkbox,
   Collapse,
   IconButton,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
 import { iconMedium } from '../../css/icons.styles';
@@ -62,7 +62,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useDispatch, useSelector } from 'react-redux';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
 
