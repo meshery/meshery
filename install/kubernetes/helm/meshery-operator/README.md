@@ -50,7 +50,7 @@ Meshery Operator chart.
 | mesheryOperator.args[1] | string | `"--enable-leader-election"` |  |
 | mesheryOperator.command[0] | string | `"/manager"` |  |
 | mesheryOperator.image.pullPolicy | string | `"Always"` |  |
-| mesheryOperator.image.repository | string | `"layer5/meshery-operator:stable-latest"` |  |
+| mesheryOperator.image.repository | string | `"meshery/meshery-operator:stable-latest"` |  |
 | mesheryOperator.name | string | `"manager"` |  |
 | nameOverride | string | `""` |  |
 | nodeSelector | object | `{}` |  |
