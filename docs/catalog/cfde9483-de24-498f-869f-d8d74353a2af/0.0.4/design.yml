@@ -12272,7 +12272,7 @@
                   "value": "10.101.133.151:4222"
                 }
               ],
-              "image": "layer5/meshsync:stable-latest",
+              "image": "meshery/meshsync:stable-latest",
               "imagePullPolicy": "Always",
               "name": "meshsync",
               "ports": [
