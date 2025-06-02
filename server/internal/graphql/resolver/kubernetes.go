@@ -8,8 +8,8 @@ import (
 
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/models"
-	meshkitKube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/kubernetes/describe"
+	meshkitKube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/kubernetes/describe"
 )
 
 func (r *Resolver) getAvailableNamespaces(ctx context.Context, provider models.Provider, k8sClusterIDs []string) ([]*model.NameSpace, error) {

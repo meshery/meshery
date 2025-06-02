@@ -458,15 +458,15 @@ definitions:
                 $ref: '#/definitions/CatalogDataType'
         title: CatalogData defines model for catalog_data.
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CatalogDataCompatibility:
         title: CatalogDataCompatibility defines model for CatalogData.Compatibility.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CatalogDataType:
         title: CatalogDataType Categorization of the type of design or operational flow depicted in this design.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CategoryDefinition:
         properties:
             metadata:
@@ -995,7 +995,7 @@ definitions:
         x-go-package: github.com/docker/docker/api/types/container
     ContentClass:
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CountBySeverityLevel:
         properties:
             count:
@@ -1281,7 +1281,7 @@ definitions:
             Type:
                 $ref: '#/definitions/EntityType'
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/entity
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/entity
     EntitySummary:
         properties:
             components:
@@ -1301,10 +1301,10 @@ definitions:
                 type: integer
                 x-go-name: Relationships
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/core/v1beta1
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/core/v1beta1
     EntityType:
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/entity
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/entity
     EnvironmentData:
         properties:
             created_at:
@@ -1431,15 +1431,15 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/events
+        x-go-package: github.com/meshery/meshkit/models/events
     EventSeverity:
         title: EventSeverity A set of seven standard event levels.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/events
+        x-go-package: github.com/meshery/meshkit/models/events
     EventStatus:
         title: EventStatus Status for the event.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/events
+        x-go-package: github.com/meshery/meshkit/models/events
     EventsResponse:
         properties:
             count_by_severity_level:
@@ -2583,7 +2583,7 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/core/v1beta1
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/core/v1beta1
     MeshSyncResourcesAPIResponse:
         properties:
             design:

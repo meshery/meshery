@@ -2,7 +2,7 @@ package helpers
 
 import (
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 )
 
 var (

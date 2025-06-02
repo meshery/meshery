@@ -18,12 +18,12 @@ package handlers
 // 	"github.com/layer5io/meshery/server/meshes"
 // 	"github.com/layer5io/meshery/server/models"
 // 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
-// 	"github.com/layer5io/meshkit/logger"
-// 	"github.com/layer5io/meshkit/models/events"
-// 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-// 	"github.com/layer5io/meshkit/utils/kubernetes"
-// 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
-// 	"github.com/layer5io/meshkit/utils/walker"
+// 	"github.com/meshery/meshkit/logger"
+// 	"github.com/meshery/meshkit/models/events"
+// 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+// 	"github.com/meshery/meshkit/utils/kubernetes"
+// 	"github.com/meshery/meshkit/utils/kubernetes/kompose"
+// 	"github.com/meshery/meshkit/utils/walker"
 // 	"gopkg.in/yaml.v2"
 // )
 

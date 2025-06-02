@@ -16,8 +16,8 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/utils"
 )
 
 // ChangeOperatorStatus is the resolver for the changeOperatorStatus field.

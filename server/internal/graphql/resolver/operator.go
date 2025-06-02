@@ -8,10 +8,10 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/model"
 	"github.com/layer5io/meshery/server/machines/kubernetes"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/controllers"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/broadcast"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/models/controllers"
+	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/meshkit/utils/broadcast"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
 /*

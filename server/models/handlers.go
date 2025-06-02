@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/server/models/meshmodel"
-	"github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshkit/utils/events"
 )
 
 // HandlerInterface defines the methods a Handler should define
