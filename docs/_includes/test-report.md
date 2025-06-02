@@ -1,6 +1,6 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 2nd 2025, 12:28:09 pm
+- Testing started at: June 2nd 2025, 2:01:38 pm
 
 **📦 Test Result Summary**
 
@@ -9,7 +9,7 @@
 - ⚠️ 3 flaked
 - ⏩ 7 skipped
 
-⌛ _Duration: 6 minutes and 28 seconds_
+⌛ _Duration: 5 minutes and 58 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -29,7 +29,7 @@
 | 6 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
 | 7 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 8 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 9 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 9 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 10 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
 | 11 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
 | 12 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
