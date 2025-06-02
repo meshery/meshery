@@ -47,7 +47,7 @@ Meshery UI is a significant component of the value proposition Meshery offers to
 
 ### User Flows / Wireframing / Mockups
 
-Figma is used as the user flow and UI mockup design tool. The [Meshery UI design file](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) can be viewed by using this [open invitation](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9) for view access. Fill-in a [community member form](https://docs.google.com/forms/d/e/1FAIpQLSdMLeZY6hZ46yYNkoKKV5OM-jCypjbYcqptbUNltEE73EqCjA/viewform?usp=sf_link) to gain access to additional community resources.
+Figma is used as the user flow and UI mockup design tool. The [Meshery UI design file](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) can be viewed by using this [open invitation](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9) for view access. Fill-in a [community member form](https://meshery.io/newcomers) to gain access to additional community resources.
 
 ### Design Goals
 
