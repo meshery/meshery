@@ -43,7 +43,7 @@ MESHERY_CLOUD_DEV="http://localhost:9876"
 MESHERY_CLOUD_PROD="https://cloud.layer5.io"
 MESHERY_CLOUD_STAGING="https://staging-cloud.layer5.io"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
-EXOSCALE_PROD="https://dev-sks.exoscale.com"
+EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_PROD="https://dev-sks.exoscale.com"
 
 #-----------------------------------------------------------------------------
