@@ -53,6 +53,7 @@ mesheryctl component view [component-name]
 
 		outFormatFlag, _ := cmd.Flags().GetString("output-format")
 		componentDefinition := args[0]
+		saveFlag, _ = cmd.Flags().GetBool("save")
 
 		urlPath := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, componentDefinition)
 

@@ -21,26 +21,26 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
 
-	// "github.com/layer5io/meshkit/errors"
-	// "github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/models/events"
+	// "github.com/meshery/meshkit/errors"
+	// "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/events"
 
-	meshkitOci "github.com/layer5io/meshkit/models/oci"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	meshkitutils "github.com/layer5io/meshkit/utils"
+	meshkitOci "github.com/meshery/meshkit/models/oci"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitutils "github.com/meshery/meshkit/utils"
 
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/

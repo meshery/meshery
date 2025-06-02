@@ -14,9 +14,9 @@ import (
 	"github.com/layer5io/meshery/server/internal/graphql/generated"
 	"github.com/layer5io/meshery/server/internal/graphql/resolver"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils/broadcast"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/utils/broadcast"
 )
 
 type Options struct {

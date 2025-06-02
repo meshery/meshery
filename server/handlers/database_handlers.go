@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"

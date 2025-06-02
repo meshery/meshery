@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshkit/logger"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitUtils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/logger"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitUtils "github.com/meshery/meshkit/utils"
 )
 
 var ModelsPath = "../meshmodel"

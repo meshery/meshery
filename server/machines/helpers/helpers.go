@@ -11,8 +11,8 @@ import (
 	"github.com/layer5io/meshery/server/machines/prometheus"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 )
 
 func StatusToEvent(status connections.ConnectionStatus) machines.EventType {

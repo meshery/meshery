@@ -8,9 +8,9 @@ package handlers
 
 // 	"github.com/gofrs/uuid"
 // 	"github.com/layer5io/meshery/server/models"
-// 	"github.com/layer5io/meshkit/logger"
-// 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-// 	"github.com/layer5io/meshkit/validator"
+// 	"github.com/meshery/meshkit/logger"
+// 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+// 	"github.com/meshery/meshkit/validator"
 // 	"github.com/meshery/schemas/models/v1beta1/pattern"
 // 	"github.com/spf13/viper"
 // )

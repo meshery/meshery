@@ -16,7 +16,7 @@ import (
 	"github.com/docker/go-connections/nat"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
 )
 
@@ -87,7 +87,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 		var mesheryNetworkSettings *container.NetworkSettingsSummary
 		for _, container := range containers {
-			if strings.Contains(container.Image, "layer5/meshery") {
+			if strings.Contains(container.Image, "meshery/meshery") {
 				mesheryNetworkSettings = container.NetworkSettings
 			}
 		}

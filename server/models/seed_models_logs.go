@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	gofrs "github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	mutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
 	"strings"
 )
