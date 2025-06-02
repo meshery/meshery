@@ -44,7 +44,7 @@ MESHERY_CLOUD_PROD="https://cloud.layer5.io"
 MESHERY_CLOUD_STAGING="https://staging-cloud.layer5.io"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
 EXOSCALE_STG="https://stg-sks.exoscale.com"
-EXOSCALE_PROD="https://dev-sks.exoscale.com"
+EXOSCALE_DEV="https://dev-sks.exoscale.com"
 
 #-----------------------------------------------------------------------------
 # Server
