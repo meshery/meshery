@@ -1,4 +1,4 @@
-import { Box, List, ListItem, ListItemText, ListSubheader, styled, alpha } from '@layer5/sistent';
+import { Box, List, ListItem, ListItemText, ListSubheader, styled, alpha } from '@sistent/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 
 export const ValidationErrorListItem = styled(ListItem)(({ theme }) => ({

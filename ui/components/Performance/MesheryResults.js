@@ -8,7 +8,7 @@ import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryResultDialog from '../MesheryResultDialog';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@layer5/sistent';
+import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@sistent/sistent';
 import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';

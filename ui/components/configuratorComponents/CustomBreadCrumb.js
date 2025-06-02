@@ -1,4 +1,4 @@
-import { ClickAwayListener, styled } from '@layer5/sistent';
+import { ClickAwayListener, styled } from '@sistent/sistent';
 import React, { useEffect, useState } from 'react';
 
 export const DesignerWrapper = styled('div')(({ theme }) => ({

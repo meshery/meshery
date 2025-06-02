@@ -9,7 +9,7 @@ import {
   Typography,
   Box,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { iconSmall } from '../../../../css/icons.styles';
 
 export default function SimpleAccordion(props) {

@@ -23,7 +23,7 @@ import {
   ExportIcon,
   IconButton,
   CloseIcon,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React, { useContext, useState } from 'react';
 import { capitalize } from 'lodash/fp';
 import { getAllUsers } from '@/rtk-query/user';

@@ -1,4 +1,4 @@
-import { Typography } from '@layer5/sistent';
+import { Typography } from '@sistent/sistent';
 
 export function TabPanel(props) {
   const { children, value, index, ...other } = props;

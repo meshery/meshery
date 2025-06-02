@@ -14,7 +14,7 @@ import {
   Table,
   TableCell,
   TableRow,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import FlipCard from '../FlipCard';
 import PerformanceResults from './PerformanceResults';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';

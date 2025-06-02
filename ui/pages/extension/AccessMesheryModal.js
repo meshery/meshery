@@ -10,7 +10,7 @@ import {
   Slide,
   CloseIcon,
   styled,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
   margin: 0,

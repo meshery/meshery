@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme } from '@layer5/sistent';
+import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters } from '../components/extensions';
 import DefaultError from '@/components/General/error-404';
