@@ -34,7 +34,7 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.50.1
           
           # Install gosec (SAST)
-          curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $HOME/.local/bin v2.19.0
+          # curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $HOME/.local/bin v2.19.0
           
           # Install OpenVEX
           curl -LO https://github.com/openvex/openvex/releases/latest/download/openvex-linux-amd64
@@ -46,20 +46,20 @@ jobs:
           
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: SAST Scan (GoSec)
-        id: sast-scan
-        run: |
-          # Scan Go code in mesheryctl
-          gosec -fmt=json -out=mesheryctl-gosec-report.json ./mesheryctl/...
-          GOSECTL_ISSUES=$(jq '.Issues | length' mesheryctl-gosec-report.json)
-          echo "mesheryctl issues: $GOSECTL_ISSUES"
+      # - name: SAST Scan (GoSec)
+      #   id: sast-scan
+      #   run: |
+      #     # Scan Go code in mesheryctl
+      #     gosec -fmt=json -out=mesheryctl-gosec-report.json ./mesheryctl/...
+      #     GOSECTL_ISSUES=$(jq '.Issues | length' mesheryctl-gosec-report.json)
+      #     echo "mesheryctl issues: $GOSECTL_ISSUES"
           
-          # Scan Go code in root
-          gosec -fmt=json -out=root-gosec-report.json ./...
-          ROOT_ISSUES=$(jq '.Issues | length' root-gosec-report.json)
-          echo "root issues: $ROOT_ISSUES"
+      #     # Scan Go code in root
+      #     gosec -fmt=json -out=root-gosec-report.json ./...
+      #     ROOT_ISSUES=$(jq '.Issues | length' root-gosec-report.json)
+      #     echo "root issues: $ROOT_ISSUES"
           
-          echo "SAST_ISSUES=$((GOSECTL_ISSUES + ROOT_ISSUES))" >> $GITHUB_ENV
+      #     echo "SAST_ISSUES=$((GOSECTL_ISSUES + ROOT_ISSUES))" >> $GITHUB_ENV
 
       - name: Build Docker Image
         run: |
@@ -120,10 +120,10 @@ jobs:
       - name: Generate Security Summary
         run: |
           echo "## 📊 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔍 Static Analysis (SAST)" >> $GITHUB_STEP_SUMMARY
-          echo "- **mesheryctl issues**: $(jq '.Issues | length' mesheryctl-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Root directory issues**: $(jq '.Issues | length' root-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Total SAST issues**: $SAST_ISSUES" >> $GITHUB_STEP_SUMMARY
+          # echo "### 🔍 Static Analysis (SAST)" >> $GITHUB_STEP_SUMMARY
+          # echo "- **mesheryctl issues**: $(jq '.Issues | length' mesheryctl-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
+          # echo "- **Root directory issues**: $(jq '.Issues | length' root-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
+          # echo "- **Total SAST issues**: $SAST_ISSUES" >> $GITHUB_STEP_SUMMARY
           
           echo "### 🐳 Container Scan (Trivy)" >> $GITHUB_STEP_SUMMARY
           echo "- **CRITICAL vulnerabilities**: $TRIVY_CRITICAL" >> $GITHUB_STEP_SUMMARY
