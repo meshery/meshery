@@ -125,7 +125,7 @@ const DefaultError = (props) => {
           {' '}
           discussion forum
         </ErrorLink>{' '}
-        or the <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
+        or the <ErrorLink href="https://slack.meshery.io"> Slack workspace</ErrorLink>.
       </Typography>
     </ErrorMain>
   );

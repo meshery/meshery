@@ -5,7 +5,7 @@ const peformanceProfiles = [
   {
     profileWithUUID: `Sample-Perf-Test-${uuidv4()}`,
     serviceMesh: 'None',
-    url: 'https://layer5.io/',
+    url: 'https://meshery.io/',
     loadGenerator: 'fortio',
   },
 ];

@@ -29,7 +29,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Join the community Slack"
         >
-          <a href="https://slack.layer5.io">
+          <a href="https://slack.meshery.io">
             <SlackIcon height={45} width={45} />
           </a>
         </Tooltip>
