@@ -9,7 +9,7 @@ Meshery Adapter for Istio chart.
 | Name | Email | Url |
 | ---- | ------ | --- |
 | aisuko | <urakiny@gmail.com> |  |
-| leecalcote | <leecalcote@gmail.com> |  |
+
 
 ## Values
 

@@ -19,7 +19,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Get connected with the Layer5 community"
         >
-          <a href="mailto:community@layer5.io">
+          <a href="mailto:maintainers@meshery.io">
             <MessageIcon height={45} width={45} />
           </a>
         </Tooltip>

@@ -41,7 +41,7 @@ jobs:
         with:
           file_pattern: docs
           commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated Swagger Docs for REST API"
@@ -82,7 +82,7 @@ jobs:
         with:
           file_pattern: docs
           commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated GraphQL API Documentation"
@@ -235,7 +235,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Job(s) failure in the build-and-release-stable workflow
-          to: support@layer5.io
+          to: maintainers@meshery.io
           from: Build and Release Stable workflow
           body: |
             The workflow failed. Here are the details:

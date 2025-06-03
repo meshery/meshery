@@ -65,7 +65,7 @@ jobs:
         with:
           commit_user_name: l5io
           repository: ./meshery.io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
@@ -84,7 +84,7 @@ jobs:
         with:
           commit_user_name: l5io
           repository: ./layer5
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
@@ -103,7 +103,7 @@ jobs:
         with:
           commit_user_name: l5io
           repository: ./meshery
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Generated documentation for Integration"
@@ -122,7 +122,7 @@ jobs:
         with:
           commit_user_name: l5io
           repository: ./meshery-cloud
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "Models Updated"
