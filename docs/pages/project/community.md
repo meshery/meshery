@@ -14,7 +14,7 @@ Meshery is a CNCF project maintained by engineers from Layer5, VMware, Red Hat, 
 
 ## Getting involved in the Community
 
-Meshery is one of a number of open source projects originated by the <a href="https://layer5.io/community">Layer5 community</a>. Get involved with Meshery and supporting projects. Start by reading through the [Newcomers Guide](https://layer5.io/community/newcomers), which provides details on how to participate. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. The Meshery community is always open and warmly welcomes you.  If this is your first time making open source contribution, you are in the right place!
+Get involved with Meshery and supporting projects. Start by reading through the [Newcomers Guide](https://meshery.io/community), which provides details on how to participate. Seek out other community members, who will make sure you are not left out. We always have a role for everyone whether to be a code-writer, a community manager, user, advocate, or just to listen in. The Meshery community is always open and warmly welcomes you.  If this is your first time making open source contribution, you are in the right place!
 
 Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for specific details about setting up your development environment and to start learning the innerworkings of a specific Meshery component.
 
@@ -22,7 +22,7 @@ Please see our [contributing guide]({{ site.baseurl }}/project/contributing) for
 
 The Meshery project is community-built and welcomes collaboration! <a href="https://github.com/meshery/meshery"><i class="fab fa-github"></i> Fork Meshery</a>
 
-* Join any of the [community meetings](https://meshery.io/calendar). 
+* Join any of the [community meetings](https://meshery.io/calendar).
 * Subscribe to the [community calendar](https://meshery.io/calendar).
 * Fill-in a <a href="https://meshery.io/newcomers">community member form</a> to gain access to community resources.
 

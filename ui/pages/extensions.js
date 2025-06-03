@@ -30,8 +30,7 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
 
         <FrontSideDescription variant="body">
           <ImageWrapper src="/static/img/kanvas-icon-color.svg" />
-          Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
-          cloud native apps. Kanvas is now publicly available.{' '}
+          Collaboratively design and manage your infra and apps. Kanvas is now publicly available.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for access!'}
         </FrontSideDescription>
         {

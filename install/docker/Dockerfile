@@ -69,7 +69,7 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
 #FROM ubuntu AS nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 #RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-#RUN git config --global user.email "meshery@layer5.io"
+#RUN git config --global user.email "ci@meshery.io"
 #RUN git config --global user.name "meshery"
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client

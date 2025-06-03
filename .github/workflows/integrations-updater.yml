@@ -1,5 +1,8 @@
 name: Meshery Integrations Updater
 
+# Extension Point. Add your website repo here.
+# See http://docs.meshery.io/extensibility/providers
+
 on:
   push:
     branches:
@@ -26,7 +29,9 @@ jobs:
         with:
           path: meshery
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-
+      
+      # Extension Point. Add your website repo here.
+      # See http://docs.meshery.io/extensibility/providers
       - name: Checkout Layer5.io repo
         uses: actions/checkout@master
         with:
