@@ -209,7 +209,7 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 
 ##### Scoop
 
-GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
+GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Meshery’s Scoop bucket.
 
 ## Helm Charts Lint Check, Build, and Release
 
@@ -427,7 +427,7 @@ Minor releases of the Meshery project are release frequently (on a monthly basis
 
 ### Release Support
 
-General community support and commercial support from Layer5 is available. Separately, third parties and partners may offer longer-term support solutions.
+General community support is available. Separately, third parties and partners may offer longer-term support solutions.
 
 #### Pre v1.0
 
