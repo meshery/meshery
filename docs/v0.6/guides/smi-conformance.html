@@ -806,7 +806,7 @@ meshery-custom-end -->
 
 <h2 id="running-smi-conformance-tests-in-cicd-pipelines">Running SMI Conformance Tests in CI/CD Pipelines</h2>
 
-<p>You can use <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance GitHub action</a> to run SMI Conformance tests in your CI/CD pipelines.</p>
+<p>You can use <a href="https://github.com/meshery/meshery-smi-conformance-action">Meshery SMI Conformance GitHub action</a> to run SMI Conformance tests in your CI/CD pipelines.</p>
 
 <p>The conformance test would be run in your pipeline and the results will be published on your Meshery Dashboard (see <a href="/v0.6#setup-meshery-and-install-a-service-mesh">Setup Meshery and Install a Service Mesh</a>).</p>
 
@@ -840,7 +840,7 @@ You can use the <a href="https://docs.github.com/en/actions/reference/encrypted-
      steps:
  
        - name: Validate SMI Conformance
-         uses: layer5io/mesheryctl-smi-conformance-action@master
+         uses: meshery/mesheryctl-smi-conformance-action@master
          with:
            service_mesh: open_service_mesh
            provider_token: $

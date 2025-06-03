@@ -736,7 +736,7 @@ meshery-custom-end -->
 
 <p>As a service mesh agnostic tool that provides lifecycle and performance management of a large number of (10+) service meshes, Kubernetes applications, service mesh patterns and WebAssembly filters, Meshery is the ideal tool for the job when it comes to implementing these specifications.</p>
 
-<p>Meshery also comes with two new GitHub Actions that do exactly this. The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="/v0.6/tasks/performance-management">SMP compatible performance benchmarks</a>.
+<p>Meshery also comes with two new GitHub Actions that do exactly this. The <a href="https://github.com/meshery/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/meshery/meshery-smp-action">Meshery SMP Action</a> which runs <a href="/v0.6/tasks/performance-management">SMP compatible performance benchmarks</a>.
 But how do we use these actions? What do they offer? Let’s find out!</p>
 <h2>Service Mesh Interface Conformance GitHub Action</h2>
 
@@ -760,7 +760,7 @@ An example of the action configuration which runs on every release is shown belo
     <span class="na">steps</span><span class="pi">:</span>
 
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">SMI conformance tests</span>
-        <span class="na">uses</span><span class="pi">:</span> <span class="s">layer5io/mesheryctl-smi-conformance-action@master</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">meshery/mesheryctl-smi-conformance-action@master</span>
         <span class="na">with</span><span class="pi">:</span>
           <span class="na">provider_token</span><span class="pi">:</span> <span class="s">$</span>
           <span class="na">service_mesh</span><span class="pi">:</span> <span class="s">open_service_mesh</span>
@@ -798,7 +798,7 @@ An example of the action configuration which runs on every release is shown belo
            <span class="s">osm-bin install --osm-namespace default</span>
 
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">SMI conformance tests</span>
-        <span class="na">uses</span><span class="pi">:</span> <span class="s">layer5io/mesheryctl-smi-conformance-action@master</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">meshery/mesheryctl-smi-conformance-action@master</span>
         <span class="na">with</span><span class="pi">:</span>
           <span class="na">provider_token</span><span class="pi">:</span> <span class="s">$</span>
           <span class="na">service_mesh</span><span class="pi">:</span> <span class="s">open_service_mesh</span>
@@ -844,7 +844,7 @@ An example of the action configuration which runs on every release is shown belo
           <span class="na">driver</span><span class="pi">:</span> <span class="s">docker</span>
 
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run Performance Test</span>
-        <span class="na">uses</span><span class="pi">:</span> <span class="s">layer5io/meshery-smp-action@master</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">meshery/meshery-smp-action@master</span>
         <span class="na">with</span><span class="pi">:</span>
           <span class="na">provider_token</span><span class="pi">:</span> <span class="s">$</span>
           <span class="na">platform</span><span class="pi">:</span> <span class="s">docker</span>
@@ -872,7 +872,7 @@ An example of the action configuration which runs on every release is shown belo
 <span class="na">duration</span><span class="pi">:</span> <span class="s2">"</span><span class="s">30m"</span>
 </code></pre></div></div>
 
-<p>See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.</p>
+<p>See this sample GitHub workflow (<a href="https://github.com/meshery/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.</p>
 
 <p><a href="/v0.6/assets/img/service-mesh-performance-profile-test-results.png"><img src="/assets/img/service-mesh-performance-profile-test-results.png" classname="image-center" alt="performance management dashboard" /></a></p>
 

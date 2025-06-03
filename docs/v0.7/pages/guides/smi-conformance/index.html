@@ -828,7 +828,7 @@ _Viewing the Results_
 
 ## Running SMI Conformance Tests in CI/CD Pipelines
 
-You can use [Meshery SMI Conformance GitHub action](https://github.com/layer5io/meshery-smi-conformance-action) to run SMI Conformance tests in your CI/CD pipelines.
+You can use [Meshery SMI Conformance GitHub action](https://github.com/meshery/meshery-smi-conformance-action) to run SMI Conformance tests in your CI/CD pipelines.
 
 The conformance test would be run in your pipeline and the results will be published on your Meshery Dashboard (see [Setup Meshery and Install a Service Mesh](#setup-meshery-and-install-a-service-mesh)).
 
@@ -863,7 +863,7 @@ A sample workflow that could be added to your `.github/workflows` folder is give
      steps:
  
        - name: Validate SMI Conformance
-         uses: layer5io/mesheryctl-smi-conformance-action@master
+         uses: meshery/mesheryctl-smi-conformance-action@master
          with:
            service_mesh: open_service_mesh
            provider_token: $

@@ -657,7 +657,7 @@ meshery-custom-end -->
 
 <h2 id="contribución-a-los-adaptadores-meshery">Contribución a los adaptadores Meshery</h2>
 
-<p>Con el<a href="https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter">CONTRIBUTING.md</a> Tenga en cuenta que el desarrollo sigue el flujo de trabajo de solicitud de bifurcación y extracción habitual que se describe aquí, consulte también Proceso de GitHub. Al bifurcar, GitHub desactiva todos los flujos de trabajo. Es una buena práctica y seguro activarlos de manera que el código se valide en cada inserción. Esto requiere que el filtro de ramas para “al enviar” esté configurado en “\ _ \ _” para que se active también en las ramas que contengan “/” en su nombre. Las acciones se parametrizan mediante secretos (consulte Estrategia de creación y lanzamiento). La imagen de Docker solo se crea y se envía a Docker Hub si se inserta una etiqueta y se configura la información de autenticación correspondiente. El único secreto que debe establecerse en cada bifurcación es GO_VERSION, especificado en la estrategia de compilación y lanzamiento; de lo contrario, se usa la versión predeterminada de la acción correspondiente.</p>
+<p>Con el<a href="https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter">CONTRIBUTING.md</a> Tenga en cuenta que el desarrollo sigue el flujo de trabajo de solicitud de bifurcación y extracción habitual que se describe aquí, consulte también Proceso de GitHub. Al bifurcar, GitHub desactiva todos los flujos de trabajo. Es una buena práctica y seguro activarlos de manera que el código se valide en cada inserción. Esto requiere que el filtro de ramas para “al enviar” esté configurado en “\ _ \ _” para que se active también en las ramas que contengan “/” en su nombre. Las acciones se parametrizan mediante secretos (consulte Estrategia de creación y lanzamiento). La imagen de Docker solo se crea y se envía a Docker Hub si se inserta una etiqueta y se configura la información de autenticación correspondiente. El único secreto que debe establecerse en cada bifurcación es GO_VERSION, especificado en la estrategia de compilación y lanzamiento; de lo contrario, se usa la versión predeterminada de la acción correspondiente.</p>
 
 <p>Cada compromiso debe estar firmado, consulte /v0.5project/contributingContributing Overview.</p>
 
@@ -680,7 +680,7 @@ meshery-custom-end -->
 
 <ol>
   <li>Obtenga el archivo de especificaciones proto buf del repositorio de Meshery:
-<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto</code></li>
+<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto</code></li>
   <li>Generar codigo
     <ol>
       <li>Usando Go como ejemplo, haga lo siguiente:
@@ -697,7 +697,7 @@ meshery-custom-end -->
   <li>Implemente los métodos de servicio y exponga el servidor gRPC en un puerto de su elección (por ejemplo, 10000).</li>
 </ol>
 
-<p>Consejo: El <a href="https://github.com/layer5io/meshery-istio">Adaptador Meshery para Istio</a> es un buen adaptador de referencia para usar como ejemplo de Adaptador Meshery.</p>
+<p>Consejo: El <a href="https://github.com/meshery/meshery-istio">Adaptador Meshery para Istio</a> es un buen adaptador de referencia para usar como ejemplo de Adaptador Meshery.</p>
 	
               
               <br/>

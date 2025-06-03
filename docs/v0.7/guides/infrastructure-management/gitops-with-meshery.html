@@ -791,7 +791,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="na">driver</span><span class="pi">:</span> <span class="s">docker</span>
 
       <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">Run Performance Test</span>
-        <span class="na">uses</span><span class="pi">:</span> <span class="s">layer5io/meshery-smp-action@master</span>
+        <span class="na">uses</span><span class="pi">:</span> <span class="s">meshery/meshery-smp-action@master</span>
         <span class="na">with</span><span class="pi">:</span>
           <span class="na">provider_token</span><span class="pi">:</span> <span class="s">$</span>
           <span class="na">platform</span><span class="pi">:</span> <span class="s">docker</span>
@@ -819,7 +819,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <span class="na">duration</span><span class="pi">:</span> <span class="s2">"</span><span class="s">30m"</span>
 </code></pre></div></div>
 
-<p>See this sample GitHub workflow (<a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.</p>
+<p>See this sample GitHub workflow (<a href="https://github.com/meshery/meshery-smp-action/blob/master/action.yml">action.yml</a>) for more configuration details.</p>
 
 <p><a href="/assets/img/service-mesh-performance-profile-test-results.png"><img src="/assets/img/service-mesh-performance-profile-test-results.png" classname="image-center" alt="performance management dashboard" /></a></p>
 
@@ -838,7 +838,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <a href="https://smi-spec.io">Service Mesh Interface</a> provides a standard interface for service meshes on Kubernetes. These (currently) four specfications offer a common denominator set of interfaces to support most common service mesh use cases and the flexibility to evolve to support new service mesh capabilities over time.
 
-The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/layer5io/meshery-smp-action">Meshery SMP Action</a> which runs <a href="/tasks/performance/managing-performance">SMP compatible performance benchmarks</a>.
+The <a href="https://github.com/meshery/meshery-smi-conformance-action">Meshery SMI Conformance Action</a> which <a href="https://meshery.io/blog/validating-smi-conformance-with-meshery">validates SMI conformance</a> in your pipeline and the <a href="https://github.com/meshery/meshery-smp-action">Meshery SMP Action</a> which runs <a href="/tasks/performance/managing-performance">SMP compatible performance benchmarks</a>.
 
 <h2>Service Mesh Interface Conformance GitHub Action</h2>
 
@@ -865,7 +865,7 @@ jobs:
     steps:
 
       - name: SMI conformance tests
-        uses: layer5io/mesheryctl-smi-conformance-action@master
+        uses: meshery/mesheryctl-smi-conformance-action@master
         with:
           provider_token: $
           service_mesh: open_service_mesh
@@ -904,7 +904,7 @@ jobs:
            osm-bin install --osm-namespace default
 
       - name: SMI conformance tests
-        uses: layer5io/mesheryctl-smi-conformance-action@master
+        uses: meshery/mesheryctl-smi-conformance-action@master
         with:
           provider_token: $
           service_mesh: open_service_mesh

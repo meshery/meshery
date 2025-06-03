@@ -647,7 +647,7 @@ meshery-custom-end -->
 <p>The library consists of interfaces and default implementations for the main and common functionality of an adapter. It also provides a mini-framework that runs the gRPC adapter service, calling the functions of handlers injected by the adapter code. This is represented in an UML-ish style in the figure below. The library is used in all of Meshery’s adapters.</p>
 
 <h2 id="contributing-to-meshery-adapters">Contributing to Meshery Adapters</h2>
-<p>With the <a href="https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter">CONTRIBUTING.md</a> in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build &amp; Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured. The only secret that should be set in each fork is GO_VERSION, specified in Build &amp; Release Strategy, otherwise, the corresponding action’s default version is used.</p>
+<p>With the <a href="https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter">CONTRIBUTING.md</a> in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build &amp; Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured. The only secret that should be set in each fork is GO_VERSION, specified in Build &amp; Release Strategy, otherwise, the corresponding action’s default version is used.</p>
 
 <p>Each commit has to be signed off, see <a href="/v0.5/v0.5/project/contributing">Contributing Overview</a>.</p>
 
@@ -670,7 +670,7 @@ meshery-custom-end -->
 
 <ol>
   <li>Get the proto buf spec file from Meshery repo:
-<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto</code></li>
+<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto</code></li>
   <li>Generate code
     <ol>
       <li>Using Go as an example, do the following:
@@ -687,7 +687,7 @@ meshery-custom-end -->
   <li>Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).</li>
 </ol>
 
-<p>Tip: The <a href="https://github.com/layer5io/meshery-istio">Meshery Adapter for Istio</a> is a good reference adapter to use as an example of a Meshery Adapter.</p>
+<p>Tip: The <a href="https://github.com/meshery/meshery-istio">Meshery Adapter for Istio</a> is a good reference adapter to use as an example of a Meshery Adapter.</p>
 	
               
               <br/>
