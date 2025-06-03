@@ -3,7 +3,7 @@ name: meshery-nsm
 description: Meshery Adapter for Network Service Mesh.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source:
-  - https://github.com/layer5io/meshery-nsm
+  - https://github.com/meshery/meshery-nsm
 
 deprecated: false
 # A chart can be either an 'application' or a 'library' chart.
