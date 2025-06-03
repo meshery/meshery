@@ -3,7 +3,7 @@ package core
 import (
 	"context"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/v1beta1/pattern"

@@ -24,10 +24,10 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	encoding "github.com/meshery/meshkit/encoding"
 	meshkitutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/cobra"

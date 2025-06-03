@@ -5,10 +5,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 
-	"github.com/layer5io/meshery/server/models/pattern/patterns/k8s"
+	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
 	"github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
