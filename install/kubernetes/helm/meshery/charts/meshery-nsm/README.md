@@ -10,7 +10,7 @@ Meshery Adapter for Network Service Mesh.
 | ---- | ------ | --- |
 | Meshery Authors | <community@layer5.io> |  |
 | aisuko | <urakiny@gmail.com> |  |
-| leecalcote | <lee.calcote@layer5.io> |  |
+| leecalcote | <leecalcote@gmail.com> |  |
 
 ## Values
 
