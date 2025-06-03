@@ -3,7 +3,7 @@ name: meshery-consul
 description: Meshery Adapter for Consul chart.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
-  - https://github.com/layer5io/meshery-consul
+  - https://github.com/meshery/meshery-consul
 
 deprecated: false
 
