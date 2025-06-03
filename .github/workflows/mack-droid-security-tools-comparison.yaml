@@ -11,38 +11,16 @@ on:
         description: 'Branch to run workflow on'
         required: false
         default: 'main'
-      components:
-        description: 'Comma-separated components to scan (meshery,mesheryctl,ui,meshery-osm) or "all"'
-        required: false
-        default: 'all'
 
 jobs:
   security-scans:
-    name: Security Scan - ${{ matrix.component }}
+    name: Security Scan - Meshery
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        component: ${{ github.event.inputs.components == 'all' && fromJSON('["meshery","mesheryctl","ui","meshery-osm"]') || split(github.event.inputs.components, ',') }}
-        include:
-          - component: meshery
-            path: meshery-server
-            dockerfile: Dockerfile
-          - component: mesheryctl
-            path: mesheryctl
-            dockerfile: Dockerfile
-          - component: ui
-            path: ui
-            dockerfile: Dockerfile
-          - component: meshery-osm
-            path: meshery-osm
-            dockerfile: Dockerfile
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch || github.ref_name }}
-          path: src
 
       - name: Install Security Tools
         run: |
@@ -52,7 +30,7 @@ jobs:
           # Install Grype
           curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b $HOME/.local/bin v0.78.0
           
-          # Install Trivy (global install)
+          # Install Trivy
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.50.1
           
           # Install gosec (SAST)
@@ -63,48 +41,112 @@ jobs:
           chmod +x openvex-linux-amd64
           sudo mv openvex-linux-amd64 /usr/local/bin/openvex
           
+          # Install jq for JSON parsing
+          sudo apt-get update && sudo apt-get install -y jq
+          
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: SAST Scan (GoSec)
-        if: ${{ contains(matrix.component, 'meshery') || contains(matrix.component, 'mesheryctl') }}
+        id: sast-scan
         run: |
-          gosec -fmt=json -out=src/${{ matrix.path }}/gosec-report.json ./src/${{ matrix.path }}/...
-        working-directory: src
+          # Scan Go code in mesheryctl
+          gosec -fmt=json -out=mesheryctl-gosec-report.json ./mesheryctl/...
+          GOSECTL_ISSUES=$(jq '.Issues | length' mesheryctl-gosec-report.json)
+          echo "mesheryctl issues: $GOSECTL_ISSUES"
+          
+          # Scan Go code in root
+          gosec -fmt=json -out=root-gosec-report.json ./...
+          ROOT_ISSUES=$(jq '.Issues | length' root-gosec-report.json)
+          echo "root issues: $ROOT_ISSUES"
+          
+          echo "SAST_ISSUES=$((GOSECTL_ISSUES + ROOT_ISSUES))" >> $GITHUB_ENV
 
       - name: Build Docker Image
-        working-directory: src/${{ matrix.path }}
         run: |
-          docker build -t ${{ matrix.component }}:latest -f ${{ matrix.dockerfile }} .
+          docker build -t meshery:latest .
 
       - name: Container Scan (Trivy)
+        id: trivy-scan
         run: |
           trivy image \
-            --format table \
+            --format json \
+            --output trivy-report.json \
             --severity CRITICAL,HIGH \
             --exit-code 0 \
-            ${{ matrix.component }}:latest
+            meshery:latest
+            
+          # Extract critical/high counts
+          CRITICAL_COUNT=$(jq '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL") | .VulnerabilityID' trivy-report.json | sort | uniq | wc -l)
+          HIGH_COUNT=$(jq '.Results[].Vulnerabilities[]? | select(.Severity == "HIGH") | .VulnerabilityID' trivy-report.json | sort | uniq | wc -l)
+          
+          echo "TRIVY_CRITICAL=$CRITICAL_COUNT" >> $GITHUB_ENV
+          echo "TRIVY_HIGH=$HIGH_COUNT" >> $GITHUB_ENV
 
       - name: Generate SBOM
         run: |
-          syft dir:src/${{ matrix.path }} -o cyclonedx-json > ${{ matrix.component }}-sbom.json
+          syft dir:. -o cyclonedx-json > meshery-sbom.json
 
       - name: Vulnerability Scan (Grype)
+        id: grype-scan
         run: |
-          grype sbom:${{ matrix.component }}-sbom.json -o cyclonedx-json > ${{ matrix.component }}-grype-report.json
+          grype sbom:meshery-sbom.json -o json > meshery-grype-report.json
+          
+          # Extract critical/high counts
+          CRITICAL_COUNT=$(jq '.matches[] | select(.vulnerability.severity == "Critical") | .vulnerability.id' meshery-grype-report.json | sort | uniq | wc -l)
+          HIGH_COUNT=$(jq '.matches[] | select(.vulnerability.severity == "High") | .vulnerability.id' meshery-grype-report.json | sort | uniq | wc -l)
+          
+          echo "GRYPE_CRITICAL=$CRITICAL_COUNT" >> $GITHUB_ENV
+          echo "GRYPE_HIGH=$HIGH_COUNT" >> $GITHUB_ENV
 
       - name: Generate VEX Document
         run: |
           openvex generate \
-            --sbom ${{ matrix.component }}-sbom.json \
-            --output ${{ matrix.component }}-openvex.json \
+            --sbom meshery-sbom.json \
+            --output meshery-openvex.json \
             --author "Meshery Security Automation"
 
       - name: Archive Security Reports
         uses: actions/upload-artifact@v4
         with:
-          name: security-reports-${{ matrix.component }}
+          name: meshery-security-reports
           path: |
-            ${{ matrix.component }}-sbom.json
-            ${{ matrix.component }}-grype-report.json
-            ${{ matrix.component }}-openvex.json
-            src/${{ matrix.path }}/gosec-report.json
+            meshery-sbom.json
+            meshery-grype-report.json
+            meshery-openvex.json
+            mesheryctl-gosec-report.json
+            root-gosec-report.json
+            trivy-report.json
+
+      - name: Generate Security Summary
+        run: |
+          echo "## 📊 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔍 Static Analysis (SAST)" >> $GITHUB_STEP_SUMMARY
+          echo "- **mesheryctl issues**: $(jq '.Issues | length' mesheryctl-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Root directory issues**: $(jq '.Issues | length' root-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total SAST issues**: $SAST_ISSUES" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 🐳 Container Scan (Trivy)" >> $GITHUB_STEP_SUMMARY
+          echo "- **CRITICAL vulnerabilities**: $TRIVY_CRITICAL" >> $GITHUB_STEP_SUMMARY
+          echo "- **HIGH vulnerabilities**: $TRIVY_HIGH" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📦 SBOM Vulnerability Scan (Grype)" >> $GITHUB_STEP_SUMMARY
+          echo "- **CRITICAL vulnerabilities**: $GRYPE_CRITICAL" >> $GITHUB_STEP_SUMMARY
+          echo "- **HIGH vulnerabilities**: $GRYPE_HIGH" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 🔒 VEX Document Generated" >> $GITHUB_STEP_SUMMARY
+          echo "Vulnerability Exploitability Exchange document created with $(jq '.statements | length' meshery-openvex.json) statements" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📎 Artifacts" >> $GITHUB_STEP_SUMMARY
+          echo "Download the [security reports artifact](https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID#artifacts) for full details" >> $GITHUB_STEP_SUMMARY
+          
+          echo "## 🔍 Detailed Vulnerability Lists" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 🐳 Top Container Vulnerabilities (Trivy)" >> $GITHUB_STEP_SUMMARY
+          echo '| Severity | Vulnerability ID | Package | Version | Description |' >> $GITHUB_STEP_SUMMARY
+          echo '|----------|------------------|---------|---------|-------------|' >> $GITHUB_STEP_SUMMARY
+          jq -r '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | "| \(.Severity) | \(.VulnerabilityID) | \(.PkgName) | \(.InstalledVersion) | \(.Title) |"' trivy-report.json | sort >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 📦 Top SBOM Vulnerabilities (Grype)" >> $GITHUB_STEP_SUMMARY
+          echo '| Severity | Vulnerability ID | Package | Version | Fix State |' >> $GITHUB_STEP_SUMMARY
+          echo '|----------|------------------|---------|---------|-----------|' >> $GITHUB_STEP_SUMMARY
+          jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | "| \(.vulnerability.severity) | \(.vulnerability.id) | \(.artifact.name) | \(.artifact.version) | \(.vulnerability.fix.state) |"' meshery-grype-report.json | sort | uniq >> $GITHUB_STEP_SUMMARY
