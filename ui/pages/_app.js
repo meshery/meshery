@@ -152,7 +152,7 @@ const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) => {
                   verticalAlign: 'bottom',
                 }}
               />{' '}
-              by the Layer5 Community
+              by the Meshery Community
             </>
           )}
         </StyledFooterText>
