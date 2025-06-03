@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@layer5/sistent';
-import { CustomTooltip, VisibilityChipMenu } from '@layer5/sistent';
+import { Avatar, Divider, Grid2, IconButton, Typography, Link, useTheme } from '@sistent/sistent';
+import { CustomTooltip, VisibilityChipMenu } from '@sistent/sistent';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Save from '@mui/icons-material/Save';
 import Fullscreen from '@mui/icons-material/Fullscreen';

@@ -7,7 +7,7 @@ import {
   MenuItem,
   MenuList,
   ClickAwayListener,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function ActionButton({ defaultActionClick, options }) {

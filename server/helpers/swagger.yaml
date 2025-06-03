@@ -4104,7 +4104,7 @@ definitions:
         type: object
         x-go-package: github.com/layer5io/meshery/server/models
     PerformanceSpec:
-        description: PerformanceSpec - represents SMP, see here https://github.com/layer5io/service-mesh-performance-specification
+        description: PerformanceSpec - represents SMP, see here https://github.com/service-mesh-performance/service-mesh-performance-specification
         properties:
             ActualQPS:
                 format: double
@@ -4157,7 +4157,7 @@ definitions:
                 type: string
                 x-go-name: SmpVersion
         type: object
-        x-go-package: github.com/layer5io/service-mesh-performance/spec
+        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
     PerformanceTestConfig_Client:
         properties:
             additional_options:
@@ -4204,11 +4204,11 @@ definitions:
                 type: string
                 x-go-name: SslCertificate
         type: object
-        x-go-package: github.com/layer5io/service-mesh-performance/spec
+        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
     PerformanceTestConfig_Client_Protocol:
         format: int32
         type: integer
-        x-go-package: github.com/layer5io/service-mesh-performance/spec
+        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
     PerformanceTestParameters:
         description: PerformanceTestParameters contains parameters to run a performance test
         properties:

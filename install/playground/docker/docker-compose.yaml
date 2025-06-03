@@ -36,23 +36,23 @@ services:
        ports:
             - 10001:10001
        restart: always
-    meshery-consul:
-       image: meshery/meshery-consul:stable-latest
-       ports:
-            - 10002:10002
-       restart: always
-    meshery-kuma:
-       image: meshery/meshery-kuma:stable-latest
-       ports:
-            - 10007:10007
-       restart: always
-    meshery-nginx-sm:
-       image: meshery/meshery-nginx-sm:stable-latest
-       ports:
-            - 10010:10010
-       restart: always
-    meshery-cilium:
-        image: meshery/meshery-cilium:stable-latest
-        ports:
-            - 10012:10012
-        restart: always
+    # meshery-consul:
+    #    image: meshery/meshery-consul:stable-latest
+    #    ports:
+    #         - 10002:10002
+    #    restart: always
+    # meshery-kuma:
+    #    image: meshery/meshery-kuma:stable-latest
+    #    ports:
+    #         - 10007:10007
+    #    restart: always
+    # meshery-nginx-sm:
+    #    image: meshery/meshery-nginx-sm:stable-latest
+    #    ports:
+    #         - 10010:10010
+    #    restart: always
+    # meshery-cilium:
+    #     image: meshery/meshery-cilium:stable-latest
+    #     ports:
+    #         - 10012:10012
+    #     restart: always

@@ -25,7 +25,7 @@ import {
   splitCamelCaseString,
   KeyValueInRow,
   convertToReadableUnit,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { SectionHeading } from '../DataFormatter';
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });

@@ -16,7 +16,7 @@ import {
   useMediaQuery,
   Divider,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { WorkspacesComponent } from '../Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';

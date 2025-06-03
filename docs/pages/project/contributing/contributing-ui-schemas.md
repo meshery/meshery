@@ -138,7 +138,7 @@ To consume the schema in the UI:
 2. This will update your `package.json` to something like:
 
    ```json
-   "@layer5/schema": "file:../../schemas"
+   "@meshery/schema": "file:../../schemas"
    ```
 
 3. Now you can import types and schema objects in your UI components:
@@ -146,7 +146,7 @@ To consume the schema in the UI:
 #### Example: Importing and Using a Type
 
 ```ts
-import { DesignTypes } from "@layer5/schema";
+import { DesignTypes } from "@meshery/schema";
 
 // Type safety!
 const renderDesignCard = (design: Design) => <div>{design.name}</div>;
@@ -155,7 +155,7 @@ const renderDesignCard = (design: Design) => <div>{design.name}</div>;
 #### Example: Accessing Runtime Schema
 
 ```ts
-import { DesignSchema } from "@layer5/schema";
+import { DesignSchema } from "@meshery/schema";
 
 const validateDesign = (data) => {
   const isValid = ajv.validate(DesignSchema, data);
@@ -169,12 +169,12 @@ const validateDesign = (data) => {
 
 ### A. RJSF JSON Schemas
 
-Meshery uses [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) to render forms dynamically based on JSON schemas. All of Meshery’s RJSF schemas are defined in the `@layer5/sistent` package, which extends schemas from the `@layer5/schema` package.
+Meshery uses [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) to render forms dynamically based on JSON schemas. All of Meshery’s RJSF schemas are defined in the `@sistent/sistent` package, which extends schemas from the `@meshery/schema` package.
 
 This approach enables us to generate forms that automatically adapt to the schema structure without hardcoding field properties like type, enum, description, and others.
 
 ```ts
-import { DesignSchema } from "@layer5/schema";
+import { DesignSchema } from "@meshery/schema";
 
 const designSchema = {
   ...DesignSchema,
@@ -208,7 +208,7 @@ OpenAPI schemas (especially request bodies for POST/PUT operations) serve as the
 This ensures alignment between frontend form behavior and backend expectations.
 
 ```ts
-import { DesignTypes } from "@layer5/schema";
+import { DesignTypes } from "@meshery/schema";
 
 const DesignForm = ({ design }: { design: DesignTypes }) => (
   <form>
@@ -233,7 +233,7 @@ For example, if we have a `Design` schema, the UI retrieves details like the des
 Generated TypeScript types from the schema ensure UI components are type-safe and consistent with backend contracts.
 
 ```ts
-import { DesignTypes } from "@layer5/schema";
+import { DesignTypes } from "@meshery/schema";
 
 const DesignCard = ({ design }: { design: DesignTypes }) => (
   <div>

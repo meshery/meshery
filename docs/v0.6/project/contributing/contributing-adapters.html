@@ -842,7 +842,7 @@ meshery-custom-end -->
           <h1>Contributing to Meshery Adapters</h1>
            <p>Meshery Adapters are the Extension Points in Meshery’s architecture. Their design, the process of creating a new adapter is documented in <a href="/v0.6/v0.6/extensibility/adapters">Extensibility: Meshery Adapters</a>.</p>
 
-<p>With the <a href="/v0.6/v0.6https://github.com/layer5io/meshery/blob/master/CONTRIBUTING.md#adapter">CONTRIBUTING.md</a> in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build &amp; Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured. The only secret that should be set in each fork is GO_VERSION, specified in Build &amp; Release Strategy, otherwise, the corresponding action’s default version is used.</p>
+<p>With the <a href="/v0.6/v0.6https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#adapter">CONTRIBUTING.md</a> in mind, understand that development follows the usual fork-and-pull request workflow described here, see also GitHub Process. On forking GitHub deactivates all workflows. It is safe and good practice to activate them such that the code is validated on each push. This requires that branches filter for “on push” is set to ‘**’ to be triggered also on branches containing ‘/’  in their name.  The actions are parameterized using secrets (see Build &amp; Release Strategy). The Docker image is only built and pushed to Docker Hub if a tag is pushed and the corresponding authentication information is configured. The only secret that should be set in each fork is GO_VERSION, specified in Build &amp; Release Strategy, otherwise, the corresponding action’s default version is used.</p>
 
 <p>Each commit has to be signed off, see <a href="/v0.6/v0.6/project/contributing">Contributing Overview</a>.</p>
 
@@ -865,7 +865,7 @@ meshery-custom-end -->
 
 <ol>
   <li>Get the proto buf spec file from Meshery repo:
-<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto</code></li>
+<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto</code></li>
   <li>Generate code
     <ol>
       <li>Using Go as an example, do the following:
@@ -882,7 +882,7 @@ meshery-custom-end -->
   <li>Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).</li>
 </ol>
 
-<p>Tip: The <a href="/v0.6/v0.6https://github.com/layer5io/meshery-istio">Meshery Adapter for Istio</a> is a good reference adapter to use as an example of a Meshery Adapter.</p>
+<p>Tip: The <a href="/v0.6/v0.6https://github.com/meshery/meshery-istio">Meshery Adapter for Istio</a> is a good reference adapter to use as an example of a Meshery Adapter.</p>
 
 
 <script>
@@ -1031,7 +1031,7 @@ meshery-custom-end -->
           src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjY1LjUgMTk5IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNjUuNSAxOTkiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwMGIzOWZ9PC9zdHlsZT48cGF0aCBkPSJNMjYwLjQsNjUuN2MyLTEuNiw1LTAuMSw1LDIuNHYxMDZjMCwxMy43LTExLjEsMjQuOS0yNC45LDI0LjlIMjQuOUMxMS4yLDE5OSwwLDE4Ny45LDAsMTc0LjF2LTEwNgljMC0yLjYsMy00LDUtMi40YzExLjYsOSwyNywyMC41LDc5LjksNTguOWMxMC45LDgsMjkuNCwyNC44LDQ3LjgsMjQuN2MxOC41LDAuMiwzNy4zLTE3LDQ3LjgtMjQuNwlDMjMzLjQsODYuMiwyNDguOCw3NC43LDI2MC40LDY1Ljd6IE0xMzIuNywxMzIuN2MxMiwwLjIsMjkuMy0xNS4xLDM4LjEtMjEuNWM2OC44LTQ5LjksNzQtNTQuMyw4OS45LTY2LjdjMy0yLjMsNC44LTYsNC44LTkuOHYtOS44CWMwLTEzLjctMTEuMS0yNC45LTI0LjktMjQuOUgyNC45QzExLjIsMCwwLDExLjEsMCwyNC45djkuOGMwLDMuOCwxLjgsNy40LDQuOCw5LjhjMTUuOSwxMi40LDIxLjEsMTYuOCw4OS45LDY2LjcJQzEwMy40LDExNy41LDEyMC43LDEzMi45LDEzMi43LDEzMi43TDEzMi43LDEzMi43eiIgY2xhc3M9InN0MCIvPjwvc3ZnPg=="
           alt="mail"
         />
-        <span class="footer-icons-text small-hide">Get connected with the Layer5 community</span>
+        <span class="footer-icons-text small-hide">Get connected with the Meshery community</span>
       </a>
     </div>
 
@@ -1093,7 +1093,7 @@ meshery-custom-end -->
     <div class="footer-icons">
       <a
         class="social__link"
-        href="/v0.6/v0.6https://www.youtube.com/Layer5io?sub_confirmation=1"
+        href="/v0.6/v0.6https://www.youtube.com/mesheryio?sub_confirmation=1"
         target="_blank"
         rel="noreferrer"
       >

@@ -7,7 +7,7 @@ import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { Grid2, Switch, Typography, useTheme } from '@layer5/sistent';
+import { Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const Adapters = () => {

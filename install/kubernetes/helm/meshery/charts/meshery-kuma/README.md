@@ -8,9 +8,9 @@ Meshery Adapter for Kuma.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Meshery Authors | <community@layer5.io> |  |
+| Meshery Authors | <maintainers@meshery.io> |  |
 | aisuko | <urakiny@gmail.com> |  |
-| leecalcote | <lee.calcote@layer5.io> |  |
+
 
 ## Values
 

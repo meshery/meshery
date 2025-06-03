@@ -8,9 +8,9 @@ Meshery Adapter for Network Service Mesh.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Meshery Authors | <community@layer5.io> |  |
+| Meshery Authors | <maintainers@meshery.io> |  |
 | aisuko | <urakiny@gmail.com> |  |
-| leecalcote | <lee.calcote@layer5.io> |  |
+
 
 ## Values
 

@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
-import { Box, Typography, useTheme } from '@layer5/sistent';
+import { Box, Typography, useTheme } from '@sistent/sistent';
 
 export default function MesheryConfigurationChart() {
   const router = useRouter();

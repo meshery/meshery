@@ -11584,7 +11584,7 @@
                   "name": "CAPABILITIES"
                 }
               ],
-              "image": "meshery/meshery:kanvas-v0.8.63",
+              "image": "layer5/meshery:kanvas-v0.8.63",
               "imagePullPolicy": "Always",
               "name": "meshery",
               "ports": [
@@ -19553,7 +19553,7 @@
               "command": [
                 "/manager"
               ],
-              "image": "meshery/meshery-operator:stable-latest",
+              "image": "layer5/meshery-operator:stable-latest",
               "imagePullPolicy": "Always",
               "name": "manager",
               "ports": [
@@ -19797,7 +19797,7 @@
                   }
                 }
               ],
-              "image": "meshery/meshery-cloud:production-v0.8.207",
+              "image": "layer5/meshery-cloud:production-v0.8.207",
               "imagePullPolicy": "IfNotPresent",
               "name": "layer5-cloud",
               "ports": [

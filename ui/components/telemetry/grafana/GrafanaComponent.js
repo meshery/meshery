@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@layer5/sistent';
-import { Typography, Box, styled, useTheme } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { Typography, Box, styled, useTheme } from '@sistent/sistent';
 
 import GrafanaConfigComponent from './GrafanaConfigComponent';
 import GrafanaSelectionComponent from './GrafanaSelectionComponent';

@@ -1,5 +1,5 @@
 import { PureAbility } from '@casl/ability';
-import { createCanShow } from '@layer5/sistent';
+import { createCanShow } from '@sistent/sistent';
 import _ from 'lodash';
 import { CapabilitiesRegistry } from './disabledComponents';
 import { store } from '../store';
