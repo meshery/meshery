@@ -402,7 +402,7 @@ const ExtensionsComponent = () => {
                     token &&
                     "http://localhost:9081/api/user/token?token=" +
                       token +
-                      "&provider=Meshery"
+                      "&provider=Layer5"
                   }
                 >
                   {isLoggedIn ? (
@@ -430,7 +430,7 @@ const ExtensionsComponent = () => {
                         token &&
                         "http://localhost:9081/api/user/token?token=" +
                           token +
-                          "&provider=Meshery"
+                          "&provider=Layer5"
                       }
                     >
                       Launch Meshery

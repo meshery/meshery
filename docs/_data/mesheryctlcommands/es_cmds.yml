@@ -230,7 +230,7 @@ system-context:
 perf:
   name: perf
   description: Gestión del rendimiento y evaluación comparativa mediante la CLI de Meshery
-  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
+  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Layer5"
 
   flags:
     output-format:
