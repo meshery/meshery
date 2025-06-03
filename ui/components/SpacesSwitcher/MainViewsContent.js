@@ -11,7 +11,7 @@ import {
   useRoomActivity,
   ExportIcon,
   WorkspaceContentMoveModal,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, {
@@ -119,7 +119,7 @@ const MainViewsContent = ({
       title: 'Move View',
       icon: <MoveFileIcon fill={theme.palette.icon.default} />,
       enabled: () =>
-        CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject),
+        CAN(keys.ASSIGN_VIEWS_TO_WORKSPACE.action, keys.ASSIGN_VIEWS_TO_WORKSPACE.subject),
     },
 
     VIEW_INFO: {

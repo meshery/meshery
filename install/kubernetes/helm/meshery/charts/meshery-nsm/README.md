@@ -8,9 +8,9 @@ Meshery Adapter for Network Service Mesh.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Meshery Authors | <community@layer5.io> |  |
+| Meshery Authors | <maintainers@meshery.io> |  |
 | aisuko | <urakiny@gmail.com> |  |
-| leecalcote | <lee.calcote@layer5.io> |  |
+
 
 ## Values
 
@@ -21,7 +21,7 @@ Meshery Adapter for Network Service Mesh.
 | env | object | `{}` |  |
 | fullnameOverride | string | `""` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"layer5/meshery-nsm:stable-latest"` |  |
+| image.repository | string | `"meshery/meshery-nsm:stable-latest"` |  |
 | imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.enabled | bool | `false` |  |

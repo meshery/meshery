@@ -16,10 +16,10 @@ import (
 	"github.com/layer5io/meshery/server/models"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 
 	"github.com/layer5io/meshery/server/helpers/utils"
 	mesheryutils "github.com/layer5io/meshery/server/helpers/utils"
@@ -30,9 +30,9 @@ import (
 
 	"github.com/meshery/schemas/models/v1beta1"
 
-	_component "github.com/layer5io/meshkit/utils/component"
-	"github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/manifests"
+	_component "github.com/meshery/meshkit/utils/component"
+	"github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/manifests"
 
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )

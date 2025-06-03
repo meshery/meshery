@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@layer5/sistent';
-import { Typography, Link, Box, styled } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { Typography, Link, Box, styled } from '@sistent/sistent';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background?.default,

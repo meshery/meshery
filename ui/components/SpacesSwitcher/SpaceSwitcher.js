@@ -15,8 +15,9 @@ import {
   WorkspaceIcon,
   CircularProgress,
   useMediaQuery,
-} from '@layer5/sistent';
-import { NoSsr } from '@layer5/sistent';
+} from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
+
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconMedium, iconSmall, iconXLarge } from 'css/icons.styles';

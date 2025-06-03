@@ -9,9 +9,9 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/generators/artifacthub"
+	"github.com/meshery/meshkit/generators/artifacthub"
 
-	meshkitmodels "github.com/layer5io/meshkit/generators/models"
+	meshkitmodels "github.com/meshery/meshkit/generators/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 )

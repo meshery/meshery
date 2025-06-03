@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import {
   CustomTooltip,
   AppBar,
@@ -17,7 +17,7 @@ import {
   FileIcon,
   MendeleyIcon,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import DashboardMeshModelGraph from '../Dashboard/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
 import GrafanaComponent from '../telemetry/grafana/GrafanaComponent';

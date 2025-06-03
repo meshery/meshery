@@ -10,7 +10,7 @@ import {
   ModalFooter,
   PrimaryActionButtons,
   Modal as SistentModal,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from '../../MesheryMeshInterface/PatternService/helper';

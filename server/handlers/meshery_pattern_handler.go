@@ -24,19 +24,19 @@ import (
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/models/converter"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/converter"
 	_errors "github.com/pkg/errors"
 
-	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
-	"github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/models/oci"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/catalog"
+	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/oci"
+	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/meshkit/utils/catalog"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -636,7 +636,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errPatternDelete,
-		}).WithDescription("Error deleting pattern.").Build()
+		}).WithDescription("Error: Could not delete design.").Build()
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)

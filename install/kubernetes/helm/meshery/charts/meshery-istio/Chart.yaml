@@ -29,5 +29,5 @@ appVersion: stable-latest
 maintainers:
   - name: aisuko
     email: urakiny@gmail.com
-  - name: leecalcote
-    email: leecalcote@gmail.com
+  - name: maintainers
+    email: maintainers@meshery.io

@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import MesheryFilters from '../../components/MesheryFilters/Filters';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
-import { Box } from '@layer5/sistent';
+import { Box } from '@sistent/sistent';
 import { useDispatch } from 'react-redux';
 import { updatePage } from '@/store/slices/mesheryUi';
 

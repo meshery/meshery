@@ -1,6 +1,6 @@
 services:
     meshery:
-        image: layer5/meshery:playground-latest
+        image: meshery/meshery:playground-latest
         environment:
             - PROVIDER_BASE_URLS=https://cloud.layer5.io
             - ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012
@@ -27,7 +27,7 @@ services:
     #         - /root/meshery/install/playground/docker/nginx.conf:/etc/nginx/nginx.conf
     #     restart: always
     meshery-istio:
-        image: layer5/meshery-istio:stable-latest
+        image: meshery/meshery-istio:stable-latest
         ports:
             - 10000:10000
         restart: always
@@ -36,23 +36,23 @@ services:
        ports:
             - 10001:10001
        restart: always
-    meshery-consul:
-       image: layer5/meshery-consul:stable-latest
-       ports:
-            - 10002:10002
-       restart: always
-    meshery-kuma:
-       image: layer5/meshery-kuma:stable-latest
-       ports:
-            - 10007:10007
-       restart: always
-    meshery-nginx-sm:
-       image: layer5/meshery-nginx-sm:stable-latest
-       ports:
-            - 10010:10010
-       restart: always
-    meshery-cilium:
-        image: layer5/meshery-cilium:stable-latest
-        ports:
-            - 10012:10012
-        restart: always
+    # meshery-consul:
+    #    image: meshery/meshery-consul:stable-latest
+    #    ports:
+    #         - 10002:10002
+    #    restart: always
+    # meshery-kuma:
+    #    image: meshery/meshery-kuma:stable-latest
+    #    ports:
+    #         - 10007:10007
+    #    restart: always
+    # meshery-nginx-sm:
+    #    image: meshery/meshery-nginx-sm:stable-latest
+    #    ports:
+    #         - 10010:10010
+    #    restart: always
+    # meshery-cilium:
+    #     image: meshery/meshery-cilium:stable-latest
+    #     ports:
+    #         - 10012:10012
+    #     restart: always

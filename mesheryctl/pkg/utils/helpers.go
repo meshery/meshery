@@ -24,8 +24,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/logger"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -35,7 +35,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
 const (
@@ -285,7 +285,7 @@ var TemplateContext = config.Context{
 
 var Services = map[string]Service{
 	"meshery": {
-		Image:  "layer5/meshery:stable-latest",
+		Image:  "meshery/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
 			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
@@ -297,7 +297,7 @@ var Services = map[string]Service{
 		Ports:   []string{"9081:9081"},
 	},
 	"meshery-istio": {
-		Image:  "layer5/meshery-istio:stable-latest",
+		Image:  "meshery/meshery-istio:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10000:10000"},
 	},
@@ -307,12 +307,12 @@ var Services = map[string]Service{
 		Ports:  []string{"10001:10001"},
 	},
 	"meshery-consul": {
-		Image:  "layer5/meshery-consul:stable-latest",
+		Image:  "meshery/meshery-consul:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10002:10002"},
 	},
 	"meshery-nsm": {
-		Image:  "layer5/meshery-nsm:stable-latest",
+		Image:  "meshery/meshery-nsm:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10004:10004"},
 	},
@@ -322,27 +322,27 @@ var Services = map[string]Service{
 		Ports:  []string{"10005:10005"},
 	},
 	"meshery-traefik-mesh": {
-		Image:  "layer5/meshery-traefik-mesh:stable-latest",
+		Image:  "meshery/meshery-traefik-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10006:10006"},
 	},
 	"meshery-kuma": {
-		Image:  "layer5/meshery-kuma:stable-latest",
+		Image:  "meshery/meshery-kuma:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10007:10007"},
 	},
 	"meshery-osm": {
-		Image:  "layer5/meshery-osm:stable-latest",
+		Image:  "meshery/meshery-osm:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10009:10009"},
 	},
 	"meshery-nginx-sm": {
-		Image:  "layer5/meshery-nginx-sm:stable-latest",
+		Image:  "meshery/meshery-nginx-sm:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10010:10010"},
 	},
 	"meshery-cilium": {
-		Image:  "layer5/meshery-cilium:stable-latest",
+		Image:  "meshery/meshery-cilium:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10012:10012"},
 	},

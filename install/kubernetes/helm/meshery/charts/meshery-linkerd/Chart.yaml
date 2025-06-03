@@ -27,8 +27,8 @@ appVersion: stable-latest
 
 maintainers:
   - name: Meshery Authors
-    email: community@layer5.io
+    email: maintainers@meshery.io
   - name: aisuko
     email: urakiny@gmail.com
-  - name: leecalcote
-    email: lee.calcote@layer5.io
+  - name: maintainers
+    email: maintainers@meshery.io

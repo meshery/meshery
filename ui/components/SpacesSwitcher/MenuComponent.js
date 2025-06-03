@@ -1,5 +1,5 @@
-import { DARK_BLUE_GRAY, IconButton } from '@layer5/sistent';
-import { CustomTooltip, styled, Menu, MenuItem } from '@layer5/sistent';
+import { DARK_BLUE_GRAY, IconButton } from '@sistent/sistent';
+import { CustomTooltip, styled, Menu, MenuItem } from '@sistent/sistent';
 import { MoreVert } from '@mui/icons-material';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { iconMedium } from 'css/icons.styles';

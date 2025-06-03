@@ -4,7 +4,7 @@ import {
   NoSsr,
   WorkspaceRecentActivityModal,
   WorkspaceTeamsTable,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import {
   Box,
   CustomColumnVisibilityControl,
@@ -19,7 +19,7 @@ import {
   useTheme,
   PROMPT_VARIANTS,
   ModalFooter,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { EmptyState } from '../General';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useRef, useState } from 'react';
