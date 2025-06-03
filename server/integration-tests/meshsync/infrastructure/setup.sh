@@ -5,7 +5,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CLUSTER_NAME="meshery-integration-test-meshsync-cluster"
 HELM_LOCAL_REPO_NAME="meshery-integration-test-meshsync"
-DOCKER_IMAGE="layer5/meshery"
+DOCKER_IMAGE="meshery/meshery"
 DOCKER_IMAGE_TAG="integration-test"
 
 MESHERY_K8S_NAMESPACE="meshery"
