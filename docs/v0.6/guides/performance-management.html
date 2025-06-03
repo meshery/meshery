@@ -839,7 +839,7 @@ mesh:
 
 <h2 id="running-performance-benchmarks-in-your-pipelines">Running Performance Benchmarks in your Pipelines</h2>
 
-<p>Meshery also has a <a href="https://github.com/layer5io/meshery-smp-action">meshery-smp-action</a> which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.</p>
+<p>Meshery also has a <a href="https://github.com/meshery/meshery-smp-action">meshery-smp-action</a> which is a GitHub action that can be used to run performance tests in your CI/CD pipelines.</p>
 
 <p>Download the token from the Meshery Dashboard by clicking on the profile icon on the top-right corner.</p>
 
@@ -854,7 +854,7 @@ mesh:
 You can use the <a href="https://docs.github.com/en/actions/reference/encrypted-secrets">secrets feature in GitHub</a> to store the token.
 </div>
 
-<p>The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in <a href="https://github.com/layer5io/meshery-smp-action#smp-compatible-test-configuration-file">SMP compatible format</a>.</p>
+<p>The action can be used by defining your test configuration in a performance profile in Meshery or by writing your test configuration in <a href="https://github.com/meshery/meshery-smp-action#smp-compatible-test-configuration-file">SMP compatible format</a>.</p>
 
 <p>The action can then be configured as shown below:</p>
 
@@ -882,16 +882,16 @@ jobs:
           driver: docker
 
       - name: Run Performance Test
-        uses: layer5io/meshery-smp-action@master
+        uses: meshery/meshery-smp-action@master
         with:
           provider_token: $
           platform: docker
           profile_name: soak-test
 </code></pre></div></div>
 
-<p>More configuration details of the action can be found <a href="https://github.com/layer5io/meshery-smp-action/blob/master/action.yml">here</a>.</p>
+<p>More configuration details of the action can be found <a href="https://github.com/meshery/meshery-smp-action/blob/master/action.yml">here</a>.</p>
 
-<p>See <a href="https://github.com/layer5io/meshery-smp-action#sample-configuration">sample configurations</a> for more workflow examples using this action.</p>
+<p>See <a href="https://github.com/meshery/meshery-smp-action#sample-configuration">sample configurations</a> for more workflow examples using this action.</p>
   <br/>
 
 

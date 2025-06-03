@@ -164,7 +164,7 @@
           <a class="gh-source" data-gh-source="github" href="https://github.com/meshery/meshery" title="Go to repository" data-md-state="done">
           <div class="gh-source__repository">
             <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
-            layer5io/meshery
+            meshery/meshery
           <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
         </div>
       </div>
@@ -177,7 +177,7 @@ meshery-custom-end -->
 
 <script>
 $(document).ready(function() {
-  var url = "https://api.github.com/search/repositories?q=layer5io/meshery";
+  var url = "https://api.github.com/search/repositories?q=meshery/meshery";
   fetch(url, { 
       headers: {"Accept":"application/vnd.github.preview"}
   }).then(function(e) {
@@ -493,8 +493,8 @@ meshery-custom-end -->
           <div class="d-none d-xl-block col-xl-2 td-toc d-print-none">
               <div class="td-page-meta ml-2 pb-1 pt-2 mb-0">
                   <strong>Tools</strong>
-<a href="https://github.com/layer5io/meshery/issues/new?assignees=&labels=area/docs&template=documentation.md&title=&#91;Docs&#93;" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
-<a href="https://github.com/layer5io/meshery/blob/master/docs/pages/es/project/contributing.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/meshery/meshery/issues/new?assignees=&labels=area/docs&template=documentation.md&title=&#91;Docs&#93;" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
+<a href="https://github.com/meshery/meshery/blob/master/docs/pages/es/project/contributing.md" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
 <strong>Contents</strong>
 
 
@@ -548,7 +548,7 @@ meshery-custom-end -->
 
 <p>Por favor, ¡hazlo! ¡Gracias por tu ayuda! :balloon:</p>
 
-<p>Este proyecto está construido por la comunidad y la colaboración es bienvenida. Se espera que cada persona colaboradora se adhiera al <a href="https://github.com/layer5io/meshery/blob/master/CODE_OF_CONDUCT.md">Código de conducta de CNCF</a>.</p>
+<p>Este proyecto está construido por la comunidad y la colaboración es bienvenida. Se espera que cada persona colaboradora se adhiera al <a href="https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md">Código de conducta de CNCF</a>.</p>
 
 <p>¿No estás seguro/a por dónde empezar?</p>
 
@@ -565,7 +565,7 @@ meshery-custom-end -->
   <li><strong>Ejecuta</strong> Meshery: Ponte en los zapatos del usuario y recorre todas las características y funciones de Meshery como usuario.</li>
   <li><strong>Construye</strong> Meshery: Asegurate que tienes un entorno de desarrollo usable.</li>
   <li><strong>Comunicate</strong> con la comunidad de Layer5 uniéndote a la <a href="https://slack.meshery.io">cuenta de Slack</a>.</li>
-  <li><strong>Contribuye</strong> tomando cualquier issue abierto con la etiqueta <a href="https://github.com/layer5io/meshery/issues/">help wanted</a> y entrale. Si es necesario, crea un <a href="https://github.com/layer5io/meshery/issues/new/choose">nuevo issue</a>. Todas las <a href="https://github.com/layer5io/meshery/pulls">pull requests</a> deben hacer referencia a un issue abierto. Incluye palabras clave en las descripciones de tus pull requests, así como mensajes de commits, para <a href="https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue">cerrar automáticamente los issues en GitHub</a>.</li>
+  <li><strong>Contribuye</strong> tomando cualquier issue abierto con la etiqueta <a href="https://github.com/meshery/meshery/issues/">help wanted</a> y entrale. Si es necesario, crea un <a href="https://github.com/meshery/meshery/issues/new/choose">nuevo issue</a>. Todas las <a href="https://github.com/meshery/meshery/pulls">pull requests</a> deben hacer referencia a un issue abierto. Incluye palabras clave en las descripciones de tus pull requests, así como mensajes de commits, para <a href="https://docs.github.com/en/free-pro-team@latest/github/managing-your-work-on-github/linking-a-pull-request-to-an-issue">cerrar automáticamente los issues en GitHub</a>.</li>
 </ul>
 
 <p><strong>Secciones</strong></p>
@@ -636,7 +636,7 @@ Para indicar que estás de acuerdo con el DCO para las contribuciones, simplemen
 <code class="language-plaintext highlighter-rouge">make site</code></li>
   <li>Has commit, <a href="#commit-signing">sign-off</a>, y envía los cambios a tu rama remota
 <code class="language-plaintext highlighter-rouge">git push origin &lt;my-changes&gt;</code></li>
-  <li>Abre pull request (en su navegador web) en nuestro repositorio principal: https://github.com/layer5io/meshery.</li>
+  <li>Abre pull request (en su navegador web) en nuestro repositorio principal: https://github.com/meshery/meshery.</li>
 </ol>
 
 <h3 id="flujo-de-contribución-de-meshery"><a name="contributing-meshery">Flujo de contribución de Meshery</a></h3>
@@ -653,7 +653,7 @@ Para indicar que estás de acuerdo con el DCO para las contribuciones, simplemen
   <li>Tener la versión 1.11+ de<code class="language-plaintext highlighter-rouge">Go</code> instalada si quieres compilar y/o hacer cambios en el código existente.</li>
   <li>La variable de entorno <code class="language-plaintext highlighter-rouge">GOPATH</code> debe configurarse de manera apropiada.</li>
   <li><code class="language-plaintext highlighter-rouge">npm</code> y <code class="language-plaintext highlighter-rouge">node</code> deben estar instalados en tu máquina, preferiblemente las últimas versiones.</li>
-  <li>Haz fork de este repoisitorio (<code class="language-plaintext highlighter-rouge">https://github.com/layer5io/meshery.git</code>), clona tu version forked de Meshery a tu maquina local, preferiblemente fuera de tu <code class="language-plaintext highlighter-rouge">GOPATH</code>. Si llegase a suceder que copiaras Meshery dentro de tu <code class="language-plaintext highlighter-rouge">GOPATH</code> y tuvieras una version de go <code class="language-plaintext highlighter-rouge">Go</code> anterior a la versión 1.13, por favor establece la variable de entorno <code class="language-plaintext highlighter-rouge">GO111MODULE=on</code> para habilitar los modulos de Go.</li>
+  <li>Haz fork de este repoisitorio (<code class="language-plaintext highlighter-rouge">https://github.com/meshery/meshery.git</code>), clona tu version forked de Meshery a tu maquina local, preferiblemente fuera de tu <code class="language-plaintext highlighter-rouge">GOPATH</code>. Si llegase a suceder que copiaras Meshery dentro de tu <code class="language-plaintext highlighter-rouge">GOPATH</code> y tuvieras una version de go <code class="language-plaintext highlighter-rouge">Go</code> anterior a la versión 1.13, por favor establece la variable de entorno <code class="language-plaintext highlighter-rouge">GO111MODULE=on</code> para habilitar los modulos de Go.</li>
 </ol>
 
 <h4 id="construir-y-ejecutar-el-servidor-meshery">Construir y ejecutar el servidor Meshery</h4>
@@ -680,7 +680,7 @@ Después de ejecutar el servidor Meshery, deberás seleccionar tu <strong>Provee
 
 <ol>
   <li>Obtén el archivo proto buf spec del repositorio de Meshery:
-<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/layer5io/meshery/master/meshes/meshops.proto</code></li>
+<code class="language-plaintext highlighter-rouge">wget https://raw.githubusercontent.com/meshery/meshery/master/meshes/meshops.proto</code></li>
   <li>Genera el código
     <ol>
       <li>Usando Go como ejemplo, haz lo siguiente::
@@ -697,7 +697,7 @@ Después de ejecutar el servidor Meshery, deberás seleccionar tu <strong>Provee
   <li>Implementa los métodos de servicio (service method) y expón el puerto de gRPC en el puerto de tu elección (por ejemplo 10000).</li>
 </ol>
 
-<p><em>Tip:</em> El <a href="https://github.com/layer5io/meshery-istio">adaptador de Meshery para Istio</a> es un buen adaptador de referencia para usar como ejemplo de un adaptador Meshery escrito en Go.</p>
+<p><em>Tip:</em> El <a href="https://github.com/meshery/meshery-istio">adaptador de Meshery para Istio</a> es un buen adaptador de referencia para usar como ejemplo de un adaptador Meshery escrito en Go.</p>
 
 <h3 id="flujo-de-contribución-al-ui"><a name="contributing-ui">Flujo de Contribución al UI</a></h3>
 
