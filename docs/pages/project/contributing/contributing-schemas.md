@@ -151,7 +151,7 @@ This ensures that schemas remain the **single source of truth**, making developm
 
 - [GitHub Issues](https://github.com/meshery/schemas/issues) - Report bugs or request features
 - [Community Slack](https://slack.meshery.io) - Real-time discussions with maintainers
-- [Weekly Meetings](https://layer5.io/community/calendar) - Join our community calls
+- [Weekly Meetings](https://meshery.io/calendar) - Join our community calls
 
 ---
 > **Community Resources**
