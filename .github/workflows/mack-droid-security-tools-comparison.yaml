@@ -35,9 +35,6 @@ jobs:
           # Install Grype
           curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b $HOME/.local/bin v0.78.0
           
-          # Install Trivy
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.50.1
-          
           # Install gosec (SAST)
           curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $HOME/.local/bin v2.19.0
           
@@ -51,30 +48,55 @@ jobs:
           
           echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-      - name: SAST Scan (GoSec)
+      - name: Setup Go Environment
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'  # Match Meshery's Go version
+
+      - name: SAST Scan (GoSec) - Debug Mode
+        id: sast-scan
+        continue-on-error: true
         run: |
+          # Build first to ensure code compiles
+          ulimit -v 4000000 
+          go build ./...
+          
           # Scan Go code in mesheryctl
-          gosec -fmt=json -out=mesheryctl-gosec-report.json ./mesheryctl/...
+          gosec -fmt=json -out=mesheryctl-gosec-report.json -debug ./mesheryctl/... 2> mesheryctl-gosec-debug.log || true
           
           # Scan Go code in root
-          gosec -fmt=json -out=root-gosec-report.json ./...
+          gosec -fmt=json -out=root-gosec-report.json -debug ./... 2> root-gosec-debug.log || true
+          
+          # Check if debug logs contain errors
+          if grep -q "ERROR" mesheryctl-gosec-debug.log; then
+            echo "SAST_ERROR_MESHERYCTL=true" >> $GITHUB_ENV
+            echo "::warning::SAST scan for mesheryctl encountered errors"
+          fi
+          
+          if grep -q "ERROR" root-gosec-debug.log; then
+            echo "SAST_ERROR_ROOT=true" >> $GITHUB_ENV
+            echo "::warning::SAST scan for root directory encountered errors"
+          fi
 
       - name: Pull Meshery Image
         run: docker pull layer5/meshery:stable-latest
 
-      - name: Container Scan (Trivy)
-        id: trivy-scan
+      - name: Trivy Container Scan
+        uses: aquasecurity/trivy-action@master
+        id: trivy-container-scan
+        with:
+          image-ref: 'layer5/meshery:stable-latest'
+          format: 'json'
+          output: 'trivy-report.json'
+          severity: 'CRITICAL,HIGH'
+          exit-code: 0
+          ignore-unfixed: false
+
+      - name: Parse Trivy Results
         run: |
-          trivy image \
-            --format json \
-            --output trivy-report.json \
-            --severity CRITICAL,HIGH \
-            --exit-code 0 \
-            layer5/meshery:stable-latest
-          
           # Extract critical/high counts
-          CRITICAL_COUNT=$(jq '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL") | .VulnerabilityID' trivy-report.json | sort | uniq | wc -l)
-          HIGH_COUNT=$(jq '.Results[].Vulnerabilities[]? | select(.Severity == "HIGH") | .VulnerabilityID' trivy-report.json | sort | uniq | wc -l)
+          CRITICAL_COUNT=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy-report.json)
+          HIGH_COUNT=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' trivy-report.json)
           
           echo "TRIVY_CRITICAL=$CRITICAL_COUNT" >> $GITHUB_ENV
           echo "TRIVY_HIGH=$HIGH_COUNT" >> $GITHUB_ENV
@@ -89,8 +111,8 @@ jobs:
           grype sbom:meshery-sbom.json -o json > meshery-grype-report.json
           
           # Extract critical/high counts
-          CRITICAL_COUNT=$(jq '.matches[] | select(.vulnerability.severity == "Critical") | .vulnerability.id' meshery-grype-report.json | sort | uniq | wc -l)
-          HIGH_COUNT=$(jq '.matches[] | select(.vulnerability.severity == "High") | .vulnerability.id' meshery-grype-report.json | sort | uniq | wc -l)
+          CRITICAL_COUNT=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' meshery-grype-report.json)
+          HIGH_COUNT=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' meshery-grype-report.json)
           
           echo "GRYPE_CRITICAL=$CRITICAL_COUNT" >> $GITHUB_ENV
           echo "GRYPE_HIGH=$HIGH_COUNT" >> $GITHUB_ENV
@@ -123,9 +145,19 @@ jobs:
       - name: Generate Security Summary
         run: |
           echo "## 📊 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
+          
           echo "### 🔍 Static Analysis (SAST)" >> $GITHUB_STEP_SUMMARY
-          echo "- **mesheryctl issues**: $(jq '.Issues | length' mesheryctl-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Root directory issues**: $(jq '.Issues | length' root-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
+          if [ "$SAST_ERROR_MESHERYCTL" = "true" ]; then
+            echo "❌ mesheryctl scan failed - [View logs](https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID#artifacts)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **mesheryctl issues**: $(jq '.Issues | length' mesheryctl-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          if [ "$SAST_ERROR_ROOT" = "true" ]; then
+            echo "❌ Root directory scan failed - [View logs](https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID#artifacts)" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Root directory issues**: $(jq '.Issues | length' root-gosec-report.json)" >> $GITHUB_STEP_SUMMARY
+          fi
           
           echo "### 🐳 Container Scan (Trivy)" >> $GITHUB_STEP_SUMMARY
           echo "- **CRITICAL vulnerabilities**: $TRIVY_CRITICAL" >> $GITHUB_STEP_SUMMARY
