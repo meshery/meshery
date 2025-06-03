@@ -225,10 +225,10 @@ const ComponentContents = ({ componentDef }) => {
   });
   const componentData = data?.components?.find((comp) => comp.id === componentDef.id);
   const PropertyFormattersLeft = {
-    version: (value) => <KeyValue property="API Version" value={value} />,
-    modelName: (value) => <KeyValue property="Model Name" value={value} />,
-    kind: (value) => <KeyValue property="Kind" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+    version: (value) => <KeyValue property="API VERSION" value={value} />,
+    modelName: (value) => <KeyValue property="MODEL NAME" value={value} />,
+    kind: (value) => <KeyValue property="KIND" value={value} />,
+    subCategory: (value) => <KeyValue property="SUB-CATEGORY" value={value} />,
   };
 
   const metaDataLeft = {
@@ -242,9 +242,9 @@ const ComponentContents = ({ componentDef }) => {
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
-    duplicates: (value) => <KeyValue property="Duplicates" value={value} />,
-    category: (value) => <KeyValue property="Category" value={value} />,
+    registrant: (value) => <KeyValue property="REGISTRANT" value={value} />,
+    duplicates: (value) => <KeyValue property="DUPLICATES" value={value} />,
+    category: (value) => <KeyValue property="CATEGORY" value={value} />,
   };
 
   const metaDataRight = {
@@ -288,8 +288,8 @@ const ComponentContents = ({ componentDef }) => {
 
 const RelationshipContents = ({ relationshipDef }) => {
   const PropertyFormattersLeft = {
-    version: (value) => <KeyValue property="API Version" value={value} />,
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
+    version: (value) => <KeyValue property="API VERSION" value={value} />,
+    registrant: (value) => <KeyValue property="REGISTRANT" value={value} />,
   };
 
   const metaDataLeft = {
@@ -302,8 +302,8 @@ const RelationshipContents = ({ relationshipDef }) => {
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    registrant: (value) => <KeyValue property="Registrant" value={value} />,
-    subType: (value) => <KeyValue property="Sub Type" value={value} />,
+    registrant: (value) => <KeyValue property="REGISTRANT" value={value} />,
+    subType: (value) => <KeyValue property="SUB TYPE" value={value} />,
   };
 
   const metaDataRight = {
@@ -335,8 +335,8 @@ const RelationshipContents = ({ relationshipDef }) => {
 
 const RegistrantContent = ({ registrant }) => {
   const PropertyFormattersLeft = {
-    models: (value) => <KeyValue property="Models" value={value} />,
-    components: (value) => <KeyValue property="Components" value={value} />,
+    models: (value) => <KeyValue property="MODELS" value={value} />,
+    components: (value) => <KeyValue property="COMPONENTS" value={value} />,
   };
 
   const metaDataLeft = {
@@ -348,8 +348,8 @@ const RegistrantContent = ({ registrant }) => {
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
-    relationships: (value) => <KeyValue property="Relationships" value={value} />,
-    policies: (value) => <KeyValue property="Policies" value={value} />,
+    relationships: (value) => <KeyValue property="RELATIONSHIPS" value={value} />,
+    policies: (value) => <KeyValue property="POLICIES" value={value} />,
   };
 
   const metaDataRight = {
@@ -377,12 +377,25 @@ const RegistrantContent = ({ registrant }) => {
   );
 };
 
-const Description = ({ description }) => (
+const Description = ({ description }) => {
+  const theme = useTheme();
+  return (
   <div style={{ margin: '0.6rem 0' }}>
-    <p style={{ fontWeight: '600', margin: '0', fontSize: '16px' }}>Description</p>
+    <p
+      style={{
+        fontWeight: '600',
+        margin: '0',
+        fontSize: theme.typography.caption.fontSize,
+        textTransform: 'uppercase',
+        color: theme.palette.text.secondary,
+      }}
+    >
+      DESCRIPTION
+    </p>
     <p style={{ margin: '0', fontSize: '16px' }}>{description}</p>
   </div>
-);
+  );
+};
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
