@@ -32,7 +32,7 @@ const HelpCenterWidget = (props) => {
     },
     {
       name: 'Slack',
-      link: 'https://slack.layer5.io',
+      link: 'https://slack.meshery.io',
       external: true,
       icon: '/static/img/designs.svg',
     },
