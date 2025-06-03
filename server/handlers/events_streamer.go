@@ -13,8 +13,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"

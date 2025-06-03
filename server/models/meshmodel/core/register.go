@@ -11,18 +11,18 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 
-	"github.com/layer5io/meshery/server/helpers/utils"
-	mesheryutils "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/helpers/utils"
+	mesheryutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"

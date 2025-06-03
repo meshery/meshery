@@ -12,9 +12,9 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 )
 
@@ -257,9 +257,9 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	
-	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    		h.log.Error(err)
+
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
 	}
 }
 
@@ -294,9 +294,9 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	
-	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    		h.log.Error(err)
+
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
 	}
 }
 

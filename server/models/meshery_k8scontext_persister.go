@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/database"
 	"gorm.io/gorm"
 )
