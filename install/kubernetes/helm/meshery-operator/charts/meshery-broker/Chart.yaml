@@ -8,8 +8,8 @@ appVersion: stable-latest
 
 maintainers:
   - name: Meshery Authors
-    email: community@layer5.io
+    email: maintainers@meshery.io
   - name: darrenlau
     email: panyuenlau@gmail.com
-  - name: leecalcote
-    email: leecalcote@gmail.com
+  - name: maintainers
+    email: maintainers@meshery.io

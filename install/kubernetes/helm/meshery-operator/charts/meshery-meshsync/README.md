@@ -8,9 +8,9 @@ Meshery MeshSync
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Meshery Authors | <community@layer5.io> |  |
+| Meshery Authors | <maintainers@meshery.io> |  |
 | darrenlau | <panyuenlau@gmail.com> |  |
-| leecalcote | <leecalcote@gmail.com> |  |
+
 
 ## Values
 
