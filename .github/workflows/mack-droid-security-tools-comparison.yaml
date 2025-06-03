@@ -8,107 +8,103 @@ on:
   workflow_dispatch:
     inputs:
       branch:
-        description: 'Branch to run the workflow on'
+        description: 'Branch to run workflow on'
         required: false
         default: 'main'
       components:
-        description: 'Select components to scan (comma-separated or "all")'
+        description: 'Comma-separated components to scan (meshery,mesheryctl,ui,meshery-osm) or "all"'
         required: false
         default: 'all'
 
 jobs:
-  setup-tools:
-    name: Setup Security Tools
+  security-scans:
+    name: Security Scan - ${{ matrix.component }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        component: ${{ github.event.inputs.components == 'all' && fromJSON('["meshery","mesheryctl","ui","meshery-osm"]') || split(github.event.inputs.components, ',') }}
+        include:
+          - component: meshery
+            path: meshery-server
+            dockerfile: Dockerfile
+          - component: mesheryctl
+            path: mesheryctl
+            dockerfile: Dockerfile
+          - component: ui
+            path: ui
+            dockerfile: Dockerfile
+          - component: meshery-osm
+            path: meshery-osm
+            dockerfile: Dockerfile
+
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.branch || github.ref_name }}
+          path: src
 
-      - name: Install Syft
+      - name: Install Security Tools
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b . v0.105.0
-          sudo mv syft /usr/local/bin/syft
-
-      - name: Install Grype
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b . v0.78.0
-          sudo mv grype /usr/local/bin/grype
-
-      - name: Install Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          install-only: true
-
-      - name: Install OpenVEX
-        run: |
+          # Install Syft
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b $HOME/.local/bin v0.105.0
+          
+          # Install Grype
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b $HOME/.local/bin v0.78.0
+          
+          # Install Trivy (global install)
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.50.1
+          
+          # Install gosec (SAST)
+          curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $HOME/.local/bin v2.19.0
+          
+          # Install OpenVEX
           curl -LO https://github.com/openvex/openvex/releases/latest/download/openvex-linux-amd64
           chmod +x openvex-linux-amd64
           sudo mv openvex-linux-amd64 /usr/local/bin/openvex
+          
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
 
-  scan-components:
-    name: Scan Component - ${{ matrix.component }}
-    runs-on: ubuntu-latest
-    needs: setup-tools
-    strategy:
-      matrix:
-        component: ["meshery", "mesheryctl", "meshery-ui", "provider"]
-        include:
-          - component: meshery
-            path: ./server
-          - component: mesheryctl
-            path: ./mesheryctl
-          - component: meshery-ui
-            path: ./ui
-          - component: provider
-            path: ./provider-ui
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch || github.ref_name }}
-
-      - name: Build Docker image
+      - name: SAST Scan (GoSec)
+        if: ${{ contains(matrix.component, 'meshery') || contains(matrix.component, 'mesheryctl') }}
         run: |
-          docker build -t ${{ matrix.component }}:latest ${{ matrix.path }}
+          gosec -fmt=json -out=src/${{ matrix.path }}/gosec-report.json ./src/${{ matrix.path }}/...
+        working-directory: src
 
-      - name: Trivy Image Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: image
-          image-ref: ${{ matrix.component }}:latest
-          format: table
-          exit-code: 0
-          severity: CRITICAL,HIGH
-
-      - name: Generate SBOM with Syft
+      - name: Build Docker Image
+        working-directory: src/${{ matrix.path }}
         run: |
-          syft ${{ matrix.path }} -o cyclonedx-json > ${{ matrix.component }}-sbom.json
+          docker build -t ${{ matrix.component }}:latest -f ${{ matrix.dockerfile }} .
 
-      - name: Upload SBOM Artifact
+      - name: Container Scan (Trivy)
+        run: |
+          trivy image \
+            --format table \
+            --severity CRITICAL,HIGH \
+            --exit-code 0 \
+            ${{ matrix.component }}:latest
+
+      - name: Generate SBOM
+        run: |
+          syft dir:src/${{ matrix.path }} -o cyclonedx-json > ${{ matrix.component }}-sbom.json
+
+      - name: Vulnerability Scan (Grype)
+        run: |
+          grype sbom:${{ matrix.component }}-sbom.json -o cyclonedx-json > ${{ matrix.component }}-grype-report.json
+
+      - name: Generate VEX Document
+        run: |
+          openvex generate \
+            --sbom ${{ matrix.component }}-sbom.json \
+            --output ${{ matrix.component }}-openvex.json \
+            --author "Meshery Security Automation"
+
+      - name: Archive Security Reports
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.component }}-sbom
-          path: ${{ matrix.component }}-sbom.json
-
-      - name: Grype SBOM Scan (VEX Report)
-        run: |
-          grype sbom:${{ matrix.component }}-sbom.json -o cyclonedx-json > ${{ matrix.component }}-grype-vex.json
-
-      - name: Upload Grype VEX Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.component }}-grype-vex
-          path: ${{ matrix.component }}-grype-vex.json
-
-      - name: OpenVEX from SBOM
-        run: |
-          openvex generate --sbom ${{ matrix.component }}-sbom.json --output ${{ matrix.component }}-openvex.json
-
-      - name: Upload OpenVEX Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.component }}-openvex
-          path: ${{ matrix.component }}-openvex.json
+          name: security-reports-${{ matrix.component }}
+          path: |
+            ${{ matrix.component }}-sbom.json
+            ${{ matrix.component }}-grype-report.json
+            ${{ matrix.component }}-openvex.json
+            src/${{ matrix.path }}/gosec-report.json
