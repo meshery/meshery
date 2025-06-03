@@ -10,7 +10,7 @@ import (
 
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	brokerpkg "github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/logger"

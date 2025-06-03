@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models/environments"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/logger"
 )
 

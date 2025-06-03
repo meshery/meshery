@@ -1,4 +1,4 @@
-module github.com/layer5io/meshery
+module github.com/meshery/meshery
 
 go 1.23.8
 

@@ -89,7 +89,7 @@ mesheryctl model import -f [path-to-csv-directory]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --config string   path to config file (default "/home/runner/.meshery/config.yaml")
+      --config string   path to config file (default "/home/n2/.meshery/config.yaml")
   -v, --verbose         verbose output
 
 </div>
