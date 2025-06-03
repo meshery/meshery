@@ -117,13 +117,14 @@ jobs:
           echo "GRYPE_CRITICAL=$CRITICAL_COUNT" >> $GITHUB_ENV
           echo "GRYPE_HIGH=$HIGH_COUNT" >> $GITHUB_ENV
 
-      - name: Generate VEX Document
-        run: |
-          openvex generate \
-            --sbom meshery-sbom.json \
-            --output meshery-openvex.json \
-            --author "Meshery Security Automation"
-
+      - name: Install vexctl via GitHub Action
+        uses: openvex/setup-vexctl@v1
+        with:
+          version: 'latest'  # or pin to v0.3.0
+      
+      - name: Generate VEX
+        run: vexctl generate --sbom meshery-sbom.json --output meshery-openvex.json
+      
       - name: Upload SARIF Reports
         uses: github/codeql-action/upload-sarif@v2
         with:
