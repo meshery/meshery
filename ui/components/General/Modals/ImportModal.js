@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import RJSFModal from './Modal';
-import { Button } from '@layer5/sistent';
+import { Button } from '@sistent/sistent';
 import { capitalize } from 'lodash';
 
 // might also expect RJSFWrapperComponent from extensions

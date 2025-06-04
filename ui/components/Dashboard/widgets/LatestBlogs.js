@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme, PlainCard, BellIcon } from '@layer5/sistent';
+import { useTheme, PlainCard, BellIcon } from '@sistent/sistent';
 
 const LatestBlogs = (props) => {
   const theme = useTheme();

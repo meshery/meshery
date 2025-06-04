@@ -3,7 +3,7 @@ package planner
 import (
 	"sync"
 
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
 )
 
 // ParallelProcessGraph provides methods for parallel processing of the graph

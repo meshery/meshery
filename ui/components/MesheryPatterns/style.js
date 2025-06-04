@@ -1,4 +1,4 @@
-import { DialogTitle, Typography, styled } from '@layer5/sistent';
+import { DialogTitle, Typography, styled } from '@sistent/sistent';
 
 export const StyledDialog = styled(DialogTitle)(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : '#396679',

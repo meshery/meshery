@@ -38,8 +38,8 @@ import {
   CatalogCard,
   FeedbackButton,
   SistentThemeProviderWithoutBaseLine,
-} from "@layer5/sistent";
-import { MESHMAP, providerUrl } from "../utils/constants";
+} from "@sistent/sistent";
+import { MESHMAP, providerUrl,SELECTED_PROVIDER_NAME } from "../utils/constants";
 
 const AuthenticatedMsg = "Authenticated";
 const UnauthenticatedMsg = "Unauthenticated";
@@ -400,9 +400,9 @@ const ExtensionsComponent = () => {
                   style={{ textDecoration: "none" }}
                   href={
                     token &&
-                    "http://localhost:9081/api/user/token?token=" +
+                    `http://localhost:9081/api/user/token?token=" +
                       token +
-                      "&provider=Meshery"
+                      "&provider=${SELECTED_PROVIDER_NAME}`
                   }
                 >
                   {isLoggedIn ? (
@@ -428,9 +428,9 @@ const ExtensionsComponent = () => {
                       style={{ textDecoration: "none", color: "white" }}
                       href={
                         token &&
-                        "http://localhost:9081/api/user/token?token=" +
+                        `http://localhost:9081/api/user/token?token=" +
                           token +
-                          "&provider=Meshery"
+                          "&provider=${SELECTED_PROVIDER_NAME}`
                       }
                     >
                       Launch Meshery
