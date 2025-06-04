@@ -6,9 +6,9 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/generators/artifacthub"
 
 	meshkitmodels "github.com/meshery/meshkit/generators/models"

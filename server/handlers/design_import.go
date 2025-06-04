@@ -13,8 +13,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
-	pCore "github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/models"
+	pCore "github.com/meshery/meshery/server/models/pattern/core"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/files"
 	"github.com/meshery/meshkit/logger"

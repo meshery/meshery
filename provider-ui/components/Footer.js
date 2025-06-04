@@ -23,9 +23,9 @@ const StyledFavoriteIcon = styled(FavoriteIcon)(({ theme }) => ({
 }));
 
 export default function Footer() {
-  const handleL5CommunityClick = () => {
+  const handleMesheryCommunityClick = () => {
     if (typeof window !== "undefined") {
-      const w = window.open("https://layer5.io", "_blank");
+      const w = window.open("https://meshery.io", "_blank");
       w.focus();
     }
   };
@@ -40,8 +40,8 @@ export default function Footer() {
             color="textSecondary"
             component="p"
           >
-            <ClickableSpan onClick={handleL5CommunityClick}>
-              Built with <StyledFavoriteIcon sx={{ color: "blue" }} /> by the Layer5 Community
+            <ClickableSpan onClick={handleMesheryCommunityClick}>
+              Built with <StyledFavoriteIcon sx={{ color: "blue" }} /> by the Meshery Community
             </ClickableSpan>
           </Typography>
         </Item>

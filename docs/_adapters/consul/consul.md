@@ -34,7 +34,7 @@ redirect_from: service-meshes/adapters/consul
 
 {% include compatibility/adapter-status.html %}
 
-<!-- {% include adapter-labs.html %} -->
+
 
 ## Lifecycle management
 

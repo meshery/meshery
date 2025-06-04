@@ -7,7 +7,7 @@ services:
             - EVENT=mesheryLocal
             - PORT=9081
             - MESHERY_SERVER_CALLBACK_URL=https://playground.meshery.io/api/user/token
-            - PROVIDER=Meshery
+            - PROVIDER=Layer5
         volumes:
             - $HOME/.kube:/home/appuser/.kube:ro
             - $HOME/.minikube:$HOME/.minikube:ro
