@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery-server
       containers:
-      - image: layer5/meshery-nginx-sm:stable-latest
+      - image: meshery/meshery-nginx-sm:stable-latest
         imagePullPolicy: Always
         name: meshery-nginx-sm
         ports:

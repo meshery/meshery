@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
 import MesheryPatterns from '../../../components/MesheryPatterns/MesheryPatterns';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { useDispatch } from 'react-redux';
 import { updatePage } from '@/store/slices/mesheryUi';
 

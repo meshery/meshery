@@ -12,7 +12,7 @@ import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, KubernetesIcon, Typography, useTheme } from '@layer5/sistent';
+import { Box, KubernetesIcon, Typography, useTheme } from '@sistent/sistent';
 
 export default function KubernetesConnectionStatsChart() {
   const { data: connectionData } = useGetConnectionsQuery({

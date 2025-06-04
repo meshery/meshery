@@ -69,7 +69,7 @@ jobs:
       # - name: Check out meshery-consul code
       #   uses: actions/checkout@v4
       #   with:
-      #     repository: layer5io/meshery-consul
+      #     repository: meshery-extensions/meshery-consul
       #     path: ./meshery-consul
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.10.0

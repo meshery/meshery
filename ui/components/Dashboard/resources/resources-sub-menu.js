@@ -5,7 +5,7 @@ import { TabPanel } from '../tabpanel';
 import { SecondaryTab, SecondaryTabs, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
-import { styled } from '@layer5/sistent';
+import { styled } from '@sistent/sistent';
 import { tabsClasses } from '@mui/material';
 
 const DashboardIconText = styled('div')({

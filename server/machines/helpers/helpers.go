@@ -5,14 +5,14 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/machines/grafana"
-	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/machines/prometheus"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/grafana"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/machines/prometheus"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 )
 
 func StatusToEvent(status connections.ConnectionStatus) machines.EventType {

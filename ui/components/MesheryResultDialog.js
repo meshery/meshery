@@ -9,7 +9,7 @@ import {
   TableRow,
   TableCell,
   TableBody,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import MesheryChartDialog from './MesheryChartDialog';
 
 const StyledTableRow = styled(TableRow)(() => ({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Button, styled } from '@layer5/sistent';
+import { Typography, Button, styled } from '@sistent/sistent';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import { iconMedium } from '../../css/icons.styles';

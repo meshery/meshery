@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Typography, ResponsiveDataTable } from '@layer5/sistent';
+import { Button, Typography, ResponsiveDataTable } from '@sistent/sistent';
 import PropTypes from 'prop-types';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
@@ -10,7 +10,7 @@ import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { PROMPT_VARIANTS } from '@layer5/sistent';
+import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
 const DatabaseSummary = (props) => {

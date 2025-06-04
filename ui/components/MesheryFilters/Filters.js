@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
@@ -49,7 +49,7 @@ import {
   Box,
   styled,
   PROMPT_VARIANTS,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 import InfoModal from '../General/Modals/Information/InfoModal';
@@ -58,7 +58,7 @@ import { DefaultTableCell, SortableTableCell } from '../connections/common/index
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
-import { Modal as SistentModal } from '@layer5/sistent';
+import { Modal as SistentModal } from '@sistent/sistent';
 import {
   useGetFiltersQuery,
   useCloneFilterMutation,

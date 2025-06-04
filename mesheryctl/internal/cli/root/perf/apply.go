@@ -25,10 +25,10 @@ import (
 
 	"github.com/asaskevich/govalidator"
 	"github.com/ghodss/yaml"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/pkg/errors"

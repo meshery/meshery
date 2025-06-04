@@ -1,4 +1,4 @@
-import { Box, styled, Button, Typography } from '@layer5/sistent';
+import { Box, styled, Button, Typography } from '@sistent/sistent';
 
 export const CreatAtContainer = styled(Typography)(({ isBold }) => ({
   fontWeight: isBold ? 'bold' : '',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import {
   Button,
   TextField,
@@ -14,7 +14,7 @@ import {
   Switch,
   IconButton,
   styled,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import Moment from 'react-moment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';

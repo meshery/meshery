@@ -19,7 +19,7 @@ import {
   CustomTooltip,
   TableCell,
   TableRow,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';

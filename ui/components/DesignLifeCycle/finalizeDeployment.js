@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
-const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
+const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@sistent/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
 import { isOperatorEnabled } from '@/utils/utils';
 

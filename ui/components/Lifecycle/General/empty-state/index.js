@@ -1,4 +1,4 @@
-import { Grid2, Typography } from '@layer5/sistent';
+import { Grid2, Typography } from '@sistent/sistent';
 import React from 'react';
 import CurvedArrowIcon from './curvedArrowIcon';
 

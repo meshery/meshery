@@ -1,4 +1,4 @@
-import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton, darkTeal } from '@layer5/sistent';
+import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton, darkTeal } from '@sistent/sistent';
 
 export const HeaderAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.tabs,

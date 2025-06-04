@@ -9,7 +9,7 @@ import {
   InputLabel,
   OutlinedInput,
   Box,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 import {
   ConnectionDetailContent,

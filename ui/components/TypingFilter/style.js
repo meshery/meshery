@@ -1,4 +1,4 @@
-import { TextField, styled } from '@layer5/sistent';
+import { TextField, styled } from '@sistent/sistent';
 export const Root = styled('div')(() => ({
   position: 'relative',
 }));

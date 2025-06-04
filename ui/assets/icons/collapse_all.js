@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '@layer5/sistent';
+import { useTheme } from '@sistent/sistent';
 
 const CollapseAllIcon = (props) => {
   const theme = useTheme();

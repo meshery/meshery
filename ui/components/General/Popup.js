@@ -1,4 +1,4 @@
-import { Button, Grid2, IconButton, Typography, styled, useTheme } from '@layer5/sistent';
+import { Button, Grid2, IconButton, Typography, styled, useTheme } from '@sistent/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';

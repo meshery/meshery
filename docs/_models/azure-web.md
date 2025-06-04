@@ -7,7 +7,7 @@ permalink: extensibility/integrations/azure-web
 docURL: https://docs.meshery.io/extensibility/integrations/azure-web
 description: 
 integrations-category: Serverless
-integrations-subcategory: Uncategorized
+integrations-subcategory: API Gateway
 registrant: GitHub
 components: 
 - name: server-farm

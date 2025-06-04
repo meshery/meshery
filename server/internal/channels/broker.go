@@ -1,6 +1,6 @@
 package channels
 
-import "github.com/layer5io/meshkit/broker"
+import "github.com/meshery/meshkit/broker"
 
 var (
 	BrokerPublish   = "broker-publish"

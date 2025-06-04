@@ -1,4 +1,4 @@
-import { Typography, useTheme, styled } from '@layer5/sistent';
+import { Typography, useTheme, styled } from '@sistent/sistent';
 import React from 'react';
 import PropTypes from 'prop-types';
 import AnimatedMeshSync from './Animations/AnimatedMeshSync';

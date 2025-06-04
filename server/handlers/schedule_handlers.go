@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 )
 
 // swagger:route POST /api/user/schedules SchedulesAPI idPostSchedules

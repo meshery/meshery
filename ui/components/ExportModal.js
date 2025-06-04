@@ -1,14 +1,14 @@
 import React from 'react';
-import { ListItemText, Modal, useTheme, Box, DownloadIcon } from '@layer5/sistent';
+import { ListItemText, Modal, useTheme, Box, DownloadIcon } from '@sistent/sistent';
 import KubernetesIcon from '@/assets/icons/technology/kubernetes';
-import { useModal } from '@layer5/sistent';
+import { useModal } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
-import { ListItem } from '@layer5/sistent';
-import { ListItemIcon } from '@layer5/sistent';
-import { ModalBody } from '@layer5/sistent';
+import { ListItem } from '@sistent/sistent';
+import { ListItemIcon } from '@sistent/sistent';
+import { ModalBody } from '@sistent/sistent';
 import { Colors } from '@/themes/app';
-import { InfoTooltip } from '@layer5/sistent';
-import { IconButton } from '@layer5/sistent';
+import { InfoTooltip } from '@sistent/sistent';
+import { IconButton } from '@sistent/sistent';
 import { OCIImageIcon } from '@/assets/icons/OciImage';
 import HelmIcon from '@/assets/icons/technology/HelmIcon';
 

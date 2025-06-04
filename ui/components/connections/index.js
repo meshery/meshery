@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { NoSsr } from '@layer5/sistent';
-import { ErrorBoundary, AppBar } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { ErrorBoundary, AppBar } from '@sistent/sistent';
 import Modal from '../General/Modals/Modal';
 import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';

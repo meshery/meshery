@@ -8,7 +8,7 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 )
 

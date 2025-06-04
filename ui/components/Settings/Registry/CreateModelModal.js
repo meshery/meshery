@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal } from '@layer5/sistent';
+import { Modal } from '@sistent/sistent';
 import UrlStepper from './Stepper/UrlStepper';
 
 const CreateModelModal = ({ isCreateModalOpen, setIsCreateModalOpen }) => {

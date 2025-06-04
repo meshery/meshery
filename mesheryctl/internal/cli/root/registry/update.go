@@ -21,10 +21,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/store"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	mutils "github.com/meshery/meshkit/utils"
+	"github.com/meshery/meshkit/utils/store"
 	comp "github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/sirupsen/logrus"
 

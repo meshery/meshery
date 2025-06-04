@@ -1,6 +1,6 @@
 import React from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { CircularProgress } from '@layer5/sistent';
+import { CircularProgress } from '@sistent/sistent';
 import { COMPONENTS } from '../../../constants/navigator';
 import MinusSquare from '../../../assets/icons/MinusSquare';
 import PlusSquare from '../../../assets/icons/PlusSquare';

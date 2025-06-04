@@ -49,7 +49,7 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 ### Remote Providers
 
-The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
+The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
 A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.
 

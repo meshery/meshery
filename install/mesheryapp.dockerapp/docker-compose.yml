@@ -1,6 +1,6 @@
 services:
   meshery:
-    image: layer5/meshery:stable-latest
+    image: meshery/meshery:stable-latest
     labels:
       - ${labels.watchtower}
     environment:
@@ -10,7 +10,7 @@ services:
     ports:
       - "${meshery.port}:8080"
   meshery-istio:
-    image: layer5/meshery-istio:stable-latest
+    image: meshery/meshery-istio:stable-latest
     labels:
       - ${labels.watchtower}
     ports:
@@ -24,14 +24,14 @@ services:
       - "${linkerd.port}:10001"
     x-enabled: ${linkerd.enabled}
   meshery-consul:
-    image: layer5/meshery-consul:stable-latest
+    image: meshery/meshery-consul:stable-latest
     labels:
       - ${labels.watchtower}
     ports:
       - "${consul.port}:10002"
     x-enabled: ${consul.enabled}
   meshery-nsm:
-    image: layer5/meshery-nsm:stable-latest
+    image: meshery/meshery-nsm:stable-latest
     labels:
       - ${labels.watchtower}
     ports:

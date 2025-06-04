@@ -21,7 +21,7 @@ import {
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
-import { Button, NoSsr } from '@layer5/sistent';
+import { Button, NoSsr } from '@sistent/sistent';
 import { iconSmall } from 'css/icons.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';

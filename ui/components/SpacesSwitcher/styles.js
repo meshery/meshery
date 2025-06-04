@@ -10,7 +10,7 @@ import {
   Avatar,
   Button,
   Checkbox,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 const DRAWER_WIDTH = 300;
 

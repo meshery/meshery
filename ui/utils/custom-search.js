@@ -8,7 +8,7 @@ import {
   CloseIcon,
   SearchIcon,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import debounce from './debounce';
 
 const SearchContainer = styled('div')({

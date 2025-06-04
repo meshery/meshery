@@ -1,4 +1,4 @@
-import { Card, CardContent, styled } from '@layer5/sistent';
+import { Card, CardContent, styled } from '@sistent/sistent';
 import { useEffect, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 

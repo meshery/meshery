@@ -10,7 +10,7 @@ import {
 } from '@/rtk-query/user';
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { ShareModal as CatalogShare } from '@layer5/sistent';
+import { ShareModal as CatalogShare } from '@sistent/sistent';
 import { getShareableResourceRoute } from './hooks';
 import { JsonParse } from '@/utils/utils';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';

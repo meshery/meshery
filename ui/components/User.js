@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Avatar, Button } from '@layer5/sistent';
+import { Avatar, Button } from '@sistent/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';

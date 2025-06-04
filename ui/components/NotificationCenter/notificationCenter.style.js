@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@layer5/sistent';
+import { Badge, Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@sistent/sistent';
 import { alpha } from '@mui/system';
 import { STATUS } from './constants';
 

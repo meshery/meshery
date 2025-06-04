@@ -25,7 +25,7 @@ import {
   WorkspaceIcon,
   Slide,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useEffect, useState } from 'react';
 import { iconSmall } from 'css/icons.styles';
 import WorkSpaceContentDataTable from './WorkSpaceContentDataTable';

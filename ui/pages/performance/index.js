@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import MesheryPerformanceComponent from '../../components/Performance/Dashboard';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';

@@ -3,7 +3,7 @@ package models
 import (
 	"net/url"
 
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
 )
 
 func GetRedirectURLForNavigatorExtension(remoteProviderProperties *ProviderProperties, log logger.Handler) string {

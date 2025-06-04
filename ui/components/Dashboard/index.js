@@ -23,7 +23,7 @@ import {
   OutlinedResetIcon,
   useTheme,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
