@@ -8,7 +8,7 @@ title: AWS EC2
 </p>
 
 <p>
-    To get started, you'll connect your Kubernetes cluster to Meshery. Using pre-configured designs available in the <a href="https://cloud.layer5.io/catalog">Meshery Catalog</a>, you'll then configure the EC2 controller with AWS credentials, deploy essential resources (like VPCs, subnets, and security groups) to create the network topology for your EC2 instance. Finally, you'll deploy the instance itself and verify its status through the AWS Management Console or Meshery's Kanvas operator mode.
+    To get started, you'll connect your Kubernetes cluster to Meshery. Using pre-configured designs available in the <a href="https://meshery.io/catalog">Meshery Catalog</a>, you'll then configure the EC2 controller with AWS credentials, deploy essential resources (like VPCs, subnets, and security groups) to create the network topology for your EC2 instance. Finally, you'll deploy the instance itself and verify its status through the AWS Management Console or Meshery's Kanvas operator mode.
 </p>
 
 <p>
