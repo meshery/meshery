@@ -219,14 +219,6 @@
               url: extensions/edges-shape-guide
             - title: Import & Export Designs
               url: extensions/import-export-designs
-            - title: Merging Designs
-              url: extensions/merging-design
-            - title: Publishing Designs
-              url: extensions/publishing-a-design
-            - title: Sharing Designs
-              url: extensions/sharing-a-design
-            - title: Working with Tags
-              url: extensions/working-with-tags
         - title: Kanvas Snapshot
           url: extensions/kanvas-snapshot
 

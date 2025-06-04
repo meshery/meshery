@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	"github.com/layer5io/meshery/server/models/meshmodel"
+	"github.com/meshery/meshery/server/models/meshmodel"
 	"github.com/meshery/meshkit/utils/events"
 )
 

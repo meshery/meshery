@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
 )

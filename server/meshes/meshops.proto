@@ -2,7 +2,7 @@ syntax="proto3";
 
 package meshes;
 
-option go_package = "github.com/layer5io/meshery/server/meshes;meshes";
+option go_package = "github.com/meshery/meshery/server/meshes;meshes";
 
 service MeshService {
     rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
