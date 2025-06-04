@@ -30,7 +30,7 @@ import (
 var (
 	showProviderForAllContext bool
 	forceSetProvider          bool
-	MesheryProvider           = "Meshery"
+	MesheryProvider           = "Layer5"
 	NoneProvider              = "None"
 )
 
