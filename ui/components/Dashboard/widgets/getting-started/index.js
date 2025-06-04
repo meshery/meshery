@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { iconMedium } from 'css/icons.styles';
-import { useTheme, ActionButtonCard, GetStartedModal, GetStartedIcon } from '@layer5/sistent';
+import { useTheme, ActionButtonCard, GetStartedModal, GetStartedIcon } from '@sistent/sistent';
 import {
   useGetLoggedInUserQuery,
   useGetUserByIdQuery,

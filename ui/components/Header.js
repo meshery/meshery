@@ -32,7 +32,7 @@ import {
   NoSsr,
   useTheme,
   useMediaQuery,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -63,7 +63,7 @@ import {
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
 
 async function loadActiveK8sContexts() {
   try {

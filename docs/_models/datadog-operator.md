@@ -10,6 +10,14 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
+- name: datadog-agent
+  colorIcon: assets/img/integrations/datadog-operator/components/datadog-agent/icons/color/datadog-agent-color.svg
+  whiteIcon: assets/img/integrations/datadog-operator/components/datadog-agent/icons/white/datadog-agent-white.svg
+  description: 
+- name: datadog-metric
+  colorIcon: assets/img/integrations/datadog-operator/components/datadog-metric/icons/color/datadog-metric-color.svg
+  whiteIcon: assets/img/integrations/datadog-operator/components/datadog-metric/icons/white/datadog-metric-white.svg
+  description: 
 - name: datadog-agent-profile
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-agent-profile/icons/color/datadog-agent-profile-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-agent-profile/icons/white/datadog-agent-profile-white.svg
@@ -54,7 +62,7 @@ components:
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-generic-resource/icons/color/datadog-generic-resource-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-generic-resource/icons/white/datadog-generic-resource-white.svg
   description: 
-components-count: 11
+components-count: 13
 relationships: 
 relationship-count: 0
 featureList: [

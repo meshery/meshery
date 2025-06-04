@@ -14,10 +14,10 @@ labels:
   - name: issue/remind
     labeled:
       issue:
-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://layer5.io/community/meshmates/) or any other [community member](https://layer5.io/community/members) for assistance.
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
         action: open
       pr:
-        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://layer5.io/community/meshmates/) or any other [community member](https://layer5.io/community/members) for assistance.
+        body: Checking in... it has been awhile since we&#39;ve heard from you on this issue. Are you still working on it? Please let us know and please don&#39;t hesitate to contact a [MeshMate](https://meshery.io/community#meshmates/) or any other [community member](https://meshery.io/community/members) for assistance.
         action: open
   - name: issue/dco
     labeled:

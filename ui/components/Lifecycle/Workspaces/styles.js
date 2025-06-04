@@ -1,4 +1,4 @@
-import { styled, Box } from '@layer5/sistent';
+import { styled, Box } from '@sistent/sistent';
 
 export const TableIconsContainer = styled('span')(({ disabled, theme }) => ({
   color: disabled ? theme.palette.icon.disabled : theme.palette.icon.default,

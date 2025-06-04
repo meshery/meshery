@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { CircularProgress } from '@layer5/sistent';
+import { CircularProgress } from '@sistent/sistent';
 import { COMPONENTS } from '../../../constants/navigator';
 import StyledTreeItem from './StyledTreeItem';
 import { getFilteredDataForDetailsComponent } from './helper';

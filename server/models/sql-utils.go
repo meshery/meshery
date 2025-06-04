@@ -6,8 +6,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

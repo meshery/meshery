@@ -8,18 +8,18 @@ import (
 
 	"github.com/gofrs/uuid"
 	gofrs "github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models"
-	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/server/models"
+	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 
 	"github.com/spf13/viper"
 
-	"github.com/layer5io/meshkit/models/events"
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	entity "github.com/layer5io/meshkit/models/meshmodel/entity"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/events"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	entity "github.com/meshery/meshkit/models/meshmodel/entity"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 )
 
 type EntityErrorCount struct {
@@ -185,9 +185,9 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 		errorEventBuilder.WithSeverity(events.Error).WithDescription(failedMsg)
 		errorEvent := errorEventBuilder.Build()
 		errorEventBuilder.WithMetadata(map[string]interface{}{
-			"Long_Description":      fmt.Sprintf("One or more entities failed to register. The import process for registrant, %s, encountered the following issue: %s.", hostname, failedMsg),
-			"DownloadLink":         filePath,
-			"ViewLink":             filePath,
+			"Long_Description": fmt.Sprintf("One or more entities failed to register. The import process for registrant, %s, encountered the following issue: %s.", hostname, failedMsg),
+			"DownloadLink":     filePath,
+			"ViewLink":         filePath,
 		})
 		_ = (*provider).PersistEvent(errorEvent)
 		if userID != "" {
