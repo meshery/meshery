@@ -3,7 +3,7 @@ name: meshery-app-mesh
 description: Meshery Adapter for App Mesh chart.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
-  - https://github.com/layer5io/meshery-app-mesh
+  - https://github.com/meshery/meshery-app-mesh
 
 deprecated: false
 

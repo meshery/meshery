@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"github.com/sirupsen/logrus"
 )
 

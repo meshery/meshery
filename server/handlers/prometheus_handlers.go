@@ -13,9 +13,9 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 )
 
@@ -376,8 +376,8 @@ func (h *Handler) PrometheusQueryHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    		h.log.Error(err)
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
 	}
 
 }
@@ -409,8 +409,8 @@ func (h *Handler) PrometheusQueryRangeHandler(w http.ResponseWriter, req *http.R
 		return
 	}
 
-	if _, err := utils.WriteEscaped(w, data,""); err != nil {
-    		h.log.Error(err)
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
 	}
 }
 

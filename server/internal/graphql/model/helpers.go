@@ -6,8 +6,8 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/layer5io/meshery/server/handlers"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/handlers"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/controllers"

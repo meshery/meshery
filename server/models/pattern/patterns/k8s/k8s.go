@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/converter"
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"

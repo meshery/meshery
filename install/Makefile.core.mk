@@ -18,7 +18,10 @@
 GIT_VERSION	= $(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA = $(shell git rev-list -1 HEAD)
 GIT_STRIPPED_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1` | cut -c 2-)
-REMOTE_PROVIDER="Meshery"
+
+# Extension Point for remote provider . Add your provider here.
+REMOTE_PROVIDER="Layer5"
+
 LOCAL_PROVIDER="None"
 GOVERSION = 1.23
 GOPATH = $(shell go env GOPATH)
