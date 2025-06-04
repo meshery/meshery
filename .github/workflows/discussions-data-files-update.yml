@@ -25,6 +25,8 @@ jobs:
       - name: Fetch data for meshery tag
         run: |
           curl -L http://discuss.meshery.io/tag/meshery.json -o docs/_data/discuss/meshery.json
+          sed -i 's|https://discuss.layer5.io|http://discuss.meshery.io|g' docs/_data/discuss/meshery.json
+          sed -i 's|discuss.layer5.io|discuss.meshery.io|g' docs/_data/discuss/meshery.json
 
       - name: Pull changes from remote
         run: git pull origin master
