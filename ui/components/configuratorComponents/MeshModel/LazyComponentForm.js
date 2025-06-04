@@ -5,7 +5,7 @@ import {
   CircularProgress,
   Typography,
   styled,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isEmpty } from 'lodash';
 import React from 'react';

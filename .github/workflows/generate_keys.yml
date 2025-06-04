@@ -74,7 +74,7 @@ jobs:
           branch: master
           commit_options: "--signoff"
           commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>author of the commit that triggered the run
 
       - name: Send Email on Generate permission keys failure
@@ -91,7 +91,7 @@ jobs:
           from: |
             "Meshery" <no-reply@meshery.io>
           to: |
-            "Layer5 Support" <support@layer5.io>
+            maintainers@meshery.io
           html_body: |
             <b>REPO:</b> ${{ github.repository }}<br />
             <b>WORKFLOW:</b> ${{ github.workflow }}<br />

@@ -57,7 +57,7 @@ FROM alpine:3.15.3 AS base-alpine
 FROM base-alpine AS wrk2
 RUN apk update \
     && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
-RUN git config --global user.email "meshery@layer5.io"
+RUN git config --global user.email "meshery@meshery.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
@@ -93,7 +93,7 @@ RUN mkdir -p /seed_content/applications && cd /seed_content/applications \
 #FROM ubuntu as nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 #RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-#RUN git config --global user.email "meshery@layer5.io"
+#RUN git config --global user.email "meshery@meshery.io"
 #RUN git config --global user.name "meshery"
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client

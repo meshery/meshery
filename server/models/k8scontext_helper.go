@@ -1,6 +1,6 @@
 package models
 
-import "github.com/layer5io/meshery/server/helpers/utils"
+import "github.com/meshery/meshery/server/helpers/utils"
 
 type K8scontextChan struct {
 	contextchan []chan struct{}

@@ -8,7 +8,7 @@ import {
   useTheme,
   DeleteIcon,
   ListItemIcon,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { GroupAdd } from '@mui/icons-material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';

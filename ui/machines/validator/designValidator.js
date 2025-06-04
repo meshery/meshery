@@ -5,14 +5,14 @@ import {
   dataValidatorMachine,
   selectIsValidating,
   selectValidationResults,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useSelector } from '@xstate/react';
 import { encodeDesignFile, processDesign } from '@/utils/utils';
 import { designsApi } from '@/rtk-query/design';
 import { initiateQuery } from '@/rtk-query/utils';
 
 import { componentKey } from './schemaValidator';
-import { fromWorkerfiedActor } from '@layer5/sistent';
+import { fromWorkerfiedActor } from '@sistent/sistent';
 
 const DESIGN_VALIDATOR_COMMANDS = {
   VALIDATE_DESIGN_SCHEMA: 'VALIDATE_DESIGN_SCHEMA',

@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"

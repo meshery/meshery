@@ -1,4 +1,4 @@
-import { useTheme } from '@layer5/sistent';
+import { useTheme } from '@sistent/sistent';
 import React, { useState, useEffect } from 'react';
 
 function getClassName(className, isActive) {

@@ -8,9 +8,9 @@ import {
   OrgNameDisabled,
   StyledTypographyDisabled,
 } from './styles';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
 import CustomErrorFallback from '../ErrorBoundary';
 import { useGetSelectedOrganization } from '@/rtk-query/user';
 

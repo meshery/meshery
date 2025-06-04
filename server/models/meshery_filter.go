@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/internal/sql"
+	"github.com/meshery/meshery/server/internal/sql"
 	"gopkg.in/yaml.v2"
 )
 

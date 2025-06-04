@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@layer5/sistent';
-import { Typography, Link, Box, styled } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { Typography, Link, Box, styled } from '@sistent/sistent';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background?.default,
@@ -75,7 +75,7 @@ const CustomErrorMessage = ({ message, showImage = true }) => {
             />
           )}
           <StyledTypographyBody1 variant="body1">
-            Start a conversation at Layer5 community{' '}
+            Start a conversation at the Meshery community{' '}
             <StyledLink
               href="https://meshery.io/community#community-forums/c/meshery/5"
               target="_blank"

@@ -43,13 +43,13 @@ definitions:
                 type: string
                 x-go-name: Type
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     AccountExtensions:
         description: NavigatorExtensions is a collection of AccountExtension
         items:
             $ref: '#/definitions/AccountExtension'
         type: array
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Adapter:
         description: Adapter represents an adapter in Meshery
         properties:
@@ -71,7 +71,7 @@ definitions:
                 type: string
                 x-go-name: Version
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Adapters:
         properties:
             appMesh:
@@ -102,7 +102,7 @@ definitions:
                 type: boolean
                 x-go-name: NSM
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Alert:
         properties:
             alertRuleTags:
@@ -254,10 +254,10 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     ApplicationType:
         type: string
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     ApplicationTypeResponse:
         properties:
             application_type:
@@ -268,7 +268,7 @@ definitions:
                 type: array
                 x-go-name: SupportedExtensions
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     ApplicationsAPIResponse:
         description: ApplicationsAPIResponse response retruned by patternfile endpoint on meshery server
         properties:
@@ -290,7 +290,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     AuthenticateOKBody:
         description: AuthenticateOKBody authenticate o k body
         properties:
@@ -348,7 +348,7 @@ definitions:
         items:
             $ref: '#/definitions/Capability'
         type: array
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Capability:
         properties:
             description:
@@ -458,15 +458,15 @@ definitions:
                 $ref: '#/definitions/CatalogDataType'
         title: CatalogData defines model for catalog_data.
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CatalogDataCompatibility:
         title: CatalogDataCompatibility defines model for CatalogData.Compatibility.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CatalogDataType:
         title: CatalogDataType Categorization of the type of design or operational flow depicted in this design.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CategoryDefinition:
         properties:
             metadata:
@@ -574,13 +574,13 @@ definitions:
                 type: string
                 x-go-name: Type
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     CollaboratorExtensions:
         description: CollaboratorExtension describes the Collaborator extension point in the UI
         items:
             $ref: '#/definitions/CollaboratorExtension'
         type: array
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Column:
         description: for a table
         properties:
@@ -867,7 +867,7 @@ definitions:
                 type: boolean
                 x-go-name: Filters
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Connection:
         properties:
             created_at:
@@ -914,7 +914,7 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models/connections
+        x-go-package: github.com/meshery/meshery/server/models/connections
     ConnectionPage:
         properties:
             connections:
@@ -935,10 +935,10 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models/connections
+        x-go-package: github.com/meshery/meshery/server/models/connections
     ConnectionStatus:
         type: string
-        x-go-package: github.com/layer5io/meshery/server/models/connections
+        x-go-package: github.com/meshery/meshery/server/models/connections
     ConnectionStatusInfo:
         properties:
             count:
@@ -949,7 +949,7 @@ definitions:
                 type: string
                 x-go-name: Status
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models/connections
+        x-go-package: github.com/meshery/meshery/server/models/connections
     ConnectionsStatusPage:
         properties:
             connections_status:
@@ -958,7 +958,7 @@ definitions:
                 type: array
                 x-go-name: ConnectionsStatus
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models/connections
+        x-go-package: github.com/meshery/meshery/server/models/connections
     ContainerTopOKBody:
         description: ContainerTopOKBody OK response to ContainerTop operation
         properties:
@@ -995,7 +995,7 @@ definitions:
         x-go-package: github.com/docker/docker/api/types/container
     ContentClass:
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/catalog/v1alpha1
+        x-go-package: github.com/meshery/meshkit/models/catalog/v1alpha1
     CountBySeverityLevel:
         properties:
             count:
@@ -1006,7 +1006,7 @@ definitions:
                 type: string
                 x-go-name: Severity
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     CreateOptions:
         description: Volume configuration
         properties:
@@ -1076,7 +1076,7 @@ definitions:
                 type: integer
                 x-go-name: TotalTables
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     DeleteResponse:
         description: DeleteResponse delete response
         properties:
@@ -1118,7 +1118,7 @@ definitions:
                 type: boolean
                 x-go-name: Validate
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Detail:
         properties:
             assertions:
@@ -1146,7 +1146,7 @@ definitions:
                 type: string
                 x-go-name: Time
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     DuplicateResponseComponent:
         properties:
             capabilities:
@@ -1198,7 +1198,7 @@ definitions:
                 type: string
                 x-go-name: Version
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     DuplicateResponseModels:
         properties:
             category:
@@ -1270,7 +1270,7 @@ definitions:
                 type: string
                 x-go-name: Version
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Entity:
         properties:
             GetEntityDetail:
@@ -1281,7 +1281,7 @@ definitions:
             Type:
                 $ref: '#/definitions/EntityType'
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/entity
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/entity
     EntitySummary:
         properties:
             components:
@@ -1301,10 +1301,10 @@ definitions:
                 type: integer
                 x-go-name: Relationships
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/core/v1beta1
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/core/v1beta1
     EntityType:
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/entity
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/entity
     EnvironmentData:
         properties:
             created_at:
@@ -1335,7 +1335,7 @@ definitions:
                 type: string
                 x-go-name: UpdatedAt
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models/environments
+        x-go-package: github.com/meshery/meshery/server/models/environments
     EnvironmentPage:
         properties:
             environments:
@@ -1356,7 +1356,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models/environments
+        x-go-package: github.com/meshery/meshery/server/models/environments
     ErrorResponse:
         properties:
             message:
@@ -1431,15 +1431,15 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/events
+        x-go-package: github.com/meshery/meshkit/models/events
     EventSeverity:
         title: EventSeverity A set of seven standard event levels.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/events
+        x-go-package: github.com/meshery/meshkit/models/events
     EventStatus:
         title: EventStatus Status for the event.
         type: string
-        x-go-package: github.com/layer5io/meshkit/models/events
+        x-go-package: github.com/meshery/meshkit/models/events
     EventsResponse:
         properties:
             count_by_severity_level:
@@ -1465,7 +1465,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Extensions:
         description: Extensions defines the UI extension points
         properties:
@@ -1480,11 +1480,11 @@ definitions:
             user_prefs:
                 $ref: '#/definitions/UserPrefsExtensions'
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Feature:
         description: Feature is a type to store the features of the provider
         type: string
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     FieldConfig:
         properties:
             defaults:
@@ -1680,7 +1680,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     FloatString:
         properties:
             Valid:
@@ -1729,7 +1729,7 @@ definitions:
                 type: array
                 x-go-name: GrafanaBoards
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     GrafanaBoard:
         description: GrafanaBoard represents a Grafana board
         properties:
@@ -1760,7 +1760,7 @@ definitions:
                 type: string
                 x-go-name: URI
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     GrafanaConfigParams:
         description: Parameters to save Grafana configuration
         properties:
@@ -1771,7 +1771,7 @@ definitions:
                 type: string
                 x-go-name: GrafanaURL
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     GrafanaDataSource:
         description: GrafanaDataSource represents a Grafana datasource like Prometheus
         properties:
@@ -1783,7 +1783,7 @@ definitions:
                 type: string
                 x-go-name: Name
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     GrafanaTemplateVars:
         description: GrafanaTemplateVars represents template variables in a bboard
         properties:
@@ -1802,7 +1802,7 @@ definitions:
             value:
                 x-go-name: Value
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     GraphDriverData:
         description: |-
             GraphDriverData Information about the storage driver used to store the container's and
@@ -1838,13 +1838,13 @@ definitions:
                 type: string
                 x-go-name: Type
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     GraphQLExtensions:
         description: GraphQLExtensions is a collection of GraphQLExtension endpoints
         items:
             $ref: '#/definitions/GraphQLExtension'
         type: array
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     HeaderComponents:
         properties:
             contextSwitcher:
@@ -1860,7 +1860,7 @@ definitions:
                 type: boolean
                 x-go-name: Settings
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     HistoryResponseItem:
         description: HistoryResponseItem individual image layer information in response to ImageHistory operation
         properties:
@@ -1906,7 +1906,7 @@ definitions:
                 type: string
                 x-go-name: URI
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     IPFamily:
         description: |-
             IPFamily represents the IP Family (IPv4 or IPv6). This type is used
@@ -2000,7 +2000,7 @@ definitions:
     JSONMap:
         additionalProperties: {}
         type: object
-        x-go-package: github.com/layer5io/meshery/server/helpers/utils
+        x-go-package: github.com/meshery/meshery/server/helpers/utils
     K8sContext:
         properties:
             auth:
@@ -2050,7 +2050,7 @@ definitions:
                 type: string
                 x-go-name: Version
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     KubernetesKeyValue:
         properties:
             id:
@@ -2225,7 +2225,7 @@ definitions:
                 format: double
                 type: number
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Legend:
         description: for a graph panel
         properties:
@@ -2399,7 +2399,7 @@ definitions:
                 type: string
                 x-go-name: Duration
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     ManagedFieldsEntry:
         description: |-
             ManagedFieldsEntry is a workflow-id, a FieldSet and the group version of the resource
@@ -2462,7 +2462,7 @@ definitions:
             of golang native maps
         title: Map type is an alias for map[string]interface{}
         type: object
-        x-go-package: github.com/layer5io/meshery/server/internal/sql
+        x-go-package: github.com/meshery/meshery/server/internal/sql
     MapType:
         properties:
             name:
@@ -2528,7 +2528,7 @@ definitions:
                 type: boolean
                 x-go-name: Visualizer
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshModelHostsWithEntitySummary:
         properties:
             created_at:
@@ -2583,7 +2583,7 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshkit/models/meshmodel/core/v1beta1
+        x-go-package: github.com/meshery/meshkit/models/meshmodel/core/v1beta1
     MeshSyncResourcesAPIResponse:
         properties:
             design:
@@ -2606,7 +2606,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshSyncResourcesSummaryAPIResponse:
         properties:
             kinds:
@@ -2633,7 +2633,7 @@ definitions:
                 type: array
                 x-go-name: Namespaces
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MesheryApplication:
         description: MesheryApplication represents the applications that needs to be saved
         properties:
@@ -2672,7 +2672,7 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MesheryFilter:
         description: MesheryFilter represents the filters that needs to be saved
         properties:
@@ -2714,7 +2714,7 @@ definitions:
                 type: string
                 x-go-name: Visibility
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MesheryK8sContextPage:
         description: MesheryK8sContextPage represents a page of contexts
         properties:
@@ -2736,7 +2736,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MesheryPattern:
         description: MesheryPattern represents the patterns that needs to be saved
         properties:
@@ -2800,7 +2800,7 @@ definitions:
                 type: string
                 x-go-name: Visibility
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MesheryUICapabilities:
         properties:
             header:
@@ -2808,7 +2808,7 @@ definitions:
             navigator:
                 $ref: '#/definitions/NavigatorComponents'
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelCategoriesAPIResponse:
         description: API response model for meshmodel categories API
         properties:
@@ -2830,7 +2830,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelComponentsAPIResponse:
         description: API response model for meshmodel components API
         properties:
@@ -2852,7 +2852,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelComponentsDuplicateAPIResponse:
         description: API response model for meshmodel components API that contains the number of duplicates for each component
         properties:
@@ -2874,7 +2874,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelPoliciesAPIResponse:
         description: API response model for meshmodel relationships API
         properties:
@@ -2896,7 +2896,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelRegistrantsAPIResponse:
         properties:
             page:
@@ -2917,7 +2917,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelRelationshipsAPIResponse:
         description: API response model for meshmodel relationships API
         properties:
@@ -2939,7 +2939,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelsAPIResponse:
         description: API response model for meshmodel models API
         properties:
@@ -2961,7 +2961,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     MeshmodelsDuplicateAPIResponse:
         description: API response model for meshmodel models API that contains the number of duplicates for each model
         properties:
@@ -2983,7 +2983,7 @@ definitions:
                 type: integer
                 x-go-name: Count
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Meta:
         properties:
             CreatedAt:
@@ -3144,7 +3144,7 @@ definitions:
                 type: boolean
                 x-go-name: Toggler
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     NavigatorExtension:
         description: NavigatorExtension describes the Navigator extension point in the UI
         properties:
@@ -3180,13 +3180,13 @@ definitions:
                 type: string
                 x-go-name: Type
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     NavigatorExtensions:
         description: NavigatorExtensions is a collection of NavigatorExtension
         items:
             $ref: '#/definitions/NavigatorExtension'
         type: array
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     NullString:
         description: |-
             var s NullString
@@ -3224,7 +3224,7 @@ definitions:
     OpCategory:
         format: int32
         type: integer
-        x-go-package: github.com/layer5io/meshery/server/meshes
+        x-go-package: github.com/meshery/meshery/server/meshes
     Options:
         properties:
             colorMode:
@@ -3302,7 +3302,7 @@ definitions:
                 type: string
                 x-go-name: UpdatedAt
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     OrganizationsPage:
         properties:
             organizations:
@@ -3323,7 +3323,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     OwnerReference:
         description: |-
             OwnerReference contains enough information to let you identify an owning
@@ -3923,7 +3923,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PerformanceProfile:
         description: |-
             PerformanceProfile represents the performance profile that needs
@@ -3986,7 +3986,7 @@ definitions:
                 type: string
                 x-go-name: UpdatedAt
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PerformanceProfileParameters:
         description: PerformanceProfileParameters structs contains parameters to save a performance profile
         properties:
@@ -4025,7 +4025,7 @@ definitions:
                 type: string
                 x-go-name: ServiceMesh
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PerformanceProfilesAPIResponse:
         description: PerformanceProfilesAPIResponse response retruned by performance endpoint on meshery server
         properties:
@@ -4047,7 +4047,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PerformanceResult:
         description: PerformanceResult represents the result of a performance test
         properties:
@@ -4080,7 +4080,7 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PerformanceResultsAPIResponse:
         description: PerformanceResultsAPIResponse response retruned by performance endpoint on meshery server
         properties:
@@ -4102,9 +4102,9 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PerformanceSpec:
-        description: PerformanceSpec - represents SMP, see here https://github.com/layer5io/service-mesh-performance-specification
+        description: PerformanceSpec - represents SMP, see here https://github.com/service-mesh-performance/service-mesh-performance-specification
         properties:
             ActualQPS:
                 format: double
@@ -4128,7 +4128,7 @@ definitions:
             TestID:
                 type: string
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PerformanceTestConfig:
         properties:
             clients:
@@ -4157,7 +4157,7 @@ definitions:
                 type: string
                 x-go-name: SmpVersion
         type: object
-        x-go-package: github.com/layer5io/service-mesh-performance/spec
+        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
     PerformanceTestConfig_Client:
         properties:
             additional_options:
@@ -4204,11 +4204,11 @@ definitions:
                 type: string
                 x-go-name: SslCertificate
         type: object
-        x-go-package: github.com/layer5io/service-mesh-performance/spec
+        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
     PerformanceTestConfig_Client_Protocol:
         format: int32
         type: integer
-        x-go-package: github.com/layer5io/service-mesh-performance/spec
+        x-go-package: github.com/service-mesh-performance/service-mesh-performance/spec
     PerformanceTestParameters:
         description: PerformanceTestParameters contains parameters to run a performance test
         properties:
@@ -4253,7 +4253,7 @@ definitions:
                 type: string
                 x-go-name: TestID
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Plugin:
         description: Plugin A plugin for the Engine API
         properties:
@@ -4670,7 +4670,7 @@ definitions:
                 type: object
                 x-go-name: UsersExtensionPreferences
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PreferenceParams:
         description: Parameters to updates Anonymous stats
         properties:
@@ -4681,7 +4681,7 @@ definitions:
                 type: boolean
                 x-go-name: AnonymousUsageStats
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Prometheus:
         description: Prometheus represents the prometheus session config
         properties:
@@ -4694,7 +4694,7 @@ definitions:
                 type: array
                 x-go-name: SelectedPrometheusBoardsConfigs
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Protocol:
         description: +enum
         title: Protocol defines network protocols supported for things like container ports.
@@ -4729,11 +4729,11 @@ definitions:
             restrictedAccess:
                 $ref: '#/definitions/RestrictedAccess'
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     ProviderType:
         description: ProviderType - for representing provider types
         type: string
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     PublishState:
         description: |-
             PublishState represents the state of a Volume as it pertains to its
@@ -5055,7 +5055,7 @@ definitions:
                 type: boolean
                 x-go-name: IsMesheryUIRestricted
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     RunnerResults:
         properties:
             ActualDuration:
@@ -5100,7 +5100,7 @@ definitions:
                 type: string
                 x-go-name: LoadGenerator
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Schedule:
         description: Schedule is the struct for representing schedules
         properties:
@@ -5113,7 +5113,7 @@ definitions:
                 type: string
                 x-go-name: ID
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     SchedulesAPIResponse:
         description: API response model for SchedulesAPI
         properties:
@@ -5135,7 +5135,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Scope:
         description: |-
             Scope defines the Scope of a Cluster Volume. This is how many nodes a
@@ -5175,7 +5175,7 @@ definitions:
                 type: array
                 x-go-name: SelectedTemplateVars
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Selector:
         properties:
             from:
@@ -5895,7 +5895,7 @@ definitions:
                 type: integer
                 x-go-name: TotalCount
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     SmiResultWithID:
         properties:
             ID:
@@ -5929,7 +5929,7 @@ definitions:
                 type: string
                 x-go-name: Status
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     Sort:
         description: for a graph panel
         properties:
@@ -5980,7 +5980,7 @@ definitions:
                 type: string
                 x-go-name: Type
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     StackdriverAlignOption:
         description: |-
             StackdriverAlignOption defines a single alignment option shown in Grafana
@@ -6314,7 +6314,7 @@ definitions:
                 type: string
                 x-go-name: Value
         type: object
-        x-go-package: github.com/layer5io/meshery/server/meshes
+        x-go-package: github.com/meshery/meshery/server/meshes
     Target:
         description: for an any panel
         properties:
@@ -6958,7 +6958,7 @@ definitions:
                 type: string
                 x-go-name: UserID
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     UserKeys:
         properties:
             category:
@@ -6989,7 +6989,7 @@ definitions:
                 type: string
                 x-go-name: Updated_at
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     UserPrefsExtension:
         description: UserPrefsExtension describes the user preference extension point in the UI
         properties:
@@ -7000,13 +7000,13 @@ definitions:
                 type: string
                 x-go-name: Type
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     UserPrefsExtensions:
         description: UserPrefsExtensions is a collection of UserPrefsExtension
         items:
             $ref: '#/definitions/UserPrefsExtension'
         type: array
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     ValueMap:
         description: for a stat
         properties:
@@ -7131,7 +7131,7 @@ definitions:
                 type: string
                 x-go-name: UpdatedAt
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     WorkspacePage:
         properties:
             page:
@@ -7152,7 +7152,7 @@ definitions:
                 type: array
                 x-go-name: Workspaces
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     WorkspacesDesignsMapping:
         properties:
             ID:
@@ -7177,7 +7177,7 @@ definitions:
                 type: string
                 x-go-name: WorkspaceId
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
     WorkspacesEnvironmentsMapping:
         properties:
             ID:
@@ -7202,7 +7202,7 @@ definitions:
                 type: string
                 x-go-name: WorkspaceId
         type: object
-        x-go-package: github.com/layer5io/meshery/server/models
+        x-go-package: github.com/meshery/meshery/server/models
 info:
     description: |-
         the purpose of this application is to provide an application

@@ -1,4 +1,4 @@
-import { styled } from '@layer5/sistent';
+import { styled } from '@sistent/sistent';
 import React, { useState } from 'react';
 
 const FlipCardWrapper = styled('div')({

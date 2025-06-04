@@ -15,7 +15,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
 )

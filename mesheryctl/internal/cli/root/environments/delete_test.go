@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 func TestDeleteEnvironment(t *testing.T) {

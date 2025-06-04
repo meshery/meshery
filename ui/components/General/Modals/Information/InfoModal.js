@@ -24,7 +24,7 @@ import {
   Skeleton,
   Typography,
   VisibilityChipMenu,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import yaml from 'js-yaml';
 import _ from 'lodash';

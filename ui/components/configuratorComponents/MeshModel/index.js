@@ -9,12 +9,12 @@ import {
   TextField,
   Toolbar,
   CustomTooltip,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
 import { getWebAdress } from '../../../utils/webApis';

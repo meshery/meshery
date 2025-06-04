@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { StyledAccordion, StyledAccordionSummary } from '../../StyledAccordion';
@@ -17,7 +17,7 @@ import {
   Chip,
   styled,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 const GrafanaRoot = styled('div')({
   width: '100%',

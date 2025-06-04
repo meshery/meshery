@@ -1,4 +1,4 @@
-import { styled, Box, accentGrey } from '@layer5/sistent';
+import { styled, Box, accentGrey } from '@sistent/sistent';
 
 export const ToolWrapper = styled(Box)(({ theme }) => ({
   marginBottom: '2rem',

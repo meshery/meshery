@@ -11,7 +11,7 @@ import {
   ModalButtonSecondary,
   useTheme,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { useDeleteWorkspaceMutation } from '../../../rtk-query/workspace';

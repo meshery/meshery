@@ -28,7 +28,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }} 
           script: |
-            const message = `Welcome, @${{ github.event.pull_request.user.login }}! Thank you for your first contribution! 🎉 A contributor will be by to give feedback soon. In the meantime, please review the [Newcomers' Guide](https://layer5.io/community/newcomers) and be sure to join the [community Slack](https://slack.meshery.io/).
+            const message = `Welcome, @${{ github.event.pull_request.user.login }}! Thank you for your first contribution! 🎉 A contributor will be by to give feedback soon. In the meantime, please review the [Newcomers' Guide](https://meshery.io/community) and be sure to join the [community Slack](https://slack.meshery.io/).
             <p align="center" width="100%">
             <img src="https://github.com/user-attachments/assets/ba4699dc-18b2-4884-9dce-36ed47c38e93" width="30%" />
             </p>

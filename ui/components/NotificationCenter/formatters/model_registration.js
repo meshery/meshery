@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Grid2, Box } from '@layer5/sistent';
+import { Typography, Grid2, Box } from '@sistent/sistent';
 import { ErrorMetadataFormatter } from './error';
 import { TitleLink } from './common';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';

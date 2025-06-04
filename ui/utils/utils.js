@@ -5,7 +5,7 @@ import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
-import { Tooltip } from '@layer5/sistent';
+import { Tooltip } from '@sistent/sistent';
 import jsyaml from 'js-yaml';
 import yaml from 'js-yaml';
 import { mesheryExtensionRoute } from '../pages/_app';

@@ -1,7 +1,7 @@
 package display
 
 import (
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 const pageSize = 10

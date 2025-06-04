@@ -14,7 +14,7 @@ import {
   StyledDivider,
   ErrorLink,
 } from './styles';
-import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@layer5/sistent';
+import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@sistent/sistent';
 import OrgSwitcher from './OrgSwitcher';
 // import RequestForm from './RequestForm';
 import CurrentSessionInfo from './CurrentSession';
@@ -125,7 +125,7 @@ const DefaultError = (props) => {
           {' '}
           discussion forum
         </ErrorLink>{' '}
-        or the <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
+        or the <ErrorLink href="https://slack.meshery.io"> Slack workspace</ErrorLink>.
       </Typography>
     </ErrorMain>
   );

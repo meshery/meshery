@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { TextField, Grid2, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@layer5/sistent';
+import { TextField, Grid2, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@sistent/sistent';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';

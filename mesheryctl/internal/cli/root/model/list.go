@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )

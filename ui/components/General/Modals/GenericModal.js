@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Backdrop, Box, styled, Fade } from '@layer5/sistent';
+import { Modal, Backdrop, Box, styled, Fade } from '@sistent/sistent';
 
 const StyledModal = styled(Modal)({
   display: 'flex',

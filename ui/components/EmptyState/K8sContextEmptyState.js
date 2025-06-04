@@ -1,4 +1,4 @@
-import { Button, Link, Typography, styled, useTheme } from '@layer5/sistent';
+import { Button, Link, Typography, styled, useTheme } from '@sistent/sistent';
 import OperatorLight from '../../assets/img/OperatorLight';
 import Operator from '../../assets/img/Operator';
 import AddIcon from '@mui/icons-material/Add';

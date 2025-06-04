@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	isql "github.com/layer5io/meshery/server/internal/sql"
+	isql "github.com/meshery/meshery/server/internal/sql"
 )
 
 type ApplicationType string

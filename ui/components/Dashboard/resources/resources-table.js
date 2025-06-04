@@ -8,7 +8,7 @@ import {
   SearchBar,
   Slide,
   UniversalFilter,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import View from '../view';
 import { ALL_VIEW, SINGLE_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';

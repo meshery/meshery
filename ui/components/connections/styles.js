@@ -15,7 +15,7 @@ import {
   Stepper,
   TableContainer,
   Grid2,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 export const CreateButton = styled(Grid)({
   display: 'flex',

@@ -9,7 +9,7 @@ import {
   Select,
   MenuItem,
   IconButton,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import ConnectCluster from '../../charts/ConnectCluster';
 import { generateDynamicURL } from '../../resources/config';

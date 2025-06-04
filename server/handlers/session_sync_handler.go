@@ -6,7 +6,7 @@ import (
 
 	"encoding/json"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 )
 
 type SessionSyncData struct {

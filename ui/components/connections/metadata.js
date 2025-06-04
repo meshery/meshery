@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@layer5/sistent';
+import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@sistent/sistent';
 
 import {
   FormatId,

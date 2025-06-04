@@ -8,7 +8,7 @@ import {
   Link,
   Avatar,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Fullscreen from '@mui/icons-material/Fullscreen';
 import Save from '@mui/icons-material/Save';
@@ -38,7 +38,7 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import { VisibilityChipMenu } from '@layer5/sistent';
+import { VisibilityChipMenu } from '@sistent/sistent';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import { Public, Lock } from '@mui/icons-material';
 import { iconMedium } from 'css/icons.styles';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr, TableCell, TableSortLabel } from '@layer5/sistent';
+import { NoSsr, TableCell, TableSortLabel } from '@sistent/sistent';
 import MUIDataTable from 'mui-datatables';
 
 function NodeDetails(props) {

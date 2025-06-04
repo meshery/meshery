@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Pagination, PaginationItem } from '@layer5/sistent';
+import { Pagination, PaginationItem } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@mui/icons-material';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
@@ -30,7 +30,7 @@ import {
   Typography,
   SearchBar,
   PROMPT_VARIANTS,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
 import {

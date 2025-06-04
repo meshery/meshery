@@ -40,7 +40,7 @@ jobs:
       with:
         repository: meshery-extensions
         commit_user_name: l5io
-        commit_user_email: ci@layer5.io
+        commit_user_email: ci@meshery.io
         commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
         commit_options: '--signoff'
         commit_message: 'Upgrading go.mod in response to meshery/meshery'
@@ -59,7 +59,7 @@ jobs:
           username: ${{ secrets.MAIL_USERNAME }}
           password: ${{ secrets.MAIL_PASSWORD }}
           subject: Go Mod Sync Failed - ${{ github.job }} job of ${{ github.repository }} has ${{ job.status }}
-          to: support@layer5.io
+          to: maintainers@meshery.io
           from: Meshery extensions go.mod sync workflow
           body: |
             The workflow (https://github.com/meshery/meshery/actions/workflows/go-mod-sync.yml) encountered error(s). This mainly occurs when the go.mod file in the meshery-extensions repository is not in sync with the go.mod file in the meshery/meshery repository. The workflow attempts to update the go.mod file in the meshery-extensions repository to ensure it matches the go.mod file in the meshery/meshery repository.

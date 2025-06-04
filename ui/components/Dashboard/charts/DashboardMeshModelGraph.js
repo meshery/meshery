@@ -17,7 +17,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { Typography, useTheme, Grid2 } from '@layer5/sistent';
+import { Typography, useTheme, Grid2 } from '@sistent/sistent';
 
 function MeshModelContructs() {
   const params = {

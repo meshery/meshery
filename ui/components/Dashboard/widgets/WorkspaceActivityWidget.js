@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { WorkspaceActivityCard } from '@layer5/sistent';
+import { WorkspaceActivityCard } from '@sistent/sistent';
 import { useGetEventsOfWorkspaceQuery, useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useSelector } from 'react-redux';
 

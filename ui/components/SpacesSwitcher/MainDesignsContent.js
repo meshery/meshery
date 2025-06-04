@@ -15,7 +15,7 @@ import {
   DeleteIcon,
   InfoIcon,
   WorkspaceContentMoveModal,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, {
