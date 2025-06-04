@@ -26,7 +26,7 @@ const HelpCenterWidget = (props) => {
     },
     {
       name: 'Discussion Forum',
-      link: 'https://discuss.layer5.io',
+      link: 'https://meshery.io/community/#discussion-forums',
       external: true,
       icon: '/static/img/designs.svg',
     },
