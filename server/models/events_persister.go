@@ -70,6 +70,10 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 		finder = finder.Where("status = ?", eventsFilter.Status)
 	}
 
+	if len(eventsFilter.ActedUpon) != 0 {
+		finder = finder.Where("acted_upon in ?", eventsFilter.ActedUpon)
+	}
+
 	sortOn := SanitizeOrderInput(fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order), []string{"created_at", "updated_at", "name"})
 	finder = finder.Order(sortOn)
 
