@@ -13,9 +13,9 @@ import (
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/spf13/viper"
 )
 

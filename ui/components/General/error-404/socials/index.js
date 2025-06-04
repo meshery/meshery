@@ -1,4 +1,4 @@
-import { Tooltip, Fade } from '@layer5/sistent';
+import { Tooltip, Fade } from '@sistent/sistent';
 import {
   DockerIcon,
   GithubIcon,
@@ -19,7 +19,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Get connected with the Layer5 community"
         >
-          <a href="mailto:community@layer5.io">
+          <a href="mailto:maintainers@meshery.io">
             <MessageIcon height={45} width={45} />
           </a>
         </Tooltip>
@@ -29,7 +29,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Join the community Slack"
         >
-          <a href="https://slack.layer5.io">
+          <a href="https://slack.meshery.io">
             <SlackIcon height={45} width={45} />
           </a>
         </Tooltip>
@@ -69,7 +69,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Access Docker images"
         >
-          <a href="https://hub.docker.com/u/layer5/">
+          <a href="https://hub.docker.com/u/meshery/">
             <DockerIcon height={45} width={45} />
           </a>
         </Tooltip>

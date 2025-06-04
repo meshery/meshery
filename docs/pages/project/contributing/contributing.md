@@ -21,7 +21,7 @@ Please do! Thanks for your help! 🎈 Meshery is community-built and welcomes co
 
 Follow these steps and you'll be right at home.
 
-1. See the [Newcomers Guide](https://layer5.io/community/newcomers) for how, where, and why to contribute.
+1. See the [Newcomers Guide](https://meshery.io/community) for how, where, and why to contribute.
 
 2. Sign up for a [_MeshMate_](https://layer5.io/community/meshmates) to find the perfect Mentor to help you explore the projects and find your place in the community:
 
@@ -31,7 +31,7 @@ Follow these steps and you'll be right at home.
 - **Build** Meshery: Confirm that you have a usable development environment.
 - **Discuss** with the community by engaging in the [discussion forum](https://meshery.io/community#discussion-forums).
 - **Contribute** by grabbing any open issue with the [help-wanted label](https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+) and jump in. If needed, create a [new issue](https://github.com/meshery/meshery/issues/new/choose). All [pull requests](https://github.com/meshery/meshery/pulls) should reference an open issue. Include keywords in your pull request descriptions, as well as commit messages, to [automatically close issues in GitHub](https://help.github.com/en/github/managing-your-work-on-github/closing-issues-using-keywords).
-- **Fill-in** a [community member form](https://layer5.io/newcomers) community member form to gain access to community resources.
+- **Fill-in** a [community member form](https://meshery.io/newcomers) community member form to gain access to community resources.
 
 ## General Contribution Flow
 

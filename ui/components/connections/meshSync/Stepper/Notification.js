@@ -1,6 +1,6 @@
 // Notification.js
 import React from 'react';
-import { Grid2, Typography, Button } from '@layer5/sistent';
+import { Grid2, Typography, Button } from '@sistent/sistent';
 
 const Notification = ({ type, message, retry, onRetry }) => {
   return (

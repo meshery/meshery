@@ -15,7 +15,7 @@ keywords:
   - meshery-app-mesh
   - meshery-nighthawk
 source:
-  - https://github.com/layer5io/meshery
+  - https://github.com/meshery/meshery
 
 engine: gotpl
 

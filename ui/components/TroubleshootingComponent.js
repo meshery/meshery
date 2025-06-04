@@ -6,7 +6,7 @@ import {
   helpAndSupportModalSchema,
   helpAndSupportModalUiSchema,
   Button,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import SupportIcon from '@/assets/icons/support';

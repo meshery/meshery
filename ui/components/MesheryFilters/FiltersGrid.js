@@ -1,4 +1,4 @@
-import { Grid2, Button, Pagination } from '@layer5/sistent';
+import { Grid2, Button, Pagination } from '@sistent/sistent';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';
 import { FILE_OPS } from '../../utils/Enum';
@@ -12,7 +12,7 @@ import {
 import { RJSFModalWrapper } from '../General/Modals/Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Modal as SistentModal } from '@layer5/sistent';
+import { Modal as SistentModal } from '@sistent/sistent';
 import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
 
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };

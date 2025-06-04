@@ -19,7 +19,7 @@ import {
   useTheme,
   styled,
   useMediaQuery,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 

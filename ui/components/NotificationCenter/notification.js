@@ -12,7 +12,7 @@ import {
   alpha,
   FormattedTime,
   CustomTooltip,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import {
   OptionList,
   OptionListItem,

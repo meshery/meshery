@@ -19,7 +19,7 @@ import {
   TableCell,
   TableRow,
   Popover,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import {
   ContentContainer,
   CreateButton,
@@ -60,7 +60,7 @@ import { keys } from '@/utils/permission_constants';
 import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DeleteIcon } from '@layer5/sistent';
+import { DeleteIcon } from '@sistent/sistent';
 
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';

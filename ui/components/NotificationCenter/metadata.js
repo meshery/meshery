@@ -9,8 +9,8 @@ import { ErrorMetadataFormatter } from './formatters/error';
 import { DryRunResponse } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
-import { useTheme, DownloadIcon, InfoIcon } from '@layer5/sistent';
 import { Launch as LaunchIcon } from '@mui/icons-material';
+import { useTheme, DownloadIcon, InfoIcon } from '@sistent/sistent';
 import _ from 'lodash';
 import { ChipWrapper } from '../connections/styles';
 

@@ -34,7 +34,7 @@ language: en
 
 {% include compatibility/adapter-status.html %}
 
-<!-- {% include adapter-labs.html %} -->
+
 
 ## Lifecycle management
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { canExpand } from '@rjsf/utils';
 import AddIcon from '../../../../assets/icons/AddIcon';
-import { Grid2, Box, IconButton, Typography, useTheme, CssBaseline } from '@layer5/sistent';
+import { Grid2, Box, IconButton, Typography, useTheme, CssBaseline } from '@sistent/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';

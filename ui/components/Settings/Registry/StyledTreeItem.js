@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, useTheme, Checkbox } from '@layer5/sistent';
+import { Box, Typography, useTheme, Checkbox } from '@sistent/sistent';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { StyledTreeItemRoot } from './MeshModel.style';

@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/encoding"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/encoding"
 
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 

@@ -20,7 +20,7 @@ import {
   Autocomplete,
   RadioGroup,
   AccordionSummary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
