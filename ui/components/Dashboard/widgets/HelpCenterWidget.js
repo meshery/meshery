@@ -40,18 +40,20 @@ const HelpCenterWidget = (props) => {
 
   return (
     <>
-      <PlainCard
-        resources={resources}
-        icon={
-          <DocumentIcon
-            {...props.iconsProps}
-            fill={theme.palette.icon.default}
-            secondaryFill={theme.palette.icon.disabled}
-            {...iconMedium}
-          />
-        }
-        title="HELP CENTER"
-      />
+      <div data-testid="help-center">
+        <PlainCard
+          resources={resources}
+          icon={
+            <DocumentIcon
+              {...props.iconsProps}
+              fill={theme.palette.icon.default}
+              secondaryFill={theme.palette.icon.disabled}
+              {...iconMedium}
+            />
+          }
+          title="HELP CENTER"
+        />
+      </div>
     </>
   );
 };

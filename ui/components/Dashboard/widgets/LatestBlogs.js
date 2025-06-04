@@ -37,17 +37,19 @@ const LatestBlogs = (props) => {
   }, []);
 
   return (
-    <PlainCard
-      resources={loading ? [{ name: 'Loading...' }] : resources}
-      icon={
-        <BellIcon
-          {...props.iconsProps}
-          fill={theme.palette.icon.default}
-          secondaryFill={theme.palette.background.brand.default}
-        />
-      }
-      title="LATEST BLOGS"
-    />
+    <div data-testid="latest-blogs">
+      <PlainCard
+        resources={loading ? [{ name: 'Loading...' }] : resources}
+        icon={
+          <BellIcon
+            {...props.iconsProps}
+            fill={theme.palette.icon.default}
+            secondaryFill={theme.palette.background.brand.default}
+          />
+        }
+        title="LATEST BLOGS"
+      />
+    </div>
   );
 };
 
