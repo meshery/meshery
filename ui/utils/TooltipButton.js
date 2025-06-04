@@ -1,5 +1,5 @@
-import { Button } from '@layer5/sistent';
-import { CustomTooltip, IconButton } from '@layer5/sistent';
+import { Button } from '@sistent/sistent';
+import { CustomTooltip, IconButton } from '@sistent/sistent';
 
 export default function TooltipButton({ children, onClick, title, variant, ...props }) {
   return (

@@ -1,4 +1,4 @@
-import { TextField } from '@layer5/sistent';
+import { TextField } from '@sistent/sistent';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import PropTypes from 'prop-types';
 import { useState } from 'react';

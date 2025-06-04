@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, styled, CustomTooltip, Collapse } from '@layer5/sistent';
+import { Box, Typography, styled, CustomTooltip, Collapse } from '@sistent/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
-import { InfoIcon } from '@layer5/sistent'; // Assuming MUI icons are available
+import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
 import ExpandMoreIcon from '@/assets/icons/ExpandMoreIcon';
 

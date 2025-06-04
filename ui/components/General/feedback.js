@@ -1,6 +1,6 @@
 import { useHandleFeedbackFormSubmissionMutation } from '@/rtk-query/user';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { FeedbackButton, styled } from '@layer5/sistent';
+import { FeedbackButton, styled } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import _ from 'lodash';
 import { useRouter } from 'next/router';

@@ -7,9 +7,9 @@ import {
   styled,
   MenuItem,
   CircularProgress,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
 import { iconMedium } from 'css/icons.styles';
 import WorkspaceModal from './WorkspaceModal';

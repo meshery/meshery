@@ -24,25 +24,7 @@ components:
   description: 
 components-count: 3
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
-- type: "Non Binding"
-  kind: "Edge"
-  description: "A relationship that defines network edges between components"
-- type: "Binding"
-  kind: "Edge"
-  description: ""
-- type: "Binding"
-  kind: "Edge"
-  description: ""
-- type: "Non Binding"
-  kind: "Edge"
-  description: ""
-- type: "Sibling"
-  kind: "Hierarchical"
-  description: ""
-relationship-count: 6
+relationship-count: 0
 featureList: [
   "Stores and retrieves any amount of data",
   "Highly scalable and durable",

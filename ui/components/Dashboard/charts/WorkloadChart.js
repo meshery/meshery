@@ -6,7 +6,7 @@ import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Box, MenuItem, Select, Typography } from '@layer5/sistent';
+import { Box, MenuItem, Select, Typography } from '@sistent/sistent';
 
 export default function WorkloadChart({
   classes,

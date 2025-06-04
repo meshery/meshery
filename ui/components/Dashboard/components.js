@@ -11,7 +11,7 @@ import {
   Button,
   DeleteIcon,
   DragIcon,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 import { iconMedium } from 'css/icons.styles';
 

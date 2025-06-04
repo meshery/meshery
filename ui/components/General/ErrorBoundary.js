@@ -4,7 +4,7 @@ import {
   helpAndSupportModalSchema,
   helpAndSupportModalUiSchema,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useState } from 'react';
 import { RJSFModalWrapper } from './Modals/Modal';
 import SupportIcon from '@/assets/icons/support';

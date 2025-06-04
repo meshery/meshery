@@ -1,4 +1,4 @@
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
 import MesheryPlayComponent from '../../components/MesheryPlayComponent';

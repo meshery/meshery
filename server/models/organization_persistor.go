@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshkit/database"
 )
 
 // MesheryApplicationPersister is the persister for persisting

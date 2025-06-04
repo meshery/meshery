@@ -7,7 +7,7 @@ permalink: extensibility/integrations/azure-synapse
 docURL: https://docs.meshery.io/extensibility/integrations/azure-synapse
 description: 
 integrations-category: Observability and Analysis
-integrations-subcategory: Uncategorized
+integrations-subcategory: Metrics
 registrant: GitHub
 components: 
 - name: workspace

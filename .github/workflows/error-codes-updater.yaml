@@ -35,8 +35,8 @@ jobs:
 
       - name: Build Error Utility
         run: |
-          go get github.com/layer5io/meshkit/cmd/errorutil@master
-          go build -o ~/errorutil github.com/layer5io/meshkit/cmd/errorutil
+          go get github.com/meshery/meshkit/cmd/errorutil@master
+          go build -o ~/errorutil github.com/meshery/meshkit/cmd/errorutil
 
       - name: Run Utility For Meshery Server
         run: |
@@ -66,7 +66,7 @@ jobs:
         with:
           file_pattern: mesheryctl/helpers server/helpers/ **.go docs/
           commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Error Codes]: Update Meshery server and mehseryctl error codes and reference"

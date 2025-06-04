@@ -3,7 +3,7 @@ package application
 // import (
 // 	"fmt"
 
-// 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
+// 	meshkube "github.com/meshery/meshkit/utils/kubernetes"
 // 	v1 "k8s.io/api/core/v1"
 // )
 

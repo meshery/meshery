@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 )
 

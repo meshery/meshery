@@ -22,7 +22,7 @@ spec:
     spec:
       serviceAccount: meshery-server
       containers:
-      - image: layer5/meshery-istio:stable-latest
+      - image: meshery/meshery-istio:stable-latest
         imagePullPolicy: Always
         name: meshery-istio
         ports:

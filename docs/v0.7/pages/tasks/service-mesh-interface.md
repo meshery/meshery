@@ -48,7 +48,7 @@ The following list highlights the sequence of steps taken to perform conformance
 
 ## Reporting Conformance
 
-Each of the participating service mesh projects can leverage the [Meshery SMI Conformance GitHub action](https://github.com/layer5io/meshery-smi-conformance-action) to incorporate SMI conformance into their CI/CD pipelines.
+Each of the participating service mesh projects can leverage the [Meshery SMI Conformance GitHub action](https://github.com/meshery/meshery-smi-conformance-action) to incorporate SMI conformance into their CI/CD pipelines.
 
 The conformance tool will run the test suite and automatically update the conformance dashboard when the test is complete. In order to ensure provenance of test results that represent a given service mesh, each project will be asked to identify one or more GitHub accounts that will be used for publishing the tests. 
 

@@ -24,9 +24,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	meshkitUtils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitUtils "github.com/meshery/meshkit/utils"
 )
 
 var (

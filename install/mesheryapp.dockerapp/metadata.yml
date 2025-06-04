@@ -7,6 +7,6 @@ description: Meshery by Docker App
 # List of application maintainers with name and email for each
 maintainers:
   - name: nunix
-    email: nunix@layer5.io
-  - name: leecalcote
-    email: leecalcote@gmail.com
+    email: ci@meshery.io
+  - name: maintainers
+    email: maintainers@meshery.io

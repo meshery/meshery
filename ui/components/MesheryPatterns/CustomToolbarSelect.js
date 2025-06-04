@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, CustomTooltip } from '@layer5/sistent';
+import { IconButton, CustomTooltip } from '@sistent/sistent';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';

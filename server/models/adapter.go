@@ -3,7 +3,7 @@ package models
 import (
 	"context"
 
-	"github.com/layer5io/meshery/server/meshes"
+	"github.com/meshery/meshery/server/meshes"
 )
 
 // Available Meshery adapters

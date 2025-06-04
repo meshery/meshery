@@ -1,6 +1,6 @@
 package stages
 
-import "github.com/layer5io/meshkit/errors"
+import "github.com/meshery/meshkit/errors"
 
 const (
 	ErrResolveReferenceCode = "meshery-server-1361"

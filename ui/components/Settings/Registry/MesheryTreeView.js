@@ -5,7 +5,7 @@ import {
   Switch,
   CircularProgress,
   Typography,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';

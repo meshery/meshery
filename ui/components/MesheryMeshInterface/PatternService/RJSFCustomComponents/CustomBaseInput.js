@@ -6,7 +6,7 @@ import {
   useTheme,
   InputLabel,
   styled,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';

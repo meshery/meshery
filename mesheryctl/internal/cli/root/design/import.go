@@ -22,9 +22,9 @@ import (
 	"os"
 	"path"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 
 	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/spf13/cobra"

@@ -1,4 +1,4 @@
-import { Accordion, FormControl, IconButton, styled, Radio } from '@layer5/sistent';
+import { Accordion, FormControl, IconButton, styled, Radio } from '@sistent/sistent';
 import { HelpOutlineOutlined } from '@mui/icons-material';
 import { Calendar } from 'react-big-calendar';
 

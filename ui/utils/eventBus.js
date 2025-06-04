@@ -1,3 +1,3 @@
-import { EventBus } from '@layer5/sistent';
+import { EventBus } from '@sistent/sistent';
 
 export const mesheryEventBus = new EventBus();

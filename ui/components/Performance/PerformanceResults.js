@@ -28,7 +28,7 @@ import {
   useTheme,
   NoSsr,
   Fade,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { useDispatch, useSelector } from 'react-redux';

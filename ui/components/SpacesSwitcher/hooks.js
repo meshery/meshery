@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { useDeletePatternFileMutation } from '@/rtk-query/design';
 import { useDeleteViewMutation } from '@/rtk-query/view';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { DesignIcon, PROMPT_VARIANTS, useTheme, ViewIcon } from '@layer5/sistent';
+import { DesignIcon, PROMPT_VARIANTS, useTheme, ViewIcon } from '@sistent/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import { iconMedium } from 'css/icons.styles';
 import { updateProgress } from '@/store/slices/mesheryUi';

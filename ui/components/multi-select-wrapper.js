@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Colors } from '../themes/app';
-import { Checkbox, MenuItem, Paper, FormControlLabel } from '@layer5/sistent';
-import { useTheme } from '@layer5/sistent';
+import { Checkbox, MenuItem, Paper, FormControlLabel } from '@sistent/sistent';
+import { useTheme } from '@sistent/sistent';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');

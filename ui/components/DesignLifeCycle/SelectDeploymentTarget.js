@@ -12,7 +12,7 @@ import {
   EnvironmentIcon,
   IconButton,
   CustomTooltip,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { Loading, StepHeading } from './common';
 import { K8sContextConnectionChip } from '../Header';
 import { createContext } from 'react';
@@ -24,8 +24,8 @@ import {
   toggleConnection,
   selectSelectedK8sConnections,
 } from '@/store/slices/globalEnvironmentContext';
-import { Button } from '@layer5/sistent';
-import { AddIcon } from '@layer5/sistent';
+import { Button } from '@sistent/sistent';
+import { AddIcon } from '@sistent/sistent';
 import { Edit } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 

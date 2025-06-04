@@ -2,11 +2,11 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/utils"
 
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/component"

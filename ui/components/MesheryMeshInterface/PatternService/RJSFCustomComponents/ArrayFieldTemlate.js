@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Grid2, Paper, Button, IconButton, Typography, styled } from '@layer5/sistent';
+import { Box, Grid2, Paper, Button, IconButton, Typography, styled } from '@sistent/sistent';
 import AddIcon from '@mui/icons-material/Add';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';

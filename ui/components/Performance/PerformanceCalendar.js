@@ -5,7 +5,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import GenericModal from '../General/Modals/GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
-import { Typography, Paper } from '@layer5/sistent';
+import { Typography, Paper } from '@sistent/sistent';
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';

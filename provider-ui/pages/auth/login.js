@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { styled, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, WarningIcon } from "@layer5/sistent"
+import { styled, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, WarningIcon } from "@sistent/sistent"
 
 const SessionExpired = styled(DialogContentText)(() => ({
   minWidth: 400,

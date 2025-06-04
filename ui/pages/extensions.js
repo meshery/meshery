@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme } from '@layer5/sistent';
+import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters } from '../components/extensions';
 import DefaultError from '@/components/General/error-404';
@@ -30,8 +30,7 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
 
         <FrontSideDescription variant="body">
           <ImageWrapper src="/static/img/kanvas-icon-color.svg" />
-          Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
-          cloud native apps. Kanvas is now publicly available.{' '}
+          Collaboratively design and manage your infra and apps. Kanvas is now publicly available.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for access!'}
         </FrontSideDescription>
         {

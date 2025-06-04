@@ -1,4 +1,4 @@
-import { createTheme } from '@layer5/sistent';
+import { createTheme } from '@sistent/sistent';
 import { unstable_createBreakpoints } from '@mui/material';
 
 const breakpoints = unstable_createBreakpoints({});

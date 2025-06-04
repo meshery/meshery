@@ -38,7 +38,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
 - `GO_VERSION`: As of December, 2024 is 1.23
-- `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `layer5io` org.
+- `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `meshery` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
 - `NPM_TOKEN`: npm authentication token, used to perform authentication against the npm registry in meshery deployment workflow.
@@ -209,7 +209,7 @@ GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homeb
 
 ##### Scoop
 
-GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Layer5’s Scoop bucket.
+GoReleaser facilitates the creation of a Scoop app for mesheryctl. The [scoop-bucket](https://github.com/layer5io/scoop-bucket) repository is the location of Meshery’s Scoop bucket.
 
 ## Helm Charts Lint Check, Build, and Release
 
@@ -383,14 +383,14 @@ The following is an example of the release channels and the docker tags used to 
 
 **Latest Stable Image**
 
-- layer5/meshery:stable-latest
-- layer5/meshery:stable-v0.4.1
-- layer5/meshery:stable-324vdgb (sha)
+- meshery/meshery:stable-latest
+- meshery/meshery:stable-v0.4.1
+- meshery/meshery:stable-324vdgb (sha)
 
 **Older Stable Image**
 
-- layer5/meshery:stable-v0.4.0
-- layer5/meshery:stable-289d02 (sha)
+- meshery/meshery:stable-v0.4.0
+- meshery/meshery:stable-289d02 (sha)
 
 Every docker image built receives either the edge tags or the stable tags. Which set of image tags assigned is determined by whether a release tag is present or not. In other words, stable channel docker images get the “stable” tags only in the presence of a release tag (e.g. v0.4.1).
 
@@ -402,12 +402,12 @@ Stable and edge releases are both published to the same Docker Hub repository. D
 
 **Latest Edge Image**
 
-- layer5/meshery:edge-latest
-- layer5/meshery:edge-289d02 (sha)
+- meshery/meshery:edge-latest
+- meshery/meshery:edge-289d02 (sha)
 
 **Older Edge Image**
 
-- layer5/meshery:edge-324vdgb (sha)
+- meshery/meshery:edge-324vdgb (sha)
 
 ### Switching Between Meshery Release Channels
 
@@ -427,7 +427,7 @@ Minor releases of the Meshery project are release frequently (on a monthly basis
 
 ### Release Support
 
-General community support and commercial support from Layer5 is available. Separately, third parties and partners may offer longer-term support solutions.
+General community support is available. Separately, third parties and partners may offer longer-term support solutions.
 
 #### Pre v1.0
 

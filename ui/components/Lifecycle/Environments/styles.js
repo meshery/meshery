@@ -1,4 +1,4 @@
-import { Checkbox, Typography, Button, useTheme, Card, styled, Box } from '@layer5/sistent';
+import { Checkbox, Typography, Button, useTheme, Card, styled, Box } from '@sistent/sistent';
 
 /** Bulk action bar styles */
 export const BulkActionWrapper = styled('div')({

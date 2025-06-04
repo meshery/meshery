@@ -1,6 +1,6 @@
 import React from 'react';
 import { gauge } from 'billboard.js';
-import { Box, Typography, Stack, KEPPEL, SAFFRON, CircularProgress } from '@layer5/sistent';
+import { Box, Typography, Stack, KEPPEL, SAFFRON, CircularProgress } from '@sistent/sistent';
 import BBChart from '@/components/BBChart';
 import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn } from '../style';

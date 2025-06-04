@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@layer5/sistent';
-import { Typography, styled, Box } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { Typography, styled, Box } from '@sistent/sistent';
 import {
   useConfigureConnectionMutation,
   useUpdateConnectionMutation,

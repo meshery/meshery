@@ -3,7 +3,7 @@ package stages
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/models/pattern/core"
 )
 
 // Format - Format stage performs de-prettification of the pattern file

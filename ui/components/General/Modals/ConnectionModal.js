@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, ModalBody } from '@layer5/sistent';
+import { Modal, ModalBody } from '@sistent/sistent';
 import ConnectionIcon from '@/assets/icons/Connection';
 import ConnectionTable from '../../connections/ConnectionTable';
 

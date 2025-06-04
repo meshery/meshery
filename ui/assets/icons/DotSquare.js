@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgIcon } from '@layer5/sistent';
+import { SvgIcon } from '@sistent/sistent';
 
 export function DotSquare(props) {
   return (
