@@ -14,11 +14,13 @@ import {
   useTheme,
   WorkspaceIcon,
   CircularProgress,
+  useMediaQuery,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
+
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
-import { iconLarge, iconXLarge } from 'css/icons.styles';
+import { iconLarge, iconMedium, iconSmall, iconXLarge } from 'css/icons.styles';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
@@ -202,6 +204,7 @@ function OrganizationAndWorkSpaceSwitcher() {
   const { isBeta } = useSelector((state) => state.ui.page);
   const { title } = useSelector((state) => state.ui.page);
   const { selectedOrganization } = useGetSelectedOrganization();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   if (!selectedOrganization) return null;
 
@@ -210,23 +213,26 @@ function OrganizationAndWorkSpaceSwitcher() {
       <StyledSwitcher>
         <Button
           onClick={() => setOrgOpen(!orgOpen)}
-          style={{ marginRight: orgOpen ? '1rem' : '0' }}
+          style={{ marginRight: orgOpen ? '1rem' : '0', padding: '5px', minWidth: '0' }}
         >
-          <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+          <OrgOutlinedIcon
+            {...(isMobile ? iconMedium : iconXLarge)}
+            fill={theme.palette.common.white}
+          />
         </Button>
         <OrgMenu open={orgOpen} organization={organization} />/
         <Button
           onClick={() => setWorkspaceOpen(!workspaceOpen)}
-          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+          style={{ marginRight: workspaceOpen ? '1rem' : '0', padding: '6px', minWidth: '0' }}
         >
           <WorkspaceIcon
-            {...iconLarge}
+            {...(isMobile ? iconSmall : iconLarge)}
             secondaryFill={theme.palette.common.white}
             fill={theme.palette.common.white}
           />
         </Button>
         <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0.2rem' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
       </StyledSwitcher>
     </NoSsr>
