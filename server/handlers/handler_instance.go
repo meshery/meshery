@@ -3,14 +3,14 @@ package handlers
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/meshmodel/core/policies"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils/events"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
 )

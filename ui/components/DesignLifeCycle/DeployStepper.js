@@ -10,7 +10,7 @@ import {
   ModalButtonSecondary,
   Box,
   Typography,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { CheckBoxField, DEPLOYMENT_TYPE, Loading } from './common';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
@@ -23,9 +23,9 @@ import {
   useIsValidatingDryRun,
 } from 'machines/validator/designValidator';
 import { useSelector } from 'react-redux';
-import { styled } from '@layer5/sistent';
-import { useTheme } from '@layer5/sistent';
-import { EnvironmentIcon } from '@layer5/sistent';
+import { styled } from '@sistent/sistent';
+import { useTheme } from '@sistent/sistent';
+import { EnvironmentIcon } from '@sistent/sistent';
 import { useContext } from 'react';
 import { NotificationCenterContext } from '../NotificationCenter';
 import { useEffect } from 'react';
@@ -34,7 +34,7 @@ import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
 import { SEVERITY } from '../NotificationCenter/constants';
-import EnvironmentModal from '../Modals/EnvironmentModal';
+import EnvironmentModal from '../General/Modals/EnvironmentModal';
 import { openViewScopedToDesignInOperator } from '@/utils/utils';
 import { useRouter } from 'next/router';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';

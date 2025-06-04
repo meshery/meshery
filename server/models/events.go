@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 )
 
 const (

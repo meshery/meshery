@@ -1,5 +1,5 @@
-import { DARK_BLUE_GRAY, IconButton } from '@layer5/sistent';
-import { CustomTooltip, styled, Menu, MenuItem } from '@layer5/sistent';
+import { DARK_BLUE_GRAY, IconButton } from '@sistent/sistent';
+import { CustomTooltip, styled, Menu, MenuItem } from '@sistent/sistent';
 import { MoreVert } from '@mui/icons-material';
 import { useMediaQuery, useTheme } from '@mui/material';
 import { iconMedium } from 'css/icons.styles';
@@ -49,6 +49,7 @@ export const MenuComponent = ({ options = [] }) => {
         {options.map((option) => (
           <CustomTooltip key={option.title} title={option.title}>
             <IconButton
+              disabled={option.disabled}
               style={{ cursor: 'pointer' }}
               onClick={(event) => {
                 event.stopPropagation();
@@ -108,6 +109,7 @@ export const MenuComponent = ({ options = [] }) => {
             <StyledMenuDiv>
               <CustomTooltip key={option.title} title={option.title}>
                 <StyledMenuItem
+                  disabled={option.disabled}
                   key={option.title}
                   onClick={(event) => {
                     event.stopPropagation();

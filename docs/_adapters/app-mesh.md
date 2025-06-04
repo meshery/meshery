@@ -53,8 +53,6 @@ The {{ page.name }} includes a handful of sample applications. Use Meshery to de
 
 - [Bookinfo]({{site.baseurl}}/guides/infrastructure-management/sample-apps#bookinfo)
 
-  - Follow this [tutorial workshop](https://github.com/layer5io/istio-service-mesh-workshop/blob/master/lab-2/README.md) to set up and deploy the BookInfo sample app on Istio using Meshery.
-
 - [Httpbin]({{site.baseurl}}/guides/infrastructure-management/sample-apps#httpbin)
 
   - Httpbin is a simple HTTP request and response service.

@@ -1,4 +1,4 @@
-import { useTheme } from '@layer5/sistent';
+import { useTheme } from '@sistent/sistent';
 import React from 'react';
 
 const ExpandMoreIcon = (props) => {

@@ -10,22 +10,25 @@ import {
 } from '@/rtk-query/user';
 import { useUpdateViewVisibilityMutation } from '@/rtk-query/view';
 import { useNotification } from '@/utils/hooks/useNotification';
-import { ShareModal as CatalogShare } from '@layer5/sistent';
+import { ShareModal as CatalogShare } from '@sistent/sistent';
 import { getShareableResourceRoute } from './hooks';
 import { JsonParse } from '@/utils/utils';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 
 export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose }) => {
+  const firstSelectedResource = Array.isArray(selectedResource)
+    ? selectedResource[0]
+    : selectedResource;
   const resourceType = dataName === 'design' ? 'pattern' : dataName;
 
   const { data: ownerData, isSuccess: isOwnerDataFetched } = useGetUserProfileSummaryByIdQuery({
-    id: selectedResource?.user_id,
+    id: firstSelectedResource?.user_id,
   });
 
   const { data: accessActorsInfoOfResource, isSuccess: accessActorsFetched } =
     useGetAccessActorsInfoOfResourceQuery({
-      resourceId: selectedResource?.id,
+      resourceId: firstSelectedResource?.id,
       resourceType: resourceType,
       actorType: 'users',
     });
@@ -49,17 +52,17 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
   };
   const shareableLink = getShareableResourceRoute(
     dataName,
-    selectedResource?.id,
-    selectedResource?.name,
+    firstSelectedResource?.id,
+    firstSelectedResource?.name,
   );
 
   const handleUpdatePatternVisibility = async (value) => {
     const res = await updatePatterns({
       body: {
-        id: selectedResource?.id,
-        name: selectedResource.name,
-        catalog_data: selectedResource.catalog_data,
-        design_file: JsonParse(selectedResource.pattern_file),
+        id: firstSelectedResource?.id,
+        name: firstSelectedResource?.name,
+        catalog_data: firstSelectedResource?.catalog_data,
+        design_file: JsonParse(firstSelectedResource?.pattern_file),
         visibility: value,
       },
     });
@@ -70,7 +73,7 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
 
   const handleUpdateViewVisibility = async (value) => {
     const res = await updateView({
-      id: selectedResource?.id,
+      id: firstSelectedResource?.id,
       body: {
         visibility: value,
       },

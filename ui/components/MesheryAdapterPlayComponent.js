@@ -27,7 +27,7 @@ import {
   TableRow,
   NoSsr,
   TableHead,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayIcon from '@mui/icons-material/PlayArrow';
@@ -40,7 +40,7 @@ import dataFetch from '../lib/data-fetch';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
 import fetchAvailableNamespaces from './graphql/queries/NamespaceQuery';
-import MesheryMetrics from './MesheryMetrics';
+import MesheryMetrics from './Performance/MesheryMetrics';
 import MesheryResultDialog from './MesheryResultDialog';
 import ReactSelectWrapper from './ReactSelectWrapper';
 import ConfirmationMsg from './ConfirmationModal';

@@ -1,14 +1,9 @@
-import {
-  getDesign,
-  useDeletePatternFileMutation,
-  useUpdatePatternFileMutation,
-} from '@/rtk-query/design';
+import { getDesign, useUpdatePatternFileMutation } from '@/rtk-query/design';
 import { getUserAccessToken, getUserProfile, useGetLoggedInUserQuery } from '@/rtk-query/user';
 import {
   ListItem,
   ListItemText,
   Divider,
-  PROMPT_VARIANTS,
   PromptComponent,
   OutlinedPatternIcon,
   useModal,
@@ -16,32 +11,38 @@ import {
   ShareIcon,
   useTheme,
   useRoomActivity,
-} from '@layer5/sistent';
+  ExportIcon,
+  DeleteIcon,
+  InfoIcon,
+  WorkspaceContentMoveModal,
+} from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
-import useInfiniteScroll, { handleUpdatePatternVisibility } from './hooks';
+import useInfiniteScroll, {
+  handleUpdatePatternVisibility,
+  useContentDelete,
+  useContentDownload,
+} from './hooks';
 import { MenuComponent } from './MenuComponent';
 import { DesignList, GhostContainer, GhostImage, GhostText, LoadingContainer } from './styles';
 import ExportModal from '../ExportModal';
-import downloadContent from '@/utils/fileDownloader';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from 'lib/event-types';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import ShareModal from './ShareModal';
-import InfoModal from '../Modals/Information/InfoModal';
+import InfoModal from '../General/Modals/Information/InfoModal';
 import { useGetMeshModelsQuery } from '@/rtk-query/meshModel';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import DeleteIcon from '@mui/icons-material/Delete';
-import GetAppIcon from '@mui/icons-material/GetApp';
-import InfoIcon from '@mui/icons-material/Info';
 import MoveFileIcon from '@/assets/icons/MoveFileIcon';
-import { useUnassignDesignFromWorkspaceMutation } from '@/rtk-query/workspace';
-import { updateProgress } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import {
+  useAssignDesignToWorkspaceMutation,
+  useAssignViewToWorkspaceMutation,
+  useGetWorkspacesQuery,
+} from '@/rtk-query/workspace';
+import { useNotification } from '@/utils/hooks/useNotification';
 
 const MainDesignsContent = ({
   page,
@@ -51,17 +52,18 @@ const MainDesignsContent = ({
   designs,
   hasMore,
   total_count,
-  workspaceId,
+  workspace,
   refetch,
+  isMultiSelectMode,
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [shareModal, setShareModal] = useState(false);
   const [infoModal, setInfoModal] = useState({ open: false, userId: '' });
-  const [unassignDesignFromWorkspace] = useUnassignDesignFromWorkspaceMutation();
-  const { notify } = useNotification();
+  const [moveModal, setMoveModal] = useState(false);
   const modalRef = useRef(true);
-  const [deletePatternFile] = useDeletePatternFileMutation();
+  const { handleDelete } = useContentDelete(modalRef);
+
   const loadNextPage = useCallback(() => {
     if (isLoading || isFetching) return;
     setPage(page + 1);
@@ -78,75 +80,25 @@ const MainDesignsContent = ({
   });
 
   const handleDesignDownloadModal = (design) => {
-    setDownloadModal((prevState) => ({
-      ...prevState,
+    setDownloadModal({
       open: true,
       content: design,
-    }));
+    });
   };
   const handleDownloadDialogClose = () => {
-    setDownloadModal((prevState) => ({
-      ...prevState,
+    setDownloadModal({
       open: false,
       content: null,
-    }));
-  };
-
-  const handleDownload = (e, design, source_type, params) => {
-    e.stopPropagation();
-    updateProgress({ showProgress: true });
-    try {
-      let id = design.id;
-      let name = design.name;
-      downloadContent({ id, name, type: 'pattern', source_type, params });
-      updateProgress({ showProgress: false });
-      notify({ message: `"${name}" design downloaded`, event_type: EVENT_TYPES.INFO });
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleDelete = async (design) => {
-    const response = await modalRef.current.show({
-      title: `Delete catalog item?`,
-      subtitle: `Are you sure you want to delete ${design?.name}?`,
-      primaryOption: 'DELETE',
-      variant: PROMPT_VARIANTS.DANGER,
-      showInfoIcon:
-        "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
     });
-    if (response === 'DELETE') {
-      const selectedPattern = design;
-      const { name, id } = selectedPattern;
-      deletePatternFile({
-        id: id,
-      })
-        .unwrap()
-        .then(() => {
-          notify({ message: `"${name}" Design deleted`, event_type: EVENT_TYPES.SUCCESS });
-        })
-        .catch(() => {
-          notify({ message: `Unable to delete "${name}" Design`, event_type: EVENT_TYPES.ERROR });
-        });
-    }
+  };
+  const { handleDesignDownload } = useContentDownload();
+
+  const handleRemove = (design) => {
+    setMoveModal(true);
+    setSelectedDesign(design);
   };
 
-  const handleRemove = async (design, workspaceId) => {
-    unassignDesignFromWorkspace({
-      workspaceId,
-      designId: design?.id,
-    })
-      .unwrap()
-      .then(() => {
-        setPage(0);
-        notify({
-          message: 'Design removed from workspace',
-          event_type: EVENT_TYPES.SUCCESS,
-        });
-      });
-  };
-
-  const handleShare = async (design) => {
+  const handleShare = (design) => {
     setShareModal(true);
     setSelectedDesign(design);
   };
@@ -197,17 +149,13 @@ const MainDesignsContent = ({
   const [updatePatterns] = useUpdatePatternFileMutation();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
-
   const handleOpenDesignInDesigner = (designId, designName) => {
-    if (!isKanvasDesignerAvailable) {
-      notify({
-        message: 'Kanvas Designer is not available',
-        event_type: EVENT_TYPES.ERROR,
-      });
-      return;
-    }
     if (workspaceSwitcherContext?.closeModal) {
       workspaceSwitcherContext.closeModal();
+    }
+    if (!isKanvasDesignerAvailable) {
+      router.push(`/configuration/designs/configurator?design_id=${designId}`);
+      return;
     }
 
     openDesignInKanvas(designId, designName, Router);
@@ -217,24 +165,16 @@ const MainDesignsContent = ({
     EXPORT_DESIGN: {
       id: 'export_design',
       title: 'Export Design',
-      icon: <GetAppIcon style={{ fill: theme.palette.icon.default }} />,
+      icon: <ExportIcon fill={theme.palette.icon.default} />,
       enabled: () => CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
     },
-    DELETE_DESIGN: {
-      id: workspaceId ? 'move' : 'delete',
-      title: workspaceId ? 'Remove Design' : 'Delete Design',
-      icon: workspaceId ? (
-        <MoveFileIcon fill={theme.palette.icon.default} />
-      ) : (
-        <DeleteIcon fill={theme.palette.icon.default} />
-      ),
+
+    REMOVE_DESIGN: {
+      id: 'move',
+      title: 'Move Design',
+      icon: <MoveFileIcon fill={theme.palette.icon.default} />,
       enabled: () =>
-        workspaceId
-          ? CAN(
-              keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
-              keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
-            )
-          : CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+        CAN(keys.REMOVE_DESIGNS_FROM_WORKSPACE.action, keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject),
     },
     SHARE_DESIGN: {
       id: 'share',
@@ -250,6 +190,12 @@ const MainDesignsContent = ({
       icon: <InfoIcon fill={theme.palette.icon.default} />,
       enabled: () => true,
     },
+    DELETE_DESIGN: {
+      id: 'delete',
+      title: 'Delete Design',
+      icon: <DeleteIcon fill={theme.palette.icon.default} />,
+      enabled: () => CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+    },
   };
 
   const getMenuOptions = ({
@@ -259,38 +205,52 @@ const MainDesignsContent = ({
     handleRemove,
     handleShare,
     handleInfoModal,
+    refetch,
   }) => {
     const options = [
       {
         ...DESIGN_ACTIONS.EXPORT_DESIGN,
         handler: () => handleDesignDownloadModal(design),
       },
-      {
-        ...DESIGN_ACTIONS.DELETE_DESIGN,
-        handler: () => (workspaceId ? handleRemove(design, workspaceId) : handleDelete(design)),
-      },
+
       {
         ...DESIGN_ACTIONS.SHARE_DESIGN,
         handler: () => handleShare(design),
       },
+
       {
         ...DESIGN_ACTIONS.INFO_DESIGN,
         handler: () => handleInfoModal(design),
       },
+      {
+        ...DESIGN_ACTIONS.DELETE_DESIGN,
+        handler: () => handleDelete([design], RESOURCE_TYPE.DESIGN, refetch),
+      },
     ];
 
+    if (workspace) {
+      options.unshift({
+        ...DESIGN_ACTIONS.REMOVE_DESIGN,
+        handler: () => handleRemove(design, refetch),
+      });
+    }
     return options.filter((option) => option.enabled({ design }));
   };
   const isInitialFetch = isFetching && page === 0;
   const isEmpty = total_count === 0;
   const shouldRenderDesigns = !isEmpty && !isInitialFetch;
   const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const { organization: currentOrganization } = useSelector((state) => state.ui);
   const providerUrl = capabilitiesRegistry?.provider_url;
   const [activeUsers] = useRoomActivity({
     provider_url: providerUrl,
     getUserAccessToken: getUserAccessToken,
     getUserProfile: getUserProfile,
   });
+  const [assignDesignToWorkspace] = useAssignDesignToWorkspaceMutation();
+  const [assignViewToWorkspace] = useAssignViewToWorkspaceMutation();
+  const { notify } = useNotification();
+  const router = useRouter();
   return (
     <>
       <DesignList data-testid="designs-list-item">
@@ -304,7 +264,7 @@ const MainDesignsContent = ({
               <React.Fragment key={`${design?.id}-${design?.name}`}>
                 <DesignViewListItem
                   activeUsers={activeUsers?.[design?.id]}
-                  type="design"
+                  type={RESOURCE_TYPE.DESIGN}
                   selectedItem={design}
                   handleItemClick={() => {
                     handleOpenDesignInDesigner(design?.id, design?.name);
@@ -327,9 +287,11 @@ const MainDesignsContent = ({
                         handleDesignDownloadModal,
                         handleShare,
                         handleInfoModal,
+                        refetch,
                       })}
                     />
                   }
+                  isMultiSelectMode={isMultiSelectMode}
                 />
                 <Divider light />
               </React.Fragment>
@@ -340,9 +302,11 @@ const MainDesignsContent = ({
           {isLoading || isInitialFetch ? (
             Array(10)
               .fill(null)
-              .map((_, index) => <DesignViewListItemSkeleton key={index} />)
+              .map((_, index) => (
+                <DesignViewListItemSkeleton key={index} isMultiSelectMode={isMultiSelectMode} />
+              ))
           ) : isFetching ? (
-            <DesignViewListItemSkeleton />
+            <DesignViewListItemSkeleton isMultiSelectMode={isMultiSelectMode} />
           ) : null}
 
           {!hasMore && !isLoading && !isFetching && designs?.length > 0 && !isEmpty && (
@@ -363,7 +327,7 @@ const MainDesignsContent = ({
       <ExportModal
         downloadModal={downloadModal}
         handleDownloadDialogClose={handleDownloadDialogClose}
-        handleDesignDownload={handleDownload}
+        handleDesignDownload={handleDesignDownload}
       />
       {shareModal && (
         <ShareModal
@@ -386,6 +350,35 @@ const MainDesignsContent = ({
         </Modal>
       )}
       <PromptComponent ref={modalRef} />
+      {moveModal && (
+        <WorkspaceContentMoveModal
+          currentWorkspace={workspace}
+          setWorkspaceContentMoveModal={setMoveModal}
+          type={RESOURCE_TYPE.DESIGN}
+          workspaceContentMoveModal={moveModal}
+          selectedContent={selectedDesign}
+          refetch={refetch}
+          useGetWorkspacesQuery={useGetWorkspacesQuery}
+          WorkspaceModalContext={WorkspaceModalContext}
+          assignDesignToWorkspace={assignDesignToWorkspace}
+          assignViewToWorkspace={assignViewToWorkspace}
+          isCreateWorkspaceAllowed={CAN(
+            keys.CREATE_WORKSPACE.action,
+            keys.CREATE_WORKSPACE.subject,
+          )}
+          isMoveDesignAllowed={CAN(
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+            keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+          )}
+          isMoveViewAllowed={CAN(
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+            keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+          )}
+          currentOrgId={currentOrganization?.id}
+          notify={notify}
+          router={router}
+        />
+      )}
     </>
   );
 };

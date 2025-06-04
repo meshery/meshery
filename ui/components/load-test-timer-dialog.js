@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 
 let ReactCountdownClock;
 if (typeof window !== 'undefined') {
@@ -13,7 +13,7 @@ const LoadTestTimerDialog = ({ countDownComplete, t, open }) => {
     let tNum = 0;
     try {
       tNum = parseInt(t.substring(0, t.length - 1));
-    } catch (ex) {
+    } catch {
       console.error('Unexpected Error');
     }
 

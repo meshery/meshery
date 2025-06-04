@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@layer5/sistent';
-import { Grid, ExpansionPanelDetails, Typography, styled } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { Grid2, ExpansionPanelDetails, Typography, styled } from '@sistent/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
@@ -31,7 +31,7 @@ const SecondaryHeading = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const IframeGridItem = styled(Grid)(({ theme }) => ({
+const IframeGridItem = styled(Grid2)(({ theme }) => ({
   minHeight: theme.spacing(55),
   minWidth: theme.spacing(55),
   '& iframe': {
@@ -97,9 +97,9 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
               </Column>
             </ExpansionPanelSummary>
             <ExpansionPanelDetails>
-              <Grid container spacing={5}>
+              <Grid2 container spacing={5} size="grow">
                 {config.panels.map((panel, ind) => (
-                  <IframeGridItem key={ind} item xs={12} sm={6}>
+                  <IframeGridItem key={ind} size={{ xs: 12, sm: 6, md: 4 }}>
                     <LazyLoad once>
                       <iframe
                         key={`url_-_-${ind}`}
@@ -110,7 +110,7 @@ const GrafanaCharts = ({ grafanaURL, boardPanelConfigs }) => {
                     </LazyLoad>
                   </IframeGridItem>
                 ))}
-              </Grid>
+              </Grid2>
             </ExpansionPanelDetails>
           </ExpansionPanel>
         ))}

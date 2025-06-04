@@ -8,8 +8,8 @@ import (
 	"plugin"
 	"sync"
 
-	"github.com/layer5io/meshery/server/extensions"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/extensions"
+	"github.com/meshery/meshery/server/models"
 )
 
 var (

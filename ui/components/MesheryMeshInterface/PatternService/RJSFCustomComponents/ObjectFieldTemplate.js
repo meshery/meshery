@@ -1,7 +1,7 @@
 import React from 'react';
 import { canExpand } from '@rjsf/utils';
 import AddIcon from '../../../../assets/icons/AddIcon';
-import { Grid, Box, IconButton, Typography, useTheme, CssBaseline } from '@layer5/sistent';
+import { Grid2, Box, IconButton, Typography, useTheme, CssBaseline } from '@sistent/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
@@ -59,10 +59,9 @@ const ObjectFieldTemplate = ({
     return (
       <Box mb={1} mt={1} id={id}>
         <CssBaseline />
-        <Grid container justify="flex-start" alignItems="center">
+        <Grid2 container justify="flex-start" alignItems="center" size="grow">
           {canExpand(schema, uiSchema, formData) ? (
-            <Grid
-              item={true}
+            <Grid2
               onClick={() => {
                 if (!show) setShow(true);
               }}
@@ -82,10 +81,10 @@ const ObjectFieldTemplate = ({
                   }}
                 />
               </IconButton>
-            </Grid>
+            </Grid2>
           ) : (
             Object.keys(properties).length > 0 && (
-              <Grid item={true}>
+              <Grid2>
                 <IconButton className="object-property-expand" onClick={() => setShow(!show)}>
                   {show ? (
                     <ExpandLessIcon style={iconMedium} fill="gray" />
@@ -93,11 +92,16 @@ const ObjectFieldTemplate = ({
                     <ExpandMoreIcon style={iconMedium} fill="gray" />
                   )}
                 </IconButton>
-              </Grid>
+              </Grid2>
             )
           )}
 
-          <Grid item mb={1} mt={1}>
+          <Grid2
+            style={{
+              marginBottom: '0.5rem',
+              marginTop: '0.5rem',
+            }}
+          >
             <Typography
               variant="body1"
               style={{ fontWeight: 'bold', display: 'inline', fontFamily: 'inherit', fontSize: 13 }}
@@ -138,19 +142,19 @@ const ObjectFieldTemplate = ({
                 </IconButton>
               </CustomTextTooltip>
             )}
-          </Grid>
-        </Grid>
+          </Grid2>
+        </Grid2>
       </Box>
     );
   };
 
   const Properties = (
-    <Grid
+    <Grid2
       container={true}
       spacing={2}
-      style={{
-        padding: '.5rem',
-        paddingTop: '0.7rem',
+      size="grow"
+      sx={{
+        padding: '1rem',
         width: '100%',
         margin: '0px',
         ...(Object.keys(properties).length === 0 || schema['$schema']
@@ -162,12 +166,12 @@ const ObjectFieldTemplate = ({
         return element.hidden ? (
           element.content
         ) : (
-          <Grid item={true} {...calculateGrid(element)} key={index}>
+          <Grid2 size={calculateGrid(element)} key={index}>
             {element.content}
-          </Grid>
+          </Grid2>
         );
       })}
-    </Grid>
+    </Grid2>
   );
 
   const fieldTitle = uiSchema['ui:title'] || title;

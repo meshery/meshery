@@ -18,25 +18,25 @@ import (
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
-	helpers "github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/models/converter"
+	helpers "github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/models/pattern/resource/selector"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/converter"
 	_errors "github.com/pkg/errors"
 
-	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
-	"github.com/layer5io/meshkit/models/events"
-	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/models/oci"
-	"github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/catalog"
+	"github.com/meshery/meshkit/models/catalog/v1alpha1"
+	"github.com/meshery/meshkit/models/events"
+	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/oci"
+	"github.com/meshery/meshkit/utils"
+	"github.com/meshery/meshkit/utils/catalog"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha2"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -124,6 +124,39 @@ func (h *Handler) handleProviderPatternSaveError(rw http.ResponseWriter, eventBu
 		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": ErrSavePattern(err),
 		}).WithDescription(ErrSavePattern(err).Error()).Build()
+	}
+
+	_ = provider.PersistEvent(event)
+	go h.config.EventBroadcaster.Publish(userID, event)
+}
+
+func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBuilder *events.EventBuilder, userID uuid.UUID, body []byte, err error, provider models.Provider) {
+
+	var meshkitErr errors.Error
+	var event *events.Event
+	errorParsingToMeshkitError := json.Unmarshal(body, &meshkitErr)
+
+	description := ""
+	if len(meshkitErr.ShortDescription) > 0 {
+		description = fmt.Sprintf("Failed to fetch Design, %s", meshkitErr.ShortDescription[0])
+	} else {
+		description = "Failed to fetch design"
+	}
+
+	if errorParsingToMeshkitError == nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		_, _ = rw.Write(body)
+		h.log.Error(&meshkitErr)
+		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+			"error": meshkitErr,
+		}).Build()
+
+	} else {
+		h.log.Error(ErrGetPattern(err))
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrGetPattern(err),
+		}).WithDescription(ErrGetPattern(err).Error()).Build()
 	}
 
 	_ = provider.PersistEvent(event)
@@ -603,7 +636,7 @@ func (h *Handler) DeleteMesheryPatternHandler(
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 			"error": errPatternDelete,
-		}).WithDescription("Error deleting pattern.").Build()
+		}).WithDescription("Error: Could not delete design.").Build()
 		http.Error(rw, errPatternDelete.Error(), http.StatusInternalServerError)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -1149,6 +1182,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
+
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
@@ -1361,11 +1395,10 @@ func (h *Handler) GetMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	patternUUID := uuid.FromStringOrNil(patternID)
 	userID := uuid.FromStringOrNil(user.ID)
-
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("view").ActedUpon(patternUUID)
 	resp, err := provider.GetMesheryPattern(r, patternID, r.URL.Query().Get("metrics"))
 	if err != nil {
-		h.log.Error(ErrGetPattern(err))
-		http.Error(rw, ErrGetPattern(err).Error(), http.StatusNotFound)
+		h.handleProviderPatternGetError(rw, eventBuilder, userID, resp, err, provider)
 		return
 	}
 

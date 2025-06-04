@@ -60,16 +60,18 @@ type PreferenceParams struct {
 
 // Preference represents the data stored in session / local DB
 type Preference struct {
-	MeshAdapters              []*Adapter             `json:"meshAdapters,omitempty"`
-	Grafana                   *Grafana               `json:"grafana,omitempty"`
-	Prometheus                *Prometheus            `json:"prometheus,omitempty"`
-	LoadTestPreferences       *LoadTestPreferences   `json:"loadTestPrefs,omitempty"`
-	AnonymousUsageStats       bool                   `json:"anonymousUsageStats"`
-	AnonymousPerfResults      bool                   `json:"anonymousPerfResults"`
-	UpdatedAt                 time.Time              `json:"updated_at,omitempty"`
-	DashboardPreferences      map[string]interface{} `json:"dashboardPreferences,omitempty"`
-	UsersExtensionPreferences map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
-	RemoteProviderPreferences map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
+	MeshAdapters                      []*Adapter             `json:"meshAdapters,omitempty"`
+	Grafana                           *Grafana               `json:"grafana,omitempty"`
+	Prometheus                        *Prometheus            `json:"prometheus,omitempty"`
+	LoadTestPreferences               *LoadTestPreferences   `json:"loadTestPrefs,omitempty"`
+	AnonymousUsageStats               bool                   `json:"anonymousUsageStats"`
+	AnonymousPerfResults              bool                   `json:"anonymousPerfResults"`
+	UpdatedAt                         time.Time              `json:"updated_at,omitempty"`
+	DashboardPreferences              map[string]interface{} `json:"dashboardPreferences,omitempty"`
+	SelectedOrganizationID            string                 `json:"selectedOrganizationID,omitempty"`
+	SelectedWorkspaceForOrganizations map[string]string      `json:"selectedWorkspaceForOrganizations,omitempty"` // map[orgID]workspaceID
+	UsersExtensionPreferences         map[string]interface{} `json:"usersExtensionPreferences,omitempty"`
+	RemoteProviderPreferences         map[string]interface{} `json:"remoteProviderPreferences,omitempty"`
 }
 
 func init() {

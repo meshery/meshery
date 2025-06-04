@@ -4,9 +4,9 @@ import {
   helpAndSupportModalSchema,
   helpAndSupportModalUiSchema,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useState } from 'react';
-import { RJSFModalWrapper } from '../Modal';
+import { RJSFModalWrapper } from './Modals/Modal';
 import SupportIcon from '@/assets/icons/support';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';

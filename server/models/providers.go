@@ -4,13 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 )
@@ -504,5 +504,4 @@ type Provider interface {
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string, visibility []string) ([]byte, error)
 	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
-	RemoveDesignFromWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
 }

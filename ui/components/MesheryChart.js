@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-  Grid,
+  Grid2,
   Typography,
   IconButton,
   Paper,
@@ -8,8 +8,8 @@ import {
   Fade,
   Popper,
   styled,
-} from '@layer5/sistent';
-import { NoSsr } from '@layer5/sistent';
+} from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
 import {
   fortioResultToJsChartData,
   makeChart,
@@ -393,13 +393,13 @@ function MesheryChart(props) {
       </SocialPopper>
       <div>
         <ChartTitle ref={titleRef} style={{ display: 'none' }} />
-        <Grid container justifyContent="center" style={{ padding: '0.5rem' }}>
+        <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">
           {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => (
-            <Grid item xs={4} key={`nri-${i}`}>
+            <Grid2 key={`nri-${i}`} size={{ xs: 4 }}>
               {el}
-            </Grid>
+            </Grid2>
           ))}
-        </Grid>
+        </Grid2>
         <ChartWrapper>
           <ChartContainer ref={chartRef}></ChartContainer>
           <ChartPercentiles

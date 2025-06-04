@@ -1,4 +1,4 @@
-import { Grid, Button, Pagination } from '@layer5/sistent';
+import { Grid2, Button, Pagination } from '@sistent/sistent';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';
 import { FILE_OPS } from '../../utils/Enum';
@@ -9,11 +9,10 @@ import {
   GridNoTextStyles,
   GridPaginationStyles,
 } from '../MesheryPatterns/Grid.styles';
-import { RJSFModalWrapper } from '../Modal';
+import { RJSFModalWrapper } from '../General/Modals/Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Modal as SistentModal } from '@layer5/sistent';
-
+import { Modal as SistentModal } from '@sistent/sistent';
 import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
 
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
@@ -34,7 +33,7 @@ function FilterCardGridItem({
   const [yaml, setYaml] = useState(yamlConfig);
 
   return (
-    <Grid item {...gridProps}>
+    <Grid2 size={gridProps}>
       <FiltersCard
         name={filter.name}
         updated_at={filter.updated_at}
@@ -72,7 +71,7 @@ function FilterCardGridItem({
         visibility={filter.visibility}
         handleInfoModal={handleInfoModal}
       />
-    </Grid>
+    </Grid2>
   );
 }
 
@@ -158,7 +157,7 @@ function FiltersGrid({
   return (
     <div>
       {!selectedFilter.show && (
-        <Grid container spacing={3}>
+        <Grid2 container spacing={3}>
           {filters.map((filter) => (
             <FilterCardGridItem
               key={filter.id}
@@ -174,7 +173,7 @@ function FiltersGrid({
               handleInfoModal={() => handleInfoModal(filter)}
             />
           ))}
-        </Grid>
+        </Grid2>
       )}
       {!selectedFilter.show && filters.length === 0 && (
         <GridNoPapperStyles>

@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Grid, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
+import { Tooltip, Grid2, FormControl, MenuItem, Table, FormattedTime } from '@sistent/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -9,7 +9,7 @@ import {
   UniversalFilter,
   TableCell,
   TableRow,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
@@ -511,11 +511,11 @@ export default function MeshSyncTable(props) {
             <Table>
               <TableRow>
                 <TableCell>
-                  <Grid container style={{ textTransform: 'lowercase' }}>
+                  <Grid2 container style={{ textTransform: 'lowercase' }} size="grow">
                     <ContentContainer
-                      item
-                      xs={12}
-                      md={12}
+                      size={{
+                        xs: 12,
+                      }}
                       style={{
                         display: 'flex',
                         flexWrap: 'wrap',
@@ -525,7 +525,7 @@ export default function MeshSyncTable(props) {
                     >
                       <MeshSyncDataFormatter metadata={metadata} />
                     </ContentContainer>
-                  </Grid>
+                  </Grid2>
                 </TableCell>
               </TableRow>
             </Table>

@@ -18,14 +18,14 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/walker"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/walker"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
@@ -1504,12 +1504,6 @@ func (l *DefaultLocalProvider) AddDesignToWorkspace(_ *http.Request, workspaceID
 	workspaceId, _ := uuid.FromString(workspaceID)
 	designId, _ := uuid.FromString(designID)
 	return l.WorkspacePersister.AddDesignToWorkspace(workspaceId, designId)
-}
-
-func (l *DefaultLocalProvider) RemoveDesignFromWorkspace(_ *http.Request, workspaceID string, designID string) ([]byte, error) {
-	workspaceId, _ := uuid.FromString(workspaceID)
-	designId, _ := uuid.FromString(designID)
-	return l.WorkspacePersister.DeleteDesignFromWorkspace(workspaceId, designId)
 }
 
 func (l *DefaultLocalProvider) GetDesignsOfWorkspace(_ *http.Request, workspaceID, page, pageSize, search, order, filter string, visibility []string) ([]byte, error) {

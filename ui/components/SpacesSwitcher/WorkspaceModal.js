@@ -13,28 +13,24 @@ import {
   Box,
   DesignIcon,
   ViewIcon,
-  Collapse,
   useMediaQuery,
   Divider,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { WorkspacesComponent } from '../Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeFilledIcon from '@mui/icons-material/AccessTimeFilled';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
 import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
 import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
 import WorkspaceContent from './WorkspaceContent';
-import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
 import SharedContent from './SharedContent';
-import { useSelector } from 'react-redux';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
@@ -42,8 +38,8 @@ import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProv
 const getNavItem = (theme) => {
   return [
     {
-      id: 'Recent',
-      label: 'Recent',
+      id: 'Recents (Global)',
+      label: 'Recents (Global)',
       icon: <AccessTimeFilledIcon />,
       content: <RecentContent />,
     },
@@ -77,11 +73,15 @@ const getNavItem = (theme) => {
 };
 
 const NavItem = ({ item, open, selectedId, onSelect }) => {
+  const { setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <ListItem disablePadding sx={{ display: 'block' }}>
       <ListItemButton
         selected={selectedId === item.id}
-        onClick={() => onSelect(item.id)}
+        onClick={() => {
+          setMultiSelectedContent([]);
+          onSelect(item.id);
+        }}
         sx={{
           minHeight: 48,
           px: 2.5,
@@ -105,11 +105,9 @@ const NavItem = ({ item, open, selectedId, onSelect }) => {
 
 const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoading }) => {
   const theme = useTheme();
-  const [isExpanded, setIsExpanded] = useState(true);
 
   const handleWorkspacesClick = () => {
     onSelect('All Workspaces');
-    setIsExpanded(!isExpanded);
   };
 
   const workspaces = workspacesData?.workspaces?.map((workspace) => ({
@@ -123,7 +121,7 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
       />
     ),
   }));
-
+  const { setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <>
       <ListItem disablePadding sx={{ display: 'block' }}>
@@ -150,57 +148,53 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
             />
           </ListItemIcon>
           <ListItemText primary="All Workspaces" sx={{ opacity: open ? 1 : 0 }} />
-          {open && workspaces && workspaces.length > 0 && (
-            <Box component="span">{isExpanded ? <ExpandLess /> : <ExpandMore />}</Box>
-          )}
         </ListItemButton>
       </ListItem>
 
-      {open && (
-        <Collapse in={isExpanded} timeout="auto" unmountOnExit>
-          {isLoading ? (
-            <ListItem sx={{ pl: 4 }}>
-              <ListItemText primary="Loading..." />
-            </ListItem>
-          ) : (
-            workspaces &&
-            workspaces.map((workspace) => (
-              <ListItem
-                key={workspace.id}
-                disablePadding
-                sx={{ display: 'block', backgroundColor: theme.palette.background.secondary }}
+      {isLoading ? (
+        <ListItem sx={{ pl: 4 }}>
+          <ListItemText primary="Loading..." />
+        </ListItem>
+      ) : (
+        workspaces &&
+        workspaces.map((workspace) => (
+          <ListItem
+            key={workspace.id}
+            disablePadding
+            sx={{ display: 'block', backgroundColor: theme.palette.background.secondary }}
+          >
+            <ListItemButton
+              selected={selectedId === workspace.id}
+              onClick={() => {
+                setMultiSelectedContent([]);
+                onSelect(workspace.id);
+              }}
+              sx={{
+                minHeight: 48,
+                px: 2.5,
+                pl: '2.5rem',
+                justifyContent: open ? 'initial' : 'center',
+              }}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  justifyContent: 'center',
+                  mr: open ? 3 : 'auto',
+                }}
               >
-                <ListItemButton
-                  selected={selectedId === workspace.id}
-                  onClick={() => onSelect(workspace.id)}
-                  sx={{
-                    minHeight: 48,
-                    px: 2.5,
-                    pl: '2.5rem',
-                    justifyContent: open ? 'initial' : 'center',
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      justifyContent: 'center',
-                      mr: open ? 3 : 'auto',
-                    }}
-                  >
-                    {workspace.icon}
-                  </ListItemIcon>
-                  <ListItemText primary={workspace.name} sx={{ opacity: open ? 1 : 0 }} />
-                </ListItemButton>
-              </ListItem>
-            ))
-          )}
-        </Collapse>
+                {workspace.icon}
+              </ListItemIcon>
+              <ListItemText primary={workspace.name} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+          </ListItem>
+        ))
       )}
     </>
   );
 };
 
-const WorkspaceContentWrapper = ({ id, workspacesData }) => {
+const WorkspaceContentWrapper = ({ id, workspacesData, onSelectWorkspace }) => {
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const theme = useTheme();
 
@@ -219,9 +213,8 @@ const WorkspaceContentWrapper = ({ id, workspacesData }) => {
   if (mainItem && mainItem.content) {
     return mainItem.content;
   }
-
   if (id === 'All Workspaces') {
-    return <WorkspacesComponent />;
+    return <WorkspacesComponent onSelectWorkspace={onSelectWorkspace} />;
   }
 
   const foundWorkspace = workspacesData?.workspaces?.find((workspace) => workspace.id === id);
@@ -240,22 +233,27 @@ const Navigation = ({ setHeaderInfo }) => {
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
   const { selectedWorkspace } = workspaceSwitcherContext;
-  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recent');
-  const { organization: currentOrganization } = useSelector((state) => state.ui);
+  const [selectedId, setSelectedId] = useState(selectedWorkspace?.id || 'Recents (Global)');
   const navConfig = getNavItem(theme).filter((item) => item.enabled !== false);
-
+  const { selectedOrganization } = useGetSelectedOrganization();
   const { data: workspacesData, isLoading } = useGetWorkspacesQuery(
     {
       page: 0,
       pagesize: 'all',
       order: 'updated_at desc',
-      orgId: currentOrganization?.id,
+      orgID: selectedOrganization?.id,
     },
     {
-      skip: !currentOrganization?.id,
+      skip: !selectedOrganization?.id,
     },
   );
-
+  const onSelectWorkspace = ({ id, name }) => {
+    setSelectedId(id);
+    workspaceSwitcherContext.setSelectedWorkspace({
+      id: id,
+      name: name,
+    });
+  };
   useEffect(() => {
     setOpen(!isMobile);
   }, [isMobile]);
@@ -347,7 +345,11 @@ const Navigation = ({ setHeaderInfo }) => {
       </ErrorBoundary>
       <ErrorBoundary>
         <StyledMainContent>
-          <WorkspaceContentWrapper id={selectedId} workspacesData={workspacesData} />
+          <WorkspaceContentWrapper
+            id={selectedId}
+            workspacesData={workspacesData}
+            onSelectWorkspace={onSelectWorkspace}
+          />
         </StyledMainContent>
       </ErrorBoundary>
     </Box>

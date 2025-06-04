@@ -48,7 +48,7 @@ Organizations,Remove User from Organization,"Discontinue user access to organiza
 Organizations,Promote or Demote User to Org Admin,Elevate or remove organization level administrative privileges.,,,,X,X,X,Organization Management,0ddd82df-27ed-4781-a91a-ec1dbeb620d0,X,FALSE
 Organizations,View Org,See only organizations to which you are a member. See all other members within your membership teams.,X,X,X,X,X,X,Organization Management,49f02947-0c8d-4b2d-af53-f50ce18f8861,X,FALSE
 Organizations,View Organizations,See all organizations of which you are an administrator. See all members of those organizations.,,,,X,X,X,Organization Management,172fa7d3-0d8a-4646-a789-bf64f52ba40b,X,FALSE
-Organizations,View All Organizations,"See all organizations within a Layer5 Cloud deployment. See all organizations, teams, and users.",,,,,X,X,Organization Management,e996c998-a50f-4cb8-ae7b-f2f1b523c971,X,FALSE
+Organizations,View All Organizations,"See all organizations within a Meshery Cloud deployment. See all organizations, teams, and users.",,,,,X,X,Organization Management,e996c998-a50f-4cb8-ae7b-f2f1b523c971,X,FALSE
 Organizations,Remove Roles from Organization members,Remove roles from users in an organization,,,,,X,X,Organization Management,8a003a11-a909-425a-bd23-d8ba14972c89,X,FALSE
 Organizations,Assign Roles to Organization members,Assign roles to users in an organization,,,,,X,X,Organization Management,0d455711-6205-422b-9de7-05933fe2aeb2,X,FALSE
 Connections,Add cluster,Add Kubernetes cluster,,,X,,X,X,Lifecycle Management,fce15b20-78ac-42af-b79c-b8f19bdb0802,X,TRUE

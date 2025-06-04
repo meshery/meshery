@@ -26,20 +26,20 @@ import {
   TextField,
   ClickAwayListener,
   IconButton,
-  Grid,
   Slide,
+  Grid2,
   Hidden,
   NoSsr,
   useTheme,
   useMediaQuery,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
+import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './Modals/ConnectionModal';
+import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
@@ -63,7 +63,7 @@ import {
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
 
 async function loadActiveK8sContexts() {
   try {
@@ -422,15 +422,15 @@ const Header = ({
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid container alignItems="center">
+            <Grid2 container alignItems="center" size="grow">
               <Hidden smUp>
-                <Grid item style={{ display: 'none' }}>
+                <Grid2 style={{ display: 'none' }}>
                   <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
                     <HeaderIcons style={iconMedium} />
                   </MenuIconButton>
-                </Grid>
+                </Grid2>
               </Hidden>
-              <Grid item xs container alignItems="center" component={PageTitleWrapper}>
+              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
                 {/* Extension Point for   Logo */}
                 <div
                   id="nav-header-logo"
@@ -442,8 +442,8 @@ const Header = ({
                     justifyContent: 'center',
                   }}
                 ></div>
-                <SpaceSwitcher />
-              </Grid>
+                <OrganizationAndWorkSpaceSwitcher />
+              </Grid2>
               <Box
                 component={UserContainer}
                 style={{
@@ -497,7 +497,7 @@ const Header = ({
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
-            </Grid>
+            </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
       </>

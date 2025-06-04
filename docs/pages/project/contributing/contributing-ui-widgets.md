@@ -44,10 +44,10 @@ Create a new file inside `widgets/`, e.g.:
 /ui/components/DashboardComponent/widgets/LatestBlogs.js
 ```
 
-Use design system components from `@layer5/sistent`:
+Use design system components from `@sistent/sistent`:
 
 ```jsx
-import { useTheme, PlainCard, BellIcon } from "@layer5/sistent";
+import { useTheme, PlainCard, BellIcon } from "@sistent/sistent";
 
 const LatestBlogs = (props) => {
   const theme = useTheme();

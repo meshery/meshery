@@ -1,7 +1,7 @@
 import React from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ADDITIONAL_PROPERTY_FLAG } from '@rjsf/utils';
-import { IconButton, Input, InputLabel, Grid, FormControl } from '@layer5/sistent';
+import { IconButton, Input, InputLabel, Grid2, FormControl } from '@sistent/sistent';
 import { iconMedium } from '../../../../css/icons.styles';
 
 const WrapIfAdditionalTemplate = ({
@@ -26,8 +26,15 @@ const WrapIfAdditionalTemplate = ({
   const handleChange = ({ target }) => onKeyChange(target.value);
 
   return (
-    <Grid container key={`${id}-key`} alignItems="center" spacing={2} className={classNames}>
-      <Grid item xs>
+    <Grid2
+      container
+      key={`${id}-key`}
+      alignItems="center"
+      spacing={2}
+      className={classNames}
+      size="grow"
+    >
+      <Grid2 size={{ xs: 12 }}>
         <FormControl fullWidth={true} required={required}>
           <InputLabel>{keyLabel}</InputLabel>
           <Input
@@ -40,14 +47,12 @@ const WrapIfAdditionalTemplate = ({
             type="text"
           />
         </FormControl>
-      </Grid>
-      <Grid item style={{ alignSelf: 'flex-end' }}>
+      </Grid2>
+      <Grid2 style={{ alignSelf: 'flex-end' }}>
         <span style={{ fontSize: '1.25rem' }}>&nbsp;:&nbsp;</span>
-      </Grid>
-      <Grid item={true} xs>
-        {children}
-      </Grid>
-      <Grid item={true}>
+      </Grid2>
+      <Grid2 size={{ xs: 12 }}>{children}</Grid2>
+      <Grid2>
         <IconButton
           component="span"
           disabled={disabled || readonly}
@@ -55,8 +60,8 @@ const WrapIfAdditionalTemplate = ({
         >
           <DeleteIcon style={iconMedium} />
         </IconButton>
-      </Grid>
-    </Grid>
+      </Grid2>
+    </Grid2>
   );
 };
 

@@ -70,7 +70,7 @@ For this guide, the `in-cluster deployment` method is used.  Follow this [setup 
 
 In this section, you will set up the EC2 controller and configure it to connect to your AWS account. This process involves creating a Kubernetes secret that contains your AWS access keys and configuring the controller pod to consume this secret. While these configurations are already included in our designs, the steps will be demonstrated for clarity.
 
-1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://cloud.layer5.io/catalog/content/catalog/ec2-controller-design-28a7fad9-c7ef-440a-a8f0-7614e072b866) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
+1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://meshery.io/catalog/deployment/ec2-controller-design-8f7e1431-3885-4ebf-9ef7-d2ec64bd4eb5.html) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
 
     ![EC2 Controller Chart](./aws-controllers/controller-chart.png)
 
