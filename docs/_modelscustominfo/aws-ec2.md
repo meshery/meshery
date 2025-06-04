@@ -4,7 +4,7 @@ title: AWS EC2
 
 <h1> How to Deploy AWS EC2 Instances with Meshery</h1>
 <p>
-    Learn how to configure, deploy, and manage AWS EC2 instances using Meshery's intuitive <a href="/extensions/kanvas">Kanvas</a> extension. In order to manage AWS resources, Meshery uses <a href="https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/">AWS Controllers for Kubernetes (ACK)</a>. ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer.
+    Learn how to configure, deploy, and manage AWS EC2 instances using Meshery's intuitive <a href="https://meshery.io/extensions/kanvas">Kanvas</a> extension. In order to manage AWS resources, Meshery uses <a href="https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/">AWS Controllers for Kubernetes (ACK)</a>. ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer.
 </p>
 
 <p>
