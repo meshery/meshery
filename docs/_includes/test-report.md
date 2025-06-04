@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 3rd 2025, 9:22:20 pm
+- Testing started at: June 4th 2025, 1:08:16 am
 
 **📦 Test Result Summary**
 
-- ✅ 63 passed
-- ❌ 2 failed
+- ✅ 61 passed
+- ❌ 3 failed
 - ⚠️ 2 flaked
-- ⏩ 6 skipped
+- ⏩ 7 skipped
 
-⌛ _Duration: 5 minutes and 17 seconds_
+⌛ _Duration: 5 minutes and 54 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -38,6 +38,8 @@
 | 15 | chromium-local-provider | Import a Model via File Import |  | ➖ |
 | 16 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
 | 17 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
+| 18 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
+| 19 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
 
 </div>
 </details>
