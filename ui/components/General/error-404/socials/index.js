@@ -69,7 +69,7 @@ export default function Socials() {
           TransitionProps={{ timeout: 600 }}
           title="Access Docker images"
         >
-          <a href="https://hub.docker.com/u/layer5/">
+          <a href="https://hub.docker.com/u/meshery/">
             <DockerIcon height={45} width={45} />
           </a>
         </Tooltip>

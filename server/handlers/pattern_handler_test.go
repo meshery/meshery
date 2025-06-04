@@ -7,7 +7,7 @@ package handlers
 // 	"testing"
 
 // 	"github.com/gofrs/uuid"
-// 	"github.com/layer5io/meshery/server/models"
+// 	"github.com/meshery/meshery/server/models"
 // 	"github.com/meshery/meshkit/logger"
 // 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 // 	"github.com/meshery/meshkit/validator"

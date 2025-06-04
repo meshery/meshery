@@ -1,7 +1,7 @@
 package helpers
 
 import (
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/errors"
 )
 

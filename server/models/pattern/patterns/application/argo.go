@@ -3,10 +3,10 @@ package application
 // import (
 // 	"os"
 
-// 	"github.com/layer5io/meshery/server/helpers"
-// 	"github.com/layer5io/meshery/server/models"
-// 	"github.com/layer5io/meshery/server/models/pattern/patterns/application/argo/v1alpha1"
-// 	patternUtils "github.com/layer5io/meshery/server/models/pattern/utils"
+// 	"github.com/meshery/meshery/server/helpers"
+// 	"github.com/meshery/meshery/server/models"
+// 	"github.com/meshery/meshery/server/models/pattern/patterns/application/argo/v1alpha1"
+// 	patternUtils "github.com/meshery/meshery/server/models/pattern/utils"
 // 	"github.com/meshery/meshkit/logger"
 // 	"github.com/meshery/meshkit/utils"
 // 	meshkube "github.com/meshery/meshkit/utils/kubernetes"

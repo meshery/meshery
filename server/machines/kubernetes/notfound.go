@@ -2,7 +2,7 @@ package kubernetes
 
 import (
 	"context"
-	"github.com/layer5io/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshkit/models/events"
 )
 

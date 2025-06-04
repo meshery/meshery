@@ -3,7 +3,7 @@ name: meshery-operator
 description: Meshery Operator chart.
 icon: https://meshery.io/images/logos/meshery-logo.png
 source:
-  - https://github.com/layer5io/meshery-operator
+  - https://github.com/meshery/meshery-operator
 keywords:
   - meshery-broker
   - meshery-meshsync
