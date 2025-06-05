@@ -1,5 +1,3 @@
-# .github/workflows/meshery-security-pipeline.yml
-# ----------------------------- #
 name: Meshery Security Pipeline
 
 on:
@@ -158,7 +156,6 @@ jobs:
 
           for cve in $all; do
             vexctl create \
-              --merge vex.openvex.json \
               --file vex.openvex.json \
               --author "GitHub Actions" \
               --product "pkg:github/mack-droid/forkv1-meshery" \
