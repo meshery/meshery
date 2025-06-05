@@ -35,6 +35,7 @@ import { useSelector } from 'react-redux';
 import { store } from '../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { RelationshipEvaluationTraceFormatter } from './NotificationCenter/formatters/relationship_evaluation';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -86,6 +87,7 @@ function NavigatorExtension({ url }) {
       <RemoteComponent
         injectProps={{
           PatternServiceFormCore,
+          RelationshipEvaluationResponseFormatter: RelationshipEvaluationTraceFormatter,
           MesheryPerformanceComponent: PerformanceTestComponent,
           selectedK8sContexts,
           resolver: {
