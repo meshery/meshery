@@ -92,12 +92,12 @@ export const Title = styled('div')(() => ({
 }));
 
 export const TitleBellIcon = styled('div')(() => ({
-  width: '2.25rem',
-  height: '2.25rem',
+  width: '35px',
+  height: '35px',
   borderRadius: '100%',
+  padding: '0.5rem',
   backgroundColor: 'black',
   display: 'flex',
-  padding: '0.2rem',
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',
