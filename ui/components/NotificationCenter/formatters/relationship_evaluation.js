@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, styled, CustomTooltip, Collapse } from '@sistent/sistent';
+import { Box, Typography, styled, CustomTooltip, Collapse, ErrorBoundary } from '@sistent/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
 import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
@@ -34,8 +34,9 @@ const SectionTitle = styled(Box)(() => ({
 
 const ItemRow = styled(Box)(({ theme }) => ({
   display: 'flex',
-  alignItems: 'center',
+  flexDirection: 'column',
   padding: '8px 0',
+  gap: '8px',
   borderBottom: `1px solid ${theme.palette.divider}`,
   '&:last-child': {
     borderBottom: 'none',
@@ -83,38 +84,91 @@ const TraceSection = ({ title, items, children, emptyMessage = 'No changes' }) =
   );
 };
 
+const getComponentFromAction = (action, componentMapping) => {
+  if (action.op == 'delete_component') {
+    return action?.value?.component;
+  }
+
+  if (action.op == 'add_component') {
+    return componentMapping?.[action?.value?.item?.id];
+  }
+
+  return componentMapping?.[action?.value?.id];
+};
+
+const getRelationshipFromAction = (action, relationshipMapping) => {
+  if (action.op == 'delete_relationship') {
+    return action?.value?.relationship;
+  }
+  if (action.op == 'add_relationship') {
+    return relationshipMapping?.[action?.value?.item?.id];
+  }
+  return relationshipMapping?.[action?.value?.id];
+};
+
 // Component Trace Item
-const ComponentItem = ({ component }) => (
-  <ItemRow>
-    <Box display="flex" alignItems="center" gap={2} flex={1}>
-      <ComponentIcon iconSrc={'/' + component.styles.svgColor} />
-      <Box
-        display={'flex'}
-        justifyItems={'space-between'}
-        justifyContent={'space-between'}
-        width={'100%'}
-        alignItems={'center'}
-      >
-        <Typography variant="body2" fontWeight={500}>
-          {component.component.kind} <strong> &quot;{component.displayName}&quot; </strong>
-        </Typography>
-        <CustomTooltip
-          title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}
+const ComponentAction = ({ action, componentMapping }) => {
+  console.log('ComponentAction', action, componentMapping);
+  const component = getComponentFromAction(action, componentMapping);
+
+  if (!component) {
+    return null;
+  }
+
+  return (
+    <ItemRow>
+      <Box display="flex" alignItems="center" gap={2} flex={1}>
+        <ComponentIcon iconSrc={'/' + component?.styles?.svgColor} />
+        <Box
+          display={'flex'}
+          justifyItems={'space-between'}
+          justifyContent={'space-between'}
+          width={'100%'}
+          alignItems={'center'}
         >
-          <div>
-            <ComponentIcon
-              iconSrc={`/static/img/${component.model.name}.svg`}
-              label={component.model.name}
-            />
-          </div>
-        </CustomTooltip>
+          <Typography variant="body2" fontWeight={500}>
+            {component?.component?.kind} <strong> &quot;{component.displayName}&quot; </strong>
+          </Typography>
+          <CustomTooltip
+            title={`Model: ${component?.model?.name}  Version: ${component?.model?.version}`}
+          >
+            <div>
+              <ComponentIcon
+                iconSrc={`/static/img/${component?.model?.name}.svg`}
+                label={component?.model?.name}
+              />
+            </div>
+          </CustomTooltip>
+        </Box>
       </Box>
-    </Box>
-  </ItemRow>
-);
+      {action.op === 'update_component' || action.op === 'update_component_configuration' ? (
+        <Typography variant="body2" color="text.secondary">
+          Updated <code>{formatPath(action?.value?.path)}</code> to{' '}
+          <code>{JSON.stringify(action?.value?.value)}</code>
+        </Typography>
+      ) : (
+        ''
+      )}
+    </ItemRow>
+  );
+};
+
+const formatPath = (path) => {
+  if (Array.isArray(path)) return path.join('.');
+
+  if (typeof path === 'string') return path;
+
+  return JSON.stringify(path);
+};
 
 // Relationship Trace Item
-const RelationshipItem = ({ relationship }) => {
+const RelationshipAction = ({ action, relationshipMapping }) => {
+  const relationship = getRelationshipFromAction(action, relationshipMapping);
+  console.log('RelationshipAction', action, relationshipMapping, relationship);
+
+  if (!relationship) {
+    return null;
+  }
   return (
     <>
       {relationship.selectors.map((selector, index) => (
@@ -146,43 +200,62 @@ const RelationshipItem = ({ relationship }) => {
               </div>
             </CustomTooltip>
           </Box>
+          {action.op === 'update_relationship' ? (
+            <Typography variant="body2" color="text.secondary">
+              Updated <code>{formatPath(action?.value?.path)}</code> to{' '}
+              <code>{JSON.stringify(action?.value?.value)}</code>
+            </Typography>
+          ) : (
+            ''
+          )}
         </ItemRow>
       ))}
     </>
   );
 };
 
-// Component Trace List
-export const ComponentsTrace = ({ components, title }) => (
-  <TraceSection title={title} items={components}>
-    {components.map((component, index) => (
-      <ComponentItem key={index} component={component} />
-    ))}
-  </TraceSection>
-);
-
-// Relationship Trace List
-export const RelationshipsTrace = ({ relationships, title }) => (
-  <TraceSection title={title} items={relationships}>
-    {relationships.map((relationship, index) => (
-      <RelationshipItem key={index} relationship={relationship} />
-    ))}
-  </TraceSection>
-);
-
 // Main Formatter Component
-export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTraceFormatter({
-  trace,
-}) {
-  if (!trace) return null;
+export const RelationshipEvaluationTraceFormatter = ({ actions, design }) => {
+  console.log('RelationshipEvaluationTraceFormatter', actions, design);
+  const componentMapping = React.useMemo(
+    () =>
+      design?.components?.reduce?.(
+        (acc, component) => ({
+          ...acc,
+          [component.id]: component,
+        }),
+        {},
+      ),
+    [design?.components],
+  );
 
-  const hasChanges =
-    trace.componentsAdded?.length > 0 ||
-    trace.componentsRemoved?.length > 0 ||
-    trace.componentsUpdated?.length > 0 ||
-    trace.relationshipsAdded?.length > 0 ||
-    trace.relationshipsUpdated?.length > 0 ||
-    trace.relationshipsRemoved?.length > 0;
+  const relationshipMapping = React.useMemo(
+    () =>
+      design?.relationships?.reduce?.(
+        (acc, relationship) => ({
+          ...acc,
+          [relationship.id]: relationship,
+        }),
+        {},
+      ),
+    [design?.relationships],
+  );
+
+  if (!actions) return null;
+
+  console.log('Trace ', actions);
+
+  const hasChanges = actions.length > 0;
+
+  const componentsAdded = actions.filter?.((a) => a.op == 'add_component');
+  const componentsRemoved = actions?.filter?.((a) => a.op == 'delete_component');
+  const componentsUpdated = actions?.filter?.(
+    (a) => a.op == 'update_component' || a.op == 'update_component_configuration',
+  );
+
+  const relationshipsAdded = actions?.filter?.((a) => a.op == 'add_relationship');
+  const relationshipsRemoved = actions.filter?.((a) => a.op == 'delete_relationship');
+  const relationshipsUpdated = actions?.filter?.((a) => a.op == 'update_relationship');
 
   return (
     <Box mt={2}>
@@ -193,47 +266,87 @@ export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTr
         </EmptyState>
       ) : (
         <Box flexDirection="column" display="flex">
-          <ComponentsTrace
-            title="Components Added"
-            components={trace.componentsAdded || []}
-            type="added"
-          />
-          <ComponentsTrace
-            title="Components Updated"
-            components={trace.componentsUpdated || []}
-            type="updated"
-          />
-          <ComponentsTrace
-            title="Components Removed"
-            components={trace.componentsRemoved || []}
-            type="deleted"
-          />
-          <RelationshipsTrace
-            title="Relationships Added"
-            type="added"
-            relationships={trace.relationshipsAdded || []}
-          />
-          <RelationshipsTrace
-            title="Relationships Updated"
-            type="updated"
-            relationships={trace.relationshipsUpdated || []}
-          />
-          <RelationshipsTrace
-            title="Relationships Removed"
-            type="deleted"
-            relationships={trace.relationshipsRemoved || []}
-          />
+          <TraceSection title="Components Added" items={componentsAdded}>
+            {componentsAdded.map((action, index) => (
+              <ComponentAction
+                action={action}
+                key={index}
+                design={design}
+                componentMapping={componentMapping}
+              />
+            ))}
+          </TraceSection>
+
+          <TraceSection title="Components Deleted" items={componentsRemoved}>
+            {componentsRemoved.map((action, index) => (
+              <ComponentAction
+                action={action}
+                key={index}
+                design={design}
+                componentMapping={componentMapping}
+              />
+            ))}
+          </TraceSection>
+
+          <TraceSection title="Components Updated" items={componentsUpdated}>
+            {componentsUpdated.map((action, index) => (
+              <ComponentAction
+                action={action}
+                key={index}
+                design={design}
+                componentMapping={componentMapping}
+              />
+            ))}
+          </TraceSection>
+
+          <TraceSection title="Relationships Added" items={relationshipsAdded}>
+            {relationshipsAdded.map((action, index) => (
+              <RelationshipAction
+                action={action}
+                key={index}
+                design={design}
+                relationshipMapping={relationshipMapping}
+              />
+            ))}
+          </TraceSection>
+
+          <TraceSection title="Relationships Deleted" items={relationshipsRemoved}>
+            {relationshipsRemoved.map((action, index) => (
+              <RelationshipAction
+                action={action}
+                key={index}
+                design={design}
+                relationshipMapping={relationshipMapping}
+              />
+            ))}
+          </TraceSection>
+
+          <TraceSection title="Relationships Updated" items={relationshipsUpdated}>
+            {relationshipsUpdated.map((action, index) => (
+              <RelationshipAction
+                action={action}
+                key={index}
+                design={design}
+                relationshipMapping={relationshipMapping}
+              />
+            ))}
+          </TraceSection>
         </Box>
       )}
     </Box>
   );
-});
+};
 
 export const RelationshipEvaluationEventFormatter = ({ event }) => {
   return (
-    <Box mt={2}>
-      <Typography variant="body1">{event.description}</Typography>
-      <RelationshipEvaluationTraceFormatter trace={event?.metadata?.trace} />
-    </Box>
+    <ErrorBoundary>
+      <Box mt={2}>
+        <Typography variant="body1">{event.description}</Typography>
+        <RelationshipEvaluationTraceFormatter
+          actions={event?.metadata?.evaluation_response?.actions || []}
+          design={event?.metadata?.evaluation_response?.design || {}}
+        />
+      </Box>
+    </ErrorBoundary>
   );
 };
