@@ -92,7 +92,6 @@ jobs:
         with:
           name: grype-report
           path: grype-report.json
-
   vex-generation:
     name: VEX Generation
     runs-on: ubuntu-latest
@@ -106,42 +105,69 @@ jobs:
         with:
           go-version: '1.21'
           cache: true
-
-      - name: Install vexctl
-        run: go install github.com/openvex/vexctl@v0.3.0
-
+  
       - name: Download SBOM
         uses: actions/download-artifact@v4
         with:
           name: sbom
           path: artifacts/sbom
-
+  
       - name: Download Trivy Report
         uses: actions/download-artifact@v4
         with:
           name: trivy-report
           path: artifacts/reports/trivy-report
-
+  
       - name: Download Grype Report
         uses: actions/download-artifact@v4
         with:
           name: grype-report
           path: artifacts/reports/grype-report
-
+  
       - name: Generate VEX Document
         run: |
-          vexctl generate \
-            --sbom artifacts/sbom/bom.json \
-            --vex artifacts/reports/trivy-report/trivy-report.json \
-            --vex artifacts/reports/grype-report/grype-report.json \
-            --output meshery.vex.json
+          # Extract CVEs from Trivy report
+          trivy_cves=$(jq -r '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | .VulnerabilityID' artifacts/reports/trivy-report/trivy-report.json)
+          
+          # Extract CVEs from Grype report
+          grype_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/reports/grype-report/grype-report.json)
+          
+          # Combine and remove duplicates
+          all_cves=$(echo "$trivy_cves $grype_cves" | tr ' ' '\n' | sort | uniq)
+          
+          # Generate VEX document
+          vex_json='{
+            "@context": "https://openvex.dev/ns/v1",
+            "@id": "https://example.com/vex-'$(date +%s)'",
+            "author": "Automated Workflow",
+            "timestamp": "'$(date -u +"%Y-%m-%dT%H:%M:%SZ")'",
+            "version": 1,
+            "statements": []
+          }'
+          
+          for cve in $all_cves; do
+            statement='{
+              "vulnerability": {
+                "@id": "https://nvd.nist.gov/vuln/detail/'$cve'"
+              },
+              "products": [
+                {
+                  "@id": "pkg:github/mack-droid/forkv1-meshery"
+                }
+              ],
+              "status": "under_investigation"
+            }'
+            vex_json=$(echo $vex_json | jq '.statements += ['"$statement"']')
+          done
+          
+          echo $vex_json > meshery.vex.json
 
       - name: Upload VEX Document
         uses: actions/upload-artifact@v4
         with:
           name: vex-document
           path: meshery.vex.json
-
+  
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
