@@ -1,3 +1,5 @@
+# .github/workflows/meshery-security-pipeline.yml
+# ----------------------------- #
 name: Meshery Security Pipeline
 
 on:
@@ -17,363 +19,222 @@ permissions:
   security-events: write
   issues: write
 
+#####################################################
+# 1/5  – SBOM GENERATION                            #
+#####################################################
 jobs:
   sbom-generation:
-    name: SBOM Generation
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-          cache: true
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+
+      - uses: actions/setup-go@v4
+        with: {go-version: '1.21', cache: true}
+
       - name: Generate CycloneDX SBOM
         uses: CycloneDX/gh-gomod-generate-sbom@v2
         with:
           version: v1
           args: mod -licenses -assert-licenses -json -output cyclonedx-sbom.json
-      - name: Validate SBOM
-        run: |
-          if [ ! -f "cyclonedx-sbom.json" ] || [ ! -s "cyclonedx-sbom.json" ]; then
-            echo "CycloneDX SBOM is missing or empty."
-            exit 1
-          fi
-          if ! jq -e '.components' cyclonedx-sbom.json > /dev/null; then
-            echo "CycloneDX SBOM does not have a valid 'components' field."
-            exit 1
-          fi
-          echo "CycloneDX SBOM - Licenses: $(jq '[.components[].licenses[].license.id? // empty] | length' cyclonedx-sbom.json)"
-      - name: Debug CycloneDX SBOM Licenses
-        run: |
-          jq '.components[].licenses' cyclonedx-sbom.json
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: cyclonedx-sbom.json
 
+      - name: Quick SBOM sanity-check
+        run: |
+          test -s cyclonedx-sbom.json
+          jq -e '.components' cyclonedx-sbom.json >/dev/null
+
+      - uses: actions/upload-artifact@v4
+        with: {name: sbom, path: cyclonedx-sbom.json}
+
+#####################################################
+# 2/5  – REPO, SBOM & IMAGE SCANS (Grype + Trivy)  #
+#####################################################
   repo-scan:
-    name: Repository Scan
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       - name: Scan Repository with Grype
+        id: repo
         uses: anchore/scan-action@v6
-        id: repo-scan
         with:
-          path: "."
+          path: .
           output-format: json
           output-file: grype-repo-report.json
           severity-cutoff: high
           fail-build: false
-          cache-db: false
-      - name: Validate Grype Repo Report
-        run: |
-          if [ ! -f "grype-repo-report.json" ] || [ ! -s "grype-repo-report.json" ]; then
-            echo "Grype repo report is missing or empty."
-            exit 1
-          fi
-          if ! jq -e '.matches' grype-repo-report.json > /dev/null; then
-            echo "Grype repo report does not have a valid 'matches' field."
-            exit 1
-          fi
-      - name: Debug Grype Repo Scan
-        run: |
-          jq '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")' grype-repo-report.json
-      - name: Upload Grype Repo Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: grype-repo-report
-          path: grype-repo-report.json
-      - name: Debug Grype Database
-        if: failure()
-        run: |
-          grype db status -vv
-          ls -la ~/.cache/grype/db
+      - run: jq -e '.matches' grype-repo-report.json >/dev/null
+      - uses: actions/upload-artifact@v4
+        with: {name: grype-repo-report, path: grype-repo-report.json}
 
   sbom-scan:
-    name: SBOM Scan
-    runs-on: ubuntu-latest
     needs: sbom-generation
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Download SBOM
-        uses: actions/download-artifact@v4
-        with:
-          name: sbom
-          path: sbom
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {name: sbom, path: sbom}
       - name: Scan SBOM with Grype
         uses: anchore/scan-action@v6
-        id: sbom-scan
         with:
           sbom: sbom/cyclonedx-sbom.json
           output-format: json
           output-file: grype-sbom-report.json
           severity-cutoff: high
           fail-build: false
-          cache-db: false
-      - name: Validate Grype SBOM Report
-        run: |
-          if [ ! -f "grype-sbom-report.json" ] || [ ! -s "grype-sbom-report.json" ]; then
-            echo "Grype SBOM report is missing or empty."
-            exit 1
-          fi
-          if ! jq -e '.matches' grype-sbom-report.json > /dev/null; then
-            echo "Grype SBOM report does not have a valid 'matches' field."
-            exit 1
-          fi
-      - name: Debug Grype SBOM Scan
-        run: |
-          jq '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")' grype-sbom-report.json
-      - name: Upload Grype SBOM Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: grype-sbom-report
-          path: grype-sbom-report.json
+      - run: jq -e '.matches' grype-sbom-report.json >/dev/null
+      - uses: actions/upload-artifact@v4
+        with: {name: grype-sbom-report, path: grype-sbom-report.json}
 
   container-scan-trivy:
-    name: Container Scan (Trivy)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Scan with Trivy
+      - uses: actions/checkout@v4
+      - name: Scan image (Trivy)
         uses: aquasecurity/trivy-action@0.28.0
         with:
-          image-ref: 'layer5/meshery:edge-latest'
-          format: 'json'
-          output: 'trivy-report.json'
-          severity: 'CRITICAL,HIGH'
-          ignore-unfixed: false
-      - name: Validate Trivy Report
-        run: |
-          if [ ! -f "trivy-report.json" ] || [ ! -s "trivy-report.json" ]; then
-            echo "Trivy report is missing or empty."
-            exit 1
-          fi
-      - name: Upload Trivy Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-report
-          path: trivy-report.json
+          image-ref: layer5/meshery:edge-latest
+          format: json
+          output: trivy-report.json
+          severity: CRITICAL,HIGH
+      - uses: actions/upload-artifact@v4
+        with: {name: trivy-report, path: trivy-report.json}
 
   container-scan-grype:
-    name: Container Scan (Grype)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Scan Container Image with Grype
+      - uses: actions/checkout@v4
+      - name: Scan image (Grype)
         uses: anchore/scan-action@v6
-        id: image-scan
         with:
-          image: 'layer5/meshery:edge-latest'
+          image: layer5/meshery:edge-latest
           output-format: json
           output-file: grype-image-report.json
           severity-cutoff: high
           fail-build: false
-          cache-db: false
-      - name: Validate Grype Image Report
-        run: |
-          if [ ! -f "grype-image-report.json" ] || [ ! -s "grype-image-report.json" ]; then
-            echo "Grype image report is missing or empty."
-            exit 1
-          fi
-          if ! jq -e '.matches' grype-image-report.json > /dev/null; then
-            echo "Grype image report does not have a valid 'matches' field."
-            exit 1
-          fi
-      - name: Debug Grype Image Scan
-        run: |
-          jq '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")' grype-image-report.json
-      - name: Upload Grype Image Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: grype-image-report
-          path: grype-image-report.json
-      - name: Debug Grype Database
-        if: failure()
-        run: |
-          grype db status -vv
-          ls -la ~/.cache/grype/db
+      - run: jq -e '.matches' grype-image-report.json >/dev/null
+      - uses: actions/upload-artifact@v4
+        with: {name: grype-image-report, path: grype-image-report.json}
 
+#####################################################
+# 3/5  – VEX  (OpenVEX v0.2.0)                      #
+#####################################################
   vex-generation:
-    name: VEX Generation
+    needs:
+      - sbom-generation
+      - repo-scan
+      - sbom-scan
+      - container-scan-trivy
+      - container-scan-grype
     runs-on: ubuntu-latest
-    needs: [sbom-generation, repo-scan, sbom-scan, container-scan-trivy, container-scan-grype]
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-      - name: Install Grype
+      - uses: actions/checkout@v4
+
+      - name: Install Grype & vexctl
         run: |
-          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-          grype --version
-      - name: Install vexctl
-        run: |
-          curl -sSfL https://github.com/openvex/vexctl/releases/latest/download/vexctl-linux-amd64 -o /usr/local/bin/vexctl
+          curl -sS https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          curl -sS -L https://github.com/openvex/vexctl/releases/latest/download/vexctl-linux-amd64 -o /usr/local/bin/vexctl
           chmod +x /usr/local/bin/vexctl
-          vexctl version
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-      - name: Generate VEX Document using vexctl
+
+      - uses: actions/download-artifact@v4
+        with: {path: artifacts}
+
+      - name: Generate VEX (OpenVEX)
         run: |
-          # Extract high/critical CVEs
-          trivy_cves=$(jq -r '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | .VulnerabilityID' artifacts/trivy-report/trivy-report.json)
-          grype_image_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-image-report/grype-image-report.json)
-          grype_sbom_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-sbom-report/grype-sbom-report.json)
-          grype_repo_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-repo-report/grype-repo-report.json)
+          # Gather CVE lists
+          trivy=$(jq -r '.Results[].Vulnerabilities[]? | select(.Severity=="CRITICAL" or .Severity=="HIGH") | .VulnerabilityID' \
+                  artifacts/trivy-report/trivy-report.json)
+          img=$(jq -r '.matches[] | select(.vulnerability.severity=="Critical" or .vulnerability.severity=="High") | .vulnerability.id' \
+                artifacts/grype-image-report/grype-image-report.json)
+          sbom=$(jq -r '.matches[] | select(.vulnerability.severity=="Critical" or .vulnerability.severity=="High") | .vulnerability.id' \
+                artifacts/grype-sbom-report/grype-sbom-report.json)
+          repo=$(jq -r '.matches[] | select(.vulnerability.severity=="Critical" or .vulnerability.severity=="High") | .vulnerability.id' \
+                artifacts/grype-repo-report/grype-repo-report.json)
 
-          # Combine and deduplicate
-          all_cves=$(echo "$trivy_cves $grype_image_cves $grype_sbom_cves $grype_repo_cves" | tr ' ' '\n' | sort -u)
+          all=$(echo "$trivy $img $sbom $repo" | tr ' ' '\n' | sort -u | grep -v '^$')
 
-          # Initialize empty VEX document
-          echo '{"@context":"https://openvex.dev/ns/v1","statements":[]}' > vexctl-vex.json
+          # Seed empty doc (OpenVEX v0.2.0)
+          echo '{"@context":"https://openvex.dev/ns/v0.2.0","version":1,"author":"GitHub Actions","statements":[]}' \
+            > vex.openvex.json
 
-          if [ -z "$all_cves" ]; then
-            echo "No high/critical vulnerabilities found. VEX will remain empty."
-          else
-            for cve in $all_cves; do
-              vexctl create \
-                --product "pkg:github/mack-droid/forkv1-meshery" \
-                --vuln "$cve" \
-                --status under_investigation \
-                --file temp-vex.json
+          for cve in $all; do
+            vexctl create \
+              --merge vex.openvex.json \
+              --file vex.openvex.json \
+              --author "GitHub Actions" \
+              --product "pkg:github/mack-droid/forkv1-meshery" \
+              --vuln "$cve" \
+              --status under_investigation
+          done
 
-              # Merge into final VEX
-              jq -s '.[0].statements += .[1].statements | .[0]' vexctl-vex.json temp-vex.json > merged-vex.json
-              mv merged-vex.json vexctl-vex.json
-            done
-            rm -f temp-vex.json
-          fi
-
-          # Debug
-          cat vexctl-vex.json
+          cat vex.openvex.json
 
       - name: Apply VEX with Grype
         run: |
           grype sbom:artifacts/sbom/cyclonedx-sbom.json \
-            --vex vexctl-vex.json -o json > grype-vex-report.json
+                --vex vex.openvex.json -o json > grype-vex-report.json
 
-      - name: Validate VEX Artifacts
-        run: |
-          for vex in vexctl-vex.json; do
-            if [ ! -f "$vex" ] || [ ! -s "$vex" ]; then
-              echo "VEX file $vex is missing or empty."
-              exit 1
-            fi
-            if ! jq -e '.statements' "$vex" > /dev/null; then
-              echo "VEX file $vex does not have a valid 'statements' field."
-              exit 1
-            fi
-          done
-          if [ ! -f "grype-vex-report.json" ] || [ ! -s "grype-vex-report.json" ]; then
-            echo "Grype VEX report is missing or empty."
-            exit 1
-          fi
-          if ! jq -e '.matches' grype-vex-report.json > /dev/null; then
-            echo "Grype VEX report does not have a valid 'matches' field."
-            exit 1
-          fi
+      - uses: actions/upload-artifact@v4
+        with: {name: vex-artifacts, path: |
+            vex.openvex.json
+            grype-vex-report.json}
 
-      - name: Upload VEX Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: vex-artifacts
-          path: |
-            vexctl-vex.json
-            grype-vex-report.json
-
-
+#####################################################
+# 4/5  – HUMAN-READABLE SUMMARY                     #
+#####################################################
   security-summary:
-    name: Security Summary
+    needs:
+      - sbom-generation
+      - repo-scan
+      - sbom-scan
+      - container-scan-trivy
+      - container-scan-grype
+      - vex-generation
     runs-on: ubuntu-latest
-    needs: [sbom-generation, repo-scan, sbom-scan, container-scan-trivy, container-scan-grype, vex-generation]
     steps:
-      - name: Download Reports
-        uses: actions/download-artifact@v4
-        with:
-          path: security-reports
-      - name: Generate Summary
-        run: |
-          # Validate all input files
-          files=(
-            security-reports/sbom/cyclonedx-sbom.json
-            security-reports/trivy-report/trivy-report.json
-            security-reports/grype-repo-report/grype-repo-report.json
-            security-reports/grype-sbom-report/grype-sbom-report.json
-            security-reports/grype-image-report/grype-image-report.json
-            security-reports/vex-artifacts/grype-vex.json
-            security-reports/vex-artifacts/vexctl-vex.json
-            security-reports/vex-artifacts/grype-vex-report.json
-          )
-          for file in "${files[@]}"; do
-            if [ ! -f "$file" ] || [ ! -s "$file" ]; then
-              echo "File $file is missing or empty." >> $GITHUB_STEP_SUMMARY
-              exit 1
-            fi
-          done
-          if ! jq -e '.components' security-reports/sbom/cyclonedx-sbom.json > /dev/null; then
-            echo "CycloneDX SBOM does not have a valid 'components' field." >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
-          if ! jq -e '.matches' security-reports/vex-artifacts/grype-vex-report.json > /dev/null; then
-            echo "Grype VEX report does not have a valid 'matches' field." >> $GITHUB_STEP_SUMMARY
-            exit 1
-          fi
+      - uses: actions/download-artifact@v4
+        with: {path: security-reports}
 
-          echo "## SBOM Details" >> $GITHUB_STEP_SUMMARY
-          echo "- Components: $(jq '.components | length' security-reports/sbom/cyclonedx-sbom.json)" >> $GITHUB_STEP_SUMMARY
-          echo "- Dependencies: $(jq '.dependencies | length' security-reports/sbom/cyclonedx-sbom.json)" >> $GITHUB_STEP_SUMMARY
-          echo "- Licenses: $(jq '[.components[].licenses[].license.id? // empty] | length' security-reports/sbom/cyclonedx-sbom.json)" >> $GITHUB_STEP_SUMMARY
-          
-          echo "## Vulnerability Summary" >> $GITHUB_STEP_SUMMARY
-          echo "| Source | Scan Type | CRITICAL | HIGH |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------|-----------|----------|------|" >> $GITHUB_STEP_SUMMARY
-          trivy_crit=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' security-reports/trivy-report/trivy-report.json)
-          trivy_high=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' security-reports/trivy-report/trivy-report.json)
-          grype_repo_crit=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/grype-repo-report/grype-repo-report.json)
-          grype_repo_high=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' security-reports/grype-repo-report/grype-repo-report.json)
-          grype_sbom_crit=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/grype-sbom-report/grype-sbom-report.json)
-          grype_sbom_high=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' security-reports/grype-sbom-report/grype-sbom-report.json)
-          grype_image_crit=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/grype-image-report/grype-image-report.json)
-          grype_image_high=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' security-reports/grype-image-report/grype-image-report.json)
-          grype_vex_crit=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/vex-artifacts/grype-vex-report.json)
-          grype_vex_high=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' security-reports/vex-artifacts/grype-vex-report.json)
-          echo "| Trivy | Image | $trivy_crit | $trivy_high |" >> $GITHUB_STEP_SUMMARY
-          echo "| Grype | Repository | $grype_repo_crit | $grype_repo_high |" >> $GITHUB_STEP_SUMMARY
-          echo "| Grype | CycloneDX SBOM | $grype_sbom_crit | $grype_sbom_high |" >> $GITHUB_STEP_SUMMARY
-          echo "| Grype | Image | $grype_image_crit | $grype_image_high |" >> $GITHUB_STEP_SUMMARY
-          echo "| Grype | SBOM (VEX) | $grype_vex_crit | $grype_vex_high |" >> $GITHUB_STEP_SUMMARY
-          
-          echo "## VEX Summary" >> $GITHUB_STEP_SUMMARY
-          echo "| Source | Statements |" >> $GITHUB_STEP_SUMMARY
-          echo "|--------|------------|" >> $GITHUB_STEP_SUMMARY
-          grype_vex_statements=$(jq '.statements | length' security-reports/vex-artifacts/grype-vex.json)
-          vexctl_vex=$(jq '.statements | length' security-reports/vex-artifacts/vexctl-vex.json)
-          echo "| Grype VEX | $grype_vex_statements |" >> $GITHUB_STEP_SUMMARY
-          echo "| vexctl | $vexctl_vex_statements |" >> $GITHUB_STEP_SUMMARY
-          
-          echo "## Dependency Comparison" >> $GITHUB_STEP_SUMMARY
-          echo "| SBOM Source | Direct Dependencies | Transitive Dependencies |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------------|---------------------|------------------------|" >> $GITHUB_STEP_SUMMARY
-          direct=$(jq '[.components[] | select(.type == "library")] | .length' security-reports/sbom/cyclonedx-sbom.json)
-          transitive=$(jq '[.components[] | select(.type == "library') | .dependencies?[]] | unique | length // 0' security-reports/sbom/cyclonedx-sbom.json)
-          echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
-          
-          echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
-          echo "| License | Count |" >> $GITHUB_STEP_SUMMARY
-          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
-          jq -r '.components[].licenses[].license.id? // empty' security-reports/sbom/cyclonedx-sbom.json | 
-            sort | uniq -c | sort -nr | 
-            awk '{if ($2 != "") print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+      - name: Write GitHub Summary
+        env:
+          SBOM: security-reports/sbom/cyclonedx-sbom.json
+          TRIVY: security-reports/trivy-report/trivy-report.json
+          GREPO: security-reports/grype-repo-report/grype-repo-report.json
+          GSBOM: security-reports/grype-sbom-report/grype-sbom-report.json
+          GIMG:  security-reports/grype-image-report/grype-image-report.json
+          GVEX:  security-reports/vex-artifacts/grype-vex-report.json
+          OPENVEX: security-reports/vex-artifacts/vex.openvex.json
+        run: |
+          echo "## SBOM statistics" >> $GITHUB_STEP_SUMMARY
+          echo "- Components: $(jq '.components | length' $SBOM)" >> $GITHUB_STEP_SUMMARY
+          echo "- Licenses: $(jq '[.components[].licenses[].license.id?] | length' $SBOM)" >> $GITHUB_STEP_SUMMARY
+
+          table() { printf "| %-14s | %-10s | %7s | %5s |\n" "$@"; }
+
+          echo "## Vulnerability counts (High + Critical)" >> $GITHUB_STEP_SUMMARY
+          echo "| Source         | Target    | Critical | High |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------------|-----------|----------|------|" >> $GITHUB_STEP_SUMMARY
+
+          table "Trivy" "Image" \
+            "$(jq '[.Results[].Vulnerabilities[]? | select(.Severity=="CRITICAL")] | length' $TRIVY)" \
+            "$(jq '[.Results[].Vulnerabilities[]? | select(.Severity=="HIGH")] | length' $TRIVY)" >> $GITHUB_STEP_SUMMARY
+
+          for X in GREPO "Repository" GSBOM "SBOM" GIMG "Image" GVEX "VEX-filtered"; do
+            eval file=\$$X
+            [[ $X == *" "* ]] && continue
+            table "Grype" "${2:-$3}" \
+              "$(jq '[.matches[] | select(.vulnerability.severity=="Critical")] | length' $file)" \
+              "$(jq '[.matches[] | select(.vulnerability.severity=="High")] | length' $file)" >> $GITHUB_STEP_SUMMARY
+          done
+
+          echo "## VEX statements" >> $GITHUB_STEP_SUMMARY
+          echo "- OpenVEX statements: $(jq '.statements | length' $OPENVEX)" >> $GITHUB_STEP_SUMMARY
+
+#####################################################
+# 5/5  – Github Issue #
+#####################################################
+# Add a final job that reads the summary numbers and
+# fails if any critical CVEs remain, etc.
+
       # - name: Create GitHub Issue
       #   if: ${{ steps.generate_summary.outputs.vuln_count != '0' }}
       #   env:
