@@ -35,7 +35,10 @@ jobs:
         uses: CycloneDX/gh-gomod-generate-sbom@v2
         with:
           version: v1
-          args: mod -licenses -resolve-licenses -json -output cyclonedx-sbom.json
+          args: mod -licenses -assert-licenses -json -output cyclonedx-sbom.json
+      - name: Debug CycloneDX SBOM Licenses
+        run: |
+          jq '.components[].licenses' cyclonedx-sbom.json    
       - name: Install Syft
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
@@ -54,6 +57,7 @@ jobs:
               echo "SBOM $sbom does not have a valid 'components' field."
               exit 1
             fi
+            echo "SBOM $sbom - Licenses: $(jq '[.components[].licenses[].license.id? // empty] | length' $sbom)"
           done
       - name: Upload SBOMs
         uses: actions/upload-artifact@v4
@@ -62,7 +66,7 @@ jobs:
           path: |
             cyclonedx-sbom.json
             syft-sbom.json
-
+  
   container-scan:
     name: Container Scan
     runs-on: ubuntu-latest
