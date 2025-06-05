@@ -242,7 +242,7 @@ jobs:
             echo "$all_cves" | vexctl create \
               --product "pkg:github/mack-droid/forkv1-meshery" \
               --status under_investigation \
-              --output grype-vex.json
+              --file grype-vex.json
           fi
           
           # Debug: Display the VEX document
@@ -258,25 +258,25 @@ jobs:
             --product "pkg:github/mack-droid/forkv1-meshery" \
             --input <(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-image-report/grype-image-report.json) \
             --status under_investigation \
-            --output vexctl-vex.json
+            --file vexctl-vex.json
           vexctl create \
             --product "pkg:github/mack-droid/forkv1-meshery" \
             --input <(jq -r '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | .VulnerabilityID' artifacts/trivy-report/trivy-report.json) \
             --status under_investigation \
             --merge vexctl-vex.json \
-            --output vexctl-vex.json
+            --file vexctl-vex.json
           vexctl create \
             --product "pkg:github/mack-droid/forkv1-meshery" \
             --input <(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-sbom-report/grype-sbom-report.json) \
             --status under_investigation \
             --merge vexctl-vex.json \
-            --output vexctl-vex.json
+            --file vexctl-vex.json
           vexctl create \
             --product "pkg:github/mack-droid/forkv1-meshery" \
             --input <(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-repo-report/grype-repo-report.json) \
             --status under_investigation \
             --merge vexctl-vex.json \
-            --output vexctl-vex.json
+            --file vexctl-vex.json
       - name: Validate VEX Reports
         run: |
           for vex in grype-vex.json vexctl-vex.json; do
