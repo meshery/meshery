@@ -173,8 +173,7 @@ jobs:
             | group_by(.status) 
             | map({status: .[0].status, count: length}) 
             | .[] 
-            | "| \(.status) | \(.count) |"' security-reports/vex-document/meshery.vex.json
-        >> $GITHUB_STEP_SUMMARY
+            | "| \(.status) | \(.count) |"' security-reports/vex-document/meshery.vex.json >> $GITHUB_STEP_SUMMARY
 
       - name: Upload to Security Dashboard
         uses: github/codeql-action/upload-sarif@v2
