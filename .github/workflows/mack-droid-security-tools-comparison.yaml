@@ -174,9 +174,11 @@ jobs:
                 --vex vex.openvex.json -o json > grype-vex-report.json
 
       - uses: actions/upload-artifact@v4
-        with: {name: vex-artifacts, path: |
+        with: 
+          name: vex-artifacts
+          path: |
             vex.openvex.json
-            grype-vex-report.json}
+            grype-vex-report.json
 
 #####################################################
 # 4/5  – HUMAN-READABLE SUMMARY                     #
