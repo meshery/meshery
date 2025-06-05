@@ -223,63 +223,48 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
-      - name: Generate VEX Document (Grype)
+      - name: Generate VEX Document using vexctl
         run: |
-          # Extract high/critical CVEs from reports
+          # Extract high/critical CVEs
           trivy_cves=$(jq -r '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | .VulnerabilityID' artifacts/trivy-report/trivy-report.json)
           grype_image_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-image-report/grype-image-report.json)
           grype_sbom_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-sbom-report/grype-sbom-report.json)
           grype_repo_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-repo-report/grype-repo-report.json)
-          
-          # Combine and remove duplicates
-          all_cves=$(echo "$trivy_cves $grype_image_cves $grype_sbom_cves $grype_repo_cves" | tr ' ' '\n' | sort | uniq)
-          
-          # Generate VEX document with vexctl or create empty document if no CVEs
+
+          # Combine and deduplicate
+          all_cves=$(echo "$trivy_cves $grype_image_cves $grype_sbom_cves $grype_repo_cves" | tr ' ' '\n' | sort -u)
+
+          # Initialize empty VEX document
+          echo '{"@context":"https://openvex.dev/ns/v1","statements":[]}' > vexctl-vex.json
+
           if [ -z "$all_cves" ]; then
-            echo "No high/critical vulnerabilities found. Creating empty VEX document."
-            echo '{"@context":"https://openvex.dev/ns/v1","statements":[]}' > grype-vex.json
+            echo "No high/critical vulnerabilities found. VEX will remain empty."
           else
-            echo "$all_cves" | vexctl create \
-              --product "pkg:github/mack-droid/forkv1-meshery" \
-              --status under_investigation \
-              --file grype-vex.json
+            for cve in $all_cves; do
+              vexctl create \
+                --product "pkg:github/mack-droid/forkv1-meshery" \
+                --vuln "$cve" \
+                --status under_investigation \
+                --file temp-vex.json
+
+              # Merge into final VEX
+              jq -s '.[0].statements += .[1].statements | .[0]' vexctl-vex.json temp-vex.json > merged-vex.json
+              mv merged-vex.json vexctl-vex.json
+            done
+            rm -f temp-vex.json
           fi
-          
-          # Debug: Display the VEX document
-          cat grype-vex.json
-          
-          # Apply VEX with Grype
-          grype sbom:artifacts/sbom/cyclonedx-sbom.json --vex grype-vex.json -o json > grype-vex-report.json
-          
-      - name: Generate VEX Document (vexctl)
+
+          # Debug
+          cat vexctl-vex.json
+
+      - name: Apply VEX with Grype
         run: |
-          # Generate VEX using vexctl from Grype and Trivy reports
-          vexctl create \
-            --product "pkg:github/mack-droid/forkv1-meshery" \
-            --input <(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-image-report/grype-image-report.json) \
-            --status under_investigation \
-            --file vexctl-vex.json
-          vexctl create \
-            --product "pkg:github/mack-droid/forkv1-meshery" \
-            --input <(jq -r '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | .VulnerabilityID' artifacts/trivy-report/trivy-report.json) \
-            --status under_investigation \
-            --merge vexctl-vex.json \
-            --file vexctl-vex.json
-          vexctl create \
-            --product "pkg:github/mack-droid/forkv1-meshery" \
-            --input <(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-sbom-report/grype-sbom-report.json) \
-            --status under_investigation \
-            --merge vexctl-vex.json \
-            --file vexctl-vex.json
-          vexctl create \
-            --product "pkg:github/mack-droid/forkv1-meshery" \
-            --input <(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-repo-report/grype-repo-report.json) \
-            --status under_investigation \
-            --merge vexctl-vex.json \
-            --file vexctl-vex.json
-      - name: Validate VEX Reports
+          grype sbom:artifacts/sbom/cyclonedx-sbom.json \
+            --vex vexctl-vex.json -o json > grype-vex-report.json
+
+      - name: Validate VEX Artifacts
         run: |
-          for vex in grype-vex.json vexctl-vex.json; do
+          for vex in vexctl-vex.json; do
             if [ ! -f "$vex" ] || [ ! -s "$vex" ]; then
               echo "VEX file $vex is missing or empty."
               exit 1
@@ -297,14 +282,15 @@ jobs:
             echo "Grype VEX report does not have a valid 'matches' field."
             exit 1
           fi
+
       - name: Upload VEX Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: vex-artifacts
           path: |
-            grype-vex.json
             vexctl-vex.json
             grype-vex-report.json
+
 
   security-summary:
     name: Security Summary
