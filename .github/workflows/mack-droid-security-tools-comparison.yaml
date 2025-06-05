@@ -18,191 +18,166 @@ permissions:
   issues: write
 
 jobs:
-  sast-scan:
-    name: SAST Scan (GoSec)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.inputs.branch || github.ref_name }}
-
-      - name: Setup Go
-        uses: actions/setup-go@v4
-        with:
-          go-version: '1.21'
-
-      - name: Install GoSec
-        run: |
-          curl -sfL https://raw.githubusercontent.com/securego/gosec/master/install.sh | sh -s -- -b $HOME/.local/bin v2.19.0
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
-
-      - name: Run SAST Scan
-        continue-on-error: true
-        run: |
-          ulimit -v 4000000
-          go build ./...
-          gosec -fmt=json -out=sast-report.json -verbose ./...
-        env:
-          GOSEC_DIR: ./mesheryctl,./helpers,./models
-
-      - name: Upload SAST Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: sast-report
-          path: sast-report.json
-
-  container-scan:
-    name: Container Scan (Trivy)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Scan Container Image
-        uses: aquasecurity/trivy-action@0.14.0
-        with:
-          image-ref: 'layer5/meshery:stable-latest'
-          format: 'json'
-          output: 'trivy-report.json'
-          severity: 'CRITICAL,HIGH'
-          ignore-unfixed: true
-          exit-code: 0
-
-      - name: Parse Critical Findings
-        id: trivy-parser
-        run: |
-          critical_count=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' trivy-report.json)
-          echo "critical_count=$critical_count" >> $GITHUB_OUTPUT
-
-      - name: Upload Trivy Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-report
-          path: trivy-report.json
-
   sbom-generation:
-    name: SBOM Generation (Syft)
+    name: SBOM Generation
     runs-on: ubuntu-latest
-    outputs:
-      sbom-name: ${{ steps.sbom-gen.outputs.sbom-name }}
+    strategy:
+      matrix:
+        format: ['cyclonedx-json', 'spdx-json']
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Generate SBOM
-        id: sbom-gen
         uses: anchore/sbom-action@v0.15.1
         with:
-          output-format: 'cyclonedx-json'
-          output-file: 'meshery-sbom-${{ github.run_id }}.json'
-        env:
-          SYFT_CHECK_FOR_APP_UPDATE: 'false'
+          output-format: ${{ matrix.format }}
+          output-file: sbom-${{ matrix.format }}.json
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
-          name: sbom
-          path: meshery-sbom-${{ github.run_id }}.json
+          name: sbom-${{ matrix.format }}
+          path: sbom-${{ matrix.format }}.json
 
-  vulnerability-scan:
-    name: Vulnerability Scan (Grype)
+  container-scan:
+    name: Container Vulnerability Scan
     runs-on: ubuntu-latest
-    needs: [sbom-generation]
+    strategy:
+      matrix:
+        scanner: ['trivy', 'grype']
     steps:
-      - name: Download SBOM
-        uses: actions/download-artifact@v4
-        with:
-          name: sbom
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Install Grype
+      - name: ${{ matrix.scanner }} Scan
         uses: anchore/scan-action@v3
         with:
-          scanner: 'grype'
-          grype-version: 'v0.78.0'
+          scanner: ${{ matrix.scanner }}
+          target: 'docker:layer5/meshery:stable-latest'
+          output-format: 'json'
+          output-file: ${{ matrix.scanner }}-container-report.json
+          severity-cutoff: 'medium'
 
-      - name: Scan SBOM
-        run: |
-          grype sbom:$(ls meshery-sbom-*.json) -o json > grype-report.json
-          critical_count=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' grype-report.json)
-          echo "critical_count=$critical_count" >> $GITHUB_OUTPUT
-
-      - name: Upload Grype Report
+      - name: Upload Report
         uses: actions/upload-artifact@v4
         with:
-          name: grype-report
-          path: grype-report.json
+          name: ${{ matrix.scanner }}-container-report
+          path: ${{ matrix.scanner }}-container-report.json
+
+  source-scan:
+    name: Source Code Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: SAST Scan (GoSec)
+        uses: securego/gosec@master
+        with:
+          args: './... -fmt=json -out=gosec-report.json'
+        continue-on-error: true
+
+      - name: CycloneDX for Go
+        run: |
+          go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
+          cyclonedx-gomod app -output sbom-go.json
+
+      - name: Upload Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-reports
+          path: |
+            gosec-report.json
+            sbom-go.json
 
   vex-generation:
-    name: VEX Generation (vexctl)
+    name: VEX Document Creation
     runs-on: ubuntu-latest
-    needs: [sbom-generation, vulnerability-scan]
+    needs: [sbom-generation, container-scan]
     steps:
       - name: Download SBOM
         uses: actions/download-artifact@v4
         with:
-          name: sbom
+          pattern: sbom-cyclonedx-json.json
+          path: sboms
+
+      - name: Download Vulnerability Reports
+        uses: actions/download-artifact@v4
+        with:
+          pattern: '*container-report.json'
+          path: vuln-reports
 
       - name: Install vexctl
         uses: openvex/setup-vexctl@v1
         with:
           version: '0.3.0'
 
-      - name: Generate VEX Document
+      - name: Generate VEX
         run: |
-          vexctl generate --sbom $(ls meshery-sbom-*.json) \
-          --output meshery-vex.json \
-          --author "Meshery Security Bot"
+          vexctl merge \
+            --sbom sboms/sbom-cyclonedx-json.json \
+            --vex vuln-reports/trivy-container-report.json \
+            --vex vuln-reports/grype-container-report.json \
+            --output meshery.vex.json
 
-      - name: Upload VEX Document
+      - name: Upload VEX
         uses: actions/upload-artifact@v4
         with:
           name: vex-document
-          path: meshery-vex.json
+          path: meshery.vex.json
 
-  security-summary:
-    name: Security Summary
+  security-dashboard:
+    name: Security Dashboard
     runs-on: ubuntu-latest
-    needs: [sast-scan, container-scan, vulnerability-scan, vex-generation]
+    needs: [sbom-generation, container-scan, source-scan, vex-generation]
     steps:
       - name: Download All Reports
         uses: actions/download-artifact@v4
         with:
           path: security-reports
 
-      - name: Generate Summary
+      - name: Create Comparative Summary
         run: |
-          echo "# Security Scan Summary ($(date +%Y-%m-%d))" > summary.md
-          echo "## SAST Findings" >> summary.md
-          jq '.Issues | length' security-reports/sast-report.json | xargs echo "- **GoSec Issues**: " >> summary.md
+          echo "# Security Scan Comparison ($(date +%Y-%m-%d))"
+          echo "## Container Vulnerability Scanners"
           
-          echo "## Container Vulnerabilities" >> summary.md
-          trivy_critical=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' security-reports/trivy-report.json)
-          echo "- **CRITICAL**: $trivy_critical" >> summary.md
-          
-          echo "## SBOM Vulnerabilities" >> summary.md
-          grype_critical=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/grype-report.json)
-          echo "- **CRITICAL**: $grype_critical" >> summary.md
-          
-          echo "## VEX Document" >> summary.md
-          echo "- Statements: $(jq '.statements | length' security-reports/vex-document/meshery-vex.json)" >> summary.md
-          
-          echo "## Next Steps" >> summary.md
-          echo "- [View Full Reports](https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)" >> summary.md
-          echo "- [Triage Guidance](https://docs.meshery.io/security)" >> summary.md
-          
-          cat summary.md >> $GITHUB_STEP_SUMMARY
+          echo "### Trivy Findings"
+          echo "| Severity | Count |"
+          echo "|----------|-------|"
+          jq -r '.Results[].Vulnerabilities? 
+            | group_by(.Severity) 
+            | map({severity: .[0].Severity, count: length}) 
+            | .[] 
+            | "| \(.severity) | \(.count) |"' security-reports/trivy-container-report.json
 
-      - name: Create Security Issue
-        if: ${{ needs.container-scan.outputs.critical_count != '0' || needs.vulnerability-scan.outputs.critical_count != '0' }}
-        uses: actions/github-script@v7
+          echo "### Grype Findings"
+          echo "| Severity | Count |"
+          echo "|----------|-------|"
+          jq -r '.matches 
+            | group_by(.vulnerability.severity) 
+            | map({severity: .[0].vulnerability.severity, count: length}) 
+            | .[] 
+            | "| \(.severity) | \(.count) |"' security-reports/grype-container-report.json
+
+          echo "## SBOM Formats"
+          echo "| Format | Components | Dependencies |"
+          echo "|--------|------------|--------------|"
+          jq -r '"| CycloneDX | \(.components | length) | \(."component-versions" | length) |"' security-reports/sbom-cyclonedx-json.json
+          jq -r '"| SPDX | \(.packages | length) | \(."relationships" | length) |"' security-reports/sbom-spdx-json.json
+
+          echo "## VEX Document"
+          echo "| Status | Vulnerabilities |"
+          echo "|--------|-----------------|"
+          jq -r '.statements 
+            | group_by(.status) 
+            | map({status: .[0].status, count: length}) 
+            | .[] 
+            | "| \(.status) | \(.count) |"' security-reports/vex-document/meshery.vex.json
+        >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload to Security Dashboard
+        uses: github/codeql-action/upload-sarif@v2
         with:
-          script: |
-            const summary = fs.readFileSync('summary.md', 'utf8');
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `Critical Security Findings - ${new Date().toISOString()}`,
-              body: summary,
-              labels: ['security', 'critical']
-            })
+          sarif_file: security-reports/gosec-report.json
+          category: sast
