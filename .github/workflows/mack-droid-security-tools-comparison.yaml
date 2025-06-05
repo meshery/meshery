@@ -26,19 +26,16 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.21'
           cache: true
-
       - name: Generate CycloneDX SBOM
         uses: CycloneDX/gh-gomod-generate-sbom@v2
         with:
           version: v1
           args: mod -licenses -json -output bom.json
-
       - name: Validate SBOM
         run: |
           jq . bom.json
@@ -55,7 +52,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
       - name: Scan with Trivy
         uses: aquasecurity/trivy-action@0.14.0
         with:
@@ -64,7 +60,6 @@ jobs:
           output: 'trivy-report.json'
           severity: 'CRITICAL,HIGH'
           ignore-unfixed: false
-
       - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
         with:
@@ -72,26 +67,36 @@ jobs:
           path: trivy-report.json
 
   vulnerability-scan:
-    name: Vulnerability Scan (SBOM)
+    name: Vulnerability Scan (Image)
     runs-on: ubuntu-latest
-    needs: sbom-generation
     steps:
-      - name: Download SBOM
-        uses: actions/download-artifact@v4
-        with:
-          name: sbom
-          path: bom.json
-
-      - name: Scan SBOM with Grype
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Install Grype
         run: |
-          grype sbom:bom.json -o json > grype-report.json
-        continue-on-error: true
-
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+          grype --version
+      - name: Scan Container Image with Grype
+        run: |
+          grype layer5/meshery:stable-latest -o json > grype-report.json
+        env:
+          GRYPE_DB_UPDATE_URL: https://toolbox-data.anchore.io/grype/databases/listing.json
+      - name: Validate Grype Report
+        run: |
+          if [ ! -f "grype-report.json" ] || [ ! -s "grype-report.json" ]; then
+            echo "Grype report is missing or empty."
+            exit 1
+          fi
+          if ! jq -e '.matches' grype-report.json > /dev/null; then
+            echo "Grype report does not have a valid 'matches' field."
+            exit 1
+          fi
       - name: Upload Grype Report
         uses: actions/upload-artifact@v4
         with:
           name: grype-report
           path: grype-report.json
+
   vex-generation:
     name: VEX Generation
     runs-on: ubuntu-latest
@@ -99,31 +104,26 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.21'
           cache: true
-  
       - name: Download SBOM
         uses: actions/download-artifact@v4
         with:
           name: sbom
           path: artifacts/sbom
-  
       - name: Download Trivy Report
         uses: actions/download-artifact@v4
         with:
           name: trivy-report
           path: artifacts/reports/trivy-report
-  
       - name: Download Grype Report
         uses: actions/download-artifact@v4
         with:
           name: grype-report
           path: artifacts/reports/grype-report
-  
       - name: Generate VEX Document
         run: |
           # Extract CVEs from Trivy report
@@ -161,13 +161,12 @@ jobs:
           done
           
           echo $vex_json > meshery.vex.json
-
       - name: Upload VEX Document
         uses: actions/upload-artifact@v4
         with:
           name: vex-document
           path: meshery.vex.json
-  
+
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
@@ -177,9 +176,25 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: security-reports
-
       - name: Generate Summary
         run: |
+          # Check if files exist and are valid
+          if [ ! -f "security-reports/sbom/bom.json" ] || [ ! -s "security-reports/sbom/bom.json" ]; then
+            echo "SBOM file is missing or empty." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          if [ ! -f "security-reports/trivy-report/trivy-report.json" ] || [ ! -s "security-reports/trivy-report/trivy-report.json" ]; then
+            echo "Trivy report is missing or empty." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          if [ ! -f "security-reports/grype-report/grype-report.json" ] || [ ! -s "security-reports/grype-report/grype-report.json" ]; then
+            echo "Grype report is missing or empty." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          if [ ! -f "security-reports/vex-document/meshery.vex.json" ] || [ ! -s "security-reports/vex-document/meshery.vex.json" ]; then
+            echo "VEX document is missing or empty." >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
           echo "## SBOM Details" >> $GITHUB_STEP_SUMMARY
           echo "- Components: $(jq '.components | length' security-reports/sbom/bom.json)" >> $GITHUB_STEP_SUMMARY
           echo "- Dependencies: $(jq '.dependencies | length' security-reports/sbom/bom.json)" >> $GITHUB_STEP_SUMMARY
@@ -197,7 +212,6 @@ jobs:
           
           echo "## VEX Document" >> $GITHUB_STEP_SUMMARY
           echo "- Statements: $(jq '.statements | length' security-reports/vex-document/meshery.vex.json)" >> $GITHUB_STEP_SUMMARY
-  
       - name: Generate Comparison Report
         run: |
           # Check if SBOM file exists and is not empty
@@ -216,14 +230,14 @@ jobs:
           echo "| Tool | Direct Dependencies | Transitive Dependencies |" >> $GITHUB_STEP_SUMMARY
           echo "|------|---------------------|------------------------|" >> $GITHUB_STEP_SUMMARY
           
-          # # Calculate direct and transitive dependencies safely
-          # direct=$(jq '[.components[] | select(.type == "library")] | length' security-reports/sbom/bom.json)
-          # transitive=$(jq '[.components[] | select(.type == "library") | .dependencies?[]] | unique | length // 0' security-reports/sbom/bom.json)
-          # echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
+          # Calculate direct and transitive dependencies safely
+          direct=$(jq '[.components[] | select(.type == "library")] | length' security-reports/sbom/bom.json)
+          transitive=$(jq '[.components[] | select(.type == "library") | .dependencies?[]] | unique | length // 0' security-reports/sbom/bom.json)
+          echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
           
-          # echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
-          # echo "| License | Count |" >> $GITHUB_STEP_SUMMARY
-          # echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
-          # jq -r '.components[].licenses[].license.id? // empty' security-reports/sbom/bom.json | 
-          #   sort | uniq -c | sort -nr | 
-          #   awk '{if ($2 != "") print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+          echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
+          echo "| License | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          jq -r '.components[].licenses[].license.id? // empty' security-reports/sbom/bom.json | 
+            sort | uniq -c | sort -nr | 
+            awk '{if ($2 != "") print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
