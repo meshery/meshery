@@ -197,7 +197,7 @@ jobs:
           
           echo "## VEX Document" >> $GITHUB_STEP_SUMMARY
           echo "- Statements: $(jq '.statements | length' security-reports/vex-document/meshery.vex.json)" >> $GITHUB_STEP_SUMMARY
-        
+  
       - name: Generate Comparison Report
         run: |
           # Check if SBOM file exists and is not empty
@@ -226,4 +226,4 @@ jobs:
           echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
           jq -r '.components[].licenses[].license.id? // empty' security-reports/sbom/bom.json | 
             sort | uniq -c | sort -nr | 
-            awk '{print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+            awk '{if ($2 != "") print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
