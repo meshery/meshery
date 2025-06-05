@@ -216,14 +216,14 @@ jobs:
           echo "| Tool | Direct Dependencies | Transitive Dependencies |" >> $GITHUB_STEP_SUMMARY
           echo "|------|---------------------|------------------------|" >> $GITHUB_STEP_SUMMARY
           
-          # Calculate direct and transitive dependencies safely
-          direct=$(jq '[.components[] | select(.type == "library")] | length' security-reports/sbom/bom.json)
-          transitive=$(jq '[.components[] | select(.type == "library") | .dependencies?[]] | unique | length // 0' security-reports/sbom/bom.json)
-          echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
+          # # Calculate direct and transitive dependencies safely
+          # direct=$(jq '[.components[] | select(.type == "library")] | length' security-reports/sbom/bom.json)
+          # transitive=$(jq '[.components[] | select(.type == "library") | .dependencies?[]] | unique | length // 0' security-reports/sbom/bom.json)
+          # echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
           
-          echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
-          echo "| License | Count |" >> $GITHUB_STEP_SUMMARY
-          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
-          jq -r '.components[].licenses[].license.id? // empty' security-reports/sbom/bom.json | 
-            sort | uniq -c | sort -nr | 
-            awk '{if ($2 != "") print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+          # echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
+          # echo "| License | Count |" >> $GITHUB_STEP_SUMMARY
+          # echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          # jq -r '.components[].licenses[].license.id? // empty' security-reports/sbom/bom.json | 
+          #   sort | uniq -c | sort -nr | 
+          #   awk '{if ($2 != "") print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
