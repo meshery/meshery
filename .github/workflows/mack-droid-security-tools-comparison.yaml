@@ -19,73 +19,58 @@ permissions:
 
 jobs:
   sbom-generation:
-    name: SBOM Generation
+    name: SBOM Generation (CycloneDX)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-
-      - name: Generate SBOM with Syft
-        uses: anchore/sbom-action@v0.15.1
         with:
-          output-format: 'cyclonedx-json'
-          output-file: 'sbom.json'
-
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom.json
-
-  sast-scan:
-    name: SAST Scan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+          fetch-depth: 0  # Required for full history
 
       - name: Setup Go
         uses: actions/setup-go@v4
         with:
           go-version: '1.21'
+          cache: true
 
-      - name: Run GoSec
-        uses: securego/gosec@master
+      - name: Generate CycloneDX SBOM
+        uses: CycloneDX/gh-gomod-generate-sbom@v2
         with:
-          args: './... -fmt=json -out=gosec-report.json'
-        continue-on-error: true
+          version: v1
+          args: mod -licenses -json -output bom.json
 
-      - name: Upload SAST Report
+      - name: Validate SBOM
+        run: |
+          jq . bom.json  # Simple validation
+          echo "Components: $(jq '.components | length' bom.json)"
+
+      - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
-          name: sast-report
-          path: gosec-report.json
+          name: sbom
+          path: bom.json
 
   container-scan:
     name: Container Scan
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        scanner: [trivy, grype]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Run ${{ matrix.scanner }} Scan
-        run: |
-          if [ "${{ matrix.scanner }}" = "trivy" ]; then
-            trivy image --format json --output trivy-report.json \
-              --severity CRITICAL,HIGH layer5/meshery:stable-latest
-          else
-            grype docker:layer5/meshery:stable-latest --output json --file grype-report.json
-          fi
-        continue-on-error: true
+      - name: Scan with Trivy
+        uses: aquasecurity/trivy-action@0.14.0
+        with:
+          image-ref: 'layer5/meshery:stable-latest'
+          format: 'json'
+          output: 'trivy-report.json'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: false
 
-      - name: Upload ${{ matrix.scanner }} Report
+      - name: Upload Trivy Report
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.scanner }}-report
-          path: ${{ matrix.scanner }}-report.json
+          name: trivy-report
+          path: trivy-report.json
 
   vulnerability-scan:
     name: Vulnerability Scan (SBOM)
@@ -96,18 +81,18 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: sbom
-          path: sbom.json
+          path: bom.json
 
-      - name: Run Grype Scan
+      - name: Scan SBOM with Grype
         run: |
-          grype sbom:sbom.json --output json --file grype-sbom-report.json
+          grype sbom:bom.json -o json > grype-report.json
         continue-on-error: true
 
       - name: Upload Grype Report
         uses: actions/upload-artifact@v4
         with:
-          name: grype-sbom-report
-          path: grype-sbom-report.json
+          name: grype-report
+          path: grype-report.json
 
   vex-generation:
     name: VEX Generation
@@ -118,9 +103,9 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: sbom
-          path: sbom.json
+          path: bom.json
 
-      - name: Download Vulnerability Reports
+      - name: Download Scan Reports
         uses: actions/download-artifact@v4
         with:
           pattern: '*-report.json'
@@ -133,9 +118,11 @@ jobs:
 
       - name: Generate VEX Document
         run: |
-          vexctl generate --sbom sbom.json \
-            --output meshery.vex.json \
-            --author "Meshery Security Automation"
+          vexctl generate \
+            --sbom bom.json \
+            --vex reports/trivy-report.json \
+            --vex reports/grype-report.json \
+            --output meshery.vex.json
 
       - name: Upload VEX Document
         uses: actions/upload-artifact@v4
@@ -146,7 +133,7 @@ jobs:
   security-summary:
     name: Security Summary
     runs-on: ubuntu-latest
-    needs: [sast-scan, container-scan, vulnerability-scan, vex-generation]
+    needs: [sbom-generation, container-scan, vulnerability-scan, vex-generation]
     steps:
       - name: Download Reports
         uses: actions/download-artifact@v4
@@ -155,49 +142,37 @@ jobs:
 
       - name: Generate Summary
         run: |
-          echo "# Security Scan Summary ($(date +%Y-%m-%d))" > summary.md
+          echo "## SBOM Details" >> $GITHUB_STEP_SUMMARY
+          echo "- Components: $(jq '.components | length' security-reports/sbom/bom.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- Dependencies: $(jq '.dependencies | length' security-reports/sbom/bom.json)" >> $GITHUB_STEP_SUMMARY
+          echo "- Licenses: $(jq '.components[].licenses | length' security-reports/sbom/bom.json | awk '{s+=$1} END {print s}')" >> $GITHUB_STEP_SUMMARY
           
-          echo "## SAST Findings" >> summary.md
-          sast_count=$(jq '.Issues | length' security-reports/sast-report/gosec-report.json)
-          echo "- **GoSec Issues**: $sast_count" >> summary.md
+          echo "## Vulnerability Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Scanner | CRITICAL | HIGH |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|----------|------|" >> $GITHUB_STEP_SUMMARY
+          trivy_crit=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' security-reports/trivy-report/trivy-report.json)
+          trivy_high=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' security-reports/trivy-report/trivy-report.json)
+          grype_crit=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/grype-report/grype-report.json)
+          grype_high=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' security-reports/grype-report/grype-report.json)
+          echo "| Trivy | $trivy_crit | $trivy_high |" >> $GITHUB_STEP_SUMMARY
+          echo "| Grype | $grype_crit | $grype_high |" >> $GITHUB_STEP_SUMMARY
           
-          echo "## Container Vulnerabilities" >> summary.md
-          for scanner in trivy grype; do
-            critical=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' security-reports/${scanner}-report/${scanner}-report.json 2>/dev/null || echo 0)
-            high=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' security-reports/${scanner}-report/${scanner}-report.json 2>/dev/null || echo 0)
-            echo "- **$scanner CRITICAL**: $critical" >> summary.md
-            echo "- **$scanner HIGH**: $high" >> summary.md
-          done
+          echo "## VEX Document" >> $GITHUB_STEP_SUMMARY
+          echo "- Statements: $(jq '.statements | length' security-reports/vex-document/meshery.vex.json)" >> $GITHUB_STEP_SUMMARY
+        
+      - name: Generate Comparison Report
+        run: |
+          echo "## Dependency Comparison" >> $GITHUB_STEP_SUMMARY
+          echo "| Tool | Direct Dependencies | Transitive Dependencies |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------------------|------------------------|" >> $GITHUB_STEP_SUMMARY
           
-          echo "## SBOM Vulnerabilities" >> summary.md
-          critical=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/grype-sbom-report/grype-sbom-report.json)
-          high=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' security-reports/grype-sbom-report/grype-sbom-report.json)
-          echo "- **CRITICAL**: $critical" >> summary.md
-          echo "- **HIGH**: $high" >> summary.md
+          # CycloneDX counts
+          direct=$(jq '[.components[] | select(.type == "library")] | length' security-reports/sbom/bom.json)
+          transitive=$(jq '[.components[] | select(.type == "library") | .dependencies[]] | unique | length' security-reports/sbom/bom.json)
+          echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
           
-          echo "## VEX Document" >> summary.md
-          statements=$(jq '.statements | length' security-reports/vex-document/meshery.vex.json)
-          echo "- Statements: $statements" >> summary.md
-          
-          cat summary.md >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload to GitHub Security
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: security-reports/sast-report/gosec-report.json
-          category: gosec
-
-      - name: Create Security Issue if Critical Found
-        if: ${{ contains(steps.summary.outputs.summary, 'CRITICAL') }}
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            const summary = fs.readFileSync('summary.md', 'utf8');
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `Critical Security Findings - ${new Date().toISOString()}`,
-              body: summary,
-              labels: ['security', 'critical']
-            })
+          # Show license distribution
+          echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
+          jq -r '.components[].licenses[].license.id' security-reports/sbom/bom.json | 
+            sort | uniq -c | sort -nr | 
+            awk '{print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
