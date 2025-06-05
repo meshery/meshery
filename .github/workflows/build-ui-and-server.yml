@@ -131,7 +131,7 @@ jobs:
         if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
         run: |
           mkdir -p ./pr
-          echo "${{ github.event.number }}" > ./pr/number
+          echo "${{ github.pull_request.number }}" > ./pr/number
           echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha    
       - name: Upload Test Report
         if: ${{ !cancelled() }}
