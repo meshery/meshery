@@ -165,10 +165,10 @@ jobs:
 
           cat vex.openvex.json
 
-      - name: Apply VEX with Grype
-        run: |
-          grype sbom:artifacts/sbom/cyclonedx-sbom.json \
-                --vex vex.openvex.json -o json > grype-vex-report.json
+      # - name: Apply VEX with Grype
+      #   run: |
+      #     grype sbom:artifacts/sbom/cyclonedx-sbom.json \
+      #           --vex vex.openvex.json -o json > grype-vex-report.json
 
       - uses: actions/upload-artifact@v4
         with: 
