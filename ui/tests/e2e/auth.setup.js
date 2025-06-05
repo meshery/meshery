@@ -8,7 +8,7 @@ setup('authenticate as Meshery provider', async ({ page }) => {
 
   await page.goto(ENV.PROVIDER_SELECTION_URL);
   await page.getByLabel('Select Provider').click();
-  await page.getByRole('menuitem', { name: 'Meshery' }).click();
+  await page.getByRole('menuitem', { name: 'Layer5' }).click();
 
   await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
   await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
