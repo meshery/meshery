@@ -25,7 +25,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Required for full history
+          fetch-depth: 0
 
       - name: Setup Go
         uses: actions/setup-go@v4
@@ -41,9 +41,8 @@ jobs:
 
       - name: Validate SBOM
         run: |
-          jq . bom.json  # Simple validation
+          jq . bom.json
           echo "Components: $(jq '.components | length' bom.json)"
-
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
@@ -99,29 +98,42 @@ jobs:
     runs-on: ubuntu-latest
     needs: [sbom-generation, container-scan, vulnerability-scan]
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: true
+
+      - name: Install vexctl
+        run: go install github.com/openvex/vexctl@v0.3.0
+
       - name: Download SBOM
         uses: actions/download-artifact@v4
         with:
           name: sbom
-          path: bom.json
+          path: artifacts/sbom
 
-      - name: Download Scan Reports
+      - name: Download Trivy Report
         uses: actions/download-artifact@v4
         with:
-          pattern: '*-report.json'
-          path: reports
+          name: trivy-report
+          path: artifacts/reports/trivy-report
 
-      - name: Install vexctl
-        uses: openvex/setup-vexctl@v1
+      - name: Download Grype Report
+        uses: actions/download-artifact@v4
         with:
-          version: '0.3.0'
+          name: grype-report
+          path: artifacts/reports/grype-report
 
       - name: Generate VEX Document
         run: |
           vexctl generate \
-            --sbom bom.json \
-            --vex reports/trivy-report.json \
-            --vex reports/grype-report.json \
+            --sbom artifacts/sbom/bom.json \
+            --vex artifacts/reports/trivy-report/trivy-report.json \
+            --vex artifacts/reports/grype-report/grype-report.json \
             --output meshery.vex.json
 
       - name: Upload VEX Document
@@ -166,12 +178,10 @@ jobs:
           echo "| Tool | Direct Dependencies | Transitive Dependencies |" >> $GITHUB_STEP_SUMMARY
           echo "|------|---------------------|------------------------|" >> $GITHUB_STEP_SUMMARY
           
-          # CycloneDX counts
           direct=$(jq '[.components[] | select(.type == "library")] | length' security-reports/sbom/bom.json)
           transitive=$(jq '[.components[] | select(.type == "library") | .dependencies[]] | unique | length' security-reports/sbom/bom.json)
           echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
           
-          # Show license distribution
           echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
           jq -r '.components[].licenses[].license.id' security-reports/sbom/bom.json | 
             sort | uniq -c | sort -nr | 
