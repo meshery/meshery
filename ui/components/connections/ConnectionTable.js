@@ -66,7 +66,7 @@ import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
-// test
+
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
     name: 'FETCH_CONNECTIONS',
