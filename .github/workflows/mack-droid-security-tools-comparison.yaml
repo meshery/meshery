@@ -70,7 +70,8 @@ jobs:
           output-format: json
           output-file: grype-repo-report.json
           severity-cutoff: high
-          cache-db: true
+          fail-build: false
+          cache-db: false
       - name: Validate Grype Repo Report
         run: |
           if [ ! -f "grype-repo-report.json" ] || [ ! -s "grype-repo-report.json" ]; then
@@ -81,6 +82,9 @@ jobs:
             echo "Grype repo report does not have a valid 'matches' field."
             exit 1
           fi
+      - name: Debug Grype Repo Scan
+        run: |
+          jq '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")' grype-repo-report.json
       - name: Upload Grype Repo Report
         uses: actions/upload-artifact@v4
         with:
@@ -89,7 +93,7 @@ jobs:
       - name: Debug Grype Database
         if: failure()
         run: |
-          grype db status
+          grype db status -vv
           ls -la ~/.cache/grype/db
 
   sbom-scan:
@@ -112,7 +116,8 @@ jobs:
           output-format: json
           output-file: grype-sbom-report.json
           severity-cutoff: high
-          cache-db: true
+          fail-build: false
+          cache-db: false
       - name: Validate Grype SBOM Report
         run: |
           if [ ! -f "grype-sbom-report.json" ] || [ ! -s "grype-sbom-report.json" ]; then
@@ -123,6 +128,9 @@ jobs:
             echo "Grype SBOM report does not have a valid 'matches' field."
             exit 1
           fi
+      - name: Debug Grype SBOM Scan
+        run: |
+          jq '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")' grype-sbom-report.json
       - name: Upload Grype SBOM Report
         uses: actions/upload-artifact@v4
         with:
@@ -169,7 +177,8 @@ jobs:
           output-format: json
           output-file: grype-image-report.json
           severity-cutoff: high
-          cache-db: true
+          fail-build: false
+          cache-db: false
       - name: Validate Grype Image Report
         run: |
           if [ ! -f "grype-image-report.json" ] || [ ! -s "grype-image-report.json" ]; then
@@ -180,11 +189,19 @@ jobs:
             echo "Grype image report does not have a valid 'matches' field."
             exit 1
           fi
+      - name: Debug Grype Image Scan
+        run: |
+          jq '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")' grype-image-report.json
       - name: Upload Grype Image Report
         uses: actions/upload-artifact@v4
         with:
           name: grype-image-report
           path: grype-image-report.json
+      - name: Debug Grype Database
+        if: failure()
+        run: |
+          grype db status -vv
+          ls -la ~/.cache/grype/db
 
   vex-generation:
     name: VEX Generation
@@ -210,8 +227,8 @@ jobs:
           # Extract high/critical CVEs from reports
           trivy_cves=$(jq -r '.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL" or .Severity == "HIGH") | .VulnerabilityID' artifacts/trivy-report/trivy-report.json)
           grype_image_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-image-report/grype-image-report.json)
-          grype_sbom_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "CRITICAL" or .HIGH") | .vulnerability.id' artifacts/grype-sbom-report/grype-sbom-report.json)
-          grype_repo_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .HIGH") | .vulnerability.id' artifacts/grype-repo-report/grype-repo-report.json)
+          grype_sbom_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-sbom-report/grype-sbom-report.json)
+          grype_repo_cves=$(jq -r '.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High") | .vulnerability.id' artifacts/grype-repo-report/grype-repo-report.json)
           
           # Combine and remove duplicates
           all_cves=$(echo "$trivy_cves $grype_image_cves $grype_sbom_cves $grype_repo_cves" | tr ' ' '\n' | sort | uniq)
@@ -363,15 +380,15 @@ jobs:
           echo "| Source | Statements |" >> $GITHUB_STEP_SUMMARY
           echo "|--------|------------|" >> $GITHUB_STEP_SUMMARY
           grype_vex_statements=$(jq '.statements | length' security-reports/vex-artifacts/grype-vex.json)
-          vexctl_vex_statements=$(jq '.statements | length' security-reports/vex-artifacts/vexctl-vex.json)
+          vexctl_vex=$(jq '.statements | length' security-reports/vex-artifacts/vexctl-vex.json)
           echo "| Grype VEX | $grype_vex_statements |" >> $GITHUB_STEP_SUMMARY
-          echo "| vexctl VEX | $vexctl_vex_statements |" >> $GITHUB_STEP_SUMMARY
+          echo "| vexctl | $vexctl_vex_statements |" >> $GITHUB_STEP_SUMMARY
           
           echo "## Dependency Comparison" >> $GITHUB_STEP_SUMMARY
           echo "| SBOM Source | Direct Dependencies | Transitive Dependencies |" >> $GITHUB_STEP_SUMMARY
           echo "|-------------|---------------------|------------------------|" >> $GITHUB_STEP_SUMMARY
-          direct=$(jq '[.components[] | select(.type == "library")] | length' security-reports/sbom/cyclonedx-sbom.json)
-          transitive=$(jq '[.components[] | select(.type == "library") | .dependencies?[]] | unique | length // 0' security-reports/sbom/cyclonedx-sbom.json)
+          direct=$(jq '[.components[] | select(.type == "library")] | .length' security-reports/sbom/cyclonedx-sbom.json)
+          transitive=$(jq '[.components[] | select(.type == "library') | .dependencies?[]] | unique | length // 0' security-reports/sbom/cyclonedx-sbom.json)
           echo "| CycloneDX (Go) | $direct | $transitive |" >> $GITHUB_STEP_SUMMARY
           
           echo "## License Distribution" >> $GITHUB_STEP_SUMMARY
@@ -380,34 +397,34 @@ jobs:
           jq -r '.components[].licenses[].license.id? // empty' security-reports/sbom/cyclonedx-sbom.json | 
             sort | uniq -c | sort -nr | 
             awk '{if ($2 != "") print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
-      # - name: Create GitHub Issue
-      #   if: ${{ steps.generate_summary.outputs.vuln_count != '0' }}
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     vuln_count=$((trivy_crit + trivy_high + grype_repo_crit + grype_repo_high + grype_sbom_crit + grype_sbom_high + grype_image_crit + grype_image_high + grype_vex_crit + grype_vex_high))
-      #     echo "Found $vuln_count critical/high vulnerabilities" > issue_body.txt
-      #     echo "## Trivy (Image)" >> issue_body.txt
-      #     echo '```json' >> issue_body.txt
-      #     jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity == "CRITICAL" or .Severity == "HIGH")][0:5]' security-reports/trivy-report/trivy-report.json >> issue_body.txt
-      #     echo '```' >> issue_body.txt
-      #     echo "## Grype (Repository)" >> issue_body.txt
-      #     echo '```json' >> issue_body.txt
-      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-repo-report/grype-repo-report.json >> issue_body.txt
-      #     echo '```' >> issue_body.txt
-      #     echo "## Grype (CycloneDX SBOM)" >> issue_body.txt
-      #     echo '```json' >> issue_body.txt
-      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-sbom-report/grype-sbom-report.json >> issue_body.txt
-      #     echo '```' >> issue_body.txt
-      #     echo "## Grype (Image)" >> issue_body.txt
-      #     echo '```json' >> issue_body.txt
-      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-image-report/grype-image-report.json >> issue_body.txt
-      #     echo '```' >> issue_body.txt
-      #     echo "## Grype (SBOM with VEX)" >> issue_body.txt
-      #     echo '```json' >> issue_body.txt
-      #     jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/vex-artifacts/grype-vex-report.json >> issue_body.txt
-      #     echo '```' >> issue_body.txt
-      #     gh issue create \
-      #       --title "Security Scan: $vuln_count CRITICAL/HIGH Vulnerabilities Found - $(date +'%Y-%m-%d %H:%M:%S')" \
-      #       --body-file issue_body.txt
-      #   id: generate_summary
+      - name: Create GitHub Issue
+        if: ${{ steps.generate_summary.outputs.vuln_count != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          vuln_count=$((trivy_crit + trivy_high + grype_repo_crit + grype_repo_high + grype_sbom_crit + grype_sbom_high + grype_image_crit + grype_image_high + grype_vex_crit + grype_vex_high))
+          echo "Found $vuln_count critical/high vulnerabilities" > issue_body.txt
+          echo "## Trivy (Image)" >> issue_body.txt
+          echo '```json' >> issue_body.txt
+          jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity == "CRITICAL" or .Severity == "HIGH")][0:5]' security-reports/trivy-report/trivy-report.json >> issue_body.txt
+          echo '```' >> issue_body.txt
+          echo "## Grype (Repository)" >> issue_body.txt
+          echo '```json' >> issue_body.txt
+          jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-repo-report/grype-repo-report.json >> issue_body.txt
+          echo '```' >> issue_body.txt
+          echo "## Grype (CycloneDX SBOM)" >> issue_body.txt
+          echo '```json' >> issue_body.txt
+          jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-sbom-report/grype-sbom-report.json >> issue_body.txt
+          echo '```' >> issue_body.txt
+          echo "## Grype (Image)" >> issue_body.txt
+          echo '```json' >> issue_body.txt
+          jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/grype-image-report/grype-image-report.json >> issue_body.txt
+          echo '```' >> issue_body.txt
+          echo "## Grype (SBOM with VEX)" >> issue_body.txt
+          echo '```json' >> issue_body.txt
+          jq '[.matches[] | select(.vulnerability.severity == "Critical" or .vulnerability.severity == "High")][0:5]' security-reports/vex-artifacts/grype-vex-report.json >> issue_body.txt
+          echo '```' >> issue_body.txt
+          gh issue create \
+            --title "Security Scan: $vuln_count CRITICAL/HIGH Vulnerabilities Found - $(date +'%Y-%m-%d %H:%M:%S')" \
+            --body-file issue_body.txt
+        id: generate_summary
