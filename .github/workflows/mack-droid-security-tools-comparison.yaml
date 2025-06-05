@@ -21,162 +21,183 @@ jobs:
   sbom-generation:
     name: SBOM Generation
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        format: ['cyclonedx-json', 'spdx-json']
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Generate SBOM
+      - name: Generate SBOM with Syft
         uses: anchore/sbom-action@v0.15.1
         with:
-          output-format: ${{ matrix.format }}
-          output-file: sbom-${{ matrix.format }}.json
+          output-format: 'cyclonedx-json'
+          output-file: 'sbom.json'
 
       - name: Upload SBOM
         uses: actions/upload-artifact@v4
         with:
-          name: sbom-${{ matrix.format }}
-          path: sbom-${{ matrix.format }}.json
+          name: sbom
+          path: sbom.json
 
-  container-scan:
-    name: Container Vulnerability Scan
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        scanner: ['trivy', 'grype']
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: ${{ matrix.scanner }} Scan
-        uses: anchore/scan-action@v3
-        with:
-          scanner: ${{ matrix.scanner }}
-          target: 'docker:layer5/meshery:stable-latest'
-          output-format: 'json'
-          output-file: ${{ matrix.scanner }}-container-report.json
-          severity-cutoff: 'medium'
-
-      - name: Upload Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.scanner }}-container-report
-          path: ${{ matrix.scanner }}-container-report.json
-
-  source-scan:
-    name: Source Code Analysis
+  sast-scan:
+    name: SAST Scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: SAST Scan (GoSec)
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Run GoSec
         uses: securego/gosec@master
         with:
           args: './... -fmt=json -out=gosec-report.json'
         continue-on-error: true
 
-      - name: CycloneDX for Go
-        run: |
-          go install github.com/CycloneDX/cyclonedx-gomod/cmd/cyclonedx-gomod@latest
-          cyclonedx-gomod app -output sbom-go.json
-
-      - name: Upload Reports
+      - name: Upload SAST Report
         uses: actions/upload-artifact@v4
         with:
-          name: source-reports
-          path: |
-            gosec-report.json
-            sbom-go.json
+          name: sast-report
+          path: gosec-report.json
 
-  vex-generation:
-    name: VEX Document Creation
+  container-scan:
+    name: Container Scan
     runs-on: ubuntu-latest
-    needs: [sbom-generation, container-scan]
+    strategy:
+      matrix:
+        scanner: [trivy, grype]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Run ${{ matrix.scanner }} Scan
+        run: |
+          if [ "${{ matrix.scanner }}" = "trivy" ]; then
+            trivy image --format json --output trivy-report.json \
+              --severity CRITICAL,HIGH layer5/meshery:stable-latest
+          else
+            grype docker:layer5/meshery:stable-latest --output json --file grype-report.json
+          fi
+        continue-on-error: true
+
+      - name: Upload ${{ matrix.scanner }} Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.scanner }}-report
+          path: ${{ matrix.scanner }}-report.json
+
+  vulnerability-scan:
+    name: Vulnerability Scan (SBOM)
+    runs-on: ubuntu-latest
+    needs: sbom-generation
     steps:
       - name: Download SBOM
         uses: actions/download-artifact@v4
         with:
-          pattern: sbom-cyclonedx-json.json
-          path: sboms
+          name: sbom
+          path: sbom.json
+
+      - name: Run Grype Scan
+        run: |
+          grype sbom:sbom.json --output json --file grype-sbom-report.json
+        continue-on-error: true
+
+      - name: Upload Grype Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: grype-sbom-report
+          path: grype-sbom-report.json
+
+  vex-generation:
+    name: VEX Generation
+    runs-on: ubuntu-latest
+    needs: [sbom-generation, container-scan, vulnerability-scan]
+    steps:
+      - name: Download SBOM
+        uses: actions/download-artifact@v4
+        with:
+          name: sbom
+          path: sbom.json
 
       - name: Download Vulnerability Reports
         uses: actions/download-artifact@v4
         with:
-          pattern: '*container-report.json'
-          path: vuln-reports
+          pattern: '*-report.json'
+          path: reports
 
       - name: Install vexctl
         uses: openvex/setup-vexctl@v1
         with:
           version: '0.3.0'
 
-      - name: Generate VEX
+      - name: Generate VEX Document
         run: |
-          vexctl merge \
-            --sbom sboms/sbom-cyclonedx-json.json \
-            --vex vuln-reports/trivy-container-report.json \
-            --vex vuln-reports/grype-container-report.json \
-            --output meshery.vex.json
+          vexctl generate --sbom sbom.json \
+            --output meshery.vex.json \
+            --author "Meshery Security Automation"
 
-      - name: Upload VEX
+      - name: Upload VEX Document
         uses: actions/upload-artifact@v4
         with:
           name: vex-document
           path: meshery.vex.json
 
-  security-dashboard:
-    name: Security Dashboard
+  security-summary:
+    name: Security Summary
     runs-on: ubuntu-latest
-    needs: [sbom-generation, container-scan, source-scan, vex-generation]
+    needs: [sast-scan, container-scan, vulnerability-scan, vex-generation]
     steps:
-      - name: Download All Reports
+      - name: Download Reports
         uses: actions/download-artifact@v4
         with:
           path: security-reports
 
-      - name: Create Comparative Summary
+      - name: Generate Summary
         run: |
-          echo "# Security Scan Comparison ($(date +%Y-%m-%d))"
-          echo "## Container Vulnerability Scanners"
+          echo "# Security Scan Summary ($(date +%Y-%m-%d))" > summary.md
           
-          echo "### Trivy Findings"
-          echo "| Severity | Count |"
-          echo "|----------|-------|"
-          jq -r '.Results[].Vulnerabilities? 
-            | group_by(.Severity) 
-            | map({severity: .[0].Severity, count: length}) 
-            | .[] 
-            | "| \(.severity) | \(.count) |"' security-reports/trivy-container-report.json
+          echo "## SAST Findings" >> summary.md
+          sast_count=$(jq '.Issues | length' security-reports/sast-report/gosec-report.json)
+          echo "- **GoSec Issues**: $sast_count" >> summary.md
+          
+          echo "## Container Vulnerabilities" >> summary.md
+          for scanner in trivy grype; do
+            critical=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "CRITICAL")] | length' security-reports/${scanner}-report/${scanner}-report.json 2>/dev/null || echo 0)
+            high=$(jq '[.Results[].Vulnerabilities[]? | select(.Severity == "HIGH")] | length' security-reports/${scanner}-report/${scanner}-report.json 2>/dev/null || echo 0)
+            echo "- **$scanner CRITICAL**: $critical" >> summary.md
+            echo "- **$scanner HIGH**: $high" >> summary.md
+          done
+          
+          echo "## SBOM Vulnerabilities" >> summary.md
+          critical=$(jq '[.matches[] | select(.vulnerability.severity == "Critical")] | length' security-reports/grype-sbom-report/grype-sbom-report.json)
+          high=$(jq '[.matches[] | select(.vulnerability.severity == "High")] | length' security-reports/grype-sbom-report/grype-sbom-report.json)
+          echo "- **CRITICAL**: $critical" >> summary.md
+          echo "- **HIGH**: $high" >> summary.md
+          
+          echo "## VEX Document" >> summary.md
+          statements=$(jq '.statements | length' security-reports/vex-document/meshery.vex.json)
+          echo "- Statements: $statements" >> summary.md
+          
+          cat summary.md >> $GITHUB_STEP_SUMMARY
 
-          echo "### Grype Findings"
-          echo "| Severity | Count |"
-          echo "|----------|-------|"
-          jq -r '.matches 
-            | group_by(.vulnerability.severity) 
-            | map({severity: .[0].vulnerability.severity, count: length}) 
-            | .[] 
-            | "| \(.severity) | \(.count) |"' security-reports/grype-container-report.json
-
-          echo "## SBOM Formats"
-          echo "| Format | Components | Dependencies |"
-          echo "|--------|------------|--------------|"
-          jq -r '"| CycloneDX | \(.components | length) | \(."component-versions" | length) |"' security-reports/sbom-cyclonedx-json.json
-          jq -r '"| SPDX | \(.packages | length) | \(."relationships" | length) |"' security-reports/sbom-spdx-json.json
-
-          echo "## VEX Document"
-          echo "| Status | Vulnerabilities |"
-          echo "|--------|-----------------|"
-          jq -r '.statements 
-            | group_by(.status) 
-            | map({status: .[0].status, count: length}) 
-            | .[] 
-            | "| \(.status) | \(.count) |"' security-reports/vex-document/meshery.vex.json >> $GITHUB_STEP_SUMMARY
-
-      - name: Upload to Security Dashboard
+      - name: Upload to GitHub Security
         uses: github/codeql-action/upload-sarif@v2
         with:
-          sarif_file: security-reports/gosec-report.json
-          category: sast
+          sarif_file: security-reports/sast-report/gosec-report.json
+          category: gosec
+
+      - name: Create Security Issue if Critical Found
+        if: ${{ contains(steps.summary.outputs.summary, 'CRITICAL') }}
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('summary.md', 'utf8');
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Critical Security Findings - ${new Date().toISOString()}`,
+              body: summary,
+              labels: ['security', 'critical']
+            })
