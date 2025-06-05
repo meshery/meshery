@@ -74,7 +74,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
       - name: Scan with Trivy
-        uses: aquasecurity/trivy-action@0.14.0
+        uses: aquasecurity/trivy-action@latest
         with:
           image-ref: 'layer5/meshery:stable-latest'
           format: 'json'
