@@ -1,0 +1,34 @@
+- Shape: Barrel
+  Description: A shape resembling a 3D barrel, with both the top and bottom edges appearing rounded. This shape can be used to represent data storage, such as databases or repositories.
+  CommonUsecase: 
+    - Representing databases in system architectures
+    - Indicating storage components in data flow diagrams
+  DependOn: Often used in conjunction with other shapes to highlight data storage elements.
+  SVG: "Barrel.svg"
+
+- Shape: Tag
+  Description: A shape resembling a label or tag, useful for categorized or labeled data nodes.
+  CommonUsecase: 
+    - Labeling or annotating elements in diagrams
+    - Representing metadata or categories in information architecture
+    - Indicating attachments or additional information in flowcharts
+  DependOn: Typically connected to or associated with other elements to provide additional context  
+  SVG: "Tag.svg"
+
+- Shape: Round Tag
+  Description: A tag shape with rounded edges, offering a softer visual cue for categorized nodes.
+  CommonUsecase:
+    - Softer labeling in user-friendly diagrams
+    - Representing clickable tags in UI mockups
+    - Indicating removable or filterable attributes in data visualizations
+  DependOn: Used in contexts where a more approachable or modern aesthetic is desired  
+  SVG: "RoundTag.svg"
+
+- Shape: TextBox
+  Description: A rectangular shape representing a text entry or display area, useful in diagrams to show nodes that contain text information or comments.
+  CommonUsecase:
+    - Representing textual data or descriptions in diagrams
+    - Indicating text entry points in user interfaces
+    - Displaying comments or notes in flowcharts or wireframes
+  DependOn: Often used for nodes that need to convey specific textual information
+  SVG: "TextBox.svg"
