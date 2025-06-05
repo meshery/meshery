@@ -216,7 +216,8 @@ jobs:
           grype --version
       - name: Install vexctl
         run: |
-          curl -sSfL https://github.com/open-vex/vexctl/releases/latest/download/vexctl_linux_amd64.tar.gz | tar -xz -C /usr/local/bin vexctl
+          curl -sSfL https://github.com/openvex/vexctl/releases/latest/download/vexctl-linux-amd64 -o /usr/local/bin/vexctl
+          chmod +x /usr/local/bin/vexctl
           vexctl version
       - name: Download Artifacts
         uses: actions/download-artifact@v4
