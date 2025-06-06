@@ -28,8 +28,8 @@ This section focuses on visual elements that have a specific, predefined meaning
 
 When you're working with Kubernetes designs, you'll notice that components related to Kubernetes have a distinct and consistent visual style. This deliberate approach is designed to help you instantly recognize and understand the various Kubernetes resources within your infrastructure designs.
 
-<a href="/pages/extensions/kanvas/k8s_style.gif" target="_blank">
-  <img src="/pages/extensions/kanvas/k8s_style.gif" style="width:50%; height:auto;" alt="Example of using kubernetes components in Kanvas">
+<a href="../../../assets/img/shapes/k8s_style.gif" target="_blank">
+  <img src="../../../assets/img/shapes/k8s_style.gif" style="width:50%; height:auto;" alt="Example of using kubernetes components in Kanvas">
 </a>
 
 Kanvas employs its own thoughtful design system to represent Kubernetes resources, built on a few key principles for clarity:
@@ -50,8 +50,8 @@ Ever looked at a complex design in Kanvas, perhaps one shared by a colleague, an
 
 Beyond its rich support for Kubernetes-native resources, Kanvas allows you to visually represent a wide array of integrated services and technologies. It does this by using their widely recognized, official icons, helping you create clear and immediately understandable designs for your hybrid, multi-cloud, and microservice architectures.
 
-<a href="/pages/extensions/kanvas/component_style.gif" target="_blank">
-  <img src="/pages/extensions/kanvas/component_style.gif" style="width:50%; height:auto;" alt="Example of using integrated components in Kanvas">
+<a href="../../../assets/img/shapes/component_style.gif" target="_blank">
+  <img src="../../../assets/img/shapes/component_style.gif" style="width:50%; height:auto;" alt="Example of using integrated components in Kanvas">
 </a>
 
 **How Integrated Components are Represented**
@@ -74,8 +74,8 @@ This approach allows you to build rich, unambiguous designs where you and your t
 
 Now, let's explore the visual elements that give you creative freedom. This part of the guide focuses on elements designed for your flexible diagramming, annotation, and custom visual communication needs.
 
-<a href="/pages/extensions/kanvas/shape_style.gif" target="_blank">
-  <img src="/pages/extensions/kanvas/shape_style.gif" style="width:50%; height:auto;" alt="Overview of general diagramming elements">
+<a href="../../../assets/img/shapes/shape_style.gif" target="_blank">
+  <img src="../../../assets/img/shapes/shape_style.gif" style="width:50%; height:auto;" alt="Overview of general diagramming elements">
 </a>
 
 {% include alert.html type="info" title="Key Principle: User-Defined Meaning" content="The key principle for all elements in this section is that the Meshery system itself does not assign them specific operational or semantic functions." %}
@@ -84,8 +84,8 @@ Now, let's explore the visual elements that give you creative freedom. This part
 
 The "Shapes" palette in Kanvas offers a diverse collection of common geometric figures and symbolic graphics. These are your go-to tools for general-purpose diagramming, especially when you need to represent concepts not covered by system-defined component icons. For every shape listed, we will explain its general use, but remember, its specific meaning in your design is up to you.
 
-<a href="/pages/extensions/kanvas/shapes.png" target="_blank">
-  <img src="/pages/extensions/kanvas/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Kanvas">
+<a href="/../../../assets/img/shapes/shapes.png" target="_blank">
+  <img src="../../../assets/img/shapes/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Kanvas">
 </a>
 
 <details>
@@ -137,8 +137,8 @@ When your diagrams require a more distinct visual style or an element for emphas
 
 In Kanvas, arrows are fundamental tools for showing direction or creating simple visual annotations. They are static shapes intended for illustration.
 
-<a href="/pages/extensions/kanvas/arrows.png" target="_blank">
-  <img src="/pages/extensions/kanvas/arrows.png" style="width:50%; height:auto;" alt="Static arrow shapes palette in Kanvas">
+<a href="/../../../assets/img/shapes/arrows.png" target="_blank">
+  <img src="../../../assets/img/shapes/arrows.png" style="width:50%; height:auto;" alt="Static arrow shapes palette in Kanvas">
 </a>
 
 {% include alert.html type="info" title="Looking for Dynamic Connections?" content="The arrows shown here are static visual aids. To represent actual, functional relationships between components (like network traffic or dependencies), you should use the Edge system instead. <strong><a href='hhttps://docs.meshery.io/extensions/edges-shape-guide'>Learn more</a></strong>" %}
@@ -147,16 +147,16 @@ In Kanvas, arrows are fundamental tools for showing direction or creating simple
 
 To help you visually map out processes, Kanvas includes a dedicated palette of standard flowchart shapes. If you've ever created a flowchart, these symbols will be very familiar to you.
 
-<a href="/pages/extensions/kanvas/flowchart.png" target="_blank">
-  <img src="/pages/extensions/kanvas/flowchart.png" style="width:50%; height:auto;" alt="Flowchart shapes palette in Kanvas">
+<a href="../../../assets/img/shapes/flowchart.png" target="_blank">
+  <img src="../../../assets/img/shapes/flowchart.png" style="width:50%; height:auto;" alt="Flowchart shapes palette in Kanvas">
 </a>
 
 ### Simple Line Icons
 
 Kanvas also provides a comprehensive library of **Simple Line Icons**, representing common objects, actions, and concepts. These icons are intended for user-driven annotations and visual enhancement. You might use a "lightbulb" icon to signify an idea, or a "warning" icon to flag a component for attention.
 
-<a href="/pages/extensions/kanvas/simple_line_icons.png" target="_blank">
-  <img src="/pages/extensions/kanvas/simple_line_icons.png" style="width:50%; height:auto;" alt="Simple line icons palette in Kanvas">
+<a href="../../../assets/img/shapes/simple_line_icons.png" target="_blank">
+  <img src="../../../assets/img/shapes/simple_line_icons.png" style="width:50%; height:auto;" alt="Simple line icons palette in Kanvas">
 </a>
 
 ## Component Visuals in Different Contexts
@@ -165,18 +165,18 @@ A single component will be visually represented differently depending on where y
 
 1.**Deployment component with its distinctive shape and badge:**
 
-<a href="../../../assets/img/deployment-shape.png">
-    <img src="../../../assets/img/deployment-shape.png" style="width:30%; height:auto;" alt="Deployment Component Shape in Kanvas">
+<a href="../../../assets/img/shapes/deployment-shape.png">
+    <img src="../../../assets/img/shapes/deployment-shape.png" style="width:30%; height:auto;" alt="Deployment Component Shape in Kanvas">
 </a>
 
 2.**Deployment icon as it might appear in a component selection panel:**
 
-<a href="../../../assets/img/deployment-icon.png">
-    <img src="../../../assets/img/deployment-icon.png" style="width:50%; height:auto;" alt="Deployment icon in a component selection panel">
+<a href="../../../assets/img/shapes/deployment-icon.png">
+    <img src="../../../assets/img/shapes/deployment-icon.png" style="width:50%; height:auto;" alt="Deployment icon in a component selection panel">
 </a>
 
 3.**Deployment component as seen in a cluster resource overview:**
 
-<a href="../../../assets/img/deployment-dashboard.png">
-    <img src="../../../assets/img/deployment-dashboard.png" style="width:50%; height:auto;" alt="Deployment component in a cluster resource overview">
+<a href="../../../assets/img/shapes/deployment-dashboard.png">
+    <img src="../../../assets/img/shapes/deployment-dashboard.png" style="width:50%; height:auto;" alt="Deployment component in a cluster resource overview">
 </a>
