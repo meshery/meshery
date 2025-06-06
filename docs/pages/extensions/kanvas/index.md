@@ -16,14 +16,15 @@ category: kanvas
 Kanvas is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes and cloud native applications. Kanvas works with your Kubernetes clusters so that you design and manage your infrastructure and applications between members of your team. Kanvas has two modes: Designer and Visualizer. Create and share your own Kubernetes deployments and patterns in Kanvas Designer. Deploy your designs and manage your infrastructure using Kanvas Visualizer. It includes multi-user collaboration features that allow teams to work together seamlessly towards achieving their goals in a more timely manner. Kanvas aims at removing all the challenging aspects of collaboration from the equation so that everyone on your team can be on the same page when it comes to managing cloud-native infrastructure projects.
 
 ### Guide to use Kanvas' features
+Explore the following features of Kanvas in the [Kanvas Docs](https://docs.kanvas.new):
 
-- <a href="{{site.baseurl}}/extensions/publishing-a-design">Publishing a Design</a> - Publish your first design.
-- <a href="{{site.baseurl}}/extensions/sharing-a-design">Sharing a Design</a> - Share your design with friends.
-- <a href="{{site.baseurl}}/extensions/importing-a-design">Import a Design</a> - Importing a design from catalog or locally.
-- <a href="{{site.baseurl}}/extensions/merging-design">Merge Designs</a> - Merging designs.
-- <a href="{{site.baseurl}}/extensions/importing-an-application">Import an application</a> - Importing an application of different types.
-- <a href="{{site.baseurl}}/extensions/component-shape-guide">Component Shapes</a> - Know what each component shape signify.
-- <a href="{{site.baseurl}}/extensions/edges-shape-guide">Edges Shapes</a> - Know what each Edge signifies.
+- **Publishing a Design** – Publish your first design.  
+- **Sharing a Design** – Share your design with friends.  
+- **Importing a Design** – Import a design from the catalog or locally.  
+- **Merging Designs** – Combine multiple designs into one.  
+- **Importing an Application** – Import different types of applications.  
+- **Component Shapes** – Understand what each component shape signifies.  
+- **Edge Shapes** – Learn what each edge represents.
 
 ### Kanvas For GitOps
 
