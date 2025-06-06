@@ -144,8 +144,13 @@ generate_schema_models "catalog" "v1alpha2"
 
 This ensures that schemas remain the **single source of truth**, making development **efficient, consistent, and scalable**.
 
-
-
+{% include alert.html type="warning" title="Best Practices" content="
+  <ul>
+    <li>Do not commit the entire output of <code>make build</code> unless you're intentionally updating all the generated schemas.</li>
+    <li><strong>Verify that you're using the correct version</strong> of <code>@openapi-contrib/openapi-schema-to-json-schema</code>.</li>
+    <li>Run <code>make generate-types</code> to validate your changes and check that only the intended files have been updated.</li>
+  </ul>
+  <p>Adhering to these practices keeps the repository clean, reduces noise in code reviews, and helps us maintain the schemas as the single source of truth.</p>" %}
 
 ### Getting Help
 
