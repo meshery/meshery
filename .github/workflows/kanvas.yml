@@ -1,11 +1,12 @@
 name: Meshery Snapshot Service
-on: # rebuild any PRs and main branch changes
+
+on:
   pull_request_target:
     types: [opened, synchronize, reopened]
-  
+
   workflow_call:
     inputs:
-      fileName: 
+      fileName:
         description: Relative file path from the root directory
         required: true
         type: string
@@ -13,7 +14,8 @@ on: # rebuild any PRs and main branch changes
       resource_url:
         description: "The URL of the generated resource."
         value: ${{ jobs.KanvasScreenshot.outputs.resource_url }}
-permissions: 
+
+permissions:
   actions: read
   contents: write
   security-events: write
@@ -24,23 +26,28 @@ permissions:
 jobs:
   KanvasScreenshot:
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
     outputs:
       resource_url: ${{ steps.test_result.outputs.resource_url }}
+
     steps:
-      - name: Set PR number # To comment the final status on the Pull-request opened in any repository
+      - name: Set PR number # To comment the final status on the Pull-request
         run: |
-          export pull_number=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          echo "PULL_NO=$pull_number" >> $GITHUB_ENV
-      - uses: actions/checkout@v4
-      - uses: actions/checkout@v4 #this step would go away
-        with:
-          path: action
-          repository: layer5labs/kanvas-snapshot
+          echo "PULL_NO=$(jq --raw-output .pull_request.number $GITHUB_EVENT_PATH)" >> $GITHUB_ENV
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Removed the second checkout of 'layer5labs/kanvas-snapshot' repo
+
       - id: test_result
         uses: layer5labs/Kanvas-Snapshot@v0.2.34
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
-          mesheryToken: ${{ secrets.MESHERY_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
-          prNumber: ${{ env.PULL_NO }} # auto-filled from the above step
-          application_type: Kubernetes Manifest # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
-          filePath: ${{ inputs.fileName == '' && 'install/deployment_yamls/k8s' || inputs.fileName }} # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
+          mesheryToken: ${{ secrets.MESHERY_TOKEN }}
+          prNumber: ${{ env.PULL_NO }}
+          application_type: Kubernetes Manifest
+          filePath: ${{ inputs.fileName == '' && 'install/deployment_yamls/k8s' || inputs.fileName }}
