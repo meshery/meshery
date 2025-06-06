@@ -10,7 +10,7 @@ const model = {
 const model_import = {
   MODEL_NAME: `test`,
   MODEL_URL_IMPORT:
-    'https://raw.githubusercontent.com/vr-varad/meshery/refs/heads/feat/create_import_model_testing/ui/tests/e2e/assets/test.tar',
+    'https://raw.githubusercontent.com/meshery/meshery/master/ui/tests/e2e/assets/test.tar',
   MODEL_FILE_IMPORT: path.resolve('tests/e2e/assets/test.tar'),
   MODEL_CSV_IMPORT: {
     Model_Name: 'couchbase',
