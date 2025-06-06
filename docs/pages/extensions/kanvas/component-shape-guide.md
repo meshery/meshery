@@ -141,7 +141,7 @@ In Kanvas, arrows are fundamental tools for showing direction or creating simple
   <img src="../../../assets/img/shapes/arrows.png" style="width:50%; height:auto;" alt="Static arrow shapes palette in Kanvas">
 </a>
 
-{% include alert.html type="info" title="Looking for Dynamic Connections?" content="The arrows shown here are static visual aids. To represent actual, functional relationships between components (like network traffic or dependencies), you should use the Edge system instead. <strong><a href='hhttps://docs.meshery.io/extensions/edges-shape-guide'>Learn more</a></strong>" %}
+{% include alert.html type="info" title="Looking for Dynamic Connections?" content="The arrows shown here are static visual aids. To represent actual, functional relationships between components (like network traffic or dependencies), you should use the Edge system instead. <strong><a href='https://docs.meshery.io/extensions/edges-shape-guide'>Learn more</a></strong>" %}
 
 ### Flowchart Shapes
 
