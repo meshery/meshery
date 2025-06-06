@@ -213,7 +213,7 @@
         - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
           grandchildren:
-            - title: Component Shape Guide
+            - title: Component Style Guide
               url: extensions/component-shape-guide
             - title: Edges Style Guide
               url: extensions/edges-shape-guide
