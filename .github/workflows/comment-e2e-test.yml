@@ -3,6 +3,9 @@ on:
   workflow_run:
     workflows: ['Meshery UI and Server']
     types: [completed]
+
+env:
+  PULL_REQUEST: ${{ github.event.number }}
   
 permissions:
   issues: write
@@ -20,15 +23,11 @@ jobs:
         name: e2e-test-reporter
         github-token: ${{ secrets.GH_ACCESS_TOKEN }}
         run-id: ${{ github.event.workflow_run.id }}
-    - name: Retrieve PR Number
-      run: |
-        echo "PULL_REQUEST=$(cat ./pr/number)" >> $GITHUB_OUTPUT
-      id: pr
     - name: Find Comment
       uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3.1.0
       id: fc
       with:
-        issue-number: ${{ steps.pr.outputs.PULL_REQUEST }}
+        issue-number: ${{ env.PULL_REQUEST }}
         comment-author: 'github-actions[bot]'
         body-includes: END-TO-END TESTS
     - name: Delete Previous Comment
@@ -47,7 +46,7 @@ jobs:
       with:
         script: |
           const fs = require('fs')
-          const PRNumber = Number(fs.readFileSync('./pr/number'))
+          const PRNumber = Number(process.env.PULL_REQUEST)
           const PRSha = fs.readFileSync('./pr/sha', 'utf8').trim()
           const E2ETestReporter = fs.readFileSync('./ui/test-report.md', 'utf8')
                 
