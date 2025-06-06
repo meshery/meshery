@@ -137,6 +137,8 @@
           url: guides/configuration-management/push-pull-model-image
         - title: Cloud Native Design Patterns
           url: guides/configuration-management/pattern-management
+        - title: Identifying Components
+          url: guides/configuration-management/identifying-components
     - title: Performance Management ↆ
       url: guides/performance-management
       children:
@@ -213,8 +215,6 @@
         - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
           grandchildren:
-            - title: Component Style Guide
-              url: extensions/component-style-guide
             - title: Edges Style Guide
               url: extensions/edges-shape-guide
             - title: Import & Export Designs
