@@ -76,8 +76,6 @@ Meshery supports the deployment of a variety of sample applications on {{ page.n
 - [Image Hub]({{site.baseurl}}/guides/infrastructure-management/sample-apps#imagehub)
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
 
-[![Image Hub on HashiCorp Consul]({{ site.baseurl }}/extensibility/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)]({{ site.baseurl }}/extensibility/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
-
 ### Performance management of Consul and it workloads
 
 #### Prometheus and Grafana integration
