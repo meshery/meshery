@@ -32,3 +32,14 @@
     - Displaying comments or notes in flowcharts or wireframes
   DependOn: Often used for nodes that need to convey specific textual information
   SVG: "TextBox.svg"
+
+- Shape: Generic Node
+  Description: A simple, often circular or rectangular shape used as a placeholder
+    for unspecified or generic data points.
+  CommonUsecase: 
+    - Representing undefined or flexible entities in early-stage diagrams
+    - Showing placeholder nodes in template diagrams
+    - Indicating generic components in adaptable system designs
+  DependOn: Can be connected to various other node types, often used as a base
+    for more specific node definitions
+  SVG: "GenericNode.svg"

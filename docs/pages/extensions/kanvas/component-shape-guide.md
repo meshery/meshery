@@ -12,77 +12,85 @@ redirect_from:
   - extensions/component-shape-guide
 ---
 
-## Component Style Guide
+# Component Style Guide
 
 When you're designing and visualizing cloud-native systems in [Kanvas](https://kanvas.new/), you'll interact with a rich library of visual elements. This guide is here to help you understand what those visuals mean.
 
 We'll cover two main types of visual elements you'll encounter:
--   **System-Defined Visuals:** These are icons and styles that Kanvas uses to represent specific functionalities, component types (like Kubernetes resources), or integrated technologies. They have **predefined** meanings within the system.
--   **General Diagramming Elements:** These are tools like generic shapes, arrows, and flowchart symbols provided for your custom diagramming and annotation needs. Their meaning is primarily defined by you or by common diagramming conventions.
+- **System-Defined Visuals:** These are icons and styles that Kanvas uses to represent specific functionalities, component types (like Kubernetes resources), or integrated technologies. They have **predefined** meanings within the system.
+- **General Diagramming Elements:** These are tools like generic shapes, arrows, and flowchart symbols provided for your custom diagramming and annotation needs. Their meaning is primarily defined by you or by common diagramming conventions.
 
-### System-Defined Visual Representations
+## System-Defined Visual Representations
 
 This section focuses on visual elements that have a specific, predefined meaning within Kanvas. Understanding these will help you accurately interpret designs.
 
-#### Kubernetes Components
+### Kubernetes Components
 
-When you're working with Kubernetes designs in Kanvas, you'll notice that components related to Kubernetes have a distinct and consistent visual style. This deliberate approach is designed to help you instantly recognize and
+When you're working with Kubernetes designs, you'll notice that components related to Kubernetes have a distinct and consistent visual style. This deliberate approach is designed to help you instantly recognize and understand the various Kubernetes resources within your infrastructure designs.
 
-![k8s_style](/pages/extensions/kanvas/k8s_style.gif)
+<a href="/pages/extensions/kanvas/k8s_style.gif" target="_blank">
+  <img src="/pages/extensions/kanvas/k8s_style.gif" style="width:50%; height:auto;" alt="Example of using kubernetes components in Kanvas">
+</a>
 
 Kanvas employs its own thoughtful design system to represent Kubernetes resources, built on a few key principles for clarity:
 
--   **Uniform Color Scheme:** Kubernetes component icons in Kanvas typically use a **distinctive blue background**. This blue often serves as a standard identifier for Kubernetes-related elements, helping you differentiate them at a glance.
--   **Standardized Icon Structure:** While the exact outer container shape can vary, the fundamental structure is consistent: an outer container shape with the blue background, encompassing a unique inner white symbol.
--   **Outer Container Shape Variations:** You'll observe that the blue background is framed by different outer shapes. While a **blue rounded square** is the most versatile container, specific patterns do emerge:
-    -   **Triangles:** A prominent pattern is the use of triangular outer shells for core networking resources like `Service` and `API Service`.
-    -   **Hexagons:** You might observe hexagonal shapes for some foundational workload controllers like `StatefulSet`.
-    -   **Unique Polygons:** Several Kinds feature highly unique shapes tailored to their function, such as those for `Endpoints`, `PriorityClass` (often resembling a gauge), or `ValidatingWebhookConfiguration` (which might use a shield shape, suggesting security).
--   **Meaningful Inner Symbols:** The white symbol inside each icon is the crucial unique identifier for that specific Kubernetes Kind. These symbols are often inspired by the core function of the resource (e.g., a symbol suggesting containerization for a Pod) and may occasionally incorporate elements of the official Kubernetes logo.
+- **Uniform Color Scheme:** Kubernetes component icons in Kanvas typically use a **distinctive blue background**. This blue often serves as a standard identifier for Kubernetes-related elements, helping you differentiate them at a glance.
+- **Standardized Icon Structure:** While the exact outer container shape can vary, the fundamental structure is consistent: an outer container shape with the blue background, encompassing a unique inner white symbol.
+- **Outer Container Shape Variations:** You'll observe that the blue background is framed by different outer shapes. While a **blue rounded square** is the most versatile container, specific patterns do emerge:
+    - **Triangles:** A prominent pattern is the use of triangular outer shells for core networking resources like `Service` and `API Service`.
+    - **Hexagons:** You might observe hexagonal shapes for some foundational workload controllers like `StatefulSet`.
+    - **Unique Polygons:** Several Kinds feature highly unique shapes tailored to their function, such as those for `Endpoints`, `PriorityClass` (often resembling a gauge), or `ValidatingWebhookConfiguration` (which might use a shield shape, suggesting security).
+- **Meaningful Inner Symbols:** The white symbol inside each icon is the crucial unique identifier for that specific Kubernetes Kind. These symbols are often inspired by the core function of the resource (e.g., a symbol suggesting containerization for a Pod) and may occasionally incorporate elements of the official Kubernetes logo.
 
-> This systematic approach ensures that once you learn the basics of this visual language, you can easily identify any Kubernetes component in your Kanvas designs. While these aren't official icons mandated by the Kubernetes project, they are Meshery's carefully considered way of providing a clear and consistent visual representation.
+> This systematic approach ensures that once you learn the basics of this visual language, you can easily identify any Kubernetes component in your designs.
 
-{% include alert.html type="Note" title="Note on a Specific Component: Deployment Shape" content="Due to characteristics of the rendering library used in Kanvas, a Kubernetes **Deployment** component might sometimes display with a rounded-rectangle outline as its primary shape. You might also see a small badge placed over its lefthand-side border; this badge aids in quickly identifying the component type in certain views." %}
+### Icons for Integrated Technologies and Their Components
 
-#### Icons for Integrated Technologies and Their Components
+Ever looked at a complex design in Kanvas, perhaps one shared by a colleague, and seen various software logos wondering what they represent? Or, when crafting your own designs, have you needed to represent specific cloud services, databases, or other third-party tools using their official, recognizable visuals? Kanvas is designed to make this straightforward.
 
-Ever looked at a complex design and seen various software logos, wondering what they represent? Or needed to use official icons for cloud services or other tools in your own designs? Beyond Kubernetes-native resources, your designs frequently bring together a wide array of services and technologies. Kanvas visually represents these integrations—and the specific **components** they offer—using their widely recognized, official icons.
+Beyond its rich support for Kubernetes-native resources, Kanvas allows you to visually represent a wide array of integrated services and technologies. It does this by using their widely recognized, official icons, helping you create clear and immediately understandable designs for your hybrid, multi-cloud, and microservice architectures.
 
-![component_example](/pages/extensions/kanvas/component_style.gif)
+<a href="/pages/extensions/kanvas/component_style.gif" target="_blank">
+  <img src="/pages/extensions/kanvas/component_style.gif" style="width:50%; height:auto;" alt="Example of using integrated components in Kanvas">
+</a>
 
-**Visual Organization in the Palette**
+**How Integrated Components are Represented**
 
-In Kanvas, you'll find these integrations thoughtfully organized:
--   They are grouped into logical **Categories** (such as "Cloud Native Network," "Database," etc.).
--   Within each category, Meshery lists specific **integration models**. Each model (e.g., "AWS App Mesh," "Prometheus") is typically represented by the **official logo** of that technology.
+To help you navigate its extensive library of integrations, Kanvas organizes these components in a clear hierarchy:
 
-**Designable Components from Integration Models**
+-   **Categories:** At the highest level, integrations are grouped into logical Categories like "Cloud Native Network," "Database," or "Orchestration & Management." This helps you quickly find the type of technology you're looking for.
+-   **Integration Models:** Within each category, you'll find specific integration models (e.g., "AWS App Mesh," "Prometheus," "HashiCorp Consul"). Each model is represented by the official logo or a standardized symbol of that technology, leveraging familiar branding for easy identification.
+-   **Designable Components:** Each integration model serves as a source for one or more designable components – these are the actual, functional building blocks you'll drag onto your canvas. These individual components have their own icons, which are typically derived from the parent integration's logo to maintain a clear visual link to their origin.
 
-Each integration model serves as a source for one or more **designable components** – the actual building blocks you'll drag onto your canvas. When an integration model in the palette is clicked, it reveals the specific components it offers. These individual components also feature their own icons, typically derived from the parent integration's logo.
+**What These Icons Mean in Your Design**
 
-> This visual mapping is a **system-defined representation**: Kanvas uses that specific icon to denote that exact service, technology, or the functionality it provides. When you incorporate one into your design, it precisely signifies that your architecture includes or interacts with that external service or functional unit.
+When you incorporate an icon representing a specific cloud service (like an AWS S3 bucket) or a component from an integrated technology, you are making a clear statement: your architecture includes, interacts with, or plans to use that specific external service or functional unit. This visual mapping is a system-defined representation.
 
-This structured visual approach allows you to build rich, unambiguous diagrams where you can easily see which parts of your system depend on specific cloud resources, networking functions, or other managed services.
+This approach allows you to build rich, unambiguous designs where you and your team can easily see which parts of your system depend on specific cloud resources, networking functions, observability tools, or other managed services.
 
-有关integration：https://docs.meshery.io/extensions/integrations
+{% include alert.html type="info" title="Exploring All Integrations" content="This guide covers the visual style of components. For a complete catalog of all technologies that Meshery integrates, visit the integrations directory. <strong><a href='https://docs.meshery.io/extensions/integrations'>Explore All Integrations</a></strong>" %}
 
-### General Diagramming Elements
+## General Diagramming Elements
 
-Now, let's explore the visual elements that are all about giving you creative freedom. This part of the guide focuses on elements designed for your flexible diagramming, annotation, and custom visual communication needs.
+Now, let's explore the visual elements that give you creative freedom. This part of the guide focuses on elements designed for your flexible diagramming, annotation, and custom visual communication needs.
 
-![shapes_overview](/pages/extensions/kanvas/shape_style.gif)
+<a href="/pages/extensions/kanvas/shape_style.gif" target="_blank">
+  <img src="/pages/extensions/kanvas/shape_style.gif" style="width:50%; height:auto;" alt="Overview of general diagramming elements">
+</a>
 
-{% raw %}{% include alert.html type="light" title="A Note on General Elements" content="A key thing to remember is that, generally, the **Meshery system itself does not assign specific operational or semantic functions to the elements in this section**. Their power lies in how *you* choose to use them to enrich your designs, illustrate workflows, or create custom visual representations tailored to your team's conventions." %}{% endraw %}
+{% include alert.html type="info" title="Key Principle: User-Defined Meaning" content="The key principle for all elements in this section is that the Meshery system itself does not assign them specific operational or semantic functions." %}
 
-#### Generic Shapes
+### Generic Shapes
 
-The "Shapes" palette in Kanvas offers a diverse collection of common geometric figures and symbolic graphics. These are your go-to tools for general-purpose diagramming, especially when you need to represent concepts not covered by system-defined component icons. For every shape listed, we explain its general use, but remember, its specific meaning in your design is up to you.
+The "Shapes" palette in Kanvas offers a diverse collection of common geometric figures and symbolic graphics. These are your go-to tools for general-purpose diagramming, especially when you need to represent concepts not covered by system-defined component icons. For every shape listed, we will explain its general use, but remember, its specific meaning in your design is up to you.
 
-![shapes_style](/pages/extensions/kanvas/shapes.png)
+<a href="/pages/extensions/kanvas/shapes.png" target="_blank">
+  <img src="/pages/extensions/kanvas/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Kanvas">
+</a>
 
 <details>
 <summary><strong>Foundational Geometric Shapes</strong></summary>
-
+<br>
 These are the quintessential building blocks for many diagrams – your circles, squares, triangles, and basic polygons. They offer simple, clean, and universally understood forms for a wide range of uses.
 
 {% include extension-guide.html
@@ -97,7 +105,7 @@ These are the quintessential building blocks for many diagrams – your circles,
 
 <details>
 <summary><strong>Common Representational & Symbolic Shapes</strong></summary>
-
+<br>
 This group includes shapes that, by common convention, often evoke a more specific symbolic meaning, like using a "Barrel" for data storage or an "Actor" for a user role. Leveraging these established visual metaphors can make your custom diagrams more intuitive.
 
 {% include extension-guide.html
@@ -112,7 +120,7 @@ This group includes shapes that, by common convention, often evoke a more specif
 
 <details>
 <summary><strong>Specialized & Decorative Geometric Shapes</strong></summary>
-
+<br>
 When your diagrams require a more distinct visual style or an element for emphasis, this collection offers a variety of options, from complex polygons to stylized forms like "Crescent," "Star," or "XWing." These shapes are less commonly used in Kanvas and have no universally accepted meaning.
 
 {% include extension-guide.html
@@ -125,46 +133,50 @@ When your diagrams require a more distinct visual style or an element for emphas
 
 </details>
 
-#### Arrows and Connectors
+### Arrows
 
-Arrows and connector lines are fundamental tools for linking elements and showing direction. Kanvas provides both a palette of **static arrow shapes** for quick visual annotations and a more sophisticated **Edge system** for creating meaningful, styled connections between components.
+In Kanvas, arrows are fundamental tools for showing direction or creating simple visual annotations. They are static shapes intended for illustration.
 
-![arrows](/pages/extensions/kanvas/arrows.png)
+<a href="/pages/extensions/kanvas/arrows.png" target="_blank">
+  <img src="/pages/extensions/kanvas/arrows.png" style="width:50%; height:auto;" alt="Static arrow shapes palette in Kanvas">
+</a>
 
-**For Meaningful, Dynamic Connections: The Edge System**
+{% include alert.html type="info" title="Looking for Dynamic Connections?" content="The arrows shown here are static visual aids. To represent actual, functional relationships between components (like network traffic or dependencies), you should use the Edge system instead. <strong><a href='hhttps://docs.meshery.io/extensions/edges-shape-guide'>Learn more</a></strong>" %}
 
-When you need to represent **actual, functional relationships** between your components—such as network connections, dependencies, or data flows—Kanvas provides a dedicated and more powerful "Edge" system. These Edges are not just static lines; they are an integral part of your design's model and can be styled with specific colors, thicknesses, and arrowheads to convey rich semantic information.
-
-{% raw %}{% include alert.html type="info" title="All About Edges: Styling, Meaning, and Usage" content='For comprehensive details on how to create and interpret these meaningful relationships using the Edge system, please consult our dedicated **Edge Style Guide**. That guide is the definitive resource for understanding how Kanvas visually represents and interprets the connections between your components.' %}{% endraw %}
-
-#### Flowchart Shapes
+### Flowchart Shapes
 
 To help you visually map out processes, Kanvas includes a dedicated palette of standard flowchart shapes. If you've ever created a flowchart, these symbols will be very familiar to you.
 
-![flowchart](/pages/extensions/kanvas/flowchart.png)
+<a href="/pages/extensions/kanvas/flowchart.png" target="_blank">
+  <img src="/pages/extensions/kanvas/flowchart.png" style="width:50%; height:auto;" alt="Flowchart shapes palette in Kanvas">
+</a>
 
-#### Simple Line Icons
+### Simple Line Icons
 
-Kanvas also provides a comprehensive library of **Simple Line Icons**, representing common objects, actions, and concepts. hese icons are intended for user-driven annotations and visual enhancement. You might use a "lightbulb" icon to signify an idea, or a "warning" icon to flag a component for attention.
+Kanvas also provides a comprehensive library of **Simple Line Icons**, representing common objects, actions, and concepts. These icons are intended for user-driven annotations and visual enhancement. You might use a "lightbulb" icon to signify an idea, or a "warning" icon to flag a component for attention.
 
-![simple_line_icons](/pages/extensions/kanvas/simple_line_icons.png)
+<a href="/pages/extensions/kanvas/simple_line_icons.png" target="_blank">
+  <img src="/pages/extensions/kanvas/simple_line_icons.png" style="width:50%; height:auto;" alt="Simple line icons palette in Kanvas">
+</a>
 
-#### Where 
-Here's how the Deployment component appears in different contexts:
+## Component Visuals in Different Contexts
 
-<br/>
+A single component will be visually represented differently depending on where you encounter it in the Meshery UI. Let's take the Deployment component as an example to see how its appearance adapts to these different views:
+
+1.**Deployment component with its distinctive shape and badge:**
 
 <a href="../../../assets/img/deployment-shape.png">
-    <img src="../../../assets/img/deployment-shape.png" style="width:50%; height:auto;" alt="Deployment Component Shape">
+    <img src="../../../assets/img/deployment-shape.png" style="width:30%; height:auto;" alt="Deployment Component Shape in Kanvas">
 </a>
-<p>Deployment component with its distinctive rounded-rectangle shape and badge</p>
 
-<br/>
+2.**Deployment icon as it might appear in a component selection panel:**
 
-[![Deployment in Icon Set](../../../assets/img/deployment-icon.png)](../../../assets/img/deployment-icon.png)
-Deployment icon in the component selection panel
+<a href="../../../assets/img/deployment-icon.png">
+    <img src="../../../assets/img/deployment-icon.png" style="width:50%; height:auto;" alt="Deployment icon in a component selection panel">
+</a>
 
-<br/>
+3.**Deployment component as seen in a cluster resource overview:**
 
-[![Deployment in Dashboard](../../../assets/img/deployment-dashboard.png)](../../../assets/img/deployment-dashboard.png)
-Deployment component as seen in the cluster resource overview
+<a href="../../../assets/img/deployment-dashboard.png">
+    <img src="../../../assets/img/deployment-dashboard.png" style="width:50%; height:auto;" alt="Deployment component in a cluster resource overview">
+</a>
