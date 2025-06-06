@@ -9,6 +9,7 @@ list: include
 type: extensions
 category: kanvas
 redirect_from:
+  - /extensions/component-shape-guide
   - extensions/component-shape-guide
 ---
 

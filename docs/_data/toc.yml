@@ -214,7 +214,7 @@
           url: extensions/kanvas
           grandchildren:
             - title: Component Style Guide
-              url: extensions/component-shape-guide
+              url: extensions/component-style-guide
             - title: Edges Style Guide
               url: extensions/edges-shape-guide
             - title: Import & Export Designs
