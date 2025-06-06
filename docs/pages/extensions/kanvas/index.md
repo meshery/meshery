@@ -18,12 +18,12 @@ Kanvas is a GitOps-infused cloud native <b>visual designer</b> for Kubernetes an
 ### Guide to use Kanvas' features
 Explore the following features of Kanvas in the [Kanvas Docs](https://docs.kanvas.new):
 
-- **Publishing a Design** – Publish your first design.  
-- **Sharing a Design** – Share your design with friends.  
-- **Importing a Design** – Import a design from the catalog or locally.  
-- **Merging Designs** – Combine multiple designs into one.  
-- **Importing an Application** – Import different types of applications.  
-- **Component Shapes** – Understand what each component shape signifies.  
+- **Publishing a Design** – Publish your first design.
+- **Sharing a Design** – Share your design with friends.
+- **Importing a Design** – Import a design from the catalog or locally.
+- **Merging Designs** – Combine multiple designs into one.
+- **Importing an Application** – Import different types of applications.
+- **Component Shapes** – Understand what each component shape signifies.
 - **Edge Shapes** – Learn what each edge represents.
 
 ### Kanvas For GitOps
