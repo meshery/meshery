@@ -29,6 +29,10 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# Whether to install Custom Resource Definitions (CRDs)
+# Set to false if CRDs are managed externally or already exist in the cluster.
+installCRDs: true
+
 # For AKS AWS GCP to get the permissions to watch the nodes
 rbac:
   nodes: false
