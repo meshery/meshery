@@ -433,7 +433,7 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 
 	ctxName := k8sContext.Name
 	serverURL := k8sContext.Server
-	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]K8sContext)
+	k8sctxs, ok := ctx.Value(AllKubeClusterKey).([]*K8sContext)
 	if !ok || len(k8sctxs) == 0 {
 		event := events.NewEvent().ActedUpon(ctxUUID).FromSystem(*mesheryInstanceID).WithSeverity(events.Error).WithCategory("meshsync").WithAction("flush").WithDescription("No Kubernetes context specified, please choose a context from context switcher").FromUser(userUUID).Build()
 		err := provider.PersistEvent(event)
@@ -449,6 +449,9 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	var refCount int
 	// Gets the serverID for the passed contextID
 	for _, k8ctx := range k8sctxs {
+		if k8ctx == nil {
+			continue
+		}
 		if k8ctx.ID == ctxID && k8ctx.KubernetesServerID != nil {
 			sid = k8ctx.KubernetesServerID.String()
 			break
@@ -457,6 +460,9 @@ func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Prov
 	// Counts the reference of the serverID
 	// As multiple context can have same serverID
 	for _, k8ctx := range k8sctxs {
+		if k8ctx == nil {
+			continue
+		}
 		if k8ctx.KubernetesServerID.String() == sid {
 			refCount++
 		}
