@@ -27,6 +27,7 @@
 |--------|---------|
 | **Status** | ❌ Deprecated |
 | **Meaning** | :contentReference[oaicite:4]{index=4} |
+| **Visual** | ![Deprecated Filled Circle Head](../../images/edges/deprecated-filled-circle-head.png) |
 
 ---
 
