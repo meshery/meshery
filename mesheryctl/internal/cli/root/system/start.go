@@ -461,6 +461,7 @@ func init() {
 
 // Apply Meshery helm charts
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, installCRDs bool, callbackURL, providerURL string) error {
+	log.Printf("DEBUG: applyHelmCharts received installCRDs: %v", installCRDs)
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
 
@@ -473,6 +474,8 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if act == meshkitkube.UNINSTALL {
 		action = "uninstall"
 	}
+	serverSkipCRDs := !installCRDs
+	log.Printf("DEBUG: For main Meshery chart, setting SkipCRDs: %v (derived from !installCRDs)", serverSkipCRDs)
 	errServer := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       utils.MesheryNamespace,
 		ReleaseName:     "meshery",
@@ -489,21 +492,31 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		DryRun:           dryRun,
 		SkipCRDs:         !installCRDs,
 	})
-	errOperator := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
-		Namespace:       utils.MesheryNamespace,
-		ReleaseName:     "meshery-operator",
-		CreateNamespace: true,
-		ChartLocation: meshkitkube.HelmChartLocation{
-			Repository: utils.HelmChartURL,
-			Chart:      utils.HelmChartOperatorName,
-			Version:    chartVersion,
-		},
-		Action: act,
-		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
-		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
-		DryRun:           dryRun,
-		SkipCRDs:         !installCRDs,
-	})
+	var errOperator error 
+	log.Printf("DEBUG: Before operator chart logic. installCRDs: %v", installCRDs)
+	if installCRDs { 
+	    log.Printf("DEBUG: Attempting to apply Meshery Operator chart.")     // Only attempt to apply the operator chart if CRDs are being installed
+		errOperator = kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
+			Namespace:        utils.MesheryNamespace,
+			ReleaseName:      "meshery-operator",
+			CreateNamespace:  true,
+			ChartLocation: meshkitkube.HelmChartLocation{
+				Repository: utils.HelmChartURL,
+				Chart:      utils.HelmChartOperatorName,
+				Version:    chartVersion,
+			},
+			Action:           act,
+			DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
+			DryRun:           dryRun,
+			SkipCRDs:         !installCRDs, // Keep this for consistency, though the 'if installCRDs' wrapper is key
+		})
+	} else {
+		log.Printf("DEBUG: Skipping Meshery Operator Helm chart deployment as --skip-crds flag is set. (installCRDs is false)")
+		// If CRDs are being skipped, we explicitly state that the operator is not being installed.
+		log.Info("Skipping Meshery Operator Helm chart deployment as --skip-crds flag is set.")
+	}
+	
+	
 	if errServer != nil && errOperator != nil {
 		return fmt.Errorf("could not %s Meshery Server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
 	}
