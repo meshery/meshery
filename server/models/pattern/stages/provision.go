@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models/pattern/planner"
+	"github.com/meshery/meshery/server/models/pattern/planner"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/orchestration"
 

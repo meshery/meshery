@@ -32,7 +32,7 @@ cleanup_deleted_relationships_actions(relationships) := delete_actions if {
 		rel.status == "deleted"
 		action := {
 			"op": actions.delete_relationship_op,
-			"value": {"id": rel.id},
+			"value": {"id": rel.id, "relationship": rel},
 		}
 	}
 }

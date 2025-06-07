@@ -7,7 +7,7 @@ permalink: extensibility/integrations/azure-red-hat-openshift
 docURL: https://docs.meshery.io/extensibility/integrations/azure-red-hat-openshift
 description: 
 integrations-category: Provisioning
-integrations-subcategory: Uncategorized
+integrations-subcategory: Certified Kubernetes - Distribution
 registrant: GitHub
 components: 
 - name: open-shift-cluster

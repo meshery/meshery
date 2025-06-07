@@ -224,7 +224,7 @@ Add the Meshery Scoop Bucket and install:
 
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">
- scoop bucket add mesheryctl https://github.com/layer5io/scoop-bucket.git
+ scoop bucket add mesheryctl https://github.com/meshery/scoop-bucket.git
  scoop install mesheryctl
  </div></div>
  </pre>

@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshery/server/models/pattern/utils"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"

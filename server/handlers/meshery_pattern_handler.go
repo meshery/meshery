@@ -18,12 +18,12 @@ import (
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
-	helpers "github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
-	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
+	helpers "github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/models/pattern/resource/selector"
+	patternutils "github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/errors"
 	"github.com/meshery/meshkit/models/converter"
@@ -184,8 +184,7 @@ func (h *Handler) handlePatternPOST(
 	var err error
 
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(models.Create).
-		ActedUpon(userID).WithSeverity(events.Informational).WithDescription("Save design ")
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(models.Create).WithSeverity(events.Informational).WithDescription("Save design ")
 
 	requestPayload := &DesignPostPayload{}
 	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
@@ -197,6 +196,7 @@ func (h *Handler) handlePatternPOST(
 		h.logErrorGettingUserToken(rw, provider, err, userID, eventBuilder)
 		return
 	}
+	eventBuilder = eventBuilder.ActedUpon(*requestPayload.ID)
 
 	designFileBytes, err := encoding.Marshal(requestPayload.DesignFile)
 
@@ -228,7 +228,11 @@ func (h *Handler) handlePatternPOST(
 	} else {
 		eventBuilder = eventBuilder.WithAction(models.Create)
 	}
+	description := fmt.Sprintf("Design %s saved at version %s", requestPayload.DesignFile.Name, requestPayload.DesignFile.Version)
 	metadata := map[string]interface{}{
+		"history_title": fmt.Sprintf("Version %s - %d components and %d relationships",
+			requestPayload.DesignFile.Version, len(requestPayload.DesignFile.Components), len(requestPayload.DesignFile.Relationships)),
+
 		"design": map[string]interface{}{
 			"name": requestPayload.DesignFile.Name,
 			"id":   requestPayload.DesignFile.Id.String(),
@@ -236,6 +240,7 @@ func (h *Handler) handlePatternPOST(
 		"doclink": "https://docs.meshery.io/concepts/logical/designs",
 	}
 	event := eventBuilder.
+		WithDescription(description).
 		WithMetadata(metadata).
 		Build()
 	_ = provider.PersistEvent(event)
@@ -1570,7 +1575,7 @@ func (h *Handler) handlePatternUpdate(
 		_ = r.Body.Close()
 	}()
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("update").ActedUpon(userID)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("update").FromUser(userID)
 
 	res := meshes.EventsResponse{
 		Component:     "core",
@@ -1643,7 +1648,8 @@ func (h *Handler) handlePatternUpdate(
 	}
 	go h.config.PatternChannel.Publish(userID, struct{}{})
 
-	eventBuilder.WithSeverity(events.Informational)
+	eventBuilder = eventBuilder.WithSeverity(events.Informational).ActedUpon(*mesheryPattern.ID)
+
 	h.formatPatternOutput(rw, resp, format, sourcetype, eventBuilder, parsedBody.URL, models.Update)
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
