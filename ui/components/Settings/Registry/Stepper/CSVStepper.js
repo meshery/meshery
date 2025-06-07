@@ -244,7 +244,7 @@ const CsvStepper = React.memo(({ handleClose }) => {
           <div>
             <StyledHeadingBox>
               <Typography fontWeight={'bold'}>
-                Please upload the relationship CSVa sdf file
+                Please upload the relationship CSV file
               </Typography>
               <TooltipIconButton
                 title="Download Relationship CSV template"
