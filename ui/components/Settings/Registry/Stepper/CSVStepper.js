@@ -243,9 +243,7 @@ const CsvStepper = React.memo(({ handleClose }) => {
         component: (
           <div>
             <StyledHeadingBox>
-              <Typography fontWeight={'bold'}>
-                Please upload the relationship CSV file
-              </Typography>
+              <Typography fontWeight={'bold'}>Please upload the relationship CSV file</Typography>
               <TooltipIconButton
                 title="Download Relationship CSV template"
                 onClick={() => handleDownload('Relationships.csv')}

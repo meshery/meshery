@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { useState } from 'react';
 import { Box, Typography, styled, CustomTooltip, Collapse, ErrorBoundary } from '@sistent/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
 import { InfoIcon } from '@sistent/sistent'; // Assuming MUI icons are available
