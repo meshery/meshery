@@ -58,6 +58,9 @@ func (h *Handler) SessionSyncHandler(w http.ResponseWriter, req *http.Request, p
 	k8scontexts, ok := req.Context().Value(models.AllKubeClusterKey).([]*models.K8sContext)
 	if ok {
 		for _, k8scontext := range k8scontexts {
+			if k8scontext == nil {
+				continue
+			}
 			var cid string
 			if k8scontext.KubernetesServerID != nil {
 				cid = k8scontext.KubernetesServerID.String()
