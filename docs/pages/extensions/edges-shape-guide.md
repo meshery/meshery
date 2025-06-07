@@ -60,7 +60,7 @@
 |--------|---------|
 | **Status** | ✅ Active |
 | **Meaning** | :contentReference[oaicite:8]{index=8} |
-| **Visual** | ![:contentReference[oaicite:9]{index=9}](../../images/edges/line-with-circle.png) |
+| **Visual** | ![Line with a circle in the middle](../../images/edges/line-with-circle.png) |
 
 ---
 
