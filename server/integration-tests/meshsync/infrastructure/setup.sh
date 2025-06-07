@@ -86,7 +86,7 @@ setup_cluster() {
   echo ""
 
   echo "Applying meshery resources..."
-  kubectl apply -f $PATH_TO_CRDS_YAML
+  # kubectl apply -f $PATH_TO_CRDS_YAML
   helm install meshery-operator $PATH_TO_MESHERY_OPERATOR_CHART --namespace $MESHERY_K8S_NAMESPACE --dependency-update
   echo ""
 
@@ -114,13 +114,17 @@ setup_cluster() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout=64s
   echo ""
 
-  echo "Waiting for meshsync to be available"
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
+  echo "Outputing cluster resources..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
 
   echo "Waiting for broker to be ready"
   kubectl --namespace $MESHERY_K8S_NAMESPACE rollout status --watch statefulset/meshery-broker --timeout 64s
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready pod --selector=app=meshery,component=broker --timeout=64s
+  echo ""
+
+  echo "Waiting for meshsync to be available"
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
   echo ""
 
 
@@ -166,10 +170,17 @@ setup_connection() {
   sleep 32
 
   echo "Printing server logs..." 
-  # Get the pod name for the sdeployment
+  # Get the pod name for the deployment
   SERVER_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app.kubernetes.io/name="meshery" -o jsonpath='{.items[0].metadata.name}')
   # Output logs from the pod
   kubectl --namespace $MESHERY_K8S_NAMESPACE logs $SERVER_DEPLOYMENT_POD_NAME
+
+  echo "Printing meshsync logs..." 
+  # Get the pod name for the deployment
+  MESHSYNC_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app=meshery,component=meshsync -o jsonpath='{.items[0].metadata.name}')
+  # Output logs from the pod
+  kubectl --namespace $MESHERY_K8S_NAMESPACE logs $MESHSYNC_DEPLOYMENT_POD_NAME
+
 
   echo "Copying sqlite database file from pod..."
     NAMESPACE=$MESHERY_K8S_NAMESPACE \
