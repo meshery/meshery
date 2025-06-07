@@ -135,6 +135,16 @@ setup_cluster() {
 }
 
 setup_connection() {
+  # right now flush meshsync functionality is not working
+  # to ensure meshsync will post messages to nats after server subscribe to subject
+  # the flow is as follow: scale meshsync to 0, submit kube config, scale meshsync back to 1
+  echo "Scaling down meshsync to 0 replicas..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE scale deployment meshery-meshsync --replicas=0
+
+  echo "Outputing cluster resources..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get po
+  echo ""
+
   echo "Preparing tmp kubeconfig with current contexts..."
   kubectl config view --minify --raw > $TMP_KUBECONFIG_PATH
   # Replace localhost API server address with in-cluster DNS.
@@ -165,9 +175,19 @@ setup_connection() {
     kubectl --namespace "$MESHERY_K8S_NAMESPACE" delete job "$JOB_NAME"
   done
 
-  # we only need meshsync up on this stage
+  echo "Scaling up meshsync to 1 replicas..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE scale deployment meshery-meshsync --replicas=1
+
+  echo "Outputing cluster resources..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get po
+  echo ""
+
   echo "Waiting for meshsync to be available..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
+  echo ""
+
+  echo "Outputing cluster resources..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
 
   echo "Collecting meshsync events..."
