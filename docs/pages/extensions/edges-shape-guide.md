@@ -111,7 +111,8 @@
 
 ## See also
 - :contentReference[oaicite:16]{index=16}  
-- :contentReference[oaicite:17]{index=17} :contentReference[oaicite:18]{index=18}
+- :contentReference[oaicite:17]{index=17}
+- :contentReference[oaicite:18]{index=18}
 
 ---
 
