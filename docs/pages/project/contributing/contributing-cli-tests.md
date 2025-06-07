@@ -88,7 +88,7 @@ There are a few ways to set up the Meshery server, but for end-to-end testing, w
 make server
 ```
 
-Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]{{site.baseurl}}/installation) (like that of [installing Meshery on Minikube]({{site.baseurl}}/installation/kubernetes/minikube)). 
+Be aware that some test cases require the availability of a Kubernetes cluster and one or more Meshery Adapters. In those cases, please refer to the [installation guides]({{site.baseurl}}/installation) (like that of [installing Meshery on Minikube]({{site.baseurl}}/installation/kubernetes/minikube)). 
 
 ### Authentication
 
