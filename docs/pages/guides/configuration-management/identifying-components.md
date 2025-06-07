@@ -3,7 +3,7 @@ layout: default
 title: Identifying Meshery Components
 permalink: guides/configuration-management/identifying-components
 language: en
-abstract: A guide to help you identify and understand the various component icons, shapes, and visual styles used across the Meshery user interface.
+abstract: A guide to help you identify and understand the various component icons, shapes, and visual styles used across the Meshery UI.
 list: include
 type: guides
 category: configuration
@@ -99,7 +99,7 @@ When your diagrams require a more distinct visual style or an element for emphas
 
 To see how this works in practice, let's take the Kubernetes `Deployment` component as an example. Its appearance adapts to different views in the Meshery UI:
 
-1.The full component shape as it might appear in a design, with its distinctive outer shape and badge:
+1.The full component shape as it appears in a design:
 
 <a href="../../../assets/img/shapes/deployment-shape.png">
     <img src="../../../assets/img/shapes/deployment-shape.png" style="width:30%; height:auto;" alt="Deployment Component Shape">
@@ -111,7 +111,7 @@ To see how this works in practice, let's take the Kubernetes `Deployment` compon
     <img src="../../../assets/img/shapes/deployment-icon.png" style="width:50%; height:auto;" alt="Deployment icon in a component selection panel">
 </a>
 
-3.The icon as seen in a cluster resource overview or list:
+3.The icon as seen in a cluster resource overview:
 
 <a href="../../../assets/img/shapes/deployment-dashboard.png">
     <img src="../../../assets/img/shapes/deployment-dashboard.png" style="width:50%; height:auto;" alt="Deployment component in a cluster resource overview">
