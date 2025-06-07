@@ -5,8 +5,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/layer5io/meshkit/database"
+	// TODO do not forget to update to meshery/meshsync
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshkit/database"
 	"github.com/stretchr/testify/assert"
 )
 
