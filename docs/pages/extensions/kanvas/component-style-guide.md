@@ -34,7 +34,7 @@ Below are all the shapes with their current usage in a general context.
  guide_description="Description"
  guide_usecase="CommonUseCase"
  guide_svg="SVG"
- guide_assests_folder="shapes"
+ guide_assets_folder="shapes"
 %}
  
 {% include alert.html type="light" title="Note" content="Because a Kubernetes Deployment can be a parent of other components, it displays as a rounded-rectangle (a limitation of the Javascript library being used to render Designs). There is a small badge, placed over the lefthand-side border that aids in identifying the component type." %}
