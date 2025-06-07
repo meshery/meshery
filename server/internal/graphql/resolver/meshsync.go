@@ -130,7 +130,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}
 			var sid string
 			for _, k8ctx := range k8sctxs {
-				if k8sctxs == nil {
+				if k8ctx == nil {
 					continue
 				}
 				if k8ctx.ID == k8scontextID && k8ctx.KubernetesServerID != nil {
