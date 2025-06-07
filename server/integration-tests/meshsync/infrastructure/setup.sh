@@ -85,11 +85,6 @@ setup_cluster() {
   kubectl create namespace $MESHERY_K8S_NAMESPACE
   echo ""
 
-  echo "Applying meshery resources..."
-  # kubectl apply -f $PATH_TO_CRDS_YAML
-  helm install meshery-operator $PATH_TO_MESHERY_OPERATOR_CHART --namespace $MESHERY_K8S_NAMESPACE --dependency-update
-  echo ""
-
   echo "Creating $CUSTOM_K8S_NAMESPACE namespace..."
   kubectl create namespace $CUSTOM_K8S_NAMESPACE
   echo ""
@@ -114,19 +109,25 @@ setup_cluster() {
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery --timeout=64s
   echo ""
 
+  echo "Installing meshery operator..."
+  # kubectl apply -f $PATH_TO_CRDS_YAML
+  helm install meshery-operator $PATH_TO_MESHERY_OPERATOR_CHART --namespace $MESHERY_K8S_NAMESPACE --dependency-update
+  echo ""
+
   echo "Outputing cluster resources..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE get po
   echo ""
 
-  echo "Waiting for broker to be ready"
+  echo "Waiting for operator to be available..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-operator --timeout=64s
+  echo ""
+  
+  # broker is important to be present before submitting k8s context,
+  # as server will attempt to connect
+  echo "Waiting for broker to be ready..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE rollout status --watch statefulset/meshery-broker --timeout 64s
   kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=ready pod --selector=app=meshery,component=broker --timeout=64s
   echo ""
-
-  echo "Waiting for meshsync to be available"
-  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
-  echo ""
-
 
   echo "Outputing cluster resources..."
   kubectl --namespace $MESHERY_K8S_NAMESPACE get po
@@ -164,6 +165,10 @@ setup_connection() {
     kubectl --namespace "$MESHERY_K8S_NAMESPACE" delete job "$JOB_NAME"
   done
 
+  # we only need meshsync up on this stage
+  echo "Waiting for meshsync to be available..."
+  kubectl --namespace $MESHERY_K8S_NAMESPACE wait --for=condition=available deployment/meshery-meshsync --timeout=64s
+  echo ""
 
   echo "Collecting meshsync events..."
   # TODO maybe there is a better way to be sure events are delivered?
