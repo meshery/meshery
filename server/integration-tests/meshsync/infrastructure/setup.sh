@@ -199,13 +199,16 @@ setup_connection() {
   SERVER_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app.kubernetes.io/name="meshery" -o jsonpath='{.items[0].metadata.name}')
   # Output logs from the pod
   kubectl --namespace $MESHERY_K8S_NAMESPACE logs $SERVER_DEPLOYMENT_POD_NAME
+  echo ""
+  echo ""
 
   echo "Printing meshsync logs..." 
   # Get the pod name for the deployment
   MESHSYNC_DEPLOYMENT_POD_NAME=$(kubectl get pods --namespace "$MESHERY_K8S_NAMESPACE" --selector=app=meshery,component=meshsync -o jsonpath='{.items[0].metadata.name}')
   # Output logs from the pod
   kubectl --namespace $MESHERY_K8S_NAMESPACE logs $MESHSYNC_DEPLOYMENT_POD_NAME
-
+  echo ""
+  echo ""
 
   echo "Copying sqlite database file from pod..."
     NAMESPACE=$MESHERY_K8S_NAMESPACE \
