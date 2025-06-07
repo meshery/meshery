@@ -215,7 +215,7 @@ NB: This works if there is an existing `mesheryctl` binary. If there isn't, the 
 
 **Enforce rebuilding the  binary**
 
-This involves parsing a flag for the binry to be built whether it exists or not. This comes in handy when you have local changes and possibly will like to test.
+This involves parsing a flag for the binary to be built whether it exists or not. This comes in handy when you have local changes and possibly will like to test.
 
 ```bash
   bash run_tests_local.sh -b
