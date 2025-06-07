@@ -4,7 +4,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshkit/database"
 	"github.com/stretchr/testify/assert"
 )
 
