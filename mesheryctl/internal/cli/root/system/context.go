@@ -398,7 +398,7 @@ mesheryctl system context create `
 		isRunning, _ := utils.AreMesheryComponentsRunning(currCtx.GetPlatform())
 		//if meshery running stop meshery before context switch
 		if isRunning {
-			utils.Log.Info("Meshery is running, attempting to switch context without stopping Meshery deployments.")
+			utils.Log.Info("Meshery is running... switching context without stopping Meshery deployments.")
 		}
 
 		configuration.CurrentContext = args[0]
