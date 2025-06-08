@@ -47,6 +47,12 @@ func (mh *MeshsyncDataHandler) GetBrokerHandler() broker.Handler {
 	return mh.broker
 }
 
+func (mh *MeshsyncDataHandler) CloseConnection() {
+	if mh.broker != nil && mh.broker.Info() != broker.NotConnected {
+		mh.broker.CloseConnection()
+	}
+}
+
 func (mh *MeshsyncDataHandler) Run() error {
 	storeSubscriptionStatusChan := make(chan bool)
 	// this subscription is independent of whether or not the stale data in the database have been cleaned up

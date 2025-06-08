@@ -35,6 +35,36 @@ const (
 	MesheryOperator
 )
 
+// contains a map of MesheryControllersHelper per k8sContext
+type MesheryControllersHelpersCatalog interface {
+	Get(key string) *MesheryControllersHelper
+	Set(key string, value *MesheryControllersHelper)
+	SetWithContext(ctx context.Context, key string, value *MesheryControllersHelper)
+}
+
+type MesheryControllersHelpersMap map[string]*MesheryControllersHelper
+
+func NewMesheryControllersHelpersMap() MesheryControllersHelpersMap {
+	return make(map[string]*MesheryControllersHelper)
+}
+
+func (m MesheryControllersHelpersMap) Set(key string, value *MesheryControllersHelper) {
+	m.SetWithContext(context.Background(), key, value)
+}
+
+func (m MesheryControllersHelpersMap) SetWithContext(ctx context.Context, key string, value *MesheryControllersHelper) {
+	if prev := m[key]; prev != nil {
+		// remove previous helper
+		prev.DestroyHelper(ctx)
+	}
+
+	m[key] = value
+}
+
+func (m MesheryControllersHelpersMap) Get(key string) *MesheryControllersHelper {
+	return m[key]
+}
+
 type MesheryControllersHelper struct {
 	// context that is being manged by a particular controllerHelper instance
 	contextID string
@@ -76,6 +106,14 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 		// Resetting this value results in again subscribing to the Broker.
 		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
+	}
+}
+
+func (mch *MesheryControllersHelper) DestroyHelper(ctx context.Context) {
+	// perform actions when helpers is no longer supposed to be in use
+	if mch.ctxMeshsyncDataHandler != nil {
+		mch.RemoveCtxControllerHandler(ctx, mch.contextID)
+		mch.RemoveMeshSyncDataHandler(ctx, mch.contextID)
 	}
 }
 
@@ -135,7 +173,9 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-
+	if mch.ctxMeshsyncDataHandler != nil {
+		mch.ctxMeshsyncDataHandler.CloseConnection()
+	}
 	mch.ctxMeshsyncDataHandler = nil
 }
 

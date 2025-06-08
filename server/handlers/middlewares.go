@@ -203,6 +203,7 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 		ctx = context.WithValue(ctx, models.HandlerKey, h)
 		ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
+		ctx = context.WithValue(ctx, models.MesheryControllerHelpersCatalogKey, h.MesheryCtrlsHelpersCatalog)
 		req1 := req.WithContext(ctx)
 
 		next(w, req1, prefObj, user, provider)
@@ -256,6 +257,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 	ctx = context.WithValue(ctx, models.KubeClustersKey, k8sContextPassedByUser)
 	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
+	ctx = context.WithValue(ctx, models.MesheryControllerHelpersCatalogKey, h.MesheryCtrlsHelpersCatalog)
 
 	for _, k8sContext := range k8sContextsFromKubeConfig {
 		machineCtx := &kubernetes.MachineCtx{

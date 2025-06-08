@@ -52,6 +52,8 @@ func GetAutoRegistrationSingleton() *AutoRegistrationHelper {
 	return autoRegistrationSingleton
 }
 
+// TODO:
+// do we need to inject models.MesheryControllerHelpersCatalogKey in context here as well?
 func (arh *AutoRegistrationHelper) processRegistration() {
 	if arh == nil {
 		return

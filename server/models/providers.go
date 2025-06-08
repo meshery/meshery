@@ -301,8 +301,9 @@ const (
 	KubeClustersKey   ContextKey = "kubeclusters"
 	AllKubeClusterKey ContextKey = "allkubeclusters"
 
-	MesheryControllerHandlersKey ContextKey = "mesherycontrollerhandlerskey"
-	MeshSyncDataHandlersKey      ContextKey = "meshsyncdatahandlerskey"
+	MesheryControllerHandlersKey       ContextKey = "mesherycontrollerhandlerskey"
+	MesheryControllerHelpersCatalogKey ContextKey = "mesherycontrollerhelperscatalogkey"
+	MeshSyncDataHandlersKey            ContextKey = "meshsyncdatahandlerskey"
 
 	RegistryManagerKey ContextKey = "registrymanagerkey"
 

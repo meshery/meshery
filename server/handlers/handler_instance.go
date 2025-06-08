@@ -29,6 +29,7 @@ type Handler struct {
 	// rename it for now from  MesheryCtrlsHelper to MesheryCtrlsHelperStubDoNotUse
 	// instead of removing it completely to avoid possible regression
 	MesheryCtrlsHelperStubDoNotUse          *models.MesheryControllersHelper
+	MesheryCtrlsHelpersCatalog              models.MesheryControllersHelpersCatalog
 	Provider                                string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
 	SystemID                                *uuid.UUID
 	dbHandler                               *database.Handler
@@ -46,6 +47,7 @@ func NewHandlerInstance(
 	brokerConn broker.Handler,
 	compRegHelper *models.ComponentsRegistrationHelper,
 	mctrlHelper *models.MesheryControllersHelper,
+	mctrlHelperCatalog models.MesheryControllersHelpersCatalog,
 	dbHandler *database.Handler,
 	eb *events.EventStreamer,
 	regManager *meshmodel.RegistryManager,
@@ -61,6 +63,7 @@ func NewHandlerInstance(
 		brokerConn:                              brokerConn,
 		K8sCompRegHelper:                        compRegHelper,
 		MesheryCtrlsHelperStubDoNotUse:          mctrlHelper,
+		MesheryCtrlsHelpersCatalog:              mctrlHelperCatalog,
 		dbHandler:                               dbHandler,
 		EventsBuffer:                            eb,
 		registryManager:                         regManager,
