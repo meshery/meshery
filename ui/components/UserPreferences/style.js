@@ -1,4 +1,4 @@
-import { Card, FormControl, Paper, styled, Select, FormGroup, Grid2 } from '@layer5/sistent';
+import { Card, FormControl, Paper, styled, Select, FormGroup, Grid2 } from '@sistent/sistent';
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
   '&.Mui-focused .MuiOutlinedInput-notchedOutline': {

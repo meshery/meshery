@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Typography, useTheme } from '@layer5/sistent';
+import { Box, Typography, useTheme } from '@sistent/sistent';
 import TipsIcon from '../../assets/icons/Tipsicon'; // add this icon
 
 const TipsCarousel = ({ tips }) => {

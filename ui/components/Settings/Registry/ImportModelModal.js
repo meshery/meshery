@@ -11,7 +11,7 @@ import {
   Box,
   Modal,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { RJSFModalWrapper } from '@/components/General/Modals/Modal';
 import CsvStepper from './Stepper/CSVStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';

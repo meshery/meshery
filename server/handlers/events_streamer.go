@@ -13,12 +13,12 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	_events "github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	_events "github.com/meshery/meshkit/utils/events"
 )
 
 var (
@@ -230,6 +230,7 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 	category := urlValues.Get("category")
 	action := urlValues.Get("action")
 	severity := urlValues.Get("severity")
+	acted_upon := urlValues.Get("acted_upon")
 
 	eventFilter := &events.EventsFilter{}
 	if category != "" {
@@ -250,6 +251,13 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 		err := json.Unmarshal([]byte(severity), &eventFilter.Severity)
 		if err != nil {
 			return eventFilter, models.ErrUnmarshal(err, "event severity filter")
+		}
+	}
+
+	if acted_upon != "" {
+		err := json.Unmarshal([]byte(acted_upon), &eventFilter.ActedUpon)
+		if err != nil {
+			return eventFilter, models.ErrUnmarshal(err, "event acted upon filter")
 		}
 	}
 

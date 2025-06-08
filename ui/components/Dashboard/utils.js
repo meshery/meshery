@@ -1,5 +1,5 @@
 import { FALLBACK_KUBERNETES_IMAGE_PATH, KUBERNETES } from '@/constants/common';
-import { componentIcon } from '@layer5/sistent';
+import { componentIcon } from '@sistent/sistent';
 import { iconXLarge } from 'css/icons.styles';
 import React from 'react';
 

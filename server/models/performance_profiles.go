@@ -2,8 +2,8 @@ package models
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/internal/sql"
 	"github.com/lib/pq"
+	"github.com/meshery/meshery/server/internal/sql"
 
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 )

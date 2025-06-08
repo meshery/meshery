@@ -8,7 +8,7 @@ import {
   useResourceCleanData,
   Paper,
   Typography,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';

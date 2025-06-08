@@ -9,8 +9,8 @@ import (
 	"github.com/gofrs/uuid"
 	"gopkg.in/yaml.v2"
 
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/models/patterns"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/patterns"
 )
 
 // MesheryPatternPersister is the persister for persisting

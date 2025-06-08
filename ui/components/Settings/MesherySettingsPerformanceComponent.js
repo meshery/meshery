@@ -20,7 +20,7 @@ import {
   Autocomplete,
   NoSsr,
   Radio,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useGetLoadTestPrefsQuery, useUpdateLoadTestPrefsMutation } from '@/rtk-query/user';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
