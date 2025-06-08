@@ -46,3 +46,16 @@ You're ready to use Meshery! Open your browser and navigate to the Meshery UI.
 {% include_cached installation/accessing-meshery-ui.md display-title="true" %}
 
 {% include related-discussions.html tag="meshery" %}
+
+## Deploying Meshery without Meshery Operator
+
+Meshery's Helm chart supports installation without its default Operator component. This is useful when you want a minimal setup or plan to install the Operator later or separately.
+
+### ✅ Install Meshery Core Without Operator
+
+```bash
+helm repo add meshery https://meshery.io/charts
+helm repo update
+
+# Install Meshery only (no operator)
+helm install meshery meshery/meshery --namespace meshery --create-namespace
