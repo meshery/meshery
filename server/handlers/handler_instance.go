@@ -22,9 +22,13 @@ type Handler struct {
 	MeshsyncChannel chan struct{}
 	log             logger.Handler
 	// to be removed
-	brokerConn                              broker.Handler
-	K8sCompRegHelper                        *models.ComponentsRegistrationHelper
-	MesheryCtrlsHelper                      *models.MesheryControllersHelper
+	brokerConn       broker.Handler
+	K8sCompRegHelper *models.ComponentsRegistrationHelper
+	// this is probably incorrect, as MesheryControllersHelper is supposed to be per k8s context (or per connection)
+	// in all places where it is used (to pass to kubernetes.MachineCtx), it is then re instantiated;
+	// rename it for now from  MesheryCtrlsHelper to MesheryCtrlsHelperStubDoNotUse
+	// instead of removing it completely to avoid possible regression
+	MesheryCtrlsHelperStubDoNotUse          *models.MesheryControllersHelper
 	Provider                                string // When set, all endpoints consider tokens / identities / capabilities valid from the single, designated provider.
 	SystemID                                *uuid.UUID
 	dbHandler                               *database.Handler
@@ -56,7 +60,7 @@ func NewHandlerInstance(
 		log:                                     logger,
 		brokerConn:                              brokerConn,
 		K8sCompRegHelper:                        compRegHelper,
-		MesheryCtrlsHelper:                      mctrlHelper,
+		MesheryCtrlsHelperStubDoNotUse:          mctrlHelper,
 		dbHandler:                               dbHandler,
 		EventsBuffer:                            eb,
 		registryManager:                         regManager,

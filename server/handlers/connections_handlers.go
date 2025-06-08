@@ -393,7 +393,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 			machineCtx := &kubernetes.MachineCtx{
 				K8sContext:         k8scontext,
-				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+				MesheryCtrlsHelper: h.MesheryCtrlsHelperStubDoNotUse,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
 				K8scontextChannel:  h.config.K8scontextChannel,

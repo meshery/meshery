@@ -260,7 +260,7 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 	for _, k8sContext := range k8sContextsFromKubeConfig {
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
-			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelperStubDoNotUse,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
 			K8scontextChannel:  h.config.K8scontextChannel,
@@ -318,7 +318,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	for _, k8sContext := range connectedK8sContexts {
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
-			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelperStubDoNotUse,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
 			K8scontextChannel:  h.config.K8scontextChannel,
