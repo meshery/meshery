@@ -66,9 +66,11 @@ func AssignControllerHandlers(
 ) {
 	if machinectx != nil {
 		machinectx.MesheryCtrlsHelper = models.NewMesheryControllersHelper(machinectx.log, models.NewOperatorDeploymentConfig(adapterTracker), models.GetDBInstance())
-		mctrlHelperCatalog.Set(
-			machinectx.K8sContext.ID,
-			machinectx.MesheryCtrlsHelper,
-		)
+		if mctrlHelperCatalog != nil {
+			mctrlHelperCatalog.Set(
+				machinectx.K8sContext.ID,
+				machinectx.MesheryCtrlsHelper,
+			)
+		}
 	}
 }

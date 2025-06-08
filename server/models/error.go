@@ -137,6 +137,7 @@ const (
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
+	ErrMeshsyncDataHandlerCode            = "replace_me" // TODO run error util
 )
 
 var (
@@ -608,4 +609,12 @@ func ErrImportFailure(hostname string, failedMsg string) error {
 
 func ErrMarshallingDesignIntoYAML(err error) error {
 	return errors.New(ErrMarshallingDesignIntoYAMLCode, errors.Alert, []string{"Failed to marshal design into YAML"}, []string{err.Error()}, []string{"unable to marshal design into YAML", "design may be corrupted"}, []string{"check if the design is valid and not corrupted"})
+}
+
+func ErrMeshsyncDataHandler(err error) error {
+	return ErrMeshsyncDataHandlerStrings(err.Error())
+}
+
+func ErrMeshsyncDataHandlerStrings(messages ...string) error {
+	return errors.New(ErrMeshsyncDataHandlerCode, errors.Alert, []string{"Error in meshsync data hadler"}, messages, []string{"not deployed operator", "issue with connection to broker"}, []string{"check that operator is deployed", "check that server can establish connection to broker"})
 }

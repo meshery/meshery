@@ -2,6 +2,8 @@ package resolver
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path"
@@ -9,7 +11,6 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/meshery/server/internal/graphql/model"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
@@ -167,15 +168,29 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		if r.BrokerConn.Info() != broker.NotConnected {
-			err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
-				Request: &broker.RequestObject{
-					Entity: broker.ReSyncDiscoveryEntity,
-				},
-			})
-			if err != nil {
-				return "", ErrPublishBroker(err)
-			}
+		mesheryControllerHelpersCatalog, _ := ctx.Value(models.MesheryControllerHelpersCatalogKey).(models.MesheryControllersHelpersCatalog)
+		if mesheryControllerHelpersCatalog == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf("mesheryControllerHelpersCatalog is not present in go context"),
+			)
+		}
+		mesheryCtrlsHelper := mesheryControllerHelpersCatalog.Get(k8scontextID)
+		if mesheryCtrlsHelper == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"mesheryControllerHelpersCatalog does not have mesheryCtrlsHelper for current k8s context %s",
+					k8scontextID,
+				),
+			)
+		}
+
+		if err := mesheryCtrlsHelper.ResyncMeshsync(ctx); err != nil {
+			return "", ErrResyncCluster(
+				errors.Join(
+					fmt.Errorf("error calling ResyncMeshsync for current k8s context %s", k8scontextID),
+					err,
+				),
+			)
 		}
 	}
 	return model.StatusProcessing, nil
