@@ -116,4 +116,5 @@ RUN mkdir -p /var/run; chown -R appuser:docker /var/run/
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
 WORKDIR /app/server/cmd
-CMD ["./meshery"]
+ENTRYPOINT ["./meshery"]
+CMD []
