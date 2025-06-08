@@ -38,7 +38,7 @@ const (
 	ErrPerformanceProfilesSubscriptionCode  = "meshery-server-1211"
 	ErrPerformanceResultSubscriptionCode    = "meshery-server-1212"
 	ErrGormDatabaseCode                     = "meshery-server-1213"
-	ErrResyncClusterCode                    = "replace_me" // TODO run error util
+	ErrResyncClusterCode                    = "meshery-server-1369"
 )
 
 var (
