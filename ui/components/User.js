@@ -3,7 +3,6 @@ import { Avatar, Button } from '@sistent/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { IconButtonAvatar } from './Header.styles';
@@ -16,7 +15,6 @@ import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
  */
 const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
-  const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatch();
@@ -29,7 +27,7 @@ const User = (props) => {
   } = useGetLoggedInUserQuery();
 
   const getProfileUrl = () => {
-    return `${MESHERY_CLOUD_PROD}/user/${userData?.id}`
+    return `${MESHERY_CLOUD_PROD}/user/${userData?.id}`;
   };
 
   const goToProfile = () => {
@@ -56,9 +54,6 @@ const User = (props) => {
   useEffect(() => {
     if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
       capabilitiesLoadedRef.current = true;
-      setAccount(
-        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
-      );
     }
   }, [capabilitiesRegistry]);
 
