@@ -33,7 +33,6 @@ import {
   useTheme,
   useMediaQuery,
 } from '@sistent/sistent';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
@@ -96,7 +95,7 @@ const K8sContextConnectionChip_ = ({
 
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
-      <CustomTextTooltip
+      <CustomTooltip
         placement="left-end"
         leaveDelay={200}
         interactive={true}
@@ -128,7 +127,7 @@ const K8sContextConnectionChip_ = ({
             status={operatorState}
           />
         </div>
-      </CustomTextTooltip>
+      </CustomTooltip>
     </Box>
   );
 };
