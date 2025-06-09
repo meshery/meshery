@@ -389,10 +389,13 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
-		event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
+		event := eventBuilder.WithDescription(description).
 			WithMetadata(map[string]interface{}{
-				"trace":        evaluationResponse.Trace,
-				"evaluated_at": *evaluationResponse.Timestamp,
+				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
+				"trace":               evaluationResponse.Trace,
+				"evaluation_response": evaluationResponse,
+				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
 		_ = provider.PersistEvent(event)
 

@@ -1,5 +1,6 @@
 import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { SEVERITY, STATUS } from '../../components/NotificationCenter/constants';
+import { BellIcon } from '@sistent/sistent';
 
 const initialState = {
   current_view: {
@@ -11,6 +12,20 @@ const initialState = {
     has_more: true,
   },
 
+  // this is used to fetch the view when notification center is opened
+  view_to_fetch_on_open: {
+    page: 0,
+    filters: {
+      status: STATUS.UNREAD,
+    },
+  },
+
+  ui: {
+    history_mode: false, // used to determine if the notification center is in history mode . so we render in a different way
+    title: 'Notifications', // title of the operation center
+    empty_message: 'No notifications found', // message to show when there are no notifications
+    icon: BellIcon,
+  },
   isNotificationCenterOpen: false,
 };
 
@@ -90,15 +105,37 @@ export const eventsSlice = createSlice({
     },
 
     setCurrentView: (state, action) => {
+      console.log('Setting current view in events slice:', action);
       state.current_view = action.payload;
     },
 
-    toggleNotificationCenter: (state) => {
+    toggleNotificationCenter: (state, action) => {
+      console.log('Toggling notification center state', action);
       state.isNotificationCenterOpen = !state.isNotificationCenterOpen;
     },
 
     closeNotificationCenter: (state) => {
       state.isNotificationCenterOpen = false;
+      state.view_to_fetch_on_open = initialState.view_to_fetch_on_open;
+      state.current_view = initialState.current_view;
+      state.ui = initialState.ui;
+    },
+
+    openNotificationCenter: (state, action) => {
+      console.log('Opening notification center with view:', action.payload);
+      state.isNotificationCenterOpen = true;
+      state.view_to_fetch_on_open =
+        action.payload.view_to_open || initialState.view_to_fetch_on_open;
+      if (action.payload.view_to_open) {
+        state.current_view = action.payload.view_to_open;
+      }
+
+      if (action.payload.ui) {
+        state.ui = {
+          ...state.ui,
+          ...action.payload.ui,
+        };
+      }
     },
   },
 });
