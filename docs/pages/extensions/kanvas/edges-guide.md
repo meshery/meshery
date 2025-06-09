@@ -40,7 +40,7 @@ Edge styles are carefully chosen to reflect meaning:
 | **Color**        | Indicates traffic type or status (e.g., green = active, red = failed, grey = passive) |
 | **Thickness**    | Thicker lines may suggest higher bandwidth or importance |
 | **Arrowhead**    | Shows direction of flow or control |
-| **Dashes vs Solid** | Dashed lines indicate indirect, inferred, or optional connections |
+| **Line Style**      | Dashed lines indicate indirect, inferred, or optional connections |
 
 ---
 
