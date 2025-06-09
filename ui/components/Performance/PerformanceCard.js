@@ -17,7 +17,7 @@ import {
 } from '@sistent/sistent';
 import FlipCard from '../FlipCard';
 import PerformanceResults from './PerformanceResults';
-import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '../../constants/endpoints';
 import { iconMedium } from '../../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -190,7 +190,7 @@ function PerformanceCard({
         </ResultContainer>
         <div style={{}}>
           <BottomPart>
-            <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
+            <Link href={`${REMOTE_PROVIDER_URL}/user/${profile.user_id}`} target="_blank">
               <Avatar alt="profile-avatar" src={userAvatar} />
             </Link>
             <div

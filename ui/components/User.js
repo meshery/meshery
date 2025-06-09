@@ -8,7 +8,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { IconButtonAvatar } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '@/store/slices/mesheryUi';
-import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 /**
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
@@ -27,7 +27,7 @@ const User = (props) => {
   } = useGetLoggedInUserQuery();
 
   const getProfileUrl = () => {
-    return userData?.id ? `${MESHERY_CLOUD_PROD}/user/${userData.id}` : null;
+    return userData?.id ? `${REMOTE_PROVIDER_URL}/user/${userData.id}` : null;
   };
 
   const goToProfile = () => {

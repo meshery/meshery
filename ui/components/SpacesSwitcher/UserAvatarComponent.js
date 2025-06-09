@@ -1,4 +1,4 @@
-import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 import React from 'react';
 import { CustomTooltip, Link, Avatar, Typography } from '@sistent/sistent';
 import { StyledAvatarContainer, StyledUserDetailsContainer, StyledUpdatedText } from './styles';
@@ -11,7 +11,7 @@ const UserAvatarComponent = ({ userData }) => {
         sx={{ display: { xs: 'block', sm: 'block' } }}
       >
         <div>
-          <Link href={`${MESHERY_CLOUD_PROD}/user/${userData?.id}`}>
+          <Link href={`${REMOTE_PROVIDER_URL}/user/${userData?.id}`}>
             <Avatar alt={userData?.first_name} src={userData?.avatar_url} />
           </Link>
         </div>
