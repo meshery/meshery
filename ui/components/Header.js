@@ -466,32 +466,42 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <UserSpan style={{ position: 'relative' }}>
-                    <K8sContextMenu
-                      contexts={contexts}
-                      activeContexts={activeContexts}
-                      setActiveContexts={setActiveContexts}
-                      searchContexts={searchContexts}
-                    />
-                  </UserSpan>
+                  <CustomTooltip title="Kubernetes Connections">
+                    <UserSpan style={{ position: 'relative' }}>
+                      <K8sContextMenu
+                        contexts={contexts}
+                        activeContexts={activeContexts}
+                        setActiveContexts={setActiveContexts}
+                        searchContexts={searchContexts}
+                      />
+                    </UserSpan>
+                  </CustomTooltip>
                   <SettingsWrapper
                     isDesktop={isDesktop}
                     data-testid="settings-button"
                     aria-describedby={abilityUpdated}
                   >
                     <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')}>
-                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
-                      </IconButton>
+                      <CustomTooltip title="Settings">
+                        <IconButton onClick={() => Router.push('/settings')}>
+                          <SettingsIcon
+                            style={{ ...iconMedium, fill: theme.palette.common.white }}
+                          />
+                        </IconButton>
+                      </CustomTooltip>
                     </CanShow>
                   </SettingsWrapper>
-                  <div data-testid="notification-button">
-                    <NotificationDrawerButton />
-                  </div>
+                  <CustomTooltip title="Notifications">
+                    <div data-testid="notification-button">
+                      <NotificationDrawerButton />
+                    </div>
+                  </CustomTooltip>
 
-                  <UserSpan>
-                    <User />
-                  </UserSpan>
+                  <CustomTooltip title={'User Profile'}>
+                    <UserSpan>
+                      <User />
+                    </UserSpan>
+                  </CustomTooltip>
                   <UserSpan data-testid="header-menu">
                     <HeaderMenu />
                   </UserSpan>
