@@ -27,7 +27,7 @@ const User = (props) => {
   } = useGetLoggedInUserQuery();
 
   const getProfileUrl = () => {
-    return `${MESHERY_CLOUD_PROD}/user/${userData?.id}`;
+    return userData?.id ? `${MESHERY_CLOUD_PROD}/user/${userData.id}` : null;
   };
 
   const goToProfile = () => {
