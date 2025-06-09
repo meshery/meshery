@@ -230,6 +230,7 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 	category := urlValues.Get("category")
 	action := urlValues.Get("action")
 	severity := urlValues.Get("severity")
+	acted_upon := urlValues.Get("acted_upon")
 
 	eventFilter := &events.EventsFilter{}
 	if category != "" {
@@ -250,6 +251,13 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 		err := json.Unmarshal([]byte(severity), &eventFilter.Severity)
 		if err != nil {
 			return eventFilter, models.ErrUnmarshal(err, "event severity filter")
+		}
+	}
+
+	if acted_upon != "" {
+		err := json.Unmarshal([]byte(acted_upon), &eventFilter.ActedUpon)
+		if err != nil {
+			return eventFilter, models.ErrUnmarshal(err, "event acted upon filter")
 		}
 	}
 

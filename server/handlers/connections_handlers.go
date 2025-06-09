@@ -207,8 +207,8 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		pageSize, _ = strconv.Atoi(pageSizeStr)
 	}
 
-	if pageSize > 50 {
-		pageSize = 50
+	if pageSize > 100 {
+		pageSize = 100
 	}
 	if pageSize <= 0 {
 		pageSize = 10

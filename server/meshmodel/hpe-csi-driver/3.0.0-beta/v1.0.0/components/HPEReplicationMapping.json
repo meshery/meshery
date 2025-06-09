@@ -1,0 +1,78 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "HPE Replication Mapping",
+  "description": "Uncategorized",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "hpe-csi-driver",
+    "displayName": "HPE CSI Driver",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://hpe-storage.github.io/co-deployments/hpe-csi-driver-3.0.0-beta.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "3.0.0-beta"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "",
+    "secondaryColor": "circle",
+    "shape": "Uncategorized",
+    "svgColor": "#00B39F",
+    "svgComplete": "",
+    "svgWhite": "#00D3A9"
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "https://hpe-storage.github.io/co-deployments/hpe-csi-driver-3.0.0-beta.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "FALSE",
+    "kind": "HPEReplicationMapping",
+    "schema": "{\n \"description\": \"HPEReplicationMapping defines the properties of a 3PAR/Primera RCGs\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"HPEReplicationMappingSpec defines the properties listed on an HPEReplicationMapping\",\n   \"properties\": {\n    \"primary_array_details\": {\n     \"properties\": {\n      \"cpg\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      },\n      \"secretNamespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"rcg_details\": {\n     \"description\": \"RCG Details\",\n     \"properties\": {\n      \"rcgnames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"rcgnames\"\n     ],\n     \"type\": \"object\"\n    },\n    \"target_array_details\": {\n     \"properties\": {\n      \"cpg\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      },\n      \"secretNamespace\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"primary_array_details\",\n    \"rcg_details\",\n    \"target_array_details\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"HPE Replication Mapping\",\n \"type\": \"object\"\n}"
+  }
+}
