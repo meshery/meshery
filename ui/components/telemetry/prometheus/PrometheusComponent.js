@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
-import { Typography, styled, Box } from '@sistent/sistent';
+import { Typography, styled, Box, Button } from '@sistent/sistent';
 import {
   useConfigureConnectionMutation,
   useUpdateConnectionMutation,
@@ -280,6 +280,19 @@ const PrometheusComponent = (props) => {
             connectionID={connectionID}
           />
           {displaySelec}
+
+          {/* New Learn More button linking to Prometheus docs */}
+          <Box mt={3} textAlign="center">
+            <Button
+              variant="outlined"
+              color="primary"
+              href="/extensibility/integrations/prometheus"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Learn More about Prometheus Integration
+            </Button>
+          </Box>
         </StyledBox>
       </NoSsr>
     );
