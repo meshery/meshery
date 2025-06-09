@@ -23,7 +23,7 @@
 
 | Name                | GitHub        | Affiliation |
 | ------------------- | ------------- | ----------- |
-| [Aisuko Li](https://meshery.io/community/members/aisuko-li)           | @aisuko        | RMIT        |
+| [Aisuko Li](https://meshery.io/community/members/aisuko)           | @aisuko        | RMIT        |
 | [Dheeraj Gedam](https://meshery.io/community/members/dheeraj-gedam)        | @dheerajng     | Citrix      |
 | [Haim Helman](https://meshery.io/community/members/haim-helman)         | @thehh1974     | VMware      |
 | [Hussaina Begum](https://meshery.io/community/members/hussaina-begum)      | @hexxdump      | VMware      |
