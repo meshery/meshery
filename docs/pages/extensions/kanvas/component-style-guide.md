@@ -34,7 +34,7 @@ By default, the **circle** shape is used for new components. However, we encoura
  guide_description="Description"
  guide_usecase="CommonUseCase"
  guide_svg="SVG"
- guide_assests_folder="shapes"
+ guide_assets_folder="shapes"
 %}
 
 ---
