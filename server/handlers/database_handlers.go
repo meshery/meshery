@@ -45,10 +45,6 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 		order = "name ASC" // default order
 	}
 
-	// DEBUG: dump params
-	fmt.Printf("Params -> search=%q, limit=%d, offset=%d, order=%q\n",
-		search, limit, offset, order)
-
 	// 1) pull just the table names (empty search → LIKE '%%' → all tables)
 	var tableNames []string
 	h.dbHandler.DB.
@@ -72,14 +68,32 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	subq := strings.Join(unions, " UNION ALL ")
 
 	// 3) raw SQL: use 'order' directly as "column direction"
+	if len(tableNames) == 0 {
+		// No tables found, return empty result
+		databaseSummary := &models.DatabaseSummary{
+			Page:        page,
+			PageSize:    limit,
+			TotalTables: 0,
+			RecordCount: 0,
+			Tables:      []*models.SqliteSchema{},
+		}
+		w.Header().Set("Content-Type", "application/json")
+		val, err := json.Marshal(databaseSummary)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Fprint(w, string(val))
+		return
+	}
+
 	raw := fmt.Sprintf(`
-        SELECT name, count
-          FROM (%s)
-         ORDER BY %s
-         %s
-    `,
+		SELECT name, count
+		  FROM (%s)
+		 ORDER BY %s
+		 %s
+	`,
 		subq,
-		models.SanitizeOrderInput(order, []string{"name", "count", "created_at", "updated_at"}),
+		models.SanitizeOrderInput(order, []string{"name", "count"}),
 		func() string {
 			if limit > 0 {
 				return fmt.Sprintf("LIMIT %d OFFSET %d", limit, offset)
