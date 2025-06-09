@@ -21,7 +21,7 @@ Meshery supports multiple types of relationships, such as:
 - **Permissions** (e.g., RBAC relations)
 - **Hierarchical associations** (e.g., controller/child relationships)
 
-> 🔗 See [Relationships]({{site.baseurl}}/concepts/logical/relationships) for examples of these types in practice.
+🔗 For examples of these types in practice, see [Relationships]({{site.baseurl}}/concepts/logical/relationships).
 
 ---
 
