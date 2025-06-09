@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
@@ -14,61 +15,95 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
-	"gorm.io/gorm/clause"
 )
 
-// swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
-// Handle GET request for getting summary about the system database.
-//
-// # Tables can be further filtered through query parameter
-//
-// ```?order={field}``` orders on the passed field
-//
-// ```?sort={[asc/desc]}``` Default behavior is asc
-//
-// ```?page={page-number}``` Default page number is 1
-//
-// ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
-//
-// ```?search={tablename}``` If search is non empty then a greedy search is performed
-// responses:
-//
-//	200: systemDatabaseResponseWrapper
+/*
+swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
+
+Handle GET request for getting summary about the system database.
+
+Tables can be further filtered through query parameters:
+
+	- ?order={field}         Orders on the passed field
+	- ?sort={[asc/desc]}     Default behavior is asc
+	- ?page={page-number}    Default page number is 1
+	- ?pagesize={pagesize}   Default pagesize is 10. To return all results: pagesize=all
+	- ?search={tablename}    If search is non empty then a greedy search is performed
+
+responses:
+	200: systemDatabaseResponseWrapper
+*/
+
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	var tables []*models.SqliteSchema
 	var recordCount int
 	var totalTables int64
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 
-	tableFinder := h.dbHandler.DB.Table("sqlite_schema").
-		Where("type = ?", "table")
+	page, offset, limit, search, order, _, _ := getPaginationParams(r)
 
-	if search != "" {
-		tableFinder = tableFinder.Where("name LIKE ?", "%"+search+"%")
+	if order == "" {
+		order = "name ASC" // default order
 	}
 
-	tableFinder.Count(&totalTables)
+	// DEBUG: dump params
+	fmt.Printf("Params -> search=%q, limit=%d, offset=%d, order=%q\n",
+		search, limit, offset, order)
 
-	if limit != 0 {
-		tableFinder = tableFinder.Limit(limit)
+	// 1) pull just the table names (empty search → LIKE '%%' → all tables)
+	var tableNames []string
+	h.dbHandler.DB.
+		Table("sqlite_schema").
+		Select("name").
+		Where("type = ?", "table").
+		Where("name LIKE ?", "%"+search+"%").
+		Pluck("name", &tableNames)
+	totalTables = int64(len(tableNames))
+
+	// 2) build a UNION ALL sub‐query of (name, count)
+	unions := make([]string, 0, len(tableNames))
+	for _, tn := range tableNames {
+		unions = append(unions,
+			fmt.Sprintf(
+				"SELECT %q AS name, COUNT(*) AS count FROM %q",
+				tn, tn,
+			),
+		)
 	}
-	if offset != 0 {
-		tableFinder = tableFinder.Offset(offset)
+	subq := strings.Join(unions, " UNION ALL ")
+
+	// 3) raw SQL: use 'order' directly as "column direction"
+	raw := fmt.Sprintf(`
+        SELECT name, count
+          FROM (%s)
+         ORDER BY %s
+         %s
+    `,
+		subq,
+		models.SanitizeOrderInput(order, []string{"name", "count", "created_at", "updated_at"}),
+		func() string {
+			if limit > 0 {
+				return fmt.Sprintf("LIMIT %d OFFSET %d", limit, offset)
+			}
+			return ""
+		}(),
+	)
+
+	// 4) execute and scan
+	rows, err := h.dbHandler.DB.Raw(raw).Rows()
+	if err != nil {
+		http.Error(w, "failed to load table counts", http.StatusInternalServerError)
+		return
 	}
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	if order != "" {
-		if sort == "desc" {
-			tableFinder = tableFinder.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
-			tableFinder = tableFinder.Order(order)
+	defer rows.Close()
+
+	for rows.Next() {
+		t := &models.SqliteSchema{}
+		if err := rows.Scan(&t.Name, &t.Count); err != nil {
+			http.Error(w, "scan error", http.StatusInternalServerError)
+			return
 		}
-	}
-
-	tableFinder.Find(&tables)
-
-	for _, table := range tables {
-		h.dbHandler.DB.Table(table.Name).Count(&table.Count)
-		recordCount += int(table.Count)
+		recordCount += int(t.Count)
+		tables = append(tables, t)
 	}
 
 	databaseSummary := &models.DatabaseSummary{
@@ -88,17 +123,20 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	fmt.Fprint(w, string(val))
 }
 
-// swagger:route DELETE /api/system/database/reset ResetSystemDatabase
-// Reset the system database to its initial state.
-//
-// This endpoint resets the system database to its initial state by performing the following steps:
-// - Creates an archive of the current database contents.
-// - Drops all existing tables in the database.
-// - Applies auto migration to recreate the necessary tables.
-//
-// responses:
-//   200:
-//   500:
+/*
+swagger:route DELETE /api/system/database/reset ResetSystemDatabase
+
+Reset the system database to its initial state.
+
+This endpoint resets the system database to its initial state by performing the following steps:
+	- Creates an archive of the current database contents.
+	- Drops all existing tables in the database.
+	- Applies auto migration to recreate the necessary tables.
+
+responses:
+	200:
+	500:
+*/
 
 // Reset the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {

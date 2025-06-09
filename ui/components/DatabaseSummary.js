@@ -105,8 +105,9 @@ const DatabaseSummary = (props) => {
       if (searchText) setPage(0);
       setSearchText(searchText != null ? searchText : '');
     }),
-    onColumnSortChange: (_, direction) => {
-      setSortOrder(`name ${direction}`);
+    onColumnSortChange: (changedColumn, direction) => {
+      setPage(0);
+      setSortOrder(`${changedColumn} ${direction}`);
     },
   };
 
