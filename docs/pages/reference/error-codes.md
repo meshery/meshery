@@ -41,6 +41,7 @@ language: en
     cursor: pointer;
   }
   .tbl-body-row .error-name-code {
+    display: flex; /* Add this if flexbox alignment is desired */
     justify-content: flex-start;
   }
   .tbl .tbl-body .tbl-hidden-row {
