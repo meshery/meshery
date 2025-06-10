@@ -69,10 +69,12 @@ language: en
     td, th {
       padding: 0.5rem;
     }
+    /* Consider removing or adjusting these lines to enable toggling on mobile
     .tbl .tbl-body .tbl-hidden-row {
       display: block;
       visibility: visible;
     }
+    */
   }
 </style>
 
