@@ -13,41 +13,59 @@ redirect_from:
 
 Ever wondered what the different icons and shapes in Meshery represent? Whether you're looking at a dashboard, a settings page, or a design, you'll encounter a rich library of visual elements. This guide is here to help you understand what they mean.
 
-The visual elements in Meshery generally fall into two categories:
-- **System-Defined Icons:** These have predefined meanings to represent specific Kubernetes resources or integrated technologies.
-- **Foundational Elements:** A small set of basic shapes for representing abstract concepts.
+The [components](https://docs.meshery.io/concepts/logical/components) in Meshery fall into two fundamental categories, distinguished by whether they can be orchestrated (managed) by Meshery during deployment:
 
-## System-Defined Icons
+- **Semantic Components (Orchestratable):** These represent actual infrastructure resources that Meshery can understand and manage during deployment. Examples include Kubernetes resources (like Pods and Services), databases, and other infrastructure components. Meshery will actively manage their lifecycle during deployment.
 
-This is the most common type of visual you'll see. Meshery uses a consistent system of icons to represent specific, functional components. Understanding these will help you accurately interpret your systems.
+- **Non-semantic Components (Annotation):** These are visual elements used for documentation and organization, such as text boxes, arrows, shapes, and comments. Meshery ignores these during deployment as they don't represent actual infrastructure.
+
+{% include alert.html type="info" title="Visual Customization" content="All components, whether semantic or non-semantic, support rich visual customization. For example, you can change the color of a Kubernetes Pod icon, modify its shape, or customize its background - it's all configurable!" %}
+
+## Semantic Components
+
+These components represent real infrastructure that Meshery can manage. They can be either built-in (like Kubernetes components) or custom components that you [create](https://docs.meshery.io/guides/configuration-management/creating-models).
 
 ### Kubernetes Components
 
-Icons for Kubernetes resources have a distinct and consistent visual style to help you instantly recognize them. This system is built on a few key principles:
+While Kubernetes components are commonly used, they follow the same principles as all other semantic components. They have a default distinct visual style to help you instantly recognize them:
 
 - **Uniform Color Scheme:** Kubernetes component icons typically use a **distinctive blue background** as a standard identifier.
 - **Standardized Icon Structure:** The fundamental structure is consistent: an outer container shape with the blue background, encompassing a unique inner white symbol.
 - **Meaningful Inner Symbols:** The white symbol inside each icon is the crucial unique identifier for that specific Kubernetes Kind, often inspired by the core function of the resource.
 
-<a href="../../../assets/img/shapes/k8s_style.gif" target="_blank">
-  <img src="../../../assets/img/shapes/k8s_style.gif" style="width:50%; height:auto;" alt="Example of using kubernetes components in Kanvas">
+<a href="../../../assets/img/shapes/k8s_component.gif" target="_blank">
+  <img src="../../../assets/img/shapes/k8s_component.gif" style="width:50%; height:auto;" alt="Kubernetes components in Meshery">
 </a>
 
 ### Integrated Technologies
-Meshery uses the widely recognized, official icons of its many integrated services and technologies (like AWS, Prometheus, Istio, etc.). This leverages familiar branding for easy identification. When you see an icon for a specific cloud service or tool, you are seeing a system-defined representation of that functional unit.
 
-<a href="../../../assets/img/shapes/component_style.gif" target="_blank">
-  <img src="../../../assets/img/shapes/component_style.gif" style="width:50%; height:auto;" alt="Example of using integrated components in Meshery">
+Meshery supports various technologies (like AWS, Prometheus, Istio, KEDA, etc.) with their official icons. These components have the same orchestratable capabilities as Kubernetes components.
+
+<a href="../../../assets/img/shapes/AWS-models.png" target="_blank">
+  <img src="../../../assets/img/shapes/AWS-models.png" style="width:50%; height:auto;" alt="AWS models in Meshery">
 </a>
 
 {% include alert.html type="info" title="Exploring All Integrations" content="This guide covers the visual style of components. For a complete catalog of all technologies that Meshery integrates, visit the integrations directory. <strong><a href='https://docs.meshery.io/extensions/integrations'>Explore All Integrations</a></strong>" %}
+
+## Non-semantic Components
+
+These components help you document and organize your designs without affecting the actual infrastructure. They include:
+
+- Text boxes and comments for documentation
+- Shapes and containers for visual grouping
+- Lines and arrows for showing relationships
+- Labels and tags for organization
+
+While these components are ignored during deployment, they support the same visual customization options as semantic components.
+
+{% include alert.html type="info" title="Edge Components" content="To learn more about edge components and their visual styles, visit the <strong><a href='https://docs.meshery.io/extensions/edges-shape-guide'>Edge Components Guide</a></strong>" %}
 
 ## Foundational Elements
 
 In addition to the rich library of predefined icons, Meshery also provides a core set of foundational geometric shapes. These are not tied to any specific technology but are intended for representing abstract concepts or for simple annotations within your designs where a specific component icon doesn't apply.
 
 <a href="../../../assets/img/shapes/shapes.png" target="_blank">
-  <img src="../../../assets/img/shapes/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Kanvas">
+  <img src="../../../assets/img/shapes/shapes.png" style="width:50%; height:auto;" alt="Generic shapes palette in Meshery">
 </a>
 
 <details>
@@ -83,7 +101,7 @@ This group includes shapes that, by common convention, often evoke a more specif
 <details>
 <summary><strong>Specialized & Decorative Geometric Shapes</strong></summary>
 <br>
-When your diagrams require a more distinct visual style or an element for emphasis, this collection offers a variety of options, from complex polygons to stylized forms like "Crescent," "Star," or "XWing." These shapes are less commonly used in Kanvas and have no universally accepted meaning.
+When your diagrams require a more distinct visual style or an element for emphasis, this collection offers a variety of options, from complex polygons to stylized forms like "Crescent," "Star," or "XWing." These shapes are less commonly used in Meshery and have no universally accepted meaning.
 
 {% include extension-guide.html
   data_file="specialized_decorative_shapes"
