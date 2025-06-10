@@ -1317,7 +1317,18 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) PersistEvent(tokenString string, event events.Event) error {
+// IF the remote provider supports persisting events, this function will persist the event
+// The token is used to authenticate the request to the remote provider. if the token is nil, it uses the GlobalTokenForAnonymousResults
+func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
+
+	var tokenString string
+	if token == nil {
+		l.Log.Debug("No token provided, using GlobalTokenForAnonymousResults")
+		tokenString = GlobalTokenForAnonymousResults
+	} else {
+		tokenString = *token
+	}
+
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)

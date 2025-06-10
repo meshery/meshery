@@ -1820,7 +1820,7 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 
 // Events
 
-func (e *EventsPersister) PersistEvent(token string, event events.Event) error {
+func (e *EventsPersister) PersistEvent(event events.Event, token *string) error {
 	err := e.DB.Save(event).Error
 	if err != nil {
 		return ErrPersistEvent(err)
