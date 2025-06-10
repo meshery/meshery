@@ -22,7 +22,7 @@ Ensure you have Meshery CLI (`mesheryctl`) installed. Follow the [official insta
 
 ### Step 2: Import the Model
 
-Meshery supports importing models via local files or URLs. The model must be a Meshery-exported model.
+Meshery supports importing Models via local files or URLs. The model must be a Meshery-exported model.
 
 #### 📄 Import from Local File
 
