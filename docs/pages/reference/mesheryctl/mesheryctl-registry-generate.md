@@ -62,13 +62,6 @@ mesheryctl registry generate --directory &lt;DIRECTORY_PATH&gt;
 </div>
 </pre> 
 
-<!-- <pre class='codeblock-pre'>
-<div class='codeblock'>
-    
-
-</div>
-</pre>  -->
-
 ## Options
 
 <pre class='codeblock-pre'>
