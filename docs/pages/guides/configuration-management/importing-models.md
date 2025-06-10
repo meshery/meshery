@@ -18,31 +18,37 @@ Import your existing Models and existing custom resource definition (CRD) into M
 
 Before you can use the Meshery CLI to import a [Model](/concepts/logical/models), you must first install it. You can install Meshery CLI by [following the instructions]({{site.baseurl}}/installation#install-mesheryctl).
 
-
 **Step 2: Import the Model**
 
-Model can imported in 2 different format ```URL, File```.The only cretiria for this import is the model should be a Meshery exported Model.
+Models can be imported in two formats: **File** and **URL**.  
+The only requirement is that the model must be a Meshery-exported model.
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model import -f [file/url] </div></div>
-</pre>
-
-The supported registrant are `github`,`meshery` and `artifacthub`.The URL format must be in this order.
-
-https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
-
-**Example :**
+### 🗂️ Import from File
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f istio-base.tar</div></div>
 </pre>
 
+### 🌐 Import from URL
+
+You can also import models hosted on public URLs. Supported registrants include:
+
+- ✅ GitHub
+- ✅ Meshery Registry
+- ✅ ArtifactHub
+
+The URL must point to a valid Meshery-exported `.json`, `.yaml`, or `.tar` file.  
+Use the following URL format for GitHub:
+https://github.com/{owner}/{repo}/raw/refs/heads/main/{filename}
+
+
+**Example:**
+
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "https://github.com/{owner}/{repo}/raw/refs/heads/main/filename"</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "https://github.com/meshery/meshery-models/raw/refs/heads/main/istio-base.tar"</div></div>
 </pre>
 
-
-
+> 💡 You can run `mesheryctl model list` to verify the imported models.
 
 ## Import Models Using Meshery UI
 
@@ -54,7 +60,10 @@ To import a model into Meshery using the Meshery UI, you must first [install Mes
 
 Once you have accessed the Meshery UI, navigate to the Registry under Settings. This page can be accessed by clicking on the Settings on the top right on setting icon and then selecting "Registry" and then choose model.
 
-<a href="{{ site.baseurl }}/assets/img/export/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/export/Registry.png" /></a>
+<a href="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/import/Registry.png">
+  <img alt="Registry-Navigator" style="width:500px;height:auto;" src="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/import/Registry.png" />
+</a>
+
 
 **Step 3: Upload the Model**
 
@@ -62,6 +71,9 @@ On the Registry page, you can import your model clicking the import button in re
 
 This Meshery model will include components, relationships.
 
-<a href="{{ site.baseurl }}/assets/img/import/ImportModel.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/import/ImportModel.gif" /></a>
+<a href="{{ site.baseurl }}/assets/img/import/ImportModel.gif">
+  <img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/import/ImportModel.gif" />
+</a>
+
 
 
