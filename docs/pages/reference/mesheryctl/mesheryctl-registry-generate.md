@@ -33,32 +33,32 @@ mesheryctl registry generate [flags]
 Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
-
+<code class="clipboardjs">mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
+</code>
 </div>
 </pre> 
 
 Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
-
+<code class="clipboardjs">mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
+</code>
 </div>
 </pre> 
 
 Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
-
+<code class="clipboardjs">mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
+</code>
 </div>
 </pre> 
 
 Generate Meshery Models and Component from csv files in a local directory.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl registry generate --directory &lt;DIRECTORY_PATH&gt;
-
+<code class="clipboardjs">mesheryctl registry generate --directory &lt;DIRECTORY_PATH&gt;
+</code>
 </div>
 </pre> 
 
