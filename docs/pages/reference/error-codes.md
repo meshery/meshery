@@ -29,6 +29,7 @@ language: en
     text-align: left;
   }
   .tbl-head-row .error-name-code {
+    display: flex; /* Add this if flexbox alignment is desired */
     justify-content: space-between;
     align-items: flex-end;
     height: 5rem;
