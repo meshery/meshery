@@ -210,14 +210,14 @@ function OrganizationAndWorkSpaceSwitcher() {
       <StyledSwitcher>
         <Button
           onClick={() => setOrgOpen(!orgOpen)}
-          style={{ marginRight: orgOpen ? '1rem' : '0' }}
+          style={{ marginRight: orgOpen ? '1rem' : '0', padding: '0.25rem', minWidth: '0' }}
         >
           <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
         </Button>
         <OrgMenu open={orgOpen} organization={organization} />/
         <Button
           onClick={() => setWorkspaceOpen(!workspaceOpen)}
-          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+          style={{ marginRight: workspaceOpen ? '1rem' : '0', padding: '0.375rem', minWidth: '0' }}
         >
           <WorkspaceIcon
             {...iconLarge}
@@ -226,7 +226,7 @@ function OrganizationAndWorkSpaceSwitcher() {
           />
         </Button>
         <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0.25rem' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
       </StyledSwitcher>
     </NoSsr>
