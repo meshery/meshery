@@ -226,7 +226,10 @@ function OrganizationAndWorkSpaceSwitcher() {
           />
         </Button>
         <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0.25rem' : '' }} />
+        <div
+          id="meshery-dynamic-header"
+          style={{ marginLeft: DynamicComponent ? '0.25rem' : '' }}
+        />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
       </StyledSwitcher>
     </NoSsr>
