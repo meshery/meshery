@@ -8,7 +8,7 @@ type: guides
 language: en
 ---
 
-Import your existing models and CRD-based configurations into Meshery. The platform supports a variety of application definition formats. Models can be imported using either the Meshery CLI or Meshery UI.
+Import your existing Models and CRD-based configurations into Meshery. The platform supports a variety of application definition formats. Models can be imported using either the Meshery CLI or Meshery UI.
 
 > **Note:** A [Model](/concepts/logical/models) can only be imported if it contains at least one valid [Component](/concepts/logical/components) or [Relationship](/concepts/logical/relationships).
 
