@@ -1818,6 +1818,16 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 	return nil
 }
 
+// Events
+
+func (e *EventsPersister) PersistEvent(token string, event events.Event) error {
+	err := e.DB.Save(event).Error
+	if err != nil {
+		return ErrPersistEvent(err)
+	}
+	return nil
+}
+
 // // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 // func getLatestStableReleaseTag() (string, error) {
 // 	url := "https://github.com/layer5io/wasm-filters/releases/latest"

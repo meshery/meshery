@@ -151,14 +151,6 @@ func (e *EventsPersister) BulkDeleteEvent(eventIDs []*uuid.UUID) error {
 	return nil
 }
 
-func (e *EventsPersister) PersistEvent(event *events.Event) error {
-	err := e.DB.Save(event).Error
-	if err != nil {
-		return ErrPersistEvent(err)
-	}
-	return nil
-}
-
 func (e *EventsPersister) getCountBySeverity(userID uuid.UUID, eventStatus events.EventStatus) ([]*CountBySeverityLevel, error) {
 	if eventStatus == "" {
 		eventStatus = events.Unread

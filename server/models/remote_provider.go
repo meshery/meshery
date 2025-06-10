@@ -1317,7 +1317,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 	return "", ErrPost(err, fmt.Sprint(bdr), resp.StatusCode)
 }
 
-func (l *RemoteProvider) PublishEventToProvider(tokenString string, event events.Event) error {
+func (l *RemoteProvider) PersistEvent(tokenString string, event events.Event) error {
 	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
