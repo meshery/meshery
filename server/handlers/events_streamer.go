@@ -430,7 +430,7 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 func listenForAdapterEvents(ctx context.Context, aClient *meshes.AdapterClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
 	log.Debug("Received a stream client...")
 	userUUID := uuid.FromStringOrNil(userID)
-	streaaClient, err := aClient.AClient.StreamEvents(ctx, &meshes.EventsRequest{})
+	streamClient, err := aClient.AClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
 		log.Error(ErrStreamEvents(err))
 		// errChan <- err
