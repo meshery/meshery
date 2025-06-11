@@ -327,17 +327,17 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 	var err error
 
-	localMeshAdapters := map[string]*meshes.MeshClient{}
+	localMeshAdapters := map[string]*meshes.AdapterClient{}
 	localMeshAdaptersLock := &sync.Mutex{}
 
 	respChan := make(chan []byte, 100)
 
-	newAdaptersChan := make(chan *meshes.MeshClient)
+	newAdaptersChan := make(chan *meshes.AdapterClient)
 
 	go func() {
 		for mClient := range newAdaptersChan {
 			h.log.Debug("received a new mesh client, listening for events")
-			go func(mClient *meshes.MeshClient) {
+			go func(mClient *meshes.AdapterClient) {
 				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID)
 				_ = mClient.Close()
 			}(mClient)
@@ -427,7 +427,7 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
+func listenForAdapterEvents(ctx context.Context, mClient *meshes.AdapterClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
 	log.Debug("Received a stream client...")
 	userUUID := uuid.FromStringOrNil(userID)
 	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
@@ -478,14 +478,14 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 	}
 }
 
-func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapters map[string]*meshes.MeshClient) map[string]*meshes.MeshClient {
+func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapters map[string]*meshes.AdapterClient) map[string]*meshes.AdapterClient {
 	localMeshAdaptersLock.Lock()
 	for _, mcl := range localMeshAdapters {
 		_ = mcl.Close()
 	}
 	localMeshAdaptersLock.Unlock()
 
-	return map[string]*meshes.MeshClient{}
+	return map[string]*meshes.AdapterClient{}
 }
 
 // swagger:route POST /api/events EventsAPI idClientEventHandler
