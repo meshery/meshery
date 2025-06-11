@@ -440,7 +440,7 @@ func listenForAdapterEvents(ctx context.Context, aClient *meshes.AdapterClient, 
 
 	for {
 		log.Debug("Waiting to receive events.")
-		event, err := streaaClient.Recv()
+		event, err := streamClient.Recv()
 		if err != nil {
 			if err == io.EOF {
 				log.Error(ErrStreamClient(err))
