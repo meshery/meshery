@@ -227,8 +227,8 @@ const WorkspaceContentWrapper = ({ id, workspacesData, onSelectWorkspace }) => {
 
 const Navigation = ({ setHeaderInfo }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
-  const [open, setOpen] = useState(!isMobile);
+  const closeList = useMediaQuery(theme.breakpoints.down('xl'));
+  const [open, setOpen] = useState(!closeList);
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
@@ -255,8 +255,8 @@ const Navigation = ({ setHeaderInfo }) => {
     });
   };
   useEffect(() => {
-    setOpen(!isMobile);
-  }, [isMobile]);
+    setOpen(!closeList);
+  }, [closeList]);
 
   const handleDrawerToggle = () => {
     setOpen(!open);

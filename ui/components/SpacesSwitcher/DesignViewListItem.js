@@ -11,6 +11,7 @@ import {
   Checkbox,
   FormGroup,
   Typography,
+  useTheme,
 } from '@sistent/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
@@ -21,6 +22,7 @@ import {
   StyledListItemText,
   StyledSmallAvatar,
   StyledSmallAvatarContainer,
+  StyledTypography,
   StyledUpdatedText,
   StyledUserDetailsContainer,
 } from './styles';
@@ -45,6 +47,7 @@ const DesignViewListItem = ({
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
   });
+  const theme = useTheme();
   const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <>
@@ -116,7 +119,7 @@ const DesignViewListItem = ({
             {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
           </Grid2>
           <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-            <Typography variant="body2">{selectedItem.organization_name}</Typography>
+            <StyledTypography variant="body2">{selectedItem.organization_name}</StyledTypography>
           </Grid2>
           <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
             <Typography variant="body2">{selectedItem.workspace_name}</Typography>

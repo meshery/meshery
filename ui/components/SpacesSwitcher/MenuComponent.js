@@ -30,7 +30,7 @@ export const MenuComponent = ({ options = [] }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('xl'));
 
   const handleClick = (event) => {
     event.stopPropagation();

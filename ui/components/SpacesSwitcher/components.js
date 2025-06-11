@@ -203,6 +203,7 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
 
 export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => {
   const { setMultiSelectedContent, multiSelectedContent } = useContext(WorkspaceModalContext);
+  const theme = useTheme();
   return (
     <Grid2
       container
@@ -242,7 +243,12 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
         </Typography>
       </Grid2>
       <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
-        <Typography variant="body1" noWrap>
+        <Typography sx={{
+          [theme.breakpoints.down('sm')]: {
+            display: "flex",
+            justifyContent: "center",
+          }
+        }} variant="body1" noWrap>
           Author
         </Typography>
       </Grid2>

@@ -112,7 +112,7 @@ const MyDesignsContent = () => {
     <Box display={'flex'} flexDirection="column" gap="1rem">
       <Grid2 container spacing={2} alignItems="center" marginBottom="1rem" size="grow">
         {/* Search Bar */}
-        <Grid2 size={{ xs: 12, md: 7 }}>
+        <Grid2 size={{ xs: 12, md: 6.5 }}>
           <StyledSearchBar
             sx={{ backgroundColor: 'transparent' }}
             placeholder="Search Designs"

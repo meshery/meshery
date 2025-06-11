@@ -10,6 +10,7 @@ import {
   Avatar,
   Button,
   Checkbox,
+  Typography,
 } from '@sistent/sistent';
 
 const DRAWER_WIDTH = 300;
@@ -29,7 +30,7 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('xl')]: {
       position: 'absolute',
       height: '100%',
       zIndex: theme.zIndex.drawer,
@@ -86,7 +87,7 @@ export const StyledMainContent = styled(Box)(({ theme }) => ({
   height: '100%',
   padding: '1rem 2rem',
   overflowY: 'auto',
-  [theme.breakpoints.down('lg')]: {
+  [theme.breakpoints.down('xl')]: {
     paddingLeft: '5rem',
   },
 }));
@@ -153,11 +154,17 @@ export const StyledMainMenuComponent = styled('div')({
 
 export const StyledListItemText = styled(ListItemText)({
   cursor: 'pointer',
-  width: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   margin: '0',
+  maxWidth: '150px',
+
+  '& .MuiTypography-root': {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
 });
 
 export const StyledListIcon = styled(ListItemIcon)({
@@ -212,3 +219,12 @@ export const StyledMuiDoubleCheckbox = styled(Checkbox)(({ theme }) => ({
     height: '1.25rem',
   },
 }));
+
+export const StyledTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.up('lg')]: {
+    width: "95px",
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }
+}))
