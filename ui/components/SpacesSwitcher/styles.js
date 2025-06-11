@@ -152,20 +152,20 @@ export const StyledMainMenuComponent = styled('div')({
   cursor: 'pointer',
 });
 
-export const StyledListItemText = styled(ListItemText)({
+export const StyledListItemText = styled(ListItemText)(({ theme }) =>({
   cursor: 'pointer',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   margin: '0',
-  maxWidth: '150px',
+  maxWidth: theme.spacing(19),
 
   '& .MuiTypography-root': {
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
   },
-});
+}));
 
 export const StyledListIcon = styled(ListItemIcon)({
   minWidth: '0px',
@@ -222,7 +222,7 @@ export const StyledMuiDoubleCheckbox = styled(Checkbox)(({ theme }) => ({
 
 export const StyledTypography = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
-    width: '95px',
+    width: theme.spacing(12),
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',

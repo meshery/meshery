@@ -42,7 +42,7 @@ const UserAvatarComponent = ({ userData }) => {
               display: { sm: 'none', md: 'inline' },
             },
             [theme.breakpoints.down('xl')]: {
-              width: '95px',
+              width: theme.spacing(12),
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
