@@ -1,0 +1,54 @@
+---
+layout: default
+title: Edge Styles Guide
+permalink: guides/configuration-management/edges-guide
+language: en
+abstract: Learn about the different edge styles and how to interpret their visual meaning.
+list: include
+type: guides
+category: configuration
+redirect_from:
+  - extensions/edges-shape-guide
+---
+
+In Meshery, the line that connects [components](https://docs.meshery.io/concepts/logical/components) in a design is called an **edge**. Each edge visually represents a [relationship](https://docs.meshery.io/concepts/logical/relationships) and uses a specific style to communicate its nature.
+
+This guide helps you interpret the most common edge styles you will encounter.
+
+### Interpreting Common Edge Styles
+
+Meshery uses a set of default visual styles to provide at-a-glance information about the type of connection an edge represents. While these styles can be customized in the designer, understanding the defaults is key to interpreting shared designs.
+
+#### Line Style: The Primary Indicator
+
+The line style is the most important visual cue for understanding an edge's purpose.
+
+- **Dotted Line**:
+  - **What it means**: A **semantic relationship**. This represents a real, functional connection that Meshery understands and can manage, such as a network link or a volume mount.
+  - **When you'll see it**: This is the default style for most infrastructure relationships.
+
+- **Solid Line**:
+  - **What it means**: A **non-semantic annotation**. This is a visual note or organizational aid for human interpretation only. Meshery's engine ignores these connections.
+  - **When you'll see it**: Used for documenting designs, showing conceptual flows, or grouping components visually.
+
+#### Color: A Secondary Cue
+
+Color provides an additional hint about an edge's nature.
+
+- **Green / Teal**:
+  - This is the default color for **non-semantic annotations**, helping them stand out from functional connections.
+
+- **Blue**:
+  - These are the typical default colors for **semantic relationships**. The exact color may vary depending on your UI theme to ensure visibility.
+
+### Edge Style Gallery
+
+The following gallery showcases the full range of visual styles available for edges within Meshery's design tooling.
+
+{% include extension-guide.html
+  data_file="edges"
+  guide_title="Edge"
+  guide_description="Description"
+  guide_svg="SVG"
+  guide_assests_folder="shapes"
+%}
