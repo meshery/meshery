@@ -11,7 +11,6 @@ import {
   Checkbox,
   FormGroup,
   Typography,
-  useTheme,
 } from '@sistent/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
@@ -47,7 +46,6 @@ const DesignViewListItem = ({
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
   });
-  const theme = useTheme();
   const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
   return (
     <>

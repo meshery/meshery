@@ -222,9 +222,9 @@ export const StyledMuiDoubleCheckbox = styled(Checkbox)(({ theme }) => ({
 
 export const StyledTypography = styled(Typography)(({ theme }) => ({
   [theme.breakpoints.up('lg')]: {
-    width: "95px",
+    width: '95px',
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
-  }
-}))
+  },
+}));

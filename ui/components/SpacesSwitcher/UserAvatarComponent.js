@@ -6,11 +6,13 @@ import { StyledAvatarContainer, StyledUserDetailsContainer, StyledUpdatedText } 
 const UserAvatarComponent = ({ userData }) => {
   const theme = useTheme();
   return (
-    <StyledAvatarContainer sx={{
-      [theme.breakpoints.down('sm')]: {
-        justifyContent: "center",
-      }
-    }}>
+    <StyledAvatarContainer
+      sx={{
+        [theme.breakpoints.down('sm')]: {
+          justifyContent: 'center',
+        },
+      }}
+    >
       <CustomTooltip
         title={`${userData?.first_name} ${userData?.last_name || ''}`}
         sx={{ display: { xs: 'block', sm: 'block' } }}
@@ -39,12 +41,12 @@ const UserAvatarComponent = ({ userData }) => {
             '& span': {
               display: { sm: 'none', md: 'inline' },
             },
-            [theme.breakpoints.down('lg')]: {
-              width: "95px",
+            [theme.breakpoints.down('xl')]: {
+              width: '95px',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-            }
+            },
           }}
         >
           {userData?.first_name}
