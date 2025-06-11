@@ -1828,6 +1828,10 @@ func (e *EventsPersister) PersistEvent(event events.Event, token *string) error 
 	return nil
 }
 
+func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
+	return nil, ErrLocalProviderSupport
+}
+
 // // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 // func getLatestStableReleaseTag() (string, error) {
 // 	url := "https://github.com/layer5io/wasm-filters/releases/latest"

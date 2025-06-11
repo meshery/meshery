@@ -1329,7 +1329,7 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
 		tokenString = *token
 	}
 
-	if !l.Capabilities.IsSupported(PersistMesheryPatternResources) {
+	if !l.Capabilities.IsSupported(PersistEvents) {
 		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
 		return ErrInvalidCapability("PersistEvents", l.ProviderName)
 	}
@@ -1356,6 +1356,76 @@ func (l *RemoteProvider) PersistEvent(event events.Event, token *string) error {
 		return ErrPost(fmt.Errorf("error persisting event with the remote provider"), "event", resp.StatusCode)
 	}
 	return nil
+}
+
+func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return nil, ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	// ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
+
+	l.Log.Info("attempting to fetch events from remote provider")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/events/list")
+	q := remoteProviderURL.Query()
+	q.Set("page", strconv.Itoa(page))
+	q.Set("pagesize", strconv.Itoa(eventsFilter.Limit))
+	q.Set("search", eventsFilter.Search)
+	q.Set("order", fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order))
+	filterBytes, _ := json.Marshal(eventsFilter)
+	q.Set("filter", string(filterBytes))
+
+	remoteProviderURL.RawQuery = q.Encode()
+	l.Log.Debug("constructed events url: ", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		if resp == nil {
+			return nil, ErrUnreachableRemoteProvider(err)
+		}
+		return nil, ErrFetch(err, "Events", resp.StatusCode)
+	}
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, ErrDataRead(err, "Events")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err = ErrFetch(fmt.Errorf("unable to fetch events"), fmt.Sprint(bdr), resp.StatusCode)
+		l.Log.Error(err)
+		return nil, err
+	}
+
+	eventsResponse := &EventsResponse{}
+
+	type ProviderResp struct {
+		Data                 []*events.Event         `json:"data"`
+		Page                 int                     `json:"page"`
+		TotalCount           int64                   `json:"total_count"`
+		PageSize             int                     `json:"page_size"`
+		CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
+	}
+
+	response := &ProviderResp{}
+
+	if err := json.Unmarshal(bdr, &response); err != nil {
+		return nil, ErrUnmarshal(err, "Events Response")
+	}
+
+	eventsResponse.Events = response.Data
+	eventsResponse.Page = response.Page
+	eventsResponse.TotalCount = response.TotalCount
+	eventsResponse.PageSize = response.PageSize
+	eventsResponse.CountBySeverityLevel = response.CountBySeverityLevel
+
+	return eventsResponse, nil
+
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously

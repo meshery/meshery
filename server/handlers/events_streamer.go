@@ -52,6 +52,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	userID := uuid.FromStringOrNil(user.ID)
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
+	fmt.Println(page)
 	// eventCategory :=
 	filter, err := getEventFilter(req)
 	if err != nil {
@@ -64,20 +65,42 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	filter.Search = search
 	filter.Status = events.EventStatus(status)
 
-	eventsResult, err := provider.GetAllEvents(filter, userID, *h.SystemID)
-	if err != nil {
+	ctx := req.Context()
+	token, _ := ctx.Value(models.TokenCtxKey).(string)
+
+	e, err := provider.GetEvents(token, filter, page, userID, *h.SystemID)
+
+	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
 		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
-		return
 	}
+	err = json.NewEncoder(w).Encode(e)
 
-	eventsResult.Page = page
-	err = json.NewEncoder(w).Encode(eventsResult)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "events response"))
 		http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write(e)
+
+	// eventsResult, err := provider.GetAllEvents(filter, userID, *h.SystemID)
+	// eventsR ,err := provider.GetEvents(token string, page string, pageSize string, search string, order string)
+	// //
+	// if err != nil {
+	// 	h.log.Error(ErrGetEvents(err))
+	// 	http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// eventsResult.Page = pa
+	// err = json.NewEncoder(w).Encode(eventsResult)
+	// if err != nil {
+	// 	h.log.Error(models.ErrMarshal(err, "events response"))
+	// 	http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 }
 
 // swagger:route GET /api/events/types EventsAPI idGetEventStreamer

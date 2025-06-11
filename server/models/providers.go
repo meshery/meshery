@@ -229,7 +229,9 @@ const (
 
 	PersistMetrics Feature = "persist-metrics" // /result/metrics
 
-	PersistEvents Feature = "persist-events"
+	PersistEvents    Feature = "persist-events"
+	GetEvents        Feature = "get-events"     // /events
+	GetEventsSummary Feature = "events-summary" // /events/summary
 
 	PersistSMPTestProfile Feature = "persist-smp-test-profile" // /user/test-config
 
@@ -504,4 +506,7 @@ type Provider interface {
 	RemoveEnvironmentFromWorkspace(req *http.Request, workspaceID string, environmentID string) ([]byte, error)
 	GetDesignsOfWorkspace(req *http.Request, workspaceID, page, pagesize, search, order, filter string, visibility []string) ([]byte, error)
 	AddDesignToWorkspace(req *http.Request, workspaceID string, designID string) ([]byte, error)
+
+	// events
+	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error)
 }
