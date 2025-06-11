@@ -203,7 +203,6 @@ func (h *Handler) SessionInjectorMiddleware(next func(http.ResponseWriter, *http
 		ctx = context.WithValue(ctx, models.RegistryManagerKey, h.registryManager)
 		ctx = context.WithValue(ctx, models.HandlerKey, h)
 		ctx = context.WithValue(ctx, models.SystemIDKey, h.SystemID)
-		ctx = context.WithValue(ctx, models.MesheryControllerHelpersCatalogKey, h.MesheryCtrlsHelpersCatalog)
 		req1 := req.WithContext(ctx)
 
 		next(w, req1, prefObj, user, provider)
@@ -257,12 +256,11 @@ func KubernetesMiddleware(ctx context.Context, h *Handler, provider models.Provi
 
 	ctx = context.WithValue(ctx, models.KubeClustersKey, k8sContextPassedByUser)
 	ctx = context.WithValue(ctx, models.AllKubeClusterKey, connectedK8sContexts)
-	ctx = context.WithValue(ctx, models.MesheryControllerHelpersCatalogKey, h.MesheryCtrlsHelpersCatalog)
 
 	for _, k8sContext := range k8sContextsFromKubeConfig {
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
-			MesheryCtrlsHelper: h.MesheryCtrlsHelperStubDoNotUse,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
 			K8scontextChannel:  h.config.K8scontextChannel,
@@ -320,7 +318,7 @@ func K8sFSMMiddleware(ctx context.Context, h *Handler, provider models.Provider,
 	for _, k8sContext := range connectedK8sContexts {
 		machineCtx := &kubernetes.MachineCtx{
 			K8sContext:         *k8sContext,
-			MesheryCtrlsHelper: h.MesheryCtrlsHelperStubDoNotUse,
+			MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 			K8sCompRegHelper:   h.K8sCompRegHelper,
 			OperatorTracker:    h.config.OperatorTracker,
 			K8scontextChannel:  h.config.K8scontextChannel,

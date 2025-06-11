@@ -193,6 +193,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				),
 			)
 		}
+		// TODO what to put as event builder?
 		mashineCtx, err := kubernetes.GetMachineCtx(machine.Context, events.NewEvent())
 		if err != nil {
 			return "", ErrResyncCluster(

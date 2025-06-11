@@ -35,36 +35,6 @@ const (
 	MesheryOperator
 )
 
-// contains a map of MesheryControllersHelper per k8sContext
-type MesheryControllersHelpersCatalog interface {
-	Get(key string) *MesheryControllersHelper
-	Set(key string, value *MesheryControllersHelper)
-	SetWithContext(ctx context.Context, key string, value *MesheryControllersHelper)
-}
-
-type MesheryControllersHelpersMap map[string]*MesheryControllersHelper
-
-func NewMesheryControllersHelpersMap() MesheryControllersHelpersMap {
-	return make(map[string]*MesheryControllersHelper)
-}
-
-func (m MesheryControllersHelpersMap) Set(key string, value *MesheryControllersHelper) {
-	m.SetWithContext(context.Background(), key, value)
-}
-
-func (m MesheryControllersHelpersMap) SetWithContext(ctx context.Context, key string, value *MesheryControllersHelper) {
-	if prev := m[key]; prev != nil {
-		// remove previous helper
-		prev.DestroyHelper(ctx)
-	}
-
-	m[key] = value
-}
-
-func (m MesheryControllersHelpersMap) Get(key string) *MesheryControllersHelper {
-	return m[key]
-}
-
 type MesheryControllersHelper struct {
 	// context that is being manged by a particular controllerHelper instance
 	contextID string
