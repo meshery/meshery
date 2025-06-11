@@ -79,14 +79,6 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 	}
 }
 
-func (mch *MesheryControllersHelper) DestroyHelper(ctx context.Context) {
-	// perform actions when helpers is no longer supposed to be in use
-	if mch.ctxMeshsyncDataHandler != nil {
-		mch.RemoveCtxControllerHandler(ctx, mch.contextID)
-		mch.RemoveMeshSyncDataHandler(ctx, mch.contextID)
-	}
-}
-
 // initializes Meshsync data handler for the contexts for whom it has not been
 // initialized yet. Apart from updating the map, it also runs the handler after
 // updating the map. The presence of a handler for a context in a map indicate that
@@ -143,9 +135,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-	if mch.ctxMeshsyncDataHandler != nil {
-		mch.ctxMeshsyncDataHandler.CloseConnection()
-	}
+
 	mch.ctxMeshsyncDataHandler = nil
 }
 
