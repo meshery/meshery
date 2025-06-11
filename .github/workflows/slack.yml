@@ -2,6 +2,8 @@ name: Slack Notify
 on: 
   watch:
     types: [started]
+  issues:
+    types: [labeled]
 
 permissions:
   contents: read
