@@ -152,7 +152,7 @@ export const StyledMainMenuComponent = styled('div')({
   cursor: 'pointer',
 });
 
-export const StyledListItemText = styled(ListItemText)(({ theme }) =>({
+export const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   cursor: 'pointer',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
