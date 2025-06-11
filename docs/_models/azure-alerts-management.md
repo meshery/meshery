@@ -10,7 +10,15 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
-components-count: 0
+- name: prometheus-rule-group
+  colorIcon: assets/img/integrations/azure-alerts-management/components/prometheus-rule-group/icons/color/prometheus-rule-group-color.svg
+  whiteIcon: assets/img/integrations/azure-alerts-management/components/prometheus-rule-group/icons/white/prometheus-rule-group-white.svg
+  description: Observability and Analysis
+- name: smart-detector-alert-rule
+  colorIcon: assets/img/integrations/azure-alerts-management/components/smart-detector-alert-rule/icons/color/smart-detector-alert-rule-color.svg
+  whiteIcon: assets/img/integrations/azure-alerts-management/components/smart-detector-alert-rule/icons/white/smart-detector-alert-rule-white.svg
+  description: Observability and Analysis
+components-count: 2
 relationships: 
 relationship-count: 0
 featureList: [
