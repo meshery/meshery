@@ -9,7 +9,7 @@ import (
 
 // AdapterClient represents a gRPC adapter client
 type AdapterClient struct {
-	MClient MeshServiceClient
+	AClient AdapterServiceClient
 	conn    *grpc.ClientConn
 }
 
@@ -29,18 +29,18 @@ func CreateClient(_ context.Context, meshLocationURL string) (*AdapterClient, er
 		return nil, err
 	}
 
-	mClient := NewMeshServiceClient(conn)
+	aClient := NewAdapterServiceClient(conn)
 
 	return &AdapterClient{
 		conn:    conn,
-		MClient: mClient,
+		AClient: aClient,
 	}, nil
 }
 
 // Close closes the AdapterClient
-func (m *AdapterClient) Close() error {
-	if m.conn != nil {
-		return m.conn.Close()
+func (a *AdapterClient) Close() error {
+	if a.conn != nil {
+		return a.conn.Close()
 	}
 	return nil
 }
