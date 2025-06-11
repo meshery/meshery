@@ -417,11 +417,15 @@ func start() error {
 
 		if err := utils.CreateManifestsFolder(); err != nil {
 			utils.Log.Error(utils.ErrCreateManifestsFolder(err))
+			spinner.FinalMSG = ""
+			spinner.Stop()
 			return err
 		}
 
 		// Applying Meshery Helm charts for installing Meshery
 		if err = applyHelmCharts(kubeClient, currCtx, mesheryImageVersion, false, meshkitkube.INSTALL, callbackURL, providerURL); err != nil {
+			spinner.FinalMSG = ""
+			spinner.Stop()
 			return err
 		}
 
