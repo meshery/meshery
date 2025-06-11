@@ -116,7 +116,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			status := connection.Status
 			machineCtx := &kubernetes.MachineCtx{
 				K8sContext:         *ctx,
-				MesheryCtrlsHelper: h.MesheryCtrlsHelperStubDoNotUse,
+				MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 				K8sCompRegHelper:   h.K8sCompRegHelper,
 				OperatorTracker:    h.config.OperatorTracker,
 				K8scontextChannel:  h.config.K8scontextChannel,

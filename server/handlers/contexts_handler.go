@@ -104,7 +104,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 
 	machineCtx := &kubernetes.MachineCtx{
 		K8sContext:         k8scontext,
-		MesheryCtrlsHelper: h.MesheryCtrlsHelperStubDoNotUse,
+		MesheryCtrlsHelper: h.MesheryCtrlsHelper,
 		K8sCompRegHelper:   h.K8sCompRegHelper,
 		OperatorTracker:    h.config.OperatorTracker,
 		K8scontextChannel:  h.config.K8scontextChannel,

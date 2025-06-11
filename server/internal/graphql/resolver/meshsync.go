@@ -8,9 +8,13 @@ import (
 	"os"
 	"path"
 
+	"github.com/gofrs/uuid"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
@@ -168,17 +172,42 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		mesheryControllerHelpersCatalog, _ := ctx.Value(models.MesheryControllerHelpersCatalogKey).(models.MesheryControllersHelpersCatalog)
-		if mesheryControllerHelpersCatalog == nil {
+		handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+		if !ok {
 			return "", ErrResyncCluster(
-				fmt.Errorf("mesheryControllerHelpersCatalog is not present in go context"),
+				fmt.Errorf("not able to take handler from context"),
 			)
 		}
-		mesheryCtrlsHelper := mesheryControllerHelpersCatalog.Get(k8scontextID)
+		instanceTracker := handler.ConnectionToStateMachineInstanceTracker
+		if instanceTracker == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf("instance tracker is nil in handler instance"),
+			)
+		}
+		machine, ok := instanceTracker.Get(uuid.FromStringOrNil(k8scontextID))
+		if !ok || machine == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"instance tracker does not contain machine for connection %s",
+					k8scontextID,
+				),
+			)
+		}
+		// TODO what to put as event builder?
+		mashineCtx, err := kubernetes.GetMachineCtx(machine.Context, events.NewEvent())
+		if err != nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"can not receive machine context for connection %s",
+					k8scontextID,
+				),
+			)
+		}
+		mesheryCtrlsHelper := mashineCtx.MesheryCtrlsHelper
 		if mesheryCtrlsHelper == nil {
 			return "", ErrResyncCluster(
 				fmt.Errorf(
-					"mesheryControllerHelpersCatalog does not have mesheryCtrlsHelper for current k8s context %s",
+					"machine context does not contain reference to MesheryCtrlsHelper for connection %s",
 					k8scontextID,
 				),
 			)
@@ -187,7 +216,7 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 		if err := mesheryCtrlsHelper.ResyncMeshsync(ctx); err != nil {
 			return "", ErrResyncCluster(
 				errors.Join(
-					fmt.Errorf("error calling ResyncMeshsync for current k8s context %s", k8scontextID),
+					fmt.Errorf("error calling ResyncMeshsync for connection %s", k8scontextID),
 					err,
 				),
 			)
