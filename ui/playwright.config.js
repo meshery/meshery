@@ -52,7 +52,7 @@ module.exports = defineConfig({
       name: 'setup',
       testMatch: 'tests/e2e/*.setup.js',
     },
-     {
+    {
       name: 'helm-installation',
       // This testMatch will specifically target your new test file.
       testMatch: 'tests/e2e/helm-install-crds.spec.js',

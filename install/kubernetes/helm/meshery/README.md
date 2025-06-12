@@ -98,13 +98,13 @@ For environments where users may not have cluster-level permissions to create/mo
 
 **Usage Example (Skipping CRDs):**
 
-## To install Meshery without installing its CRDs:
+#### To install Meshery without installing its CRDs:
 
 ```console
 helm install meshery meshery/meshery --set installCRDs=false 
 ```   
 
-## To upgrade an existing Meshery installation      
+#### To upgrade an existing Meshery installation      
 
 ```console
 helm upgrade meshery meshery/meshery --set installCRDs=false
