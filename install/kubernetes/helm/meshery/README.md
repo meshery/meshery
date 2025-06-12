@@ -85,7 +85,32 @@ Meshery chart for deploying Meshery
 | service.type                                    | string | `"LoadBalancer"`                                                                                                                                                                                      |  |
 | serviceAccount.name                             | string | `"meshery-server"`                                                                                                                                                                                    |  |
 | testCase.enabled                                | bool | `false`                                                                                                                                                                                               |  |
-| tolerations                                     | list | `[]`                                                                                                                                                                                                  |  |
+| tolerations                                     | list | `[]`                                                                                                                      
+### CRD Management
+
+Meshery requires Custom Resource Definitions (CRDs) to function correctly, especially when interacting with the Meshery Operator. By default, Meshery's Helm chart installs these CRDs during deployment.
+
+For environments where users may not have cluster-level permissions to create/modify CRDs, or if you prefer to manage CRDs manually, you can disable their automatic installation by setting `installCRDs` to `false`.
+
+* **`installCRDs`**: Controls whether Meshery's CRDs are installed by the Helm chart.
+    * **Default value:** `true` (CRDs are installed).
+    * Set to `false` to skip CRD installation.
+
+**Usage Example (Skipping CRDs):**
+
+## To install Meshery without installing its CRDs:
+
+```console
+helm install meshery meshery/meshery --set installCRDs=false 
+```   
+
+## To upgrade an existing Meshery installation      
+
+```console
+helm upgrade meshery meshery/meshery --set installCRDs=false
+```
+Note: If you choose to skip CRD installation, you are responsible for ensuring that the necessary Meshery CRDs (brokers.meshery.io, meshsyncs.meshery.io, etc.) are present in your cluster for Meshery to operate correctly, particularly if you plan to deploy the Meshery Operator separately.
+
 
 ## Setup Repo Info
 

@@ -52,6 +52,19 @@ module.exports = defineConfig({
       name: 'setup',
       testMatch: 'tests/e2e/*.setup.js',
     },
+     {
+      name: 'helm-installation',
+      // This testMatch will specifically target your new test file.
+      testMatch: 'tests/e2e/helm-install-crds.spec.js',
+      use: {
+        // Even if the test doesn't directly interact with a browser UI,
+        // Playwright projects are often tied to a browser context.
+        // We'll use Desktop Chrome as a standard default.
+        ...devices['Desktop Chrome'],
+        // No storageState or dependencies on 'setup' needed, as this test manages its own K8s state
+        // and doesn't rely on a pre-authenticated browser session.
+      },
+    },
     {
       name: 'chromium-meshery-provider',
       use: {
