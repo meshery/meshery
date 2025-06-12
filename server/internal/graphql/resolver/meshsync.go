@@ -12,9 +12,8 @@ import (
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
-	"github.com/meshery/meshery/server/machines/kubernetes"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/models/events"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
@@ -178,12 +177,14 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				fmt.Errorf("not able to take handler from context"),
 			)
 		}
+
 		instanceTracker := handler.ConnectionToStateMachineInstanceTracker
 		if instanceTracker == nil {
 			return "", ErrResyncCluster(
 				fmt.Errorf("instance tracker is nil in handler instance"),
 			)
 		}
+
 		machine, ok := instanceTracker.Get(uuid.FromStringOrNil(k8scontextID))
 		if !ok || machine == nil {
 			return "", ErrResyncCluster(
@@ -193,30 +194,11 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 				),
 			)
 		}
-		// TODO what to put as event builder?
-		mashineCtx, err := kubernetes.GetMachineCtx(machine.Context, events.NewEvent())
-		if err != nil {
-			return "", ErrResyncCluster(
-				fmt.Errorf(
-					"can not receive machine context for connection %s",
-					k8scontextID,
-				),
-			)
-		}
-		mesheryCtrlsHelper := mashineCtx.MesheryCtrlsHelper
-		if mesheryCtrlsHelper == nil {
-			return "", ErrResyncCluster(
-				fmt.Errorf(
-					"machine context does not contain reference to MesheryCtrlsHelper for connection %s",
-					k8scontextID,
-				),
-			)
-		}
 
-		if err := mesheryCtrlsHelper.ResyncMeshsync(ctx); err != nil {
+		if err := mhelpers.ResyncResources(ctx, machine); err != nil {
 			return "", ErrResyncCluster(
 				errors.Join(
-					fmt.Errorf("error calling ResyncMeshsync for connection %s", k8scontextID),
+					fmt.Errorf("error resyncing resources for connection %s", k8scontextID),
 					err,
 				),
 			)
