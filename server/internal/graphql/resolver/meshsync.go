@@ -127,13 +127,16 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}()
 			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster
-			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
 				r.Log.Error(ErrEmptyCurrentK8sContext)
 				return "", ErrEmptyCurrentK8sContext
 			}
 			var sid string
 			for _, k8ctx := range k8sctxs {
+				if k8ctx == nil {
+					continue
+				}
 				if k8ctx.ID == k8scontextID && k8ctx.KubernetesServerID != nil {
 					sid = k8ctx.KubernetesServerID.String()
 					break
