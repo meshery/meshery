@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A relationship that allows azure resources to be connected to their respective resource group",
+    "description": "A hierarchical inventory relationship in which the configuration of Resource Group (parent component) is patched with the configuration of all other azure resources(child component). ",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -95,7 +95,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -144,7 +146,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -193,7 +197,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -242,7 +248,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -291,7 +299,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -340,7 +350,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -389,7 +401,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -438,7 +452,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -487,7 +503,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -536,7 +554,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -585,7 +605,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -634,7 +656,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -683,7 +707,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -732,7 +758,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -781,7 +809,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -830,7 +860,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -879,7 +911,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -928,7 +962,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -977,7 +1013,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1026,7 +1064,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1075,7 +1115,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1124,7 +1166,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1173,7 +1217,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1222,7 +1268,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1271,7 +1319,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1320,7 +1370,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1369,7 +1421,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1418,7 +1472,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1467,7 +1523,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1516,7 +1574,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1565,7 +1625,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1614,7 +1676,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1663,56 +1727,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
-                ]
-              ]
-            }
-          },
-          {
-            "id": null,
-            "kind": "*",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "azure-resources",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z"
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1761,7 +1778,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1810,7 +1829,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1859,7 +1880,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1908,7 +1931,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -1957,56 +1982,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
-                ]
-              ]
-            }
-          },
-          {
-            "id": null,
-            "kind": "*",
-            "match": {},
-            "match_strategy_matrix": null,
-            "model": {
-              "id": "00000000-0000-0000-0000-000000000000",
-              "schemaVersion": "",
-              "version": "",
-              "name": "azure-subscription",
-              "displayName": "",
-              "status": "",
-              "registrant": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
-                "type": "",
-                "sub_type": "",
-                "kind": "github",
-                "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
-                "created_at": "0001-01-01T00:00:00Z",
-                "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z"
-              },
-              "connection_id": "00000000-0000-0000-0000-000000000000",
-              "category": {
-                "id": "00000000-0000-0000-0000-000000000000",
-                "name": ""
-              },
-              "subCategory": "",
-              "metadata": null,
-              "model": {
-                "version": ""
-              },
-              "components_count": 0,
-              "relationships_count": 0,
-              "components": null,
-              "relationships": null
-            },
-            "patch": {
-              "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -2055,7 +2033,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -2104,7 +2084,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -2155,7 +2137,9 @@
               "patchStrategy": "replace",
               "mutatedRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "metadata",
+                  "name"
                 ]
               ]
             }
