@@ -26,11 +26,11 @@ The line style is the most important visual cue for understanding an edge's purp
 
 - **Dotted Line**:
   - **What it means**: A **semantic relationship**. This represents a real, functional connection that Meshery understands and can manage, such as a network link or a volume mount.
-  - **When you'll see it**: This is the default style for most infrastructure relationships.
+  - **When you'll see it**: These lines indicate active relationships between components, showing how they interact and communicate. The dotted pattern represents dynamic connections, while arrowheads show the direction of data flow or dependency.
 
 - **Solid Line**:
   - **What it means**: A **non-semantic annotation**. This is a visual note or organizational aid for human interpretation only. Meshery's engine ignores these connections.
-  - **When you'll see it**: Used for documenting designs, showing conceptual flows, or grouping components visually.
+  - **When you'll see it**: These lines represent static or conceptual relationships between components. They help visualize structural connections or highlight specific component groupings without implying active data flow.
 
 #### Color: A Secondary Cue
 
