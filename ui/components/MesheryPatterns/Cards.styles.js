@@ -1,4 +1,4 @@
-import { Grid, styled } from '@layer5/sistent';
+import { Grid, styled } from '@sistent/sistent';
 
 export const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
   height: fullScreen ? '100%' : undefined,

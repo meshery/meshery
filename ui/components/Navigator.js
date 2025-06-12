@@ -31,7 +31,7 @@ import {
   ExternalLinkIcon as IconExternalLink,
   TachographDigitalIcon,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';

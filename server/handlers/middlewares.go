@@ -9,12 +9,12 @@ import (
 	"net/url"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/server/machines"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
 )
 

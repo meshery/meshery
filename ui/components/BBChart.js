@@ -1,6 +1,6 @@
 import { useRef, useEffect, memo } from 'react';
 import { bb } from 'billboard.js';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
 
 const BBChart = ({ options }) => {
   const chartRef = useRef(null);

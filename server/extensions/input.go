@@ -1,10 +1,10 @@
 package extensions
 
 import (
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
 )
 
 type ExtensionInput struct {

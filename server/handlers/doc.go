@@ -34,11 +34,11 @@ import (
 	"bytes"
 
 	"github.com/go-openapi/strfmt"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshery/server/models/environments"
-	"github.com/layer5io/meshkit/models/events"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/meshkit/models/events"
 	v1 "k8s.io/api/core/v1"
 )
 

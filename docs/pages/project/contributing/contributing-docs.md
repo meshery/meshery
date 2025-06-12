@@ -341,7 +341,7 @@ You should be able to access the site on port `4000`. If you want to access it i
   </code>
   </div></pre>
 
-- Then on Github, navigate to the [Meshery repository](https://github.com/layer5io/meshery) and create a pull request from your recently pushed changes!
+- Then on Github, navigate to the [Meshery repository](https://github.com/meshery/meshery) and create a pull request from your recently pushed changes!
 
 ---
 

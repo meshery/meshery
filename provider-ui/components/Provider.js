@@ -29,8 +29,8 @@ import {
   accentGrey,
   CHINESE_SILVER,
   KEPPEL,
-} from "@layer5/sistent";
-import { CloseIcon, ClickAwayListener, DropDownIcon } from "@layer5/sistent";
+} from "@sistent/sistent";
+import { CloseIcon, ClickAwayListener, DropDownIcon } from "@sistent/sistent";
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
@@ -246,9 +246,9 @@ export default function Provider() {
                   <MenuProviderDisabled
                     sx={{ marginTop: "0px" }}
                     disabled={true}
-                    key="CNCF Labs"
+                    key="Exoscale Labs"
                   >
-                    CNCF Labs{"\u00A0"}
+                    Exoscale Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
@@ -259,8 +259,8 @@ export default function Provider() {
                     HPE Security{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="MIT">
-                    Massachusetts Institute of Technology (MIT){"\u00A0"}
+                  <MenuProviderDisabled disabled={true} key="F5">
+                    F5 BIG IP iHealth{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="UT Austin">

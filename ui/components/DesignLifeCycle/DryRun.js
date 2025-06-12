@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@layer5/sistent';
+import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@sistent/sistent';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
@@ -9,7 +9,7 @@ import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
 } from '../../machines/validator/designValidator';
-import { ErrorIcon } from '@layer5/sistent';
+import { ErrorIcon } from '@sistent/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { FormatStructuredData } from '../DataFormatter';
 import {

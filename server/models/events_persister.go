@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 )
 
@@ -68,6 +68,10 @@ func (e *EventsPersister) GetAllEvents(eventsFilter *events.EventsFilter, userID
 
 	if eventsFilter.Status != "" {
 		finder = finder.Where("status = ?", eventsFilter.Status)
+	}
+
+	if len(eventsFilter.ActedUpon) != 0 {
+		finder = finder.Where("acted_upon in ?", eventsFilter.ActedUpon)
 	}
 
 	sortOn := SanitizeOrderInput(fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order), []string{"created_at", "updated_at", "name"})

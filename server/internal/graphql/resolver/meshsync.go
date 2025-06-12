@@ -6,12 +6,12 @@ import (
 	"os"
 	"path"
 
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils"
 	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
 )
 
@@ -123,13 +123,16 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			}()
 			r.Log.Info("Hard reset complete.")
 		} else { //Delete meshsync objects coming from a particular cluster
-			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+			k8sctxs, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 			if !ok || len(k8sctxs) == 0 {
 				r.Log.Error(ErrEmptyCurrentK8sContext)
 				return "", ErrEmptyCurrentK8sContext
 			}
 			var sid string
 			for _, k8ctx := range k8sctxs {
+				if k8ctx == nil {
+					continue
+				}
 				if k8ctx.ID == k8scontextID && k8ctx.KubernetesServerID != nil {
 					sid = k8ctx.KubernetesServerID.String()
 					break
