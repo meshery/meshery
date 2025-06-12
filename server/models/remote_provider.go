@@ -15,6 +15,7 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -1426,6 +1427,198 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 
 	return eventsResponse, nil
 
+}
+
+func (l *RemoteProvider) GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error) {
+
+	eventTypes := EventTypesResponse{}
+
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return eventTypes, ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	// ep, _ := l.Capabilities.GetEndpointForFeature(PersistEvents)
+
+	l.Log.Info("attempting to fetch events types from remote provider")
+
+	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + "/api/events/types")
+	q := remoteProviderURL.Query()
+
+	remoteProviderURL.RawQuery = q.Encode()
+	l.Log.Debug("constructed events url: ", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)
+
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return eventTypes, ErrFetch(err, "Events", resp.StatusCode)
+	}
+
+	defer func() {
+		_ = resp.Body.Close()
+	}()
+
+	bdr, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return eventTypes, ErrDataRead(err, "Events")
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		err = ErrFetch(fmt.Errorf("unable to fetch event types"), fmt.Sprint(bdr), resp.StatusCode)
+		l.Log.Error(err)
+		return eventTypes, err
+	}
+
+	type Response struct {
+		Action   string `json:"action"`
+		Category string `json:"category"`
+	}
+
+	eventTypesResponse := []Response{}
+
+	err = json.Unmarshal(bdr, &eventTypesResponse)
+
+	if err != nil {
+		return eventTypes, ErrUnmarshal(err, "Events Response")
+	}
+
+	for _, eventType := range eventTypesResponse {
+		eventTypes.Action = append(eventTypes.Action, eventType.Action)
+		eventTypes.Category = append(eventTypes.Category, eventType.Category)
+	}
+	slices.Sort(eventTypes.Action)
+	slices.Sort(eventTypes.Category)
+	eventTypes.Action = slices.Compact(eventTypes.Action)
+	eventTypes.Category = slices.Compact(eventTypes.Category)
+
+	return eventTypes, nil
+
+}
+
+func (l *RemoteProvider) UpdateEventStatus(token string, eventID uuid.UUID, status string) error {
+
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to update event status in remote provider for event ID: ", eventID)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events/%s/status", l.RemoteProviderURL, eventID.String()))
+	l.Log.Debug("constructed event status url: ", remoteProviderURL.String())
+	payload := map[string]interface{}{
+		"status": status,
+	}
+
+	data, err := json.Marshal(payload)
+
+	if err != nil {
+		return ErrMarshal(err, "update event status")
+	}
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bytes.NewBuffer(data))
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error updating event status with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error updating event status with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Event status updated successfully in remote provider.")
+	return nil
+}
+
+func (l *RemoteProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
+
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to bulk update event status in remote provider for event IDs: ", eventIDs)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events/status", l.RemoteProviderURL))
+	payload := map[string]interface{}{
+		"ids":    eventIDs,
+		"status": status,
+	}
+
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return ErrMarshal(err, "bulk update event status")
+	}
+	bf := bytes.NewBuffer(data)
+	cReq, _ := http.NewRequest(http.MethodPut, remoteProviderURL.String(), bf)
+	cReq.Header.Set("Content-Type", "application/json")
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error bulk updating event status with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error bulk updating event status with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Bulk event status updated successfully in remote provider.")
+	return nil
+}
+
+func (l *RemoteProvider) DeleteEvent(token string, eventID uuid.UUID) error {
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to delete event in remote provider for event ID: ", eventID)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events/%s", l.RemoteProviderURL, eventID.String()))
+	l.Log.Debug("constructed event deletion url: ", remoteProviderURL.String())
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), nil)
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error deleting event with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error deleting event status with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Event deleted in remote provider.")
+	return nil
+}
+
+func (l *RemoteProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error {
+	if !l.Capabilities.IsSupported(PersistEvents) {
+		l.Log.Error(ErrInvalidCapability("PersistEvents", l.ProviderName))
+		return ErrInvalidCapability("PersistEvents", l.ProviderName)
+	}
+
+	l.Log.Info("attempting to bulk delete events in remote provider for event IDs: ", eventIDs)
+	remoteProviderURL, _ := url.Parse(fmt.Sprintf("%s/api/events", l.RemoteProviderURL))
+	payload := map[string]interface{}{
+		"ids": eventIDs,
+	}
+
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return ErrMarshal(err, "bulk delete events")
+	}
+	bf := bytes.NewBuffer(data)
+	cReq, _ := http.NewRequest(http.MethodDelete, remoteProviderURL.String(), bf)
+	cReq.Header.Set("Content-Type", "application/json")
+	resp, err := l.DoRequest(cReq, token)
+	if err != nil {
+		return ErrUnreachableRemoteProvider(err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		l.Log.Error(ErrPost(fmt.Errorf("error bulk delete events with the remote provider"), "event status", resp.StatusCode))
+		return ErrPost(fmt.Errorf("error bulk deleting events with the remote provider"), "event status", resp.StatusCode)
+	}
+
+	l.Log.Info("Bulk events deleted successfully in remote provider.")
+	return nil
 }
 
 // PublishMetrics - publishes metrics to the provider backend asyncronously

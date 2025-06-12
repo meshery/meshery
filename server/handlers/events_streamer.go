@@ -109,7 +109,9 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // 200:
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-	eventTypes, err := provider.GetEventTypes(userID, *h.SystemID)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
+
 	if err != nil {
 		http.Error(w, fmt.Errorf("error retrieving event cagegories and actions").Error(), http.StatusInternalServerError)
 		return
@@ -131,6 +133,7 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	defer func() {
 		_ = req.Body.Close()
@@ -151,33 +154,29 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 		http.Error(w, ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()).Error(), http.StatusInternalServerError)
 		return
 	}
-	event, err := provider.UpdateEventStatus(eventID, status)
+	err = provider.UpdateEventStatus(token, eventID, status)
 	if err != nil {
 		_err := ErrUpdateEvent(err, eventID.String())
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = json.NewEncoder(w).Encode(event)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
-		return
-	}
+
 }
 
 // swagger:route PUT /api/events/status idGetEventStreamer
 // Handle PUT request to update event status in bulk.
 // Bulk update status for the events associated with the ids.
 // responses:
-// 	200: eventResponseWrapper
-
+//
+//	200: eventResponseWrapper
 func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 
 	defer func() {
 		_ = req.Body.Close()
 	}()
 
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	var reqBody eventStatusPayload
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -187,19 +186,14 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	}
 
 	_ = json.Unmarshal(body, &reqBody)
-	event, err := provider.BulkUpdateEventStatus(reqBody.StatusIDs, reqBody.Status)
+	err = provider.BulkUpdateEventStatus(token, reqBody.StatusIDs, reqBody.Status)
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = json.NewEncoder(w).Encode(event)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
-		return
-	}
+
 }
 
 // swagger:route DELETE /api/events/bulk idGetEventStreamer
@@ -213,6 +207,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		_ = req.Body.Close()
 	}()
 
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	var reqBody statusIDs
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -222,7 +217,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 	}
 
 	_ = json.Unmarshal(body, &reqBody)
-	err = provider.BulkDeleteEvent(reqBody.IDs)
+	err = provider.BulkDeleteEvent(token, reqBody.IDs)
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
 		h.log.Error(_err)
@@ -239,7 +234,9 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 
 func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
-	err := provider.DeleteEvent(eventID)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	err := provider.DeleteEvent(token, eventID)
+
 	if err != nil {
 		_err := ErrDeleteEvent(err, eventID.String())
 		h.log.Error(_err)

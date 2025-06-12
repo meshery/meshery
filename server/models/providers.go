@@ -353,7 +353,7 @@ func VerifyMesheryProvider(provider string, supportedProviders map[string]Provid
 type Provider interface {
 	PreferencePersister
 	CapabilitiesPersister
-	MesheryEvents
+	// MesheryEvents
 
 	// Initialize will initialize a provider instance
 	// by loading its capabilities and other metadata in the memory
@@ -509,4 +509,9 @@ type Provider interface {
 
 	// events
 	GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error)
+	GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error)
+	UpdateEventStatus(token string, eventID uuid.UUID, status string) error
+	BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error
+	DeleteEvent(token string, eventID uuid.UUID) error
+	BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error
 }
