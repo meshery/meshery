@@ -1,1 +1,1 @@
-Nidhish Chauhan attended
+- Nidhish Chauhan attended
