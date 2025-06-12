@@ -53,7 +53,7 @@ import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
 import { FormattedLinkMetadata, FormattedMetadata, PropertyLinkFormatters } from './metadata';
 import { truncate } from 'lodash';
-import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { MESHERY_CLOUD_PROD, MESHERY_DOCS_URL } from '@/constants/endpoints';
 import { useDispatch } from 'react-redux';
 
 export const eventPreventDefault = (e) => {
@@ -71,6 +71,15 @@ export const canTruncateDescription = (description) => {
 };
 
 const AvatarStack = ({ avatars, direction }) => {
+  const handleAvatarClick = (e, avatar) => {
+    e.stopPropagation();
+
+    if (avatar.system_id) {
+      window.location.href = '/management/connections?tab=connections&searchText=meshery';
+    } else if (avatar.user_id) {
+      window.open(`${MESHERY_CLOUD_PROD}/user/${avatar.user_id}`);
+    }
+  };
   return (
     <StyledAvatarStack
       sx={{
@@ -84,6 +93,7 @@ const AvatarStack = ({ avatars, direction }) => {
               zIndex: avatars.length - index,
               ml: '-0.4rem',
             }}
+            onClick={(e) => handleAvatarClick(e, avatar)}
           >
             <Avatar alt={avatar.name} src={avatar.avatar_url} />
           </Box>
@@ -313,7 +323,7 @@ export const Notification = ({ event_id }) => {
 
   const eventActors = [
     ...(event.user_id && user
-      ? [{ name: userName, avatar_url: userAvatarUrl, tooltip: userName }]
+      ? [{ name: userName, avatar_url: userAvatarUrl, tooltip: userName, user_id: event.user_id }]
       : []),
     ...(event.system_id
       ? [
@@ -321,6 +331,7 @@ export const Notification = ({ event_id }) => {
             name: 'Meshery',
             avatar_url: '/static/img/meshery-logo.png',
             tooltip: `System ID: ${event.system_id}`,
+            system_id: event.system_id,
           },
         ]
       : []),
