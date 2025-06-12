@@ -3,21 +3,22 @@ layout: default
 title: Edge Styles Guide
 permalink: guides/configuration-management/edges-guide
 language: en
-abstract: Learn about the different edge styles and how to interpret their visual meaning.
+abstract: Learn about the different edge styles and how to interpret their visual meaning in Meshery's component relationships.
 list: include
 type: guides
 category: configuration
 redirect_from:
   - extensions/edges-shape-guide
+  - extensions/edges-shape-guide/
 ---
 
-In Meshery, the line that connects [components](https://docs.meshery.io/concepts/logical/components) in a design is called an **edge**. Each edge visually represents a [relationship](https://docs.meshery.io/concepts/logical/relationships) and uses a specific style to communicate its nature.
+In Meshery, the line that connects [components](https://docs.meshery.io/concepts/logical/components) is called an **edge**. Each edge visually represents a [relationship](https://docs.meshery.io/concepts/logical/relationships) and uses a specific style to communicate its nature.
 
 This guide helps you interpret the most common edge styles you will encounter.
 
 ### Interpreting Common Edge Styles
 
-Meshery uses a set of default visual styles to provide at-a-glance information about the type of connection an edge represents. While these styles can be customized in the designer, understanding the defaults is key to interpreting shared designs.
+Meshery uses a set of default visual styles to provide at-a-glance information about the type of connection an edge represents. While these styles can be customized in the UI, understanding the defaults is key to interpreting component relationships.
 
 #### Line Style: The Primary Indicator
 
@@ -38,12 +39,12 @@ Color provides an additional hint about an edge's nature.
 - **Green / Teal**:
   - This is the default color for **non-semantic annotations**, helping them stand out from functional connections.
 
-- **Blue**:
-  - These are the typical default colors for **semantic relationships**. The exact color may vary depending on your UI theme to ensure visibility.
+- **Blue / Grey**:
+  - These are the typical default colors for **semantic relationships**.
 
 ### Edge Style Gallery
 
-The following gallery showcases the full range of visual styles available for edges within Meshery's design tooling.
+The following gallery showcases the full range of visual styles available for edges in Meshery.
 
 {% include extension-guide.html
   data_file="edges"
