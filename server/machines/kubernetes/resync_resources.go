@@ -6,12 +6,10 @@ import (
 	"fmt"
 
 	"github.com/meshery/meshery/server/machines"
-	"github.com/meshery/meshkit/models/events"
 )
 
 func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
-	// TODO what to put as event builder?
-	mashineCtx, err := GetMachineCtx(sm.Context, events.NewEvent())
+	mashineCtx, err := GetMachineCtxPlain(sm.Context)
 	if err != nil {
 		return ErrResyncK8SResources(
 			fmt.Errorf(
