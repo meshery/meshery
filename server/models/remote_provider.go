@@ -1410,6 +1410,7 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 		Page                 int                     `json:"page"`
 		TotalCount           int64                   `json:"total_count"`
 		PageSize             int                     `json:"page_size"`
+		ReadCount            int64                   `json:"read_count"`
 		CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
 	}
 
@@ -1424,6 +1425,7 @@ func (l *RemoteProvider) GetEvents(token string, eventsFilter *events.EventsFilt
 	eventsResponse.TotalCount = response.TotalCount
 	eventsResponse.PageSize = response.PageSize
 	eventsResponse.CountBySeverityLevel = response.CountBySeverityLevel
+	eventsResponse.ReadCount = response.ReadCount
 
 	return eventsResponse, nil
 

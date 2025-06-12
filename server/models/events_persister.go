@@ -19,6 +19,7 @@ type EventsResponse struct {
 	PageSize             int                     `json:"page_size"`
 	CountBySeverityLevel []*CountBySeverityLevel `json:"count_by_severity_level"`
 	TotalCount           int64                   `json:"total_count"`
+	ReadCount            int64                   `json:"read_count"`
 }
 
 type CountBySeverityLevel struct {
