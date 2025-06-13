@@ -13,27 +13,27 @@ components:
 - name: hazelcast-version
   colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast-version/icons/color/hazelcast-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast-version/icons/white/hazelcast-version-white.svg
-  description: App Definition and Development
+  description: 
 - name: oracle-version
   colorIcon: assets/img/integrations/kubedb-crds/components/oracle-version/icons/color/oracle-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/oracle-version/icons/white/oracle-version-white.svg
-  description: App Definition and Development
+  description: 
 - name: hazelcast
   colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast/icons/color/hazelcast-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast/icons/white/hazelcast-white.svg
-  description: App Definition and Development
+  description: 
 - name: oracle
   colorIcon: assets/img/integrations/kubedb-crds/components/oracle/icons/color/oracle-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/oracle/icons/white/oracle-white.svg
-  description: App Definition and Development
+  description: 
 - name: cassandra-ops-request
   colorIcon: assets/img/integrations/kubedb-crds/components/cassandra-ops-request/icons/color/cassandra-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/cassandra-ops-request/icons/white/cassandra-ops-request-white.svg
-  description: App Definition and Development
+  description: 
 - name: hazelcast-ops-request
   colorIcon: assets/img/integrations/kubedb-crds/components/hazelcast-ops-request/icons/color/hazelcast-ops-request-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/hazelcast-ops-request/icons/white/hazelcast-ops-request-white.svg
-  description: App Definition and Development
+  description: 
 - name: elasticsearch-autoscaler
   colorIcon: assets/img/integrations/kubedb-crds/components/elasticsearch-autoscaler/icons/color/elasticsearch-autoscaler-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/elasticsearch-autoscaler/icons/white/elasticsearch-autoscaler-white.svg
