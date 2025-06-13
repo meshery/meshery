@@ -26,7 +26,7 @@ import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
-import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
+import { DrawerHeader, StyledDrawer, StyledMainContent, StyledModal } from './styles';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
@@ -172,7 +172,7 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
               sx={{
                 minHeight: 48,
                 px: 2.5,
-                pl: '2.5rem',
+                pl: open ? '2.5rem': undefined,
                 justifyContent: open ? 'initial' : 'center',
               }}
             >
@@ -358,32 +358,27 @@ const Navigation = ({ setHeaderInfo }) => {
 
 const WorkspaceModal = ({ workspaceModal, closeWorkspaceModal }) => {
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [headerInfo, setHeaderInfo] = useState({
     title: 'All Workspaces',
     icon: <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />,
   });
 
   return (
-    <Modal
+    <StyledModal
       closeModal={closeWorkspaceModal}
-      fullScreen
-      fullWidth
-      sx={{
-        margin: {
-          xs: '1rem',
-          sm: '2rem',
-          md: '4rem',
-          lg: '5rem 8rem',
-        },
-      }}
       open={workspaceModal}
       headerIcon={headerInfo.icon}
       title={headerInfo.title}
+      isFullScreenModeAllowed={!isSmallScreen}
+      sx={{
+        zIndex: 9999999999,
+      }}
     >
       <ModalBody style={{ height: '100%', padding: '0' }}>
         {workspaceModal && <Navigation setHeaderInfo={setHeaderInfo} />}
       </ModalBody>
-    </Modal>
+    </StyledModal>
   );
 };
 

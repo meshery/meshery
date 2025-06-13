@@ -93,7 +93,7 @@ const DesignViewListItem = ({
               </FormGroup>
             </Grid2>
           )}
-          <Grid2 size={{ xs: 6, md: 3.5, lg: 3 }}>
+          <Grid2 size={{ xs: 6, md: 3.5, lg: 3.5 }}>
             <StyledAvatarContainer>
               <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
               <StyledListItemText
@@ -136,7 +136,7 @@ const DesignViewListItem = ({
           </Grid2>
 
           <Grid2
-            size={{ xs: 1, lg: 2 }}
+            size={{ xs: 1, lg: 1 }}
             sx={{
               display: 'flex',
               justifyContent: 'center',

@@ -119,7 +119,7 @@ const MyDesignsContent = () => {
             value={filters.searchQuery}
             onChange={onSearchChange}
             endAdornment={
-              <p style={{ color: theme.palette.text.default }}>Total Designs: {total_count}</p>
+              <p style={{ color: theme.palette.text.default }}>Total: {total_count}</p>
             }
           />
         </Grid2>

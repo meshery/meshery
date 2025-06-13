@@ -237,9 +237,11 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           </FormGroup>
         </Grid2>
       )}
-      <Grid2 size={{ xs: 6, md: 3.5, lg: 3 }}>
+      <Grid2 size={{ xs: 6, md: 3.5, lg: 3.5 }}>
         <Typography variant="body1" noWrap>
-          Name
+          <b>
+            Name
+          </b>
         </Typography>
       </Grid2>
       <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
@@ -253,34 +255,44 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           variant="body1"
           noWrap
         >
-          Author
+          <b>
+            Author
+          </b>
         </Typography>
       </Grid2>
       <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-        <Typography>Organization</Typography>
+        <Typography>
+          <b>
+            Organization
+          </b>
+        </Typography>
       </Grid2>
       <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
-        <Typography>Workspace</Typography>
+        <Typography><b>Workspace</b></Typography>
       </Grid2>
 
       <Grid2 size={{ md: 1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
         <Typography variant="body1" noWrap>
-          Visibility
+          <b>
+            Visibility
+          </b>
         </Typography>
       </Grid2>
       <Grid2
-        size={{ xs: 2, md: 1, lg: 2 }}
+        size={{ xs: 2, md: 1, lg: 1 }}
         sx={{
           display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: 'start',
+          alignItems: 'start',
         }}
       >
         <Typography variant="body1" noWrap>
-          Actions
+          <b>
+            Actions
+          </b>
         </Typography>
       </Grid2>
-    </Grid2>
+    </Grid2 >
   );
 };
 

@@ -194,12 +194,12 @@ const WorkspaceContent = ({ workspace }) => {
               onChange={onSearchChange}
               endAdornment={
                 filters.type === RESOURCE_TYPE.DESIGN ? (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Designs: {designsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: "0.25rem" }}>
+                    Total: {designsData?.total_count ?? 0}
                   </p>
                 ) : (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Views: {viewsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: "0.25rem" }}>
+                    Total: {viewsData?.total_count ?? 0}
                   </p>
                 )
               }
