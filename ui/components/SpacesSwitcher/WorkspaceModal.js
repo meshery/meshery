@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
-  Modal,
   ModalBody,
   useTheme,
   WorkspaceIcon,
@@ -172,7 +171,7 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
               sx={{
                 minHeight: 48,
                 px: 2.5,
-                pl: open ? '2.5rem': undefined,
+                pl: open ? '2.5rem' : undefined,
                 justifyContent: open ? 'initial' : 'center',
               }}
             >

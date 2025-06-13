@@ -1,4 +1,3 @@
-import { height, margin, width } from '@mui/system';
 import {
   styled,
   Drawer as MuiDrawer,
@@ -232,14 +231,13 @@ export const StyledTypography = styled(Typography)(({ theme }) => ({
 }));
 
 export const StyledModal = styled(Modal)(({ theme }) => ({
-
   '& .MuiDialog-paperFullScreen': {
-    margin: '0'
+    margin: '0',
   },
 
-  '& .MuiDialog-paperFullWidth' : {
-    width: "90%",
-    height: "80%"
+  '& .MuiDialog-paperFullWidth': {
+    width: '90%',
+    height: '80%',
   },
 
   '& .MuiDialog-paper': {
@@ -253,4 +251,4 @@ export const StyledModal = styled(Modal)(({ theme }) => ({
       maxHeight: '100%',
     },
   },
-}))
+}));

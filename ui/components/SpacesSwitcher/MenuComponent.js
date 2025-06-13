@@ -49,9 +49,9 @@ export const MenuComponent = ({ options = [] }) => {
         {options.map((option) => (
           <CustomTooltip key={option.title} title={option.title}>
             <IconButton
-            sx={{
-              padding: '0.15rem',
-            }}
+              sx={{
+                padding: '0.15rem',
+              }}
               disabled={option.disabled}
               style={{ cursor: 'pointer' }}
               onClick={(event) => {
