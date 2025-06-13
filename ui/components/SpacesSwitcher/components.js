@@ -237,7 +237,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           </FormGroup>
         </Grid2>
       )}
-      <Grid2 size={{ xs: 6, md: 3.5, lg: 3.5 }}>
+      <Grid2 size={{ xs: 5.5, md: 3.5, lg: 3.5, xl: 3 }}>
         <Typography variant="body1" noWrap>
           <b>
             Name
@@ -247,7 +247,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
       <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
         <Typography
           sx={{
-            [theme.breakpoints.down('sm')]: {
+            [theme.breakpoints.down('md')]: {
               display: 'flex',
               justifyContent: 'center',
             },
@@ -279,10 +279,10 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
         </Typography>
       </Grid2>
       <Grid2
-        size={{ xs: 2, md: 1, lg: 1 }}
+        size={{ xs: 3, md: 1, xl: 2 }}
         sx={{
           display: 'flex',
-          justifyContent: 'start',
+          justifyContent: "center",
           alignItems: 'start',
         }}
       >

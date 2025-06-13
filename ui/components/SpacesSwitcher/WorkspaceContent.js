@@ -183,7 +183,7 @@ const WorkspaceContent = ({ workspace }) => {
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <Grid2 container spacing={2} alignItems="center" size="grow">
           {/* Search Bar */}
-          <Grid2 size={{ xs: 12, md: 5 }}>
+          <Grid2 size={{ xs: 12, md: 4.5 }}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"

@@ -371,9 +371,6 @@ const WorkspaceModal = ({ workspaceModal, closeWorkspaceModal }) => {
       headerIcon={headerInfo.icon}
       title={headerInfo.title}
       isFullScreenModeAllowed={!isSmallScreen}
-      sx={{
-        zIndex: 9999999999,
-      }}
     >
       <ModalBody style={{ height: '100%', padding: '0' }}>
         {workspaceModal && <Navigation setHeaderInfo={setHeaderInfo} />}

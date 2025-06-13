@@ -160,7 +160,7 @@ export const StyledListItemText = styled(ListItemText)(({ theme }) => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   margin: '0',
-  maxWidth: theme.spacing(40),
+  maxWidth: theme.spacing(25),
 
   '& .MuiTypography-root': {
     whiteSpace: 'nowrap',
