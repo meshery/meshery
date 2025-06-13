@@ -139,7 +139,13 @@ mesheryctl system logs meshery-istio
 				log.Errorf("%s does not exists", utils.DockerComposeFile)
 				log.Info("run \"mesheryctl system start\" again to download and generate docker-compose based on your context")
 				return nil
-			}
+			} 
+
+			if _, err := exec.LookPath("docker-compose"); err != nil {
+	                       log.Error("docker-compose is not installed or not available in your PATH.")
+	                       log.Info("Please install docker-compose: https://docs.docker.com/compose/install/")
+	                       return nil
+                       }
 
 			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
 
