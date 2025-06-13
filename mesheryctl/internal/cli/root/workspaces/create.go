@@ -71,13 +71,11 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 		reqOrg, err := utils.NewRequest(http.MethodGet, orgsUrl, nil)
 		if err != nil {
-			utils.Log.Info("failed to create request to fetch orgs")
 			return err
 		}
 
 		respOrg, err := utils.MakeRequest(reqOrg)
 		if err != nil {
-			utils.Log.Info("failed to fetch organizations")
 			return err
 		}
 		defer respOrg.Body.Close()
@@ -116,7 +114,6 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
-
 
 		payload := &models.WorkspacePayload{
 			Name:           nameFlag,
