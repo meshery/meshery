@@ -24,14 +24,12 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y make
 
       - name: Build Docker image
-        run: |
-          make docker-build
-          docker tag layer5/meshery meshery/meshery:latest
+        run: make docker-build
       
       - name: Run Trivy scan on built image
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'meshery/meshery:latest'
+          image-ref: 'meshery/meshery'
           format: 'json'
           output: 'trivy-scan-results.json'
 
