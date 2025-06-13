@@ -150,3 +150,11 @@ button {
   border: 1px solid var(--color-secondary-light);
 }
 
+[data-theme='light'] a,
+[data-theme='light'] a:visited {
+  color: grey !important;
+}
+
+[data-theme='light'] a:hover {
+  color: darkgrey !important;
+}
