@@ -2,7 +2,7 @@ module.exports = {
   env: {
     browser: true,
     es6: true,
-    node: true, // tells the parser that we are using nodejs
+    node: true,
   },
 
   settings: {
@@ -13,6 +13,7 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',    // TypeScript rules
     'next',
     'plugin:prettier/recommended',
   ],
@@ -21,15 +22,16 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
     globalThis: 'readonly',
   },
-  parser: '@babel/eslint-parser',
+  parser: '@typescript-eslint/parser',          // TypeScript parser
   parserOptions: {
     ecmaFeatures: {
       jsx: true,
     },
     ecmaVersion: 2018,
     sourceType: 'module',
+    project: './tsconfig.json',                 // (optional, for stricter rules)
   },
-  plugins: ['react', 'prettier', 'unused-imports'],
+  plugins: ['react', 'prettier', 'unused-imports', '@typescript-eslint'],
   rules: {
     '@next/next/no-img-element': 'off',
     'react-hooks/rules-of-hooks': 'warn',
@@ -44,14 +46,15 @@ module.exports = {
     'react/jsx-uses-vars': [2],
     'react/jsx-no-undef': 'error',
     'no-console': 0,
-    'no-unused-vars': 'error',
+    'no-unused-vars': 'off',                    // Disable base rule
+    '@typescript-eslint/no-unused-vars': 'error',// Use TS rule for unused vars
     'unused-imports/no-unused-imports': 'error',
     'react/jsx-key': 'warn',
     'no-dupe-keys': 'error',
     'react/jsx-filename-extension': [
       1,
       {
-        extensions: ['.js', '.jsx'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       },
     ],
     'react/prop-types': 'off',
