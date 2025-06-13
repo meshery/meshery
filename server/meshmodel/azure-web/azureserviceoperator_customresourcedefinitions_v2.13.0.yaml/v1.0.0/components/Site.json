@@ -58,7 +58,122 @@
     "svgComplete": "",
     "svgWhite": "\u003csvg id=\"b70acf0a-34b4-4bdf-9024-7496043ff915\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003cradialGradient id=\"e2cf8746-c9a8-4eee-86c2-4951983c6032\" cx=\"13428.81\" cy=\"3518.86\" r=\"56.67\" gradientTransform=\"translate(-2005.33 -518.83) scale(0.15)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0.18\" stop-color=\"#5ea0ef\" /\u003e\u003cstop offset=\"1\" stop-color=\"#0078d4\" /\u003e\u003c/radialGradient\u003e\u003clinearGradient id=\"bdd213dd-d313-473c-8ff4-0133fd3a9033\" x1=\"4.4\" y1=\"11.48\" x2=\"4.37\" y2=\"7.53\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#ccc\" /\u003e\u003cstop offset=\"1\" stop-color=\"#fcfcfc\" /\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"afcc63c5-3649-4476-a742-bcb53a569f3c\" x1=\"10.13\" y1=\"15.45\" x2=\"10.13\" y2=\"11.9\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#ccc\" /\u003e\u003cstop offset=\"1\" stop-color=\"#fcfcfc\" /\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"bd873f0b-9954-4aa5-a3df-9f4c64e8729d\" x1=\"14.18\" y1=\"11.15\" x2=\"14.18\" y2=\"7.38\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#ccc\" /\u003e\u003cstop offset=\"1\" stop-color=\"#fcfcfc\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-web-41\u003c/title\u003e\u003cpath id=\"ee75dd06-1aca-4f76-9d11-d05a284020ad\" d=\"M14.21,15.72A8.5,8.5,0,0,1,3.79,2.28l.09-.06a8.5,8.5,0,0,1,10.33,13.5\" fill=\"url(#e2cf8746-c9a8-4eee-86c2-4951983c6032)\" /\u003e\u003cpath d=\"M6.69,7.23A13,13,0,0,1,15.6,3.65a8.47,8.47,0,0,0-1.49-1.44,14.34,14.34,0,0,0-4.69,1.1A12.54,12.54,0,0,0,5.34,6.13,2.76,2.76,0,0,1,6.69,7.23Z\" fill=\"#fff\" opacity=\"0.6\" /\u003e\u003cpath d=\"M2.48,10.65a17.86,17.86,0,0,0-.83,2.62,7.82,7.82,0,0,0,.62.92c.18.23.35.44.55.65A17.94,17.94,0,0,1,3.9,11.37,2.76,2.76,0,0,1,2.48,10.65Z\" fill=\"#fff\" opacity=\"0.6\" /\u003e\u003cpath d=\"M3.46,6.11a12,12,0,0,1-.69-2.94,8.15,8.15,0,0,0-1.1,1.45A12.69,12.69,0,0,0,2.24,7,2.69,2.69,0,0,1,3.46,6.11Z\" fill=\"#f2f2f2\" opacity=\"0.55\" /\u003e\u003ccircle cx=\"4.38\" cy=\"8.68\" r=\"2.73\" fill=\"url(#bdd213dd-d313-473c-8ff4-0133fd3a9033)\" /\u003e\u003cpath d=\"M8.36,13.67A1.77,1.77,0,0,1,8.9,12.4a11.88,11.88,0,0,1-2.53-1.86,2.74,2.74,0,0,1-1.49.83,13.1,13.1,0,0,0,1.45,1.28A12.12,12.12,0,0,0,8.38,13.9,1.79,1.79,0,0,1,8.36,13.67Z\" fill=\"#f2f2f2\" opacity=\"0.55\" /\u003e\u003cpath d=\"M14.66,13.88a12,12,0,0,1-2.76-.32.41.41,0,0,1,0,.11,1.75,1.75,0,0,1-.51,1.24,13.69,13.69,0,0,0,3.42.24A8.21,8.21,0,0,0,16,13.81,11.5,11.5,0,0,1,14.66,13.88Z\" fill=\"#f2f2f2\" opacity=\"0.55\" /\u003e\u003ccircle cx=\"10.13\" cy=\"13.67\" r=\"1.78\" fill=\"url(#afcc63c5-3649-4476-a742-bcb53a569f3c)\" /\u003e\u003cpath d=\"M12.32,8.93a1.83,1.83,0,0,1,.61-1A25.5,25.5,0,0,1,8.47,3.79a16.91,16.91,0,0,1-2-2.92,7.64,7.64,0,0,0-1.09.42A18.14,18.14,0,0,0,7.53,4.47,26.44,26.44,0,0,0,12.32,8.93Z\" fill=\"#f2f2f2\" opacity=\"0.7\" /\u003e\u003ccircle cx=\"14.18\" cy=\"9.27\" r=\"1.89\" fill=\"url(#bd873f0b-9954-4aa5-a3df-9f4c64e8729d)\" /\u003e\u003cpath d=\"M17.35,10.54,17,10.37l0,0-.3-.16-.06,0L16.38,10l-.07,0L16,9.8a1.76,1.76,0,0,1-.64.92c.12.08.25.15.38.22l.08.05.35.19,0,0,.86.45h0a8.63,8.63,0,0,0,.29-1.11Z\" fill=\"#f2f2f2\" opacity=\"0.55\" /\u003e\u003ccircle cx=\"4.38\" cy=\"8.68\" r=\"2.73\" fill=\"url(#bdd213dd-d313-473c-8ff4-0133fd3a9033)\" /\u003e\u003ccircle cx=\"10.13\" cy=\"13.67\" r=\"1.78\" fill=\"url(#afcc63c5-3649-4476-a742-bcb53a569f3c)\" /\u003e\u003c/svg\u003e"
   },
-  "capabilities": null,
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",

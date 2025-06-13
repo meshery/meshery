@@ -53,7 +53,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Subnet",
+            "kind": "VirtualNetworksSubnet",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -93,9 +93,11 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -144,9 +146,11 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "metadata",
+                  "name"
                 ]
               ]
             }
