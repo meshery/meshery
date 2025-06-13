@@ -1,7 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ENV } from './env';
-import { execSync } from 'child_process'; // Essential for running helm and kubectl commands
-import os from 'os'; // Might be useful for kubeconfig paths, though not directly used in the Helm commands below
+import { execSync } from 'child_process'; // Essential for running helm and kubectl command
 
 // Helper function to execute shell commands and log output
 function execShellCommand(command, options = {}) {
