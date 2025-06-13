@@ -2,24 +2,35 @@ name: Trivy Container Image Scan
 
 on:
   workflow_dispatch:
+  pull_request:
 
 permissions:
+  contents: read
   issues: write
 
 jobs:
-  scan:
-    name: Scan Container Image
+  build-and-scan:
+    name: Build & Scan Container Image
     runs-on: ubuntu-latest
 
     steps:
-      - name: Pull latest Meshery image
-        run: |
-          docker pull layer5/meshery:stable-latest
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Run Trivy scan
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Install Make
+        run: sudo apt-get update && sudo apt-get install -y make
+
+      - name: Build Docker image
+        run: |
+          make docker-build
+      
+      - name: Run Trivy scan on built image
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'layer5/meshery:stable-latest'
+          image-ref: 'layer5/meshery'
           format: 'json'
           output: 'trivy-scan-results.json'
 
@@ -34,14 +45,13 @@ jobs:
         run: |
           vuln_count=$(jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] 
             | select(.Severity == "CRITICAL" or .Severity == "HIGH")] | length' trivy-scan-results.json)
-
           echo "Found $vuln_count critical/high vulnerabilities" > issue_body.txt
           echo '```json' >> issue_body.txt
           jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] 
             | select(.Severity == "CRITICAL" or .Severity == "HIGH")][0:5]' trivy-scan-results.json >> issue_body.txt
           echo '```' >> issue_body.txt
           echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
-
+          
       - name: Create GitHub Issue
         if: steps.parse_trivy.outputs.vuln_count != '0'
         env:
