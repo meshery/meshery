@@ -156,5 +156,5 @@ button {
 }
 
 [data-theme='light'] a:hover {
-  color: darkgrey !important;
+  color: var(--link-color-hover-light-theme) !important;
 }
