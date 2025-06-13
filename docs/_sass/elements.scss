@@ -152,7 +152,7 @@ button {
 
 [data-theme='light'] a,
 [data-theme='light'] a:visited {
-  color: grey !important;
+  color: var(--link-color-light-theme) !important;
 }
 
 [data-theme='light'] a:hover {
