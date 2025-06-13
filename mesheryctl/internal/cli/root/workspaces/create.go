@@ -18,6 +18,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
@@ -62,11 +63,60 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
+		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+
+		// verify orgId
+		orgsUrl := fmt.Sprintf("%s/api/identity/orgs", baseUrl)
+		utils.Log.Info("🔍 sending request to verify organization ID: ", orgsUrl)
+
+		reqOrg, err := utils.NewRequest(http.MethodGet, orgsUrl, nil)
+		if err != nil {
+			utils.Log.Info("failed to create request to fetch orgs")
+			return err
+		}
+
+		respOrg, err := utils.MakeRequest(reqOrg)
+		if err != nil {
+			utils.Log.Info("failed to fetch organizations")
+			return err
+		}
+		defer respOrg.Body.Close()
+
+		utils.Log.Info("received response status code: ", respOrg.StatusCode)
+
+		bodyBytes, _ := io.ReadAll(respOrg.Body)
+
+		type organization struct {
+			ID string `json:"id"`
+		}
+
+		type orgListResponse struct {
+			Organizations []organization `json:"organizations"`
+		}
+
+		var orgResp orgListResponse
+		if err := json.Unmarshal(bodyBytes, &orgResp); err != nil {
+			utils.Log.Info("failed to parse organization list")
+			return err
+		}
+
+		found := false
+		for _, org := range orgResp.Organizations {
+			if org.ID == orgIdFlag {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return errors.New("invalid organization ID: not found in your account's organization list, please make sure your Org is created and existed ;)")
+		}
+		// Organization ID verified
+		utils.Log.Info("✅ Organization ID verified")
 		url := fmt.Sprintf("%s/%s", baseUrl, workspacesApiPath)
 
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+
 
 		payload := &models.WorkspacePayload{
 			Name:           nameFlag,
