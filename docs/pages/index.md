@@ -22,11 +22,8 @@ list: exclude
     <a href="{{ site.baseurl }}/installation">
         <div class="btn-primary">Overview & Installation</div>
     </a>
-    <!-- <h6>Getting Started</h6> -->
     <ul>
-        <!-- <li><a href="{{ site.baseurl }}/project">Project Overview</a></li> -->
         <li>🚀 <a href="{{ site.baseurl }}/installation/quick-start">Quick Start</a> and <a href="{{ site.baseurl }}/project/faq">FAQs</a></li>
-        <!-- <li><a href="{{ site.baseurl }}/project">Essential Features</a></li>  -->
     </ul>
     <details>
       <summary>
@@ -55,15 +52,6 @@ list: exclude
     <a href="{{ site.baseurl }}/concepts">
         <div class="btn-primary">Concepts</div>
     </a>
-   <!-- <h6><a href="{{ site.baseurl }}/concepts/logical" class="text-black section-title">Conceptual</a></h6>
-     <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="concepts" and item.list!="exclude" and item.language!="es" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul> -->
     <details>
       <summary>
         <p style="display:inline">
@@ -112,7 +100,6 @@ list: exclude
     <a href="{{ site.baseurl }}/guides">
         <div class="btn-primary">Guides & Tutorials</div>
     </a>
-    <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
     <details>
       <summary>
         <p style="display:inline">
@@ -234,7 +221,6 @@ list: exclude
     <a href="{{ site.baseurl }}/extensions">
         <div class="btn-primary">Integrations & Extensions</div>
     </a>
-    <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
         <details>
       <summary>
         <p style="display:inline">
@@ -285,9 +271,6 @@ list: exclude
     <a href="{{ site.baseurl }}/project">
         <div class="btn-primary">Contributing & Community</div>
     </a>
-    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> -->
-    <!-- <a href="{{ site.baseurl }}/project/community" class="text-black">Community</a> -->
-      <!-- PROJECT -->
     {% assign project = site.pages | sort: "name" | alphabetical %}
     <ul>
       {% for item in project %}
@@ -325,15 +308,24 @@ list: exclude
   <a href="{{ site.baseurl }}/reference">
         <div class="btn-primary">Extensibility & Reference</div>
     </a>
-    <!-- <h6><a href="{{ site.baseurl }}/reference" class="text-black section-title">Reference</a></h6> -->
-    <ul>
-        {% for item in sorted_pages %}
-        {% if item.type=="Reference" and item.list!="exclude"  and item.language!="es"  -%}
-          <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-          </li>
+      <!-- Reference -->
+      <details>
+      <summary>
+        <p style="display:inline">
+          <a href="{{ site.baseurl }}/reference" class="text-black">Reference</a>
+        </p>
+      </summary>
+      <ul class="section-title">
+        {% assign general_ref = site.pages | where: "type", "Reference" | sort: "title" %}
+        {% for item in general_ref %}
+          {% if item.language == "en" and item.list != "exclude" %}
+            <li>
+              <a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            </li>
           {% endif %}
         {% endfor %}
       </ul>
+    </details>
       <!-- Extensibility -->
       <details>
       <summary>

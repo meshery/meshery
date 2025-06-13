@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 4th 2025, 12:27:46 pm
+- Testing started at: June 13th 2025, 4:52:14 pm
 
 **📦 Test Result Summary**
 
-- ✅ 0 passed
-- ❌ 1 failed
-- ⚠️ 0 flaked
-- ⏩ 1 skipped
+- ✅ 62 passed
+- ❌ 8 failed
+- ⚠️ 2 flaked
+- ⏩ 0 skipped
 
-⌛ _Duration: 1 minutes and 4 seconds_
+⌛ _Duration: 7 minutes and 55 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,8 +21,24 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | setup | authenticate as Meshery provider |  | ❌ |
-| 2 | setup | authenticate as None provider |  | ➖ |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
+| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 6 | chromium-meshery-provider | All settings tabs |  | ❌ |
+| 7 | chromium-meshery-provider | Action buttons on adapters tab |  | ❌ |
+| 8 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
+| 9 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
+| 10 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
+| 11 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
+| 12 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
+| 13 | chromium-meshery-provider | Grafana elements on metrics tab |  | ❌ |
+| 14 | chromium-local-provider | All settings tabs |  | ❌ |
+| 15 | chromium-meshery-provider | Info icons on settings page |  | ❌ |
+| 16 | chromium-local-provider | Action buttons on adapters tab |  | ❌ |
+| 17 | chromium-local-provider | Grafana elements on metrics tab |  | ❌ |
+| 18 | chromium-local-provider | Info icons on settings page |  | ❌ |
 
 </div>
 </details>
