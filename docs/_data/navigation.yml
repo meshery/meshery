@@ -8,6 +8,8 @@
   external_url: https://meshery.io/catalog
 - title: Blog
   external_url: https://meshery.io/blog
+- title: Troubleshooting Model Generation
+  url: /project/contributing/troubleshooting-model-generation/
 
 
 
