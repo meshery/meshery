@@ -29,11 +29,7 @@ const transitionTests = [
 ];
 
 test.describe.serial('Connection Management Tests', () => {
-  test.beforeEach(async ({ page, provider}) => {
-    if(provider === 'Meshery') {
-      test.skip('Skipping test as provider is Meshery');
-      return;
-    }
+  test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Lifecycle' }).click();
     await page.getByTestId('connection-addCluster').waitFor();
