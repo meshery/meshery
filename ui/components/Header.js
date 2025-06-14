@@ -322,6 +322,7 @@ function K8sContextMenu({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          paddingTop: '1rem',
                         }}
                       >
                         <div>
