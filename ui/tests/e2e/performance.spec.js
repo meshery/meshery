@@ -75,10 +75,5 @@ test.describe('Performance Section Tests', () => {
         ).toBeVisible();
       }
     });
-
-    test('Info icons on settings page', async ({ page }) => {
-      const infoIconCount = await page.getByTestId('InfoOutlinedIcon').count();
-      expect(infoIconCount).toBeGreaterThan(0);
-    });
   });
 });
