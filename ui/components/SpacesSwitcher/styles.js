@@ -153,13 +153,14 @@ export const StyledMainMenuComponent = styled('div')({
   cursor: 'pointer',
 });
 
-export const StyledListItemText = styled(ListItemText)(({ theme }) => ({
+export const StyledListItemText = styled(ListItemText,
+  {shouldForwardProp: (prop) => prop !== 'showWorkspaceName'})(({ theme, showWorkspaceName = true }) => ({
   cursor: 'pointer',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   margin: '0',
-  maxWidth: theme.spacing(25),
+  maxWidth: showWorkspaceName ? theme.spacing(25)  : theme.spacing(45),
 
   '& .MuiTypography-root': {
     whiteSpace: 'nowrap',

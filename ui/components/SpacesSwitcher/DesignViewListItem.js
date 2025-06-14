@@ -42,6 +42,8 @@ const DesignViewListItem = ({
   type = RESOURCE_TYPE.DESIGN,
   activeUsers = [],
   isMultiSelectMode = false,
+  showWorkspaceName = true,
+  showOrganizationName = true,
 }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
@@ -93,10 +95,13 @@ const DesignViewListItem = ({
               </FormGroup>
             </Grid2>
           )}
-          <Grid2 size={{ xs: 5, md: 3.5, lg: 3.5, xl: 3 }}>
+          <Grid2
+            size={{ xs: 5, md: !showWorkspaceName ? 5.5 : 3.5, xl: !showWorkspaceName ? 5 : 3 }}
+          >
             <StyledAvatarContainer>
               <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
               <StyledListItemText
+                showWorkspaceName={false}
                 primary={selectedItem.name || ''}
                 primaryTypographyProps={{ fontSize: '0.9rem' }}
                 secondary={
@@ -116,12 +121,16 @@ const DesignViewListItem = ({
           <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
             {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
           </Grid2>
-          <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-            <StyledTypography variant="body2">{selectedItem.organization_name}</StyledTypography>
-          </Grid2>
-          <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
-            <Typography variant="body2">{selectedItem.workspace_name}</Typography>
-          </Grid2>
+          {showOrganizationName && (
+            <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+              <StyledTypography variant="body2">{selectedItem.organization_name}</StyledTypography>
+            </Grid2>
+          )}
+          {showWorkspaceName && (
+            <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
+              <Typography variant="body2">{selectedItem.workspace_name}</Typography>
+            </Grid2>
+          )}
 
           <Grid2 size={{ md: 1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
             <VisibilityChipMenu

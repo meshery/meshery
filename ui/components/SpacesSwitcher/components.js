@@ -201,7 +201,12 @@ export const SortBySelect = ({ sortBy, handleSortByChange }) => {
   );
 };
 
-export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => {
+export const TableListHeader = ({
+  content = [],
+  isMultiSelectMode = false,
+  showOrganizationName = true,
+  showWorkspaceName = true,
+}) => {
   const { setMultiSelectedContent, multiSelectedContent } = useContext(WorkspaceModalContext);
   const theme = useTheme();
   return (
@@ -237,7 +242,7 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           </FormGroup>
         </Grid2>
       )}
-      <Grid2 size={{ xs: 5.5, md: 3.5, lg: 3.5, xl: 3 }}>
+      <Grid2 size={{ xs: 5, md: !showWorkspaceName ? 5.5 : 3.5, xl: !showWorkspaceName ? 5 : 3 }}>
         <Typography variant="body1" noWrap>
           <b>Name</b>
         </Typography>
@@ -256,16 +261,20 @@ export const TableListHeader = ({ content = [], isMultiSelectMode = false }) => 
           <b>Author</b>
         </Typography>
       </Grid2>
-      <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-        <Typography>
-          <b>Organization</b>
-        </Typography>
-      </Grid2>
-      <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
-        <Typography>
-          <b>Workspace</b>
-        </Typography>
-      </Grid2>
+      {showOrganizationName && (
+        <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Typography>
+            <b>Organization</b>
+          </Typography>
+        </Grid2>
+      )}
+      {showWorkspaceName && (
+        <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
+          <Typography>
+            <b>Workspace</b>
+          </Typography>
+        </Grid2>
+      )}
 
       <Grid2 size={{ md: 1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
         <Typography variant="body1" noWrap>

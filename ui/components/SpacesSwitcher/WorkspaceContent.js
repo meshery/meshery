@@ -297,10 +297,14 @@ const WorkspaceContent = ({ workspace }) => {
               RESOURCE_TYPE.DESIGN === filters.type ? designsData?.designs : viewsData?.views
             }
             isMultiSelectMode={true}
+            showOrganizationName={false}
+            showWorkspaceName={false}
           />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
+              showWorkspaceName={false}
+              showOrganizationName={false}
               page={filters.designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
@@ -315,6 +319,8 @@ const WorkspaceContent = ({ workspace }) => {
           )}
           {filters.type == RESOURCE_TYPE.VIEW && (
             <MainViewsContent
+              showWorkspaceName={false}
+              showOrganizationName={false}
               page={filters.viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}
