@@ -32,19 +32,15 @@ func GenerateClientSetAction(k8sContext *models.K8sContext, eventBuilder *events
 }
 
 func GetMachineCtx(machinectx interface{}, eb *events.EventBuilder) (*MachineCtx, error) {
-	machineCtx, err := GetMachineCtxPlain(machinectx)
-	if err != nil {
-		eb.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
-	}
-	return machineCtx, err
-}
-
-func GetMachineCtxPlain(machinectx interface{}) (*MachineCtx, error) {
 	machineCtx, ok := machinectx.(*MachineCtx)
 	if !ok {
-		return nil, machines.ErrAssertMachineCtx(fmt.Errorf("asserting of context %v failed", machinectx))
+		err := machines.ErrAssertMachineCtx(fmt.Errorf("asserting of context %v failed", machinectx))
+		if eb != nil {
+			eb.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+		}
+		return nil, err
 	}
 	return machineCtx, nil
 }

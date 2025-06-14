@@ -9,7 +9,7 @@ import (
 )
 
 func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
-	mashineCtx, err := GetMachineCtxPlain(sm.Context)
+	mashineCtx, err := GetMachineCtx(sm.Context, nil)
 	if err != nil {
 		return ErrResyncK8SResources(
 			fmt.Errorf(
