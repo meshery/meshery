@@ -873,7 +873,7 @@ function MesheryPatterns({
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name);
-      if (response == 'No') {
+      if (response == 'CANCEL') {
         updateProgress({ showProgress: false });
         return;
       }
