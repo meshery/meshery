@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@master
         with:
           path: meshery
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
       
       # Extension Point. Add your website repo here.
       # See http://docs.meshery.io/extensibility/providers
@@ -36,21 +36,21 @@ jobs:
         uses: actions/checkout@master
         with:
           repository: layer5io/layer5
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
           path: layer5
 
       - name: Checkout Meshery.io repo
         uses: actions/checkout@master
         with:
           repository: meshery/meshery.io
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
           path: meshery.io
 
       - name: Checkout cloud repo
         uses: actions/checkout@master
         with:
           repository: layer5io/meshery-cloud
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
           path: meshery-cloud
 
       - name: Build mesheryctl
