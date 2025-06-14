@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
+          token: ${{ secrets.MESHERY_CI }}
       - name: Fetch data for mesheryctl tag
         run: |
          curl -L http://discuss.meshery.io/tag/mesheryctl.json -o docs/_data/discuss/mesheryctl.json
