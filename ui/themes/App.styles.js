@@ -43,6 +43,8 @@ export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
   overflowY: 'hidden',
   [theme.breakpoints.down('sm')]: {
     marginLeft: canShowNav ? '4.25rem' : '0',
+    marginRight: canShowNav ? '-4.25rem' : '0',
+    height: '786px'
   },
 }));
 
