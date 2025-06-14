@@ -55,6 +55,7 @@ const StyledTitle = styled('div')(({ theme }) => ({
   fontFamily: theme.typography.fontFamily,
   textAlign: 'left',
   lineHeight: '1.3rem',
+  textTransform: 'uppercase',
 }));
 
 const RenderContents = ({
@@ -384,12 +385,25 @@ const RegistrantContent = ({ registrant }) => {
   );
 };
 
-const Description = ({ description }) => (
-  <div style={{ margin: '0.6rem 0' }}>
-    <p style={{ fontWeight: '600', margin: '0', fontSize: '16px' }}>Description</p>
-    <p style={{ margin: '0', fontSize: '16px' }}>{description}</p>
-  </div>
-);
+const Description = ({ description }) => {
+  const theme = useTheme();
+  return (
+    <div style={{ margin: '0.6rem 0' }}>
+      <p
+        style={{
+          fontWeight: '600',
+          margin: '0',
+          fontSize: theme.typography.caption.fontSize,
+          textTransform: 'uppercase',
+          color: theme.palette.text.secondary,
+        }}
+      >
+        Description
+      </p>
+      <p style={{ margin: '0', fontSize: '16px' }}>{description}</p>
+    </div>
+  );
+};
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center' }}>
