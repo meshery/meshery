@@ -101,7 +101,7 @@ const DesignViewListItem = ({
             <StyledAvatarContainer>
               <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
               <StyledListItemText
-                showWorkspaceName={false}
+                showWorkspaceName={showWorkspaceName}
                 primary={selectedItem.name || ''}
                 primaryTypographyProps={{ fontSize: '0.9rem' }}
                 secondary={
