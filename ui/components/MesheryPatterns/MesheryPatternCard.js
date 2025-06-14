@@ -29,7 +29,7 @@ import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
 import { Edit, Lock, Public } from '@mui/icons-material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -317,7 +317,7 @@ function MesheryPatternCard_({
             <YamlDialogTitleGrid item xs={12}>
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
-                <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
+                <Link href={`${REMOTE_PROVIDER_URL}/user/${pattern?.user_id}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
                 <CustomTooltip title="Enter Fullscreen" arrow interactive placement="top">

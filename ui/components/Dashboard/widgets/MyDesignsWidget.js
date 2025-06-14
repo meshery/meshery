@@ -9,7 +9,7 @@ import {
 } from '@sistent/sistent';
 import { useState } from 'react';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
-import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 
 const cardData = [
   {
@@ -28,7 +28,7 @@ const cardData = [
     id: 3,
     title: 'Import design from github',
     image: <GithubIcon width={24} height={24} />,
-    redirect: `${MESHERY_CLOUD_PROD}/connect/github/new`,
+    redirect: `${REMOTE_PROVIDER_URL}/connect/github/new`,
   },
 ];
 
@@ -70,7 +70,7 @@ const MyDesignsWidget = (props) => {
         }
         title="MY RECENT DESIGNS"
         actionButton={true}
-        href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
+        href={`${REMOTE_PROVIDER_URL}/catalog/content/my-designs`}
         btnTitle="See All Designs"
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}

@@ -3,19 +3,18 @@ import { Avatar, Button } from '@sistent/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { IconButtonAvatar } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUser } from '@/store/slices/mesheryUi';
+import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 /**
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
  */
 const User = (props) => {
   const [userLoaded, setUserLoaded] = useState(false);
-  const [account, setAccount] = useState([]);
   const capabilitiesLoadedRef = useRef(false);
   const { notify } = useNotification();
   const dispatch = useDispatch();
@@ -28,7 +27,7 @@ const User = (props) => {
   } = useGetLoggedInUserQuery();
 
   const getProfileUrl = () => {
-    return (account || [])?.find((item) => item.title === 'Cloud Account')?.href;
+    return userData?.id ? `${REMOTE_PROVIDER_URL}/user/${userData.id}` : null;
   };
 
   const goToProfile = () => {
@@ -55,9 +54,6 @@ const User = (props) => {
   useEffect(() => {
     if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
       capabilitiesLoadedRef.current = true;
-      setAccount(
-        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
-      );
     }
   }, [capabilitiesRegistry]);
 
