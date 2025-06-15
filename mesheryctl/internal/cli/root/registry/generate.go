@@ -19,11 +19,15 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
@@ -44,7 +48,201 @@ var (
 	registryLocation    string
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
+
+	componentTracker = &ComponentTracker{
+		modelComponents: make(map[string]map[string]bool),
+		mutex:           &sync.Mutex{},
+	}
 )
+
+type ComponentTracker struct {
+	modelComponents map[string]map[string]bool 
+	mutex           *sync.Mutex
+}
+
+func (ct *ComponentTracker) RegisterComponents(modelName string, components []string) {
+	ct.mutex.Lock()
+	defer ct.mutex.Unlock()
+
+	if _, exists := ct.modelComponents[modelName]; !exists {
+		ct.modelComponents[modelName] = make(map[string]bool)
+	}
+
+	for _, component := range components {
+		ct.modelComponents[modelName][component] = true
+	}
+}
+
+func (ct *ComponentTracker) GetComponents(modelName string) []string {
+	ct.mutex.Lock()
+	defer ct.mutex.Unlock()
+
+	if componentSet, exists := ct.modelComponents[modelName]; exists {
+		components := make([]string, 0, len(componentSet))
+		for component := range componentSet {
+			components = append(components, component)
+		}
+		return components
+	}
+
+	return []string{}
+}
+
+func (ct *ComponentTracker) GetAllComponents() map[string][]string {
+	ct.mutex.Lock()
+	defer ct.mutex.Unlock()
+
+	result := make(map[string][]string)
+	for model, componentSet := range ct.modelComponents {
+		components := make([]string, 0, len(componentSet))
+		for component := range componentSet {
+			components = append(components, component)
+		}
+		result[model] = components
+	}
+
+	return result
+}
+
+func setupDetailedLogging() {
+	logrus.AddHook(&detailedLogHook{})
+}
+
+type detailedLogHook struct{}
+
+func (h *detailedLogHook) Levels() []logrus.Level {
+	return []logrus.Level{
+		logrus.InfoLevel,
+		logrus.DebugLevel,
+	}
+}
+
+func (h *detailedLogHook) Fire(entry *logrus.Entry) error {
+	msg := entry.Message
+
+	componentCountRegex := regexp.MustCompile(` extracted (\d+) components for (.+?) \((.+?)\)`)
+	if matches := componentCountRegex.FindStringSubmatch(msg); len(matches) >= 4 {
+		count := matches[1]
+		modelDisplayName := matches[2]
+		modelName := matches[3]
+
+		if modelName != "" {
+			extractComponentsFromDirectory(modelName)
+		}
+
+		components := componentTracker.GetComponents(modelName)
+
+		if len(components) > 0 {
+			componentsList := strings.Join(components, ", ")
+			entry.Message = fmt.Sprintf("Extracted %s components for model %s (%s): %s",
+				count, modelDisplayName, modelName, componentsList)
+		} else {
+			entry.Message = fmt.Sprintf("Extracted %s components for model %s (%s)",
+				count, modelDisplayName, modelName)
+		}
+	}
+
+	if matches := regexp.MustCompile(`Generated (\d+) components for model \[(.+?)\] (.+)`).FindStringSubmatch(msg); len(matches) >= 4 {
+		count, _ := strconv.Atoi(matches[1])
+		if count > 0 {
+			modelName := matches[2]
+			version := matches[3]
+
+			if modelName != "" {
+				extractComponentsFromDirectory(modelName)
+			}
+
+			components := componentTracker.GetComponents(modelName)
+
+			if len(components) > 0 {
+				componentsList := strings.Join(components, ", ")
+				entry.Message = fmt.Sprintf("Generated %d components for model [%s] version %s: %s",
+					count, modelName, version, componentsList)
+			} else {
+				entry.Message = fmt.Sprintf("Generated %d components for model [%s] version %s",
+					count, modelName, version)
+			}
+		}
+	}
+
+	appendingRegex := regexp.MustCompile(`Appending (\d+) in the components sheet`)
+	if matches := appendingRegex.FindStringSubmatch(msg); len(matches) >= 2 {
+		countStr := matches[1]
+		count, err := strconv.Atoi(countStr)
+		if err == nil && count > 0 {
+			allComponents := componentTracker.GetAllComponents()
+
+			if len(allComponents) > 0 {
+				var detailedMsg strings.Builder
+				detailedMsg.WriteString(fmt.Sprintf("Appending %d in the components sheet\n", count))
+				detailedMsg.WriteString("Generated components for models:\n")
+
+				for model, components := range allComponents {
+					if len(components) > 0 {
+						detailedMsg.WriteString(fmt.Sprintf("  - Model [%s]: %s\n",
+							model, strings.Join(components, ", ")))
+					}
+				}
+
+				entry.Message = detailedMsg.String()
+			} else {
+				entry.Message = fmt.Sprintf("Appending %d in the components sheet\nNo component details available.", count)
+			}
+		}
+	}
+
+	return nil
+}
+
+func extractComponentsFromDirectory(modelName string) {
+	modelDir := filepath.Join(registryLocation, modelName)
+	if _, err := os.Stat(modelDir); os.IsNotExist(err) {
+		return
+	}
+
+	findComponentsInDir(modelDir, modelName)
+
+	versionDirs, err := os.ReadDir(modelDir)
+	if err == nil {
+		for _, versionDir := range versionDirs {
+			if versionDir.IsDir() && strings.HasPrefix(versionDir.Name(), "v") {
+				versionPath := filepath.Join(modelDir, versionDir.Name())
+
+				componentsPath := filepath.Join(versionPath, "components")
+				if _, err := os.Stat(componentsPath); err == nil {
+					findComponentsInDir(componentsPath, modelName)
+				} else {
+					findComponentsInDir(versionPath, modelName)
+				}
+			}
+		}
+	}
+}
+
+func findComponentsInDir(dirPath string, modelName string) {
+	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		if strings.HasSuffix(info.Name(), ".json") && !strings.Contains(info.Name(), "model") {
+			componentName := strings.TrimSuffix(info.Name(), ".json")
+			if componentName != "" {
+				componentTracker.RegisterComponents(modelName, []string{componentName})
+			}
+		}
+		return nil
+	})
+
+	if err != nil {
+		utils.Log.Debug("Error extracting components from directory:", err)
+	}
+}
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -91,6 +289,8 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
 
+		setupDetailedLogging()
+
 		if pathToRegistrantConnDefinition != "" {
 			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
 			return nil
@@ -122,6 +322,8 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("ModelCSV, ComponentCSV and RelationshipCSV files must be present in the directory")
 			}
 		}
+
+		utils.Log.Debug("Starting model and component generation process...")
 
 		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
