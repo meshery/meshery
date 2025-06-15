@@ -67,19 +67,20 @@ type GrafanaCred struct {
 
 // swagger:response Connection
 type Connection struct {
-	ID           uuid.UUID                      `json:"id,omitempty" db:"id"`
-	Name         string                         `json:"name,omitempty" db:"name"`
-	CredentialID uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
-	Type         string                         `json:"type,omitempty" db:"type"`
-	SubType      string                         `json:"sub_type,omitempty" db:"sub_type"`
-	Kind         string                         `json:"kind,omitempty" db:"kind"`
-	Metadata     utils.JSONMap                  `json:"metadata,omitempty" db:"metadata" gorm:"type:JSONB"`
-	Status       ConnectionStatus               `json:"status,omitempty" db:"status"`
-	UserID       *uuid.UUID                     `json:"user_id,omitempty" db:"user_id"`
-	CreatedAt    time.Time                      `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt    time.Time                      `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt    sql.NullTime                   `json:"deleted_at,omitempty" db:"deleted_at"`
-	Environments []environments.EnvironmentData `json:"environments,omitempty" db:"environments" gorm:"-"`
+	ID                     uuid.UUID                      `json:"id,omitempty" db:"id"`
+	Name                   string                         `json:"name,omitempty" db:"name"`
+	CredentialID           uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
+	Type                   string                         `json:"type,omitempty" db:"type"`
+	SubType                string                         `json:"sub_type,omitempty" db:"sub_type"`
+	Kind                   string                         `json:"kind,omitempty" db:"kind"`
+	Metadata               utils.JSONMap                  `json:"metadata,omitempty" db:"metadata" gorm:"type:JSONB"`
+	Status                 ConnectionStatus               `json:"status,omitempty" db:"status"`
+	UserID                 *uuid.UUID                     `json:"user_id,omitempty" db:"user_id"`
+	CreatedAt              time.Time                      `json:"created_at,omitempty" db:"created_at"`
+	UpdatedAt              time.Time                      `json:"updated_at,omitempty" db:"updated_at"`
+	DeletedAt              sql.NullTime                   `json:"deleted_at,omitempty" db:"deleted_at"`
+	Environments           []environments.EnvironmentData `json:"environments,omitempty" db:"environments" gorm:"-"`
+	MeshsyncDeploymentMode string                         `json:"meshsync_deployment_mode,omitempty" db:"meshsync_deployment_mode"`
 }
 
 var validConnectionStatusToManage = []ConnectionStatus{
@@ -130,6 +131,7 @@ type ConnectionPayload struct {
 	CredentialID               *uuid.UUID             `json:"credential_id,omitempty"`
 	Model                      string                 `json:"model,omitempty"`
 	SkipCredentialVerification bool                   `json:"skip_credential_verification"`
+	MeshsyncDeploymentMode     string                 `json:"meshsync_deployment_mode,omitempty"`
 }
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {
