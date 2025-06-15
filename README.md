@@ -121,7 +121,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Meshery intelligently infers the manner in which each resource [interrelates](https://docs.meshery.io/concepts/logical/relationships) with each other. Meshery supports a broad variety of built-in relationships between components, which you can use to create your own custom relationships.
 
 <div align="center">
-  <img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Multi-cluster Kubernetes Manager" />
+  <img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Diagram illustrating a mount relationship between a Pod and a Persistent Volume" />
 </div>
 <br/>
 
