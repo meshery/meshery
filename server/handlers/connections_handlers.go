@@ -59,7 +59,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
 
@@ -67,7 +67,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		if err != nil {
 			h.log.Error(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
 	}
@@ -156,7 +156,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection %s", connection.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -167,7 +167,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	description := fmt.Sprintf("Connection %s created.", connection.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info(description)
@@ -359,7 +359,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				"error": errUnmarshal,
 			})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -377,7 +377,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					"error": err,
 				})
 				_event := eventBuilder.Build()
-				_ = provider.PersistEvent(_event)
+				_ = provider.PersistEvent(*_event, nil)
 				go h.config.EventBroadcaster.Publish(userID, _event)
 				continue
 			}
@@ -388,7 +388,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					"connectionName": k8scontext.Name,
 				}).
 				Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			machineCtx := &kubernetes.MachineCtx{
@@ -418,7 +418,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 					"error": err,
 				}).Build()
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				go h.config.EventBroadcaster.Publish(userID, event)
 				continue
 			}
@@ -427,7 +427,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				event, err = inst.SendEvent(req.Context(), machines.EventType(helpers.StatusToEvent(status)), nil)
 				if err != nil {
 					h.log.Error(err)
-					_ = provider.PersistEvent(event)
+					_ = provider.PersistEvent(*event, nil)
 					h.config.EventBroadcaster.Publish(userID, event)
 					return
 				}
@@ -436,7 +436,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					smInstanceTracker.Remove(inst.ID)
 				}
 
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				h.config.EventBroadcaster.Publish(userID, event)
 			}(inst, status)
 		}
@@ -447,7 +447,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 			if err != nil {
 				event := events.NewEvent().WithCategory("connection").WithAction("update").WithSeverity(events.Error).ActedUpon(id).FromUser(userID).FromSystem(*h.SystemID).WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				h.config.EventBroadcaster.Publish(userID, event)
 				h.log.Error(err)
 				continue
@@ -458,7 +458,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted", connection.Name)).WithAction("delete")
 			}
 			event := eb.WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			h.config.EventBroadcaster.Publish(userID, event)
 
 			h.log.Debug("connection", connection, statusCode)
@@ -503,7 +503,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -514,7 +514,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info(description)
@@ -556,7 +556,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -567,7 +567,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
@@ -592,7 +592,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -603,7 +603,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	description := fmt.Sprintf("Connection %s deleted.", deletedConnection.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted.")

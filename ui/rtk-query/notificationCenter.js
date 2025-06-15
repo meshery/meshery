@@ -111,6 +111,7 @@ export const notificationCenterApi = api
           return {
             count_by_severity_level: response.count_by_severity_level,
             total_count: response.total_count,
+            read_count: response.read_count || 0,
           };
         },
         providesTags: [PROVIDER_TAGS.EVENT],
