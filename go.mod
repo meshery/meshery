@@ -49,7 +49,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshkit v0.8.33
 	github.com/meshery/schemas v0.8.22
-	github.com/n2h9/fork-meshery-meshsync v0.0.0-20250601180936-fcf7966dd6f7
+	github.com/n2h9/fork-meshery-meshsync v0.0.0-20250615164742-438e18628497
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -241,6 +241,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mattn/go-shellwords v1.0.12 // indirect
 	github.com/mattn/go-sqlite3 v1.14.24 // indirect
+	github.com/meshery/meshery-operator v0.8.7 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect

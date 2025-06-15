@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/tmp_meshkit/broker/channel"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/database"
@@ -192,13 +193,12 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 	k8scontext K8sContext,
 ) broker.Handler {
-	transport := make(chan *broker.Message, 1024)
-
+	br := channel.NewTMPChannelBrokerHandler()
 	// TODO
 	// as we will be running per connection base,
 	// we need to double check that the state is not shared anywhere in meshsync internally,
 	// otherwise we will have hard to detect errors.
-	go func() {
+	go func(handler broker.Handler) {
 		// TODO
 		// Right now this duration only stops the top level goroutine of meshsync as a library,
 		// we need to enhance meshsync functionality to halt all internal goroutines
@@ -217,13 +217,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 			// TODO
 			// provide a mechanism to distinguish server logs from meshsync logs
 			mch.log,
-			libmeshsync.WithOutputMode("channel"),
-			// TODO
-			// do we need an option to have a channel per subject inside meshsync as a library?
-			// there are right now more than one subject, f.e. MeshsyncStoreUpdatesSubject
-			// which is obsolete or has a different purpose, or smth else?
-			// it expects (line 122) Object to be an array, which meshsync sends as a single entity.
-			libmeshsync.WithTransportChannel(transport),
+			libmeshsync.WithBrokerHandler(handler),
 			libmeshsync.WithKubeConfig(kubeConfig),
 			libmeshsync.WithStopAfterDuration(duration),
 		); err != nil {
@@ -233,16 +227,9 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 		} else {
 			mch.log.Infof("meshsync lib run stops after %s", duration)
 		}
-	}()
+	}(br)
 
-	return NewTmpMeshsyncBrokerHandler(
-		map[string]<-chan *broker.Message{
-			// TODO
-			// this is hardcoded because it is hardcoded in meshsync_events.go
-			// do not add any updates there for now.
-			"meshery.meshsync.core": transport,
-		},
-	)
+	return br
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
