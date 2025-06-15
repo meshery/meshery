@@ -136,7 +136,7 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
 ## Workspaces: Your team's Google Drive for cloud native projects
 
 <div align="center">
-  <img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+  <img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Animation of Meshery Workspaces feature" loading="lazy" />
 </div>
 <br/>
 Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.
