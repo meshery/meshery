@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@layer5/sistent';
-import { TextField, Grid2, Button, styled } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { TextField, Grid2, Button, styled } from '@sistent/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';

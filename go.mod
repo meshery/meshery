@@ -1,4 +1,4 @@
-module github.com/layer5io/meshery
+module github.com/meshery/meshery
 
 go 1.23.8
 
@@ -8,9 +8,9 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // The following replaces are used for local development
 
-// replace github.com/meshery/schemas v0.8.15 => ../schemas
+//replace github.com/meshery/schemas v0.8.20 => ../schemas
 
-// replace github.com/layer5io/meshkit v0.8.26 => ../meshkit
+//replace github.com/meshery/meshkit v0.8.31 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
@@ -42,12 +42,13 @@ require (
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
 	github.com/layer5io/meshkit v0.8.29
-	github.com/layer5io/meshsync v0.8.8
+	github.com/layer5io/meshsync v0.8.6
 	github.com/layer5io/nighthawk-go v1.0.6
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/schemas v0.8.20
+	github.com/meshery/meshkit v0.8.33
+	github.com/meshery/schemas v0.8.22
 	github.com/n2h9/fork-meshery-meshsync v0.0.0-20250601180936-fcf7966dd6f7
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
@@ -137,7 +138,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chai2010/gettext-go v1.0.3 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
-	github.com/cloudflare/circl v1.5.0 // indirect
+	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/cncf/xds/go v0.0.0-20250121191232-2f005788dc42 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/compose-spec/compose-go/v2 v2.4.7 // indirect

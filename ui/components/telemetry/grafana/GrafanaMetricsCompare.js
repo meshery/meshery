@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@layer5/sistent';
-import { MenuItem, TextField, Box, styled } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
+import { MenuItem, TextField, Box, styled } from '@sistent/sistent';
 import { connect } from 'react-redux';
 
 const Root = styled(Box)(() => ({

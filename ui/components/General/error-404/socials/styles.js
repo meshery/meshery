@@ -1,4 +1,4 @@
-import { styled } from '@layer5/sistent';
+import { styled } from '@sistent/sistent';
 import Message from '@/assets/icons/general/message';
 import Docker from '@/assets/icons/social/docker';
 import Github from '@/assets/icons/social/github';

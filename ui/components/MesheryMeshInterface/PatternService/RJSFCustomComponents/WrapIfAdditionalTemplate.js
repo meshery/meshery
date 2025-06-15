@@ -1,7 +1,7 @@
 import React from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { ADDITIONAL_PROPERTY_FLAG } from '@rjsf/utils';
-import { IconButton, Input, InputLabel, Grid2, FormControl } from '@layer5/sistent';
+import { IconButton, Input, InputLabel, Grid2, FormControl } from '@sistent/sistent';
 import { iconMedium } from '../../../../css/icons.styles';
 
 const WrapIfAdditionalTemplate = ({

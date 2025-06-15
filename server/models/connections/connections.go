@@ -5,13 +5,13 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models/environments"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models/environments"
+	"github.com/meshery/meshkit/logger"
 )
 
 // swagger:response ConnectionStatus

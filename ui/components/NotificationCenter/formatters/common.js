@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@layer5/sistent';
+import { Typography } from '@sistent/sistent';
 import { Launch as LaunchIcon } from '@mui/icons-material';
 import { TextWithLinks } from '../../DataFormatter';
 

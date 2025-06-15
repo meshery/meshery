@@ -5,7 +5,7 @@ import {
   Divider,
   IconButton,
   Tooltip,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import DeleteIcon from '@mui/icons-material/Delete';

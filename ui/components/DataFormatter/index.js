@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CustomTooltip, Typography, Box, IconButton, useTheme, Grid } from '@layer5/sistent';
+import { CustomTooltip, Typography, Box, IconButton, useTheme, Grid } from '@sistent/sistent';
 import { Launch as LaunchIcon } from '@mui/icons-material';
 import _ from 'lodash';
 import { useContext } from 'react';

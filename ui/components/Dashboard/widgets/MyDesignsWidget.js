@@ -6,7 +6,7 @@ import {
   GithubIcon,
   useTheme,
   DesignCard,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useState } from 'react';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';

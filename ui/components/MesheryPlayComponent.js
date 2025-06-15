@@ -11,7 +11,7 @@ import {
   gray,
   charcoal,
   NoSsr,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';

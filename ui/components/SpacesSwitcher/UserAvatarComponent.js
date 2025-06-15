@@ -1,6 +1,6 @@
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import React from 'react';
-import { CustomTooltip, Link, Avatar, Typography } from '@layer5/sistent';
+import { CustomTooltip, Link, Avatar, Typography } from '@sistent/sistent';
 import { StyledAvatarContainer, StyledUserDetailsContainer, StyledUpdatedText } from './styles';
 
 const UserAvatarComponent = ({ userData }) => {
