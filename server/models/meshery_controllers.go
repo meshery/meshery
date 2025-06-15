@@ -237,6 +237,13 @@ func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Conte
 	mch.ctxMeshsyncDataHandler = nil
 }
 
+func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
+	if mch.ctxMeshsyncDataHandler != nil {
+		return mch.ctxMeshsyncDataHandler.Resync()
+	}
+	return nil
+}
+
 // attach a MesheryController for each context if
 // 1. the config is valid
 // 2. if it is not already attached

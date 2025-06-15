@@ -1,17 +1,13 @@
 package kubernetes
 
 import (
-	"github.com/layer5io/meshkit/errors"
+	"github.com/meshery/meshkit/errors"
 )
 
-const (
-	ErrConnectActionCode = "replace_me"
+var (
+	ErrResyncK8SResourcesCode = "meshery-server-1372"
 )
 
-func ErrConnectAction(err error) error {
-	return ErrConnectActionFromString(err.Error())
-}
-
-func ErrConnectActionFromString(message string) error {
-	return errors.New(ErrConnectActionCode, errors.Alert, []string{"Error in ConnectAction"}, []string{message}, []string{}, []string{})
+func ErrResyncK8SResources(err error) error {
+	return errors.New(ErrResyncK8SResourcesCode, errors.Critical, []string{"Error resync resources"}, []string{err.Error()}, []string{"Fail to resync resources for the kubernetes machine"}, []string{"Check if machine context is assign to machine", "Check if machine context contains a reference to MesheryControllersHelper"})
 }
