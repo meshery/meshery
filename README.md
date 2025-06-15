@@ -198,7 +198,7 @@ Meshery offers load generation and performance characterization to help you asse
 
 <br/>
 <div align="center">
-  <img src = ".github/assets/images/readme/meshery-performance.gif">
+  <img src=".github/assets/images/readme/meshery-performance.gif" alt="Animation showing Meshery performance test configuration and results">
 </div>
 <br/>
 Baseline and track your cloud native performance from release to release.
