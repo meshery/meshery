@@ -22,7 +22,6 @@ import {
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
-  flexDirection: 'row-reverse',
   justifyContent: 'space-between',
   alignItems: 'center',
   gap: '1rem',
@@ -130,10 +129,10 @@ function WorkspaceSwitcher({ open }) {
                               }
                             }}
                           >
-                            <span>{works.name}</span>
                             <WorkspaceIconWrapper className="workspace-icon">
                               <WorkspaceIcon {...iconMedium} />
-                            </WorkspaceIconWrapper>
+                            </WorkspaceIconWrapper>    
+                            <span>{works.name}</span>
                           </HoverMenuItem>
                         ))}
                       </StyledSelect>
