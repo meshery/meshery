@@ -167,19 +167,18 @@ test.describe.serial('Connection Management Tests', () => {
 
       const row = page.locator('tr').filter({ hasText: 'connected' }).first();
 
-    // Fail the test if the connection is not found
+      // Fail the test if the connection is not found
       if ((await row.count()) === 0) {
         throw new Error(
           'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
         );
       }
 
-
-    //find the checkbox in the row
+      //find the checkbox in the row
       const checkbox = row.locator('input[type="checkbox"]').first();
       await checkbox.check();
 
-    // Click "Delete" button in the table
+      // Click "Delete" button in the table
       await page.getByRole('button', { name: 'Delete', exact: true }).click();
       // Verify that Confirmation modal opened and delete
       await expect(page.getByText('Delete Connections')).toBeVisible();
