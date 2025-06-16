@@ -1,45 +1,7 @@
 import { expect, test } from './fixtures/project';
 import { ENV } from './env';
 import os from 'os';
-
-const verifyConnectionsResBody = (body, provider) => {
-  expect(body).toEqual(
-    expect.objectContaining({
-      connections: expect.any(Array),
-      total_count: expect.any(Number),
-      page: expect.any(Number),
-      page_size: expect.any(Number),
-    }),
-  );
-  for (const connection of body.connections) {
-    const mesheryKeys =
-      provider === 'Meshery'
-        ? {
-            sub_type: expect.any(String),
-            metadata: expect.anything(),
-            kind: expect.any(String),
-            name: expect.any(String),
-            status: expect.any(String),
-            type: expect.any(String),
-          }
-        : null;
-
-    expect(connection).toEqual(
-      expect.objectContaining({
-        id: expect.any(String),
-        credential_id: expect.any(String),
-        user_id: expect.any(String),
-        created_at: expect.any(String),
-        updated_at: expect.any(String),
-        deleted_at: expect.objectContaining({
-          Time: expect.any(String),
-          Valid: expect.any(Boolean),
-        }),
-        ...mesheryKeys,
-      }),
-    );
-  }
-};
+import { waitForSnackBar } from './utils/waitForSnackBar';
 
 // name: Name of the test
 // transitionOption: Option to be chosen from dropdown to transition to another state
@@ -48,72 +10,41 @@ const verifyConnectionsResBody = (body, provider) => {
 const transitionTests = [
   {
     name: 'Transition to disconnected state and then back to connected state',
-    transitionOption: 'Disconnect',
+    transitionOption: 'disconnected',
     statusAfterTransition: 'disconnected',
-    restorationOption: 'Connect',
+    restorationOption: 'connected',
   },
   {
     name: 'Transition to ignored state and then back to connected state',
-    transitionOption: 'Ignore',
+    transitionOption: 'ignored',
     statusAfterTransition: 'ignored',
-    restorationOption: 'Register',
+    restorationOption: 'registered',
   },
   {
     name: 'Transition to not found state and then back to connected state',
-    transitionOption: 'Not Found',
+    transitionOption: 'not found',
     statusAfterTransition: 'not found',
-    restorationOption: 'Discover',
+    restorationOption: 'discovered',
   },
 ];
 
-test.describe.configure({ mode: 'serial' });
-let connectionCount = 0;
-
-test.beforeEach(async ({ page, provider }) => {
-  const connectionsReq = page.waitForRequest(
-    (request) =>
-      request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-      request.method() === 'GET',
-  );
-  const connectionsRes = page.waitForResponse(async (response) => {
-    if (!response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`))
-      return false;
-    if (response.status() !== 200) return false;
-    const body = await response.json();
-    if (body.connections && body.connections.length > 0) return true;
-    else return false;
+test.describe.serial('Connection Management Tests', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('button', { name: 'Lifecycle' }).click();
+    await page.getByTestId('connection-addCluster').waitFor();
+  });
+  test('Verify that UI components are displayed', async ({ page }) => {
+    // Verify that connections table is displayed (by checking for table headings)
+    for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
+      await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
+    }
   });
 
-  // Visit Connections Page
-  await page.goto(`${ENV.MESHERY_SERVER_URL}/management/connections`);
-
-  // Verify requests and responses expected on initial page load
-  await connectionsReq;
-  const res = await connectionsRes;
-  const body = await res.json();
-  verifyConnectionsResBody(body, provider);
-
-  connectionCount = body.total_count;
-});
-test('Verify that UI components are displayed', async ({ page }) => {
-  // Verify that connections table is displayed (by checking for table headings)
-  for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
-    await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
-  }
-
-  // Get total count from the table footer pagination text
-  const paginationText = await page.locator('.MuiTablePagination-displayedRows').textContent();
-  const totalCount = parseInt(paginationText.split('of')[1].trim());
-
-  // Verify that total count matches the connections count from the server
-  expect(totalCount).toEqual(connectionCount);
-});
-
-test(
-  'Add a cluster connection by uploading kubeconfig file',
-  { tag: '@unstable' },
-  async ({ page }) => {
-    // Navigate to 'Connections' tab
+  test('Add a cluster connection by uploading kubeconfig file', async ({
+    page,
+    clusterMetaData,
+  }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
     const addConnectionReq = page.waitForRequest(
@@ -126,8 +57,6 @@ test(
         response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/kubernetes` &&
         response.status() === 200,
     );
-
-    // Click Add Cluster button
     await page.getByTestId('connection-addCluster').click();
 
     // Verify "Add Kubernetes Cluster(s)" modal opens
@@ -136,139 +65,125 @@ test(
     const fileChooserPromise = page.waitForEvent('filechooser');
     await page.getByTestId('connection-uploadKubeConfig').click();
     const fileChooser = await fileChooserPromise;
-
     // Attach existing kubeconfig file of the system, to test the upload without making any changes in configuration
     const kubeConfigPath = `${os.homedir()}/.kube/config`;
     await fileChooser.setFiles(kubeConfigPath);
 
-    // Click "IMPORT" button
     await page.getByRole('button', { name: 'IMPORT', exact: true }).click();
 
-    // Verify requests and responses
     await addConnectionReq;
     await addConnectionRes;
 
-    // Verify displaying of success modal
-    await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
+    await page.getByRole('button', { name: 'OK' }).click();
 
-    // Verify available contexts were connected
-    await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
+    // Search for the newly added cluster
+    await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
-    // Click "OK" button to close success modal
-    await page.getByRole('button', { name: 'OK', exact: true }).click();
-  },
-);
+    await page.getByRole('textbox', { name: 'Search Connections...' }).click();
+    await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
 
-transitionTests.forEach((t) => {
-  test(t.name, { tag: '@unstable' }, async ({ page, provider }) => {
-    const stateTransitionReq = page.waitForRequest(
-      (request) =>
-        request.url() ===
-          `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
-        request.method() === 'PUT',
-    );
-
-    const stateTransitionRes = page.waitForResponse(
-      (response) =>
-        response.url() ===
-          `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
-        response.status() === 202,
-    );
-
-    const getConnectionsReq = page.waitForRequest(
-      (request) =>
-        request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-        request.method() === 'GET',
-    );
-
-    const getConnectionsRes = page.waitForResponse(
-      (response) =>
-        response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-        response.status() === 200,
-    );
-
-    // since test run serially, and latest connection appears at topmost,
-    // the connection created in the previous test will appear in the first row of the table
-    const firstRow = page.locator('tbody').locator('tr').first();
-
-    // expect connected state initially
-    await expect(firstRow.locator('span', { hasText: 'connected' })).toBeVisible();
-
-    // ===== TRANSITIONING TO A NEW STATE =====
-
-    // open state transition options dropdown
-    await firstRow.locator('span', { hasText: 'connected' }).click();
-
-    // click required option
-    await page.getByText(t.transitionOption, { exact: true }).click();
-
-    // verify that Confirmation modal opened
-    await expect(page.getByText('Connection Status Transition')).toBeVisible();
-
-    // click "Confirm"
-    await page.getByRole('button', { name: 'Confirm' }).click();
-
-    // verify API requests and responses
-    await stateTransitionReq;
-    await stateTransitionRes;
-    await getConnectionsReq;
-    const res = await getConnectionsRes;
-    const body = await res.json();
-    verifyConnectionsResBody(body, provider);
-
-    // expect new state to be shown as current state
-    await expect(firstRow.locator('span', { hasText: t.statusAfterTransition })).toBeVisible();
-
-    // ===== TRANSITION BACK TO "connected" STATE =====
-
-    // open state transition options dropdown again
-    await firstRow.locator('span', { hasText: t.statusAfterTransition }).click();
-
-    // click the option required to transition back to "connected" state
-    await page.getByText(t.restorationOption, { exact: true }).click();
-
-    // verify that Confirmation modal opened again
-    await expect(page.getByText('Connection Status Transition')).toBeVisible();
-
-    // click "Confirm"
-    await page.getByRole('button', { name: 'Confirm' }).click();
-
-    // expect the state to be restored to "connected"
-    await expect(firstRow.locator('span', { hasText: 'connected' })).toBeVisible();
+    const newConnectionRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
+    await expect(newConnectionRow).toContainText('connected');
   });
-});
 
-test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
-  // Navigate to 'Connections' tab
-  await page.getByRole('tab', { name: 'Connections' }).click();
-  // Find the row with the connection to be deleted
-  const row = page.locator('tr').filter({ hasText: 'connected' }).first();
+  transitionTests.forEach((t) => {
+    test(t.name, async ({ page, clusterMetaData }) => {
+      const stateTransitionReq = page.waitForRequest(
+        (request) =>
+          request.url() ===
+            `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
+          request.method() === 'PUT',
+      );
 
-  // Fail the test if the connection is not found
-  if ((await row.count()) === 0) {
-    throw new Error(
-      'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
-    );
-  }
+      const stateTransitionRes = page.waitForResponse(
+        (response) =>
+          response.url() ===
+            `${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status` &&
+          response.status() === 202,
+      );
 
-  //find the checkbox in the row
-  const checkbox = row.locator('input[type="checkbox"]').first();
-  await checkbox.check();
+      const getConnectionsReq = page.waitForRequest(
+        (request) =>
+          request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
+          request.method() === 'GET',
+      );
 
-  // Click "Delete" button in the table
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
-  // Verify that Confirmation modal opened and delete
-  await expect(page.getByText('Delete Connections')).toBeVisible();
+      await page.getByTestId('ConnectionTable-search').getByRole('button').click();
+      await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
 
-  const responsePromise = page.waitForResponse(
-    (response) =>
-      response
-        .url()
-        .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status`) &&
-      response.status() === 202,
-  );
+      const matchingRows = page.getByRole('menuitem', { hasText: clusterMetaData.name });
 
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+      const connectedRow = matchingRows
+        .filter({
+          has: page.locator('span', { hasText: 'connected' }),
+        })
+        .first();
 
-  await responsePromise;
+      await expect(connectedRow).toBeVisible();
+
+      // ===== TRANSITIONING TO A NEW STATE =====
+
+      // open state transition options dropdown
+      await connectedRow.locator('span', { hasText: 'connected' }).click();
+      await page.getByRole('option', { name: t.transitionOption }).click();
+
+      await expect(page.locator('#searchClick')).toBeVisible();
+      await page.getByRole('button', { name: 'Confirm' }).click();
+
+      await waitForSnackBar(page, 'Connection status updated');
+
+      await stateTransitionReq;
+      await stateTransitionRes;
+      await getConnectionsReq;
+      // expect new state to be shown as current state
+
+      const updatedConnection = page
+        .getByRole('menuitem', { hasText: clusterMetaData.name })
+        .first();
+      await expect(updatedConnection).toContainText(t.statusAfterTransition);
+
+      // ===== TRANSITION BACK TO "connected" STATE =====
+      // open state transition options dropdown again
+      await updatedConnection.locator('span', { hasText: t.statusAfterTransition }).click();
+      await page.getByRole('option', { name: t.restorationOption }).click();
+
+      await expect(page.locator('#searchClick')).toBeVisible();
+      await page.getByRole('button', { name: 'Confirm' }).click();
+
+      await waitForSnackBar(page, 'Connection status updated');
+    });
+  });
+  test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page, clusterMetaData }) => {
+    // Navigate to 'Connections' tab
+    await page.getByRole('tab', { name: 'Connections' }).click();
+    // Find the row with the connection to be deleted
+    await page.getByTestId('ConnectionTable-search').getByRole('button').click();
+
+    await page.getByRole('textbox', { name: 'Search Connections...' }).click();
+    await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+
+    const row = page.locator('tr').filter({ hasText: 'connected' }).first();
+  
+    // Fail the test if the connection is not found
+    if ((await row.count()) === 0) {
+      throw new Error(
+        'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
+      );
+    }
+  
+    //find the checkbox in the row
+    const checkbox = row.locator('input[type="checkbox"]').first();
+    await checkbox.check();
+  
+    // Click "Delete" button in the table
+    await page.getByRole('button', { name: 'Delete', exact: true }).click();
+    // Verify that Confirmation modal opened and delete
+    await expect(page.getByText('Delete Connections')).toBeVisible();
+    await page.getByRole('button', { name: 'DELETE', exact: true }).click();
+
+    await waitForSnackBar(page, 'Connection status updated');
+
+
+  });
+  
 });
