@@ -43,7 +43,7 @@ MESHERY IS A CLOUD NATIVE COMPUTING FOUNDATION PROJECT
 <img src=".github/assets/images/readme/cncf-white.svg#gh-dark-mode-only" width="30%" align="center" />
 <img src=".github/assets/images/readme/cncf-black.svg#gh-light-mode-only" width="30%" align="center" />
 </div>
-<br/>
+<br />
 <p align="center">
 A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, is the open source, cloud native manager that enables the design and management of all Kubernetes-based infrastructure and applications (multi-cloud). Among other features,  As an extensible platform, Meshery offers visual and collaborative GitOps, freeing you from the chains of YAML while managing Kubernetes multi-cluster deployments.
 </p>
@@ -51,7 +51,7 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 
 <div align="center" width="100%">
 <img src=".github/assets/images/readme/meshery-dashboard-hero-image.png" width="800px" />
-<br />Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
+ <br />Try Meshery in your browser using the <a href="https://play.meshery.io">Cloud Native Playground</a> (<a href="https://www.youtube.com/watch?v=034nVaQUyME&list=PL3A-A6hPO2IO_yzN83wSJJUNQActzCJvO&index=9">teaser video</a>)
 </div>
 
 <br />
@@ -94,15 +94,11 @@ Find infrastructure configuration patterns in Meshery's <a href="https://meshery
 
 ## Multiple Kubernetes Clusters and Multiple Clouds
 
-<div align="center">
-  <img src ="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-</div>
-<br/>
+<img src ="https://meshery.io/assets/images/screens/multi-cluster-management.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" /><br />
+
 Meshery provides a single pane of glass to manage multiple Kubernetes clusters across any infrastructure, including various cloud providers. Meshery enables consistent configuration, operation, and observability across your entire Kubernetes landscape.
 
-<br/>
-<br/>
-<details><summary>Dry-run your deployments</summary>
+<details><summary><h4>Dry-run your deployments</h4></summary>
 Meshery leverages Kubernetes' built-in dry-run capabilities to allow you to simulate deployments without actually applying the changes to your cluster. This enables you to:
 
 - Validate configurations: Ensure your deployment specifications (e.g., YAML manifests, Helm charts, Meshery Designs) are syntactically correct and will be accepted by the Kubernetes API server.   
@@ -120,44 +116,29 @@ Assess your cloud native infrastructure configuration against deployment and ope
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Meshery intelligently infers the manner in which each resource [interrelates](https://docs.meshery.io/concepts/logical/relationships) with each other. Meshery supports a broad variety of built-in relationships between components, which you can use to create your own custom relationships.
 
-<div align="center">
-  <img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Multi-cluster Kubernetes Manager" />
-</div>
-<br/>
+<img src=".github/assets/images/readme/edge_mount_relationship_pod_persistent_volume.svg" width="50%" alt="Multi-cluster Kubernetes Manager" align="center" />
 
-<details><summary><img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="25px" align="left" />Context-Aware Policies For Applications</summary>
-<br/><div align="center">
-  <img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
-</div>
-<br/>
+<details><summary><img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="25px" align="left" /><h4>Context-Aware Policies For Applications</h4></summary>
+<img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin:auto;text-align:center" width="50%" />
 <p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Customize Configure your infrastructure with confidence without needing to know or write Open Policy Agent's Rego query language.</p>
 </details>
 
 ## Workspaces: Your team's Google Drive for cloud native projects
 
-<div align="center">
-  <img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-</div>
-<br/>
+<img src=".github/assets/images/readme/workspace.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+
 Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.
 
-<br/>
-<br/>
-<details><summary>Manage your connections with Environments</summary>
-<br/>
-<div align="center">
-  <img src=".github/assets/images/readme/environments.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-</div>
-<br/>
+<details><summary><h4>Manage your connections with Environments</h4></summary>
+
+<img src=".github/assets/images/readme/environments.gif" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
 <p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 </details>
 
-<details><summary>See changes to your infra before you merge</summary>
-<br/>
-<div align="center">
-  <img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-</div>
-<br/>
+<details><summary><h4>See changes to your infra before you merge</h4></summary>
+
+<img src=".github/assets/images/readme/meshery-snapshot.png" width="50%" alt="Multi-cluster Kubernetes Manager" loading="lazy" align="center" />
+
 Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </details>
 
@@ -175,7 +156,7 @@ Get snapshots of your infrastructure directly in your PRs. Preview your deployme
 
 Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable Reactjs packages and Golang plugins, subscriptions on NATS topics, consumable _and_ extendable API interfaces via REST and GraphQL.The great number of extension points in Meshery make it ideal as the foundation of your internal developer platform.
 
-<details><summary>Access the Cloud Native Patterns for Kubernetes</summary>
+<details><summary><h4>Access the Cloud Native Patterns for Kubernetes</h4></summary>
 
 <p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog">catalog</a>.
 </details>
@@ -188,19 +169,15 @@ Meshery's "multi-player" functionality refers to its collaborative features that
 
 Meshery offers load generation and performance characterization to help you assess and optimize the performance of your applications and infrastructure.
 
-<div align="center">
-  <img src=".github/assets/images/readme/performance-metrics.gif" alt="Multi-cluster Kubernetes Manager" width="50%" />
-</div>
-<br/>
+<img src=".github/assets/images/readme/performance-metrics.gif" alt="Multi-cluster Kubernetes Manager" width="50%" />
+
 <p>Create and reuse performance profiles for consistent characterization of the configuration of your infrastructure in context of how it performs.</p>
 
-<details><summary>Manage the performance of your infrastructure and its workloads</summary>
+<details>
+<summary><h4> Manage the performance of your infrastructure and its workloads</h4></summary>
 
-<br/>
-<div align="center">
-  <img src = ".github/assets/images/readme/meshery-performance.gif">
-</div>
-<br/>
+<img src = ".github/assets/images/readme/meshery-performance.gif">
+
 Baseline and track your cloud native performance from release to release.
 
 - Use performance profiles to track the historical performance of your workloads.
@@ -210,7 +187,8 @@ Baseline and track your cloud native performance from release to release.
 
 </details>
 
-<details><summary>Load Generation and Microservice Performance Characteristization</summary>
+<details>
+<summary><h4>Load Generation and Microservice Performance Characteristization</h4></summary>
 
 <picture align="left">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;" />
@@ -236,7 +214,7 @@ SCREENSHOT / GIF NEEDED HERE
 <h2><a name="running"></a>Get Started with Meshery</h2>
 <p style="clear:both;"></p>
 <!-- <img alt="Control Kubernetes and your workloads with mesheryctl" src=".github/assets/images/readme/mesheryctl.png"  style="margin-left:10px; margin-bottom:10px;" width="50%" align="right" /> -->
-<h3>Using <code>mesheryctl</code></h3>
+<h3>Using `mesheryctl`</h3>
 <p>Meshery runs as a set of containers inside or outside of your Kubernetes clusters.</p>
 <pre>curl -L https://meshery.io/install | bash -</pre>
 <p>Use the <a href="https://docs.meshery.io/installation/quick-start">quick start</a> guide.</p>
