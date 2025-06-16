@@ -384,19 +384,49 @@ const RegistrantContent = ({ registrant }) => {
   );
 };
 
-const Description = ({ description }) => (
-  <div style={{ margin: '0.6rem 0' }}>
-    <p style={{ fontWeight: '600', margin: '0', fontSize: '16px' }}>Description</p>
-    <p style={{ margin: '0', fontSize: '16px' }}>{description}</p>
-  </div>
-);
+const Description = ({ description }) => {
+  const theme = useTheme();
+  return (
+    <div style={{ margin: '0.6rem 0' }}>
+      <p
+        style={{
+          fontWeight: '600',
+          margin: '0',
+          fontSize: theme.typography.caption.fontSize,
+          textTransform: 'uppercase',
+          color: theme.palette.text.secondary,
+        }}
+      >
+        Description
+      </p>
+      <p style={{ margin: '0', fontSize: theme.typography.body1.fontSize }}>
+        {description}
+      </p>
+    </div>
+  );
+};
 
-const TitleWithImg = ({ displayName, iconSrc }) => (
-  <div style={{ display: 'flex', alignItems: 'center' }}>
-    {iconSrc && <img src={iconSrc} height="32px" width="32px" style={{ marginRight: '0.6rem' }} />}
-    <StyledTitle>{displayName}</StyledTitle>
-  </div>
-);
+const TitleWithImg = ({ displayName, iconSrc }) => {
+  const theme = useTheme();
+  return (
+    <div style={{ display: 'flex', alignItems: 'center' }}>
+      {iconSrc && (
+        <img
+          src={iconSrc}
+          alt={`${displayName} icon`}
+          style={{
+            fontSize: undefined, // ensure font size from parent doesn't apply
+            width: 32,
+            height: 32,
+            marginRight: theme.spacing(1),
+            objectFit: 'contain',
+          }}
+        />
+      )}
+      <StyledTitle>{displayName}</StyledTitle>
+    </div>
+  );
+};
 
 const StatusChip = ({ entityData, entityType }) => {
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
