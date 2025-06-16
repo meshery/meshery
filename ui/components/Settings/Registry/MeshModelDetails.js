@@ -399,9 +399,7 @@ const Description = ({ description }) => {
       >
         Description
       </p>
-      <p style={{ margin: '0', fontSize: theme.typography.body1.fontSize }}>
-        {description}
-      </p>
+      <p style={{ margin: '0', fontSize: theme.typography.body1.fontSize }}>{description}</p>
     </div>
   );
 };
