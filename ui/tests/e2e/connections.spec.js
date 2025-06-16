@@ -187,5 +187,5 @@ test.describe.serial('Connection Management Tests', () => {
 
       await waitForSnackBar(page, 'Connection status updated');
     },
-
+  );
 });
