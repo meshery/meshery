@@ -242,16 +242,23 @@ export const TableListHeader = ({
           </FormGroup>
         </Grid2>
       )}
-      <Grid2 size={{ xs: 5, md: !showWorkspaceName ? 5.5 : 3.5, xl: !showWorkspaceName ? 5 : 3 }}>
+      <Grid2
+        size={{
+          xs: 5,
+          md: !showWorkspaceName ? 5.5 : 3.5,
+          lg: !showWorkspaceName ? 7 : 4,
+          xl: !showWorkspaceName ? 6 : 3,
+        }}
+      >
         <Typography variant="body1" noWrap>
-          <b>Name</b>
+          <b>NAME</b>
         </Typography>
       </Grid2>
       <Grid2
         size={{
           xs: 4,
-          md: showOrganizationName ? 4 : 3.7,
-          lg: showWorkspaceName ? (isMultiSelectMode ? 2.75 : 3) : 3.7,
+          md: 4,
+          lg: isMultiSelectMode ? 2.75 : 3,
         }}
       >
         <Typography
@@ -264,27 +271,27 @@ export const TableListHeader = ({
           variant="body1"
           noWrap
         >
-          <b>Author</b>
+          <b>AUTHOR</b>
         </Typography>
       </Grid2>
       {showOrganizationName && (
-        <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Grid2 size={{ md: 2.5, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
           <Typography>
-            <b>Organization</b>
+            <b>ORGANIZATION</b>
           </Typography>
         </Grid2>
       )}
       {showWorkspaceName && (
         <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
           <Typography>
-            <b>Workspace</b>
+            <b>WORKSPACE</b>
           </Typography>
         </Grid2>
       )}
 
-      <Grid2 size={{ md: 1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-        <Typography variant="body1" noWrap>
-          <b>Visibility</b>
+      <Grid2 size={{ md: 1.5, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Typography variant="body1">
+          <b>VISIBILITY</b>
         </Typography>
       </Grid2>
       {/* <Grid2

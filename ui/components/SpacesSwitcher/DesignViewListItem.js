@@ -96,7 +96,12 @@ const DesignViewListItem = ({
             </Grid2>
           )}
           <Grid2
-            size={{ xs: 5, md: !showWorkspaceName ? 5.5 : 3.5, xl: !showWorkspaceName ? 5 : 3 }}
+            size={{
+              xs: 5,
+              md: !showWorkspaceName ? 5.5 : 3.5,
+              lg: !showWorkspaceName ? 7 : 4,
+              xl: !showWorkspaceName ? 6 : 3,
+            }}
           >
             <StyledAvatarContainer>
               <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
@@ -121,14 +126,14 @@ const DesignViewListItem = ({
           <Grid2
             size={{
               xs: 4,
-              md: showOrganizationName ? 4 : 3.7,
-              lg: showWorkspaceName ? (isMultiSelectMode ? 2.75 : 3) : 3.7,
+              md: 4.2,
+              lg: isMultiSelectMode ? 2.75 : 3,
             }}
           >
             {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
           </Grid2>
           {showOrganizationName && (
-            <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Grid2 size={{ md: 2.5, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
               <StyledTypography variant="body2">{selectedItem.organization_name}</StyledTypography>
             </Grid2>
           )}
@@ -151,8 +156,9 @@ const DesignViewListItem = ({
           </Grid2>
 
           <Grid2
-            size={{ xs: 2, md: 1, xl: 2 }}
+            size={{ xl: 2 }}
             sx={{
+              flexBasis: showWorkspaceName ? '30px' : '45px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
