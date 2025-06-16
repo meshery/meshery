@@ -33,7 +33,6 @@ test.describe.serial('Connection Management Tests', () => {
     await page.goto('/');
     await page.getByRole('button', { name: 'Lifecycle' }).click();
     await page.getByTestId('connection-addCluster').waitFor();
-
   });
   test('Verify that UI components are displayed', async ({ page }) => {
     // Verify that connections table is displayed (by checking for table headings)
@@ -42,7 +41,10 @@ test.describe.serial('Connection Management Tests', () => {
     }
   });
 
-  test('Add a cluster connection by uploading kubeconfig file', async ({ page, clusterMetaData }) => {
+  test('Add a cluster connection by uploading kubeconfig file', async ({
+    page,
+    clusterMetaData,
+  }) => {
     await page.getByRole('tab', { name: 'Connections' }).click();
 
     const addConnectionReq = page.waitForRequest(
@@ -111,10 +113,12 @@ test.describe.serial('Connection Management Tests', () => {
 
       const matchingRows = page.getByRole('menuitem', { hasText: clusterMetaData.name });
 
-      const connectedRow = matchingRows.filter({
-        has: page.locator('span', { hasText: 'connected' })
-      }).first();
-      
+      const connectedRow = matchingRows
+        .filter({
+          has: page.locator('span', { hasText: 'connected' }),
+        })
+        .first();
+
       await expect(connectedRow).toBeVisible();
 
       // ===== TRANSITIONING TO A NEW STATE =====
