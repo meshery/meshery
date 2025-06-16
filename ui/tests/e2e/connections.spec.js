@@ -172,7 +172,7 @@ test.describe.serial('Connection Management Tests', () => {
     }
 
     //find the checkbox in the row
-    const checkbox = row.locator('input[type="checkbox"]').first();
+    const checkbox = row.locator('span[data-description="row-select"]');
     await checkbox.click();
 
     // Click "Delete" button in the table
