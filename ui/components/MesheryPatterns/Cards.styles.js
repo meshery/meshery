@@ -86,7 +86,7 @@ export const UpdateDeleteButtons = styled('div')(() => ({
   margin: '10 0 0 auto',
   position: 'absolute',
   right: 0,
-  bottom: 0,
+  bottom: -10,
 }));
 
 export const BottomContainer = styled('div')(() => ({
