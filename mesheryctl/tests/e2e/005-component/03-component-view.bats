@@ -6,6 +6,7 @@ setup() {
 
   export FIXTURES_DIR="$BATS_TEST_DIRNAME/fixtures/component-search"
   run $MESHERYCTL_BIN model import -f $FIXTURES_DIR/valid-model
+  assert_success
   export TESTDATA_DIR="$BATS_TEST_DIRNAME/testdata/component-view"
 }
 
