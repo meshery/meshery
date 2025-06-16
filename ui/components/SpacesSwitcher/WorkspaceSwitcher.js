@@ -131,7 +131,7 @@ function WorkspaceSwitcher({ open }) {
                           >
                             <WorkspaceIconWrapper className="workspace-icon">
                               <WorkspaceIcon {...iconMedium} />
-                            </WorkspaceIconWrapper>    
+                            </WorkspaceIconWrapper>
                             <span>{works.name}</span>
                           </HoverMenuItem>
                         ))}
