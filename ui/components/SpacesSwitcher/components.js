@@ -247,7 +247,13 @@ export const TableListHeader = ({
           <b>Name</b>
         </Typography>
       </Grid2>
-      <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
+      <Grid2
+        size={{
+          xs: 4,
+          md: showOrganizationName ? 4 : 3.7,
+          lg: showWorkspaceName ? (isMultiSelectMode ? 2.75 : 3) : 3.7,
+        }}
+      >
         <Typography
           sx={{
             [theme.breakpoints.down('md')]: {
@@ -281,7 +287,7 @@ export const TableListHeader = ({
           <b>Visibility</b>
         </Typography>
       </Grid2>
-      <Grid2
+      {/* <Grid2
         size={{ xs: 3, md: 1, xl: 2 }}
         sx={{
           display: 'flex',
@@ -292,7 +298,7 @@ export const TableListHeader = ({
         <Typography variant="body1" noWrap>
           <b>Actions</b>
         </Typography>
-      </Grid2>
+      </Grid2> */}
     </Grid2>
   );
 };

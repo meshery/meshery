@@ -118,7 +118,13 @@ const DesignViewListItem = ({
               />
             </StyledAvatarContainer>
           </Grid2>
-          <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
+          <Grid2
+            size={{
+              xs: 4,
+              md: showOrganizationName ? 4 : 3.7,
+              lg: showWorkspaceName ? (isMultiSelectMode ? 2.75 : 3) : 3.7,
+            }}
+          >
             {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
           </Grid2>
           {showOrganizationName && (
