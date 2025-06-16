@@ -110,7 +110,7 @@ export const FormattedMetadata = ({ event }) => {
   }
 
   const metadata = {
-    ..._.omit(event.metadata, [...linkOrder, 'id', 'kind', 'ViewLink', 'DownloadLink']),
+    ..._.omit(event.metadata, [...linkOrder, 'kind', 'ViewLink', 'DownloadLink']),
     ShortDescription:
       event.metadata.error || !canTruncateDescription(event.description || '')
         ? null
