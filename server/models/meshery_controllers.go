@@ -145,6 +145,8 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 			return mch
 		}
 		mch.ctxMeshsyncDataHandler = msDataHandler
+		// TODO
+		// this could be misleading, if meshsync as library failed
 		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
 	}
 
@@ -213,13 +215,15 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 			return
 		}
 
+		// TODO add option to stop meshsync run (f.e. when switch deployment modes)
 		if err := libmeshsync.Run(
 			// TODO
 			// provide a mechanism to distinguish server logs from meshsync logs
 			mch.log,
+			libmeshsync.WithOutputMode("broker"),
 			libmeshsync.WithBrokerHandler(handler),
 			libmeshsync.WithKubeConfig(kubeConfig),
-			libmeshsync.WithStopAfterDuration(duration),
+			// libmeshsync.WithStopAfterDuration(duration),
 		); err != nil {
 			mch.log.Error(
 				fmt.Errorf("error running meshsync lib %v", err),
