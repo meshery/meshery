@@ -9,11 +9,11 @@ import (
 
 // TODO run error-util
 const (
-	ErrPublishCode = "replace_me"
+	ErrChannelBrokerPublishCode = "meshery-server-1374"
 )
 
-func ErrPublish(err error) error {
-	return errors.New(ErrPublishCode, errors.Alert, []string{"Publish failed"}, []string{err.Error()}, []string{"Publish to channel failed", "Subject channel buffer is full"}, []string{"Make sure there is a consumer from the subject"})
+func ErrChannelBrokerPublish(err error) error {
+	return errors.New(ErrChannelBrokerPublishCode, errors.Alert, []string{"Publish failed"}, []string{err.Error()}, []string{"Publish to channel failed", "Subject channel buffer is full"}, []string{"Make sure there is a consumer from the subject"})
 }
 
 type ErrChannelPublishType struct {

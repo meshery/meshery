@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -31,7 +32,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	}
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
-		errToken := ErrConnectActionFromString("failed to retrieve user token")
+		errToken := ErrConnectAction(fmt.Errorf("failed to retrieve user token"))
 		eventBuilder.WithMetadata(map[string]interface{}{"error": errToken})
 		return machines.NoOp, eventBuilder.Build(), errToken
 
