@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 14th 2025, 4:02:21 am
+- Testing started at: June 16th 2025, 4:39:46 pm
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
-- ❌ 1 failed
+- ✅ 65 passed
+- ❌ 2 failed
 - ⚠️ 2 flaked
-- ⏩ 1 skipped
+- ⏩ 2 skipped
 
-⌛ _Duration: 6 minutes and 7 seconds_
+⌛ _Duration: 6 minutes and 12 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -30,8 +30,10 @@
 | 7 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
 | 8 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
 | 9 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 10 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
-| 11 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
+| 10 | chromium-meshery-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
+| 11 | chromium-meshery-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
+| 12 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
+| 13 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
 
 </div>
 </details>
