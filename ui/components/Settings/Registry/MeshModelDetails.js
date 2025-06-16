@@ -390,7 +390,7 @@ const Description = ({ description }) => {
     <div style={{ margin: '0.6rem 0' }}>
       <p
         style={{
-          fontWeight: '600',
+          fontWeight: theme.typography.fontWeightBold,
           margin: '0',
           fontSize: theme.typography.caption.fontSize,
           textTransform: 'uppercase',
