@@ -244,7 +244,7 @@ export const TableListHeader = ({
       )}
       <Grid2
         size={{
-          xs: 5,
+          xs: !showWorkspaceName ? 5.5 : 5.5,
           md: !showWorkspaceName ? 5.5 : 3.5,
           lg: !showWorkspaceName ? 7 : 4,
           xl: !showWorkspaceName ? 6 : 3,
@@ -275,7 +275,7 @@ export const TableListHeader = ({
         </Typography>
       </Grid2>
       {showOrganizationName && (
-        <Grid2 size={{ md: 2.5, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
           <Typography>
             <b>ORGANIZATION</b>
           </Typography>
