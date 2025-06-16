@@ -176,7 +176,7 @@ test.describe.serial('Connection Management Tests', () => {
 
       //find the checkbox in the row
       const checkbox = row.locator('input[type="checkbox"]').first();
-      await checkbox.check();
+      await checkbox.check({ force: true });
 
       // Click "Delete" button in the table
       await page.getByRole('button', { name: 'Delete', exact: true }).click();
