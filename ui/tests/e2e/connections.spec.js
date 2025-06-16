@@ -172,8 +172,8 @@ test.describe.serial('Connection Management Tests', () => {
     }
 
     //find the checkbox in the row
-    const checkbox = row.locator('span[data-description="row-select"]');
-    await checkbox.click();
+    const checkbox = row.getByRole('checkbox').first();
+    await checkbox.setChecked(true);
 
     // Click "Delete" button in the table
     await page.getByRole('button', { name: 'Delete', exact: true }).click();
