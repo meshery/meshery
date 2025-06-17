@@ -182,7 +182,6 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const {
     data: environmentsResponse,
     isSuccess: isEnvironmentsSuccess,
-    isLoading: isEnvironmentsLoading,
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
