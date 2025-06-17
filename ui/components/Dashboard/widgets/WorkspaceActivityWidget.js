@@ -29,14 +29,16 @@ const WorkspaceActivityWidget = () => {
     setSelectedWorkspace(newWorkspaceId);
   };
   return (
-    <WorkspaceActivityCard
-      selectedWorkspace={selectedWorkspace}
-      handleWorkspaceChange={handleWorkspaceChange}
-      activities={events?.data}
-      workspaces={workspaces?.workspaces}
-      isEventsLoading={isEventsLoading}
-      workspacePagePath="/management/workspaces"
-    />
+    <div data-testid="workspace-activity">
+      <WorkspaceActivityCard
+        selectedWorkspace={selectedWorkspace}
+        handleWorkspaceChange={handleWorkspaceChange}
+        activities={events?.data}
+        workspaces={workspaces?.workspaces}
+        isEventsLoading={isEventsLoading}
+        workspacePagePath="/management/workspaces"
+      />
+    </div>
   );
 };
 

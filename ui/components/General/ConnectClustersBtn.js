@@ -14,6 +14,7 @@ function ConnectClustersBtn() {
         color="primary"
         size="large"
         style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
+        data-testid="connect-clusters-button"
       >
         <AddIcon
           style={{
