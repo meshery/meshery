@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshery/server/tmp_meshkit/broker/channel"
 	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/broker/nats"
 	"github.com/meshery/meshkit/database"
@@ -17,6 +16,7 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	libmeshsync "github.com/n2h9/fork-meshery-meshsync/pkg/lib/meshsync"
+	channelBroker "github.com/n2h9/fork-meshery-meshsync/pkg/lib/tmp_meshkit/broker/channel"
 	"github.com/spf13/viper"
 )
 
@@ -195,7 +195,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 	k8scontext K8sContext,
 ) broker.Handler {
-	br := channel.NewTMPChannelBrokerHandler()
+	br := channelBroker.NewChannelBrokerHandler()
 	// TODO
 	// as we will be running per connection base,
 	// we need to double check that the state is not shared anywhere in meshsync internally,
