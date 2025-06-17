@@ -182,6 +182,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const {
     data: environmentsResponse,
     isSuccess: isEnvironmentsSuccess,
+    isLoading: isEnvironmentsLoading,
     isError: isEnvironmentsError,
     error: environmentsError,
   } = useGetEnvironmentsQuery(
@@ -1139,7 +1140,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     return initialVisibility;
   });
 
-  if (isConnectionLoading) {
+  if (isConnectionLoading || isEnvironmentsLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
   }
 
