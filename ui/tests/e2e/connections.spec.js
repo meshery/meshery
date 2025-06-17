@@ -3,6 +3,14 @@ import { ENV } from './env';
 import os from 'os';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 
+function waitForConnectionsApiRepsonse(page) {
+  return page.waitForResponse(
+    (response) =>
+      response.url().includes('/api/integrations/connections') &&
+      response.status() === 200,
+  );
+}
+
 // name: Name of the test
 // transitionOption: Option to be chosen from dropdown to transition to another state
 // statusAfterTransition: Text shown in current state after transition
@@ -79,8 +87,12 @@ test.describe.serial('Connection Management Tests', () => {
     // Search for the newly added cluster
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
+    const getConnectionsRes = waitForConnectionsApiRepsonse(page);
+
     await page.getByRole('textbox', { name: 'Search Connections...' }).click();
     await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+
+    await getConnectionsRes;
 
     const newConnectionRow = page.getByRole('menuitem', { hasText: clusterMetaData.name }).first();
     await expect(newConnectionRow).toContainText('connected');
@@ -102,14 +114,15 @@ test.describe.serial('Connection Management Tests', () => {
           response.status() === 202,
       );
 
-      const getConnectionsReq = page.waitForRequest(
-        (request) =>
-          request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
-          request.method() === 'GET',
-      );
+      const getFilteredConnectionsRes = waitForConnectionsApiRepsonse(page);
+
+      const getStatusUpdateConnectionsRes = waitForConnectionsApiRepsonse(page);
+
 
       await page.getByTestId('ConnectionTable-search').getByRole('button').click();
       await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+
+      await getFilteredConnectionsRes;
 
       const matchingRows = page.getByRole('menuitem', { hasText: clusterMetaData.name });
 
@@ -134,7 +147,7 @@ test.describe.serial('Connection Management Tests', () => {
 
       await stateTransitionReq;
       await stateTransitionRes;
-      await getConnectionsReq;
+      await getStatusUpdateConnectionsRes;
       // expect new state to be shown as current state
 
       const updatedConnection = page
@@ -159,8 +172,13 @@ test.describe.serial('Connection Management Tests', () => {
     // Find the row with the connection to be deleted
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
+    const getFilteredConnectionsRes = waitForConnectionsApiRepsonse(page) ;
+    
+
     await page.getByRole('textbox', { name: 'Search Connections...' }).click();
     await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
+
+    await getFilteredConnectionsRes;
 
     const row = page.locator('tr').filter({ hasText: 'connected' }).first();
 

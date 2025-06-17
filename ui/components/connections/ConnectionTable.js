@@ -1140,7 +1140,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     return initialVisibility;
   });
 
-  if (isConnectionLoading || isEnvironmentsLoading) {
+  if (isConnectionLoading) {
     return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Connections" />;
   }
 
