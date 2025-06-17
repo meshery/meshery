@@ -61,6 +61,7 @@ export const PropertyFormatters = {
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
+  history_title: () => null,
 };
 
 export const LinkFormatters = {
