@@ -6,8 +6,7 @@ import { waitForSnackBar } from './utils/waitForSnackBar';
 function waitForConnectionsApiRepsonse(page) {
   return page.waitForResponse(
     (response) =>
-      response.url().includes('/api/integrations/connections') &&
-      response.status() === 200,
+      response.url().includes('/api/integrations/connections') && response.status() === 200,
   );
 }
 
@@ -118,7 +117,6 @@ test.describe.serial('Connection Management Tests', () => {
 
       const getStatusUpdateConnectionsRes = waitForConnectionsApiRepsonse(page);
 
-
       await page.getByTestId('ConnectionTable-search').getByRole('button').click();
       await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
 
@@ -172,8 +170,7 @@ test.describe.serial('Connection Management Tests', () => {
     // Find the row with the connection to be deleted
     await page.getByTestId('ConnectionTable-search').getByRole('button').click();
 
-    const getFilteredConnectionsRes = waitForConnectionsApiRepsonse(page) ;
-    
+    const getFilteredConnectionsRes = waitForConnectionsApiRepsonse(page);
 
     await page.getByRole('textbox', { name: 'Search Connections...' }).click();
     await page.getByRole('textbox', { name: 'Search Connections...' }).fill(clusterMetaData.name);
