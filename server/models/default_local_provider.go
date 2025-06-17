@@ -57,9 +57,10 @@ type DefaultLocalProvider struct {
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
 
-	GenericPersister *database.Handler
-	KubeClient       *mesherykube.Client
-	Log              logger.Handler
+	GenericPersister          *database.Handler
+	KubeClient                *mesherykube.Client
+	Log                       logger.Handler
+	TMPMeshsyncDeploymentMode string
 }
 
 // Initialize will initialize the local provider
@@ -80,6 +81,10 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
 		{Feature: PersistCredentials},
+	}
+	l.TMPMeshsyncDeploymentMode = "operator"
+	if viper.GetBool("TMP_MESHYNC_AS_A_LIBRARY_MODE") {
+		l.TMPMeshsyncDeploymentMode = "library"
 	}
 }
 
@@ -281,7 +286,7 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		MetaData:         metadata,
 		CredentialSecret: cred,
 		// TODO: pass from above
-		MeshsyncDeploymentMode: "library",
+		MeshsyncDeploymentMode: l.TMPMeshsyncDeploymentMode,
 	}
 	connectionCreated, err := l.SaveConnection(conn, "", true)
 	if err != nil {
