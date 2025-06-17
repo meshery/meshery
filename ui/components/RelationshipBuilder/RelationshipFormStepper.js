@@ -21,6 +21,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { downloadFileFromContent } from '@/utils/fileDownloader';
 import RJSFWrapper from '../MesheryMeshInterface/PatternService/RJSF_wrapper';
+import _ from 'lodash';
 
 const StyledSummaryBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.blur?.heavy,
@@ -194,8 +195,8 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                 definition.
               </li>
               <li>
-                <strong>Download:</strong> Click "Download JSON" to save the relationship file on
-                your computer
+                <strong>Download:</strong> Click &quot;Download JSON&quot; to save the relationship
+                file on your computer
               </li>
             </ul>
           </>
