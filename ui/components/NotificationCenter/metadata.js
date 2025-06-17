@@ -61,6 +61,7 @@ export const PropertyFormatters = {
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
+  history_title: () => null,
 };
 
 export const LinkFormatters = {
@@ -110,7 +111,7 @@ export const FormattedMetadata = ({ event }) => {
   }
 
   const metadata = {
-    ..._.omit(event.metadata, [...linkOrder, 'kind', 'ViewLink', 'DownloadLink']),
+    ..._.omit(event.metadata, [...linkOrder, 'id', 'kind', 'ViewLink', 'DownloadLink']),
     ShortDescription:
       event.metadata.error || !canTruncateDescription(event.description || '')
         ? null

@@ -13,42 +13,48 @@ components:
 - name: disk-access
   colorIcon: assets/img/integrations/azure-compute/components/disk-access/icons/color/disk-access-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/disk-access/icons/white/disk-access-white.svg
-  description: Provisioning
+  description: 
 - name: disk-encryption-set
   colorIcon: assets/img/integrations/azure-compute/components/disk-encryption-set/icons/color/disk-encryption-set-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/disk-encryption-set/icons/white/disk-encryption-set-white.svg
-  description: Provisioning
+  description: 
 - name: disk
   colorIcon: assets/img/integrations/azure-compute/components/disk/icons/color/disk-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/disk/icons/white/disk-white.svg
-  description: Provisioning
+  description: 
 - name: image
   colorIcon: assets/img/integrations/azure-compute/components/image/icons/color/image-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/image/icons/white/image-white.svg
-  description: Provisioning
+  description: 
 - name: snapshot
   colorIcon: assets/img/integrations/azure-compute/components/snapshot/icons/color/snapshot-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/snapshot/icons/white/snapshot-white.svg
-  description: Provisioning
+  description: 
 - name: virtual-machine
   colorIcon: assets/img/integrations/azure-compute/components/virtual-machine/icons/color/virtual-machine-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/virtual-machine/icons/white/virtual-machine-white.svg
-  description: Provisioning
+  description: 
 - name: virtual-machine-scale-set
   colorIcon: assets/img/integrations/azure-compute/components/virtual-machine-scale-set/icons/color/virtual-machine-scale-set-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/virtual-machine-scale-set/icons/white/virtual-machine-scale-set-white.svg
-  description: Provisioning
+  description: 
 - name: virtual-machine-scale-sets-extension
   colorIcon: assets/img/integrations/azure-compute/components/virtual-machine-scale-sets-extension/icons/color/virtual-machine-scale-sets-extension-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/virtual-machine-scale-sets-extension/icons/white/virtual-machine-scale-sets-extension-white.svg
-  description: Provisioning
+  description: 
 - name: virtual-machines-extension
   colorIcon: assets/img/integrations/azure-compute/components/virtual-machines-extension/icons/color/virtual-machines-extension-color.svg
   whiteIcon: assets/img/integrations/azure-compute/components/virtual-machines-extension/icons/white/virtual-machines-extension-white.svg
-  description: Provisioning
+  description: 
 components-count: 9
 relationships: 
-relationship-count: 0
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of Virtual Machine Scale Set(parent component) is patched with the configuration of Virtual Machine Scale Set Extension(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of Virtual Machine(parent component) is patched with the configuration of Virtual Machine Extension(child component). "
+relationship-count: 2
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
