@@ -131,7 +131,6 @@ const HeaderMenu = () => {
         id: 'settings',
         title: 'Settings',
         onClick: handleSettings,
-        showOnWeb: false,
       },
       {
         id: 'preferences',

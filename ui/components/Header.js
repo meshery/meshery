@@ -30,13 +30,10 @@ import {
   Grid2,
   Hidden,
   NoSsr,
-  useTheme,
-  useMediaQuery,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
@@ -52,7 +49,6 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
-  SettingsWrapper,
 } from './Header.styles';
 import {
   getUserAccessToken,
@@ -236,46 +232,48 @@ function K8sContextMenu({
     <>
       <div>
         <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
-          <IconButton
-            aria-label="contexts"
-            className="k8s-icon-button"
-            onClick={(e) => {
-              e.preventDefault();
-              setShowFullContextMenu((prev) => !prev);
-            }}
-            onMouseOver={(e) => {
-              e.preventDefault();
-              setAnchorEl(true);
-            }}
-            onMouseLeave={(e) => {
-              e.preventDefault();
-              setAnchorEl(false);
-            }}
-            aria-owns={open ? 'menu-list-grow' : undefined}
-            aria-haspopup="true"
-            style={{
-              marginRight: '0.5rem',
-            }}
-          >
-            <CBadgeContainer>
-              <img
-                className="k8s-image"
-                src={
-                  connectionMetadataState &&
-                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                    ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                    : '/static/img/kubernetes.svg'
-                }
-                onError={(e) => {
-                  e.target.src = '/static/img/kubernetes.svg';
-                }}
-                width="24px"
-                height="24px"
-                style={{ objectFit: 'contain' }}
-              />
-              <CBadge>{contexts?.total_count || 0}</CBadge>
-            </CBadgeContainer>
-          </IconButton>
+          <CustomTooltip title="Kubernetes Connections">
+            <IconButton
+              aria-label="contexts"
+              className="k8s-icon-button"
+              onClick={(e) => {
+                e.preventDefault();
+                setShowFullContextMenu((prev) => !prev);
+              }}
+              onMouseOver={(e) => {
+                e.preventDefault();
+                setAnchorEl(true);
+              }}
+              onMouseLeave={(e) => {
+                e.preventDefault();
+                setAnchorEl(false);
+              }}
+              aria-owns={open ? 'menu-list-grow' : undefined}
+              aria-haspopup="true"
+              style={{
+                marginRight: '0.5rem',
+              }}
+            >
+              <CBadgeContainer>
+                <img
+                  className="k8s-image"
+                  src={
+                    connectionMetadataState &&
+                    connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
+                      : '/static/img/kubernetes.svg'
+                  }
+                  onError={(e) => {
+                    e.target.src = '/static/img/kubernetes.svg';
+                  }}
+                  width="24px"
+                  height="24px"
+                  style={{ objectFit: 'contain' }}
+                />
+                <CBadge>{contexts?.total_count || 0}</CBadge>
+              </CBadgeContainer>
+            </IconButton>
+          </CustomTooltip>
         </CanShow>
 
         <Slide
@@ -388,7 +386,7 @@ function K8sContextMenu({
 const Header = ({
   onDrawerToggle,
   onDrawerCollapse,
-  abilityUpdated,
+  // abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
@@ -414,8 +412,7 @@ const Header = ({
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
+  // const theme = useTheme();
   return (
     <NoSsr>
       <>
@@ -465,37 +462,19 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <CustomTooltip title="Kubernetes Connections">
-                    <UserSpan style={{ position: 'relative' }}>
-                      <K8sContextMenu
-                        contexts={contexts}
-                        activeContexts={activeContexts}
-                        setActiveContexts={setActiveContexts}
-                        searchContexts={searchContexts}
-                      />
-                    </UserSpan>
-                  </CustomTooltip>
-                  <SettingsWrapper
-                    isDesktop={isDesktop}
-                    data-testid="settings-button"
-                    aria-describedby={abilityUpdated}
-                  >
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <CustomTooltip title="Settings">
-                        <IconButton onClick={() => Router.push('/settings')}>
-                          <SettingsIcon
-                            style={{ ...iconMedium, fill: theme.palette.common.white }}
-                          />
-                        </IconButton>
-                      </CustomTooltip>
-                    </CanShow>
-                  </SettingsWrapper>
+                  <UserSpan style={{ position: 'relative' }}>
+                    <K8sContextMenu
+                      contexts={contexts}
+                      activeContexts={activeContexts}
+                      setActiveContexts={setActiveContexts}
+                      searchContexts={searchContexts}
+                    />
+                  </UserSpan>
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
                       <NotificationDrawerButton />
                     </div>
                   </CustomTooltip>
-
                   <CustomTooltip title={'User Profile'}>
                     <UserSpan>
                       <User />

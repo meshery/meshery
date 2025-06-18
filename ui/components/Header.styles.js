@@ -100,7 +100,7 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
   marginTop: '-1.2rem',
   borderRadius: '3px',
-  padding: '1rem',
+  padding: '2rem 1rem 1rem',
   boxShadow: '20px #979797',
   transition: 'linear .2s',
   transitionProperty: 'height',
