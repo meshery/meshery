@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 17th 2025, 11:46:51 pm
+- Testing started at: June 18th 2025, 12:49:19 am
 
 **📦 Test Result Summary**
 
-- ✅ 79 passed
+- ✅ 80 passed
 - ❌ 1 failed
-- ⚠️ 0 flaked
+- ⚠️ 1 flaked
 - ⏩ 1 skipped
 
-⌛ _Duration: 9 minutes and 3 seconds_
+⌛ _Duration: 9 minutes and 9 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,8 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
-| 2 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
+| 1 | chromium-meshery-provider | Import a Model via File Import |  | ⚠️ |
+| 2 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
+| 3 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
 
 </div>
 </details>
