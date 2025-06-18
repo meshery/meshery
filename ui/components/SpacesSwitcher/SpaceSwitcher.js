@@ -217,8 +217,9 @@ function OrganizationAndWorkSpaceSwitcher() {
             <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
           </Button>
         </CustomTooltip>
-        <OrgMenu open={orgOpen} organization={organization} />/
-        <CustomTooltip title={'Workspace'}>
+        <OrgMenu open={orgOpen} organization={organization} />
+        /
+        <CustomTooltip title={'Workspace'} >
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
