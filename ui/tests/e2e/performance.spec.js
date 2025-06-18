@@ -18,7 +18,6 @@ const GRAFANA_ELEMENTS = ['grafana-api-key'];
 
 const COMMON_UI_ELEMENTS = [
   'navigation',
-  'settings-button',
   'notification-button',
   'profile-button',
   'header-menu',
