@@ -386,11 +386,12 @@ function K8sContextMenu({
 const Header = ({
   onDrawerToggle,
   onDrawerCollapse,
-  // abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
   searchContexts,
+  // eslint-disable-next-line no-unused-vars
+  abilityUpdated,
 }) => {
   const { notify } = useNotification;
 
@@ -412,7 +413,6 @@ const Header = ({
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';
-  // const theme = useTheme();
   return (
     <NoSsr>
       <>
