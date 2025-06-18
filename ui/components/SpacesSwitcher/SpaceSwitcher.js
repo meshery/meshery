@@ -216,15 +216,9 @@ function OrganizationAndWorkSpaceSwitcher() {
           >
             <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
           </Button>
-          <OrgMenu open={orgOpen} organization={organization} />
         </CustomTooltip>
-        /
-        <CustomTooltip
-          style={{
-            height: '40px',
-          }}
-          title={'Workspace'}
-        >
+        <OrgMenu open={orgOpen} organization={organization} />/
+        <CustomTooltip title={'Workspace'}>
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
@@ -235,8 +229,8 @@ function OrganizationAndWorkSpaceSwitcher() {
               fill={theme.palette.common.white}
             />
           </Button>
-          <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />
         </CustomTooltip>
+        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />
         /
         <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
