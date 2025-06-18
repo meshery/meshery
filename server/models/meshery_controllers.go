@@ -204,7 +204,7 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 		kubeConfig, err := k8scontext.GenerateKubeConfig()
 		if err != nil {
 			mch.log.Error(
-				fmt.Errorf("error generating kube config from context %v", err),
+				fmt.Errorf("error generating kubeconfig from context %v", err),
 			)
 			return
 		}
