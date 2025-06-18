@@ -201,12 +201,6 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 	// we need to double check that the state is not shared anywhere in meshsync internally,
 	// otherwise we will have hard to detect errors.
 	go func(handler broker.Handler) {
-		// TODO
-		// Right now this duration only stops the top level goroutine of meshsync as a library,
-		// we need to enhance meshsync functionality to halt all internal goroutines
-		// (means it right now does not stop, and continues to receive events from k8s).
-		duration := 64 * time.Second
-
 		kubeConfig, err := k8scontext.GenerateKubeConfig()
 		if err != nil {
 			mch.log.Error(
@@ -223,13 +217,10 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 			libmeshsync.WithOutputMode("broker"),
 			libmeshsync.WithBrokerHandler(handler),
 			libmeshsync.WithKubeConfig(kubeConfig),
-			// libmeshsync.WithStopAfterDuration(duration),
 		); err != nil {
 			mch.log.Error(
 				fmt.Errorf("error running meshsync lib %v", err),
 			)
-		} else {
-			mch.log.Infof("meshsync lib run stops after %s", duration)
 		}
 	}(br)
 
