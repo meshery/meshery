@@ -243,9 +243,11 @@ const MesheryTreeView = React.memo(
                   <CustomTextTooltip
                     placement="right"
                     interactive={true}
-                    title={`View all duplicate entries of ${_.toLower(
+                    title={`When enabled, shows only duplicate ${_.toLower(
                       view,
-                    )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
+                    )}. When disabled, shows all ${_.toLower(
+                      view,
+                    )} with duplicates removed. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                     sx={{ margin: '0rem', padding: '0rem' }}
                   >
                     <IconButton>
