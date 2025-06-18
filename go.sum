@@ -1323,8 +1323,8 @@ github.com/layer5io/meshery-operator v0.8.3 h1:HCXFif715iHdUpmTSInAqpsd+gaSFazn8
 github.com/layer5io/meshery-operator v0.8.3/go.mod h1:Wi9ODHppoq8ODtzdfiplWYJXYpqsHOJfkJyTMQeNXk4=
 github.com/layer5io/meshkit v0.8.29 h1:9Mtl6Z7KcvFZCO6CMzqlUDaEzbMdIPu98NaY4q7/PMw=
 github.com/layer5io/meshkit v0.8.29/go.mod h1:lMeuC99MrbP5WIBNdzDOKokCfUOW/5a/hERcCl9YSFs=
-github.com/layer5io/meshsync v0.8.6 h1:rioO1LH2Ue/ZsYmszSe9DOOr2BDr6vnDraX4QIPDPLA=
-github.com/layer5io/meshsync v0.8.6/go.mod h1:FsAfvQ+9HOjbOeAutrzoHDzAohmmnWpcaDEE0ygfGyg=
+github.com/layer5io/meshsync v0.8.8 h1:L22QCZDvN/Bymcz6lID2WzpWzMt1UHRZMyz+TZBiYuI=
+github.com/layer5io/meshsync v0.8.8/go.mod h1:ddteV/pkfSaOgr+xNTZR18iLWM6DwIIpG9TjK7nkbMY=
 github.com/layer5io/nighthawk-go v1.0.6 h1:YMCw65FvwpbByX+M7McdNYRNDW9oOw3GQaXJ1RMDdGw=
 github.com/layer5io/nighthawk-go v1.0.6/go.mod h1:n3WTr9nTRXe+30+O4FL/bsEOhinKV6++yrgyOP3rBHU=
 github.com/layer5io/service-mesh-performance v0.6.1 h1:Q1k6E96UEwcmNIirbMpRY7Odost1eOdrCh6R8IbTOXs=
@@ -1368,6 +1368,8 @@ github.com/meshery/meshery-operator v0.8.7 h1:SsiyDiPEcibYtoHlYyziwvCcBVfZOCJxq4
 github.com/meshery/meshery-operator v0.8.7/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
 github.com/meshery/meshkit v0.8.33 h1:OowG1gn3nsN0RPfgmoPj1Kota9TXP/TUppmZ80kYXmU=
 github.com/meshery/meshkit v0.8.33/go.mod h1:Ym2z/5oSQn1jDQr+Qjmm9pBW7jv+8oXqp5+RYr9NXQI=
+github.com/meshery/meshsync v0.0.0-20250617211503-8f3214d4fe74 h1:wSq/BrapSVKkcHUrtKs8Gt6IXAUfie6Aywt2DcD04Hc=
+github.com/meshery/meshsync v0.0.0-20250617211503-8f3214d4fe74/go.mod h1:Ys92h4ZPpVct8g5njMi3NpFAjm6OTZls30p3/DmgS90=
 github.com/meshery/schemas v0.8.22 h1:JQ7PoEheiXdkIG/h965L+DB7p/JdGEgs3i5r0EniSt4=
 github.com/meshery/schemas v0.8.22/go.mod h1:tuAmsG9WJRjZ0Iv12HIAhKZbWpfpkTRjfPNThKbr7HA=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
@@ -1428,8 +1430,6 @@ github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f h1:y5//uYreIhSUg3J
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f/go.mod h1:ZdcZmHo+o7JKHSa8/e818NopupXU1YMK5fe1lsApnBw=
 github.com/myntra/pipeline v0.0.0-20180618182531-2babf4864ce8 h1:b2uniQevKsIAdAgonACj+tW6eTotNBI30zvPQSVOWwQ=
 github.com/myntra/pipeline v0.0.0-20180618182531-2babf4864ce8/go.mod h1:9Viqaf1D6mzC977KNzp496RvO4I819iz5Q6gjbXY7Ow=
-github.com/n2h9/fork-meshery-meshsync v0.0.0-20250617182541-c5214b2e8ab1 h1:mgKxV88oSanzgS9AbK/c5ZCNG1ukIibkPEsE/Pp8bYs=
-github.com/n2h9/fork-meshery-meshsync v0.0.0-20250617182541-c5214b2e8ab1/go.mod h1:v1crsHWT6jbMsp/XAq5CX9VJIs1ELmdHWE2ZnXU+u/Y=
 github.com/nats-io/nats.go v1.38.0 h1:A7P+g7Wjp4/NWqDOOP/K6hfhr54DvdDQUznt5JFg9XA=
 github.com/nats-io/nats.go v1.38.0/go.mod h1:IGUM++TwokGnXPs82/wCuiHS02/aKrdYUQkU8If6yjw=
 github.com/nats-io/nkeys v0.4.9 h1:qe9Faq2Gxwi6RZnZMXfmGMZkg3afLLOtrU+gDZJ35b0=

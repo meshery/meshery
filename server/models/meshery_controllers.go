@@ -15,8 +15,8 @@ import (
 	"github.com/meshery/meshkit/models/controllers"
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
-	libmeshsync "github.com/n2h9/fork-meshery-meshsync/pkg/lib/meshsync"
-	channelBroker "github.com/n2h9/fork-meshery-meshsync/pkg/lib/tmp_meshkit/broker/channel"
+	libmeshsync "github.com/meshery/meshsync/pkg/lib/meshsync"
+	channelBroker "github.com/meshery/meshsync/pkg/lib/tmp_meshkit/broker/channel"
 	"github.com/spf13/viper"
 )
 
