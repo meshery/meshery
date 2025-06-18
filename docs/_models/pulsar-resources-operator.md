@@ -13,15 +13,15 @@ components:
 - name: api-key
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/api-key/icons/color/api-key-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/api-key/icons/white/api-key-white.svg
-  description: App Definition and Development
+  description: 
 - name: service-account-binding
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/service-account-binding/icons/color/service-account-binding-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/service-account-binding/icons/white/service-account-binding-white.svg
-  description: App Definition and Development
+  description: 
 - name: service-account
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/service-account/icons/color/service-account-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/service-account/icons/white/service-account-white.svg
-  description: App Definition and Development
+  description: 
 - name: pulsar-connection
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/color/pulsar-connection-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/white/pulsar-connection-white.svg

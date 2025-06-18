@@ -2,6 +2,7 @@ package resolver
 
 import (
 	"context"
+	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/internal/graphql/model"
@@ -29,9 +30,9 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 					Description: event.Description,
 					Category:    event.Category,
 					Action:      event.Action,
-					CreatedAt:   event.CreatedAt,
+					CreatedAt:   time.Now(),
 					DeletedAt:   event.DeletedAt,
-					UpdatedAt:   event.UpdatedAt,
+					UpdatedAt:   time.Now(),
 					Metadata:    event.Metadata,
 					Status:      string(event.Status),
 					SystemID:    event.SystemID.String(),
