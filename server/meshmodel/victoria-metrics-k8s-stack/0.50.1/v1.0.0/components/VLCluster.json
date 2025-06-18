@@ -51,14 +51,129 @@
     "relationships": null
   },
   "styles": {
-    "primaryColor": "",
-    "secondaryColor": "hexagon",
-    "shape": "Monitoring",
-    "svgColor": "#000000",
-    "svgComplete": "\u003csvg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"\nwidth=\"18\" height=\"18\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\"\nfill=\"#000000\" stroke=\"none\"\u003e\n\u003cpath d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\n33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"/\u003e\n\u003cpath d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\n-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\n-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"/\u003e\n\u003cpath d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\n-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\n-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
-    "svgWhite": "#ffffff"
+    "primaryColor": "#000000",
+    "secondaryColor": "#ffffff",
+    "shape": "hexagon",
+    "svgColor": "\u003csvg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"\nwidth=\"18\" height=\"18\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\"\nfill=\"#000000\" stroke=\"none\"\u003e\n\u003cpath d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\n33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"/\u003e\n\u003cpath d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\n-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\n-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"/\u003e\n\u003cpath d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\n-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\n-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg version=\"1.0\" xmlns=\"http://www.w3.org/2000/svg\"\nwidth=\"18\" height=\"18\" viewBox=\"0 0 128 121\" preserveAspectRatio=\"xMidYMid meet\"\u003e\n\u003cg transform=\"translate(0.000000,121.000000) scale(0.100000,-0.100000)\"\nfill=\"#ffffff\" stroke=\"none\"\u003e\n\u003cpath d=\"M454 926 c-60 -12 -114 -38 -114 -55 0 -13 249 -231 276 -241 15 -6\n33 -6 48 0 27 10 276 228 276 241 0 18 -54 43 -118 55 -83 16 -286 16 -368 0z\"/\u003e\n\u003cpath d=\"M340 726 c0 -45 0 -45 121 -153 66 -59 133 -114 150 -122 41 -21 64\n-7 208 122 121 108 121 108 121 153 0 52 -2 52 -75 -17 -150 -140 -188 -169\n-225 -169 -37 0 -75 29 -225 169 -73 69 -75 69 -75 17z\"/\u003e\n\u003cpath d=\"M340 549 c0 -41 4 -49 58 -100 31 -31 92 -86 134 -123 106 -90 110\n-90 240 23 159 137 170 151 166 199 l-3 41 -128 -114 c-70 -63 -138 -117 -151\n-121 -39 -9 -51 0 -288 215 l-28 25 0 -45z\"/\u003e\n\u003c/g\u003e\n\u003c/svg\u003e"
   },
-  "capabilities": null,
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",

@@ -51,6 +51,7 @@
   },
   "styles": {
     "primaryColor": "#7AA116",
+    "secondaryColor": "#00D3A9",
     "shape": "rectangle",
     "svgColor": "",
     "svgComplete": "",

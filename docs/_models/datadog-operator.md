@@ -62,7 +62,11 @@ components:
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-generic-resource/icons/color/datadog-generic-resource-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-generic-resource/icons/white/datadog-generic-resource-white.svg
   description: 
-components-count: 13
+- name: datadog-agent-internal
+  colorIcon: assets/img/integrations/datadog-operator/components/datadog-agent-internal/icons/color/datadog-agent-internal-color.svg
+  whiteIcon: assets/img/integrations/datadog-operator/components/datadog-agent-internal/icons/white/datadog-agent-internal-white.svg
+  description: 
+components-count: 14
 relationships: 
 relationship-count: 0
 featureList: [

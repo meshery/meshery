@@ -196,7 +196,7 @@ func (h *Handler) sendErrorEvent(userID uuid.UUID, provider models.Provider, des
 	event := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithAction("register").WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
 		"error": err,
 	}).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 
@@ -352,7 +352,7 @@ func (h *Handler) sendFileEvent(userID uuid.UUID, provider models.Provider, resp
 		WithMetadata(metadata).
 		Build()
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func getFirst42Chars(s string) string {
@@ -384,7 +384,7 @@ func (h *Handler) sendEventForImport(userID uuid.UUID, provider models.Provider,
 		WithSeverity(events.Informational).
 		WithMetadata(metadata).
 		Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 }
 func writeMessageString(response *models.RegistryAPIResponse) string {

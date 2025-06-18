@@ -41,11 +41,11 @@ components:
 - name: service-bgp-status
   colorIcon: assets/img/integrations/metallb/components/service-bgp-status/icons/color/service-bgp-status-color.svg
   whiteIcon: assets/img/integrations/metallb/components/service-bgp-status/icons/white/service-bgp-status-white.svg
-  description: Cloud Native Network
+  description: 
 - name: service-bgp-status
   colorIcon: assets/img/integrations/metallb/components/service-bgp-status/icons/color/service-bgp-status-color.svg
   whiteIcon: assets/img/integrations/metallb/components/service-bgp-status/icons/white/service-bgp-status-white.svg
-  description: Cloud Native Network
+  description: 
 components-count: 9
 relationships: 
 relationship-count: 0

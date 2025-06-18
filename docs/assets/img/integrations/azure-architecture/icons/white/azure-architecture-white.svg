@@ -1,0 +1,47 @@
+<svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 18 18">
+  <defs>
+    <style>
+      .st0 {
+        fill: url(#linear-gradient2);
+      }
+
+      .st1 {
+        fill: url(#linear-gradient1);
+      }
+
+      .st2 {
+        fill: url(#linear-gradient);
+      }
+
+      .st3 {
+        fill: #0078d4;
+      }
+
+      .st4 {
+        fill: #37c2b1;
+      }
+
+      .st5 {
+        fill: #a67af4;
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="12.8" y1="1062.8" x2="12.8" y2="1067.7" gradientTransform="translate(0 -1060)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5ea0ef"/>
+      <stop offset="1" stop-color="#0078d4"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient1" x1="3.8" y1="1065.9" x2="3.8" y2="1070.7" gradientTransform="translate(0 -1060)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a67af4"/>
+      <stop offset="1" stop-color="#773adc"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient2" x1="11.4" y1="1071.7" x2="11.4" y2="1078.4" gradientTransform="translate(0 -1060)" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3cd4c2"/>
+      <stop offset="1" stop-color="#258277"/>
+    </linearGradient>
+  </defs>
+  <path class="st3" d="M13.6,7c-.2,0-.3,0-.4-.2l-2.3-3.4c-.6-1-2.1-1.4-3.1-.6-.3.2-.5.4-.6.6l-1.3,1.9c0,.2-.4.3-.6,0-.2,0-.3-.4,0-.6l1.3-1.9c.9-1.5,2.9-1.8,4.4-.9.4.3.7.6.9.9l2.3,3.4c0,.2,0,.5,0,.6h-.4Z"/>
+  <path class="st4" d="M13.5,14.6h-2.7c-.3,0-.5-.2-.5-.5s.2-.5.5-.5h2.7c1.3,0,2.3-1,2.3-2.3s0-.8-.4-1.2l-1-1.6c0-.2,0-.5,0-.6.2,0,.5,0,.6,0h0l1,1.6c.9,1.5.6,3.4-.9,4.4-.6.4-1.1.6-1.7.6h0Z"/>
+  <path class="st5" d="M7.5,14.6h-2.5c-1.7,0-3.1-1.4-3.1-3.1s.2-1.2.6-1.7l1.7-2.6c0-.2.5-.3.6,0,.2,0,.3.5,0,.6h0l-1.7,2.6c-.6,1-.4,2.5.6,3.1.4.3.8.4,1.2.4h2.5c.3,0,.5.2.5.5s-.2.5-.5.5h0Z"/>
+  <circle class="st2" cx="12.8" cy="5.2" r="2.5"/>
+  <path class="st1" d="M3.8,5.9c-1.4,0-2.5,1.1-2.4,2.5,0,1.4,1.1,2.5,2.5,2.4,1.4,0,2.5-1.1,2.4-2.5,0-1.4-1.1-2.5-2.5-2.4h0Z"/>
+  <path class="st0" d="M11.4,11.7c-1.4,0-2.5,1.1-2.4,2.5,0,1.4,1.1,2.5,2.5,2.4,1.4,0,2.4-1.1,2.4-2.4s-1.1-2.5-2.5-2.5Z"/>
+</svg>

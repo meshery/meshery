@@ -129,7 +129,7 @@ package handlers
 // 			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
 // 		}).WithDescription("Please provide application source-type").Build()
 
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.EventsBuffer.Publish(&res)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		return
@@ -142,7 +142,7 @@ package handlers
 // 			"error": ErrRequestBody(err),
 // 		}).WithDescription("Unable to parse uploaded application.").Build()
 
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.EventsBuffer.Publish(&res)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		return
@@ -159,7 +159,7 @@ package handlers
 // 			"error": ErrRetrieveUserToken(err),
 // 		}).WithDescription("No auth token provided in the request.").Build()
 
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 // 		addMeshkitErr(&res, ErrRetrieveData(err))
@@ -199,7 +199,7 @@ package handlers
 // 						"error": conversionErr,
 // 					}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s", mesheryApplication.Name)).Build()
 
-// 					_ = provider.PersistEvent(event)
+// 					_ = provider.PersistEvent(*event,nil)
 // 					go h.config.EventBroadcaster.Publish(userID, event)
 
 // 					http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
@@ -227,7 +227,7 @@ package handlers
 // 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 // 					"error": conversionErr,
 // 				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to design file format.", mesheryApplication.Name)).Build()
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 
 // 				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
@@ -244,7 +244,7 @@ package handlers
 // 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 // 					"error": conversionErr,
 // 				}).WithDescription(fmt.Sprintf("Failed converting Docker Compose application %s to design file format.", mesheryApplication.Name)).Build()
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 
 // 				http.Error(rw, conversionErr.Error(), http.StatusInternalServerError)
@@ -261,7 +261,7 @@ package handlers
 // 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 // 				"error": sourceTypeErr,
 // 			}).WithDescription(fmt.Sprintf("Source Type \"%s\" not supported.", sourcetype)).Build()
-// 			_ = provider.PersistEvent(event)
+// 			_ = provider.PersistEvent(*event,nil)
 // 			go h.config.EventBroadcaster.Publish(userID, event)
 
 // 			http.Error(rw, sourceTypeErr.Error(), http.StatusInternalServerError)
@@ -285,7 +285,7 @@ package handlers
 // 				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 // 					"error": importErr,
 // 				}).WithDescription(fmt.Sprintf("Failed importing application from URL %s.", parsedBody.URL)).Build()
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 // 				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
@@ -300,7 +300,7 @@ package handlers
 // 					"error": ErrSaveApplication(err),
 // 				}).WithDescription(fmt.Sprintf("error reading application from the remote URL %s, URL is malformed or not reachable.", parsedBody.URL)).Build()
 
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 // 				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error reading body")))
 // 				go h.EventsBuffer.Publish(&res)
@@ -318,7 +318,7 @@ package handlers
 // 					"error": importErr,
 // 				}).WithDescription(fmt.Sprintf("error converting helm chart %s to Kubernetes manifest, URL might be malformed or not reachable.", parsedBody.URL)).Build()
 
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 
 // 				http.Error(rw, importErr.Error(), http.StatusInternalServerError)
@@ -337,7 +337,7 @@ package handlers
 // 					"error": convertErr,
 // 				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to design file format", parsedBody.URL)).Build()
 
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 // 				addMeshkitErr(&res, err)
 // 				go h.EventsBuffer.Publish(&res)
@@ -355,7 +355,7 @@ package handlers
 // 					"error": convertErr,
 // 				}).WithDescription(fmt.Sprintf("Failed converting Helm Chart %s to design file format", parsedBody.URL)).Build()
 
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 // 				addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 // 				go h.EventsBuffer.Publish(&res)
@@ -388,7 +388,7 @@ package handlers
 // 				}).WithDescription(fmt.Sprintf("Invalid URL provided %s", parsedBody.URL)).Build()
 // 				addMeshkitErr(&res, ErrSaveApplication(fmt.Errorf("error parsing URL")))
 // 				go h.EventsBuffer.Publish(&res)
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 // 				return
 // 			}
@@ -423,7 +423,7 @@ package handlers
 // 						"error": err,
 // 					}).WithDescription(fmt.Sprintf("Failed to retrieve remote application at %s", parsedBody.URL)).Build()
 
-// 					_ = provider.PersistEvent(event)
+// 					_ = provider.PersistEvent(*event,nil)
 // 					go h.config.EventBroadcaster.Publish(userID, event)
 // 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
 // 					go h.EventsBuffer.Publish(&res)
@@ -441,7 +441,7 @@ package handlers
 // 					event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 // 						"error": err,
 // 					}).WithDescription(fmt.Sprintf("Failed to retrieve remote application at %s", parsedBody.URL)).Build()
-// 					_ = provider.PersistEvent(event)
+// 					_ = provider.PersistEvent(*event,nil)
 // 					go h.config.EventBroadcaster.Publish(userID, event)
 // 					addMeshkitErr(&res, err) //error guaranteed to be meshkit error
 // 					go h.EventsBuffer.Publish(&res)
@@ -457,7 +457,7 @@ package handlers
 // 			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
 // 				"error": sourceTypeErr,
 // 			}).WithDescription(fmt.Sprintf("Source Type \"%s\" not supported.", sourcetype)).Build()
-// 			_ = provider.PersistEvent(event)
+// 			_ = provider.PersistEvent(*event,nil)
 // 			go h.config.EventBroadcaster.Publish(userID, event)
 
 // 			http.Error(rw, sourceTypeErr.Error(), http.StatusInternalServerError)
@@ -482,7 +482,7 @@ package handlers
 // 				"error": saveErr,
 // 			}).WithDescription(fmt.Sprintf("Failed persisting application %s", parsedBody.Name)).Build()
 
-// 			_ = provider.PersistEvent(event)
+// 			_ = provider.PersistEvent(*event,nil)
 // 			go h.config.EventBroadcaster.Publish(userID, event)
 // 			addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 // 			go h.EventsBuffer.Publish(&res)
@@ -494,7 +494,7 @@ package handlers
 // 		eventBuilder.WithSeverity(events.Informational)
 // 		event := eventBuilder.Build()
 // 		go h.config.EventBroadcaster.Publish(userID, event)
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 
 // 		var mesheryApplicationContent []models.MesheryApplication
 // 		err = json.Unmarshal(resp, &mesheryApplicationContent)
@@ -518,7 +518,7 @@ package handlers
 // 				"error": uploadSourceContentErr,
 // 			}).WithDescription("Failed uploading original application content to remote provider.").Build()
 
-// 			_ = provider.PersistEvent(event)
+// 			_ = provider.PersistEvent(*event,nil)
 // 			go h.config.EventBroadcaster.Publish(userID, event)
 // 			addMeshkitErr(&res, ErrApplicationSourceContent(err, obj))
 // 			go h.EventsBuffer.Publish(&res)
@@ -542,7 +542,7 @@ package handlers
 // 	h.formatApplicationOutput(rw, byt, format, &res, eventBuilder)
 
 // 	event := eventBuilder.Build()
-// 	_ = provider.PersistEvent(event)
+// 	_ = provider.PersistEvent(*event,nil)
 // 	go h.config.EventBroadcaster.Publish(userID, event)
 // }
 
@@ -573,7 +573,7 @@ package handlers
 // 			"error": ErrSaveApplication(fmt.Errorf("missing route variable \"source-type\" (one of %s, %s, %s)", models.K8sManifest, models.DockerCompose, models.HelmChart)),
 // 		}).WithDescription("Please provide application source-type").Build()
 
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		go h.EventsBuffer.Publish(&res)
 // 		return
@@ -598,7 +598,7 @@ package handlers
 // 			"error": ErrRetrieveUserToken(err),
 // 		}).WithDescription("No auth token provided in the request.").Build()
 
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		http.Error(rw, ErrRetrieveUserToken(err).Error(), http.StatusInternalServerError)
 // 		return
@@ -616,7 +616,7 @@ package handlers
 // 				"error": errAppSave,
 // 			}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.ApplicationData.Name)).Build()
 
-// 			_ = provider.PersistEvent(event)
+// 			_ = provider.PersistEvent(*event,nil)
 // 			go h.config.EventBroadcaster.Publish(userID, event)
 // 			addMeshkitErr(&res, ErrSavePattern(err))
 // 			go h.EventsBuffer.Publish(&res)
@@ -670,7 +670,7 @@ package handlers
 // 					"error": errAppSave,
 // 				}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.ApplicationData.Name)).Build()
 
-// 				_ = provider.PersistEvent(event)
+// 				_ = provider.PersistEvent(*event,nil)
 // 				go h.config.EventBroadcaster.Publish(userID, event)
 // 				addMeshkitErr(&res, ErrSavePattern(err))
 // 				go h.EventsBuffer.Publish(&res)
@@ -683,7 +683,7 @@ package handlers
 // 			h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
 // 			event := eventBuilder.Build()
 // 			// go h.config.EventBroadcaster.Publish(userID, event)
-// 			_ = provider.PersistEvent(event)
+// 			_ = provider.PersistEvent(*event,nil)
 
 // 			return
 // 		}
@@ -716,7 +716,7 @@ package handlers
 // 			"error": errAppSave,
 // 		}).WithDescription(fmt.Sprintf("Error saving application %s", parsedBody.ApplicationData.Name)).Build()
 
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		addMeshkitErr(&res, ErrApplicationFailure(err, obj))
 // 		go h.EventsBuffer.Publish(&res)
@@ -727,7 +727,7 @@ package handlers
 // 	eventBuilder.WithSeverity(events.Informational)
 // 	h.formatApplicationOutput(rw, resp, format, &res, eventBuilder)
 // 	event := eventBuilder.Build()
-// 	_ = provider.PersistEvent(event)
+// 	_ = provider.PersistEvent(*event,nil)
 // 	go h.config.EventBroadcaster.Publish(userID, event)
 
 // }
@@ -771,7 +771,7 @@ package handlers
 // 			"error": errAppFetch,
 // 		}).WithDescription("Error fetching applications").Build()
 // 		http.Error(rw, errAppFetch.Error(), http.StatusInternalServerError)
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		return
 // 	}
@@ -810,13 +810,13 @@ package handlers
 // 			"error": errAppDelete,
 // 		}).WithDescription("Error deleting application.").Build()
 // 		http.Error(rw, errAppDelete.Error(), http.StatusInternalServerError)
-// 		_ = provider.PersistEvent(event)
+// 		_ = provider.PersistEvent(*event,nil)
 // 		go h.config.EventBroadcaster.Publish(userID, event)
 // 		return
 // 	}
 
 // 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("Application %s deleted.", mesheryApplication.Name)).Build()
-// 	_ = provider.PersistEvent(event)
+// 	_ = provider.PersistEvent(*event,nil)
 // 	go h.config.EventBroadcaster.Publish(userID, event)
 
 // 	go h.config.ApplicationChannel.Publish(userID, struct{}{})

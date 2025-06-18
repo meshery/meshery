@@ -18,7 +18,7 @@ jobs:
       uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
       with:
         name: e2e-test-reporter
-        github-token: ${{ secrets.GH_ACCESS_TOKEN }}
+        github-token: ${{ secrets.MESHERY_CI }}
         run-id: ${{ github.event.workflow_run.id }}
     - name: Retrieve PR Number
       run: |

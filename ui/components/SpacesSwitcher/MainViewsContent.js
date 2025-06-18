@@ -51,6 +51,8 @@ const MainViewsContent = ({
   workspace,
   refetch,
   isMultiSelectMode,
+  showWorkspaceName = true,
+  showOrganizationName = true,
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [shareModal, setShareModal] = useState(false);
@@ -221,6 +223,8 @@ const MainViewsContent = ({
             return (
               <React.Fragment key={view?.id}>
                 <DesignViewListItem
+                  showOrganizationName={showOrganizationName}
+                  showWorkspaceName={showWorkspaceName}
                   type="view"
                   selectedItem={view}
                   handleItemClick={() => {

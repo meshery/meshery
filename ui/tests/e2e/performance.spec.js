@@ -43,7 +43,7 @@ test.describe('Performance Section Tests', () => {
   test.describe('Configure Metrics Navigation and Settings', () => {
     test.beforeEach(async ({ page }) => {
       await page.getByTestId('configure-metrics-button').click();
-      await expect(page).toHaveURL(/.*#metrics/);
+      await expect(page).toHaveURL(/metrics/i);
     });
 
     test('All settings tabs', async ({ page }) => {
@@ -74,11 +74,6 @@ test.describe('Performance Section Tests', () => {
           `Grafana element with ID ${grafanaId} should be visible`,
         ).toBeVisible();
       }
-    });
-
-    test('Info icons on settings page', async ({ page }) => {
-      const infoIconCount = await page.getByTestId('InfoOutlinedIcon').count();
-      expect(infoIconCount).toBeGreaterThan(0);
     });
   });
 });

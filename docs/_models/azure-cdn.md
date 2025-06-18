@@ -56,7 +56,37 @@ components:
   description: 
 components-count: 11
 relationships: 
-relationship-count: 0
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of Reule Set CDN(parent component) is patched with the configuration of Rule(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of AfdEndpoint CDN(parent component) is patched with the configuration of Route(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of AfdOriginGroup CDN(parent component) is patched with the configuration of AfdOrigin(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of AfdCustomDomain(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of AfdEndpoint(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of AfdOriginGroup(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of ProfilesEndpoint(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of RuleSet(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of Secret(child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of SecurityPolicy(child component). "
+relationship-count: 10
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

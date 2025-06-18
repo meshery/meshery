@@ -56,7 +56,7 @@ func (h *Handler) PatternFileHandler(
 	provider models.Provider,
 ) {
 	userID := uuid.FromStringOrNil(user.ID)
-	token, _ := r.Context().Value(models.TokenCtxKey).(string)
+	// token, _ := r.Context().Value(models.TokenCtxKey).(string)
 	var payload models.MesheryPatternFileDeployPayload
 	var patternFileByte []byte
 
@@ -99,7 +99,7 @@ func (h *Handler) PatternFileHandler(
 	if err != nil {
 		err = ErrPatternFile(err)
 		event := events.NewEvent().ActedUpon(payload.PatternID).FromSystem(*h.SystemID).FromUser(userID).WithCategory("pattern").WithAction("view").WithDescription("Failed to parse design").WithMetadata(map[string]interface{}{"error": err, "id": payload.PatternID}).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
@@ -115,7 +115,7 @@ func (h *Handler) PatternFileHandler(
 		}, eventBuilder)
 
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		if err != nil {
@@ -177,7 +177,7 @@ func (h *Handler) PatternFileHandler(
 		}
 
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to %s design '%s'.", action, patternFile.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(err)
@@ -204,13 +204,10 @@ func (h *Handler) PatternFileHandler(
 		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
 	}
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go func() {
 		h.config.EventBroadcaster.Publish(userID, event)
-		err = provider.PublishEventToProvider(token, *event)
-		if err != nil {
-			h.log.Warn(ErrPersistEventToRemoteProvider(err))
-		}
+
 	}()
 
 	ec := json.NewEncoder(rw)

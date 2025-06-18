@@ -13,11 +13,11 @@ components:
 - name: hazelcast-version
   colorIcon: assets/img/integrations/kubedb-catalog/components/hazelcast-version/icons/color/hazelcast-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-catalog/components/hazelcast-version/icons/white/hazelcast-version-white.svg
-  description: App Definition and Development
+  description: 
 - name: oracle-version
   colorIcon: assets/img/integrations/kubedb-catalog/components/oracle-version/icons/color/oracle-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-catalog/components/oracle-version/icons/white/oracle-version-white.svg
-  description: App Definition and Development
+  description: 
 - name: click-house-version
   colorIcon: assets/img/integrations/kubedb-catalog/components/click-house-version/icons/color/click-house-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-catalog/components/click-house-version/icons/white/click-house-version-white.svg
