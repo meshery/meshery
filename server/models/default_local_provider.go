@@ -83,7 +83,7 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistCredentials},
 	}
 	l.TMPMeshsyncDeploymentMode = "operator"
-	if viper.GetBool("TMP_MESHYNC_AS_A_LIBRARY_MODE") {
+	if viper.GetBool("TMP_MESHSYNC_AS_A_LIBRARY_MODE") {
 		l.TMPMeshsyncDeploymentMode = "library"
 	}
 }
