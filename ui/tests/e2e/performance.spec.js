@@ -16,12 +16,7 @@ const ACTION_BUTTONS = [
 
 const GRAFANA_ELEMENTS = ['grafana-api-key'];
 
-const COMMON_UI_ELEMENTS = [
-  'navigation',
-  'notification-button',
-  'profile-button',
-  'header-menu',
-];
+const COMMON_UI_ELEMENTS = ['navigation', 'notification-button', 'profile-button', 'header-menu'];
 
 test.describe('Performance Section Tests', () => {
   test.beforeEach(async ({ page }) => {
