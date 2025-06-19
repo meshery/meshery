@@ -8,7 +8,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
 
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
 )

@@ -34,7 +34,7 @@ import (
 	"github.com/spf13/viper"
 	controllerConfig "sigs.k8s.io/controller-runtime/pkg/client/config"
 
-	"github.com/meshery/meshery-operator/api/v1alpha1"
+	"github.com/layer5io/meshery-operator/api/v1alpha1"
 )
 
 var (

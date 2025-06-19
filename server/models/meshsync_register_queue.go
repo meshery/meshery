@@ -3,7 +3,7 @@ package models
 import (
 	"sync"
 
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 )
 
 var (
