@@ -1368,8 +1368,8 @@ github.com/meshery/meshery-operator v0.8.7 h1:SsiyDiPEcibYtoHlYyziwvCcBVfZOCJxq4
 github.com/meshery/meshery-operator v0.8.7/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
 github.com/meshery/meshkit v0.8.33 h1:OowG1gn3nsN0RPfgmoPj1Kota9TXP/TUppmZ80kYXmU=
 github.com/meshery/meshkit v0.8.33/go.mod h1:Ym2z/5oSQn1jDQr+Qjmm9pBW7jv+8oXqp5+RYr9NXQI=
-github.com/meshery/meshsync v0.0.0-20250617211503-8f3214d4fe74 h1:wSq/BrapSVKkcHUrtKs8Gt6IXAUfie6Aywt2DcD04Hc=
-github.com/meshery/meshsync v0.0.0-20250617211503-8f3214d4fe74/go.mod h1:Ys92h4ZPpVct8g5njMi3NpFAjm6OTZls30p3/DmgS90=
+github.com/meshery/meshsync v0.8.15 h1:E0O+p6MtcKWsLPG8WSBXjUlIipg96hmwuk74Pbk6qbg=
+github.com/meshery/meshsync v0.8.15/go.mod h1:Ys92h4ZPpVct8g5njMi3NpFAjm6OTZls30p3/DmgS90=
 github.com/meshery/schemas v0.8.22 h1:JQ7PoEheiXdkIG/h965L+DB7p/JdGEgs3i5r0EniSt4=
 github.com/meshery/schemas v0.8.22/go.mod h1:tuAmsG9WJRjZ0Iv12HIAhKZbWpfpkTRjfPNThKbr7HA=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
