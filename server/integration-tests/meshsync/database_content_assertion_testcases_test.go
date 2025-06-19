@@ -2,13 +2,11 @@ package meshsync
 
 import (
 	"fmt"
+	"github.com/meshery/meshkit/database"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
-
-	// TODO do not forget to update to meshery/meshsync
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
-	"github.com/meshery/meshkit/database"
-	"github.com/stretchr/testify/assert"
 )
 
 // as defined in infrastructure/setup.sh
