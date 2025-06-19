@@ -5,7 +5,7 @@ import RelationshipFormStepper from './RelationshipFormStepper';
 const CreateRelationshipModal = ({ isRelationshipModalOpen, setIsRelationshipModalOpen }) => {
   return (
     <Modal
-      maxWidth="sm"
+      maxWidth="md"
       open={isRelationshipModalOpen}
       closeModal={() => setIsRelationshipModalOpen(false)}
       title="Create Relationship"
