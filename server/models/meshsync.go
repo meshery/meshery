@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/meshery/meshsync/pkg/model"
+	"github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
