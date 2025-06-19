@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
-	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
+	operatorv1alpha1 "github.com/meshery/meshery-operator/api/v1alpha1"
+	operatorClient "github.com/meshery/meshery-operator/pkg/client"
 	"github.com/meshery/meshery/server/models"
 	brokerpkg "github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/broker/nats"
