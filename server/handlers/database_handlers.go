@@ -9,10 +9,10 @@ import (
 	"path"
 	"time"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 	"gorm.io/gorm/clause"
 )
