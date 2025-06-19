@@ -2,8 +2,8 @@ package meshsync
 
 import (
 	"fmt"
+	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/meshkit/database"
-	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/stretchr/testify/assert"
 	"strings"
 	"testing"
