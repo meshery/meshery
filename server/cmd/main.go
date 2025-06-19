@@ -12,7 +12,6 @@ import (
 	"github.com/fsnotify/fsnotify"
 
 	"github.com/gofrs/uuid"
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/helpers"
@@ -32,6 +31,7 @@ import (
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 
 	"github.com/meshery/schemas/models/v1beta1/environment"
