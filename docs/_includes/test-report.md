@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 19th 2025, 8:18:55 pm
+- Testing started at: June 19th 2025, 9:13:20 pm
 
 **📦 Test Result Summary**
 
-- ✅ 76 passed
-- ❌ 0 failed
-- ⚠️ 1 flaked
-- ⏩ 0 skipped
+- ✅ 80 passed
+- ❌ 2 failed
+- ⚠️ 0 flaked
+- ⏩ 1 skipped
 
-⌛ _Duration: 6 minutes and 4 seconds_
+⌛ _Duration: 8 minutes and 47 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,7 +21,9 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
+| 1 | chromium-local-provider | Import a Model via CSV Import |  | ❌ |
+| 2 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
+| 3 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
 
 </div>
 </details>
