@@ -11,6 +11,7 @@ import {
   Typography,
   FormControl,
   Grid2,
+  MenuItem,
 } from '@sistent/sistent';
 import { GlobalStyles } from '@mui/material';
 import { styled } from '@sistent/sistent';
@@ -21,7 +22,8 @@ import LinkIcon from '@mui/icons-material/Link';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { downloadFileFromContent } from '@/utils/fileDownloader';
 import RJSFWrapper from '../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import _ from 'lodash';
+import omit from 'lodash/omit';
+import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
 
 const StyledSummaryBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.blur?.heavy,
@@ -38,7 +40,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const RelationshipDefinitionV1Alpha3Schema =
     RelationshipDefinitionV1Alpha3OpenApiSchema.components.schemas.RelationshipDefinition;
 
-  const filteredSchema = _.omit(RelationshipDefinitionV1Alpha3Schema, ['properties.capabilities']);
+  const filteredSchema = omit(RelationshipDefinitionV1Alpha3Schema, ['properties.capabilities']);
   // -> added zIndex so dropdown appears above the modal (mui default zIndex:1300)
   const globalStyles = (
     <GlobalStyles
@@ -64,7 +66,34 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const [jsonOutput, setJsonOutput] = React.useState('');
   const formRef = React.useRef();
 
+  const [selectedCategory, setSelectedCategory] = React.useState(null);
+  const [selectedModel, setSelectedModel] = React.useState(null);
+  const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } =
+    useMeshModelComponents();
+
   const handleFormChange = (formData) => {
+    if (selectedModel && selectedCategory) {
+      const modelData = models[selectedCategory]?.find((model) => model.name === selectedModel);
+
+      if (modelData) {
+        formData = {
+          ...formData,
+          model: {
+            ...formData.model,
+            id: modelData.id,
+            name: modelData.name,
+            schemaVersion: modelData.schemaVersion,
+            subCategory: modelData.subCategory,
+            status: modelData.status,
+            version: modelData.version,
+            displayName: modelData.displayName,
+            registrant: modelData.registrant,
+            metadata: modelData.metadata,
+          },
+        };
+      }
+    }
+
     setFormData(formData);
   };
 
@@ -75,6 +104,40 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
       `${relationshipName || 'relationship'}.json`,
       'application/json',
     );
+  };
+
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value);
+    getModelFromCategory(event.target.value);
+    setSelectedModel(null);
+  };
+
+  const handleModelChange = (event) => {
+    if (event.target.value) {
+      getComponentsFromModel(event.target.value);
+      setSelectedModel(event.target.value);
+
+      const modelData = models[selectedCategory]?.find(
+        (model) => model.name === event.target.value,
+      );
+      if (modelData) {
+        setFormData((prevData) => ({
+          ...prevData,
+          model: {
+            ...formData.model,
+            id: modelData.id,
+            name: modelData.name,
+            schemaVersion: modelData.schemaVersion,
+            subCategory: modelData.subCategory,
+            status: modelData.status,
+            version: modelData.version,
+            displayName: modelData.displayName,
+            registrant: modelData.registrant,
+            metadata: modelData.metadata,
+          },
+        }));
+      }
+    }
   };
 
   const relationshipStepper = useStepper({
@@ -107,6 +170,91 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                   />
                 </FormControl>
               </Grid2>
+
+              <Grid2 size={{ xs: 12 }}>
+                <Typography variant="subtitle1" mt={2} mb={1}>
+                  Select Model Category and Type
+                </Typography>
+              </Grid2>
+
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <FormControl fullWidth>
+                  <TextField
+                    select={true}
+                    SelectProps={{
+                      MenuProps: {
+                        anchorOrigin: {
+                          vertical: 'bottom',
+                          horizontal: 'left',
+                        },
+                        getContentAnchorEl: null,
+                      },
+                      renderValue: (selected) => {
+                        if (!selected || selected.length === 0) {
+                          return <em>Select Category</em>;
+                        }
+                        return selected;
+                      },
+                      displayEmpty: true,
+                    }}
+                    id="category-selector"
+                    value={selectedCategory || ''}
+                    onChange={handleCategoryChange}
+                    fullWidth
+                    variant="outlined"
+                    helperText="Select a model category"
+                  >
+                    <MenuItem value="" disabled>
+                      <em>Select Category</em>
+                    </MenuItem>
+                    {categories.map((cat) => (
+                      <MenuItem key={cat.name} value={cat.name}>
+                        {cat.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </FormControl>
+              </Grid2>
+
+              <Grid2 size={{ xs: 12, sm: 6 }}>
+                <FormControl fullWidth>
+                  <TextField
+                    select={true}
+                    disabled={!selectedCategory}
+                    SelectProps={{
+                      MenuProps: {
+                        anchorOrigin: {
+                          vertical: 'bottom',
+                          horizontal: 'left',
+                        },
+                        getContentAnchorEl: null,
+                      },
+                      renderValue: (selected) => {
+                        if (!selected || selected.length === 0) {
+                          return <em>Select Model</em>;
+                        }
+                        return selected;
+                      },
+                      displayEmpty: true,
+                    }}
+                    id="model-selector"
+                    value={selectedModel || ''}
+                    onChange={handleModelChange}
+                    fullWidth
+                    variant="outlined"
+                    helperText="Select a model type"
+                  >
+                    <MenuItem value="" disabled>
+                      <em>Select Model</em>
+                    </MenuItem>
+                    {models?.[selectedCategory]?.map((model, idx) => (
+                      <MenuItem key={`${model.name}-${idx}`} value={model.name}>
+                        {model.displayName}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </FormControl>
+              </Grid2>
             </Grid2>
           </div>
         ),
@@ -134,6 +282,18 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
             <Box display="flex" alignItems="center">
               <Typography>Define your relationship properties using the form below.</Typography>
             </Box>
+
+            {selectedModel && meshmodelComponents[selectedModel] && (
+              <Box mb={3} mt={2}>
+                <Typography variant="subtitle1" mb={1}>
+                  Selected Model: <strong>{selectedModel}</strong>
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  The form below will be pre-populated with some values from your selected model.
+                </Typography>
+              </Box>
+            )}
+
             <Box>
               <RJSFWrapper
                 jsonSchema={filteredSchema}
@@ -207,7 +367,11 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
 
   const transitionConfig = {
     0: {
-      canGoNext: () => relationshipName && /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(relationshipName),
+      canGoNext: () =>
+        relationshipName &&
+        /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(relationshipName) &&
+        selectedCategory &&
+        selectedModel,
       nextButtonText: 'Next',
       nextAction: () => relationshipStepper.handleNext(),
     },
