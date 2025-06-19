@@ -12,6 +12,26 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { styled } from '@sistent/sistent';
+
+const StyledTableContainer = styled('div')({
+  '& .MuiTableHead-root': {
+    position: 'sticky',
+    top: 0,
+    backgroundColor: '#212121',
+    zIndex: 10,
+  },
+  '& .MuiPaper-root': {
+    position: 'relative',
+  },
+  '& .MuiTable-root': {
+    tableLayout: 'fixed',
+  },
+  '& .MuiTableCell-head': {
+    backgroundColor: '#212121',
+    color: '#fff',
+  },
+});
 
 const DatabaseSummary = (props) => {
   const [page, setPage] = useState(0);
@@ -160,14 +180,16 @@ const DatabaseSummary = (props) => {
           />
         </div>
       </ToolWrapper>
-      <ResponsiveDataTable
-        data={databaseSummary?.tables}
-        options={table_options}
-        columns={columns}
-        tableCols={tableCols}
-        updateCols={updateCols}
-        columnVisibility={columnVisibility}
-      />
+      <StyledTableContainer>
+        <ResponsiveDataTable
+          data={databaseSummary?.tables}
+          options={table_options}
+          columns={columns}
+          tableCols={tableCols}
+          updateCols={updateCols}
+          columnVisibility={columnVisibility}
+        />
+      </StyledTableContainer>
     </>
   );
 };
