@@ -104,15 +104,17 @@ func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers
 		log.Debug("broker monitor endpoint", monitorEndpoint, err)
 
 		if meshsyncStatus == controllers.Connected.String() {
-			brokerEndpoint, _ := broker.GetPublicEndpoint()
-			meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
+			brokerEndpoint, err := broker.GetPublicEndpoint()
+			if err != nil {
+				log.Warn(err) // Log the original error
+			} else if brokerEndpoint == "" {
+				log.Warn(fmt.Errorf("broker public endpoint is empty")) // Log a new error
+			} else {
+				meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
+			}
 		}
 	}
-	version, err := meshsync.GetVersion()
-	if err != nil {
-		log.Warnf("failed to get meshsync version: %v", err)
-		version = "unknown"
-	}
+	version, _ := meshsync.GetVersion()
 	meshsyncControllerStatus := OperatorControllerStatus{
 		Name:    meshsync.GetName(),
 		Version: version,
