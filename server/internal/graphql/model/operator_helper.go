@@ -108,7 +108,11 @@ func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers
 			meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
 		}
 	}
-	version, _ := meshsync.GetVersion()
+	version, err := meshsync.GetVersion()
+	if err != nil {
+		log.Warnf("failed to get meshsync version: %v", err)
+		version = "unknown"
+	}
 	meshsyncControllerStatus := OperatorControllerStatus{
 		Name:    meshsync.GetName(),
 		Version: version,
