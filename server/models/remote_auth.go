@@ -108,6 +108,9 @@ func (l *RemoteProvider) refreshToken(tokenString string) (string, error) {
 func (l *RemoteProvider) doRequestHelper(req *http.Request, token string) (*http.Response, error) {
 	c := &http.Client{}
 	req.Header.Set("Authorization", fmt.Sprintf("bearer %s", token))
+	// if token == models.GlobalTokenForAnonymousResults { // disabling because of import cycle
+	req.Header.Set("X-API-Key", token) // adds the token as special passphrase incase the token is a special passphrase
+	// }
 	req.Header.Set("SystemID", viper.GetString("INSTANCE_ID")) // Adds the system id to the header for event tracking
 	resp, err := c.Do(req)
 	if err != nil {
