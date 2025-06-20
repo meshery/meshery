@@ -15,7 +15,6 @@ import {
   Tabs,
   CustomTooltip,
   Box,
-  Stack,
   EditIcon,
   CloseIcon,
   SaveAsIcon,
@@ -228,7 +227,7 @@ const Dashboard = () => {
     },
   };
 
-  const topBarActions = Object.entries(_.omit(LayoutActions, 'START_EDIT'))
+  const topBarActions = Object.entries(LayoutActions)
     .filter(([, action]) => action.isShown)
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
@@ -316,17 +315,77 @@ const Dashboard = () => {
         <TabPanel value={resourceCategory} index={'Overview'}>
           <Box display="flex" flexDirection={'column'} gap="1rem">
             <Box padding={0} width={'100%'}>
-              <Stack
-                direction="row"
-                useFlexGap
-                gap="0rem 2rem"
-                justifyContent="end"
-                flexWrap={'wrap-reverse'}
+              <Box
+                position="absolute"
+                bottom={20}
+                left={43}
+                zIndex={1300}
+                sx={{
+                  display: 'flex',
+                  gap: 1.5,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
               >
-                {topBarActions.map(({ key, ...layoutAction }) => (
-                  <LayoutActionButton {...layoutAction} key={key} />
+                {topBarActions.map(({ key, label, Icon, action, description }) => (
+                  <CustomTooltip key={key} title={description || label} placement="bottom">
+                    <Box
+                      component="button"
+                      onClick={action}
+                      sx={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: '16px',
+                        border: `1px solid ${
+                          theme.palette.mode === 'dark'
+                            ? 'rgba(0, 179, 159, 0.3)'
+                            : 'rgba(0, 179, 159, 0.2)'
+                        }`,
+                        backgroundColor:
+                          theme.palette.mode === 'dark'
+                            ? 'rgba(255, 255, 255, 0.3)'
+                            : 'rgba(35, 35, 35, 0.2)',
+                        backdropFilter: 'blur(20px)',
+                        color: '#FFFFFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow:
+                          theme.palette.mode === 'dark'
+                            ? '0 8px 32px rgba(0, 179, 159, 0.2)'
+                            : '0 8px 32px rgba(60, 73, 79, 0.1)',
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        '&:hover': {
+                          transform: 'translateY(-2px) scale(1.05)',
+                          backgroundColor:
+                            theme.palette.mode === 'dark'
+                              ? 'rgba(255, 255, 255, 0.5)'
+                              : 'rgba(35, 35, 35, 0.5)', 
+                          borderColor:
+                            theme.palette.mode === 'dark'
+                              ? '#00B39F'
+                              : 'rgba(0, 179, 159, 0.4)',
+                          boxShadow:
+                            theme.palette.mode === 'dark'
+                              ? '0 12px 40px rgba(0, 179, 159, 0.3)' 
+                              : '0 12px 40px rgba(0, 179, 159, 0.15)',
+                         
+                        },
+                        '&:active': {
+                          transform: 'translateY(0) scale(0.95)',
+                          backgroundColor:
+                            theme.palette.mode === 'dark'
+                              ? 'rgba(0, 179, 159, 0.2)'
+                              : 'rgba(0, 179, 159, 0.1)',
+                        },
+                      }}
+                    >
+                      <Icon sx={{ fontSize: 22 }} />
+                    </Box>
+                  </CustomTooltip>
                 ))}
-              </Stack>
+              </Box>
 
               <ResponsiveReactGridLayout
                 layouts={dashboardLayout}
@@ -359,7 +418,6 @@ const Dashboard = () => {
                   );
                 })}
               </ResponsiveReactGridLayout>
-              <LayoutActionButton {...LayoutActions.START_EDIT} />
             </Box>
             <AddWidgetsToLayoutPanel
               editMode={isEditMode}
