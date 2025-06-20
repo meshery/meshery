@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -29,10 +30,30 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
+	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok {
+		errToken := ErrConnectAction(fmt.Errorf("failed to retrieve user token"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errToken})
+		return machines.NoOp, eventBuilder.Build(), errToken
+
+	}
+	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ID)
+	connection, _, err := provider.GetConnectionByIDAndKind(
+		token,
+		connectionID,
+		"kubernetes",
+	)
+	if err != nil {
+		errConnection := ErrConnectAction(err)
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
+		return machines.NoOp, eventBuilder.Build(), errConnection
+
+	}
 
 	go func() {
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
 			AddCtxControllerHandlers(machinectx.K8sContext).
+			SetMeshsyncDeploymentMode(models.MeshsyncDeploymentModeFromString(connection.MeshsyncDeploymentMode)).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker)
 		ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)

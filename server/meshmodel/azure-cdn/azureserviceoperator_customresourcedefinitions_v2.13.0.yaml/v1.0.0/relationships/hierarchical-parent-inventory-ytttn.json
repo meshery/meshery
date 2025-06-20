@@ -96,6 +96,7 @@
               "mutatedRef": [
                 [
                   "configuration",
+                  "spec",
                   "owner",
                   "name"
                 ]
