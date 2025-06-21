@@ -1,1 +1,4 @@
-folder not_existing_folder/aws-ec2-controller/v0.1.0 does not exist
+Usage: mesheryctl exp model build [model-name] --version [version]
+Run 'mesheryctl exp model build --help' to see detailed help message.
+
+.folder not_existing_folder/aws-ec2-controller/v0.1.0 does not exist

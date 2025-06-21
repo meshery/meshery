@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -81,13 +81,13 @@ func TestModelBuild(t *testing.T) {
 			Name:             "model build no params",
 			Args:             []string{"build"},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.invalid-amount-of-args.golden",
+			ExpectedResponse: "model.build.error.usage.golden",
 		},
 		{
 			Name:             "model build version not specified",
 			Args:             []string{"build", "aws-ec2-controller", "--version", ""},
 			ExpectError:      true,
-			ExpectedResponse: "model.build.error.version-not-specified.golden",
+			ExpectedResponse: "model.build.error.usage.golden",
 		},
 		{
 			Name:             "model build folder does not exist",

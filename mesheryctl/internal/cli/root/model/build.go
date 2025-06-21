@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	meshkitOci "github.com/layer5io/meshkit/models/oci"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	meshkitOci "github.com/meshery/meshkit/models/oci"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -25,8 +25,9 @@ Documentation for exp model and subcommands can be found at https://docs.meshery
 mesheryctl exp model build [model-name] --version [version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl exp model build [model-name] --version [version]\nRun 'mesheryctl exp model build --help' to see detailed help message"
 		if len(args) != 1 {
-			return ErrModelBuildFromStrings("must provide only one argument: model name")
+			return ErrModelBuildFromStrings(errMsg)
 		}
 		// do not validate model name, path and version,
 		// as their purpose is to combine into the folder
@@ -37,7 +38,7 @@ mesheryctl exp model build [model-name] --version [version]
 
 		// validate version is not empty
 		if version == "" {
-			return ErrModelBuildFromStrings("--version cannot be blank")
+			return ErrModelBuildFromStrings(errMsg)
 		}
 
 		{
@@ -46,6 +47,8 @@ mesheryctl exp model build [model-name] --version [version]
 			_, err := os.Stat(folder)
 			if os.IsNotExist(err) {
 				return ErrModelBuildFromStrings(
+					errMsg,
+					"\n\n",
 					fmt.Sprintf(
 						"folder %s does not exist",
 						folder,
