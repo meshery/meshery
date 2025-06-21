@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 
+	goerrors "errors"
+
 	"github.com/meshery/meshkit/errors"
 )
 
@@ -39,10 +41,14 @@ func ErrModelInit(err error) error {
 	return ErrModelInitFromString(err.Error())
 }
 
-func ErrModelBuildFromStrings(messages ...string) error {
-	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, messages, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
+func ErrModelBuildFromStrings(message ...string) error {
+	errs := make([]error, 0, len(message))
+	for _, m := range message {
+		errs = append(errs, goerrors.New(m))
+	}
+	return ErrModelBuild(goerrors.Join(errs...))
 }
 
 func ErrModelBuild(err error) error {
-	return ErrModelBuildFromStrings(err.Error())
+	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
 }
