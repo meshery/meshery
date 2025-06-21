@@ -126,6 +126,7 @@ func TestGetMeshSyncInfo_NilMeshsync(t *testing.T) {
 	// Call GetMeshSyncInfo with a nil broker
 	statusResult := model.GetMeshSyncInfo(nil, nil, log)
 
-	// Assert that the status is Unknown
+	// Assert that the status is Unknown and the name is empty
 	assert.Equal(t, model.StatusUnknown, statusResult.Status)
+	assert.Empty(t, statusResult.Name)
 }
