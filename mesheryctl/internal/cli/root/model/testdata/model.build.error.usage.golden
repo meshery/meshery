@@ -1,0 +1,2 @@
+Usage: mesheryctl exp model build [model-name] --version [version]
+Run 'mesheryctl exp model build --help' to see detailed help message
