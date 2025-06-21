@@ -92,6 +92,12 @@ func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) Op
 }
 
 func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
+	if meshsync == nil {
+		log.Warn(fmt.Errorf("operator_helper::GetMeshSyncInfo: meshsync controller is nil"))
+		return OperatorControllerStatus{
+			Status: StatusUnknown,
+		}
+	}
 	meshsyncStatus := meshsync.GetStatus().String()
 
 	// change the type of IMesheryController GetName() to to models.MesheryController
