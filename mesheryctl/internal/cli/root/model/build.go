@@ -48,9 +48,8 @@ mesheryctl exp model build [model-name] --version [version]
 			if os.IsNotExist(err) {
 				return ErrModelBuildFromStrings(
 					errMsg,
-					"\n\n",
 					fmt.Sprintf(
-						"folder %s does not exist",
+						"\nfolder %s does not exist",
 						folder,
 					),
 				)
