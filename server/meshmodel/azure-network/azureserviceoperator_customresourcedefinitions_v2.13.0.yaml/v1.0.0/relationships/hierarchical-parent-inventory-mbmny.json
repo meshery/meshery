@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "Reltionship child parent for network",
+    "description": "A hierarchical inventory relationship in which the configuration of Virtual Network (parent component) is patched with the configuration of Subnet (child component). ",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -53,7 +53,7 @@
         "from": [
           {
             "id": null,
-            "kind": "Subnet",
+            "kind": "VirtualNetworksSubnet",
             "match": {},
             "match_strategy_matrix": null,
             "model": {
@@ -93,9 +93,12 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
+              "mutatedRef": [
                 [
-                  "owner"
+                  "configuration",
+                  "spec",
+                  "owner",
+                  "name"
                 ]
               ]
             }
@@ -144,9 +147,11 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
+              "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "metadata",
+                  "name"
                 ]
               ]
             }
