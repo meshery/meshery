@@ -141,13 +141,13 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		err := msDataHandler.Run()
 		if err != nil {
 			mch.log.Warn(err)
-			mch.log.Info(fmt.Sprintf("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error()))
+			mch.log.Infof("Unable to connect MeshSync for Kubernetes context (%s) due to: %s", ctxID, err.Error())
 			return mch
 		}
 		mch.ctxMeshsyncDataHandler = msDataHandler
 		// TODO
 		// this could be misleading, if meshsync as library failed
-		mch.log.Info(fmt.Sprintf("MeshSync connected for Kubernetes context (%s)", ctxID))
+		mch.log.Infof("MeshSync connected for Kubernetes context (%s)", ctxID)
 	}
 
 	// }(mch)
@@ -185,10 +185,10 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 
 	if err != nil {
 		mch.log.Warn(err)
-		mch.log.Info(fmt.Sprintf("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error()))
+		mch.log.Infof("MeshSync not configured for Kubernetes context (%v) due to '%v'", ctxID, err.Error())
 		return nil
 	}
-	mch.log.Info(fmt.Sprintf("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID))
+	mch.log.Infof("Connected to Meshery Broker (%v) for Kubernetes context (%v)", brokerEndpoint, ctxID)
 	return brokerHandler
 }
 

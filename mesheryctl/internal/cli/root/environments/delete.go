@@ -67,7 +67,7 @@ mesheryctl environment delete [environmentId]
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info(fmt.Sprintf("Environment with ID %s has been deleted", args[0]))
+			utils.Log.Infof("Environment with ID %s has been deleted", args[0])
 			return nil
 		}
 

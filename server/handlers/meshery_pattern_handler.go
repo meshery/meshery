@@ -683,24 +683,24 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
 
 	exportFormat := r.URL.Query().Get("export")
-	h.log.Info(fmt.Sprintf("Export format received: '%s'", exportFormat))
+	h.log.Infof("Export format received: '%s'", exportFormat)
 
 	if exportFormat != "" {
 		var errConvert error
-		h.log.Info(fmt.Sprintf("Attempting to create converter for format: '%s'", exportFormat))
+		h.log.Infof("Attempting to create converter for format: '%s'", exportFormat)
 
-		h.log.Info(fmt.Sprintf("Available formats - K8sManifest: '%s', HelmChart: '%s'",
-			converter.K8sManifest, converter.HelmChart))
+		h.log.Infof("Available formats - K8sManifest: '%s', HelmChart: '%s'",
+			converter.K8sManifest, converter.HelmChart)
 
 		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
 		if errConvert != nil {
-			h.log.Info(fmt.Sprintf("Failed to create converter: %v", errConvert))
+			h.log.Infof("Failed to create converter: %v", errConvert)
 			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
 			h.log.Error(err)
 			http.Error(rw, err.Error(), http.StatusBadRequest)
 			return
 		}
-		h.log.Info(fmt.Sprintf("Successfully created converter for format: '%s'", exportFormat))
+		h.log.Infof("Successfully created converter for format: '%s'", exportFormat)
 	}
 
 	patternID := mux.Vars(r)["id"]
@@ -941,7 +941,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		h.log.Info(fmt.Sprintf("OCI Image built. Digest: %v, Size: %v", digest, size))
+		h.log.Infof("OCI Image built. Digest: %v, Size: %v", digest, size)
 
 		eventBuilder.WithSeverity(events.Informational).WithDescription(fmt.Sprintf("OCI Image built. Digest: %v, Size: %v", digest, size))
 		event := eventBuilder.Build()
