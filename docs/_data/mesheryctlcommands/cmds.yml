@@ -75,7 +75,7 @@ system:
           usage: mesheryctl system start --skip-update
         reset:
           name: --reset
-          description: Reset Meshery’s configuration file to default settings.
+          description: Reset Meshery's configuration file to default settings.
           usage: mesheryctl system start --reset
         skip-browser:
           name: --skip-browser
@@ -94,7 +94,7 @@ system:
       flags:
         reset:
           name: --reset
-          description: Reset Meshery’s configuration file to default settings.
+          description: Reset Meshery's configuration file to default settings.
           usage: mesheryctl system stop --reset
         keep-namespace:
           name: --keep-namespace
@@ -547,6 +547,16 @@ perf:
           description: "(optional) View more information of the performance test results."
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
+
+    delete:
+      name: delete
+      description: Delete performance profile
+      usage: |
+        # Delete a performance profile by name
+        mesheryctl perf delete [profile-name]
+      example: |
+        # Delete a performance profile by name
+        mesheryctl perf delete profile-name
 
 adapter:
   name: adapter

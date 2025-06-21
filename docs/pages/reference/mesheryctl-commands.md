@@ -403,7 +403,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command5 = site.data.mesheryctlcommands.cmds.perf %}
     <tr>
-      <td rowspan=20><a href="{{ site.baseurl }}/reference/mesheryctl/perf">{{ command5.name }}</a></td>
+      <td rowspan=21><a href="{{ site.baseurl }}/reference/mesheryctl/perf">{{ command5.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command5.description }}</td>
@@ -446,6 +446,18 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td>{{ subcommand3.description }}</td>
       </tr>
   {% for flag_hash in subcommand3.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+  {% endfor %}
+  {% assign subcommand4 = command5.subcommands.delete %}
+      <tr>
+        <td rowspan=1><a href="{{ site.baseurl }}/reference/mesheryctl/perf/delete">{{ subcommand4.name }}</a></td>
+        <td></td>
+        <td>{{ subcommand4.description }}</td>
+      </tr>
+  {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
       <tr>
         <td>{{ flag.name }}</td>
         <td>{{ flag.description }}</td>
