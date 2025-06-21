@@ -17,32 +17,46 @@ var buildModelCmd = &cobra.Command{
 	Use:   "build",
 	Short: "Create an OCI-compliant package from the model files",
 	Long: `Create an OCI-compliant package from the model files.
-Model files are taken from [path]/[model-name]/[version] folder.
+Model files are taken from [path]/[model-name]/[model-version] folder.
 Expects input to be in the format scaffolded by the model init command.
 Documentation for exp model and subcommands can be found at https://docs.meshery.io/reference/mesheryctl/exp/model`,
 	Example: `
 // Create an OCI-compliant package from the model files
-mesheryctl exp model build [model-name] --version [version]
+mesheryctl exp model build [model-name-version]/[model-version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp model build [model-name] --version [version]\nRun 'mesheryctl exp model build --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp model build [model-name]/[model-version]\nRun 'mesheryctl exp model build --help' to see detailed help message"
 		if len(args) != 1 {
 			return ErrModelBuildFromStrings(errMsg)
 		}
+
+		modelNameVersion := args[0]
+		path, _ := cmd.Flags().GetString("path")
+		name := ""
+		version := ""
+
+		{
+			parts := strings.Split(modelNameVersion, "/")
+			// input param is supposed to be [model-name]/[version]
+			if len(parts) != 2 {
+				return ErrModelBuildFromStrings(errMsg)
+			}
+			name = parts[0]
+			version = parts[1]
+		}
+
 		// do not validate model name, path and version,
 		// as their purpose is to combine into the folder
-		// only check if combined folder exists
-		modelName := args[0]
-		path, _ := cmd.Flags().GetString("path")
-		version, _ := cmd.Flags().GetString("version")
+		// only check if they y are not empty and combined folder exists
 
-		// validate version is not empty
-		if version == "" {
+		// validate name and version are not empty
+		if name == "" || version == "" {
 			return ErrModelBuildFromStrings(errMsg)
 		}
 
+		// check if combined folder exists
 		{
-			folder := buildModelCompileFolderName(path, modelName, version)
+			folder := buildModelCompileFolderName(path, name, version)
 			// if folder does not exist return with error
 			_, err := os.Stat(folder)
 			if os.IsNotExist(err) {
@@ -66,12 +80,15 @@ mesheryctl exp model build [model-name] --version [version]
 		}
 
 		// validation (if any) is done in PreRunE
-		modelName := args[0]
+		modelNameVersion := args[0]
+		parts := strings.Split(modelNameVersion, "/")
+		// it was validated that parts is exactly two elements slice in preRunE
+		name := parts[0]
+		version := parts[1]
 		path, _ := cmd.Flags().GetString("path")
-		version, _ := cmd.Flags().GetString("version")
 
 		// validation done above that args contains exactly one argument
-		folder := buildModelCompileFolderName(path, modelName, version)
+		folder := buildModelCompileFolderName(path, name, version)
 
 		// TODO validation over schema
 		// https://github.com/meshery/schemas/pull/306
@@ -83,10 +100,10 @@ mesheryctl exp model build [model-name] --version [version]
 		}
 
 		// Save OCI artifact into a tar file under current folder
-		imageName := buildModelCompileImageName(modelName, version)
+		imageName := buildModelCompileImageName(name, version)
 
 		utils.Log.Infof("Saving OCI artifact as %s", imageName)
-		if err := meshkitOci.SaveOCIArtifact(img, imageName, modelName); err != nil {
+		if err := meshkitOci.SaveOCIArtifact(img, imageName, name); err != nil {
 			return ErrModelBuild(err)
 		}
 
@@ -96,26 +113,24 @@ mesheryctl exp model build [model-name] --version [version]
 
 func init() {
 	buildModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
-	// TODO make optional (if not specified look inside the model directory and take subfolder if only one subfolder, fail if few)
-	buildModelCmd.Flags().StringP("version", "", "", "(mandatory) model version")
 }
 
-func buildModelCompileFolderName(path string, modelName string, version string) string {
+func buildModelCompileFolderName(path string, name string, version string) string {
 	dirParts := make([]string, 0, 3)
 	if path != "" {
 		dirParts = append(dirParts, path)
 	}
-	dirParts = append(dirParts, modelName)
+	dirParts = append(dirParts, name)
 	if version != "" {
 		dirParts = append(dirParts, version)
 	}
 	return filepath.Join(dirParts...)
 }
 
-func buildModelCompileImageName(modelName string, version string) string {
+func buildModelCompileImageName(name string, version string) string {
 	return fmt.Sprintf(
 		"%s-%s.%s",
-		modelName,
+		name,
 		strings.ReplaceAll(version, ".", "-"),
 		"tar",
 	)

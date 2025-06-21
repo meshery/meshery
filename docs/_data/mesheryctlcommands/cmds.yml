@@ -1189,19 +1189,13 @@ exp:
       build:
         name: build
         description: Create an OCI-compliant package from the model files
-        usage: mesheryctl exp model build [model-name] --version [version] [flags]
+        usage: mesheryctl exp model build [model-name]/[model-version] [flags]
         flags:
-          version:
-            name: --version
-            description: (mandatory) model version, no default value   
-            usage: mesheryctl exp model build [model-name] --version [version]
-            example:
-              mesheryctl exp model init aws-ec2-controller --version v1.2.3
           path:
             name: --path, -p
             description: (optional) looks for a model folder under specified path, defaults to current dir.
-            usage: mesheryctl exp model build [model-name] --version [version] --path [path]
+            usage: mesheryctl exp model build [model-name]/[model-version] --path [path]
             example:
-              mesheryctl exp model build aws-ec2-controller --version v1.2.3 --path .
-              mesheryctl exp model build aws-ec2-controller --version v1.2.3 --path ./some/folder/where/to/look/for/files
+              mesheryctl exp model build aws-ec2-controller/v1.2.3 --path .
+              mesheryctl exp model build aws-ec2-controller/v1.2.3 --path ./some/folder/where/to/look/for/files
           
