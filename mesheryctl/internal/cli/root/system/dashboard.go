@@ -168,7 +168,7 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 						}
 					}
 				}()
-				log.Info(fmt.Sprintf("Forwarding port %v -> %v", options.podPort, localPort))
+				log.Infof("Forwarding port %v -> %v", options.podPort, localPort)
 				log.Info("Meshery UI available at: ", mesheryURL)
 				log.Info("Opening Meshery UI in default browser...")
 				err = utils.NavigateToBrowser(mesheryURL)
