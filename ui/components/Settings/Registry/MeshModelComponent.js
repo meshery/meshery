@@ -239,6 +239,98 @@ const MeshModelComponent_ = ({
     checked,
   ]);
 
+  useEffect(() => {
+    const fetchAllCounts = async () => {
+      try {
+        const modelsResponse = await getMeshModelsData(
+          {
+            params: {
+              page: 0,
+              pagesize: 1,
+              components: false,
+              relationships: false,
+            },
+          },
+          true,
+        );
+        if (modelsResponse.data && modelsResponse.data.total_count !== undefined) {
+          setCounts((prevCounts) => ({
+            ...prevCounts,
+            models: modelsResponse.data.total_count,
+          }));
+        }
+
+        const componentsResponse = await getComponentsData(
+          {
+            params: {
+              page: 0,
+              pagesize: 1,
+              trim: true,
+            },
+          },
+          true,
+        );
+        if (componentsResponse.data && componentsResponse.data.total_count !== undefined) {
+          setCounts((prevCounts) => ({
+            ...prevCounts,
+            components: componentsResponse.data.total_count,
+          }));
+        }
+
+        const relationshipsResponse = await getRelationshipsData(
+          {
+            params: {
+              page: 0,
+              pagesize: 1, 
+            },
+          },
+          true,
+        );
+        if (relationshipsResponse.data && relationshipsResponse.data.total_count !== undefined) {
+          setCounts((prevCounts) => ({
+            ...prevCounts,
+            relationships: relationshipsResponse.data.total_count,
+          }));
+        }
+
+        const registrantsResponse = await getRegistrantsData(
+          {
+            params: {
+              page: 0,
+              pagesize: 1,
+            },
+          },
+          true,
+        );
+        if (registrantsResponse.data && registrantsResponse.data.total_count !== undefined) {
+          setCounts((prevCounts) => ({
+            ...prevCounts,
+            registrants: registrantsResponse.data.total_count,
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch counts:', error);
+      }
+    };
+
+    fetchAllCounts();
+  }, []);
+
+  useEffect(() => {
+    if (searchText !== null && page[view] > 0) {
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
+      });
+    }
+  }, [searchText]);
+
+  useEffect(() => {
+    fetchData();
+  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
+
   const getRegistrants = async () => {
     let registrantResponse;
     let response;
@@ -325,21 +417,6 @@ const MeshModelComponent_ = ({
       return resourcesDetail;
     }
   };
-
-  useEffect(() => {
-    if (searchText !== null && page[view] > 0) {
-      setPage({
-        Models: 0,
-        Components: 0,
-        Relationships: 0,
-        Registrants: 0,
-      });
-    }
-  }, [searchText]);
-
-  useEffect(() => {
-    fetchData();
-  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
 
   return (
     <div data-test="workloads">
