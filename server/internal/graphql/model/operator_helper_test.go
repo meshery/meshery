@@ -123,7 +123,7 @@ func TestGetMeshSyncInfo_NilMeshsync(t *testing.T) {
 		t.Fatalf("failed to create logger: %v", err)
 	}
 
-	// Call GetMeshSyncInfo with a nil broker
+// Call GetMeshSyncInfo with a nil meshsync controller
 	statusResult := model.GetMeshSyncInfo(nil, nil, log)
 
 	// Assert that the status is Unknown and the name is empty
