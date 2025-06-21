@@ -314,9 +314,11 @@ const MeshModelComponent_ = ({
     if (!resourcesDetail) return [];
 
     if (view === MODELS) {
-      return removeDuplicateVersions(
-        checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
-      );
+      if (checked) {
+        return resourcesDetail.filter((model) => model.duplicates > 0);
+      } else {
+        return removeDuplicateVersions(resourcesDetail);
+      }
     } else if (view === RELATIONSHIPS) {
       return groupRelationshipsByKind(resourcesDetail);
     } else if (view === REGISTRANTS) {
@@ -338,6 +340,9 @@ const MeshModelComponent_ = ({
   }, [searchText]);
 
   useEffect(() => {
+    if (view === MODELS) {
+      setResourcesDetail([]);
+    }
     fetchData();
   }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
 
