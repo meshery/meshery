@@ -61,7 +61,7 @@ func TestModelBuild(t *testing.T) {
 	}{
 		{
 			Name:             "model build from model name and version",
-			Args:             []string{"build", "test-case-aws-lambda-controller", "--version", "v0.1.0"},
+			Args:             []string{"build", "test-case-aws-lambda-controller/v0.1.0"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-version.golden",
 			ExpectedFiles: []string{
@@ -84,14 +84,20 @@ func TestModelBuild(t *testing.T) {
 			ExpectedResponse: "model.build.error.usage.golden",
 		},
 		{
+			Name:             "model build wrong input param format",
+			Args:             []string{"build", "aws-ec2-controller/v0.1.0/smthelse"},
+			ExpectError:      true,
+			ExpectedResponse: "model.build.error.usage.golden",
+		},
+		{
 			Name:             "model build version not specified",
-			Args:             []string{"build", "aws-ec2-controller", "--version", ""},
+			Args:             []string{"build", "aws-ec2-controller/"},
 			ExpectError:      true,
 			ExpectedResponse: "model.build.error.usage.golden",
 		},
 		{
 			Name:             "model build folder does not exist",
-			Args:             []string{"build", "aws-ec2-controller", "--version", "v0.1.0", "--path", "./not_existing_folder"},
+			Args:             []string{"build", "aws-ec2-controller/v0.1.0", "--path", "./not_existing_folder"},
 			ExpectError:      true,
 			ExpectedResponse: "model.build.error.folder-does-not-exist.golden",
 		},
