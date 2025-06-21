@@ -15,7 +15,6 @@ import {
   Tabs,
   CustomTooltip,
   Box,
-  Stack,
   EditIcon,
   CloseIcon,
   SaveAsIcon,
@@ -26,7 +25,7 @@ import {
 } from '@sistent/sistent';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
-import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
+import { AddWidgetsToLayoutPanel, LayoutWidget } from './components';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import Popup from '../General/Popup';
@@ -34,6 +33,22 @@ import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
+
+const MESHERY_COLORS = {
+  primary: '#00B39F',
+  primaryDark: 'rgba(0, 179, 159, 0.3)',
+  primaryLight: 'rgba(0, 179, 159, 0.2)',
+  glassDark: 'rgba(255, 255, 255, 0.3)',
+  glassLight: 'rgba(35, 35, 35, 0.2)',
+  glassHoverDark: 'rgba(255, 255, 255, 0.5)',
+  glassHoverLight: 'rgba(35, 35, 35, 0.5)',
+  activeDark: 'rgba(0, 179, 159, 0.2)',
+  activeLight: 'rgba(0, 179, 159, 0.1)',
+  shadowDark: 'rgba(0, 179, 159, 0.2)',
+  shadowLight: 'rgba(60, 73, 79, 0.1)',
+  shadowHoverDark: 'rgba(0, 179, 159, 0.3)',
+  shadowHoverLight: 'rgba(0, 179, 159, 0.15)',
+};
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -228,7 +243,7 @@ const Dashboard = () => {
     },
   };
 
-  const topBarActions = Object.entries(_.omit(LayoutActions, 'START_EDIT'))
+  const topBarActions = Object.entries(LayoutActions)
     .filter(([, action]) => action.isShown)
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
@@ -316,17 +331,77 @@ const Dashboard = () => {
         <TabPanel value={resourceCategory} index={'Overview'}>
           <Box display="flex" flexDirection={'column'} gap="1rem">
             <Box padding={0} width={'100%'}>
-              <Stack
-                direction="row"
-                useFlexGap
-                gap="0rem 2rem"
-                justifyContent="end"
-                flexWrap={'wrap-reverse'}
+              <Box
+                position="absolute"
+                bottom={20}
+                left={43}
+                zIndex={1300}
+                sx={{
+                  display: 'flex',
+                  gap: 1.5,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
               >
-                {topBarActions.map(({ key, ...layoutAction }) => (
-                  <LayoutActionButton {...layoutAction} key={key} />
-                ))}
-              </Stack>
+                {topBarActions.map(({ key, label, Icon, action, description }) =>{
+                
+                return (
+                  <CustomTooltip key={key} title={description || label} placement="bottom">
+                    <Box
+                      component="button"
+                      onClick={action}
+                      sx={{
+                        width: theme.spacing(6),
+                        height: theme.spacing(6),
+                        borderRadius: theme.spacing(2),
+                        border: `1px solid ${
+                          theme.palette.mode === 'dark'
+                            ? MESHERY_COLORS.primaryDark
+                            : MESHERY_COLORS.primaryLight
+                        }`,
+                        backgroundColor:
+                          theme.palette.mode === 'dark'
+                            ? MESHERY_COLORS.glassDark
+                            : MESHERY_COLORS.glassLight,
+                        backdropFilter: 'blur(20px)',
+                        color: theme.palette.common.white,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        boxShadow:
+                          theme.palette.mode === 'dark'
+                            ? `0 ${theme.spacing(1)} ${theme.spacing(4)} ${MESHERY_COLORS.shadowDark}`
+                            : `0 ${theme.spacing(1)} ${theme.spacing(4)} ${MESHERY_COLORS.shadowLight}`,
+                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        '&:hover': {
+                          transform: 'translateY(-2px) scale(1.05)',
+                          backgroundColor:
+                            theme.palette.mode === 'dark'
+                              ? MESHERY_COLORS.glassHoverDark
+                              : MESHERY_COLORS.glassHoverLight,
+                          borderColor:
+                            MESHERY_COLORS.primary,
+                          boxShadow:
+                            theme.palette.mode === 'dark'
+                              ? `0 ${theme.spacing(1.5)} ${theme.spacing(5)} ${MESHERY_COLORS.shadowHoverDark}`
+                              : `0 ${theme.spacing(1.5)} ${theme.spacing(5)} ${MESHERY_COLORS.shadowHoverLight}`,
+                        },
+                        '&:active': {
+                          transform: 'translateY(0) scale(0.95)',
+                          backgroundColor:
+                            theme.palette.mode === 'dark'
+                              ? MESHERY_COLORS.activeDark
+                              : MESHERY_COLORS.activeLight,
+                        },
+                      }}
+                    >
+                      <Icon sx={{ fontSize: theme.spacing(2.75) }} />
+                    </Box>
+                  </CustomTooltip>
+                );
+              })}
+              </Box>
 
               <ResponsiveReactGridLayout
                 layouts={dashboardLayout}
@@ -359,7 +434,6 @@ const Dashboard = () => {
                   );
                 })}
               </ResponsiveReactGridLayout>
-              <LayoutActionButton {...LayoutActions.START_EDIT} />
             </Box>
             <AddWidgetsToLayoutPanel
               editMode={isEditMode}
