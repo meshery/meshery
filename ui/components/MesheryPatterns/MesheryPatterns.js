@@ -21,8 +21,8 @@ import {
   Typography,
   styled,
   PROMPT_VARIANTS,
-} from '@layer5/sistent';
-import { NoSsr } from '@layer5/sistent';
+} from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -65,7 +65,7 @@ import DefaultError from '../General/error-404/index';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import ExportModal from '../ExportModal';
-import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
+import { useModal, Modal as SistentModal, ModalBody } from '@sistent/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { useActorRef } from '@xstate/react';
@@ -873,7 +873,7 @@ function MesheryPatterns({
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name);
-      if (response == 'No') {
+      if (response == 'CANCEL') {
         updateProgress({ showProgress: false });
         return;
       }

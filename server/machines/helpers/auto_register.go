@@ -9,18 +9,18 @@ import (
 	"sync"
 
 	"github.com/gofrs/uuid"
-	helpers "github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	"github.com/layer5io/meshkit/utils"
+	helpers "github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 
@@ -117,7 +117,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						if err != nil {
 							event.Description = fmt.Sprintf("Failed to auto register \"%s\" connection at %s", connectionName, url)
 							// Do not publish the event if auto registration fails.
-							_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
+							_ = data.MeshsyncDataHandler.Provider.PersistEvent(*event, nil)
 							continue
 						}
 
@@ -127,7 +127,7 @@ func (arh *AutoRegistrationHelper) processRegistration() {
 						event = events.NewEvent().WithCategory("connection").WithAction("register").FromUser(data.MeshsyncDataHandler.UserID).ActedUpon(data.MeshsyncDataHandler.ConnectionID).WithDescription(fmt.Sprintf("Auto Registered connection of type \"%s\" at %s", connectionName, url)).Build()
 
 						go arh.eventBroadcast.Publish(data.MeshsyncDataHandler.UserID, event)
-						_ = data.MeshsyncDataHandler.Provider.PersistEvent(event)
+						_ = data.MeshsyncDataHandler.Provider.PersistEvent(*event, nil)
 					}
 				}
 

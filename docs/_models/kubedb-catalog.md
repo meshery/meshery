@@ -10,6 +10,14 @@ integrations-category: App Definition and Development
 integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
+- name: hazelcast-version
+  colorIcon: assets/img/integrations/kubedb-catalog/components/hazelcast-version/icons/color/hazelcast-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-catalog/components/hazelcast-version/icons/white/hazelcast-version-white.svg
+  description: 
+- name: oracle-version
+  colorIcon: assets/img/integrations/kubedb-catalog/components/oracle-version/icons/color/oracle-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb-catalog/components/oracle-version/icons/white/oracle-version-white.svg
+  description: 
 - name: click-house-version
   colorIcon: assets/img/integrations/kubedb-catalog/components/click-house-version/icons/color/click-house-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-catalog/components/click-house-version/icons/white/click-house-version-white.svg
@@ -110,7 +118,7 @@ components:
   colorIcon: assets/img/integrations/kubedb-catalog/components/ignite-version/icons/color/ignite-version-color.svg
   whiteIcon: assets/img/integrations/kubedb-catalog/components/ignite-version/icons/white/ignite-version-white.svg
   description: 
-components-count: 25
+components-count: 27
 relationships: 
 relationship-count: 0
 featureList: [

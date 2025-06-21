@@ -11,18 +11,18 @@ import (
 	"cuelang.org/go/cue/cuecontext"
 	cueJson "cuelang.org/go/encoding/json"
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 
-	"github.com/layer5io/meshery/server/helpers/utils"
-	mesheryutils "github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/helpers/utils"
+	mesheryutils "github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/schemas/models/v1beta1/category"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
@@ -30,9 +30,9 @@ import (
 
 	"github.com/meshery/schemas/models/v1beta1"
 
-	_component "github.com/layer5io/meshkit/utils/component"
-	"github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/manifests"
+	_component "github.com/meshery/meshkit/utils/component"
+	"github.com/meshery/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/utils/manifests"
 
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -97,7 +97,7 @@ func RegisterK8sMeshModelComponents(provider *models.Provider, _ context.Context
 	}
 	//if want to log we can use the above function in future to log the error in terminal.
 
-	_ = (*provider).PersistEvent(event)
+	_ = (*provider).PersistEvent(*event, nil)
 	ec.Publish(userUUID, event)
 	return
 }

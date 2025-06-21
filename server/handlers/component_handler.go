@@ -16,31 +16,31 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
 
-	// "github.com/layer5io/meshkit/errors"
-	// "github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/models/events"
+	// "github.com/meshery/meshkit/errors"
+	// "github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/models/events"
 
-	meshkitOci "github.com/layer5io/meshkit/models/oci"
-	"github.com/layer5io/meshkit/models/registration"
-	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
-	meshkitutils "github.com/layer5io/meshkit/utils"
+	meshkitOci "github.com/meshery/meshkit/models/oci"
+	"github.com/meshery/meshkit/models/registration"
+	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
+	meshkitutils "github.com/meshery/meshkit/utils"
 
-	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/meshkit/models/meshmodel/entity"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/
@@ -1168,7 +1168,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 			"error": err,
 		})
 		_event := eventBuilder.Build()
-		_ = provider.PersistEvent(_event)
+		_ = provider.PersistEvent(*_event, nil)
 		go h.config.EventBroadcaster.Publish(userID, _event)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
@@ -1177,7 +1177,7 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	description := fmt.Sprintf("Status of '%s' updated to %s.", updateData.DisplayName, updateData.Status)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	// Respond with success status

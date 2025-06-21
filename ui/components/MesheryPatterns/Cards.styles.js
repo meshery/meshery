@@ -1,4 +1,4 @@
-import { Grid, styled } from '@layer5/sistent';
+import { Grid, styled } from '@sistent/sistent';
 
 export const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
   height: fullScreen ? '100%' : undefined,
@@ -86,7 +86,7 @@ export const UpdateDeleteButtons = styled('div')(() => ({
   margin: '10 0 0 auto',
   position: 'absolute',
   right: 0,
-  bottom: 0,
+  bottom: -10,
 }));
 
 export const BottomContainer = styled('div')(() => ({

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography, Grid2, Box, List, ListItem, RenderMarkdown } from '@layer5/sistent';
+import { Typography, Grid2, Box, List, ListItem, RenderMarkdown } from '@sistent/sistent';
 import { FormatStructuredData } from '../../DataFormatter';
 
 export const ErrorMetadataFormatter = ({ metadata, event }) => {
@@ -42,7 +42,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
     );
   };
   return (
-    <Grid2 container size="grow">
+    <Grid2 size="grow">
       {' '}
       <div>
         {event?.description && <FormatStructuredData data={event.description} />}

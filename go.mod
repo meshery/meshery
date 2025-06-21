@@ -1,4 +1,4 @@
-module github.com/layer5io/meshery
+module github.com/meshery/meshery
 
 go 1.23.8
 
@@ -8,9 +8,9 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // The following replaces are used for local development
 
-// replace github.com/meshery/schemas v0.8.15 => ../schemas
+//replace github.com/meshery/schemas v0.8.20 => ../schemas
 
-// replace github.com/layer5io/meshkit v0.8.26 => ../meshkit
+//replace github.com/meshery/meshkit v0.8.31 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
@@ -41,13 +41,13 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
-	github.com/layer5io/meshkit v0.8.29
-	github.com/layer5io/meshsync v0.8.6
 	github.com/layer5io/nighthawk-go v1.0.6
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/schemas v0.8.20
+	github.com/meshery/meshkit v0.8.33
+	github.com/meshery/meshsync v0.8.15
+	github.com/meshery/schemas v0.8.22
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -136,7 +136,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chai2010/gettext-go v1.0.3 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
-	github.com/cloudflare/circl v1.5.0 // indirect
+	github.com/cloudflare/circl v1.6.1 // indirect
 	github.com/cncf/xds/go v0.0.0-20250121191232-2f005788dc42 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/compose-spec/compose-go/v2 v2.4.7 // indirect
@@ -232,6 +232,7 @@ require (
 	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
+	github.com/layer5io/meshkit v0.8.29 // indirect
 	github.com/liggitt/tabwriter v0.0.0-20181228230101-89fcab3d43de // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
@@ -239,6 +240,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mattn/go-shellwords v1.0.12 // indirect
 	github.com/mattn/go-sqlite3 v1.14.24 // indirect
+	github.com/meshery/meshery-operator v0.8.7 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
@@ -259,6 +261,7 @@ require (
 	github.com/morikuni/aec v1.0.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f // indirect
+	github.com/myntra/pipeline v0.0.0-20180618182531-2babf4864ce8 // indirect
 	github.com/nats-io/nats.go v1.38.0 // indirect
 	github.com/nats-io/nkeys v0.4.9 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect

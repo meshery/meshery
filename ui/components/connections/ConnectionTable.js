@@ -19,7 +19,7 @@ import {
   TableCell,
   TableRow,
   Popover,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import {
   ContentContainer,
   CreateButton,
@@ -60,7 +60,7 @@ import { keys } from '@/utils/permission_constants';
 import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DeleteIcon } from '@layer5/sistent';
+import { DeleteIcon } from '@sistent/sistent';
 
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
@@ -102,7 +102,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('created_at desc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);

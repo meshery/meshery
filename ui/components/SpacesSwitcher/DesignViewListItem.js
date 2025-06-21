@@ -11,7 +11,7 @@ import {
   Checkbox,
   FormGroup,
   Typography,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { Lock, Public } from '@mui/icons-material';
 import { VIEW_VISIBILITY } from '../General/Modals/Information/InfoModal';
 import {
@@ -21,6 +21,7 @@ import {
   StyledListItemText,
   StyledSmallAvatar,
   StyledSmallAvatarContainer,
+  StyledTypography,
   StyledUpdatedText,
   StyledUserDetailsContainer,
 } from './styles';
@@ -29,7 +30,7 @@ import { iconMedium } from 'css/icons.styles';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 import UserAvatarComponent from './UserAvatarComponent';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
-import { Grid2 } from '@layer5/sistent';
+import { Grid2 } from '@sistent/sistent';
 import { useGetIconBasedOnMode } from './hooks';
 
 const DesignViewListItem = ({
@@ -41,6 +42,8 @@ const DesignViewListItem = ({
   type = RESOURCE_TYPE.DESIGN,
   activeUsers = [],
   isMultiSelectMode = false,
+  showWorkspaceName = true,
+  showOrganizationName = true,
 }) => {
   const { data: userData, isLoading: isUserLoading } = useGetUserProfileSummaryByIdQuery({
     id: selectedItem.user_id,
@@ -92,10 +95,18 @@ const DesignViewListItem = ({
               </FormGroup>
             </Grid2>
           )}
-          <Grid2 size={{ xs: 6, md: 3.5, lg: 3 }}>
+          <Grid2
+            size={{
+              xs: !showWorkspaceName ? 5 : 5.5,
+              md: !showWorkspaceName ? 5.5 : 3.5,
+              lg: !showWorkspaceName ? 7 : 4,
+              xl: !showWorkspaceName ? 6 : 3,
+            }}
+          >
             <StyledAvatarContainer>
               <StyledListIcon>{useGetIconBasedOnMode({ mode: type })}</StyledListIcon>
               <StyledListItemText
+                showWorkspaceName={showWorkspaceName}
                 primary={selectedItem.name || ''}
                 primaryTypographyProps={{ fontSize: '0.9rem' }}
                 secondary={
@@ -112,17 +123,27 @@ const DesignViewListItem = ({
               />
             </StyledAvatarContainer>
           </Grid2>
-          <Grid2 size={{ xs: 4, md: 4, lg: isMultiSelectMode ? 2.75 : 3 }}>
+          <Grid2
+            size={{
+              xs: 4,
+              md: 4,
+              lg: isMultiSelectMode ? 2.75 : 3,
+            }}
+          >
             {isUserLoading ? <AvatarSkeleton /> : <UserAvatarComponent userData={userData} />}
           </Grid2>
-          <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
-            <Typography variant="body2">{selectedItem.organization_name}</Typography>
-          </Grid2>
-          <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
-            <Typography variant="body2">{selectedItem.workspace_name}</Typography>
-          </Grid2>
+          {showOrganizationName && (
+            <Grid2 size={{ md: 2, lg: 1.5 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+              <StyledTypography variant="body2">{selectedItem.organization_name}</StyledTypography>
+            </Grid2>
+          )}
+          {showWorkspaceName && (
+            <Grid2 size={{ lg: 1.5 }} sx={{ display: { xs: 'none', lg: 'block' } }}>
+              <Typography variant="body2">{selectedItem.workspace_name}</Typography>
+            </Grid2>
+          )}
 
-          <Grid2 size={{ md: 1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Grid2 size={{ md: 1.1, lg: 1 }} sx={{ display: { xs: 'none', md: 'block' } }}>
             <VisibilityChipMenu
               value={selectedItem?.visibility}
               onChange={(value) => onVisibilityChange(value, selectedItem)}
@@ -135,8 +156,9 @@ const DesignViewListItem = ({
           </Grid2>
 
           <Grid2
-            size={{ xs: 1, lg: 2 }}
+            size={{ xl: 2 }}
             sx={{
+              flexBasis: showWorkspaceName ? '30px' : '45px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',

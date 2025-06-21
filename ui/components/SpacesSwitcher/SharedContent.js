@@ -1,8 +1,8 @@
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@layer5/sistent';
+import { Box, FormControl, Grid2, InputLabel, MenuItem, Select, useTheme } from '@sistent/sistent';
 import React, { useCallback, useState } from 'react';
-import { StyledSearchBar } from '@layer5/sistent';
+import { StyledSearchBar } from '@sistent/sistent';
 import MainDesignsContent from './MainDesignsContent';
 import { useGetUserDesignsQuery } from '@/rtk-query/design';
 import MainViewsContent from './MainViewsContent';
@@ -159,12 +159,12 @@ const SharedContent = () => {
               onChange={onSearchChange}
               endAdornment={
                 filters.type === RESOURCE_TYPE.DESIGN ? (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Designs: {designsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {designsData?.total_count ?? 0}
                   </p>
                 ) : (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Views: {viewsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {viewsData?.total_count ?? 0}
                   </p>
                 )
               }

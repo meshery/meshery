@@ -10,14 +10,14 @@ import (
 
 	operatorv1alpha1 "github.com/layer5io/meshery-operator/api/v1alpha1"
 	operatorClient "github.com/layer5io/meshery-operator/pkg/client"
-	"github.com/layer5io/meshery/server/models"
-	brokerpkg "github.com/layer5io/meshkit/broker"
-	"github.com/layer5io/meshkit/broker/nats"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/server/models"
+	brokerpkg "github.com/meshery/meshkit/broker"
+	"github.com/meshery/meshkit/broker/nats"
+	"github.com/meshery/meshkit/logger"
 
-	"github.com/layer5io/meshkit/models/controllers"
-	"github.com/layer5io/meshkit/utils"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/models/controllers"
+	"github.com/meshery/meshkit/utils"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -94,17 +94,25 @@ func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) Op
 func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
 	meshsyncStatus := meshsync.GetStatus().String()
 
-	// Debug block
-	if broker != nil {
-		monitorEndpoint, err := broker.GetEndpointForPort("monitor")
-		log.Debug("broker monitor endpoint", monitorEndpoint, err)
-	}
-
 	// change the type of IMesheryController GetName() to to models.MesheryController
 	// and use MesheryControllersStatusListItem instead of OperatorControllerStatus
-	if meshsyncStatus == controllers.Connected.String() && broker != nil {
-		brokerEndpoint, _ := broker.GetPublicEndpoint()
-		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
+	if broker == nil {
+		meshsyncStatus = controllers.Unknown.String()
+	} else {
+		// Debug block
+		monitorEndpoint, err := broker.GetEndpointForPort("monitor")
+		log.Debug("broker monitor endpoint", monitorEndpoint, err)
+
+		if meshsyncStatus == controllers.Connected.String() {
+			brokerEndpoint, err := broker.GetPublicEndpoint()
+			if err != nil {
+				log.Warn(err) // Log the original error
+			} else if brokerEndpoint == "" {
+				log.Warn(fmt.Errorf("broker public endpoint is empty")) // Log a new error
+			} else {
+				meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
+			}
+		}
 	}
 	version, _ := meshsync.GetVersion()
 	meshsyncControllerStatus := OperatorControllerStatus{

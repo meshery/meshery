@@ -6,7 +6,7 @@ services:
     ports:
       - "7877:7877"
   meshery:
-    image: layer5/meshery:stable-latest
+    image: meshery/meshery:stable-latest
     pull_policy: always
     environment:
       - "PROVIDER_BASE_URLS=https://cloud.layer5.io"

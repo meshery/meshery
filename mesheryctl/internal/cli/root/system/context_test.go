@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -265,7 +265,7 @@ func TestSwitchContextCmd(t *testing.T) {
 	tests := []utils.CmdTestInput{
 		{
 			Name:             "switch to a different context",
-			Args:             []string{"context", "switch", "local2", "-y"},
+			Args:             []string{"context", "switch", "local2"},
 			ExpectedResponse: "switch.context.golden",
 		},
 	}

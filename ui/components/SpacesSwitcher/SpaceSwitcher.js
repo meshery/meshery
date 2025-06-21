@@ -14,8 +14,9 @@ import {
   useTheme,
   WorkspaceIcon,
   CircularProgress,
-} from '@layer5/sistent';
-import { NoSsr } from '@layer5/sistent';
+  CustomTooltip,
+} from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
@@ -208,24 +209,29 @@ function OrganizationAndWorkSpaceSwitcher() {
   return (
     <NoSsr>
       <StyledSwitcher>
-        <Button
-          onClick={() => setOrgOpen(!orgOpen)}
-          style={{ marginRight: orgOpen ? '1rem' : '0' }}
-        >
-          <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-        </Button>
+        <CustomTooltip title={'Organization'}>
+          <Button
+            onClick={() => setOrgOpen(!orgOpen)}
+            style={{ marginRight: orgOpen ? '1rem' : '0' }}
+          >
+            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+          </Button>
+        </CustomTooltip>
         <OrgMenu open={orgOpen} organization={organization} />/
-        <Button
-          onClick={() => setWorkspaceOpen(!workspaceOpen)}
-          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-        >
-          <WorkspaceIcon
-            {...iconLarge}
-            secondaryFill={theme.palette.common.white}
-            fill={theme.palette.common.white}
-          />
-        </Button>
-        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
+        <CustomTooltip title={'Workspace'}>
+          <Button
+            onClick={() => setWorkspaceOpen(!workspaceOpen)}
+            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+          >
+            <WorkspaceIcon
+              {...iconLarge}
+              secondaryFill={theme.palette.common.white}
+              fill={theme.palette.common.white}
+            />
+          </Button>
+        </CustomTooltip>
+        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />
+        /
         <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
       </StyledSwitcher>

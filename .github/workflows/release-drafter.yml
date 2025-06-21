@@ -39,7 +39,7 @@ jobs:
       #   with:
       #     token: ${{ secrets.RELEASE_NOTES_PAT }}
       #     commit-message: "Created release note file ${{ steps.release_drafter.outputs.tag_name }}.md"
-      #     committer: l5io <ci@layer5.io>
+      #     committer: l5io <ci@meshery.io>
       #     author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
       #     signoff: true
       #     branch: docs/automated-release-notes

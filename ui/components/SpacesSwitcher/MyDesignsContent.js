@@ -3,8 +3,8 @@ import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import React, { useCallback, useRef, useState } from 'react';
 import MainDesignsContent from './MainDesignsContent';
 import { RESOURCE_TYPE, VISIBILITY } from '@/utils/Enum';
-import { Box, Grid2, PromptComponent, useTheme } from '@layer5/sistent';
-import { StyledSearchBar } from '@layer5/sistent';
+import { Box, Grid2, PromptComponent, useTheme } from '@sistent/sistent';
+import { StyledSearchBar } from '@sistent/sistent';
 import {
   ImportButton,
   MultiContentSelectToolbar,
@@ -112,15 +112,13 @@ const MyDesignsContent = () => {
     <Box display={'flex'} flexDirection="column" gap="1rem">
       <Grid2 container spacing={2} alignItems="center" marginBottom="1rem" size="grow">
         {/* Search Bar */}
-        <Grid2 size={{ xs: 12, md: 7 }}>
+        <Grid2 size={{ xs: 12, md: 6.5 }}>
           <StyledSearchBar
             sx={{ backgroundColor: 'transparent' }}
             placeholder="Search Designs"
             value={filters.searchQuery}
             onChange={onSearchChange}
-            endAdornment={
-              <p style={{ color: theme.palette.text.default }}>Total Designs: {total_count}</p>
-            }
+            endAdornment={<p style={{ color: theme.palette.text.default }}>Total: {total_count}</p>}
           />
         </Grid2>
 

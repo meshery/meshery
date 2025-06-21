@@ -138,7 +138,7 @@ To consume the schema in the UI:
 2. This will update your `package.json` to something like:
 
    ```json
-   "@layer5/schema": "file:../../schemas"
+   "@meshery/schema": "file:../../schemas"
    ```
 
 3. Now you can import types and schema objects in your UI components:
@@ -146,7 +146,7 @@ To consume the schema in the UI:
 #### Example: Importing and Using a Type
 
 ```ts
-import { DesignTypes } from "@layer5/schema";
+import { DesignTypes } from "@meshery/schema";
 
 // Type safety!
 const renderDesignCard = (design: Design) => <div>{design.name}</div>;
@@ -155,7 +155,7 @@ const renderDesignCard = (design: Design) => <div>{design.name}</div>;
 #### Example: Accessing Runtime Schema
 
 ```ts
-import { DesignSchema } from "@layer5/schema";
+import { DesignSchema } from "@meshery/schema";
 
 const validateDesign = (data) => {
   const isValid = ajv.validate(DesignSchema, data);
@@ -163,18 +163,23 @@ const validateDesign = (data) => {
 };
 ```
 
+{% include alert.html type="info" title="Can't find a Schema Import in the UI?" content="
+  <p>If you're trying to import a schema object or type in the UI but it's missing, it's likely because it hasn't been exported yet from the schemas package.</p>
+  <p>To keep the package lightweight, only actively used types and objects are exported by default. If you need access to a new schema, simply export it in the <a href='https://github.com/meshery/schemas' target='_blank'>Meshery Schemas repository</a> and regenerate the package.</p>
+" %}
+
 ---
 
 ## Integration Points in UI
 
 ### A. RJSF JSON Schemas
 
-Meshery uses [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) to render forms dynamically based on JSON schemas. All of Meshery’s RJSF schemas are defined in the `@layer5/sistent` package, which extends schemas from the `@layer5/schema` package.
+Meshery uses [react-jsonschema-form](https://github.com/rjsf-team/react-jsonschema-form) to render forms dynamically based on JSON schemas. All of Meshery’s RJSF schemas are defined in the `@sistent/sistent` package, which extends schemas from the `@meshery/schema` package.
 
 This approach enables us to generate forms that automatically adapt to the schema structure without hardcoding field properties like type, enum, description, and others.
 
 ```ts
-import { DesignSchema } from "@layer5/schema";
+import { DesignSchema } from "@meshery/schema";
 
 const designSchema = {
   ...DesignSchema,
@@ -208,7 +213,7 @@ OpenAPI schemas (especially request bodies for POST/PUT operations) serve as the
 This ensures alignment between frontend form behavior and backend expectations.
 
 ```ts
-import { DesignTypes } from "@layer5/schema";
+import { DesignTypes } from "@meshery/schema";
 
 const DesignForm = ({ design }: { design: DesignTypes }) => (
   <form>
@@ -233,7 +238,7 @@ For example, if we have a `Design` schema, the UI retrieves details like the des
 Generated TypeScript types from the schema ensure UI components are type-safe and consistent with backend contracts.
 
 ```ts
-import { DesignTypes } from "@layer5/schema";
+import { DesignTypes } from "@meshery/schema";
 
 const DesignCard = ({ design }: { design: DesignTypes }) => (
   <div>
