@@ -1,3 +1,16 @@
+---
+layout: default
+title: Kubernetes Request Flow
+abstract: A visual walkthrough of how user requests flow through Kubernetes components using Meshery Kanvas.
+permalink: guides/tutorials/kubernetes-request-flow
+model: kubernetes
+kind: tutorial
+type: guide
+category: guides
+language: en
+list: include
+---
+
 # Kubernetes Request Flow – A Visual Guide
 
 Kubernetes can be intimidating, especially when trying to understand how a user request is processed inside a cluster. This tutorial will walk you through the **fundamental data path** of a request - from the user to the container, using a **diagram built in Meshery Kanvas**.
