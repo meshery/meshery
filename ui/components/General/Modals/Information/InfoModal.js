@@ -31,7 +31,7 @@ import _ from 'lodash';
 import { useSnackbar } from 'notistack';
 import React, { useEffect, useRef, useState } from 'react';
 import PatternIcon from '../../../../assets/icons/Pattern';
-import { MESHERY_CLOUD_PROD } from '../../../../constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '../../../../constants/endpoints';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { EVENT_TYPES } from '../../../../lib/event-types';
 import { useGetUserByIdQuery } from '../../../../rtk-query/user.js';
@@ -510,7 +510,7 @@ const OwnerChip = ({ userProfile }) => {
     <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
       {userProfile ? (
         <>
-          <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
+          <Link href={`${REMOTE_PROVIDER_URL}/user/${userProfile.id}`} rel="noopener noreferrer">
             <Avatar src={userProfile.avatar_url} />
           </Link>
           <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
