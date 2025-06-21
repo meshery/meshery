@@ -93,7 +93,7 @@ func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) Op
 
 func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
 	if meshsync == nil {
-log.Warn("operator_helper::GetMeshSyncInfo: meshsync controller is nil")
+		log.Warn(fmt.Errorf("operator_helper::GetMeshSyncInfo: meshsync controller is nil"))
 		return OperatorControllerStatus{
 			Status: StatusUnknown,
 		}
