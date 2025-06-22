@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 21st 2025, 11:49:06 pm
+- Testing started at: June 22nd 2025, 2:31:11 pm
 
 **📦 Test Result Summary**
 
-- ✅ 73 passed
+- ✅ 77 passed
 - ❌ 1 failed
-- ⚠️ 4 flaked
-- ⏩ 0 skipped
+- ⚠️ 0 flaked
+- ⏩ 1 skipped
 
-⌛ _Duration: 7 minutes and 36 seconds_
+⌛ _Duration: 8 minutes and 42 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,9 +21,8 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 2 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
-| 3 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 1 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
+| 2 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
 
 </div>
 </details>
