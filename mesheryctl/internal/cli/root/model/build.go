@@ -22,7 +22,7 @@ Expects input to be in the format scaffolded by the model init command.
 Documentation for exp model and subcommands can be found at https://docs.meshery.io/reference/mesheryctl/exp/model`,
 	Example: `
 // Create an OCI-compliant package from the model files
-mesheryctl exp model build [model-name-version]/[model-version]
+mesheryctl exp model build [model-name]/[model-version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp model build [model-name]/[model-version]\nRun 'mesheryctl exp model build --help' to see detailed help message"
