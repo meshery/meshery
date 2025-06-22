@@ -2,7 +2,23 @@ name: Trivy Container Image Scan
 
 on:
   workflow_dispatch:
-  pull_request:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - "*.github/**"
+      - "Makefile"
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "*.github/**"
 
 permissions:
   contents: read
@@ -16,12 +32,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Install Make
-        run: sudo apt-get update && sudo apt-get install -y make
 
       - name: Build Docker image
         run: make docker-build
