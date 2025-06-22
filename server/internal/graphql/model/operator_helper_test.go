@@ -108,3 +108,25 @@ func TestGetMeshSyncInfo_BrokerEndpointError(t *testing.T) {
 	assert.Equal(t, "meshsync", statusResult.Name) // Name should still be meshsync's name
 	// Optionally, verify that no error was logged to t.Log or similar if the logger was configured for that
 }
+
+func TestGetMeshSyncInfo_NilMeshsync(t *testing.T) {
+	// Create a logger
+	// Assuming logger.SyslogLogFormat is a valid constant in the logger package.
+	// If not, this might need adjustment (e.g., to logger.JSONLogFormat or leaving it default if possible)
+	// For tests, sending output to io.Discard is common.
+	log, err := logger.New("test", logger.Options{
+		Format:   logger.SyslogLogFormat, // This might need to be logger.JSONLogFormat or another valid one
+		LogLevel: int(logrus.ErrorLevel),
+		Output:   io.Discard,
+	})
+	if err != nil {
+		t.Fatalf("failed to create logger: %v", err)
+	}
+
+// Call GetMeshSyncInfo with a nil meshsync controller
+	statusResult := model.GetMeshSyncInfo(nil, nil, log)
+
+	// Assert that the status is Unknown and the name is empty
+	assert.Equal(t, model.StatusUnknown, statusResult.Status)
+	assert.Empty(t, statusResult.Name)
+}
