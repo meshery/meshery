@@ -19,11 +19,14 @@ import { RelationshipDefinitionV1Alpha3OpenApiSchema } from '@meshery/schemas';
 import DescriptionIcon from '@mui/icons-material/Description';
 import CodeIcon from '@mui/icons-material/Code';
 import LinkIcon from '@mui/icons-material/Link';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import { downloadFileFromContent } from '@/utils/fileDownloader';
 import RJSFWrapper from '../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import omit from 'lodash/omit';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
+import pick from 'lodash/pick';
+import SelectorsForm from './SelectorsForm';
 
 const StyledSummaryBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.blur?.heavy,
@@ -40,7 +43,12 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const RelationshipDefinitionV1Alpha3Schema =
     RelationshipDefinitionV1Alpha3OpenApiSchema.components.schemas.RelationshipDefinition;
 
-  const filteredSchema = omit(RelationshipDefinitionV1Alpha3Schema, ['properties.capabilities']);
+  const filteredSchema = omit(RelationshipDefinitionV1Alpha3Schema, [
+    'properties.capabilities',
+    'properties.selectors',
+  ]);
+  const selectorsSchema = pick(RelationshipDefinitionV1Alpha3Schema.properties, ['selectors']);
+
   // -> added zIndex so dropdown appears above the modal (mui default zIndex:1300)
   const globalStyles = (
     <GlobalStyles
@@ -311,7 +319,25 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
         label: 'Relationship Properties',
         helpText: (
           <>
-            <p>Fill out all required fields to properly define your relationship.</p>
+            <p>Fill out the required fields to properly define your relationship.</p>
+          </>
+        ),
+      },
+      {
+        component: (
+          <div>
+            <SelectorsForm
+              selectorsSchema={selectorsSchema.selectors}
+              formData={formData}
+              onChange={handleFormChange}
+            />
+          </div>
+        ),
+        icon: FilterAltIcon,
+        label: 'Selectors',
+        helpText: (
+          <>
+            <p>selectors help control which components can be connected.</p>
           </>
         ),
       },
@@ -378,13 +404,18 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
     1: {
       canGoNext: () => true,
       nextButtonText: 'Next',
+      nextAction: () => relationshipStepper.handleNext(),
+    },
+    2: {
+      canGoNext: () => true,
+      nextButtonText: 'Next',
       nextAction: () => {
         const jsonContent = JSON.stringify(formData, null, 2);
         setJsonOutput(jsonContent);
         relationshipStepper.handleNext();
       },
     },
-    2: {
+    3: {
       canGoNext: () => true,
       nextButtonText: 'Finish',
       nextAction: handleClose,
