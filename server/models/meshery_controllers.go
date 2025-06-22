@@ -2,7 +2,6 @@ package models
 
 import (
 	"context"
-	"fmt"
 	"strings"
 	"sync"
 	"time"
@@ -98,7 +97,7 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 			if err != nil {
 				mch.log.Warn(err)
 			}
-			mch.log.Info(fmt.Sprintf("Meshery Broker unreachable for Kubernetes context (%v)", ctxID))
+			mch.log.Infof("Meshery Broker unreachable for Kubernetes context (%v)", ctxID)
 			return mch
 		}
 		brokerHandler, err := nats.New(nats.Options{
