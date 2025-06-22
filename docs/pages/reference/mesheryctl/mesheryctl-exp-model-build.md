@@ -1,8 +1,8 @@
 ---
 layout: default
-title: mesheryctl-exp-model
-permalink: reference/mesheryctl/exp/model
-redirect_from: reference/mesheryctl/exp/model/
+title: mesheryctl-exp-model-build
+permalink: reference/mesheryctl/exp/model/build
+redirect_from: reference/mesheryctl/exp/model/build/
 type: reference
 display-title: "false"
 language: en
@@ -10,34 +10,36 @@ command: exp
 subcommand: model
 ---
 
-# mesheryctl exp model
+# mesheryctl exp model build
 
-Experimental commands for mesheryctl model
+Create an OCI-compliant package from the model files
 
 ## Synopsis
 
-Temporal container to deliver model init and model build subcommands to exp command
+Create an OCI-compliant package from the model files.
+Model files are taken from [path]/[model-name]/[model-version] folder.
+Expects input to be in the format scaffolded by the model init command.
+Documentation for exp model and subcommands can be found at https://docs.meshery.io/reference/mesheryctl/exp/model
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model [flags]
+mesheryctl exp model build [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Scaffold a folder structure for model creation
+Create an OCI-compliant package from the model files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model init [model-name]
+mesheryctl exp model build [model-name]/[model-version]
 
 </div>
 </pre> 
 
-Create an OCI-compliant package from the model files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model build [model-name] --version [version]
+    
 
 </div>
 </pre> 
@@ -46,7 +48,8 @@ mesheryctl exp model build [model-name] --version [version]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for model
+  -h, --help          help for build
+  -p, --path string   (optional) target directory to get model from (default: current dir) (default ".")
 
 </div>
 </pre>
@@ -62,8 +65,5 @@ mesheryctl exp model build [model-name] --version [version]
 </pre>
 
 ## See Also
-
-* [mesheryctl exp model build](/reference/mesheryctl/exp/model/build)
-* [mesheryctl exp model init](/reference/mesheryctl/exp/model/init)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
