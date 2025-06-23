@@ -11,8 +11,6 @@ language: en
 
 ---
 
-# Kubernetes Request Flow – A Visual Guide
-
 ## Introduction
 
 In this tutorial, we will explore the exact journey a request takes inside a Kubernetes cluster from the moment a user hits "Enter" in their browser, to the moment a response is sent back. We will understand **fundamental data path** of a request - from the user to the container, using a **diagram built in Meshery Kanvas**.
