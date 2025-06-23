@@ -23,6 +23,18 @@ Documentation for exp model and subcommands can be found at https://docs.meshery
 	Example: `
 // Create an OCI-compliant package from the model files
 mesheryctl exp model build [model-name]/[model-version]
+
+// Create package in specific output location
+mesheryctl exp model build [model-name]/[model-version] -o /path/to/output
+
+// Create package without version in filename (for Jekyll sites)
+mesheryctl exp model build [model-name]/[model-version] --no-version
+
+// Use short flag
+mesheryctl exp model build [model-name]/[model-version] -n
+
+// Combine both flags
+mesheryctl exp model build [model-name]/[model-version] -o /path/to/output -n
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp model build [model-name]/[model-version]\nRun 'mesheryctl exp model build --help' to see detailed help message"
@@ -69,6 +81,17 @@ mesheryctl exp model build [model-name]/[model-version]
 				)
 			}
 		}
+
+		// validate output location if specified
+		outputLocation, _ := cmd.Flags().GetString("output-location")
+		if outputLocation != "" {
+			if _, err := os.Stat(outputLocation); os.IsNotExist(err) {
+				if err := os.MkdirAll(outputLocation, 0755); err != nil {
+					return ErrModelBuildFromStrings(errMsg, fmt.Sprintf("\ncannot create output directory %s: %v", outputLocation, err))
+				}
+			}
+		}
+
 		// TODO should we validate if the directory has a valid meshery model structure?
 
 		return nil
@@ -86,6 +109,8 @@ mesheryctl exp model build [model-name]/[model-version]
 		name := parts[0]
 		version := parts[1]
 		path, _ := cmd.Flags().GetString("path")
+		outputLocation, _ := cmd.Flags().GetString("output-location")
+		noVersionInFilename, _ := cmd.Flags().GetBool("no-version")
 
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(path, name, version)
@@ -100,7 +125,7 @@ mesheryctl exp model build [model-name]/[model-version]
 		}
 
 		// Save OCI artifact into a tar file under current folder
-		imageName := buildModelCompileImageName(name, version)
+		imageName := buildModelCompileImageName(name, version, outputLocation, noVersionInFilename)
 
 		utils.Log.Infof("Saving OCI artifact as %s", imageName)
 		if err := meshkitOci.SaveOCIArtifact(img, imageName, name); err != nil {
@@ -113,6 +138,8 @@ mesheryctl exp model build [model-name]/[model-version]
 
 func init() {
 	buildModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
+	buildModelCmd.Flags().StringP("output-location", "o", "", "(optional) output directory for the generated tar file (default: current dir)")
+	buildModelCmd.Flags().BoolP("no-version", "n", false, "(optional) exclude version from the output image filename(default: false)")
 }
 
 func buildModelCompileFolderName(path string, name string, version string) string {
@@ -127,11 +154,21 @@ func buildModelCompileFolderName(path string, name string, version string) strin
 	return filepath.Join(dirParts...)
 }
 
-func buildModelCompileImageName(name string, version string) string {
-	return fmt.Sprintf(
-		"%s-%s.%s",
-		name,
-		strings.ReplaceAll(version, ".", "-"),
-		"tar",
-	)
+func buildModelCompileImageName(name string, version string, outputLocation string, noVersionInFilename bool) string {
+	var filename string
+
+	if noVersionInFilename {
+		filename = fmt.Sprintf("%s.tar", name)
+	} else {
+		filename = fmt.Sprintf(
+			"%s-%s.%s",
+			name,
+			strings.ReplaceAll(version, ".", "-"),
+			"tar",
+		)
+	}
+	if outputLocation != "" {
+		return filepath.Join(outputLocation, filename)
+	}
+	return filename
 }
