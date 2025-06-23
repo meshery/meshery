@@ -20,7 +20,7 @@ import (
 	"github.com/meshery/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 

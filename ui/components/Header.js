@@ -30,13 +30,10 @@ import {
   Grid2,
   Hidden,
   NoSsr,
-  useTheme,
-  useMediaQuery,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
@@ -52,7 +49,6 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
-  SettingsWrapper,
 } from './Header.styles';
 import {
   getUserAccessToken,
@@ -388,11 +384,12 @@ function K8sContextMenu({
 const Header = ({
   onDrawerToggle,
   onDrawerCollapse,
-  abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
   searchContexts,
+  // eslint-disable-next-line no-unused-vars
+  abilityUpdated,
 }) => {
   const { notify } = useNotification;
 
@@ -414,8 +411,6 @@ const Header = ({
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
@@ -465,37 +460,19 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <CustomTooltip title="Kubernetes Connections">
-                    <UserSpan style={{ position: 'relative' }}>
-                      <K8sContextMenu
-                        contexts={contexts}
-                        activeContexts={activeContexts}
-                        setActiveContexts={setActiveContexts}
-                        searchContexts={searchContexts}
-                      />
-                    </UserSpan>
-                  </CustomTooltip>
-                  <SettingsWrapper
-                    isDesktop={isDesktop}
-                    data-testid="settings-button"
-                    aria-describedby={abilityUpdated}
-                  >
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <CustomTooltip title="Settings">
-                        <IconButton onClick={() => Router.push('/settings')}>
-                          <SettingsIcon
-                            style={{ ...iconMedium, fill: theme.palette.common.white }}
-                          />
-                        </IconButton>
-                      </CustomTooltip>
-                    </CanShow>
-                  </SettingsWrapper>
+                  <UserSpan style={{ position: 'relative' }}>
+                    <K8sContextMenu
+                      contexts={contexts}
+                      activeContexts={activeContexts}
+                      setActiveContexts={setActiveContexts}
+                      searchContexts={searchContexts}
+                    />
+                  </UserSpan>
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
                       <NotificationDrawerButton />
                     </div>
                   </CustomTooltip>
-
                   <CustomTooltip title={'User Profile'}>
                     <UserSpan>
                       <User />
