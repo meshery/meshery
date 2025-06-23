@@ -195,10 +195,8 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-
-						if component.Genealogy != "" {
-							componentDef.Metadata.Genealogy = component.Genealogy
-						}
+						
+						componentDef.Metadata.Genealogy = component.Genealogy
 
 						_, err = os.Stat(compPath)
 
