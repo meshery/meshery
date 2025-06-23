@@ -195,7 +195,7 @@ func InvokeCompUpdate() error {
 							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
 							continue
 						}
-						
+
 						utils.Log.Infof("Updating genealogy for component %s...", component.Component)
 						componentDef.Metadata.Genealogy = component.Genealogy
 
