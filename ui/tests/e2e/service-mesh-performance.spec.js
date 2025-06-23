@@ -14,15 +14,7 @@ const performanceProfiles = [
 ];
 
 performanceProfiles.forEach((config) => {
-  const {
-    profileName,
-    serviceMesh,
-    url,
-    loadGenerator,
-    concurrentRequest,
-    qps,
-    duration,
-  } = config;
+  const { profileName, serviceMesh, url, loadGenerator, concurrentRequest, qps, duration } = config;
 
   test.describe(`Performance Management Tests with ${loadGenerator}`, () => {
     test.beforeEach(async ({ page }) => {
@@ -49,14 +41,18 @@ performanceProfiles.forEach((config) => {
       ).toHaveCount(1);
     });
 
-    test(`View detailed result of a performance profile (Graph Visualiser) with load generator ${loadGenerator}`, async ({ page }) => {
+    test(`View detailed result of a performance profile (Graph Visualiser) with load generator ${loadGenerator}`, async ({
+      page,
+    }) => {
       await expect(page.getByText(profileName)).toBeVisible();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('TableChartIcon').first().click();
       expect(page.getByText(url, { exact: true })).toBeTruthy();
     });
 
-    test(`Edit the configuration of a performance profile with load generator ${loadGenerator} and service mesh ${serviceMesh}`, async ({ page }) => {
+    test(`Edit the configuration of a performance profile with load generator ${loadGenerator} and service mesh ${serviceMesh}`, async ({
+      page,
+    }) => {
       await page.getByText(profileName).click();
       await page.getByTestId('performanceProfileCard-edit').click();
       await page.getByLabel('Technology').click();
@@ -70,7 +66,9 @@ performanceProfiles.forEach((config) => {
       ).toHaveCount(1);
     });
 
-    test(`Compare test of a performance profile with load generator ${loadGenerator}`, async ({ page }) => {
+    test(`Compare test of a performance profile with load generator ${loadGenerator}`, async ({
+      page,
+    }) => {
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('MUIDataTableBodyRow-0').locator('input[type="checkbox"]').check();
       await page.getByTestId('CompareArrowsIcon').first().click();
