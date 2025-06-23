@@ -47,7 +47,7 @@ performanceProfiles.forEach((config) => {
       await expect(page.getByText(profileName)).toBeVisible();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('TableChartIcon').first().click();
-      expect(page.getByText(url, { exact: true })).toBeTruthy();
+      expect(page.getByText(url, { exact: true })).toBeVisible();
     });
 
     test(`Edit the configuration of a performance profile with load generator ${loadGenerator} and service mesh ${serviceMesh}`, async ({
