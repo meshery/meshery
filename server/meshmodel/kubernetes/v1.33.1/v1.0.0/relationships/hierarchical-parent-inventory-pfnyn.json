@@ -95,12 +95,9 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "displayName"
-                ],
-                [
                   "configuration",
                   "metadata",
-                  "namespace"
+                  "name"
                 ]
               ]
             }
@@ -161,11 +158,6 @@
                   "0",
                   "configMapRef",
                   "name"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
                 ]
               ]
             }

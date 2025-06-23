@@ -107,6 +107,7 @@
     "@types/node": "^22.13.14",
     "ajv": "^8.17.1",
     "babel-loader": "^9.1.2",
+    "js-yaml": "^4.1.0",
     "dotenv": "^16.4.7",
     "eslint": "^8.57.1",
     "eslint-config-next": "^13.1.2",

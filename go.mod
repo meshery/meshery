@@ -41,12 +41,12 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
-	github.com/layer5io/meshsync v0.8.6
 	github.com/layer5io/nighthawk-go v1.0.6
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshkit v0.8.33
+	github.com/meshery/meshsync v0.8.15
 	github.com/meshery/schemas v0.8.22
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
