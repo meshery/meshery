@@ -4,9 +4,9 @@ title: Kubernetes Request Flow – A Visual Guide
 abstract: A visual walkthrough of how user requests flow through Kubernetes components using Meshery Kanvas.
 permalink: guides/tutorials/kubernetes-request-flow
 model: kubernetes
-kind: tutorial
-type: guide
-category: guides
+kind: deployments
+type: guides
+category: tutorials
 language: en
 
 ---
