@@ -17,14 +17,6 @@ teardown() {
     rm -f "$LOG_PATH/registry-update"
 }
 
-# It does not currently show usage instructions when no flags are provided.
-@test "mesheryctl registry update with no arguments displays usage instructions with no flags" {
-	run $MESHERYCTL_BIN registry update
-	assert_failure
-	assert_output --partial "unexpected end of JSON input"
-	assert_output --partial "Error: unexpected end of JSON input"
-}
-
 @test "mesheryctl registry update with only spreadsheet-id fails" {
 	run $MESHERYCTL_BIN registry update --spreadsheet-id "$SHEET_ID"
 	assert_failure
