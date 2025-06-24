@@ -133,7 +133,7 @@ const HeaderMenu = () => {
     // Always add these items
     defaultItems.push(
       {
-        id: 'Connetions',
+        id: 'Connections',
         title: 'Connections',
         onClick: handleConnections,
         showOnWeb: false,
