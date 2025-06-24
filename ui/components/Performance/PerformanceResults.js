@@ -257,7 +257,7 @@ function generateColumnsForDisplay(
               >
                 <ReplyIcon
                   style={{
-                    transform: 'scaleX(-1)',
+                    transform: 'scaleX(-1) translateY(-35px)',
                     color: theme.palette.icon.default,
                     ...iconLarge,
                   }}
@@ -367,6 +367,7 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         width: '100%',
         maxWidth: '90vw',
         padding: '0.5rem',
+        position: 'relative',
       }}
     >
       <Tabs value={tabValue} onChange={handleTabChange}>
