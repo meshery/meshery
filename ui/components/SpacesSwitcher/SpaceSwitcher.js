@@ -222,9 +222,10 @@ function OrganizationAndWorkSpaceSwitcher() {
         <CustomTooltip title={'Organization'}>
           <Button
             onClick={() => {
-              setOrgOpen(!orgOpen);
               if (isSmallScreen) {
                 setOpenModal(true);
+              } else {
+                setOrgOpen(!orgOpen);
               }
             }}
             sx={{
@@ -279,12 +280,7 @@ function OrganizationAndWorkSpaceSwitcher() {
   );
 }
 
-function OrganizationAndWorkSpaceSwitcherModal({
-  open,
-  handleClose,
-  organization,
-  router = useRouter(),
-}) {
+function OrganizationAndWorkSpaceSwitcherModal({ open, handleClose, organization, router }) {
   return (
     <Modal
       open={open}
@@ -311,9 +307,7 @@ function OrganizationAndWorkSpaceSwitcherModal({
               width: '100%',
             }}
           >
-            <Typography variant="h6" id="organization-workspace-switcher-title">
-              Org:
-            </Typography>
+            <Typography variant="h6">Org:</Typography>
             <OrgMenu open={true} organization={organization} />
           </Grid2>
           <Grid2
@@ -326,9 +320,7 @@ function OrganizationAndWorkSpaceSwitcherModal({
               width: '100%',
             }}
           >
-            <Typography variant="h6" id="organization-workspace-switcher-title">
-              Wks:
-            </Typography>
+            <Typography variant="h6">Wks:</Typography>
             <WorkspaceSwitcher open={true} organization={organization} router={router} />
           </Grid2>
         </Grid2>
