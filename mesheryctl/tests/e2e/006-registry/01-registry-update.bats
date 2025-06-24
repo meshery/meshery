@@ -11,10 +11,27 @@ setup() {
 }
 
 teardown() {
+<<<<<<< HEAD
     rm -rf "$TEMP_DATA_DIR"
     rm -f "$LOG_PATH/registry-update"
 }
 
+=======
+    # Remove any custom models directories created during tests
+    rm -rf "$TEMP_DATA_DIR"
+    # Remove log files created by the tests
+    rm -f "$LOG_PATH/registry-update"
+}
+
+# It does not currently show usage instructions when no flags are provided.
+@test "mesheryctl registry update with no arguments displays usage instructions with no flags" {
+	run $MESHERYCTL_BIN registry update
+	assert_failure
+	assert_output --partial "unexpected end of JSON input"
+	assert_output --partial "Error: unexpected end of JSON input"
+}
+
+>>>>>>> 7a5edc96b17 (add meshery registry update bats e2e test)
 @test "mesheryctl registry update with only spreadsheet-id fails" {
 	run $MESHERYCTL_BIN registry update --spreadsheet-id "$SHEET_ID"
 	assert_failure
@@ -31,12 +48,20 @@ teardown() {
 	run $MESHERYCTL_BIN registry update --spreadsheet-id "INVALID_SHEET" --spreadsheet-cred "$VALID_CRED"
 	assert_failure
 	assert_output --partial "googleapi: Error 404: Requested entity was not found., notFound"
+<<<<<<< HEAD
+=======
+    assert_output --partial "Error: googleapi: Error 404: Requested entity was not found., notFound"
+>>>>>>> 7a5edc96b17 (add meshery registry update bats e2e test)
 }
 
 @test "mesheryctl registry update with invalid spreadsheet-cred fails" {
 	run $MESHERYCTL_BIN registry update --spreadsheet-id "$SHEET_ID" --spreadsheet-cred "$INVALID_CRED"
 	assert_failure
 	assert_output --partial "invalid character '\u008a' looking for beginning of value"
+<<<<<<< HEAD
+=======
+	assert_output --partial "Error: invalid character '\u008a' looking for beginning of value"
+>>>>>>> 7a5edc96b17 (add meshery registry update bats e2e test)
 }
 
 @test "mesheryctl registry update with valid spreadsheet-id and cred succeeds" {
@@ -76,3 +101,13 @@ teardown() {
 	assert_output --regexp "Updated [0-9]+ models and [0-9]+ components"
 	assert_output --partial "refer $LOG_PATH for detailed registry update logs"
 }
+<<<<<<< HEAD
+=======
+
+@test "mesheryctl registry update creates log file in logs/registry" {
+	# Ensure no previous log exists
+	rm -f "$LOG_PATH/registry-update"  
+	run $MESHERYCTL_BIN registry update --spreadsheet-id "$SHEET_ID" --spreadsheet-cred "$VALID_CRED"
+	assert_file_exist $LOG_PATH/registry-update
+}
+>>>>>>> 7a5edc96b17 (add meshery registry update bats e2e test)
