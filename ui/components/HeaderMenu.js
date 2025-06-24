@@ -60,6 +60,11 @@ const HeaderMenu = () => {
     handleClose();
   };
 
+  const handleConnections = () => {
+    router.push('/management/connections');
+    handleClose();
+  };
+
   const handleGetToken = () => {
     triggerGetToken()
       .unwrap()
@@ -127,6 +132,12 @@ const HeaderMenu = () => {
 
     // Always add these items
     defaultItems.push(
+      {
+        id: 'Connetions',
+        title: 'Connections',
+        onClick: handleConnections,
+        showOnWeb: false,
+      },
       {
         id: 'settings',
         title: 'Settings',
