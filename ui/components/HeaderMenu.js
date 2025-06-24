@@ -178,7 +178,12 @@ const HeaderMenu = () => {
   return (
     <>
       <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
-        <MenuIcon />
+        <MenuIcon
+          sx={{
+            height: 27,
+            width: 27,
+          }}
+        />
       </IconButtonAvatar>
 
       <Popover
