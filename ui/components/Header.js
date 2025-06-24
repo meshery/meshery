@@ -489,7 +489,10 @@ const Header = ({
                   </CustomTooltip>
                   <UserSpan
                     sx={{
-                      marginLeft: '0',
+                      marginLeft: {
+                        xs: 0,
+                        sm: 1,
+                      },
                     }}
                     data-testid="header-menu"
                   >
