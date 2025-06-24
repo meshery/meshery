@@ -199,7 +199,7 @@
           url: guides/tutorials/embedding-meshery-design-in-wordpress
         - title: Publishing Designs to ArtifactHub
           url: guides/tutorials/publish-to-artifacthub
-        - title: Kubernetes Request Flow
+        - title: Kubernetes Request Flow – A Visual Guide
           url: guides/tutorials/kubernetes-request-flow
 # - title: ⚙️ Tasks
 #   url: tasks
