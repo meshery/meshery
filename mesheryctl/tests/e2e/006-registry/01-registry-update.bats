@@ -23,6 +23,7 @@ teardown() {
     rm -f "$LOG_PATH/registry-update"
 }
 
+<<<<<<< HEAD
 # It does not currently show usage instructions when no flags are provided.
 @test "mesheryctl registry update with no arguments displays usage instructions with no flags" {
 	run $MESHERYCTL_BIN registry update
@@ -32,6 +33,8 @@ teardown() {
 }
 
 >>>>>>> 7a5edc96b17 (add meshery registry update bats e2e test)
+=======
+>>>>>>> 8187169aec9 (removed reg-update default usage instructions e2e test)
 @test "mesheryctl registry update with only spreadsheet-id fails" {
 	run $MESHERYCTL_BIN registry update --spreadsheet-id "$SHEET_ID"
 	assert_failure
