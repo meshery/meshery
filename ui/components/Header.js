@@ -444,8 +444,8 @@ const Header = ({
                 style={{
                   position: 'relative',
                   display: 'flex',
-                  flexWrap: 'wrap',
                   gap: '1rem 0.5rem',
+                  width: 'fit-content',
                 }}
               >
                 {/* According to the capabilities load the component */}
@@ -461,7 +461,15 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <UserSpan style={{ position: 'relative' }}>
+                  <UserSpan
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        sm: 'inline-flex',
+                      },
+                    }}
+                    style={{ position: 'relative' }}
+                  >
                     <K8sContextMenu
                       contexts={contexts}
                       activeContexts={activeContexts}
@@ -479,7 +487,12 @@ const Header = ({
                       <User />
                     </UserSpan>
                   </CustomTooltip>
-                  <UserSpan data-testid="header-menu">
+                  <UserSpan
+                    sx={{
+                      marginLeft: '0',
+                    }}
+                    data-testid="header-menu"
+                  >
                     <HeaderMenu />
                   </UserSpan>
                 </UserInfoContainer>
