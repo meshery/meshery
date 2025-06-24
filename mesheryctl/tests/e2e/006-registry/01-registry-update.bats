@@ -11,9 +11,7 @@ setup() {
 }
 
 teardown() {
-    # Remove any custom models directories created during tests
     rm -rf "$TEMP_DATA_DIR"
-    # Remove log files created by the tests
     rm -f "$LOG_PATH/registry-update"
 }
 
