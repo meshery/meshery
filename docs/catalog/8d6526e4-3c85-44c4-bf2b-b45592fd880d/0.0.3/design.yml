@@ -2,7 +2,7 @@
   "id": "8d6526e4-3c85-44c4-bf2b-b45592fd880d",
   "name": "understanding persistent storage in kubernetes",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -103,15 +103,7 @@
               "volumes": [
                 {
                   "persistentVolumeClaim": {
-                    "claimName": {
-                      "metadata": {
-                        "name": "claim-volume-backed",
-                        "namespace": "default"
-                      },
-                      "spec": {
-                        "volumeName": null
-                      }
-                    }
+                    "claimName": "claim-volume-backed"
                   }
                 }
               ]
@@ -221,15 +213,7 @@
               "volumes": [
                 {
                   "persistentVolumeClaim": {
-                    "claimName": {
-                      "metadata": {
-                        "name": "persistent-volume-claim-hbssss",
-                        "namespace": "default"
-                      },
-                      "spec": {
-                        "volumeName": "persistent-volume-dds"
-                      }
-                    }
+                    "claimName": "persistent-volume-claim-hbssss"
                   }
                 }
               ]
@@ -339,11 +323,7 @@
               "volumes": [
                 {
                   "persistentVolumeClaim": {
-                    "claimName": {
-                      "metadata": {
-                        "namespace": "default"
-                      }
-                    }
+                    "claimName": "persistent-volume-claim-od"
                   }
                 }
               ]
@@ -453,11 +433,7 @@
               "volumes": [
                 {
                   "persistentVolumeClaim": {
-                    "claimName": {
-                      "metadata": {
-                        "namespace": "default"
-                      }
-                    }
+                    "claimName": "persistent-volume-claim-od"
                   }
                 }
               ]
@@ -864,107 +840,6 @@
       }
     },
     {
-      "id": "71127c33-925b-4b8a-bf0c-292d3b6b8832",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "550bfe31-5015-a0d1-b695-369c97b4e903",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-          "name": "meshery",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "2025-06-22T05:57:00.309106049Z",
-          "updated_at": "2025-06-22T05:57:00.309106049Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-opacity": 0,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-style": "dashed",
-        "border-width": 1,
-        "data": {
-          "label": ""
-        },
-        "height": 30,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 113.90917117593928,
-          "y": 387.4882733458852
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#00D3A9",
-        "shape": "rectangle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
-        "width": 30,
-        "z-index": 27
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "parent",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {},
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Section",
-        "schema": ""
-      }
-    },
-    {
       "id": "240e0550-ec24-4ef5-9920-d9c2a6c987dd",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
@@ -1060,108 +935,6 @@
       }
     },
     {
-      "id": "51a13c05-ac32-4c09-8528-74afbb338c6d",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "550bfe31-5015-a0d1-b695-369c97b4e903",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-          "name": "meshery",
-          "credential_id": "00000000-0000-0000-0000-000000000000",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "user_id": "00000000-0000-0000-0000-000000000000",
-          "created_at": "2025-06-22T05:57:00.309106049Z",
-          "updated_at": "2025-06-22T05:57:00.309106049Z",
-          "deleted_at": "0001-01-01T00:00:00Z"
-        },
-        "connection_id": "98027e7d-9e16-e4f0-6dbd-83f3ac0d9856",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-opacity": 0,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-color": "#808080",
-        "border-style": "dashed",
-        "border-width": 1,
-        "data": {
-          "label": ""
-        },
-        "height": 60,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 375.41637700550484,
-          "y": 771.5769819080597
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#FFDE00",
-        "shape": "rectangle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
-        "width": 180,
-        "z-index": 28
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {},
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "TextBox",
-        "schema": ""
-      }
-    },
-    {
       "id": "644c1efe-bdc8-4255-a930-a07aad0c53eb",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
@@ -1227,8 +1000,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": -228.78725527381164,
-          "y": 1242.3274253778595
+          "x": -252.09592540079223,
+          "y": 1253.6826542334654
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -1322,8 +1095,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": -347.2422215297277,
-          "y": 1338.9293805527602
+          "x": -365.9581683450166,
+          "y": 1350.8683739896371
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
