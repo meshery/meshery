@@ -281,6 +281,7 @@ function OrganizationAndWorkSpaceSwitcher() {
 }
 
 function OrganizationAndWorkSpaceSwitcherModal({ open, handleClose, organization, router }) {
+  const theme = useTheme();
   return (
     <Modal
       open={open}
@@ -307,7 +308,7 @@ function OrganizationAndWorkSpaceSwitcherModal({ open, handleClose, organization
               width: '100%',
             }}
           >
-            <Typography variant="h6">Org:</Typography>
+            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
             <OrgMenu open={true} organization={organization} />
           </Grid2>
           <Grid2
@@ -320,7 +321,11 @@ function OrganizationAndWorkSpaceSwitcherModal({ open, handleClose, organization
               width: '100%',
             }}
           >
-            <Typography variant="h6">Wks:</Typography>
+            <WorkspaceIcon
+              {...iconLarge}
+              secondaryFill={theme.palette.common.white}
+              fill={theme.palette.common.white}
+            />
             <WorkspaceSwitcher open={true} organization={organization} router={router} />
           </Grid2>
         </Grid2>
