@@ -21,7 +21,9 @@ func TestExportModel(t *testing.T) {
 
 	// Create a custom directory for testing custom output location
 	customDir := filepath.Join(currDir, "testCustomDir")
-	os.MkdirAll(customDir, 0755)
+	if err := os.MkdirAll(customDir, 0755); err != nil {
+		t.Fatalf("Failed to create custom directory: %v", err)
+	}
 
 	// Setup cleanup to remove exported files generated during testing
 	t.Cleanup(func() {
