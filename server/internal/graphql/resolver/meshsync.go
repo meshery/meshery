@@ -2,16 +2,20 @@ package resolver
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io"
 	"os"
 	"path"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	"github.com/gofrs/uuid"
+	"github.com/meshery/meshery/server/handlers"
 	"github.com/meshery/meshery/server/internal/graphql/model"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/models"
-	"github.com/meshery/meshkit/broker"
 	"github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/spf13/viper"
 )
 
@@ -170,15 +174,37 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 	}
 
 	if actions.ReSync == "true" {
-		if r.BrokerConn.Info() != broker.NotConnected {
-			err := r.BrokerConn.Publish(model.RequestSubject, &broker.Message{
-				Request: &broker.RequestObject{
-					Entity: broker.ReSyncDiscoveryEntity,
-				},
-			})
-			if err != nil {
-				return "", ErrPublishBroker(err)
-			}
+		handler, ok := ctx.Value(models.HandlerKey).(*handlers.Handler)
+		if !ok {
+			return "", ErrResyncCluster(
+				fmt.Errorf("not able to take handler from context"),
+			)
+		}
+
+		instanceTracker := handler.ConnectionToStateMachineInstanceTracker
+		if instanceTracker == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf("instance tracker is nil in handler instance"),
+			)
+		}
+
+		machine, ok := instanceTracker.Get(uuid.FromStringOrNil(k8scontextID))
+		if !ok || machine == nil {
+			return "", ErrResyncCluster(
+				fmt.Errorf(
+					"instance tracker does not contain machine for connection %s",
+					k8scontextID,
+				),
+			)
+		}
+
+		if err := mhelpers.ResyncResources(ctx, machine); err != nil {
+			return "", ErrResyncCluster(
+				errors.Join(
+					fmt.Errorf("error resyncing resources for connection %s", k8scontextID),
+					err,
+				),
+			)
 		}
 	}
 	return model.StatusProcessing, nil
