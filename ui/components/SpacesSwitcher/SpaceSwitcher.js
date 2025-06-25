@@ -63,13 +63,13 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
 
   [theme.breakpoints.down('md')]: {
     '& .MuiInputBase-input': {
-      maxWidth: '3rem',
+      maxWidth: '2.5rem !important',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
     },
     '& span': {
-      maxWidth: '2.5rem',
+      maxWidth: '2.3rem',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
