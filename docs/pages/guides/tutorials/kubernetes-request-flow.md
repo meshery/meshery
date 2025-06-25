@@ -119,7 +119,7 @@ If we want to recreate this flow from scratch, we can drag and drop the same com
 
 ### Diagram Screenshot
 
-![Kubernetes Flow Diagram](kubernetes-request-flow/k8s-request-flow.png)
+[![Kubernetes Flow Diagram]({{site.baseurl}}/pages/guides/tutorials/kubernetes-request-flow/k8s-request-flow.png)]({{site.baseurl}}/pages/guides/tutorials/kubernetes-request-flow/k8s-request-flow.png)
 
 > Note: You can design this yourself using the components in Meshery Kanvas.
 
