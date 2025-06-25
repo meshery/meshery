@@ -57,9 +57,10 @@ const ShareIconButton = styled(IconButton)({
   transform: 'scaleX(-1)',
 });
 
-const SocialPopper = styled(Popper)({
-  maxWidth: 240,
-});
+const SocialPopper = styled(Popper)(({ theme }) => ({
+  maxWidth: theme.spacing(30),
+  zIndex: theme.zIndex.modal + 1,
+}));
 
 const SocialPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
@@ -358,13 +359,7 @@ function MesheryChart(props) {
           <ReplyIcon />
         </ShareIconButton>
       </ShareIconContainer>
-      <SocialPopper
-        open={socialExpand}
-        anchorEl={anchorEl}
-        transition
-        style={{ zIndex: '1301' }}
-        placement="bottom-end"
-      >
+      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition placement="bottom-end">
         {({ TransitionProps }) => (
           <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
             <Fade {...TransitionProps} timeout={350}>
