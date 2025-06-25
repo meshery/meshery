@@ -4,8 +4,8 @@ import {
   Typography,
   IconButton,
   Paper,
-  ClickAwayListener,
-  Fade,
+  // ClickAwayListener,
+  // Fade,
   Popper,
   styled,
 } from '@sistent/sistent';
@@ -17,15 +17,15 @@ import {
   makeMultiChart,
 } from '../lib/chartjs-formatter';
 import bb, { areaStep, line } from 'billboard.js';
-import {
-  TwitterShareButton,
-  LinkedinShareButton,
-  FacebookShareButton,
-  TwitterIcon,
-  LinkedinIcon,
-  FacebookIcon,
-} from 'react-share';
-import ReplyIcon from '@mui/icons-material/Reply';
+// import {
+//   TwitterShareButton,
+//   LinkedinShareButton,
+//   FacebookShareButton,
+//   TwitterIcon,
+//   LinkedinIcon,
+//   FacebookIcon,
+// } from 'react-share';
+// import ReplyIcon from '@mui/icons-material/Reply';
 
 const ChartTitle = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
@@ -92,25 +92,25 @@ function MesheryChart(props) {
   const percentileRef = useRef(null);
   const titleRef = useRef(null);
 
-  const [socialExpand, setSocialExpand] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [socialMessage, setSocialMessage] = useState('');
+  // const [socialExpand, setSocialExpand] = useState(false);
+  // const [anchorEl, setAnchorEl] = useState(null);
+  // const [socialMessage, setSocialMessage] = useState('');
 
   const getSocialMessageForPerformanceTest = (rps, percentile) => {
     return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`;
   };
 
-  const handleSocialExpandClick = (e, chartData) => {
-    setAnchorEl(e.currentTarget);
-    setSocialMessage(
-      getSocialMessageForPerformanceTest(
-        chartData.options.metadata.qps.display.value.split(' ')[1],
-        chartData.percentiles[4].Value,
-      ),
-    );
-    e.stopPropagation();
-    setSocialExpand((prevState) => !prevState);
-  };
+  // const handleSocialExpandClick = (e, chartData) => {
+  //   setAnchorEl(e.currentTarget);
+  //   setSocialMessage(
+  //     getSocialMessageForPerformanceTest(
+  //       chartData.options.metadata.qps.display.value.split(' ')[1],
+  //       chartData.percentiles[4].Value,
+  //     ),
+  //   );
+  //   e.stopPropagation();
+  //   setSocialExpand((prevState) => !prevState);
+  // };
 
   const singleChart = (rawdata, data) => {
     if (typeof data === 'undefined' || typeof data.StartTime === 'undefined') {
@@ -353,12 +353,12 @@ function MesheryChart(props) {
 
   return (
     <NoSsr>
-      <ShareIconContainer>
+      {/* <ShareIconContainer>
         <ShareIconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, chartData)}>
           <ReplyIcon />
         </ShareIconButton>
-      </ShareIconContainer>
-      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition style={{ zIndex: '1301' }}>
+      </ShareIconContainer> */}
+      {/* <SocialPopper open={socialExpand} anchorEl={anchorEl} transition style={{ zIndex: '1301' }}>
         {({ TransitionProps }) => (
           <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
             <Fade {...TransitionProps} timeout={350}>
@@ -390,7 +390,7 @@ function MesheryChart(props) {
             </Fade>
           </ClickAwayListener>
         )}
-      </SocialPopper>
+      </SocialPopper> */}
       <div>
         <ChartTitle ref={titleRef} style={{ display: 'none' }} />
         <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">
