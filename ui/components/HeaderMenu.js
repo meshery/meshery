@@ -60,11 +60,6 @@ const HeaderMenu = () => {
     handleClose();
   };
 
-  const handleConnections = () => {
-    router.push('/management/connections');
-    handleClose();
-  };
-
   const handleGetToken = () => {
     triggerGetToken()
       .unwrap()
@@ -133,12 +128,6 @@ const HeaderMenu = () => {
     // Always add these items
     defaultItems.push(
       {
-        id: 'Connections',
-        title: 'Connections',
-        onClick: handleConnections,
-        showOnWeb: false,
-      },
-      {
         id: 'settings',
         title: 'Settings',
         onClick: handleSettings,
@@ -178,12 +167,7 @@ const HeaderMenu = () => {
   return (
     <>
       <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
-        <MenuIcon
-          sx={{
-            height: 27,
-            width: 27,
-          }}
-        />
+        <MenuIcon />
       </IconButtonAvatar>
 
       <Popover
