@@ -1029,14 +1029,6 @@ const Navigator_ = () => {
                   color: '#fff',
                   opacity: '0.7',
                   transition: 'opacity 200ms linear',
-                  '&:hover': {
-                    opacity: 1,
-                    background: 'transparent',
-                  },
-                  '&:focus': {
-                    opacity: 1,
-                    background: 'transparent',
-                  },
                 }}
               />
             </HelpButton>

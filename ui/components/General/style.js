@@ -422,6 +422,18 @@ export const HelpButton = styled(IconButton, {
   ...(!isCollapsed && {
     transform: 'translateX(0.5px)',
   }),
+  '&:hover': {
+    backgroundColor: 'transparent',
+    '& svg': {
+      opacity: 1,
+    },
+  },
+  '&:focus': {
+    backgroundColor: 'transparent',
+    '& svg': {
+      opacity: 1,
+    },
+  },
 }));
 
 export const FixedSidebarFooter = styled('div')({
