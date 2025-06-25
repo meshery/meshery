@@ -16,8 +16,6 @@ import {
   CircularProgress,
   CustomTooltip,
   useMediaQuery,
-  Modal,
-  ModalBody,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
@@ -31,6 +29,7 @@ import {
   useGetSelectedOrganization,
   useUpdateSelectedOrganizationMutation,
 } from '@/rtk-query/user';
+import { MobileOrgWksSwither } from './MobileViewSwitcher';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -60,6 +59,21 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
   },
   '& svg': {
     fill: '#eee',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    '& .MuiInputBase-input': {
+      maxWidth: '3rem',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
+    '& span': {
+      maxWidth: '2.5rem',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
   },
 }));
 
@@ -98,7 +112,7 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
   gap: '0.5rem 0rem',
 }));
 
-function OrgMenu(props) {
+export function OrgMenu(props) {
   const { data: orgsResponse, isSuccess: isOrgsSuccess } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
@@ -198,7 +212,6 @@ function DefaultHeader({ title, isBeta }) {
 function OrganizationAndWorkSpaceSwitcher() {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
 
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
@@ -208,10 +221,6 @@ function OrganizationAndWorkSpaceSwitcher() {
   const { title } = useSelector((state) => state.ui.page);
   const { selectedOrganization } = useGetSelectedOrganization();
 
-  const handleClose = () => {
-    setOpenModal(false);
-  };
-
   if (!selectedOrganization) return null;
 
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -219,37 +228,38 @@ function OrganizationAndWorkSpaceSwitcher() {
   return (
     <NoSsr>
       <StyledSwitcher>
-        <CustomTooltip title={'Organization'}>
-          <Button
-            onClick={() => {
-              if (isSmallScreen) {
-                setOpenModal(true);
-              } else {
-                setOrgOpen(!orgOpen);
-              }
-            }}
-            sx={{
-              padding: {
-                xs: '0.2rem !important',
-                sm: '0 0.5rem !important',
-              },
-              minWidth: {
-                xs: '2rem !important',
-                sm: '4rem !important',
-              },
-            }}
-            style={{ marginRight: orgOpen ? (isSmallScreen ? '0' : '1rem') : '0' }}
-          >
-            <OrgOutlinedIcon
-              height={isSmallScreen ? iconLarge.height : iconXLarge.height}
-              width={isSmallScreen ? iconLarge.width : iconXLarge.width}
-              fill={theme.palette.common.white}
-            />
-          </Button>
-        </CustomTooltip>
-        {!isSmallScreen && <OrgMenu open={orgOpen} organization={organization} />}/
+        {isSmallScreen && (
+          <>
+            <MobileOrgWksSwither organization={organization} router={router} />/
+          </>
+        )}
         {!isSmallScreen && (
           <>
+            <CustomTooltip title={'Organization'}>
+              <Button
+                onClick={() => {
+                  setOrgOpen(!orgOpen);
+                }}
+                sx={{
+                  padding: {
+                    xs: '0.2rem !important',
+                    sm: '0 0.5rem !important',
+                  },
+                  minWidth: {
+                    xs: '2rem !important',
+                    sm: '4rem !important',
+                  },
+                }}
+                style={{ marginRight: orgOpen ? (isSmallScreen ? '0' : '1rem') : '0' }}
+              >
+                <OrgOutlinedIcon
+                  height={isSmallScreen ? iconLarge.height : iconXLarge.height}
+                  width={isSmallScreen ? iconLarge.width : iconXLarge.width}
+                  fill={theme.palette.common.white}
+                />
+              </Button>
+            </CustomTooltip>
+            <OrgMenu open={orgOpen} organization={organization} />/
             <CustomTooltip title={'Workspace'}>
               <Button
                 onClick={() => {
@@ -267,70 +277,10 @@ function OrganizationAndWorkSpaceSwitcher() {
             <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
           </>
         )}
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
       </StyledSwitcher>
-      <OrganizationAndWorkSpaceSwitcherModal
-        open={openModal}
-        handleClose={handleClose}
-        organization={organization}
-        router={router}
-      />
     </NoSsr>
-  );
-}
-
-function OrganizationAndWorkSpaceSwitcherModal({ open, handleClose, organization, router }) {
-  const theme = useTheme();
-  return (
-    <Modal
-      open={open}
-      closeModal={handleClose}
-      aria-labelledby="organization-workspace-switcher-title"
-      aria-describedby="organization-workspace-switcher-description"
-      style={{ zIndex: 1000 }}
-      title="Organization and Workspace Switcher"
-      sx={{
-        width: '90%',
-        marginRight: '-10px',
-        marginLeft: 'auto',
-      }}
-    >
-      <ModalBody>
-        <Grid2 container spacing={2} alignItems="center" flexDirection={'column'}>
-          <Grid2
-            container
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}
-          >
-            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-            <OrgMenu open={true} organization={organization} />
-          </Grid2>
-          <Grid2
-            container
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              width: '100%',
-            }}
-          >
-            <WorkspaceIcon
-              {...iconLarge}
-              secondaryFill={theme.palette.common.white}
-              fill={theme.palette.common.white}
-            />
-            <WorkspaceSwitcher open={true} organization={organization} router={router} />
-          </Grid2>
-        </Grid2>
-      </ModalBody>
-    </Modal>
   );
 }
 
