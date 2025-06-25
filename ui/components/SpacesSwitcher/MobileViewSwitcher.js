@@ -5,6 +5,7 @@ import {
   ClickAwayListener,
   Grid2,
   Slide,
+  useMediaQuery,
   useTheme,
   WorkspaceIcon,
 } from '@sistent/sistent';
@@ -39,10 +40,13 @@ function SwitcherMenu({ organization, router }) {
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const [transformProperty, setTransformProperty] = useState(100);
 
+  const isSmallScreen = useMediaQuery('(max-width:500px)');
+
   const styleSlider = {
     position: 'absolute',
     zIndex: '-1',
-    bottom: '-170%',
+    bottom: '-140%',
+    width: isSmallScreen ? '100%' : '270px',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
@@ -69,6 +73,7 @@ function SwitcherMenu({ organization, router }) {
           aria-haspopup="true"
           style={{
             minWidth: '2.5rem',
+            marginLeft: '0.5rem',
           }}
         >
           <DashboardSwitcherIcon height={28} width={28} />
@@ -115,40 +120,29 @@ function SwitcherMenu({ organization, router }) {
               }}
             >
               <CMenuContainer>
-                <Grid2
-                  container
-                  spacing={2}
-                  alignItems="center"
-                  sx={{
-                    marginTop: '1rem',
-                    backgroundColor: theme.palette.background.card,
-                    borderRadius: '3px',
-                    padding: '1rem',
-                    boxShadow: '20px #979797',
-                    transition: 'linear .2s',
-                    transitionProperty: 'height',
-                  }}
-                  flexDirection={'column'}
-                >
+                <Grid2 container spacing={2} alignItems="center" flexDirection={'column'}>
                   <Grid2
                     container
                     sx={{
+                      width: '100%',
                       display: 'flex',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      gap: '2rem',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
                     <OrgMenu open={true} organization={organization} />
                   </Grid2>
+
                   <Grid2
                     container
                     sx={{
+                      width: '100%',
                       display: 'flex',
                       flexDirection: 'row',
                       alignItems: 'center',
-                      gap: '2.4rem',
+                      justifyContent: 'space-between',
                     }}
                   >
                     <WorkspaceIcon

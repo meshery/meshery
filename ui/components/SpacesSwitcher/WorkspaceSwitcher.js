@@ -104,6 +104,15 @@ function WorkspaceSwitcher({ open }) {
                             handleChangeWorkspace(e); // only call for new selection
                           }
                         }}
+                        SelectDisplayProps={{
+                          style: {
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fill: '#eee',
+                            paddingBlock: '9px 8px',
+                            paddingInline: '18px 34px',
+                          },
+                        }}
                         renderValue={() => {
                           return selectedWorkspace?.name || '';
                         }}
