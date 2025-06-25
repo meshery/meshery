@@ -432,5 +432,4 @@ function MesheryChart(props) {
     </NoSsr>
   );
 }
-
 export default MesheryChart;

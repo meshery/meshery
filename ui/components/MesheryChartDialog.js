@@ -126,5 +126,4 @@ MesheryChartDialog.propTypes = {
   title: PropTypes.string,
   socialMessage: PropTypes.string, //new addition
 }
-
 export default MesheryChartDialog
