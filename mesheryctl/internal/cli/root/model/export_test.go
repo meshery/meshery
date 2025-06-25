@@ -38,7 +38,7 @@ func TestExportModel(t *testing.T) {
 		}
 
 		for _, file := range filesToClean {
-			os.Remove(file)
+			os.RemoveAll(file)
 		}
 
 		// Clean up custom directory
