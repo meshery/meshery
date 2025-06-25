@@ -17,7 +17,7 @@ In this tutorial, we will explore the exact journey a request takes inside a Kub
 > **_Note:_** This tutorial is completely visual and beginner-friendly. No YAML or CLI is required.
 
 
-## Prerequisites
+### Prerequisites
 
 - Basic understanding of Kubernetes objects (Service, Pod, Container)
 - Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
