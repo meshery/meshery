@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 24th 2025, 11:50:02 pm
+- Testing started at: June 25th 2025, 12:44:07 am
 
 **📦 Test Result Summary**
 
-- ✅ 0 passed
-- ❌ 1 failed
+- ✅ 73 passed
+- ❌ 2 failed
 - ⚠️ 0 flaked
-- ⏩ 1 skipped
+- ⏩ 5 skipped
 
-⌛ _Duration: 0 minutes and 5 seconds_
+⌛ _Duration: 8 minutes and 47 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,8 +21,13 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | setup | authenticate as Meshery provider |  | ❌ |
-| 2 | setup | authenticate as None provider |  | ➖ |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
+| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
+| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
+| 6 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
+| 7 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
 
 </div>
 </details>
