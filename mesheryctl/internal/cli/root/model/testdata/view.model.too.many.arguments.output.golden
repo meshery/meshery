@@ -1,0 +1,4 @@
+too many arguments
+
+Usage: mesheryctl model view [model-name]
+Run 'mesheryctl model view --help' to see detailed help message

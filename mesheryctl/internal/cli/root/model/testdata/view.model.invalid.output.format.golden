@@ -1,0 +1,4 @@
+[ yaml, json ] are the only format supported
+
+Usage: mesheryctl model view --output-format [yaml|json]
+Run 'mesheryctl model view --help' to see detailed help message
