@@ -100,7 +100,7 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 Models use **capabilities** to describe the operations which they support, such as styling, configurations, interactions, and runtime behavior. Entities may define a broad array of capabilities, which are in turn dynamically interpreted by Meshery for full lifecycle management.
 
-To simply the assignment of these capabilities, Meshery organizes these capabilities into reusable and assignable sets, such as:
+To simplify the assignment of these capabilities, Meshery organizes these capabilities into reusable and assignable sets, such as:
 
 - **Default Set:**
   A foundational set covering configuration (`Workload Configuration`, `Labels and Annotations`), UI interaction (`Styling`, `Change Shape`, `Compound Drag and Drop`), and component introspection (`Relationships`, `Json Schema`).
