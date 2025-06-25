@@ -33,7 +33,7 @@ function DashboardSwitcherIcon({ width = '24px', height = '24px', ...props }) {
           c0,.1,0,.2-.2.2h-2.5c-.1,0-.2,0-.2-.2v-2.1Z"
       />
       <path
-        fill="none"
+        fill="#fff"
         stroke="#fff"
         strokeWidth="2"
         strokeLinecap="round"

@@ -63,13 +63,8 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
 
   [theme.breakpoints.down('md')]: {
     '& .MuiInputBase-input': {
-      maxWidth: '2.5rem !important',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
-    },
-    '& span': {
-      maxWidth: '2.3rem',
+      minWidth: '7rem',
+      maxWidth: '7.5rem',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
@@ -90,8 +85,15 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 
 export const StyledHeader = styled(Typography)(({ theme }) => ({
   paddingLeft: theme.spacing(1),
-  fontSize: '1.25rem',
-  [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
+  fontSize: '1.65rem',
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1.25rem',
+    maxWidth: '7rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
   color: theme.palette.common.white,
 }));
 export const StyledBetaHeader = styled('sup')(() => ({
@@ -240,23 +242,9 @@ function OrganizationAndWorkSpaceSwitcher() {
                 onClick={() => {
                   setOrgOpen(!orgOpen);
                 }}
-                sx={{
-                  padding: {
-                    xs: '0.2rem !important',
-                    sm: '0 0.5rem !important',
-                  },
-                  minWidth: {
-                    xs: '2rem !important',
-                    sm: '4rem !important',
-                  },
-                }}
-                style={{ marginRight: orgOpen ? (isSmallScreen ? '0' : '1rem') : '0' }}
+                style={{ marginRight: orgOpen ? '1rem' : '0' }}
               >
-                <OrgOutlinedIcon
-                  height={isSmallScreen ? iconLarge.height : iconXLarge.height}
-                  width={isSmallScreen ? iconLarge.width : iconXLarge.width}
-                  fill={theme.palette.common.white}
-                />
+                <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
               </Button>
             </CustomTooltip>
             <OrgMenu open={orgOpen} organization={organization} />/
