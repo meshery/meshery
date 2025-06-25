@@ -9,8 +9,6 @@ type: guides
 category: tutorials
 language: en
 ---
-
-
 In this tutorial, we will explore the exact journey a request takes inside a Kubernetes cluster from the moment a user hits "Enter" in their browser, to the moment a response is sent back. We will understand the fundamental data path of a request - from the user to the container, using a **diagram built in Meshery Kanvas**.
 
 > **_Note:_** This tutorial is completely visual and beginner-friendly. No YAML or CLI is required.
