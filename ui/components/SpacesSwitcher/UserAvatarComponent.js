@@ -1,11 +1,18 @@
 import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 import React from 'react';
-import { CustomTooltip, Link, Avatar, Typography } from '@sistent/sistent';
+import { CustomTooltip, Link, Avatar, Typography, useTheme } from '@sistent/sistent';
 import { StyledAvatarContainer, StyledUserDetailsContainer, StyledUpdatedText } from './styles';
 
 const UserAvatarComponent = ({ userData }) => {
+  const theme = useTheme();
   return (
-    <StyledAvatarContainer>
+    <StyledAvatarContainer
+      sx={{
+        [theme.breakpoints.down('sm')]: {
+          justifyContent: 'center',
+        },
+      }}
+    >
       <CustomTooltip
         title={`${userData?.first_name} ${userData?.last_name || ''}`}
         sx={{ display: { xs: 'block', sm: 'block' } }}
@@ -33,6 +40,12 @@ const UserAvatarComponent = ({ userData }) => {
           sx={{
             '& span': {
               display: { sm: 'none', md: 'inline' },
+            },
+            [theme.breakpoints.down('xl')]: {
+              width: theme.spacing(12),
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
             },
           }}
         >
