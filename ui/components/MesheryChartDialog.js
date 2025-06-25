@@ -124,6 +124,7 @@ MesheryChartDialog.propTypes = {
   handleClose: PropTypes.func.isRequired,
   content: PropTypes.node.isRequired,
   title: PropTypes.string,
-  socialMessage: PropTypes.string, //new addition
+  socialMessage: PropTypes.string,
+   //new addition
 }
 export default MesheryChartDialog
