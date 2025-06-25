@@ -1419,6 +1419,7 @@ function MesheryPatterns({
           event_type: EVENT_TYPES.SUCCESS,
         });
         getPatterns();
+        setImportModal({ open: false });
       })
       .catch(() => {
         updateProgress({ showProgress: false });
