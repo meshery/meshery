@@ -30,6 +30,8 @@ import {
   Grid2,
   Hidden,
   NoSsr,
+  useTheme,
+  useMediaQuery,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -393,6 +395,7 @@ const Header = ({
   abilityUpdated,
 }) => {
   const { notify } = useNotification;
+  const theme = useTheme();
 
   const {
     data: providerCapabilities,
@@ -410,6 +413,8 @@ const Header = ({
 
   const remoteProviderUrl = providerCapabilities?.provider_url;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const loaderType = 'circular';
   return (
@@ -450,7 +455,7 @@ const Header = ({
               >
                 {/* According to the capabilities load the component */}
                 <ErrorBoundary customFallback={() => null}>
-                  {collaboratorExtensionUri && (
+                  {collaboratorExtensionUri && isSmallScreen && (
                     <RemoteComponent
                       url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
                       loaderType={loaderType}
