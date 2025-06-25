@@ -2,7 +2,6 @@
   "name": "meshery-ui",
   "version": "1.0.0",
   "description": "collaborative management plane",
-  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "next lint --fix && node ui_dev_server.js",
