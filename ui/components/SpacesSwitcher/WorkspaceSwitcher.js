@@ -82,8 +82,8 @@ function WorkspaceSwitcher({ open }) {
   return (
     <NoSsr>
       {!isLoadingWorkspaces && allWorkspaces?.length > 0 && (
-        <div
-          style={{
+        <Grid2
+          sx={{
             width: open ? 'auto' : 0,
             overflow: open ? '' : 'hidden',
             transition: 'all 1s',
@@ -142,7 +142,7 @@ function WorkspaceSwitcher({ open }) {
               />
             </FormGroup>
           </FormControl>
-        </div>
+        </Grid2>
       )}
       <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
     </NoSsr>

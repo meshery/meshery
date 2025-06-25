@@ -15,6 +15,9 @@ import {
   WorkspaceIcon,
   CircularProgress,
   CustomTooltip,
+  useMediaQuery,
+  Modal,
+  ModalBody,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
@@ -72,7 +75,7 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 }));
 
 export const StyledHeader = styled(Typography)(({ theme }) => ({
-  paddingLeft: theme.spacing(2),
+  paddingLeft: theme.spacing(1),
   fontSize: '1.25rem',
   [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
   color: theme.palette.common.white,
@@ -92,7 +95,6 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
   userSelect: 'none',
   transition: 'width 2s ease-in',
   color: theme.palette.common.white,
-  flexWrap: 'wrap',
   gap: '0.5rem 0rem',
 }));
 
@@ -196,6 +198,8 @@ function DefaultHeader({ title, isBeta }) {
 function OrganizationAndWorkSpaceSwitcher() {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
   const router = useRouter();
@@ -204,38 +208,129 @@ function OrganizationAndWorkSpaceSwitcher() {
   const { title } = useSelector((state) => state.ui.page);
   const { selectedOrganization } = useGetSelectedOrganization();
 
+  const handleClose = () => {
+    setOpenModal(false);
+  };
+
   if (!selectedOrganization) return null;
+
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <NoSsr>
       <StyledSwitcher>
         <CustomTooltip title={'Organization'}>
           <Button
-            onClick={() => setOrgOpen(!orgOpen)}
-            style={{ marginRight: orgOpen ? '1rem' : '0' }}
+            onClick={() => {
+              if (isSmallScreen) {
+                setOpenModal(true);
+              } else {
+                setOrgOpen(!orgOpen);
+              }
+            }}
+            sx={{
+              padding: {
+                xs: '0.2rem !important',
+                sm: '0 0.5rem !important',
+              },
+              minWidth: {
+                xs: '2rem !important',
+                sm: '4rem !important',
+              },
+            }}
+            style={{ marginRight: orgOpen ? (isSmallScreen ? '0' : '1rem') : '0' }}
           >
-            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+            <OrgOutlinedIcon
+              height={isSmallScreen ? iconLarge.height : iconXLarge.height}
+              width={isSmallScreen ? iconLarge.width : iconXLarge.width}
+              fill={theme.palette.common.white}
+            />
           </Button>
         </CustomTooltip>
-        <OrgMenu open={orgOpen} organization={organization} />/
-        <CustomTooltip title={'Workspace'}>
-          <Button
-            onClick={() => setWorkspaceOpen(!workspaceOpen)}
-            style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+        {!isSmallScreen && <OrgMenu open={orgOpen} organization={organization} />}/
+        {!isSmallScreen && (
+          <>
+            <CustomTooltip title={'Workspace'}>
+              <Button
+                onClick={() => {
+                  setWorkspaceOpen(!workspaceOpen);
+                }}
+                style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+              >
+                <WorkspaceIcon
+                  {...iconLarge}
+                  secondaryFill={theme.palette.common.white}
+                  fill={theme.palette.common.white}
+                />
+              </Button>
+            </CustomTooltip>
+            <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
+          </>
+        )}
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
+      </StyledSwitcher>
+      <OrganizationAndWorkSpaceSwitcherModal
+        open={openModal}
+        handleClose={handleClose}
+        organization={organization}
+        router={router}
+      />
+    </NoSsr>
+  );
+}
+
+function OrganizationAndWorkSpaceSwitcherModal({ open, handleClose, organization, router }) {
+  const theme = useTheme();
+  return (
+    <Modal
+      open={open}
+      closeModal={handleClose}
+      aria-labelledby="organization-workspace-switcher-title"
+      aria-describedby="organization-workspace-switcher-description"
+      style={{ zIndex: 1000 }}
+      title="Organization and Workspace Switcher"
+      sx={{
+        width: '90%',
+        marginRight: '-10px',
+        marginLeft: 'auto',
+      }}
+    >
+      <ModalBody>
+        <Grid2 container spacing={2} alignItems="center" flexDirection={'column'}>
+          <Grid2
+            container
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
+          >
+            <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+            <OrgMenu open={true} organization={organization} />
+          </Grid2>
+          <Grid2
+            container
+            sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              width: '100%',
+            }}
           >
             <WorkspaceIcon
               {...iconLarge}
               secondaryFill={theme.palette.common.white}
               fill={theme.palette.common.white}
             />
-          </Button>
-        </CustomTooltip>
-        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />
-        /
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
-        {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
-      </StyledSwitcher>
-    </NoSsr>
+            <WorkspaceSwitcher open={true} organization={organization} router={router} />
+          </Grid2>
+        </Grid2>
+      </ModalBody>
+    </Modal>
   );
 }
 

@@ -39,7 +39,6 @@ export const UserContainer = styled('div')(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     justifyContent: 'flex-end',
-    marginRight: '1rem',
     marginBlock: '0.5rem',
   },
 }));
