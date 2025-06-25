@@ -1,4 +1,4 @@
-import DashboardSwitcher from '@/assets/icons/DashboardSwitcher';
+import DashboardSwitcherIcon from '@/assets/icons/DashboardSwitcherIcon';
 import {
   Box,
   Button,
@@ -71,7 +71,7 @@ function SwitcherMenu({ organization, router }) {
             minWidth: '2.5rem',
           }}
         >
-          <DashboardSwitcher height={28} width={28} />
+          <DashboardSwitcherIcon height={28} width={28} />
         </Button>
 
         <Slide
