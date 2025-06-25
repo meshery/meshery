@@ -94,6 +94,29 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 {% include alert.html type="info" title="Instance example" content="NGINX-as234z2 pod running in a cluster as a Kubernetes Pod with port 443 and SSL termination." %}
 
+### Capabilities
+
+**Capabilities** __(static?)__ **: Capabilities are used to describe the operations that a model supports.**.
+
+Model use **capabilities** to describe the operations which they support, such as styling, configurations, interactions, and runtime behavior.
+
+To simply the assignment of these capabilities, Meshery organizes these capabilities into reusable and assignable sets, such as:
+
+- **Default Set:**
+  A foundational set covering configuration (`Workload Configuration`, `Labels and Annotations`), UI interaction (`Styling`, `Change Shape`, `Compound Drag and Drop`), and component introspection (`Relationships`, `Json Schema`).
+- **Shapes:**
+  Visual components with layout and appearance-related capabilities. Includes `Styling`, `Change Shape`, `Compound Drag and Drop`, and `Body Text`.
+- **Comment:**
+  Annotation-like elements with light interaction. Similar to **Shapes**, but focused on non-functional overlays.
+- **Ghost:**
+  Lightweight visual components with minimal styling. Typically lacks body text or complex interactions.
+- **Shapes without Text:**
+  Variant of **Shapes**, omitting `Body Text` to support simpler block structures.
+- **Component with Logging and Terminal Session Support:**
+  Extends the Default set with operational capabilities like `Performance Test`, `Interactive Terminal`, and `Stream Logs`.
+- **Container Alias:**
+  Alias components that simulate real workloads, combining configuration, view, and operational capabilities.
+
 ### Importing and Creating Models
 
 Models can be created from scratch or imported using either the Meshery UI or the Meshery CLI.  
