@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 6th 2025, 1:08:37 am
+- Testing started at: June 25th 2025, 5:10:45 am
 
 **📦 Test Result Summary**
 
-- ✅ 65 passed
-- ❌ 2 failed
-- ⚠️ 2 flaked
+- ✅ 72 passed
+- ❌ 1 failed
+- ⚠️ 0 flaked
 - ⏩ 4 skipped
 
-⌛ _Duration: 5 minutes and 58 seconds_
+⌛ _Duration: 5 minutes and 33 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,21 +21,11 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 5 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 6 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 7 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 8 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 9 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 10 | chromium-local-provider | Search a Model and Export it |  | ❌ |
-| 11 | chromium-local-provider | Import a Model via File Import |  | ➖ |
-| 12 | chromium-local-provider | Import a Model via Url Import |  | ➖ |
-| 13 | chromium-local-provider | Import a Model via CSV Import |  | ➖ |
-| 14 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
-| 15 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ❌ |
+| 2 | chromium-meshery-provider | Transition to disconnected state and then back to connected state |  | ➖ |
+| 3 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ➖ |
+| 4 | chromium-meshery-provider | Transition to not found state and then back to connected state |  | ➖ |
+| 5 | chromium-meshery-provider | Delete Kubernetes cluster connections |  | ➖ |
 
 </div>
 </details>

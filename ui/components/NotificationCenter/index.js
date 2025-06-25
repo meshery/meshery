@@ -192,20 +192,15 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
 };
 
 const Header = ({ handleFilter, handleClose }) => {
+  const uiConfig = useSelector((state) => state.events.ui);
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
-  const { count_by_severity_level } = data || {
+  const { count_by_severity_level, read_count } = data || {
     count_by_severity_level: [],
     total_count: 0,
+    read_count: 0,
   };
-  const {
-    data: { total_count: read_count } = {
-      total_count: 0,
-    },
-  } = useGetEventsSummaryQuery({
-    status: STATUS.READ,
-  });
 
   const onClickSeverity = (severity) => {
     handleFilter({
@@ -220,13 +215,14 @@ const Header = ({ handleFilter, handleClose }) => {
     });
   };
 
+  const Icon = uiConfig.icon || BellIcon;
   return (
     <NotificationContainer>
       <Title>
         <TitleBellIcon onClick={handleClose}>
-          <BellIcon height="30" width="30" fill="#fff" />
+          <Icon height="30" width="30" fill="#fff" />
         </TitleBellIcon>
-        <Typography variant="h6"> Notifications</Typography>
+        <Typography variant="h6">{uiConfig.title || 'Notifications'}</Typography>
       </Title>
       <SeverityChips>
         {Object.values(SEVERITY).map((severity) => (
@@ -425,14 +421,13 @@ const NotificationCenterDrawer = () => {
   const isNotificationCenterOpen = useSelector((state) => state.events.isNotificationCenterOpen);
   const [fetchEvents, { isFetching }] = useLazyGetEventsQuery();
   const hasMore = useSelector((state) => state.events.current_view.has_more);
+  const initialViewToLoad = useSelector((state) => state.events.view_to_fetch_on_open);
 
   const [isLoadingFilters, setIsLoadingFilters] = useState(false); // whether we are loading filters and basically should show loading spinner as we are loading the whole page
 
   useEffect(() => {
     dispatch(
-      loadEvents(fetchEvents, 0, {
-        status: STATUS.UNREAD,
-      }),
+      loadEvents(fetchEvents, initialViewToLoad?.page || 0, initialViewToLoad?.filters || {}),
     );
   }, []);
 

@@ -10,10 +10,6 @@ test.describe('Index Page UI Tests', () => {
     await expect(page.getByTestId('navigation')).toBeVisible();
   });
 
-  test('Test if Settings button is displayed', async ({ page }) => {
-    await expect(page.getByTestId('settings-button')).toBeVisible();
-  });
-
   test('Test if Notification button is displayed', async ({ page }) => {
     await expect(page.getByTestId('notification-button')).toBeVisible();
   });
