@@ -23,7 +23,7 @@ In this tutorial, we will explore the exact journey a request takes inside a Kub
 - Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
 
 
-## Lab Scenario
+### Lab Scenario
 
 We will explore a simple application architecture in Kubernetes.
 - A **User** sending a request  
