@@ -136,7 +136,7 @@ To simply the assignment of these capabilities, Meshery organizes these capabili
 | **Interactive Terminal**                 | Initiate a terminal session.                                                | action    |
 | **Stream Logs**                          | Initiate log streaming session.                                             | action    |
 
-{% include alert.html type="info" title="Capabilties Schema example" content='<details><summary>Capabilties  schema excerpt</summary><pre> {
+{% include alert.html type="info" title="Capabilities Schema example" content='<details><summary>Capabilities schema excerpt</summary><pre> {
 "$id": "https://schemas.meshery.io/capability.json",
 "$schema": "http://json-schema.org/draft-07/schema#",
 "description": "Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.",
