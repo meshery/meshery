@@ -189,6 +189,7 @@ func (h *Handler) handlePatternPOST(
 	requestPayload := &DesignPostPayload{}
 	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
 		h.logErrorParsingRequestBody(rw, provider, err, userID, eventBuilder)
+		return
 	}
 
 	token, err := provider.GetProviderToken(r)
@@ -196,7 +197,11 @@ func (h *Handler) handlePatternPOST(
 		h.logErrorGettingUserToken(rw, provider, err, userID, eventBuilder)
 		return
 	}
-	eventBuilder = eventBuilder.ActedUpon(*requestPayload.ID)
+
+	// Set the event builder with the pattern ID if available
+	if requestPayload.ID != nil {
+		eventBuilder = eventBuilder.ActedUpon(*requestPayload.ID)
+	}
 
 	designFileBytes, err := encoding.Marshal(requestPayload.DesignFile)
 

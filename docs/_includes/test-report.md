@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 22nd 2025, 9:57:43 pm
+- Testing started at: June 25th 2025, 7:29:50 pm
 
 **📦 Test Result Summary**
 
-- ✅ 80 passed
+- ✅ 76 passed
 - ❌ 0 failed
-- ⚠️ 2 flaked
+- ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 19 seconds_
+⌛ _Duration: 5 minutes and 53 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,8 +21,6 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
-| 2 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
 
 </div>
 </details>
