@@ -96,9 +96,9 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 ### Capabilities
 
-**Capabilities** __(static?)__ **: Capabilities are used to describe the operations that a model supports.**.
+**Capabilities** *_(static?)_* **: Capabilities are used to describe the operations that a model supports.**.
 
-Model use **capabilities** to describe the operations which they support, such as styling, configurations, interactions, and runtime behavior.
+Model use **capabilities** to describe the operations which they support, such as styling, configurations, interactions, and runtime behavior. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.
 
 To simply the assignment of these capabilities, Meshery organizes these capabilities into reusable and assignable sets, such as:
 
@@ -116,6 +116,52 @@ To simply the assignment of these capabilities, Meshery organizes these capabili
   Extends the Default set with operational capabilities like `Performance Test`, `Interactive Terminal`, and `Stream Logs`.
 - **Container Alias:**
   Alias components that simulate real workloads, combining configuration, view, and operational capabilities.
+
+
+#### Individual Capabilities
+
+| Capability| Description | Kind |
+|---------------------------|----------------------------------------------|-----------|
+| **Performance Test**                     | Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.  | action    |
+| **Workload Configuration**               | Configure the workload specific setting of a component.                                | mutate    |
+| **Labels and Annotations Configuration** | Configure Labels And Annotations for the component.                         | mutate    |
+| **Relationships**                        | View defined relationships for the component.                               | view      |
+| **Json Schema**                          | View the underlying JSON Schema definition of the component.                | view      |
+| **Styling**                              | Configure the visual styles for the component.                              | mutate    |
+| **Change Shape**                         | Change the shape of the component.                                          | mutate    |
+| **Compound Drag and Drop**               | Drag and Drop a component into a parent component in graph view.            | interaction |
+| **Body Text**                            | Add textual content within the body of a node.                              | mutate    |
+| **Show Label**                           | Display label text associated with a node (similar to `Body Text`).         | view      |
+| **Resolve Component**                    | Mark the status of a component as resolved.                                 | mutate    |
+| **Interactive Terminal**                 | Initiate a terminal session.                                                | action    |
+| **Stream Logs**                          | Initiate log streaming session.                                             | action    |
+
+{% include alert.html type="info" title="Capabilties Schema example" content='<details><summary>Capabilties  schema excerpt</summary><pre> {
+"$id": "https://schemas.meshery.io/capability.json",
+"$schema": "http://json-schema.org/draft-07/schema#",
+"description": "Meshery manages entities in accordance with their specific capabilities. This field explicitly identifies those capabilities largely by what actions a given component supports; e.g. metric-scrape, sub-interface, and so on. This field is extensible. Entities may define a broad array of capabilities, which are in-turn dynamically interpretted by Meshery for full lifecycle management.",
+"additionalProperties": false,
+"type": "object",
+"required": 
+.
+.
+.
+"kind": {
+"description": "Top-level categorization of the capability",
+"additionalProperties": false,
+"anyOf": [
+  {
+    "const": "action",
+    "description": "For capabilities related to executing actions on entities. Example: initiate log streaming on a Pod. Example: initiate deployment of a component."
+  },
+  {
+    "const": "mutate",
+    "description": "For capabilities related to mutating an entity. Example: the ability to change the configuration of a component."
+  },
+  .
+  .
+  .
+</pre></details> See <a href="https://github.com/meshery/schemas/blob/master/typescript/constructs/v1alpha1/capability/CapabilityOpenApiSchema.ts">Capabilties Schema</a> for more details.' %}
 
 ### Importing and Creating Models
 
