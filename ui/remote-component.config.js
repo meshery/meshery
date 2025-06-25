@@ -70,7 +70,7 @@ module.exports = {
     '@mui/icons-material/Warning': require('@mui/icons-material/Warning'),
     '@mui/icons-material/GetApp': require('@mui/icons-material/GetApp'),
     '@mui/icons-material/Person': require('@mui/icons-material/Person'),
-    '@layer5/sistent': require('@layer5/sistent'),
+    '@sistent/sistent': require('@sistent/sistent'),
     lodash: require('lodash'),
     'react-relay': require('react-relay'),
     graphql: require('graphql'),

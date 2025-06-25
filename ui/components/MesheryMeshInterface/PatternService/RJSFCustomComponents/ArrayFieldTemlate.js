@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import { Box, Grid2, Paper, Button, IconButton, Typography, styled } from '@layer5/sistent';
+import { Box, Grid2, Paper, Button, IconButton, Typography, useTheme } from '@sistent/sistent';
 import AddIcon from '@mui/icons-material/Add';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -10,12 +10,6 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
-
-const StyledRoot = styled(Paper)({
-  '& .MuiPaper-root': {
-    backgroundColor: '#f4f4f4',
-  },
-});
 
 function getTitleForItem(props) {
   const title = getTitle(props);
@@ -47,7 +41,6 @@ const ArrayFieldTitle = ({ title, classes }) => {
 
   return (
     <Typography
-      className={classes.typography}
       variant="body1"
       style={{ fontWeight: 'bold', display: 'inline', fontSize: '0.8rem' }}
     >
@@ -153,9 +146,10 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 };
 
 const DefaultNormalArrayFieldTemplate = (props) => {
-  const { classes, theme } = props;
+  const theme = useTheme();
+  const { classes } = props;
   return (
-    <StyledRoot elevation={0}>
+    <Paper elevation={0}>
       <Box p={1}>
         <Grid2
           alignItems="center"
@@ -179,7 +173,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   <HelpOutlineIcon
                     width="14px"
                     height="14px"
-                    fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                    fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
                     style={{ marginLeft: '4px', ...iconSmall }}
                   />
                 </IconButton>
@@ -200,7 +194,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
                   <ErrorOutlineIcon
                     width="16px"
                     height="16px"
-                    fill={theme.palette.type === 'dark' ? '#F91313' : '#B32700'}
+                    fill={theme.palette.mode === 'dark' ? '#F91313' : '#B32700'}
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>
@@ -239,7 +233,7 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             })}
         </Grid2>
       </Box>
-    </StyledRoot>
+    </Paper>
   );
 };
 

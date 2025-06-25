@@ -21,7 +21,7 @@ assignees: ''
 <!-- [Optional] Any visual diagrams of the desired user interface. -->
 
 ---
-### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
+### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook)
 - 🛠 [Meshery Build & Release Strategy](https://docs.meshery.io/project/contributing/build-and-release)
 - 📚 [Instructions for contributing to documentation](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow)
    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs)

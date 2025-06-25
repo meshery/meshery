@@ -9,7 +9,7 @@ import { ErrorMetadataFormatter } from './formatters/error';
 import { DryRunResponse } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
-import { useTheme, DownloadIcon, InfoIcon } from '@layer5/sistent';
+import { useTheme, DownloadIcon, InfoIcon } from '@sistent/sistent';
 import _ from 'lodash';
 import { ChipWrapper } from '../connections/styles';
 
@@ -61,6 +61,7 @@ export const PropertyFormatters = {
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
+  history_title: () => null,
 };
 
 export const LinkFormatters = {
@@ -110,7 +111,7 @@ export const FormattedMetadata = ({ event }) => {
   }
 
   const metadata = {
-    ..._.omit(event.metadata, [...linkOrder, 'kind', 'ViewLink', 'DownloadLink']),
+    ..._.omit(event.metadata, [...linkOrder, 'id', 'kind', 'ViewLink', 'DownloadLink']),
     ShortDescription:
       event.metadata.error || !canTruncateDescription(event.description || '')
         ? null

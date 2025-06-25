@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Box, styled, Step } from '@layer5/sistent';
+import { Box, styled, Step } from '@sistent/sistent';
 import TipsCarousel from '../../../General/TipsCarousel';
 import {
   ConnectionStepperTips,

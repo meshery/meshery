@@ -7,7 +7,7 @@ import {
   MenuItem,
   MenuList,
   ClickAwayListener,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 const ActionPopover = ({ actions = [] }) => {

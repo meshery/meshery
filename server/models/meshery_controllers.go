@@ -8,12 +8,12 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/broker/nats"
-	"github.com/layer5io/meshkit/database"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/controllers"
-	"github.com/layer5io/meshkit/utils"
-	mesherykube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshkit/broker/nats"
+	"github.com/meshery/meshkit/database"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/controllers"
+	"github.com/meshery/meshkit/utils"
+	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
 )
 
@@ -137,6 +137,13 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
 
 	mch.ctxMeshsyncDataHandler = nil
+}
+
+func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
+	if mch.ctxMeshsyncDataHandler != nil {
+		return mch.ctxMeshsyncDataHandler.Resync()
+	}
+	return nil
 }
 
 // attach a MesheryController for each context if

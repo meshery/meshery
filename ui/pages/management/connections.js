@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { NoSsr, styled } from '@layer5/sistent';
+import { NoSsr, styled } from '@sistent/sistent';
 import Head from 'next/head';
 import MesheryConnections from '../../components/connections';
 import { useDispatch } from 'react-redux';

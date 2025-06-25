@@ -6,8 +6,8 @@ import (
 
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 var whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)

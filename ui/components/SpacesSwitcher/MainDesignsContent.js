@@ -15,7 +15,7 @@ import {
   DeleteIcon,
   InfoIcon,
   WorkspaceContentMoveModal,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import React, { useCallback, useContext, useRef, useState } from 'react';
 import DesignViewListItem, { DesignViewListItemSkeleton } from './DesignViewListItem';
 import useInfiniteScroll, {
@@ -55,6 +55,8 @@ const MainDesignsContent = ({
   workspace,
   refetch,
   isMultiSelectMode,
+  showWorkspaceName = true,
+  showOrganizationName = true,
 }) => {
   const { data: currentUser } = useGetLoggedInUserQuery({});
   const [selectedDesign, setSelectedDesign] = useState(null);
@@ -263,6 +265,8 @@ const MainDesignsContent = ({
             return (
               <React.Fragment key={`${design?.id}-${design?.name}`}>
                 <DesignViewListItem
+                  showWorkspaceName={showWorkspaceName}
+                  showOrganizationName={showOrganizationName}
                   activeUsers={activeUsers?.[design?.id]}
                   type={RESOURCE_TYPE.DESIGN}
                   selectedItem={design}

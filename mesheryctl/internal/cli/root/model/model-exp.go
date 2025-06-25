@@ -17,7 +17,7 @@ package model
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -29,17 +29,20 @@ import (
 
 var (
 	// Available model subcommads
-	modelExpAvailableSubcommands = []*cobra.Command{initModelCmd}
+	modelExpAvailableSubcommands = []*cobra.Command{initModelCmd, buildModelCmd}
 )
 
 // ModelCmd represents the mesheryctl model command
 var ModelExpCmd = &cobra.Command{
 	Use:   "model",
 	Short: "Experimental commands for mesheryctl model",
-	Long:  `Temporal container to deliver model init subcommand to exp command`,
+	Long:  `Temporal container to deliver model init and model build subcommands to exp command`,
 	Example: `
 // Scaffold a folder structure for model creation
 mesheryctl exp model init [model-name]
+
+// Create an OCI-compliant package from the model files
+mesheryctl exp model build [model-name] --version [version]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {

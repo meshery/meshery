@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
+import LinkIcon from '@mui/icons-material/Link';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constants/navigator';
 import {
   MeshModelToolbar,
@@ -21,12 +23,12 @@ import {
 } from '@/rtk-query/meshModel';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
-import { Button, NoSsr } from '@layer5/sistent';
+import { Button, NoSsr } from '@sistent/sistent';
 import { iconSmall } from 'css/icons.styles';
-import AddIcon from '@mui/icons-material/AddCircleOutline';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
 import ImportModelModal from './ImportModelModal';
 import CreateModelModal from './CreateModelModal';
+import CreateRelationshipModal from '@/components/RelationshipBuilder/CreateRelationshipModal';
 
 const MeshModelComponent_ = ({
   modelsCount: initialModelsCount,
@@ -52,7 +54,7 @@ const MeshModelComponent_ = ({
     relationships: initialRelationshipsCount,
     registrants: initialRegistrantCount,
   });
-  console.log(counts);
+
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   const [view, setView] = useState(selectedTab ?? 'Models');
@@ -63,6 +65,7 @@ const MeshModelComponent_ = ({
   const [checked, setChecked] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isRelationshipModalOpen, setIsRelationshipModalOpen] = useState(false);
   const [modelFilters, setModelsFilters] = useState({ page: 0 });
   const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
   const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
@@ -186,7 +189,7 @@ const MeshModelComponent_ = ({
           break;
         case REGISTRANTS:
           response = await getRegistrants();
-          if (response.data && response.data.registrants) {
+          if (response?.data?.registrants) {
             setCounts((prevCounts) => ({
               ...prevCounts,
               registrants: response.data.registrants.length,
@@ -197,7 +200,7 @@ const MeshModelComponent_ = ({
           break;
       }
 
-      if (response.data && response.data[view.toLowerCase()]) {
+      if (response?.data && response.data[view.toLowerCase()]) {
         // When search or "show duplicates" functionality is active:
         // Avoid appending data to the previous dataset.
         // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
@@ -222,6 +225,7 @@ const MeshModelComponent_ = ({
       }
     } catch (error) {
       console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
+      setResourcesDetail([]); // Set empty array on error
     }
   }, [
     getMeshModelsData,
@@ -310,12 +314,16 @@ const MeshModelComponent_ = ({
   };
 
   const modifyData = () => {
+    if (!resourcesDetail) return [];
+
     if (view === MODELS) {
       return removeDuplicateVersions(
         checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
       );
     } else if (view === RELATIONSHIPS) {
       return groupRelationshipsByKind(resourcesDetail);
+    } else if (view === REGISTRANTS) {
+      return resourcesDetail || [];
     } else {
       return resourcesDetail;
     }
@@ -341,6 +349,8 @@ const MeshModelComponent_ = ({
       <TabBar
         openImportModal={() => setIsImportModalOpen(true)}
         openCreateModal={() => setIsCreateModalOpen(true)}
+        openRelationshipModal={() => setIsRelationshipModalOpen(true)}
+        view={view}
       />
 
       <ImportModelModal
@@ -350,6 +360,10 @@ const MeshModelComponent_ = ({
       <CreateModelModal
         isCreateModalOpen={isCreateModalOpen}
         setIsCreateModalOpen={setIsCreateModalOpen}
+      />
+      <CreateRelationshipModal
+        isRelationshipModalOpen={isRelationshipModalOpen}
+        setIsRelationshipModalOpen={setIsRelationshipModalOpen}
       />
 
       <MainContainer>
@@ -431,7 +445,7 @@ const MeshModelComponent_ = ({
   );
 };
 
-const TabBar = ({ openImportModal, openCreateModal }) => {
+const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal }) => {
   return (
     <MeshModelToolbar>
       <div
@@ -466,6 +480,20 @@ const TabBar = ({ openImportModal, openCreateModal }) => {
         >
           Import
         </Button>
+        {view === RELATIONSHIPS && (
+          <Button
+            aria-label="Create Relationship"
+            variant="contained"
+            color="primary"
+            onClick={openRelationshipModal}
+            style={{ display: 'flex' }}
+            disabled={false}
+            startIcon={<LinkIcon />}
+            data-testid="TabBar-Button-CreateRelationship"
+          >
+            Create Relationship
+          </Button>
+        )}
       </div>
       {/*
       This builk operation is not yet supported

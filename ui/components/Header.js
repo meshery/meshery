@@ -30,14 +30,10 @@ import {
   Grid2,
   Hidden,
   NoSsr,
-  useTheme,
-  useMediaQuery,
-} from '@layer5/sistent';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+} from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
@@ -53,7 +49,6 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
-  SettingsWrapper,
 } from './Header.styles';
 import {
   getUserAccessToken,
@@ -63,7 +58,7 @@ import {
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
 
 async function loadActiveK8sContexts() {
   try {
@@ -96,7 +91,7 @@ const K8sContextConnectionChip_ = ({
 
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
-      <CustomTextTooltip
+      <CustomTooltip
         placement="left-end"
         leaveDelay={200}
         interactive={true}
@@ -128,7 +123,7 @@ const K8sContextConnectionChip_ = ({
             status={operatorState}
           />
         </div>
-      </CustomTextTooltip>
+      </CustomTooltip>
     </Box>
   );
 };
@@ -327,6 +322,7 @@ function K8sContextMenu({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          marginTop: '1rem',
                         }}
                       >
                         <div>
@@ -389,11 +385,12 @@ function K8sContextMenu({
 const Header = ({
   onDrawerToggle,
   onDrawerCollapse,
-  abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
   searchContexts,
+  // eslint-disable-next-line no-unused-vars
+  abilityUpdated,
 }) => {
   const { notify } = useNotification;
 
@@ -415,8 +412,6 @@ const Header = ({
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
@@ -474,24 +469,16 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
-                  <SettingsWrapper
-                    isDesktop={isDesktop}
-                    data-testid="settings-button"
-                    aria-describedby={abilityUpdated}
-                  >
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')}>
-                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
-                      </IconButton>
-                    </CanShow>
-                  </SettingsWrapper>
-                  <div data-testid="notification-button">
-                    <NotificationDrawerButton />
-                  </div>
-
-                  <UserSpan>
-                    <User />
-                  </UserSpan>
+                  <CustomTooltip title="Notifications">
+                    <div data-testid="notification-button">
+                      <NotificationDrawerButton />
+                    </div>
+                  </CustomTooltip>
+                  <CustomTooltip title={'User Profile'}>
+                    <UserSpan>
+                      <User />
+                    </UserSpan>
+                  </CustomTooltip>
                   <UserSpan data-testid="header-menu">
                     <HeaderMenu />
                   </UserSpan>

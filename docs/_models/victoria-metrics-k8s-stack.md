@@ -74,7 +74,19 @@ components:
   colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/v-logs/icons/color/v-logs-color.svg
   whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/v-logs/icons/white/v-logs-white.svg
   description: 
-components-count: 16
+- name: vl-cluster
+  colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-cluster/icons/color/vl-cluster-color.svg
+  whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-cluster/icons/white/vl-cluster-white.svg
+  description: 
+- name: vl-single
+  colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-single/icons/color/vl-single-color.svg
+  whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-single/icons/white/vl-single-white.svg
+  description: 
+- name: vm-anomaly
+  colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vm-anomaly/icons/color/vm-anomaly-color.svg
+  whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vm-anomaly/icons/white/vm-anomaly-white.svg
+  description: 
+components-count: 19
 relationships: 
 relationship-count: 0
 featureList: [

@@ -404,7 +404,7 @@ system-provider:
 perf:
   name: perf
   description: Performance Management and Benchmarking using Meshery CLI
-  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Meshery"
+  usage: mesheryctl perf --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s --token "provider=Layer5"
 
   flags:
     output-format:
@@ -1180,9 +1180,22 @@ exp:
             example:
               mesheryctl exp model init aws-ec2-controller --path .
               mesheryctl exp model init aws-ec2-controller --path ./some/folder/where/to/put/files
-          count:
+          version:
             name: --version
             description: (optional) model version, defaults to v0.1.0   
             usage: mesheryctl exp model init [model-name] --path [path]
             example:
               mesheryctl exp model init aws-ec2-controller --version v1.2.3
+      build:
+        name: build
+        description: Create an OCI-compliant package from the model files
+        usage: mesheryctl exp model build [model-name]/[model-version] [flags]
+        flags:
+          path:
+            name: --path, -p
+            description: (optional) looks for a model folder under specified path, defaults to current dir.
+            usage: mesheryctl exp model build [model-name]/[model-version] --path [path]
+            example:
+              mesheryctl exp model build aws-ec2-controller/v1.2.3 --path .
+              mesheryctl exp model build aws-ec2-controller/v1.2.3 --path ./some/folder/where/to/look/for/files
+          

@@ -2,11 +2,12 @@ package resolver
 
 import (
 	"context"
+	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/internal/graphql/model"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/internal/graphql/model"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
 )
 
 func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider, user models.User) (<-chan *model.Event, error) {
@@ -29,9 +30,9 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 					Description: event.Description,
 					Category:    event.Category,
 					Action:      event.Action,
-					CreatedAt:   event.CreatedAt,
+					CreatedAt:   time.Now(),
 					DeletedAt:   event.DeletedAt,
-					UpdatedAt:   event.UpdatedAt,
+					UpdatedAt:   time.Now(),
 					Metadata:    event.Metadata,
 					Status:      string(event.Status),
 					SystemID:    event.SystemID.String(),

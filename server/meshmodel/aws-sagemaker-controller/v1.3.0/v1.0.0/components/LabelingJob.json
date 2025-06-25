@@ -1,0 +1,192 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Labeling Job",
+  "description": "Machine Learning",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-sagemaker-controller",
+    "displayName": "AWS SageMaker",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Machine Learning"
+    },
+    "subCategory": "Machine Learning",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#01A88D",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e \u003crect xmlns=\"http://www.w3.org/2000/svg\" id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 40 40\" height=\"20\" width=\"20\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "v1.3.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#01A88D",
+    "secondaryColor": "#00D3A9",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg id=\"Icon-Architecture-BG/32/Machine-Learning\" fill=\"#01A88D\"\u003e \u003crect id=\"Rectangle\" x=\"0\" y=\"0\" width=\"40\" height=\"40\"\u003e\u003c/rect\u003e \u003c/g\u003e \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg viewBox=\"0 0 40 40\" xmlns=\"http://www.w3.org/2000/svg\"\u003e \u003cg id=\"Icon-Architecture/32/Arch_Amazon-SageMaker-Studio-Lab_32\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\"\u003e \u003cg id=\"Icon-Service/32/Amazon-SageMaker-Studio-Lab_32\" transform=\"translate(6.000000, 6.000000)\" fill=\"#FFFFFF\"\u003e \u003cpath d=\"M18,21.0722264 L27,21.0722264 L27,7.07222639 L18,7.07222639 L18,21.0722264 Z M17,21.0722264 L17,7.07222639 L15,7.07222639 L15,9.07222639 L16,9.07222639 L16,10.0722264 L15,10.0722264 L15,13.0722264 L16,13.0722264 L16,14.0722264 L15,14.0722264 L15,17.0722264 L16,17.0722264 L16,18.0722264 L15,18.0722264 L15,21.0722264 L17,21.0722264 Z M28,6.57222639 L28,21.5722264 C28,21.8482264 27.776,22.0722264 27.5,22.0722264 L14.5,22.0722264 C14.224,22.0722264 14,21.8482264 14,21.5722264 L14,18.0722264 L13,18.0722264 L13,17.0722264 L14,17.0722264 L14,14.0722264 L13,14.0722264 L13,13.0722264 L14,13.0722264 L14,10.0722264 L13,10.0722264 L13,9.07222639 L14,9.07222639 L14,6.57222639 C14,6.29622639 14.224,6.07222639 14.5,6.07222639 L27.5,6.07222639 C27.776,6.07222639 28,6.29622639 28,6.57222639 L28,6.57222639 Z M14,23.0722264 L15,23.0722264 L15,25.5722264 C15,25.7612264 14.892,25.9342264 14.724,26.0192264 L10.724,28.0192264 C10.653,28.0542264 10.576,28.0722264 10.5,28.0722264 C10.414,28.0722264 10.329,28.0502264 10.252,28.0062264 L3.252,24.0062264 C3.096,23.9172264 3,23.7512264 3,23.5722264 L3,18.9002264 L0.273,17.5182264 C0.105,17.4332264 0,17.2602264 0,17.0722264 L0,10.5722264 C0,10.4052264 0.084,10.2492264 0.223,10.1562264 L3,8.30422639 L3,4.07222639 C3,3.89022639 3.1,3.72222639 3.259,3.63422639 L9.745,0.0612263904 C9.885,-0.0137736096 10.052,-0.0207736096 10.195,0.0452263904 L14.709,2.11722639 C14.886,2.19922639 15,2.37722639 15,2.57222639 L15,5.07222639 L14,5.07222639 L14,2.89322639 L10.007,1.05922639 L9,1.61322639 L9,6.07222639 L8,6.07222639 L8,2.16422639 L4,4.36722639 L4,7.79522639 L7.478,9.96922639 L10,8.27822639 L10,6.07222639 L11,6.07222639 L11,8.54522639 C11,8.71222639 10.917,8.86722639 10.778,8.96122639 L8,10.8222264 L8,13.0722264 L11,13.0722264 L11,14.0722264 L7.5,14.0722264 C7.224,14.0722264 7,13.8482264 7,13.5722264 L7,10.8492264 L3.879,8.89822639 C3.85,8.93222639 3.815,8.96322639 3.777,8.98822639 L1,10.8392264 L1,13.5782264 L4.199,11.1722264 L4.801,11.9712264 L1,14.8302264 L1,16.7652264 L3.726,18.1472264 C3.747,18.1572264 3.756,18.1792264 3.775,18.1922264 L6.18,16.1882264 L6.82,16.9562264 L4,19.3062264 L4,23.2822264 L6.655,24.7992264 L8,23.6992264 L8,18.0722264 L9,18.0722264 L9,22.8802264 L11.684,20.6852264 L12.316,21.4592264 L7.585,25.3302264 L10.516,27.0052264 L14,25.2632264 L14,23.0722264 Z\" id=\"Fill-3\"\u003e\u003c/path\u003e \u003c/g\u003e \u003c/g\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/sagemaker-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "version": "FALSE",
+    "kind": "LabelingJob",
+    "schema": "{\n \"description\": \"LabelingJob is the Schema for the LabelingJobs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"LabelingJobSpec defines the desired state of LabelingJob.\",\n   \"properties\": {\n    \"humanTaskConfig\": {\n     \"description\": \"Configures the labeling task and how it is presented to workers; including,\\nbut not limited to price, keywords, and batch size (task count).\",\n     \"properties\": {\n      \"annotationConsolidationConfig\": {\n       \"description\": \"Configures how labels are consolidated across human workers and processes\\noutput data.\",\n       \"properties\": {\n        \"annotationConsolidationLambdaARN\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"maxConcurrentTaskCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"numberOfHumanWorkersPerDataObject\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"preHumanTaskLambdaARN\": {\n       \"type\": \"string\"\n      },\n      \"publicWorkforceTaskPrice\": {\n       \"description\": \"Defines the amount of money paid to an Amazon Mechanical Turk worker for\\neach task performed.\\n\\nUse one of the following prices for bounding box tasks. Prices are in US\\ndollars and should be based on the complexity of the task; the longer it\\ntakes in your initial testing, the more you should offer.\\n\\n   * 0.036\\n\\n   * 0.048\\n\\n   * 0.060\\n\\n   * 0.072\\n\\n   * 0.120\\n\\n   * 0.240\\n\\n   * 0.360\\n\\n   * 0.480\\n\\n   * 0.600\\n\\n   * 0.720\\n\\n   * 0.840\\n\\n   * 0.960\\n\\n   * 1.080\\n\\n   * 1.200\\n\\nUse one of the following prices for image classification, text classification,\\nand custom tasks. Prices are in US dollars.\\n\\n   * 0.012\\n\\n   * 0.024\\n\\n   * 0.036\\n\\n   * 0.048\\n\\n   * 0.060\\n\\n   * 0.072\\n\\n   * 0.120\\n\\n   * 0.240\\n\\n   * 0.360\\n\\n   * 0.480\\n\\n   * 0.600\\n\\n   * 0.720\\n\\n   * 0.840\\n\\n   * 0.960\\n\\n   * 1.080\\n\\n   * 1.200\\n\\nUse one of the following prices for semantic segmentation tasks. Prices are\\nin US dollars.\\n\\n   * 0.840\\n\\n   * 0.960\\n\\n   * 1.080\\n\\n   * 1.200\\n\\nUse one of the following prices for Textract AnalyzeDocument Important Form\\nKey Amazon Augmented AI review tasks. Prices are in US dollars.\\n\\n   * 2.400\\n\\n   * 2.280\\n\\n   * 2.160\\n\\n   * 2.040\\n\\n   * 1.920\\n\\n   * 1.800\\n\\n   * 1.680\\n\\n   * 1.560\\n\\n   * 1.440\\n\\n   * 1.320\\n\\n   * 1.200\\n\\n   * 1.080\\n\\n   * 0.960\\n\\n   * 0.840\\n\\n   * 0.720\\n\\n   * 0.600\\n\\n   * 0.480\\n\\n   * 0.360\\n\\n   * 0.240\\n\\n   * 0.120\\n\\n   * 0.072\\n\\n   * 0.060\\n\\n   * 0.048\\n\\n   * 0.036\\n\\n   * 0.024\\n\\n   * 0.012\\n\\nUse one of the following prices for Rekognition DetectModerationLabels Amazon\\nAugmented AI review tasks. Prices are in US dollars.\\n\\n   * 1.200\\n\\n   * 1.080\\n\\n   * 0.960\\n\\n   * 0.840\\n\\n   * 0.720\\n\\n   * 0.600\\n\\n   * 0.480\\n\\n   * 0.360\\n\\n   * 0.240\\n\\n   * 0.120\\n\\n   * 0.072\\n\\n   * 0.060\\n\\n   * 0.048\\n\\n   * 0.036\\n\\n   * 0.024\\n\\n   * 0.012\\n\\nUse one of the following prices for Amazon Augmented AI custom human review\\ntasks. Prices are in US dollars.\\n\\n   * 1.200\\n\\n   * 1.080\\n\\n   * 0.960\\n\\n   * 0.840\\n\\n   * 0.720\\n\\n   * 0.600\\n\\n   * 0.480\\n\\n   * 0.360\\n\\n   * 0.240\\n\\n   * 0.120\\n\\n   * 0.072\\n\\n   * 0.060\\n\\n   * 0.048\\n\\n   * 0.036\\n\\n   * 0.024\\n\\n   * 0.012\",\n       \"properties\": {\n        \"amountInUsd\": {\n         \"description\": \"Represents an amount of money in United States dollars.\",\n         \"properties\": {\n          \"cents\": {\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"dollars\": {\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"tenthFractionsOfACent\": {\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"taskAvailabilityLifetimeInSeconds\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"taskDescription\": {\n       \"type\": \"string\"\n      },\n      \"taskKeywords\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"taskTimeLimitInSeconds\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"taskTitle\": {\n       \"type\": \"string\"\n      },\n      \"uiConfig\": {\n       \"description\": \"Provided configuration information for the worker UI for a labeling job.\\nProvide either HumanTaskUiArn or UiTemplateS3Uri.\\n\\nFor named entity recognition, 3D point cloud and video frame labeling jobs,\\nuse HumanTaskUiArn.\\n\\nFor all other Ground Truth built-in task types and custom task types, use\\nUiTemplateS3Uri to specify the location of a worker task template in Amazon\\nS3.\",\n       \"properties\": {\n        \"humanTaskUIARN\": {\n         \"type\": \"string\"\n        },\n        \"uiTemplateS3URI\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"workteamARN\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"inputConfig\": {\n     \"description\": \"Input data for the labeling job, such as the Amazon S3 location of the data\\nobjects and the location of the manifest file that describes the data objects.\\n\\nYou must specify at least one of the following: S3DataSource or SnsDataSource.\\n\\n  - Use SnsDataSource to specify an SNS input topic for a streaming labeling\\n    job. If you do not specify and SNS input topic ARN, Ground Truth will\\n    create a one-time labeling job that stops after all data objects in the\\n    input manifest file have been labeled.\\n\\n  - Use S3DataSource to specify an input manifest file for both streaming\\n    and one-time labeling jobs. Adding an S3DataSource is optional if you\\n    use SnsDataSource to create a streaming labeling job.\\n\\nIf you use the Amazon Mechanical Turk workforce, your input data should not\\ninclude confidential information, personal information or protected health\\ninformation. Use ContentClassifiers to specify that your data is free of\\npersonally identifiable information and adult content.\",\n     \"properties\": {\n      \"dataAttributes\": {\n       \"description\": \"Attributes of the data specified by the customer. Use these to describe the\\ndata to be labeled.\",\n       \"properties\": {\n        \"contentClassifiers\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"dataSource\": {\n       \"description\": \"Provides information about the location of input data.\\n\\nYou must specify at least one of the following: S3DataSource or SnsDataSource.\\n\\nUse SnsDataSource to specify an SNS input topic for a streaming labeling\\njob. If you do not specify and SNS input topic ARN, Ground Truth will create\\na one-time labeling job.\\n\\nUse S3DataSource to specify an input manifest file for both streaming and\\none-time labeling jobs. Adding an S3DataSource is optional if you use SnsDataSource\\nto create a streaming labeling job.\",\n       \"properties\": {\n        \"s3DataSource\": {\n         \"description\": \"The Amazon S3 location of the input data objects.\",\n         \"properties\": {\n          \"manifestS3URI\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"snsDataSource\": {\n         \"description\": \"An Amazon SNS data source used for streaming labeling jobs.\",\n         \"properties\": {\n          \"snsTopicARN\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"labelAttributeName\": {\n     \"description\": \"The attribute name to use for the label in the output manifest file. This\\nis the key for the key/value pair formed with the label that a worker assigns\\nto the object. The LabelAttributeName must meet the following requirements.\\n\\n  - The name can't end with \\\"-metadata\\\".\\n\\n  - If you are using one of the following built-in task types (https://docs.aws.amazon.com/sagemaker/latest/dg/sms-task-types.html),\\n    the attribute name must end with \\\"-ref\\\". If the task type you are using\\n    is not listed below, the attribute name must not end with \\\"-ref\\\". Image\\n    semantic segmentation (SemanticSegmentation), and adjustment (AdjustmentSemanticSegmentation)\\n    and verification (VerificationSemanticSegmentation) labeling jobs for\\n    this task type. Video frame object detection (VideoObjectDetection), and\\n    adjustment and verification (AdjustmentVideoObjectDetection) labeling\\n    jobs for this task type. Video frame object tracking (VideoObjectTracking),\\n    and adjustment and verification (AdjustmentVideoObjectTracking) labeling\\n    jobs for this task type. 3D point cloud semantic segmentation (3DPointCloudSemanticSegmentation),\\n    and adjustment and verification (Adjustment3DPointCloudSemanticSegmentation)\\n    labeling jobs for this task type. 3D point cloud object tracking (3DPointCloudObjectTracking),\\n    and adjustment and verification (Adjustment3DPointCloudObjectTracking)\\n    labeling jobs for this task type.\\n\\nIf you are creating an adjustment or verification labeling job, you must\\nuse a different LabelAttributeName than the one used in the original labeling\\njob. The original labeling job is the Ground Truth labeling job that produced\\nthe labels that you want verified or adjusted. To learn more about adjustment\\nand verification labeling jobs, see Verify and Adjust Labels (https://docs.aws.amazon.com/sagemaker/latest/dg/sms-verification-data.html).\\n\\nRegex Pattern: `^[a-zA-Z0-9](-*[a-zA-Z0-9]){0,126}$`\",\n     \"type\": \"string\"\n    },\n    \"labelCategoryConfigS3URI\": {\n     \"description\": \"The S3 URI of the file, referred to as a label category configuration file,\\nthat defines the categories used to label the data objects.\\n\\nFor 3D point cloud and video frame task types, you can add label category\\nattributes and frame attributes to your label category configuration file.\\nTo learn how, see Create a Labeling Category Configuration File for 3D Point\\nCloud Labeling Jobs (https://docs.aws.amazon.com/sagemaker/latest/dg/sms-point-cloud-label-category-config.html).\\n\\nFor named entity recognition jobs, in addition to \\\"labels\\\", you must provide\\nworker instructions in the label category configuration file using the \\\"instructions\\\"\\nparameter: \\\"instructions\\\": {\\\"shortInstruction\\\":\\\"\\nAdd header\\n\\nAdd Instructions\\n\\\", \\\"fullInstruction\\\":\\\"\\nAdd additional instructions.\\n\\\"}. For details and an example, see Create a Named Entity Recognition Labeling\\nJob (API) (https://docs.aws.amazon.com/sagemaker/latest/dg/sms-named-entity-recg.html#sms-creating-ner-api).\\n\\nFor all other built-in task types (https://docs.aws.amazon.com/sagemaker/latest/dg/sms-task-types.html)\\nand custom tasks (https://docs.aws.amazon.com/sagemaker/latest/dg/sms-custom-templates.html),\\nyour label category configuration file must be a JSON file in the following\\nformat. Identify the labels you want to use by replacing label_1, label_2,...,label_n\\nwith your label categories.\\n\\n{\\n\\n\\\"document-version\\\": \\\"2018-11-28\\\",\\n\\n\\\"labels\\\": [{\\\"label\\\": \\\"label_1\\\"},{\\\"label\\\": \\\"label_2\\\"},...{\\\"label\\\": \\\"label_n\\\"}]\\n\\n}\\n\\nNote the following about the label category configuration file:\\n\\n  - For image classification and text classification (single and multi-label)\\n    you must specify at least two label categories. For all other task types,\\n    the minimum number of label categories required is one.\\n\\n  - Each label category must be unique, you cannot specify duplicate label\\n    categories.\\n\\n  - If you create a 3D point cloud or video frame adjustment or verification\\n    labeling job, you must include auditLabelAttributeName in the label category\\n    configuration. Use this parameter to enter the LabelAttributeName (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_CreateLabelingJob.html#sagemaker-CreateLabelingJob-request-LabelAttributeName)\\n    of the labeling job you want to adjust or verify annotations of.\\n\\nRegex Pattern: `^(https|s3)://([^/]+)/?(.*)$`\",\n     \"type\": \"string\"\n    },\n    \"labelingJobAlgorithmsConfig\": {\n     \"description\": \"Configures the information required to perform automated data labeling.\",\n     \"properties\": {\n      \"initialActiveLearningModelARN\": {\n       \"type\": \"string\"\n      },\n      \"labelingJobAlgorithmSpecificationARN\": {\n       \"type\": \"string\"\n      },\n      \"labelingJobResourceConfig\": {\n       \"description\": \"Configure encryption on the storage volume attached to the ML compute instance\\nused to run automated data labeling model training and inference.\",\n       \"properties\": {\n        \"volumeKMSKeyID\": {\n         \"type\": \"string\"\n        },\n        \"vpcConfig\": {\n         \"description\": \"Specifies an Amazon Virtual Private Cloud (VPC) that your SageMaker jobs,\\nhosted models, and compute resources have access to. You can control access\\nto and from your resources by configuring a VPC. For more information, see\\nGive SageMaker Access to Resources in your Amazon VPC (https://docs.aws.amazon.com/sagemaker/latest/dg/infrastructure-give-access.html).\",\n         \"properties\": {\n          \"securityGroupIDs\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"subnets\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"labelingJobName\": {\n     \"description\": \"The name of the labeling job. This name is used to identify the job in a\\nlist of labeling jobs. Labeling job names must be unique within an Amazon\\nWeb Services account and region. LabelingJobName is not case sensitive. For\\nexample, Example-job and example-job are considered the same labeling job\\nname by Ground Truth.\\n\\nRegex Pattern: `^[a-zA-Z0-9](-*[a-zA-Z0-9]){0,62}$`\",\n     \"type\": \"string\"\n    },\n    \"outputConfig\": {\n     \"description\": \"The location of the output data and the Amazon Web Services Key Management\\nService key ID for the key used to encrypt the output data, if any.\",\n     \"properties\": {\n      \"kmsKeyID\": {\n       \"type\": \"string\"\n      },\n      \"s3OutputPath\": {\n       \"type\": \"string\"\n      },\n      \"snsTopicARN\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"roleARN\": {\n     \"description\": \"The Amazon Resource Number (ARN) that Amazon SageMaker assumes to perform\\ntasks on your behalf during data labeling. You must grant this role the necessary\\npermissions so that Amazon SageMaker can successfully complete data labeling.\\n\\nRegex Pattern: `^arn:aws[a-z\\\\-]*:iam::\\\\d{12}:role/?[a-zA-Z_0-9+=,.@\\\\-_/]+$`\",\n     \"type\": \"string\"\n    },\n    \"stoppingConditions\": {\n     \"description\": \"A set of conditions for stopping the labeling job. If any of the conditions\\nare met, the job is automatically stopped. You can use these conditions to\\ncontrol the cost of data labeling.\",\n     \"properties\": {\n      \"maxHumanLabeledObjectCount\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"maxPercentageOfInputDatasetLabeled\": {\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"description\": \"An array of key/value pairs. For more information, see Using Cost Allocation\\nTags (https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html#allocation-what)\\nin the Amazon Web Services Billing and Cost Management User Guide.\",\n     \"items\": {\n      \"description\": \"A tag object that consists of a key and an optional value, used to manage\\nmetadata for SageMaker Amazon Web Services resources.\\n\\nYou can add tags to notebook instances, training jobs, hyperparameter tuning\\njobs, batch transform jobs, models, labeling jobs, work teams, endpoint configurations,\\nand endpoints. For more information on adding tags to SageMaker resources,\\nsee AddTags (https://docs.aws.amazon.com/sagemaker/latest/APIReference/API_AddTags.html).\\n\\nFor more information on adding metadata to your Amazon Web Services resources\\nwith tagging, see Tagging Amazon Web Services resources (https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html).\\nFor advice on best practices for managing Amazon Web Services resources with\\ntagging, see Tagging Best Practices: Implement an Effective Amazon Web Services\\nResource Tagging Strategy (https://d1.awsstatic.com/whitepapers/aws-tagging-best-practices.pdf).\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"humanTaskConfig\",\n    \"inputConfig\",\n    \"labelAttributeName\",\n    \"labelingJobName\",\n    \"outputConfig\",\n    \"roleARN\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Labeling Job\",\n \"type\": \"object\"\n}"
+  }
+}

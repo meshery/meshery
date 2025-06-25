@@ -5,7 +5,7 @@ import { FlipCard } from '../General';
 import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Grid2, useTheme } from '@layer5/sistent';
+import { Grid2, useTheme } from '@sistent/sistent';
 
 import {
   Name,
