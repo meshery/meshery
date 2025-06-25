@@ -1,0 +1,12 @@
+{
+  "models": [
+    {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "amd-gpu",
+      "displayName": "AMD GPU",
+      "version": "v1.0.0",
+      "description": "AMD GPU model for Kubernetes",
+      "status": "enabled"
+    }
+  ]
+}
