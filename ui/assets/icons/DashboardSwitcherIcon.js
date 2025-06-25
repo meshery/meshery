@@ -1,6 +1,6 @@
 import React from 'react';
 
-function DashboardSwitcher({ width = '24px', height = '24px', ...props }) {
+function DashboardSwitcherIcon({ width = '24px', height = '24px', ...props }) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -44,4 +44,4 @@ function DashboardSwitcher({ width = '24px', height = '24px', ...props }) {
   );
 }
 
-export default DashboardSwitcher;
+export default DashboardSwitcherIcon;
