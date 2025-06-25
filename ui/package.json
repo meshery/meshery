@@ -32,7 +32,7 @@
     "@casl/react": "^5.0.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@meshery/schemas": "*",
+    "@meshery/schemas": "^0.0.3-1",
     "@mui/icons-material": "^6.4.11",
     "@mui/material": "^6.4.11",
     "@mui/x-date-pickers": "^7.24.0",
