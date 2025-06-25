@@ -34,7 +34,7 @@ We will explore a simple application architecture in Kubernetes.
 This is a common real-world pattern seen in microservices architectures and backend systems.
 
 
-## Objective
+### Objective
 
  We will visually explore how all the kubernetes components come together using Meshery Kanvas, and learn how this understanding can simplify debugging and designing applications.
 
