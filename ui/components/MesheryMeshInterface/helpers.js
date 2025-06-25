@@ -112,6 +112,13 @@ function jsonSchemaBuilder(schema, uiSchema) {
         uiSchema[key]['ui:widget'] = 'range';
       }
 
+      if (
+        schema.properties?.[key]['type'] === 'string' &&
+        (key.toLowerCase().includes('primarycolor') || key.toLowerCase().includes('secondarycolor'))
+      ) {
+        uiSchema[key]['ui:widget'] = 'color';
+      }
+
       jsonSchemaBuilder(schema.properties?.[key], uiSchema[key]);
     }
     return;
