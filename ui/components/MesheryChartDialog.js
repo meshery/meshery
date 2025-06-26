@@ -1,5 +1,5 @@
-import React, { useState } from "react"
-import PropTypes from "prop-types"
+import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import {
   Button,
   Dialog,
@@ -55,7 +55,6 @@ function MesheryChartDialog(props) {
     e.stopPropagation()
     setSocialExpand((prevState) => !prevState)
   }
-  //migrating share functions of MesheryChart to MesheryChartDialog
   return (
     <React.Fragment>
       <Dialog 
@@ -125,6 +124,6 @@ MesheryChartDialog.propTypes = {
   content: PropTypes.node.isRequired,
   title: PropTypes.string,
   socialMessage: PropTypes.string,
-   //new addition
 }
+
 export default MesheryChartDialog
