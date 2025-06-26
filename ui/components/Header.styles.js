@@ -39,7 +39,6 @@ export const UserContainer = styled('div')(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
     width: '100%',
     justifyContent: 'flex-end',
-    marginRight: '1rem',
     marginBlock: '0.5rem',
   },
 }));
@@ -107,7 +106,12 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
 }));
 
 export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
-  padding: 4,
+  padding: 2,
+  color: theme.palette.common.white,
+}));
+
+export const IconButtonMenu = styled(IconButton)(({ theme }) => ({
+  padding: 6,
   color: theme.palette.common.white,
 }));
 
