@@ -18,7 +18,7 @@ export const SideList = styled('div')(({ theme }) => ({
   maxWidth: '95vw',
 
   [theme.breakpoints.down('md')]: {
-    width: '100% !important',
+    width: '100%',
   },
 }));
 export const StyledSubtitle = styled(Typography)(() => ({
