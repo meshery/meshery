@@ -411,6 +411,7 @@ const Header = ({
 }) => {
   const { notify } = useNotification;
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
     data: providerCapabilities,
@@ -428,8 +429,6 @@ const Header = ({
 
   const remoteProviderUrl = providerCapabilities?.provider_url;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
-
-  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const loaderType = 'circular';
   return (
