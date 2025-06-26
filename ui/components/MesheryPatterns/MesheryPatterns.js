@@ -1418,6 +1418,7 @@ function MesheryPatterns({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
+        setImportModal({ open: false });
         getPatterns();
       })
       .catch(() => {
