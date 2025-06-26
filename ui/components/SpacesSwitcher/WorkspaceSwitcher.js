@@ -114,7 +114,7 @@ function WorkspaceSwitcher({ open }) {
                           },
                         }}
                         renderValue={() => {
-                          return selectedWorkspace?.name || '';
+                          return <span>{selectedWorkspace?.name || ''}</span>;
                         }}
                         MenuProps={{
                           anchorOrigin: {
