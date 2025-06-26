@@ -17,22 +17,23 @@ import (
 	"github.com/spf13/viper"
 )
 
-/*
-swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
-
-Handle GET request for getting summary about the system database.
-
-Tables can be further filtered through query parameters:
-
-	- ?order={field}         Orders on the passed field
-	- ?sort={[asc/desc]}     Default behavior is asc
-	- ?page={page-number}    Default page number is 1
-	- ?pagesize={pagesize}   Default pagesize is 10. To return all results: pagesize=all
-	- ?search={tablename}    If search is non empty then a greedy search is performed
-
-responses:
-	200: systemDatabaseResponseWrapper
-*/
+// swagger:route GET /api/system/database GetSystemDatabase idGetSystemDatabase
+// Handle GET request for getting summary about the system database.
+//
+// # Tables can be further filtered through query parameter
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 10. To return all results: ```pagesize=all```
+//
+// ```?search={tablename}``` If search is non empty then a greedy search is performed
+// responses:
+//
+//	200: systemDatabaseResponseWrapper
 
 func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	var tables []*models.SqliteSchema
@@ -137,20 +138,17 @@ func (h *Handler) GetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *m
 	fmt.Fprint(w, string(val))
 }
 
-/*
-swagger:route DELETE /api/system/database/reset ResetSystemDatabase
-
-Reset the system database to its initial state.
-
-This endpoint resets the system database to its initial state by performing the following steps:
-	- Creates an archive of the current database contents.
-	- Drops all existing tables in the database.
-	- Applies auto migration to recreate the necessary tables.
-
-responses:
-	200:
-	500:
-*/
+// swagger:route DELETE /api/system/database/reset ResetSystemDatabase
+// Reset the system database to its initial state.
+//
+// This endpoint resets the system database to its initial state by performing the following steps:
+// - Creates an archive of the current database contents.
+// - Drops all existing tables in the database.
+// - Applies auto migration to recreate the necessary tables.
+//
+// responses:
+//   200:
+//   500:
 
 // Reset the system database to its initial state.
 func (h *Handler) ResetSystemDatabase(w http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
