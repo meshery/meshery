@@ -62,14 +62,28 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
   },
 
   [theme.breakpoints.down('md')]: {
-    [theme.breakpoints.down('md')]: {
-      '& .MuiInputBase-input, & span': {
-        minWidth: '8rem',
-        maxWidth: '8rem',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
-      },
+    '& .MuiInputBase-input, & span': {
+      minWidth: '8rem',
+      maxWidth: '8rem',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
+  },
+
+  '@media (max-width: 400px)': {
+    '& .MuiInputBase-input,': {
+      maxWidth: 'unset',
+      minWidth: 'unset',
+      width: '100%',
+    },
+
+    '& span': {
+      minWidth: '8rem',
+      maxWidth: '10rem',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
     },
   },
 }));
@@ -141,11 +155,25 @@ export function OrgMenu(props) {
     const id = e.target.value;
     updateSelectedOrg(id);
   };
+
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
+
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && open && (
-        <SlideInMenuOpen>
-          <FormControl component="fieldset">
+        <Grid2
+          sx={{
+            width: isSmallScreen ? '80%' : open ? 'auto' : 0,
+            overflow: open ? '' : 'hidden',
+            transition: 'all 1s',
+          }}
+        >
+          <FormControl
+            sx={{
+              width: isSmallScreen ? '100%' : 'auto',
+            }}
+            component="fieldset"
+          >
             <FormGroup>
               <FormControlLabel
                 key="OrgPreferences"
@@ -198,7 +226,7 @@ export function OrgMenu(props) {
               />
             </FormGroup>
           </FormControl>
-        </SlideInMenuOpen>
+        </Grid2>
       )}
     </NoSsr>
   );

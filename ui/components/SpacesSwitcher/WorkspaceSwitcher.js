@@ -8,6 +8,7 @@ import {
   MenuItem,
   CircularProgress,
   WorkspaceIcon,
+  useMediaQuery,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
@@ -79,17 +80,24 @@ function WorkspaceSwitcher({ open }) {
     return <CircularProgress height="1.5rem" width="1.5rem" />;
   }
 
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
+
   return (
     <NoSsr>
       {!isLoadingWorkspaces && allWorkspaces?.length > 0 && (
         <Grid2
           sx={{
-            width: open ? 'auto' : 0,
+            width: isSmallScreen ? '80%' : open ? 'auto' : 0,
             overflow: open ? '' : 'hidden',
             transition: 'all 1s',
           }}
         >
-          <FormControl component="fieldset">
+          <FormControl
+            sx={{
+              width: isSmallScreen ? '100%' : 'auto',
+            }}
+            component="fieldset"
+          >
             <FormGroup>
               <FormControlLabel
                 key="SpacesPreferences"
@@ -111,10 +119,23 @@ function WorkspaceSwitcher({ open }) {
                             fill: '#eee',
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
+                            width: '100%', // Ensure full width
                           },
                         }}
                         renderValue={() => {
-                          return <span>{selectedWorkspace?.name || ''}</span>;
+                          return (
+                            <span
+                              style={{
+                                display: 'inline-block',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                                flex: 1, // Take remaining space
+                              }}
+                            >
+                              {selectedWorkspace?.name || ''}
+                            </span>
+                          );
                         }}
                         MenuProps={{
                           anchorOrigin: {
