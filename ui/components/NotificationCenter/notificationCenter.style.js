@@ -13,9 +13,13 @@ export const DarkBackdrop = styled('div')(({ open }) => ({
   zIndex: '1202', // Ensure it's behind the container
 }));
 
-export const SideList = styled('div')(() => ({
+export const SideList = styled('div')(({theme}) => ({
   width: '45rem',
   maxWidth: '95vw',
+
+  [theme.breakpoints.down('md')]: {
+    width: '100% !important',
+  },
 }));
 export const StyledSubtitle = styled(Typography)(() => ({
   textTransform: 'capitalize',
@@ -83,6 +87,11 @@ export const NotificationContainer = styled('div')(({ theme }) => ({
   height: '5.65rem',
   flexWrap: 'wrap',
   background: theme.palette.background.card,
+
+  [theme.breakpoints.down('md')]: {
+    height: 'auto',
+  },
+
 }));
 
 export const Title = styled('div')(() => ({
