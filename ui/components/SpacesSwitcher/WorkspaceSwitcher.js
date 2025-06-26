@@ -119,23 +119,10 @@ function WorkspaceSwitcher({ open }) {
                             fill: '#eee',
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
-                            width: '100%', // Ensure full width
                           },
                         }}
                         renderValue={() => {
-                          return (
-                            <span
-                              style={{
-                                display: 'inline-block',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                                flex: 1, // Take remaining space
-                              }}
-                            >
-                              {selectedWorkspace?.name || ''}
-                            </span>
-                          );
+                          return <span>{selectedWorkspace?.name || ''}</span>;
                         }}
                         MenuProps={{
                           anchorOrigin: {
