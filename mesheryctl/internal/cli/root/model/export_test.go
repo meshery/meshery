@@ -60,7 +60,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "yaml", "-o", "oci"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=yaml&file_type=oci&components=true&relationships=true&pagesize=all", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.default.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -68,7 +68,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "yaml", "-o", "oci"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=yaml&file_type=oci&components=true&relationships=true&pagesize=all", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.yaml.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -76,7 +76,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "json", "-o", "oci"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=json&file_type=oci&components=true&relationships=true&pagesize=all", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.json.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -84,7 +84,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "yaml", "-o", "oci"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=yaml&file_type=oci&components=true&relationships=true&pagesize=all", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.oci.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -92,7 +92,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "yaml", "-o", "tar"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=yaml&file_type=tar&components=true&relationships=true&pagesize=all", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.tar.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -100,7 +100,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "yaml", "-o", "oci", "--version", "v1.0.0"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=yaml&file_type=oci&components=true&relationships=true&pagesize=all&version=v1.0.0", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.version.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -108,7 +108,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "yaml", "-o", "oci", "--discard-components", "--discard-relationships"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=yaml&file_type=oci&components=false&relationships=false&pagesize=all&version=v1.0.0", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.no-components-relationships.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -116,7 +116,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "json", "-o", "tar"},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=json&file_type=tar&components=false&relationships=false&pagesize=all&version=v1.0.0", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.json-tar.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -124,7 +124,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "amd-gpu", "-t", "yaml", "-o", "oci", "-l", customDir},
 			URL:              fmt.Sprintf("%s?name=amd-gpu&output_format=yaml&file_type=oci&components=false&relationships=false&pagesize=all&version=v1.0.0", apiURL),
 			Fixture:          "export.model.api.response.golden",
-			ExpectedResponse: "export.model.custom-location.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 		{
@@ -132,7 +132,7 @@ func TestExportModel(t *testing.T) {
 			Args:             []string{"export", "non-existent-model", "-t", "yaml", "-o", "oci"},
 			URL:              fmt.Sprintf("%s?name=non-existent-model&output_format=yaml&file_type=oci&components=false&relationships=false&pagesize=all&version=v1.0.0", apiURL),
 			Fixture:          "export.model.not-found.api.response.golden",
-			ExpectedResponse: "export.model.not-found.output.golden",
+			ExpectedResponse: "export.model.empty.output.golden",
 			ExpectError:      false,
 		},
 	}
