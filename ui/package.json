@@ -102,6 +102,7 @@
     "@actions/core": "^1.11.1",
     "@babel/core": "^7.26.10",
     "@babel/eslint-parser": "^7.27.0",
+    "@babel/preset-typescript": "^7.27.1",
     "@babel/types": "^7.27.0",
     "@next/eslint-plugin-next": "^13.1.2",
     "@playwright/test": "^1.51.1",
