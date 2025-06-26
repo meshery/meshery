@@ -5,6 +5,7 @@ import {
   ClickAwayListener,
   Grid2,
   Slide,
+  styled,
   useMediaQuery,
   useTheme,
   WorkspaceIcon,
@@ -33,6 +34,14 @@ const MobileOrgWksSwither_ = ({ organization, router }) => {
 };
 
 export const MobileOrgWksSwither = MobileOrgWksSwither_;
+
+const StyledGrid = styled(Grid2)({
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+});
 
 function SwitcherMenu({ organization, router }) {
   const theme = useTheme();
@@ -64,7 +73,7 @@ function SwitcherMenu({ organization, router }) {
             e.preventDefault();
             setShowFullContextMenu((prev) => !prev);
           }}
-          onMouseEnter={(e) => {
+          onMouseOver={(e) => {
             e.preventDefault();
             setAnchorEl(true);
           }}
@@ -96,25 +105,6 @@ function SwitcherMenu({ organization, router }) {
                 if (
                   !(e.target.tagName.toLowerCase() === 'body') &&
                   !e.target.classList.contains('switcher-icon-button') &&
-                  !e.target.classList.contains('MuiIconButton-root') &&
-                  !e.target.classList.contains('MuiButtonBase-root') &&
-                  !e.target.classList.contains('MuiSvgIcon-root') &&
-                  !e.target.classList.contains('MuiTouchRipple-root') &&
-                  !e.target.classList.contains('MuiTypography-root') &&
-                  !e.target.classList.contains('MuiBox-root') &&
-                  !e.target.classList.contains('MuiGrid2-root') &&
-                  !e.target.classList.contains('MuiPaper-root') &&
-                  !e.target.classList.contains('MuiClickAwayListener-root') &&
-                  !e.target.classList.contains('MuiMenuItem-root') &&
-                  !e.target.classList.contains('MuiListItem-root') &&
-                  !e.target.classList.contains('MuiListItemButton-root') &&
-                  !e.target.classList.contains('MuiListItemIcon-root') &&
-                  !e.target.classList.contains('MuiListItemText-root') &&
-                  !e.target.classList.contains('MuiList-root') &&
-                  !e.target.classList.contains('MuiMenu-root') &&
-                  !e.target.classList.contains('MuiPopover-root') &&
-                  !e.target.classList.contains('MuiPaper-root') &&
-                  !e.target.classList.contains('MuiSelect-select') &&
                   !(e.target.tagName.toLowerCase() === 'path') &&
                   !(e.target.tagName.toLowerCase() === 'svg') &&
                   !(e.target.tagName.toLowerCase() === 'circle')
@@ -126,30 +116,12 @@ function SwitcherMenu({ organization, router }) {
             >
               <CMenuContainer>
                 <Grid2 container spacing={2} alignItems="center" flexDirection={'column'}>
-                  <Grid2
-                    container
-                    sx={{
-                      width: '100%',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
+                  <StyledGrid container>
                     <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
                     <OrgMenu open={true} organization={organization} />
-                  </Grid2>
+                  </StyledGrid>
 
-                  <Grid2
-                    container
-                    sx={{
-                      width: '100%',
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                    }}
-                  >
+                  <StyledGrid container>
                     <WorkspaceIcon
                       {...iconLarge}
                       style={{ marginLeft: '0.2rem' }}
@@ -157,7 +129,7 @@ function SwitcherMenu({ organization, router }) {
                       fill={theme.palette.common.white}
                     />
                     <WorkspaceSwitcher open={true} organization={organization} router={router} />
-                  </Grid2>
+                  </StyledGrid>
                 </Grid2>
               </CMenuContainer>
             </ClickAwayListener>
