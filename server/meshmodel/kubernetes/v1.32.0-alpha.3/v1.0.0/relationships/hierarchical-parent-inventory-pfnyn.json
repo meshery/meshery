@@ -95,9 +95,7 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "metadata",
-                  "name"
+                  "displayName"
                 ]
               ]
             }
