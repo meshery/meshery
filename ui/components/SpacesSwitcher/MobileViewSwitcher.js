@@ -147,6 +147,7 @@ function SwitcherMenu({ organization, router }) {
                   >
                     <WorkspaceIcon
                       {...iconLarge}
+                      style={{ marginLeft: '0.2rem' }}
                       secondaryFill={theme.palette.common.white}
                       fill={theme.palette.common.white}
                     />

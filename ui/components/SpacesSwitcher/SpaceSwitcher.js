@@ -62,12 +62,14 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
   },
 
   [theme.breakpoints.down('md')]: {
-    '& .MuiInputBase-input': {
-      minWidth: '7rem',
-      maxWidth: '7.5rem',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      whiteSpace: 'nowrap',
+    [theme.breakpoints.down('md')]: {
+      '& .MuiInputBase-input, & span': {
+        minWidth: '8rem',
+        maxWidth: '8rem',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+      },
     },
   },
 }));
