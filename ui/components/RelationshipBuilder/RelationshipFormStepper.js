@@ -11,7 +11,6 @@ import {
   Typography,
   FormControl,
   Grid2,
-  MenuItem,
 } from '@sistent/sistent';
 import { GlobalStyles } from '@mui/material';
 import { styled } from '@sistent/sistent';
@@ -27,6 +26,7 @@ import omit from 'lodash/omit';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
 import pick from 'lodash/pick';
 import SelectorsForm from './SelectorsForm';
+import ModelSelector from './ModelSelector';
 
 const StyledSummaryBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.blur?.heavy,
@@ -74,32 +74,26 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
   const [jsonOutput, setJsonOutput] = React.useState('');
   const formRef = React.useRef();
 
-  const [selectedCategory, setSelectedCategory] = React.useState(null);
   const [selectedModel, setSelectedModel] = React.useState(null);
-  const { models, meshmodelComponents, getModelFromCategory, getComponentsFromModel, categories } =
-    useMeshModelComponents();
+  const { meshmodelComponents, getComponentsFromModel } = useMeshModelComponents();
 
   const handleFormChange = (formData) => {
-    if (selectedModel && selectedCategory) {
-      const modelData = models[selectedCategory]?.find((model) => model.name === selectedModel);
-
-      if (modelData) {
-        formData = {
-          ...formData,
-          model: {
-            ...formData.model,
-            id: modelData.id,
-            name: modelData.name,
-            schemaVersion: modelData.schemaVersion,
-            subCategory: modelData.subCategory,
-            status: modelData.status,
-            version: modelData.version,
-            displayName: modelData.displayName,
-            registrant: modelData.registrant,
-            metadata: modelData.metadata,
-          },
-        };
-      }
+    if (selectedModel) {
+      formData = {
+        ...formData,
+        model: {
+          ...formData.model,
+          id: selectedModel.id,
+          name: selectedModel.name,
+          schemaVersion: selectedModel.schemaVersion,
+          subCategory: selectedModel.subCategory,
+          status: selectedModel.status,
+          version: selectedModel.version,
+          displayName: selectedModel.displayName,
+          registrant: selectedModel.registrant,
+          metadata: selectedModel.metadata,
+        },
+      };
     }
 
     setFormData(formData);
@@ -114,37 +108,28 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
     );
   };
 
-  const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value);
-    getModelFromCategory(event.target.value);
-    setSelectedModel(null);
-  };
+  const handleModelChange = (model) => {
+    if (model) {
+      getComponentsFromModel(model.name);
+      setSelectedModel(model);
 
-  const handleModelChange = (event) => {
-    if (event.target.value) {
-      getComponentsFromModel(event.target.value);
-      setSelectedModel(event.target.value);
-
-      const modelData = models[selectedCategory]?.find(
-        (model) => model.name === event.target.value,
-      );
-      if (modelData) {
-        setFormData((prevData) => ({
-          ...prevData,
-          model: {
-            ...formData.model,
-            id: modelData.id,
-            name: modelData.name,
-            schemaVersion: modelData.schemaVersion,
-            subCategory: modelData.subCategory,
-            status: modelData.status,
-            version: modelData.version,
-            displayName: modelData.displayName,
-            registrant: modelData.registrant,
-            metadata: modelData.metadata,
-          },
-        }));
-      }
+      setFormData((prevData) => ({
+        ...prevData,
+        model: {
+          ...formData.model,
+          id: model.id,
+          name: model.name,
+          schemaVersion: model.schemaVersion,
+          subCategory: model.subCategory,
+          status: model.status,
+          version: model.version,
+          displayName: model.displayName,
+          registrant: model.registrant,
+          metadata: model.metadata,
+        },
+      }));
+    } else {
+      setSelectedModel(null);
     }
   };
 
@@ -181,87 +166,14 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
 
               <Grid2 size={{ xs: 12 }}>
                 <Typography variant="subtitle1" mt={2} mb={1}>
-                  Select Model Category and Type
+                  Select Model
                 </Typography>
-              </Grid2>
-
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth>
-                  <TextField
-                    select={true}
-                    SelectProps={{
-                      MenuProps: {
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'left',
-                        },
-                        getContentAnchorEl: null,
-                      },
-                      renderValue: (selected) => {
-                        if (!selected || selected.length === 0) {
-                          return <em>Select Category</em>;
-                        }
-                        return selected;
-                      },
-                      displayEmpty: true,
-                    }}
-                    id="category-selector"
-                    value={selectedCategory || ''}
-                    onChange={handleCategoryChange}
-                    fullWidth
-                    variant="outlined"
-                    helperText="Select a model category"
-                  >
-                    <MenuItem value="" disabled>
-                      <em>Select Category</em>
-                    </MenuItem>
-                    {categories.map((cat) => (
-                      <MenuItem key={cat.name} value={cat.name}>
-                        {cat.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </FormControl>
-              </Grid2>
-
-              <Grid2 size={{ xs: 12, sm: 6 }}>
-                <FormControl fullWidth>
-                  <TextField
-                    select={true}
-                    disabled={!selectedCategory}
-                    SelectProps={{
-                      MenuProps: {
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'left',
-                        },
-                        getContentAnchorEl: null,
-                      },
-                      renderValue: (selected) => {
-                        if (!selected || selected.length === 0) {
-                          return <em>Select Model</em>;
-                        }
-                        return selected;
-                      },
-                      displayEmpty: true,
-                    }}
-                    id="model-selector"
-                    value={selectedModel || ''}
-                    onChange={handleModelChange}
-                    fullWidth
-                    variant="outlined"
-                    helperText="Select a model type"
-                  >
-                    <MenuItem value="" disabled>
-                      <em>Select Model</em>
-                    </MenuItem>
-                    {models?.[selectedCategory]?.map((model, idx) => (
-                      <MenuItem key={`${model.name}-${idx}`} value={model.name}>
-                        {model.displayName}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </FormControl>
+                <ModelSelector
+                  selectedModel={selectedModel}
+                  onModelChange={handleModelChange}
+                  label="Search and Select Model"
+                  helperText="Search for a model by name"
+                />
               </Grid2>
             </Grid2>
           </div>
@@ -291,10 +203,10 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
               <Typography>Define your relationship properties using the form below.</Typography>
             </Box>
 
-            {selectedModel && meshmodelComponents[selectedModel] && (
+            {selectedModel && meshmodelComponents[selectedModel.name] && (
               <Box mb={3} mt={2}>
                 <Typography variant="subtitle1" mb={1}>
-                  Selected Model: <strong>{selectedModel}</strong>
+                  Selected Model: <strong>{selectedModel.displayName || selectedModel.name}</strong>
                 </Typography>
                 <Typography variant="body2" color="textSecondary">
                   The form below will be pre-populated with some values from your selected model.
@@ -396,7 +308,6 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
       canGoNext: () =>
         relationshipName &&
         /^[a-z0-9]([-a-z0-9]*[a-z0-9])?$/.test(relationshipName) &&
-        selectedCategory &&
         selectedModel,
       nextButtonText: 'Next',
       nextAction: () => relationshipStepper.handleNext(),

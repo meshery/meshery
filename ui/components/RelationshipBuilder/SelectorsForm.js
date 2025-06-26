@@ -9,7 +9,6 @@ import {
   Grid2,
   Tabs,
   Tab,
-  MenuItem,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -19,6 +18,7 @@ import RJSFWrapper from '../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import cloneDeep from 'lodash/cloneDeep';
 import { useMeshModelComponents } from '@/utils/hooks/useMeshModelComponents';
 import omit from 'lodash/omit';
+import ModelSelector from './ModelSelector';
 
 const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
   const [tabValue, setTabValue] = React.useState(0);
@@ -38,8 +38,8 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
 
   const [expandedPanels, setExpandedPanels] = React.useState({});
   const [selectedModelInfo, setSelectedModelInfo] = React.useState({});
-  const { models, categories, getModelFromCategory } = useMeshModelComponents();
-  const [categorySelections, setCategorySelections] = React.useState({});
+  const { getComponentsFromModel } = useMeshModelComponents();
+  const [modelSelections, setModelSelections] = React.useState({});
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
@@ -52,55 +52,34 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
     });
   };
 
-  const handleCategoryChange = (type, direction, index, event) => {
-    const category = event.target.value;
-    setCategorySelections((prev) => ({
-      ...prev,
-      [`${type}.${direction}.${index}`]: {
-        ...prev[`${type}.${direction}.${index}`],
-        category,
-        model: null,
-      },
-    }));
-
-    getModelFromCategory(category);
-  };
-
-  const handleModelChange = (type, direction, index, event) => {
-    const modelName = event.target.value;
+  const handleModelChange = (type, direction, index, model) => {
     const panelKey = `${type}.${direction}.${index}`;
-    const category = categorySelections[panelKey]?.category;
 
-    if (category && modelName) {
-      const modelData = models[category]?.find((model) => model.name === modelName);
+    if (model) {
+      getComponentsFromModel(model.name);
 
-      if (modelData) {
-        const updatedSelectors = cloneDeep(selectorsData);
-        updatedSelectors[type][direction][index].model = {
-          name: modelData.name,
-          id: modelData.id,
-          registrant: { kind: modelData.registrant.kind },
-        };
+      const updatedSelectors = cloneDeep(selectorsData);
+      updatedSelectors[type][direction][index].model = {
+        name: model.name,
+        id: model.id,
+        registrant: { kind: model.registrant?.kind || model.registrant?.hostname || '' },
+      };
 
-        setSelectorsData(updatedSelectors);
-        onChange({
-          ...formData,
-          selectors: updatedSelectors,
-        });
+      setSelectorsData(updatedSelectors);
+      onChange({
+        ...formData,
+        selectors: updatedSelectors,
+      });
 
-        setCategorySelections((prev) => ({
-          ...prev,
-          [panelKey]: {
-            ...prev[panelKey],
-            model: modelName,
-          },
-        }));
+      setModelSelections((prev) => ({
+        ...prev,
+        [panelKey]: model,
+      }));
 
-        setSelectedModelInfo({
-          ...selectedModelInfo,
-          [panelKey]: modelData,
-        });
-      }
+      setSelectedModelInfo({
+        ...selectedModelInfo,
+        [panelKey]: model,
+      });
     }
   };
 
@@ -172,8 +151,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
           selectors.map((selector, index) => {
             const panelKey = `${type}.${direction}.${index}`;
             const panelExpanded = expandedPanels[panelKey] || false;
-            const currentCategory = categorySelections[panelKey]?.category;
-            const currentModel = categorySelections[panelKey]?.model;
+            const currentModel = modelSelections[panelKey];
 
             return (
               <Accordion
@@ -190,6 +168,12 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                   >
                     <Typography variant="subtitle2">
                       Selector {index + 1}: {selector.kind || 'New Selector'}
+                      {currentModel && (
+                        <Typography component="span" variant="caption" color="textSecondary">
+                          {' '}
+                          ({currentModel.displayName || currentModel.name})
+                        </Typography>
+                      )}
                     </Typography>
                     <ModalButtonSecondary
                       size="small"
@@ -221,51 +205,13 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
                       </FormControl>
                     </Grid2>
 
-                    <Grid2 size={{ xs: 12, sm: 6 }}>
-                      <FormControl fullWidth>
-                        <TextField
-                          select={true}
-                          label="Model Category"
-                          value={currentCategory || ''}
-                          onChange={(e) => handleCategoryChange(type, direction, index, e)}
-                          fullWidth
-                          variant="outlined"
-                          helperText="Select the model category"
-                        >
-                          <MenuItem value="" disabled>
-                            <em>Select Category</em>
-                          </MenuItem>
-                          {categories.map((cat) => (
-                            <MenuItem key={cat.name} value={cat.name}>
-                              {cat.name}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </FormControl>
-                    </Grid2>
-
-                    <Grid2 size={{ xs: 12, sm: 6 }}>
-                      <FormControl fullWidth>
-                        <TextField
-                          select={true}
-                          disabled={!currentCategory}
-                          label="Model Name"
-                          value={currentModel || ''}
-                          onChange={(e) => handleModelChange(type, direction, index, e)}
-                          fullWidth
-                          variant="outlined"
-                          helperText="Select the model name"
-                        >
-                          <MenuItem value="" disabled>
-                            <em>Select Model</em>
-                          </MenuItem>
-                          {models?.[currentCategory]?.map((model, idx) => (
-                            <MenuItem key={`${model.name}-${idx}`} value={model.name}>
-                              {model.displayName || model.name}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </FormControl>
+                    <Grid2 size={{ xs: 12 }}>
+                      <ModelSelector
+                        selectedModel={currentModel}
+                        onModelChange={(model) => handleModelChange(type, direction, index, model)}
+                        label="Search and Select Model"
+                        helperText="Search for a model by name, category, or registrant"
+                      />
                     </Grid2>
 
                     {/* -> here we are implmenting the rjsf for match prope */}
