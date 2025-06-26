@@ -1,27 +1,27 @@
 <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 150 150">
   <defs>
-    <linearGradient id="linear-gradient" x1="197.1" y1="75" x2="197.6" y2="75" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient" x1="175.2" y1="77" x2="175.6" y2="77" gradientTransform="translate(0 152) scale(1 -1)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#00b39f"/>
       <stop offset="1" stop-color="#00d3a9"/>
     </linearGradient>
-    <linearGradient id="linear-gradient1" x1="67.7" y1="93.3" x2="129.9" y2="139.2" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient1" x1="69" y1="62" x2="120.1" y2="24.3" gradientTransform="translate(0 152) scale(1 -1)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#00b39f" stop-opacity=".7"/>
       <stop offset="1" stop-color="#00d3a9"/>
     </linearGradient>
-    <linearGradient id="linear-gradient2" x1="-1342" y1="804.9" x2="-1348.2" y2="807" gradientTransform="translate(2176.9 -1179.6) scale(1.6)" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient2" x1="-1670.5" y1="-469.1" x2="-1675.6" y2="-470.8" gradientTransform="translate(2707.3 -658) scale(1.6 -1.6)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#000" stop-opacity=".3"/>
       <stop offset="0" stop-color="#000" stop-opacity=".2"/>
       <stop offset=".3" stop-color="#000" stop-opacity=".1"/>
       <stop offset=".6" stop-color="#000" stop-opacity="0"/>
       <stop offset="1" stop-color="#000" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="linear-gradient3" x1="-1345.2" y1="765.2" x2="-1315.5" y2="844.3" gradientTransform="translate(2176.9 -1179.6) scale(1.6)" gradientUnits="userSpaceOnUse">
+    <linearGradient id="linear-gradient3" x1="-1643.5" y1="-432.2" x2="-1619.1" y2="-497.2" gradientTransform="translate(2707.3 -658) scale(1.6 -1.6)" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#00d3a9"/>
       <stop offset="1" stop-color="#00b39f"/>
     </linearGradient>
   </defs>
-  <path d="M52.1,10.2h40.7l-42.2,125.1c-.9,2.6-3.4,4.4-6.1,4.4H12.7c-3.6,0-6.5-2.9-6.5-6.5,0-.7.1-1.4.3-2.1L45.9,14.6c.9-2.6,3.4-4.4,6.1-4.4h0Z" fill="url(#linear-gradient)"/>
-  <path d="M111.2,94.2H46.7c-1.6,0-3,1.3-3,3,0,.8.3,1.6,1,2.2l41.5,38.7c1.2,1.1,2.8,1.8,4.4,1.8h36.5l-15.9-45.6Z" fill="url(#linear-gradient1)"/>
-  <path d="M52.1,10.2c-2.8,0-5.3,1.8-6.2,4.5L6.6,131.1c-1.2,3.4.5,7.1,3.9,8.3.7.3,1.5.4,2.2.4h32.5c2.5-.4,4.5-2.2,5.3-4.5l7.8-23.1,28,26.1c1.2,1,2.6,1.5,4.2,1.5h36.4l-16-45.6h-46.5S92.9,10.2,92.9,10.2h-40.8Z" fill="url(#linear-gradient2)"/>
-  <path d="M104.1,14.6c-.9-2.6-3.4-4.4-6.1-4.4h-45.3c2.8,0,5.2,1.8,6.1,4.4l39.4,116.6c1.1,3.4-.7,7.1-4.1,8.2-.7.2-1.4.3-2.1.3h45.3c3.6,0,6.5-2.9,6.5-6.5,0-.7-.1-1.4-.3-2.1L104.1,14.6Z" fill="url(#linear-gradient3)"/>
+  <path d="M56.2,21.8h33.4l-34.6,102.7c-.7,2.1-2.8,3.6-5,3.6h-26.1c-3,0-5.3-2.4-5.3-5.3s0-1.1.2-1.7L51.1,25.4c.7-2.1,2.8-3.6,5-3.6h0Z" fill="url(#linear-gradient)"/>
+  <path d="M104.7,90.8h-52.9c-1.3,0-2.5,1.1-2.5,2.5s.2,1.3.8,1.8l34.1,31.8c1,.9,2.3,1.5,3.6,1.5h30l-13.1-37.4h0Z" fill="url(#linear-gradient1)"/>
+  <path d="M56.2,21.8c-2.3,0-4.4,1.5-5.1,3.7L18.9,121.1c-1,2.8.4,5.8,3.2,6.8.6.2,1.2.3,1.8.3h26.7c2.1-.3,3.7-1.8,4.4-3.7l6.4-19,23,21.4c1,.8,2.1,1.2,3.4,1.2h29.9l-13.1-37.4h-38.2l23.4-68.9h-33.5Z" fill="url(#linear-gradient2)"/>
+  <path d="M98.9,25.4c-.7-2.1-2.8-3.6-5-3.6h-37.2c2.3,0,4.3,1.5,5,3.6l32.3,95.7c.9,2.8-.6,5.8-3.4,6.7-.6.2-1.1.2-1.7.2h37.2c3,0,5.3-2.4,5.3-5.3s0-1.1-.2-1.7L98.9,25.4Z" fill="url(#linear-gradient3)"/>
 </svg>
