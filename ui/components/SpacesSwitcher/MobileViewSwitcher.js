@@ -40,7 +40,7 @@ function SwitcherMenu({ organization, router }) {
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
   const [transformProperty, setTransformProperty] = useState(100);
 
-  const isSmallScreen = useMediaQuery('(max-width:500px)');
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
 
   const styleSlider = {
     position: 'absolute',
