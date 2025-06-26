@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import PropTypes from 'prop-types'
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import {
   Button,
   Dialog,
@@ -13,7 +13,7 @@ import {
   Fade,
   Popper,
   styled,
-} from "@sistent/sistent"
+} from "@sistent/sistent";
 import {
   TwitterShareButton,
   LinkedinShareButton,
@@ -21,29 +21,29 @@ import {
   TwitterIcon,
   LinkedinIcon,
   FacebookIcon,
-} from "react-share"
-import ReplyIcon from "@mui/icons-material/Reply"
+} from "react-share";
+import ReplyIcon from "@mui/icons-material/Reply";
 const StyledDialogTitle = styled(DialogTitle)({
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
-})
+});
 
 const ShareIconButton = styled(IconButton)({
   transform: "scaleX(-1)",
-})
+});
 
 const SocialPopper = styled(Popper)({
   width: 500,
-})
+});
 
 const SocialPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
-}))
+}));
 
 const SocialIconWrapper = styled("span")(({ theme }) => ({
   margin: theme.spacing(0.4),
-}))
+}));
 
 function MesheryChartDialog(props) {
   const { open, title, handleClose, content, socialMessage } = props
@@ -54,7 +54,7 @@ function MesheryChartDialog(props) {
     setAnchorEl(e.currentTarget)
     e.stopPropagation()
     setSocialExpand((prevState) => !prevState)
-  }
+  };
   return (
     <React.Fragment>
       <Dialog 
@@ -102,7 +102,7 @@ function MesheryChartDialog(props) {
                 </SocialPaper>
               </Fade>
             </ClickAwayListener>
-          )}
+          )};
         </SocialPopper>
 
         <DialogContent>
@@ -116,7 +116,7 @@ function MesheryChartDialog(props) {
       </Dialog>
     </React.Fragment>
   )
-}
+};
 
 MesheryChartDialog.propTypes = {
   open: PropTypes.bool.isRequired,
@@ -124,6 +124,6 @@ MesheryChartDialog.propTypes = {
   content: PropTypes.node.isRequired,
   title: PropTypes.string,
   socialMessage: PropTypes.string,
-}
+};
 
-export default MesheryChartDialog
+export default MesheryChartDialog;
