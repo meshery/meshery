@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 25th 2025, 11:51:20 pm
+- Testing started at: June 26th 2025, 7:49:30 pm
 
 **📦 Test Result Summary**
 
 - ✅ 76 passed
 - ❌ 0 failed
-- ⚠️ 0 flaked
+- ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 50 seconds_
+⌛ _Duration: 5 minutes and 48 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,6 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
+| 1 | chromium-meshery-provider | Add a cluster connection by uploading kubeconfig file |  | ⚠️ |
 
 </div>
 </details>
