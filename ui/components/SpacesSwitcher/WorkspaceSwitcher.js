@@ -48,6 +48,7 @@ function WorkspaceSwitcher({ open }) {
     error: workspaceError,
     isLoading: isLoadingWorkspaces,
   } = useGetSelectedWorkspace();
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
@@ -79,8 +80,6 @@ function WorkspaceSwitcher({ open }) {
   if (isLoadingWorkspaces || isUpdatingSelectedWorkspace) {
     return <CircularProgress height="1.5rem" width="1.5rem" />;
   }
-
-  const isSmallScreen = useMediaQuery('(max-width:400px)');
 
   return (
     <NoSsr>
