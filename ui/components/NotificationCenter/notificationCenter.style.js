@@ -13,7 +13,7 @@ export const DarkBackdrop = styled('div')(({ open }) => ({
   zIndex: '1202', // Ensure it's behind the container
 }));
 
-export const SideList = styled('div')(({theme}) => ({
+export const SideList = styled('div')(({ theme }) => ({
   width: '45rem',
   maxWidth: '95vw',
 
@@ -91,7 +91,6 @@ export const NotificationContainer = styled('div')(({ theme }) => ({
   [theme.breakpoints.down('md')]: {
     height: 'auto',
   },
-
 }));
 
 export const Title = styled('div')(() => ({
