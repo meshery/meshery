@@ -136,6 +136,7 @@ export function OrgMenu(props) {
   let uniqueOrgs = _.uniqBy(orgs, 'id');
 
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
   const { selectedOrganization } = useGetSelectedOrganization();
 
   const [updateSelectedOrg, { isLoading: isUpdatingOrg }] = useUpdateSelectedOrganizationMutation();
@@ -155,8 +156,6 @@ export function OrgMenu(props) {
     const id = e.target.value;
     updateSelectedOrg(id);
   };
-
-  const isSmallScreen = useMediaQuery('(max-width:400px)');
 
   return (
     <NoSsr>
@@ -247,6 +246,7 @@ function OrganizationAndWorkSpaceSwitcher() {
 
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const router = useRouter();
   const { organization } = useSelector((state) => state.ui);
   const { isBeta } = useSelector((state) => state.ui.page);
@@ -254,8 +254,6 @@ function OrganizationAndWorkSpaceSwitcher() {
   const { selectedOrganization } = useGetSelectedOrganization();
 
   if (!selectedOrganization) return null;
-
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
 
   return (
     <NoSsr>
