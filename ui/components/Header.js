@@ -271,7 +271,22 @@ function K8sContextMenu({
                 height="24px"
                 style={{ objectFit: 'contain' }}
               />
-              <CBadge>{contexts?.total_count || 0}</CBadge>
+              <CBadge
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullContextMenu((prev) => !prev);
+                }}
+                onMouseOver={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(false);
+                }}
+              >
+                {contexts?.total_count || 0}
+              </CBadge>
             </CBadgeContainer>
           </IconButton>
         </CanShow>
@@ -440,6 +455,7 @@ const Header = ({
                     alignItems: 'center',
                     width: 'fit-content',
                     justifyContent: 'center',
+                    position: 'relative',
                   }}
                 ></div>
                 <OrganizationAndWorkSpaceSwitcher />
@@ -492,15 +508,7 @@ const Header = ({
                       <User />
                     </UserSpan>
                   </CustomTooltip>
-                  <UserSpan
-                    sx={{
-                      marginLeft: {
-                        xs: 0,
-                        sm: 1,
-                      },
-                    }}
-                    data-testid="header-menu"
-                  >
+                  <UserSpan data-testid="header-menu">
                     <HeaderMenu />
                   </UserSpan>
                 </UserInfoContainer>

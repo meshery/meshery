@@ -9,7 +9,7 @@ import {
   useTheme,
   WorkspaceIcon,
 } from '@sistent/sistent';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { CMenuContainer } from '../Header.styles';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
@@ -36,28 +36,23 @@ export const MobileOrgWksSwither = MobileOrgWksSwither_;
 
 function SwitcherMenu({ organization, router }) {
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
   const [anchorEl, setAnchorEl] = useState(false);
   const [showFullContextMenu, setShowFullContextMenu] = useState(false);
-  const [transformProperty, setTransformProperty] = useState(100);
-
-  const isSmallScreen = useMediaQuery('(max-width:400px)');
 
   const styleSlider = {
     position: 'absolute',
     zIndex: '-1',
-    bottom: '-140%',
+    top: '-8%',
     width: isSmallScreen ? '100%' : '270px',
-    transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
+    transition: 'top 0.4s ease, transform 0.4s ease',
+    transform: showFullContextMenu ? `translateY(105%)` : 'translateY(-8%)',
   };
 
   let open = Boolean(anchorEl);
   if (showFullContextMenu) {
     open = showFullContextMenu;
   }
-
-  useEffect(() => {
-    setTransformProperty((prev) => prev + 2 * 3.125);
-  }, []);
 
   return (
     <>
@@ -68,6 +63,14 @@ function SwitcherMenu({ organization, router }) {
           onClick={(e) => {
             e.preventDefault();
             setShowFullContextMenu((prev) => !prev);
+          }}
+          onMouseEnter={(e) => {
+            e.preventDefault();
+            setAnchorEl(true);
+          }}
+          onMouseLeave={(e) => {
+            e.preventDefault();
+            setAnchorEl(false);
           }}
           aria-owns={open ? 'menu-list-grow' : undefined}
           aria-haspopup="true"
@@ -90,7 +93,6 @@ function SwitcherMenu({ organization, router }) {
           <div>
             <ClickAwayListener
               onClickAway={(e) => {
-                console.log('click away', e.target == 'body', e.target);
                 if (
                   !(e.target.tagName.toLowerCase() === 'body') &&
                   !e.target.classList.contains('switcher-icon-button') &&
@@ -112,7 +114,10 @@ function SwitcherMenu({ organization, router }) {
                   !e.target.classList.contains('MuiMenu-root') &&
                   !e.target.classList.contains('MuiPopover-root') &&
                   !e.target.classList.contains('MuiPaper-root') &&
-                  !e.target.classList.contains('MuiSelect-select')
+                  !e.target.classList.contains('MuiSelect-select') &&
+                  !(e.target.tagName.toLowerCase() === 'path') &&
+                  !(e.target.tagName.toLowerCase() === 'svg') &&
+                  !(e.target.tagName.toLowerCase() === 'circle')
                 ) {
                   setAnchorEl(false);
                   setShowFullContextMenu(false);

@@ -106,7 +106,12 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
 }));
 
 export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
-  padding: 4,
+  padding: 2,
+  color: theme.palette.common.white,
+}));
+
+export const IconButtonMenu = styled(IconButton)(({ theme }) => ({
+  padding: 6,
   color: theme.palette.common.white,
 }));
 

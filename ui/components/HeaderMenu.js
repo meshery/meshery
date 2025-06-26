@@ -8,7 +8,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar, Popover } from '@sistent/sistent';
-import { IconButtonAvatar } from './Header.styles';
+import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
 
@@ -177,14 +177,14 @@ const HeaderMenu = () => {
 
   return (
     <>
-      <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
+      <IconButtonMenu aria-describedby={id} onClick={handleClick}>
         <MenuIcon
           sx={{
-            height: 27,
-            width: 27,
+            height: 28,
+            width: 28,
           }}
         />
-      </IconButtonAvatar>
+      </IconButtonMenu>
 
       <Popover
         id={id}
