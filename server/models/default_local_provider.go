@@ -181,7 +181,7 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: orgId,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
@@ -196,7 +196,7 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
+		OrganizationID: orgId,
 		Owner:          "Meshery",
 		UpdatedAt:      time.Now(),
 	}
