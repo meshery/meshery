@@ -155,7 +155,7 @@ const ModelSelector = ({
         observer.unobserve(loadingRef.current);
       }
     };
-  }, [hasMore, isLoading, isFetching, loadNextPage]);
+  }, [open, hasMore, isLoading, isFetching, loadNextPage]);
 
   return (
     <ClickAwayListener onClickAway={() => setOpen(false)}>
