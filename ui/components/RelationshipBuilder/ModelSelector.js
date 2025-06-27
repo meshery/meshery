@@ -138,8 +138,6 @@ const ModelSelector = ({
   }, [onModelChange]);
 
   useEffect(() => {
-    console.log('I am called');
-    console.log(loadingRef.current);
     if (!open || !loadingRef.current || !hasMore) return;
     const observer = new IntersectionObserver(
       (entries) => {
