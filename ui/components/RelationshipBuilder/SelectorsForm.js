@@ -62,7 +62,7 @@ const SelectorsForm = ({ selectorsSchema, formData, onChange }) => {
       updatedSelectors[type][direction][index].model = {
         name: model.name,
         id: model.id,
-        registrant: { kind: model.registrant?.kind || model.registrant?.hostname || '' },
+        registrant: { kind: model.registrant?.kind || '' },
       };
 
       setSelectorsData(updatedSelectors);
