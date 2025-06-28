@@ -24,7 +24,19 @@ components:
   description: 
 components-count: 3
 relationships: 
-relationship-count: 0
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+- type: "Non Binding"
+  kind: "Edge"
+  description: "A relationship between different type of components"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "A relationship between different type of components"
+relationship-count: 4
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

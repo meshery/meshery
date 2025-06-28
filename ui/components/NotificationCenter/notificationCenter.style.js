@@ -13,9 +13,13 @@ export const DarkBackdrop = styled('div')(({ open }) => ({
   zIndex: '1202', // Ensure it's behind the container
 }));
 
-export const SideList = styled('div')(() => ({
+export const SideList = styled('div')(({ theme }) => ({
   width: '45rem',
   maxWidth: '95vw',
+
+  [theme.breakpoints.down('md')]: {
+    width: '100%',
+  },
 }));
 export const StyledSubtitle = styled(Typography)(() => ({
   textTransform: 'capitalize',
@@ -83,6 +87,10 @@ export const NotificationContainer = styled('div')(({ theme }) => ({
   height: '5.65rem',
   flexWrap: 'wrap',
   background: theme.palette.background.card,
+
+  [theme.breakpoints.down('md')]: {
+    height: 'auto',
+  },
 }));
 
 export const Title = styled('div')(() => ({
@@ -92,12 +100,12 @@ export const Title = styled('div')(() => ({
 }));
 
 export const TitleBellIcon = styled('div')(() => ({
-  width: '2.25rem',
-  height: '2.25rem',
+  width: '35px',
+  height: '35px',
   borderRadius: '100%',
+  padding: '0.5rem',
   backgroundColor: 'black',
   display: 'flex',
-  padding: '0.2rem',
   justifyContent: 'center',
   alignItems: 'center',
   cursor: 'pointer',

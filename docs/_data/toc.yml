@@ -137,6 +137,10 @@
           url: guides/configuration-management/push-pull-model-image
         - title: Cloud Native Design Patterns
           url: guides/configuration-management/pattern-management
+        - title: Identifying Components
+          url: guides/configuration-management/identifying-components
+        - title: Edge Styles Guide
+          url: guides/configuration-management/edges-guide
     - title: Performance Management ↆ
       url: guides/performance-management
       children:
@@ -195,6 +199,8 @@
           url: guides/tutorials/embedding-meshery-design-in-wordpress
         - title: Publishing Designs to ArtifactHub
           url: guides/tutorials/publish-to-artifacthub
+        - title: Kubernetes Request Flow – A Visual Guide
+          url: guides/tutorials/kubernetes-request-flow
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -213,10 +219,6 @@
         - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
           grandchildren:
-            - title: Component Shape Guide
-              url: extensions/component-shape-guide
-            - title: Edges Style Guide
-              url: extensions/edges-shape-guide
             - title: Import & Export Designs
               url: extensions/import-export-designs
         - title: Kanvas Snapshot

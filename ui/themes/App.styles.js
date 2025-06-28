@@ -40,6 +40,7 @@ export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
   flexDirection: 'column',
   position: 'relative',
   overflowX: 'hidden',
+  overflowY: 'hidden',
   [theme.breakpoints.down('sm')]: {
     marginLeft: canShowNav ? '4.25rem' : '0',
   },

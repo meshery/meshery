@@ -246,9 +246,9 @@ export default function Provider() {
                   <MenuProviderDisabled
                     sx={{ marginTop: "0px" }}
                     disabled={true}
-                    key="CNCF Labs"
+                    key="Exoscale Labs"
                   >
-                    CNCF Labs{"\u00A0"}
+                    Exoscale Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="Equinix US-DAL">
@@ -259,8 +259,8 @@ export default function Provider() {
                     HPE Security{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
-                  <MenuProviderDisabled disabled={true} key="MIT">
-                    Massachusetts Institute of Technology (MIT){"\u00A0"}
+                  <MenuProviderDisabled disabled={true} key="F5">
+                    F5 BIG IP iHealth{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
                   <MenuProviderDisabled disabled={true} key="UT Austin">
@@ -379,7 +379,6 @@ export default function Provider() {
           <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
           <ul>
             <li>Academic research and advanced studies by Ph.D. researchers</li>
-            <li></li>
             <li>Used by school of Electrical and Computer Engineering (ECE)</li>
           </ul>
           <p style={{ fontWeight: 700 }}>
@@ -389,7 +388,6 @@ export default function Provider() {
             <li>
               Performance and compatibility-centric research and validation
             </li>
-            <li></li>
             <li>Used by various cloud native projects</li>
           </ul>
           <p style={{ fontWeight: 700 }}>HPE Security</p>
