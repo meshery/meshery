@@ -114,7 +114,6 @@ func main() {
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
-	viper.SetDefault("TMP_MESHSYNC_AS_A_LIBRARY_MODE", false)
 	store.Initialize()
 
 	log.Info("Local Provider capabilities are: ", version)

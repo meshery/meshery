@@ -175,8 +175,9 @@
               "mutatedRef": [
                 [
                   "configuration",
-                  "metadata",
-                  "labels"
+                  "spec",
+                  "selector",
+                  "matchLabels"
                 ],
                 [
                   "configuration",

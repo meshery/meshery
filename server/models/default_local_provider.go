@@ -57,10 +57,9 @@ type DefaultLocalProvider struct {
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
 
-	GenericPersister          *database.Handler
-	KubeClient                *mesherykube.Client
-	Log                       logger.Handler
-	TMPMeshsyncDeploymentMode string
+	GenericPersister *database.Handler
+	KubeClient       *mesherykube.Client
+	Log              logger.Handler
 }
 
 // Initialize will initialize the local provider
@@ -81,10 +80,6 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
 		{Feature: PersistCredentials},
-	}
-	l.TMPMeshsyncDeploymentMode = "operator"
-	if viper.GetBool("TMP_MESHSYNC_AS_A_LIBRARY_MODE") {
-		l.TMPMeshsyncDeploymentMode = "library"
 	}
 }
 
@@ -285,8 +280,6 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		Status:           connections.DISCOVERED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
-		// TODO: pass from above
-		MeshsyncDeploymentMode: l.TMPMeshsyncDeploymentMode,
 	}
 	connectionCreated, err := l.SaveConnection(conn, "", true)
 	if err != nil {
@@ -1091,18 +1084,17 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		id = conn.ID
 	}
 	connection := &connections.Connection{
-		ID:                     id,
-		Name:                   conn.Name,
-		CredentialID:           uuid.Nil,
-		Type:                   conn.Type,
-		SubType:                conn.SubType,
-		Kind:                   conn.Kind,
-		Metadata:               conn.MetaData,
-		Status:                 conn.Status,
-		UserID:                 &uuid.Nil,
-		CreatedAt:              time.Now(),
-		UpdatedAt:              time.Now(),
-		MeshsyncDeploymentMode: conn.MeshsyncDeploymentMode,
+		ID:           id,
+		Name:         conn.Name,
+		CredentialID: uuid.Nil,
+		Type:         conn.Type,
+		SubType:      conn.SubType,
+		Kind:         conn.Kind,
+		Metadata:     conn.MetaData,
+		Status:       conn.Status,
+		UserID:       &uuid.Nil,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
 	if err != nil {

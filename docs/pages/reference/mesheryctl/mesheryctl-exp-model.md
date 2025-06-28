@@ -16,7 +16,7 @@ Experimental commands for mesheryctl model
 
 ## Synopsis
 
-Temporal container to deliver model init subcommand to exp command
+Temporal container to deliver model init and model build subcommands to exp command
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model [flags]
@@ -30,6 +30,14 @@ Scaffold a folder structure for model creation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp model init [model-name]
+
+</div>
+</pre> 
+
+Create an OCI-compliant package from the model files
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp model build [model-name] --version [version]
 
 </div>
 </pre> 
@@ -55,6 +63,7 @@ mesheryctl exp model init [model-name]
 
 ## See Also
 
+* [mesheryctl exp model build](/reference/mesheryctl/exp/model/build)
 * [mesheryctl exp model init](/reference/mesheryctl/exp/model/init)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

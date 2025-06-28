@@ -489,3 +489,35 @@ ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 #	 Required golang version is: 'go$(GOVERSION).x'. \
 #	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif
+
+## Runs meshsync integration tests check dependencies script (if docker, kind, kubectl, helm are present)
+server-integration-tests-meshsync-check-dependencies:
+	./server/integration-tests/meshsync/infrastructure/setup.sh check_dependencies
+
+server-integration-tests-meshsync-setup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_cluster
+
+server-integration-tests-meshsync-setup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_connection
+
+## Runs meshsync integration tests set up script (runs creates a test kind cluster, deploys operator to it)
+## docker compose exposes nats on default ports to host, so they must be available
+server-integration-tests-meshsync-setup: server-integration-tests-meshsync-setup-cluster server-integration-tests-meshsync-setup-connection
+
+server-integration-tests-meshsync-cleanup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_cluster
+
+server-integration-tests-meshsync-cleanup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_connection
+
+## Runs meshsync integration tests clean up (stops docker compose and deletes test cluster)
+server-integration-tests-meshsync-cleanup: server-integration-tests-meshsync-cleanup-connection server-integration-tests-meshsync-cleanup-cluster
+
+## Runs meshsync integration tests code itself
+server-integration-tests-meshsync-run:
+	RUN_INTEGRATION_TESTS=true \
+	PATH_TO_SQL_FILE="../../../meshery-integration-test-meshsync-mesherydb.sql" \
+	go test -v -count=1 -run Integration ./server/integration-tests/meshsync
+
+## Runs meshsync integration tests full cycle (docker build, setup, run, cleanup)
+server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup
