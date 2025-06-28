@@ -103,7 +103,7 @@ func ErrHealthCheckFailed(err error) error {
 	return errors.New(ErrHealthCheckFailedCode,
 		errors.Alert,
 		[]string{"Health checks failed"},
-		[]string{"Failed to initialize healthchecker" + err.Error()},
+		[]string{"Failed to initialize healthchecker\n" + err.Error() + errors.GetRemedy(err)},
 		[]string{"Health checks execution failed in starting Meshery server"},
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
