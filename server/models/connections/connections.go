@@ -12,22 +12,25 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/logger"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
-// swagger:response ConnectionStatus
-type ConnectionStatus string
+type ConnectionStatus = schemasConnection.ConnectionStatus
 
 type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
+// TODO
+// Caps lock values are left for compatibility for now,
+// update later on to Pascal case everywhere
 const (
-	DISCOVERED   ConnectionStatus = "discovered"
-	REGISTERED   ConnectionStatus = "registered"
-	CONNECTED    ConnectionStatus = "connected"
-	IGNORED      ConnectionStatus = "ignored"
-	MAINTENANCE  ConnectionStatus = "maintenance"
-	DISCONNECTED ConnectionStatus = "disconnected"
-	DELETED      ConnectionStatus = "deleted"
-	NOTFOUND     ConnectionStatus = "not found"
+	DISCOVERED   ConnectionStatus = schemasConnection.Discovered
+	REGISTERED   ConnectionStatus = schemasConnection.Registered
+	CONNECTED    ConnectionStatus = schemasConnection.Connected
+	IGNORED      ConnectionStatus = schemasConnection.Ignored
+	MAINTENANCE  ConnectionStatus = schemasConnection.Maintenance
+	DISCONNECTED ConnectionStatus = schemasConnection.Disconnected
+	DELETED      ConnectionStatus = schemasConnection.Deleted
+	NOTFOUND     ConnectionStatus = schemasConnection.NotFound
 )
 
 type ConnectionRegisterPayload struct {
