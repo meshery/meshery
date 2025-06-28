@@ -46,14 +46,14 @@ var (
 	// CVS file paths for models, components, and relationships
 	componentCSVFilePath    string
 	modelCSVFilePath        string
-    relationshipCSVFilePath string
-	spreadsheeetID   string
-	spreadsheeetCred string
-    csvDirectory     string
-    sheetGID         int64 
-    modelName        string
-    logFile          *os.File
-    errorLogFile     *os.File
+	relationshipCSVFilePath string
+	spreadsheeetID          string
+	spreadsheeetCred        string
+	csvDirectory            string
+	sheetGID                int64
+	modelName               string
+	logFile                 *os.File
+	errorLogFile            *os.File
 
 	// current working directory location
 	cwd string
@@ -61,7 +61,6 @@ var (
 	registryLocation    string
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
-	
 )
 
 var generateCmd = &cobra.Command{
@@ -265,10 +264,9 @@ func applySchemaDefaultsToCSV(componentCSVFilePath string) error {
     return nil
 }
 
-// ComponentSchemaDefaults 表示从schema中读取的默认值
 type ComponentSchemaDefaults struct {
     Capabilities string `json:"capabilities"`
-    // 其他默认字段...
+	// Can add more fields as needed based on the schema
 }
 
 // getCapabilitiesFromSchema acquires default capabilities from the schema
@@ -295,7 +293,7 @@ func readSchemaFromFile(schemaPath string) (*ComponentSchemaDefaults, error) {
     }
     
     defaults := &ComponentSchemaDefaults{
-        Capabilities: "", // 从schema中提取默认值
+        Capabilities: "",
     }
     
     if properties, ok := schema["properties"].(map[string]interface{}); ok {
