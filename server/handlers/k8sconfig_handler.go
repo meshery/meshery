@@ -354,7 +354,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		h.log.Debug(conn)
-		if conn.ShouldConnectionBeManaged() {
+		if connections.ShouldConnectionBeManaged(conn) {
 			cc.ConnectionID = conn.ID.String()
 			contexts = append(contexts, cc)
 			metadata["context"] = models.RedactCredentialsForContext(cc)
@@ -387,7 +387,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		ctx.ConnectionID = conn.ID.String()
 		h.log.Debug(conn)
-		if conn.ShouldConnectionBeManaged() {
+		if connections.ShouldConnectionBeManaged(conn) {
 			contexts = append(contexts, ctx)
 		}
 	}

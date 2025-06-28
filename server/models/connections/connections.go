@@ -68,8 +68,10 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
+type Connection = schemasConnection.Connection
+
 // swagger:response Connection
-type Connection struct {
+type __ConnectionOld struct {
 	ID           uuid.UUID                      `json:"id,omitempty" db:"id"`
 	Name         string                         `json:"name,omitempty" db:"name"`
 	CredentialID uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
@@ -94,7 +96,7 @@ var validConnectionStatusToManage = []ConnectionStatus{
 // Check whether the Connection should be managed.
 // Connections with status as Discovered, Registered, Connected should only be managed.
 // Eg: If the status is set as Maintenance or Ignore do not try to mange it, not even during greedy import of K8sConnection from KubeConfig.
-func (c *Connection) ShouldConnectionBeManaged() bool {
+func ShouldConnectionBeManaged(c Connection) bool {
 	for _, validStatus := range validConnectionStatusToManage {
 		if validStatus == c.Status {
 			return true
