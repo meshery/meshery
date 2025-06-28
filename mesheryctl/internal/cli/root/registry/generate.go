@@ -20,6 +20,11 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
+	"io"
+	"strings"
+	"encoding/csv"
+	"encoding/json"
+	"net/http"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
@@ -38,13 +43,27 @@ var (
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 	srv                            *sheets.Service
 
+	// CVS file paths for models, components, and relationships
+	componentCSVFilePath    string
+	modelCSVFilePath        string
+    relationshipCSVFilePath string
+	spreadsheeetID   string
+	spreadsheeetCred string
+    csvDirectory     string
+    sheetGID         int64 
+    modelName        string
+    logFile          *os.File
+    errorLogFile     *os.File
+
 	// current working directory location
 	cwd string
 
 	registryLocation    string
 	totalAggregateModel int
 	defVersion          = "v1.0.0"
+	
 )
+
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
@@ -113,6 +132,11 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
 			// Collect list of corresponding relationship by name from spreadsheet
 			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
+
+			err = applySchemaDefaults(srv, spreadsheeetID, componentSpredsheetGID)
+			if err != nil {
+				utils.LogError.Warn("Failed to apply schema defaults:", err)
+			}
 		} else {
 			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
 			if err != nil {
@@ -120,6 +144,11 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			}
 			if modelCSVFilePath == "" || componentCSVFilePath == "" || relationshipCSVFilePath == "" {
 				return fmt.Errorf("ModelCSV, ComponentCSV and RelationshipCSV files must be present in the directory")
+			}
+
+			err = applySchemaDefaultsToCSV(componentCSVFilePath)
+			if err != nil {
+				utils.LogError.Warn("Failed to apply schema defaults to CSV:", err)
 			}
 		}
 
@@ -136,6 +165,265 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		utils.LogError.UpdateLogOutput(os.Stdout)
 		return err
 	},
+}
+
+// applySchemaDefaults applies schema defaults to the components in the Google Sheet
+func applySchemaDefaults(srv *sheets.Service, spreadsheetID string, componentSheetGID int64) error {
+    schemaDefaults, err := getCapabilitiesFromSchema()
+    if err != nil {
+        return fmt.Errorf("failed to read schema defaults: %v", err)
+    }
+    
+    if schemaDefaults.Capabilities == "" {
+        utils.Log.Info("No default capabilities defined in schema")
+        return nil
+    }
+    
+    readRange := "Components!A:R"
+    resp, err := srv.Spreadsheets.Values.Get(spreadsheetID, readRange).Do()
+    if err != nil {
+        return fmt.Errorf("unable to read components: %v", err)
+    }
+    
+    tempFile, err := createTempFileWithSchemaDefaults(resp.Values, schemaDefaults)
+    if err != nil {
+        return fmt.Errorf("failed to create temp file with defaults: %v", err)
+    }
+    
+    componentCSVFilePath = tempFile
+    
+    utils.Log.Infof("Applied schema-driven default capabilities: '%s'", schemaDefaults.Capabilities)
+    return nil
+}
+
+func applySchemaDefaultsToCSV(componentCSVFilePath string) error {
+    schemaDefaults, err := getCapabilitiesFromSchema()
+    if err != nil {
+        return fmt.Errorf("failed to read schema defaults: %v", err)
+    }
+    
+    if schemaDefaults.Capabilities == "" {
+        utils.Log.Info("No default capabilities defined in schema")
+        return nil
+    }
+    
+    file, err := os.Open(componentCSVFilePath)
+    if err != nil {
+        return fmt.Errorf("failed to open CSV file: %v", err)
+    }
+    defer file.Close()
+    
+    reader := csv.NewReader(file)
+    records, err := reader.ReadAll()
+    if err != nil {
+        return fmt.Errorf("failed to read CSV: %v", err)
+    }
+    
+    if len(records) == 0 {
+        return nil
+    }
+    
+    capabilitiesCol := -1
+    for i, header := range records[0] {
+        if strings.ToLower(strings.TrimSpace(header)) == "capabilities" {
+            capabilitiesCol = i
+            break
+        }
+    }
+    
+    if capabilitiesCol == -1 {
+        utils.Log.Warn("Capabilities column not found in CSV, skipping schema defaults")
+    	return nil
+    }
+    
+    updatedCount := 0
+    for i := 1; i < len(records); i++ {
+        if capabilitiesCol < len(records[i]) {
+            if strings.TrimSpace(records[i][capabilitiesCol]) == "" {
+                records[i][capabilitiesCol] = schemaDefaults.Capabilities
+                updatedCount++
+            }
+        }
+    }
+    
+    outputFile, err := os.Create(componentCSVFilePath)
+    if err != nil {
+        return fmt.Errorf("failed to create updated CSV: %v", err)
+    }
+    defer outputFile.Close()
+    
+    writer := csv.NewWriter(outputFile)
+    defer writer.Flush()
+    
+    for _, record := range records {
+        if err := writer.Write(record); err != nil {
+            return fmt.Errorf("failed to write CSV record: %v", err)
+        }
+    }
+    
+    utils.Log.Infof("Applied schema defaults to %d components in CSV", updatedCount)
+    return nil
+}
+
+// ComponentSchemaDefaults 表示从schema中读取的默认值
+type ComponentSchemaDefaults struct {
+    Capabilities string `json:"capabilities"`
+    // 其他默认字段...
+}
+
+// getCapabilitiesFromSchema acquires default capabilities from the schema
+func getCapabilitiesFromSchema() (*ComponentSchemaDefaults, error) {
+    schemaPath := filepath.Join(cwd, "schemas", "constructs", "v1beta1", "component", "component.json")
+    if _, err := os.Stat(schemaPath); err == nil {
+        utils.Log.Info("Reading schema from local file:", schemaPath)
+        return readSchemaFromFile(schemaPath)
+    }
+    
+    utils.Log.Info("Local schema not found, fetching from GitHub")
+    return readSchemaFromGitHub()
+}
+
+func readSchemaFromFile(schemaPath string) (*ComponentSchemaDefaults, error) {
+    file, err := os.ReadFile(schemaPath)
+    if err != nil {
+        return nil, fmt.Errorf("failed to read schema file: %v", err)
+    }
+    
+    var schema map[string]interface{}
+    if err := json.Unmarshal(file, &schema); err != nil {
+        return nil, fmt.Errorf("failed to parse schema JSON: %v", err)
+    }
+    
+    defaults := &ComponentSchemaDefaults{
+        Capabilities: "", // 从schema中提取默认值
+    }
+    
+    if properties, ok := schema["properties"].(map[string]interface{}); ok {
+        if capsProp, ok := properties["capabilities"].(map[string]interface{}); ok {
+            if defaultVal, ok := capsProp["default"].(string); ok {
+                defaults.Capabilities = defaultVal
+            }
+        }
+    }
+    
+    return defaults, nil
+}
+
+func readSchemaFromGitHub() (*ComponentSchemaDefaults, error) {
+    url := "https://raw.githubusercontent.com/meshery/schemas/master/schemas/constructs/v1beta1/component/component.json"
+    
+    resp, err := http.Get(url)
+    if err != nil {
+        utils.Log.Warn("Failed to fetch schema from GitHub:", err)
+        return &ComponentSchemaDefaults{Capabilities: ""}, nil
+    }
+    defer resp.Body.Close()
+    
+    if resp.StatusCode != http.StatusOK {
+        utils.Log.Warn(fmt.Sprintf("GitHub returned status %d, using empty default", resp.StatusCode))
+        return &ComponentSchemaDefaults{Capabilities: ""}, nil
+    }
+    
+	// Read the response body
+    body, err := io.ReadAll(resp.Body)
+    if err != nil {
+        utils.Log.Warn("Failed to read response body:", err)
+        return &ComponentSchemaDefaults{Capabilities: ""}, nil
+    }
+    
+    // Analyze the JSON schema
+    var schema map[string]interface{}
+    if err := json.Unmarshal(body, &schema); err != nil {
+        utils.Log.Warn("Failed to parse schema JSON:", err)
+        return &ComponentSchemaDefaults{Capabilities: ""}, nil
+    }
+    
+    defaults := &ComponentSchemaDefaults{
+        Capabilities: "",
+    }
+    
+    // Exract the default capabilities from the schema
+    if properties, ok := schema["properties"].(map[string]interface{}); ok {
+        if capsProp, ok := properties["capabilities"].(map[string]interface{}); ok {
+            if defaultVal, ok := capsProp["default"].(string); ok {
+                defaults.Capabilities = defaultVal
+                utils.Log.Info("Found default capabilities in GitHub schema:", defaultVal)
+            } else if defaultArray, ok := capsProp["default"].([]interface{}); ok {
+                caps := make([]string, len(defaultArray))
+                for i, cap := range defaultArray {
+                    caps[i] = fmt.Sprintf("%v", cap)
+                }
+                defaults.Capabilities = strings.Join(caps, ",")
+                utils.Log.Info("Found default capabilities array in GitHub schema:", defaults.Capabilities)
+            }
+        }
+    }
+    
+    if defaults.Capabilities == "" {
+        utils.Log.Info("No default capabilities found in GitHub schema")
+    }
+    
+    utils.Log.Info("Successfully read schema from GitHub")
+    return defaults, nil
+}
+
+func createTempFileWithSchemaDefaults(values [][]interface{}, defaults *ComponentSchemaDefaults) (string, error) {
+    tempFile, err := os.CreateTemp("", "components_with_defaults_*.csv")
+    if err != nil {
+        return "", err
+    }
+    defer tempFile.Close()
+    
+    writer := csv.NewWriter(tempFile)
+    defer writer.Flush()
+    
+    if len(values) == 0 {
+        return tempFile.Name(), nil
+    }
+    
+    header := make([]string, len(values[0]))
+    capabilitiesCol := -1
+    for i, col := range values[0] {
+        header[i] = fmt.Sprintf("%v", col)
+        if strings.ToLower(header[i]) == "capabilities" {
+            capabilitiesCol = i
+        }
+    }
+    writer.Write(header)
+    
+    updatedCount := 0
+    for _, row := range values[1:] {
+        record := make([]string, len(row))
+        for i, cell := range row {
+            record[i] = fmt.Sprintf("%v", cell)
+        }
+        
+        if capabilitiesCol >= 0 && capabilitiesCol < len(record) {
+            if strings.TrimSpace(record[capabilitiesCol]) == "" {
+                record[capabilitiesCol] = defaults.Capabilities
+                updatedCount++
+            }
+        }
+        
+        writer.Write(record)
+    }
+    
+    utils.Log.Infof("Applied schema defaults to %d components", updatedCount)
+    return tempFile.Name(), nil
+}
+
+func ErrUpdateRegistry(err error, location string) error {
+    return fmt.Errorf("failed to update registry at location %s: %w", location, err)
+}
+
+func GetSheetIDFromTitle(spreadsheet *sheets.Spreadsheet, title string) int64 {
+    for _, sheet := range spreadsheet.Sheets {
+        if sheet.Properties != nil && sheet.Properties.Title == title {
+            return sheet.Properties.SheetId
+        }
+    }
+    utils.Log.Warning(fmt.Sprintf("Sheet with title '%s' not found", title))
+    return 0
 }
 
 func init() {
