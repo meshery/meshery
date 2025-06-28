@@ -40,11 +40,11 @@ If you can't access Kanvas locally, run the following commands from the root of 
 
 1. **`git remote update`**
 2. **`make ui-setup`**
- - Prepares your UI development environment and dependencies.
+   - Prepares your UI development environment and dependencies.
 3. **`make ui-build`**
- - This is the key step. It builds the main Meshery UI and, in the process, fetches and integrates the pre-built Kanvas package.
+   - This is the key step. It builds the main Meshery UI and, in the process, fetches and integrates the pre-built Kanvas package.
 4. **`make server`**
- - Restarts your local Meshery server with the newly included extension.
+   - Restarts your local Meshery server with the newly included extension.
 
 Once these steps are complete, refresh your browser. The Kanvas extension should now be available.
 
