@@ -1,8 +1,19 @@
 # Model Templates
 
-This folder contains template JSON files used for generating Meshery models from external sources (e.g., CRDs, URLs).  
-Each template defines the required fields (such as `Registrant`, `Model Name`, `DisplayName`, `Category`) and guides the mapping of external data into Meshery’s model format.
+This folder contains JSON files defining Meshery model templates.  
+Each template describes a component or technology (e.g., Kubernetes) for use within Meshery, specifying its visual appearance, metadata, and supported capabilities.
 
-**Usage Example:**
+## Structure
 
-To generate a model using a template file:
+A typical template includes:
+- **model**: Name of the technology/component (e.g., "kubernetes")
+- **primaryColor**, **secondaryColor**, **shape**: Visual properties for UI representation
+- **capabilities**: List of actions, configuration options, and views supported by the component
+
+## Example
+
+See `kubernetes.json` for a complete example.
+
+## Usage
+
+To add or update a model template in Meshery, place your JSON file in this directory.  
