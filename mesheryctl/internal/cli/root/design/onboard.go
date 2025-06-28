@@ -52,7 +52,7 @@ var onboardCmd = &cobra.Command{
 	Example: `
 // Onboard design by providing file path
 mesheryctl design onboard -f [filepath] -s [source type]
-mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
+mesheryctl design onboard -f ./pattern.yml -s "k8s-manifest"
 	`,
 	Annotations: linkDocpatternOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
@@ -268,5 +268,5 @@ func getFullSourceType(sType string) (string, error) {
 func init() {
 	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
-	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm)")
+	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. k8s-manifest / docker-compose / helm-chart)")
 }
