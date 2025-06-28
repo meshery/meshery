@@ -7,14 +7,14 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// MeshClient represents a gRPC adapter client
-type MeshClient struct {
-	MClient MeshServiceClient
+// AdapterClient represents a gRPC adapter client
+type AdapterClient struct {
+	AClient AdapterServiceClient
 	conn    *grpc.ClientConn
 }
 
-// CreateClient creates a MeshClient for the given params
-func CreateClient(_ context.Context, meshLocationURL string) (*MeshClient, error) {
+// CreateClient creates a AdapterClient for the given params
+func CreateClient(_ context.Context, meshLocationURL string) (*AdapterClient, error) {
 	var opts []grpc.DialOption
 	// creds, err := credentials.NewClientTLSFromFile(*caFile, *serverHostOverride)
 	// 	if err != nil {
@@ -29,18 +29,18 @@ func CreateClient(_ context.Context, meshLocationURL string) (*MeshClient, error
 		return nil, err
 	}
 
-	mClient := NewMeshServiceClient(conn)
+	aClient := NewAdapterServiceClient(conn)
 
-	return &MeshClient{
+	return &AdapterClient{
 		conn:    conn,
-		MClient: mClient,
+		AClient: aClient,
 	}, nil
 }
 
-// Close closes the MeshClient
-func (m *MeshClient) Close() error {
-	if m.conn != nil {
-		return m.conn.Close()
+// Close closes the AdapterClient
+func (a *AdapterClient) Close() error {
+	if a.conn != nil {
+		return a.conn.Close()
 	}
 	return nil
 }
