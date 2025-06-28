@@ -86,7 +86,19 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of CDN Profile(parent component) is patched with the configuration of SecurityPolicy(child component). "
-relationship-count: 10
+- type: "Non Binding"
+  kind: "Edge"
+  description: "A relationship between different type of components"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "A relationship between different type of components"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "A relationship between different type of components"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "A relationship between different type of components"
+relationship-count: 14
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
