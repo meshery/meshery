@@ -52,6 +52,7 @@ $(SHELL) $(SHELLFLAGS) "\
 endef
 else # POSIX
 define RUN_SERVER
+cd server/cmd && \ 
 BUILD="$(GIT_VERSION)" \
 PROVIDER_BASE_URLS=$(1) \
 PORT=$(2) \
