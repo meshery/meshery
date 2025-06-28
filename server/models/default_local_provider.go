@@ -1092,7 +1092,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		Kind:         conn.Kind,
 		Metadata:     conn.MetaData,
 		Status:       conn.Status,
-		UserID:       &uuid.Nil,
+		UserID:       uuid.Nil,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
