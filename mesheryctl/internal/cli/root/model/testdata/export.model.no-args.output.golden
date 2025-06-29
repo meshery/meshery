@@ -1,0 +1,2 @@
+Please provide a model name. Usage: mesheryctl model export [model-name ]
+Run 'mesheryctl model export --help' to see detailed help message
