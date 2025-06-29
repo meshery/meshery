@@ -10,6 +10,14 @@ integrations-category: App Definition and Development
 integrations-subcategory: Database
 registrant: Artifact Hub
 components: 
+- name: hazelcast-version
+  colorIcon: assets/img/integrations/kubedb/components/hazelcast-version/icons/color/hazelcast-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/hazelcast-version/icons/white/hazelcast-version-white.svg
+  description: 
+- name: oracle-version
+  colorIcon: assets/img/integrations/kubedb/components/oracle-version/icons/color/oracle-version-color.svg
+  whiteIcon: assets/img/integrations/kubedb/components/oracle-version/icons/white/oracle-version-white.svg
+  description: 
 - name: node-topology
   colorIcon: assets/img/integrations/kubedb/components/node-topology/icons/color/node-topology-color.svg
   whiteIcon: assets/img/integrations/kubedb/components/node-topology/icons/white/node-topology-white.svg
@@ -162,7 +170,7 @@ components:
   colorIcon: assets/img/integrations/kubedb/components/ignite-version/icons/color/ignite-version-color.svg
   whiteIcon: assets/img/integrations/kubedb/components/ignite-version/icons/white/ignite-version-white.svg
   description: 
-components-count: 38
+components-count: 40
 relationships: 
 relationship-count: 0
 featureList: [

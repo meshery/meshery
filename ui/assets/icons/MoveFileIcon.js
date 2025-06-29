@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '@layer5/sistent';
+import { useTheme } from '@sistent/sistent';
 
 const MoveFileIcon = (props) => {
   const theme = useTheme();

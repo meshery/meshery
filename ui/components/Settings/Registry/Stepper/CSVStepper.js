@@ -15,7 +15,7 @@ import {
   useTheme,
   styled,
   Chip,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ModelIcon from '@/assets/icons/ModelIcon';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';
@@ -25,7 +25,7 @@ import { StyledDocsRedirectLink } from './style';
 import {
   ComponentDefinitionV1Beta1OpenApiSchema,
   ModelDefinitionV1Beta1OpenApiSchema,
-} from '@layer5/schemas';
+} from '@meshery/schemas';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import FinishModelGenerateStep from './FinishModelGenerateStep';
 
@@ -243,9 +243,7 @@ const CsvStepper = React.memo(({ handleClose }) => {
         component: (
           <div>
             <StyledHeadingBox>
-              <Typography fontWeight={'bold'}>
-                Please upload the relationship CSVa sdf file
-              </Typography>
+              <Typography fontWeight={'bold'}>Please upload the relationship CSV file</Typography>
               <TooltipIconButton
                 title="Download Relationship CSV template"
                 onClick={() => handleDownload('Relationships.csv')}

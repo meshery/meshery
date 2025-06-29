@@ -51,7 +51,7 @@ import {
   Typography,
   Hidden,
   NoSsr,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
@@ -116,7 +116,7 @@ export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
-const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
+const Footer = ({ capabilitiesRegistry, handleMesheryCommunityClick }) => {
   const theme = useTheme();
 
   const { extensionType: extension } = useSelector((state) => state.ui);
@@ -138,7 +138,7 @@ const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
               : theme.palette.text.disabled,
         }}
       >
-        <StyledFooterText onClick={handleL5CommunityClick}>
+        <StyledFooterText onClick={handleMesheryCommunityClick}>
           {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? (
             'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
           ) : (
@@ -152,7 +152,7 @@ const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
                   verticalAlign: 'bottom',
                 }}
               />{' '}
-              by the Layer5 Community
+              by the Meshery Community
             </>
           )}
         </StyledFooterText>
@@ -346,7 +346,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
     setState((prevState) => ({ ...prevState, mobileOpen: !prevState.mobileOpen }));
   }, []);
 
-  const handleL5CommunityClick = useCallback(() => {
+  const handleMesheryCommunityClick = useCallback(() => {
     setState((prevState) => ({ ...prevState, isOpen: !prevState.isOpen }));
   }, []);
 
@@ -681,7 +681,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
                                 </LocalizationProvider>
                               </StyledMainContent>
                               <Footer
-                                handleL5CommunityClick={handleL5CommunityClick}
+                                handleMesheryCommunityClick={handleMesheryCommunityClick}
                                 capabilitiesRegistry={capabilitiesRegistry}
                               />
                             </StyledContentWrapper>

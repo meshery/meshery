@@ -3,7 +3,9 @@ package model
 import (
 	"fmt"
 
-	"github.com/layer5io/meshkit/errors"
+	goerrors "errors"
+
+	"github.com/meshery/meshkit/errors"
 )
 
 const (
@@ -12,6 +14,7 @@ const (
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
 	ErrModelInitCode                    = "mesheryctl-1148"
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
+	ErrModelBuildCode                   = "mesheryctl-1151"
 )
 
 func ErrExportModel(err error, name string) error {
@@ -36,4 +39,16 @@ func ErrModelInitFromString(message string) error {
 
 func ErrModelInit(err error) error {
 	return ErrModelInitFromString(err.Error())
+}
+
+func ErrModelBuildFromStrings(message ...string) error {
+	errs := make([]error, 0, len(message))
+	for _, m := range message {
+		errs = append(errs, goerrors.New(m))
+	}
+	return ErrModelBuild(goerrors.Join(errs...))
+}
+
+func ErrModelBuild(err error) error {
+	return errors.New(ErrModelBuildCode, errors.Fatal, []string{"Error model build"}, []string{err.Error()}, []string{"Error during run of model build command"}, []string{"Ensure passing all params according to the command description"})
 }

@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
 import {
-  Modal,
   ModalBody,
   useTheme,
   WorkspaceIcon,
@@ -16,7 +15,7 @@ import {
   useMediaQuery,
   Divider,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { WorkspacesComponent } from '../Lifecycle';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -26,7 +25,7 @@ import MyViewsContent from './MyViewsContent';
 import MyDesignsContent from './MyDesignsContent';
 import RecentContent from './RecentContent';
 import { useGetWorkspacesQuery } from '../../rtk-query/workspace';
-import { DrawerHeader, StyledDrawer, StyledMainContent } from './styles';
+import { DrawerHeader, StyledDrawer, StyledMainContent, StyledModal } from './styles';
 import WorkspaceContent from './WorkspaceContent';
 import { useGetProviderCapabilitiesQuery, useGetSelectedOrganization } from '@/rtk-query/user';
 import PeopleIcon from '@mui/icons-material/People';
@@ -172,7 +171,7 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
               sx={{
                 minHeight: 48,
                 px: 2.5,
-                pl: '2.5rem',
+                pl: open ? '2.5rem' : undefined,
                 justifyContent: open ? 'initial' : 'center',
               }}
             >
@@ -227,8 +226,8 @@ const WorkspaceContentWrapper = ({ id, workspacesData, onSelectWorkspace }) => {
 
 const Navigation = ({ setHeaderInfo }) => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
-  const [open, setOpen] = useState(!isMobile);
+  const closeList = useMediaQuery(theme.breakpoints.down('xl'));
+  const [open, setOpen] = useState(!closeList);
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
   const isLocalProvider = capabilitiesData?.provider_type === 'local';
   const workspaceSwitcherContext = useContext(WorkspaceModalContext);
@@ -255,8 +254,8 @@ const Navigation = ({ setHeaderInfo }) => {
     });
   };
   useEffect(() => {
-    setOpen(!isMobile);
-  }, [isMobile]);
+    setOpen(!closeList);
+  }, [closeList]);
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -358,32 +357,24 @@ const Navigation = ({ setHeaderInfo }) => {
 
 const WorkspaceModal = ({ workspaceModal, closeWorkspaceModal }) => {
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [headerInfo, setHeaderInfo] = useState({
     title: 'All Workspaces',
     icon: <WorkspaceIcon {...iconMedium} secondaryFill={theme.palette.icon.neutral.default} />,
   });
 
   return (
-    <Modal
+    <StyledModal
       closeModal={closeWorkspaceModal}
-      fullScreen
-      fullWidth
-      sx={{
-        margin: {
-          xs: '1rem',
-          sm: '2rem',
-          md: '4rem',
-          lg: '5rem 8rem',
-        },
-      }}
       open={workspaceModal}
       headerIcon={headerInfo.icon}
       title={headerInfo.title}
+      isFullScreenModeAllowed={!isSmallScreen}
     >
       <ModalBody style={{ height: '100%', padding: '0' }}>
         {workspaceModal && <Navigation setHeaderInfo={setHeaderInfo} />}
       </ModalBody>
-    </Modal>
+    </StyledModal>
   );
 };
 

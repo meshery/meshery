@@ -1,4 +1,4 @@
-import { Typography, Paper, styled, Tab, Tabs, gray, charcoal, Card } from '@layer5/sistent';
+import { Typography, Paper, styled, Tab, Tabs, gray, charcoal, Card } from '@sistent/sistent';
 
 export const DashboardSection = styled(Card)(({ theme }) => ({
   backgroundColor:

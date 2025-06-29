@@ -1,4 +1,4 @@
-import { Paper, styled, Typography } from '@layer5/sistent';
+import { Paper, styled, Typography } from '@sistent/sistent';
 
 export const GridNoPapperStyles = styled(Paper)({
   padding: '0.5rem',

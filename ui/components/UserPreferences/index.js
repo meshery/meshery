@@ -15,7 +15,7 @@ import {
   TachometerIcon,
   useTheme,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
 import {

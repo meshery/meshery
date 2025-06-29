@@ -24,19 +24,19 @@ include install/Makefile.show-help.mk
 docker-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
 
 ## Build Meshery Server and UI container in Playground mode.
 docker-playground-build:
 	# `make docker-playground-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t layer5/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile -t meshery/meshery --build-arg TOKEN=$(GLOBAL_TOKEN) --build-arg GIT_COMMITSHA=$(GIT_COMMITSHA) --build-arg GIT_VERSION=$(GIT_VERSION) --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} --build-arg PROVIDER=$(LOCAL_PROVIDER) --build-arg PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) --build-arg PLAYGROUND=true .
 
 ## Build Meshery Server and UI container for e2e testing.
 docker-testing-env-build:
 	# `make docker-build` builds Meshery inside of a multi-stage Docker container.
 	# This method does NOT require that you have Go, NPM, etc. installed locally.
-	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t layer5/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
+	DOCKER_BUILDKIT=1 docker build -f install/docker/testing/Dockerfile -t meshery/meshery-testing-env --build-arg GIT_VERSION=$(GIT_VERSION) .
 
 ## Meshery Cloud for user authentication.
 ## Runs Meshery in a container locally and points to locally-running
@@ -49,7 +49,7 @@ docker-local-cloud:
 	-e ADAPTER_URLS=$(ADAPTER_URLS) \
 	-e KEYS_PATH=$(KEYS_PATH) \
 	-p 9081:8080 \
-	layer5/meshery ./meshery
+	meshery/meshery ./meshery
 
 ## Runs Meshery in a container locally and points to remote
 ## Remote Provider for user authentication.
@@ -63,7 +63,7 @@ docker-cloud:
 	-v meshery-config:/home/appuser/.meshery/config \
   -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
-	layer5/meshery ./meshery
+	meshery/meshery ./meshery
 
 ## Runs Meshery in a container locally and points to remote
 ## Remote Provider for user authentication.
@@ -76,7 +76,7 @@ docker-testing-env:
 	-v meshery-config:/home/appuser/.meshery/config \
   -v $(HOME)/.kube:/home/appuser/.kube:ro \
 	-p 9081:8080 \
-	layer5/meshery-testing-env ./meshery
+	meshery/meshery-testing-env ./meshery
 
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
@@ -286,11 +286,11 @@ proto-build:
 
 ## Analyze error codes
 error: dep-check
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
+	go run github.com/meshery/meshkit/cmd/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
 
 ## Runs meshkit error utility to update error codes for meshery server only.
 error-util:
-	go run github.com/layer5io/meshkit/cmd/errorutil -d . --skip-dirs mesheryctl update -i ./server/helpers/ -o ./server/helpers
+	go run github.com/meshery/meshkit/cmd/errorutil -d . --skip-dirs mesheryctl update -i ./server/helpers/ -o ./server/helpers
 
 ## Build Meshery UI; Build and run Meshery Server on your local machine.
 ui-server: ui-meshery-build ui-provider-build server
@@ -489,3 +489,35 @@ ifeq (,$(findstring $(GOVERSION), $(INSTALLED_GO_VERSION)))
 #	 Required golang version is: 'go$(GOVERSION).x'. \
 #	 Ensure go '$(GOVERSION).x' is installed and available in your 'PATH'.)
 endif
+
+## Runs meshsync integration tests check dependencies script (if docker, kind, kubectl, helm are present)
+server-integration-tests-meshsync-check-dependencies:
+	./server/integration-tests/meshsync/infrastructure/setup.sh check_dependencies
+
+server-integration-tests-meshsync-setup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_cluster
+
+server-integration-tests-meshsync-setup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh setup_connection
+
+## Runs meshsync integration tests set up script (runs creates a test kind cluster, deploys operator to it)
+## docker compose exposes nats on default ports to host, so they must be available
+server-integration-tests-meshsync-setup: server-integration-tests-meshsync-setup-cluster server-integration-tests-meshsync-setup-connection
+
+server-integration-tests-meshsync-cleanup-cluster:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_cluster
+
+server-integration-tests-meshsync-cleanup-connection:
+	./server/integration-tests/meshsync/infrastructure/setup.sh cleanup_connection
+
+## Runs meshsync integration tests clean up (stops docker compose and deletes test cluster)
+server-integration-tests-meshsync-cleanup: server-integration-tests-meshsync-cleanup-connection server-integration-tests-meshsync-cleanup-cluster
+
+## Runs meshsync integration tests code itself
+server-integration-tests-meshsync-run:
+	RUN_INTEGRATION_TESTS=true \
+	PATH_TO_SQL_FILE="../../../meshery-integration-test-meshsync-mesherydb.sql" \
+	go test -v -count=1 -run Integration ./server/integration-tests/meshsync
+
+## Runs meshsync integration tests full cycle (docker build, setup, run, cleanup)
+server-integration-tests-meshsync: docker-build server-integration-tests-meshsync-setup server-integration-tests-meshsync-run server-integration-tests-meshsync-cleanup

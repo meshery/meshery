@@ -1,4 +1,4 @@
-import { styled, Button, alpha } from '@layer5/sistent';
+import { styled, Button, alpha } from '@sistent/sistent';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 export const DisableButton = styled(Button)(({ theme }) => ({
@@ -66,9 +66,11 @@ export const StyledKeyValuePropertyDiv = styled('div')(() => ({
 export const StyledKeyValueProperty = styled('p')(({ theme }) => ({
   padding: '0',
   margin: '0 0.5rem 0 0',
-  fontSize: theme.typography.htmlFontSize,
+  fontSize: theme.typography.caption.fontSize,
   fontWeight: theme.typography.fontWeightBold,
   fontFamily: theme.typography.fontFamily,
+  color: theme.palette.text.secondary,
+  textTransform: 'uppercase',
 }));
 
 export const StyledKeyValueFormattedValue = styled('div')(({ theme }) => ({

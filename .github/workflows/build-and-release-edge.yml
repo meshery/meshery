@@ -49,8 +49,8 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: docs
-          commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated Swagger Docs for REST API"
@@ -91,8 +91,8 @@ jobs:
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           file_pattern: docs
-          commit_user_name: l5io
-          commit_user_email: ci@layer5.io
+          commit_user_name: meshery-ci
+          commit_user_email: ci@meshery.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated GraphQL API Documentation"

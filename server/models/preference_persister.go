@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshkit/database"
 )
 
 // PreferencePersister assists with persisting session in store

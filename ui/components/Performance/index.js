@@ -20,7 +20,7 @@ import {
   Autocomplete,
   RadioGroup,
   AccordionSummary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { URLValidator } from '../../utils/URLValidator';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -920,7 +920,7 @@ const MesheryPerformanceComponent_ = (props) => {
                     onChange={handleChange('url')}
                     InputProps={{
                       endAdornment: (
-                        <CustomTooltip title="The Endpoint where the load will be generated and the perfromance test will run against.">
+                        <CustomTooltip title="The Endpoint where the load will be generated and the performance test will run against.">
                           <HelpOutlineOutlinedIcon style={{ color: '#929292' }} />
                         </CustomTooltip>
                       ),

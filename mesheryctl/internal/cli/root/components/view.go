@@ -20,10 +20,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -53,6 +53,7 @@ mesheryctl component view [component-name]
 
 		outFormatFlag, _ := cmd.Flags().GetString("output-format")
 		componentDefinition := args[0]
+		saveFlag, _ = cmd.Flags().GetBool("save")
 
 		urlPath := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, componentDefinition)
 

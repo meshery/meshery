@@ -13,12 +13,12 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/meshes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/errors"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	_events "github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshery/server/meshes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/errors"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	_events "github.com/meshery/meshkit/utils/events"
 )
 
 var (
@@ -52,6 +52,7 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	userID := uuid.FromStringOrNil(user.ID)
 	page, offset, limit,
 		search, order, sortOnCol, status := getPaginationParams(req)
+	fmt.Println(page)
 	// eventCategory :=
 	filter, err := getEventFilter(req)
 	if err != nil {
@@ -64,20 +65,42 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 	filter.Search = search
 	filter.Status = events.EventStatus(status)
 
-	eventsResult, err := provider.GetAllEvents(filter, userID, *h.SystemID)
-	if err != nil {
+	ctx := req.Context()
+	token, _ := ctx.Value(models.TokenCtxKey).(string)
+
+	e, err := provider.GetEvents(token, filter, page, userID, *h.SystemID)
+
+	if err != nil || e == nil {
 		h.log.Error(ErrGetEvents(err))
 		http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
-		return
 	}
+	err = json.NewEncoder(w).Encode(e)
 
-	eventsResult.Page = page
-	err = json.NewEncoder(w).Encode(eventsResult)
 	if err != nil {
 		h.log.Error(models.ErrMarshal(err, "events response"))
 		http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
 		return
 	}
+
+	// w.Header().Set("Content-Type", "application/json")
+	// w.Write(e)
+
+	// eventsResult, err := provider.GetAllEvents(filter, userID, *h.SystemID)
+	// eventsR ,err := provider.GetEvents(token string, page string, pageSize string, search string, order string)
+	// //
+	// if err != nil {
+	// 	h.log.Error(ErrGetEvents(err))
+	// 	http.Error(w, ErrGetEvents(err).Error(), http.StatusInternalServerError)
+	// 	return
+	// }
+
+	// eventsResult.Page = pa
+	// err = json.NewEncoder(w).Encode(eventsResult)
+	// if err != nil {
+	// 	h.log.Error(models.ErrMarshal(err, "events response"))
+	// 	http.Error(w, models.ErrMarshal(err, "events response").Error(), http.StatusInternalServerError)
+	// 	return
+	// }
 }
 
 // swagger:route GET /api/events/types EventsAPI idGetEventStreamer
@@ -86,7 +109,9 @@ func (h *Handler) GetAllEvents(w http.ResponseWriter, req *http.Request, prefObj
 // 200:
 func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	userID := uuid.FromStringOrNil(user.ID)
-	eventTypes, err := provider.GetEventTypes(userID, *h.SystemID)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	eventTypes, err := provider.GetEventTypes(token, userID, *h.SystemID)
+
 	if err != nil {
 		http.Error(w, fmt.Errorf("error retrieving event cagegories and actions").Error(), http.StatusInternalServerError)
 		return
@@ -108,6 +133,7 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 
 func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 
 	defer func() {
 		_ = req.Body.Close()
@@ -128,33 +154,29 @@ func (h *Handler) UpdateEventStatus(w http.ResponseWriter, req *http.Request, pr
 		http.Error(w, ErrUpdateEvent(fmt.Errorf("unable to parse provided event status %s", status), eventID.String()).Error(), http.StatusInternalServerError)
 		return
 	}
-	event, err := provider.UpdateEventStatus(eventID, status)
+	err = provider.UpdateEventStatus(token, eventID, status)
 	if err != nil {
 		_err := ErrUpdateEvent(err, eventID.String())
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = json.NewEncoder(w).Encode(event)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
-		return
-	}
+
 }
 
 // swagger:route PUT /api/events/status idGetEventStreamer
 // Handle PUT request to update event status in bulk.
 // Bulk update status for the events associated with the ids.
 // responses:
-// 	200: eventResponseWrapper
-
+//
+//	200: eventResponseWrapper
 func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 
 	defer func() {
 		_ = req.Body.Close()
 	}()
 
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	var reqBody eventStatusPayload
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -164,19 +186,14 @@ func (h *Handler) BulkUpdateEventStatus(w http.ResponseWriter, req *http.Request
 	}
 
 	_ = json.Unmarshal(body, &reqBody)
-	event, err := provider.BulkUpdateEventStatus(reqBody.StatusIDs, reqBody.Status)
+	err = provider.BulkUpdateEventStatus(token, reqBody.StatusIDs, reqBody.Status)
 	if err != nil {
 		_err := ErrBulkUpdateEvent(err)
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
 	}
-	err = json.NewEncoder(w).Encode(event)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(w, models.ErrMarshal(err, "event response").Error(), http.StatusInternalServerError)
-		return
-	}
+
 }
 
 // swagger:route DELETE /api/events/bulk idGetEventStreamer
@@ -190,6 +207,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 		_ = req.Body.Close()
 	}()
 
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	var reqBody statusIDs
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
@@ -199,7 +217,7 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 	}
 
 	_ = json.Unmarshal(body, &reqBody)
-	err = provider.BulkDeleteEvent(reqBody.IDs)
+	err = provider.BulkDeleteEvent(token, reqBody.IDs)
 	if err != nil {
 		_err := ErrBulkDeleteEvent(err)
 		h.log.Error(_err)
@@ -216,7 +234,9 @@ func (h *Handler) BulkDeleteEvent(w http.ResponseWriter, req *http.Request, pref
 
 func (h *Handler) DeleteEvent(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
 	eventID := uuid.FromStringOrNil(mux.Vars(req)["id"])
-	err := provider.DeleteEvent(eventID)
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	err := provider.DeleteEvent(token, eventID)
+
 	if err != nil {
 		_err := ErrDeleteEvent(err, eventID.String())
 		h.log.Error(_err)
@@ -230,6 +250,7 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 	category := urlValues.Get("category")
 	action := urlValues.Get("action")
 	severity := urlValues.Get("severity")
+	acted_upon := urlValues.Get("acted_upon")
 
 	eventFilter := &events.EventsFilter{}
 	if category != "" {
@@ -250,6 +271,13 @@ func getEventFilter(req *http.Request) (*events.EventsFilter, error) {
 		err := json.Unmarshal([]byte(severity), &eventFilter.Severity)
 		if err != nil {
 			return eventFilter, models.ErrUnmarshal(err, "event severity filter")
+		}
+	}
+
+	if acted_upon != "" {
+		err := json.Unmarshal([]byte(acted_upon), &eventFilter.ActedUpon)
+		if err != nil {
+			return eventFilter, models.ErrUnmarshal(err, "event acted upon filter")
 		}
 	}
 
@@ -436,7 +464,7 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 		}
 
 		_event := eventBuilder.Build()
-		_ = p.PersistEvent(_event)
+		_ = p.PersistEvent(*_event, nil)
 		ec.Publish(userUUID, _event)
 
 		data, err := json.Marshal(event)
@@ -496,7 +524,7 @@ func (h *Handler) ClientEventHandler(w http.ResponseWriter, req *http.Request, p
 		WithDescription(evt.Description).WithMetadata(evt.Metadata).ActedUpon(evt.ActedUpon)
 
 	event := eventBuilder.Build()
-	err = provider.PersistEvent(event)
+	err = provider.PersistEvent(*event, nil)
 	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 		http.Error(w, models.ErrPersistEvent(err).Error(), http.StatusInternalServerError)

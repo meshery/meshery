@@ -13,7 +13,7 @@ import {
   charcoal,
   CaretDownIcon,
   ListItemButton,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { disabledStyleWithOutOpacity } from '../../css/disableComponent.styles';
 
 export const FallbackWrapper = styled(Box)(() => ({
