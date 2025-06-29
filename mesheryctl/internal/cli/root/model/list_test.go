@@ -18,7 +18,7 @@ func TestListModel(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	testUrl := fmt.Sprintf("/%s?page=0&pagesize=10", modelsApiPath)
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List model",
 			Args:             []string{"list", "--page", "1"},

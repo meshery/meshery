@@ -21,7 +21,7 @@ func TestViewModel(t *testing.T) {
 	// Example model name to use
 	querySearch := "model-test"
 
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "View model without query",
 			Args:             []string{"view"},

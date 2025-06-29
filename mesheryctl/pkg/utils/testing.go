@@ -325,7 +325,7 @@ func formatToTabs(data string) string {
 	return s
 }
 
-type MesheryListCommamdTest struct {
+type MesheryListCommandTest struct {
 	Name             string
 	Args             []string
 	URL              string

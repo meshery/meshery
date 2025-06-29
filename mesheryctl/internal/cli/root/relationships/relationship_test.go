@@ -20,7 +20,7 @@ func TestRelationship(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Display error without any flags or args",
 			Args:             []string{},

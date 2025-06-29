@@ -21,7 +21,7 @@ func TestWorkspaces(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Display error when no args and flag provided",
 			Args:             []string{},

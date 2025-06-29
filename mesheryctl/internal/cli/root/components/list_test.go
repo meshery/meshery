@@ -19,7 +19,7 @@ func TestListComponent(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 	testUrl := fmt.Sprintf("/%s?page=0&pagesize=10", componentApiPath)
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "list components with page number",
 			Args:             []string{"list", "--page", "1"},
