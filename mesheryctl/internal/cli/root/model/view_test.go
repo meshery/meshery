@@ -21,6 +21,8 @@ func TestViewModel(t *testing.T) {
 	// Example model name to use
 	querySearch := "model-test"
 
+	urlPath := fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.PathEscape(querySearch))
+
 	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "View model without query",
@@ -49,7 +51,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "View model no models found",
 			Args:             []string{"view", querySearch, "--output-format", "yaml"},
-			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.PathEscape(querySearch)),
+			URL:              urlPath,
 			Fixture:          "view.model.no.models.api.response.golden",
 			ExpectedResponse: "view.model.no.models.found.output.golden",
 			ExpectError:      false,
@@ -57,7 +59,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "View model exactly one found - YAML output",
 			Args:             []string{"view", querySearch, "--output-format", "yaml"},
-			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.PathEscape(querySearch)),
+			URL:              urlPath,
 			Fixture:          "view.model.one.found.api.response.golden",
 			ExpectedResponse: "view.model.one.found.yaml.output.golden",
 			ExpectError:      false,
@@ -65,7 +67,7 @@ func TestViewModel(t *testing.T) {
 		{
 			Name:             "View model exactly one found - JSON output",
 			Args:             []string{"view", querySearch, "--output-format", "json"},
-			URL:              fmt.Sprintf("/%s/%s?pagesize=all", modelsApiPath, url.PathEscape(querySearch)),
+			URL:              urlPath,
 			Fixture:          "view.model.one.found.api.response.golden",
 			ExpectedResponse: "view.model.one.found.json.output.golden",
 			ExpectError:      false,
