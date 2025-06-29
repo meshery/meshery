@@ -177,7 +177,7 @@
   "status": "enabled",
   "metadata": {
     "configurationUISchema": "",
-    "genealogy": "",
+    "genealogy": "inventory",
     "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
