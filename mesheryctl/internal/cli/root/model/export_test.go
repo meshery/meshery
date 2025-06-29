@@ -144,13 +144,15 @@ func TestExportModel(t *testing.T) {
 	}
 
 	// A recursive function to reset flags for a command.
-	var resetFlags func(*cobra.Command)
-	resetFlags = func(c *cobra.Command) {
+	var resetFlags func(*cobra.Command, *testing.T)
+	resetFlags = func(c *cobra.Command, t *testing.T) {
 		c.Flags().VisitAll(func(f *pflag.Flag) {
-			f.Value.Set(f.DefValue)
+			if err := f.Value.Set(f.DefValue); err != nil {
+				t.Fatalf("failed to reset flag %q: %v", f.Name, err)
+			}
 		})
 		for _, sub := range c.Commands() {
-			resetFlags(sub)
+			resetFlags(sub, t)
 		}
 	}
 
@@ -158,7 +160,7 @@ func TestExportModel(t *testing.T) {
 		t.Run(tt.Name, func(t *testing.T) {
 			// Reset flags for each test case
 			httpmock.Reset()
-			resetFlags(ModelCmd)
+			resetFlags(ModelCmd, t)
 
 			if tt.URL != "" {
 				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).LoadByte()
