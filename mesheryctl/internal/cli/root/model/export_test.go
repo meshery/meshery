@@ -36,7 +36,6 @@ func TestExportModel(t *testing.T) {
 		filesToClean := []string{
 			"amd-gpu.tar",
 			"amd-gpu.tar.gz",
-			"non-existent-model.tar",
 		}
 
 		for _, file := range filesToClean {
@@ -139,11 +138,8 @@ func TestExportModel(t *testing.T) {
 			URL:              fmt.Sprintf("%s?name=non-existent-model&output_format=yaml&file_type=oci&components=true&relationships=true&pagesize=all", apiURL),
 			Fixture:          "export.model.not-found.api.response.golden",
 			ExpectedResponse: "export.model.not-found.output.golden",
-			ExpectError:      false,
-			HttpCode:         200,
-			FileName:         "non-existent-model",
-			FileType:         "oci",
-			FileLocation:     ".",
+			ExpectError:      true,
+			HttpCode:         404,
 		},
 	}
 
