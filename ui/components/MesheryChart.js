@@ -109,6 +109,10 @@ function MesheryChart(props) {
     entries.map(({ qps, percentile }) => formatLineItem(qps, percentile)).join('\n') +
     `\n\nFind out how fast your service is with`;
 
+  const findDatasetByLabel = (datasets, label) => {
+    return datasets.find((ds) => ds.label?.toLowerCase().includes(label.toLowerCase()));
+  };
+
   const handleSocialExpandClick = (e, chartData) => {
     let message = '';
 
@@ -127,8 +131,11 @@ function MesheryChart(props) {
       message = getSocialMessageForPerformanceTest(qps, percentile);
     } else if (Array.isArray(chartData.data.datasets)) {
       // 3 or more charts selected
-      const qpsData = chartData.data.datasets[8].data || [];
-      const percentileData = chartData.data.datasets[6].data || [];
+      const qpsDataset = findDatasetByLabel(chartData.data.datasets, 'QPS') || {};
+      const p999Dataset = findDatasetByLabel(chartData.data.datasets, 'p99.9') || {};
+
+      const qpsData = qpsDataset.data || [];
+      const percentileData = p999Dataset.data || [];
 
       const chartMetrics = qpsData.map((qps, idx) => ({
         qps: qps.toFixed(2),
