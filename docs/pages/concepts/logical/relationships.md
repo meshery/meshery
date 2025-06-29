@@ -154,7 +154,25 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
            </figure>
    </details>
 
-### 5. Hierarchical - Parent - Wallet
+### 5. Edge - Reference
+
+Logical or declarative links between components where one component refers to another by name, identifier, type, or scope.
+
+- Example 1) Pod --> ConfigMap (via envFrom)
+- Example 2) Pod --> Secret (via volumes)
+
+<details close><summary>Visual Representation of Edge-Reference Relationship</summary>
+        <br>
+        <p>The <strong>Edge-Reference</strong> relationship type represents a <strong>logical or declarative link</strong> between two components, where one component <strong>refers to another by name, identifier, type, or scope</strong>. This relationship allows components to dynamically locate, associate with, or depend on other components without being tightly coupled to them. It forms the basis for indirect communication, configuration reuse, ownership tracking, and dependency resolution in distributed systems.</p>
+        <p>This type of relationship does <strong>not directly provide communication, access, or permission</strong>, but <strong>enables such interactions by declaring intent or pointing to another component</strong>.</p>
+        <br>
+           <figure><figcaption>Edge - Reference: Pod to ConfigMap and Secret<a target="_blank" href="https://kanvas.new/extension/meshmap?mode=design&design=8288ffad-c406-4129-94b1-86f044ef1ccb"> (open in playground)</a></figcaption>
+           </figure>
+<div id="embedded-design-8288ffad-c406-4129-94b1-86f044ef1ccb" style="height:30rem;width:100%;"></div>
+<script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-edge-reference.js" type="module" ></script>
+   </details>
+
+### 6. Hierarchical - Parent - Wallet
 
 **Example**
 
@@ -168,7 +186,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 <script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-wallet-relationship.js" type="module" ></script>
 </details>
 
-### 6. Hierarchical - Parent - Inventory
+### 7. Hierarchical - Parent - Inventory
 
 **Example**:
 
@@ -181,7 +199,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 <script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-inventory-relationship.js" type="module" ></script>
 </details>
 
-### 7. Match - Labels (Tagsets)
+### 8. Match - Labels (Tagsets)
 
 This relationship type defines the associations between components based on shared Labels or Annotations.
 
@@ -194,7 +212,7 @@ This relationship type defines the associations between components based on shar
           </figure>        
 </details>
 
-### 8. Edge - Annotation 
+### 9. Edge - Annotation 
 
 This relationship depicts connections between components without conveying specific semantic meaning.
 
@@ -337,8 +355,8 @@ Patches in Meshery relationships utilize strategies and references (mutatorRef/m
 
 ### Caveats and Considerations
 
-1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there’s no system to remove the extra pod configuration automatically.
-If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
+1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there's no system to remove the extra pod configuration automatically.
+If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It's important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
 
 # Itemizing your Relationship Definitions in your Meshery deployment
 
