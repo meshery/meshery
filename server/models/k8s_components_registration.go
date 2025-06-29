@@ -19,7 +19,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const k8sMeshModelPath = "../meshmodel/kubernetes/model_template.json"
+const k8sMeshModelPath = "../meshmodel/templates/model_template.json"
 
 type RegistrationStatus int
 
