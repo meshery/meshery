@@ -39,7 +39,8 @@ mesheryctl exp model build [model-name]/[model-version]
 		{
 			parts := strings.Split(inputParam, "/")
 			// input param is supposed to be [model-name] or [model-name]/[model-version]
-			if len(parts) < 1 || len(parts) > 2 {
+			// since len(args) is validated to be 1 then parts will have at least one element
+			if len(parts) > 2 {
 				return ErrModelBuildFromStrings(errMsg)
 			}
 			name, version = buildModelParseModelInput(inputParam)
