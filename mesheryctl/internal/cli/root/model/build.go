@@ -42,10 +42,7 @@ mesheryctl exp model build [model-name]/[model-version]
 			if len(parts) < 1 || len(parts) > 2 {
 				return ErrModelBuildFromStrings(errMsg)
 			}
-			name = parts[0]
-			if len(parts) > 1 {
-				version = parts[1]
-			}
+			name, version = buildModelParseModelInput(inputParam)
 		}
 
 		// do not validate model name, path and version,
@@ -81,15 +78,8 @@ mesheryctl exp model build [model-name]/[model-version]
 			return ErrModelBuild(err)
 		}
 
-		// validation (if any) is done in PreRunE
-		inputParam := args[0]
-		parts := strings.Split(inputParam, "/")
-		// it was validated that parts has 1 or 2 elements slice in preRunE
-		name := parts[0]
-		version := ""
-		if len(parts) > 1 {
-			version = parts[1]
-		}
+		// validation (if any) is done in PreRunE (so args certainly has one element)
+		name, version := buildModelParseModelInput(args[0])
 		path, _ := cmd.Flags().GetString("path")
 
 		// validation done above that args contains exactly one argument
@@ -115,6 +105,17 @@ mesheryctl exp model build [model-name]/[model-version]
 
 func init() {
 	buildModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
+}
+
+// parseModelInput parses the user input into model name and version.
+// The input can be `model-name` or `model-name/version`.
+func buildModelParseModelInput(input string) (name, version string) {
+	parts := strings.Split(input, "/")
+	name = parts[0]
+	if len(parts) > 1 {
+		version = parts[1]
+	}
+	return
 }
 
 func buildModelCompileFolderName(path string, name string, version string) string {
