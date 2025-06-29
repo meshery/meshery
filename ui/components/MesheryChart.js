@@ -101,14 +101,45 @@ function MesheryChart(props) {
     return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`;
   };
 
+  // Format and display the share message as bullet points when multiple charts are selected in the comparison view
+  const formatLineItem = (qps, percentile) => `• ${qps} RPS at P99.9 of ${percentile} ms`;
+
+  const buildMultiChartMessage = (entries) =>
+    `Performance Test Results using @mesheryio with @smp_spec\n` +
+    entries.map(({ qps, percentile }) => formatLineItem(qps, percentile)).join('\n') +
+    `\n\nFind out how fast your service is with`;
+
   const handleSocialExpandClick = (e, chartData) => {
+    let message = '';
+
+    if (Array.isArray(chartData.options.metadata)) {
+      // 2 charts selected
+      const chartMetrics = chartData.options.metadata.map((meta) => ({
+        qps: meta.qps.display.value.split(' ')[1],
+        percentile: meta.percentiles.display.value[4].display.value.split(' ')[0],
+      }));
+
+      message = buildMultiChartMessage(chartMetrics);
+    } else if (chartData.options.metadata) {
+      // Single chart selected
+      const qps = parseFloat(chartData.options.metadata.qps.display.value.split(' ')[1]).toFixed(2);
+      const percentile = parseFloat(chartData.percentiles[4].Value).toFixed(2);
+      message = getSocialMessageForPerformanceTest(qps, percentile);
+    } else if (Array.isArray(chartData.data.datasets)) {
+      // 3 or more charts selected
+      const qpsData = chartData.data.datasets[8].data || [];
+      const percentileData = chartData.data.datasets[6].data || [];
+
+      const chartMetrics = qpsData.map((qps, idx) => ({
+        qps: qps.toFixed(2),
+        percentile: percentileData[idx].toFixed(2),
+      }));
+
+      message = buildMultiChartMessage(chartMetrics);
+    }
+
     setAnchorEl(e.currentTarget);
-    setSocialMessage(
-      getSocialMessageForPerformanceTest(
-        chartData.options.metadata.qps.display.value.split(' ')[1],
-        chartData.percentiles[4].Value,
-      ),
-    );
+    setSocialMessage(message);
     e.stopPropagation();
     setSocialExpand((prevState) => !prevState);
   };
