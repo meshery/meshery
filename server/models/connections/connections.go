@@ -12,22 +12,25 @@ import (
 	"github.com/meshery/meshery/server/helpers/utils"
 	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/logger"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
-// swagger:response ConnectionStatus
-type ConnectionStatus string
+type ConnectionStatus = schemasConnection.ConnectionStatus
 
 type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
+// TODO
+// Caps lock values are left for compatibility for now,
+// update later on to Pascal case everywhere
 const (
-	DISCOVERED   ConnectionStatus = "discovered"
-	REGISTERED   ConnectionStatus = "registered"
-	CONNECTED    ConnectionStatus = "connected"
-	IGNORED      ConnectionStatus = "ignored"
-	MAINTENANCE  ConnectionStatus = "maintenance"
-	DISCONNECTED ConnectionStatus = "disconnected"
-	DELETED      ConnectionStatus = "deleted"
-	NOTFOUND     ConnectionStatus = "not found"
+	DISCOVERED   ConnectionStatus = schemasConnection.Discovered
+	REGISTERED   ConnectionStatus = schemasConnection.Registered
+	CONNECTED    ConnectionStatus = schemasConnection.Connected
+	IGNORED      ConnectionStatus = schemasConnection.Ignored
+	MAINTENANCE  ConnectionStatus = schemasConnection.Maintenance
+	DISCONNECTED ConnectionStatus = schemasConnection.Disconnected
+	DELETED      ConnectionStatus = schemasConnection.Deleted
+	NOTFOUND     ConnectionStatus = schemasConnection.NotFound
 )
 
 type ConnectionRegisterPayload struct {
@@ -65,8 +68,10 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
+type Connection = schemasConnection.Connection
+
 // swagger:response Connection
-type Connection struct {
+type __ConnectionOld struct {
 	ID           uuid.UUID                      `json:"id,omitempty" db:"id"`
 	Name         string                         `json:"name,omitempty" db:"name"`
 	CredentialID uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
@@ -91,7 +96,7 @@ var validConnectionStatusToManage = []ConnectionStatus{
 // Check whether the Connection should be managed.
 // Connections with status as Discovered, Registered, Connected should only be managed.
 // Eg: If the status is set as Maintenance or Ignore do not try to mange it, not even during greedy import of K8sConnection from KubeConfig.
-func (c *Connection) ShouldConnectionBeManaged() bool {
+func ShouldConnectionBeManaged(c Connection) bool {
 	for _, validStatus := range validConnectionStatusToManage {
 		if validStatus == c.Status {
 			return true
