@@ -161,7 +161,12 @@ const WorkspacesSection = ({ open, selectedId, onSelect, workspacesData, isLoadi
       ) : (
         workspaces &&
         workspaces.map((workspace) => (
-          <CustomTooltip title={workspace.name} disableHoverListener={open} placement="right">
+          <CustomTooltip
+            title={workspace.name}
+            disableHoverListener={open}
+            placement="right"
+            key={workspace.id}
+          >
             <ListItem
               key={workspace.id}
               disablePadding
