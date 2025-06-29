@@ -18,7 +18,7 @@ func TestListEnvironment(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "List environments organization ID not provided",
 			Args:             []string{"list"},

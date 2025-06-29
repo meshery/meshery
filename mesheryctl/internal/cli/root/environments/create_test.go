@@ -17,7 +17,7 @@ func TestCreateEnvironment(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// Test scenarios for environment creation
-	tests := []utils.MesheryCommamdTest{
+	tests := []utils.MesheryCommandTest{
 		{
 			Name:             "Create environment without arguments",
 			Args:             []string{"create"},
