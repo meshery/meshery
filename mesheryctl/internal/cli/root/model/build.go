@@ -22,35 +22,38 @@ Expects input to be in the format scaffolded by the model init command.
 Documentation for exp model and subcommands can be found at https://docs.meshery.io/reference/mesheryctl/exp/model`,
 	Example: `
 // Create an OCI-compliant package from the model files
+mesheryctl exp model build [model-name]
 mesheryctl exp model build [model-name]/[model-version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp model build [model-name]/[model-version]\nRun 'mesheryctl exp model build --help' to see detailed help message"
+		const errMsg = "Usage:\nmesheryctl exp model build [model-name]\nor\nmesheryctl exp model build [model-name]/[model-version]\n\nRun 'mesheryctl exp model build --help' to see detailed help message"
 		if len(args) != 1 {
 			return ErrModelBuildFromStrings(errMsg)
 		}
 
-		modelNameVersion := args[0]
+		inputParam := args[0]
 		path, _ := cmd.Flags().GetString("path")
 		name := ""
 		version := ""
 
 		{
-			parts := strings.Split(modelNameVersion, "/")
-			// input param is supposed to be [model-name]/[version]
-			if len(parts) != 2 {
+			parts := strings.Split(inputParam, "/")
+			// input param is supposed to be [model-name] or [model-name]/[model-version]
+			if len(parts) < 1 || len(parts) > 2 {
 				return ErrModelBuildFromStrings(errMsg)
 			}
 			name = parts[0]
-			version = parts[1]
+			if len(parts) > 1 {
+				version = parts[1]
+			}
 		}
 
 		// do not validate model name, path and version,
 		// as their purpose is to combine into the folder
 		// only check if they y are not empty and combined folder exists
 
-		// validate name and version are not empty
-		if name == "" || version == "" {
+		// validate name is not empty, version could be empty
+		if name == "" {
 			return ErrModelBuildFromStrings(errMsg)
 		}
 
@@ -69,7 +72,6 @@ mesheryctl exp model build [model-name]/[model-version]
 				)
 			}
 		}
-		// TODO should we validate if the directory has a valid meshery model structure?
 
 		return nil
 	},
@@ -80,18 +82,18 @@ mesheryctl exp model build [model-name]/[model-version]
 		}
 
 		// validation (if any) is done in PreRunE
-		modelNameVersion := args[0]
-		parts := strings.Split(modelNameVersion, "/")
-		// it was validated that parts is exactly two elements slice in preRunE
+		inputParam := args[0]
+		parts := strings.Split(inputParam, "/")
+		// it was validated that parts has 1 or 2 elements slice in preRunE
 		name := parts[0]
-		version := parts[1]
+		version := ""
+		if len(parts) > 1 {
+			version = parts[1]
+		}
 		path, _ := cmd.Flags().GetString("path")
 
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(path, name, version)
-
-		// TODO validation over schema
-		// https://github.com/meshery/schemas/pull/306
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
 		img, errBuildImage := meshkitOci.BuildImage(folder)
@@ -100,7 +102,7 @@ mesheryctl exp model build [model-name]/[model-version]
 		}
 
 		// Save OCI artifact into a tar file under current folder
-		imageName := buildModelCompileImageName(name, version)
+		imageName := buildModelCompileImageName(name, version, "tar")
 
 		utils.Log.Infof("Saving OCI artifact as %s", imageName)
 		if err := meshkitOci.SaveOCIArtifact(img, imageName, name); err != nil {
@@ -127,11 +129,18 @@ func buildModelCompileFolderName(path string, name string, version string) strin
 	return filepath.Join(dirParts...)
 }
 
-func buildModelCompileImageName(name string, version string) string {
+func buildModelCompileImageName(name string, version string, extension string) string {
+	if version != "" {
+		return fmt.Sprintf(
+			"%s-%s.%s",
+			name,
+			strings.ReplaceAll(version, ".", "-"),
+			extension,
+		)
+	}
 	return fmt.Sprintf(
-		"%s-%s.%s",
+		"%s.%s",
 		name,
-		strings.ReplaceAll(version, ".", "-"),
-		"tar",
+		extension,
 	)
 }

@@ -23,7 +23,9 @@ func TestModelBuild(t *testing.T) {
 
 	setupHookModelInit := func(modelInitArgs ...string) func() {
 		return func() {
-			// TODO replace ModelExpCmd with  ModelCmd
+			// TODO replace ModelExpCmd with ModelCmd
+			// TODO this is a bad idea, it is somehow has affect on init_test
+			// probably because ModelExpCmd is the same object
 			cmd := ModelExpCmd
 			// cmd := ModelCmd
 			cmd.SetArgs(modelInitArgs)
@@ -61,19 +63,57 @@ func TestModelBuild(t *testing.T) {
 	}{
 		{
 			Name:             "model build from model name and version",
-			Args:             []string{"build", "test-case-aws-lambda-controller/v0.1.0"},
+			Args:             []string{"build", "test-case-model-build-aws-lambda-controller/v0.1.0"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-version.golden",
 			ExpectedFiles: []string{
-				"test-case-aws-lambda-controller-v0-1-0.tar",
+				"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
 			},
 			SetupHooks: []func(){
-				setupHookModelInit("init", "test-case-aws-lambda-controller", "--version", "v0.1.0"),
+				setupHookModelInit("init", "test-case-model-build-aws-lambda-controller", "--version", "v0.1.0"),
 			},
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
-					"test-case-aws-lambda-controller",
-					"test-case-aws-lambda-controller-v0-1-0.tar",
+					"test-case-model-build-aws-lambda-controller",
+					"test-case-model-build-aws-lambda-controller-v0-1-0.tar",
+				),
+			},
+		},
+		{
+			Name:             "model build from model name only (no version)",
+			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller"},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				"test-case-model-build-aws-dynamodb-controller.tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.1"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-model-build-aws-dynamodb-controller",
+					"test-case-model-build-aws-dynamodb-controller.tar",
+				),
+			},
+		},
+		{
+			Name:             "model build from model name only (no version) with slash in the ned",
+			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller/"},
+			ExpectError:      false,
+			ExpectedResponse: "model.build.from-model-name-only.golden",
+			ExpectedFiles: []string{
+				"test-case-model-build-aws-dynamodb-controller.tar",
+			},
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.1"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-model-build-aws-dynamodb-controller",
+					"test-case-model-build-aws-dynamodb-controller.tar",
 				),
 			},
 		},
@@ -86,12 +126,6 @@ func TestModelBuild(t *testing.T) {
 		{
 			Name:             "model build wrong input param format",
 			Args:             []string{"build", "aws-ec2-controller/v0.1.0/smthelse"},
-			ExpectError:      true,
-			ExpectedResponse: "model.build.error.usage.golden",
-		},
-		{
-			Name:             "model build version not specified",
-			Args:             []string{"build", "aws-ec2-controller/"},
 			ExpectError:      true,
 			ExpectedResponse: "model.build.error.usage.golden",
 		},
