@@ -343,7 +343,7 @@ func GetToken(t *testing.T) string {
 	return filepath.Join(currDir, "fixtures", "token.golden")
 }
 
-func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommamdTest, commandDir string, commadName string) {
+func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommandTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
 
@@ -427,7 +427,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 	StopMockery(t)
 }
 
-type MesheryCommamdTest struct {
+type MesheryCommandTest struct {
 	Name             string
 	Args             []string
 	HttpMethod       string
@@ -438,7 +438,7 @@ type MesheryCommamdTest struct {
 	ExpectError      bool
 }
 
-func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommamdTest, commandDir string, commadName string) {
+func InvokeMesheryctlTestCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryCommandTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
 
