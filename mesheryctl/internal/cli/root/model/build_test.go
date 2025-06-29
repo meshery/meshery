@@ -99,7 +99,7 @@ func TestModelBuild(t *testing.T) {
 			},
 		},
 		{
-			Name:             "model build from model name only (no version) with slash in the ned",
+			Name:             "model build from model name only (no version) with slash in the end",
 			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller/"},
 			ExpectError:      false,
 			ExpectedResponse: "model.build.from-model-name-only.golden",
