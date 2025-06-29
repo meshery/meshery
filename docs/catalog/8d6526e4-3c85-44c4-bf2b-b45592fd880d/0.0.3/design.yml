@@ -2,7 +2,7 @@
   "id": "8d6526e4-3c85-44c4-bf2b-b45592fd880d",
   "name": "understanding persistent storage in kubernetes",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -1273,7 +1273,7 @@
         "background-image": "none",
         "background-opacity": 0,
         "body-text": "Understanding Persistent Storage in Kubernetes",
-        "body-text-color": "rgb(229,153,247)",
+        "body-text-color": "#00B39F",
         "body-text-font-size": 34,
         "body-text-font-weight": "700",
         "body-text-horizontal-align": "center",
@@ -1285,8 +1285,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 143.86819433380316,
-          "y": -189.79801355532635
+          "x": 135.09206141271852,
+          "y": -188.7576717843932
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
