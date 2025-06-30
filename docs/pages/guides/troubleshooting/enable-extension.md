@@ -9,56 +9,44 @@ abstract: A guide on how to build and enable Meshery extensions for use in a loc
 list: include
 ---
 
-If you've set up your local Meshery development environment, but you notice an extension isn't showing up or working as expected, this guide is here to help. Before you start debugging, the most important first step is to **understand the type** of the component you are troubleshooting.
+If you've set up your local Meshery development environment and an extension isn't showing up or working as expected, this guide is here to help. Before you start debugging, the most important first step is to understand the **type** of the component you are troubleshooting.
 
 Meshery has different types of extensions that integrate in different ways. This means their failure modes and troubleshooting methods are also very different.
 
-## Extension Types
+### Identifying the Extension's Integration Type
 
-### 1. Tightly-Coupled Frontend UI Plugins
+Before diving into troubleshooting, you need to identify how your extension connects to Meshery. Here's how to determine its type:
 
-This scenario describes extensions that are deeply integrated into the Meshery UI and share a close relationship with the Meshery Server (e.g., [Meshery Kanvas](https://docs.meshery.io/extensions/kanvas)).
+#### Integration Method: Tightly-Coupled vs. Loosely-Coupled
 
-### 2. Loosely-Coupled Backend Extensions
+- **Tightly-Coupled Plugins** rely on shared software libraries and package versions with the Meshery Server
+  - Example: [Meshery Kanvas](https://docs.meshery.io/extensions/kanvas)
+- **Loosely-Coupled Extensions** communicate with Meshery Server through standard APIs like gRPC
+  - Example: [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) like the [`meshery-istio`](https://github.com/meshery-extensions/meshery-istio) adapter
 
-This scenario describes extensions that run as independent processes and communicate with Meshery Server over a standard API.
+#### Source Code Availability: Open vs. Closed
 
-**Example: [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters)** (like the [`meshery-istio`](https://github.com/meshery-extensions/meshery-istio) adapter)
+- **Open-source components** have publicly available source code
+  - You'll find these in public repositories under the [meshery-extensions](https://github.com/orgs/meshery-extensions/repositories?type=all) GitHub organization
+- **Closed-source components** have restricted access to their source code
+  - 这些仓库是private的，需要收到邀请才可以获得
 
-#### How to Identify extesnion Type
+### Troubleshooting by Extension Type
 
-You can identify this type of component by **Codebase Status:** It is **closed-source**. You will not be able to find its source code in a public repository on the GitHub organization.
-https://github.com/orgs/meshery-extensions/repositories?type=all 是这个仓库吗？我不太确定耶
+#### Closed-Source Extensions
 
-## Common Reasons for Failure
+{% include alert.html type="info" title="Understanding the Issue" content="Closed-source extension problems aren't typical technical bugs you can fix with code. Standard debugging methods won't be effective here." %}
 
-If you've identified the component as a tightly-coupled plugin, the reason for failure is almost always one of the following:
+除了没办法本地布置以外，If you want to working with closed-source extensions like Kanvas, the solution is community engagement:
 
-* **Permission Issues (The Main Reason):** Because Kanvas is a closed-source project, if your user account does not have the necessary permissions to access its code repository, your local Meshery Server cannot build and load it. 
-* **Dependency Package Mismatch:** A tightly-coupled plugin like Kanvas requires that it and the Meshery Server use the **exact same versions of their shared software libraries (packages).** Think of them as two precise gears that must be the same size to work together. If there is even a small version mismatch between your local Meshery Server and the plugin, they will not engage correctly, and the feature will fail to load.
+- **Community Contribution Path**: To access features like Kanvas, you'll need to become more involved in the community
+  - Learn about joining the development team through the [Community Handbook](？？？？)
 
-如果你想加入核心团队，查看xxx
+{% include alert.html type="note" title="Kanvas Access Issues" content="If you have Kanvas permissions but still encounter problems, check this forum discussion: https://discuss.layer5.io/t/unable-to-setup-kanvas-locally/6431" %}
 
-如果你有kanvas的权限的话，trouble shooting的步骤可以查看这个forumu回答：https://discuss.layer5.io/t/unable-to-setup-kanvas-locally/6431/2
+> 如果你有kanvas权限，但是仍然遇到了问题，查看这个论坛的回复：https://discuss.layer5.io/t/unable-to-setup-kanvas-locally/6431
 
-#### What Are the Next Steps?
+For open-source extensions like Meshery Adapters, you can use standard technical debugging:
 
-The first thing to understand is that this is not a standard technical bug you can fix with code. Trying to debug it with typical methods will not be effective. The correct path forward is to:
-
-* **Understand the Situation:** This is not a standard technical bug you can fix with code.
-* **Follow the Contribution Path:** If you are interested in contributing to features like Kanvas, the path involves becoming a more deeply involved community member.
-  * Learn about the process for joining the development team. You can find more information in the [Community Handbook](？？？？).
-
-#### Common Reasons for Failure
-
-If an adapter is failing, it is a technical problem that you can debug. This is a technical problem that you can debug and solve yourself. Here are the steps to follow:
-
-1. **Check if the container is running:** 
-2. **Check the logs:** 
-
-| **Component Type** | Tightly-Coupled Frontend Plugin | Loosely-Coupled Backend Extension |
-| :-------------------- | :------------------------------------------------------------- | :----------------------------------------------------------- |
-| **Source Model** | Closed-Source | Open-Source |
-| **Integration** | Shared `package` dependencies | Standard `gRPC` API |
-| **Log Location** | Browser Developer Console | Docker Container Logs (`docker logs`) |
-| **Common Problem** | Permissions, dependency version mismatch | Networking, port conflicts, internal errors |
+- **Common Issues**: Networking problems, port conflicts, or component-specific errors
+- **Debugging Steps**: Use standard tools like `docker ps` and `docker logs` to identify the root cause
