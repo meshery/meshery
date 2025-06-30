@@ -1,14 +1,5 @@
-import React, { useState, useRef } from 'react';
-import {
-  Grid2,
-  Typography,
-  IconButton,
-  Paper,
-  ClickAwayListener,
-  Fade,
-  Popper,
-  styled,
-} from '@sistent/sistent';
+import React, { useRef } from 'react';
+import { Grid2, Typography, styled } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import {
   fortioResultToJsChartData,
@@ -17,16 +8,6 @@ import {
   makeMultiChart,
 } from '../lib/chartjs-formatter';
 import bb, { areaStep, line } from 'billboard.js';
-import {
-  TwitterShareButton,
-  LinkedinShareButton,
-  FacebookShareButton,
-  TwitterIcon,
-  LinkedinIcon,
-  FacebookIcon,
-} from 'react-share';
-import ReplyIcon from '@mui/icons-material/Reply';
-
 const ChartTitle = styled(Typography)(({ theme }) => ({
   textAlign: 'center',
   fontSize: theme.spacing(1.75),
@@ -53,27 +34,6 @@ const ChartWrapper = styled('div')({
   alignItems: 'center',
 });
 
-const ShareIconButton = styled(IconButton)({
-  transform: 'scaleX(-1)',
-});
-
-const SocialPopper = styled(Popper)({
-  width: 500,
-});
-
-const SocialPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(1),
-}));
-
-const SocialIconWrapper = styled('span')(({ theme }) => ({
-  margin: theme.spacing(0.4),
-}));
-
-const ShareIconContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-end',
-});
-
 function NonRecursiveConstructDisplayCells(data) {
   return Object.keys(data).map((el) => {
     if (typeof data[el].display?.value === 'string' && !data[el].display?.hide) {
@@ -91,26 +51,6 @@ function MesheryChart(props) {
   const chart = useRef(null);
   const percentileRef = useRef(null);
   const titleRef = useRef(null);
-
-  const [socialExpand, setSocialExpand] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [socialMessage, setSocialMessage] = useState('');
-
-  const getSocialMessageForPerformanceTest = (rps, percentile) => {
-    return `I achieved ${rps.trim()} RPS running my service at a P99.9 of ${percentile} ms using @mesheryio with @smp_spec! Find out how fast your service is with`;
-  };
-
-  const handleSocialExpandClick = (e, chartData) => {
-    setAnchorEl(e.currentTarget);
-    setSocialMessage(
-      getSocialMessageForPerformanceTest(
-        chartData.options.metadata.qps.display.value.split(' ')[1],
-        chartData.percentiles[4].Value,
-      ),
-    );
-    e.stopPropagation();
-    setSocialExpand((prevState) => !prevState);
-  };
 
   const singleChart = (rawdata, data) => {
     if (typeof data === 'undefined' || typeof data.StartTime === 'undefined') {
@@ -353,44 +293,6 @@ function MesheryChart(props) {
 
   return (
     <NoSsr>
-      <ShareIconContainer>
-        <ShareIconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, chartData)}>
-          <ReplyIcon />
-        </ShareIconButton>
-      </ShareIconContainer>
-      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition style={{ zIndex: '1301' }}>
-        {({ TransitionProps }) => (
-          <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
-            <Fade {...TransitionProps} timeout={350}>
-              <SocialPaper>
-                <SocialIconWrapper>
-                  <TwitterShareButton
-                    url={'https://meshery.io'}
-                    title={socialMessage}
-                    hashtags={['opensource']}
-                  >
-                    <TwitterIcon size={32} />
-                  </TwitterShareButton>
-                </SocialIconWrapper>
-                <SocialIconWrapper>
-                  <LinkedinShareButton url={'https://meshery.io'} summary={socialMessage}>
-                    <LinkedinIcon size={32} />
-                  </LinkedinShareButton>
-                </SocialIconWrapper>
-                <SocialIconWrapper>
-                  <FacebookShareButton
-                    url={'https://meshery.io'}
-                    quote={socialMessage}
-                    hashtag={'#opensource'}
-                  >
-                    <FacebookIcon size={32} />
-                  </FacebookShareButton>
-                </SocialIconWrapper>
-              </SocialPaper>
-            </Fade>
-          </ClickAwayListener>
-        )}
-      </SocialPopper>
       <div>
         <ChartTitle ref={titleRef} style={{ display: 'none' }} />
         <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">
@@ -432,5 +334,4 @@ function MesheryChart(props) {
     </NoSsr>
   );
 }
-
 export default MesheryChart;
