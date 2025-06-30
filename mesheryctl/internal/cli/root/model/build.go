@@ -22,35 +22,36 @@ Expects input to be in the format scaffolded by the model init command.
 Documentation for exp model and subcommands can be found at https://docs.meshery.io/reference/mesheryctl/exp/model`,
 	Example: `
 // Create an OCI-compliant package from the model files
+mesheryctl exp model build [model-name]
 mesheryctl exp model build [model-name]/[model-version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp model build [model-name]/[model-version]\nRun 'mesheryctl exp model build --help' to see detailed help message"
+		const errMsg = "Usage:\nmesheryctl exp model build [model-name]\nor\nmesheryctl exp model build [model-name]/[model-version]\n\nRun 'mesheryctl exp model build --help' to see detailed help message"
 		if len(args) != 1 {
 			return ErrModelBuildFromStrings(errMsg)
 		}
 
-		modelNameVersion := args[0]
+		inputParam := args[0]
 		path, _ := cmd.Flags().GetString("path")
 		name := ""
 		version := ""
 
 		{
-			parts := strings.Split(modelNameVersion, "/")
-			// input param is supposed to be [model-name]/[version]
-			if len(parts) != 2 {
+			parts := strings.Split(inputParam, "/")
+			// input param is supposed to be [model-name] or [model-name]/[model-version]
+			// since len(args) is validated to be 1 then parts will have at least one element
+			if len(parts) > 2 {
 				return ErrModelBuildFromStrings(errMsg)
 			}
-			name = parts[0]
-			version = parts[1]
+			name, version = buildModelParseModelInput(inputParam)
 		}
 
 		// do not validate model name, path and version,
 		// as their purpose is to combine into the folder
 		// only check if they y are not empty and combined folder exists
 
-		// validate name and version are not empty
-		if name == "" || version == "" {
+		// validate name is not empty, version could be empty
+		if name == "" {
 			return ErrModelBuildFromStrings(errMsg)
 		}
 
@@ -69,7 +70,6 @@ mesheryctl exp model build [model-name]/[model-version]
 				)
 			}
 		}
-		// TODO should we validate if the directory has a valid meshery model structure?
 
 		return nil
 	},
@@ -79,19 +79,12 @@ mesheryctl exp model build [model-name]/[model-version]
 			return ErrModelBuild(err)
 		}
 
-		// validation (if any) is done in PreRunE
-		modelNameVersion := args[0]
-		parts := strings.Split(modelNameVersion, "/")
-		// it was validated that parts is exactly two elements slice in preRunE
-		name := parts[0]
-		version := parts[1]
+		// validation (if any) is done in PreRunE (so args certainly has one element)
+		name, version := buildModelParseModelInput(args[0])
 		path, _ := cmd.Flags().GetString("path")
 
 		// validation done above that args contains exactly one argument
 		folder := buildModelCompileFolderName(path, name, version)
-
-		// TODO validation over schema
-		// https://github.com/meshery/schemas/pull/306
 
 		utils.Log.Infof("Building meshery model from path %s", folder)
 		img, errBuildImage := meshkitOci.BuildImage(folder)
@@ -100,7 +93,7 @@ mesheryctl exp model build [model-name]/[model-version]
 		}
 
 		// Save OCI artifact into a tar file under current folder
-		imageName := buildModelCompileImageName(name, version)
+		imageName := buildModelCompileImageName(name, version, "tar")
 
 		utils.Log.Infof("Saving OCI artifact as %s", imageName)
 		if err := meshkitOci.SaveOCIArtifact(img, imageName, name); err != nil {
@@ -115,6 +108,17 @@ func init() {
 	buildModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
 }
 
+// parseModelInput parses the user input into model name and version.
+// The input can be `model-name` or `model-name/version`.
+func buildModelParseModelInput(input string) (name, version string) {
+	parts := strings.Split(input, "/")
+	name = parts[0]
+	if len(parts) > 1 {
+		version = parts[1]
+	}
+	return
+}
+
 func buildModelCompileFolderName(path string, name string, version string) string {
 	dirParts := make([]string, 0, 3)
 	if path != "" {
@@ -127,11 +131,18 @@ func buildModelCompileFolderName(path string, name string, version string) strin
 	return filepath.Join(dirParts...)
 }
 
-func buildModelCompileImageName(name string, version string) string {
+func buildModelCompileImageName(name string, version string, extension string) string {
+	if version != "" {
+		return fmt.Sprintf(
+			"%s-%s.%s",
+			name,
+			strings.ReplaceAll(version, ".", "-"),
+			extension,
+		)
+	}
 	return fmt.Sprintf(
-		"%s-%s.%s",
+		"%s.%s",
 		name,
-		strings.ReplaceAll(version, ".", "-"),
-		"tar",
+		extension,
 	)
 }
