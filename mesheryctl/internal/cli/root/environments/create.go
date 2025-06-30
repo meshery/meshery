@@ -92,7 +92,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		}
 
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgID))
+			utils.Log.Infof("Environment named %s created in organization id %s", payload.Name, payload.OrgID)
 			return nil
 		}
 		utils.Log.Info("Error creating environment")

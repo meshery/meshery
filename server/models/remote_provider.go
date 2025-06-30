@@ -184,7 +184,7 @@ func (l *ProviderProperties) DownloadProviderExtensionPackage(log logger.Handler
 		return
 	}
 
-	log.Info(fmt.Sprintf("[Initialize]: Package not found at %s proceeding to download", loc))
+	log.Infof("[Initialize]: Package not found at %s proceeding to download", loc)
 	// logrus the provider package
 	if err := TarXZF(l.PackageURL, loc, log); err != nil {
 		log.Error(ErrDownloadPackage(err, "provider package"))
@@ -1958,7 +1958,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info(fmt.Sprintf("design %s sent to remote provider", pattern.Name))
+		l.Log.Infof("design %s sent to remote provider", pattern.Name)
 		return bdr, nil
 	}
 
@@ -4133,7 +4133,7 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 
-	l.Log.Info(fmt.Sprintf("attempting to save %s connection %s to remote provider with status %s", conn.Name, conn.Kind, conn.Status))
+	l.Log.Infof("attempting to save %s connection %s to remote provider with status %s", conn.Name, conn.Kind, conn.Status)
 	resp, err := l.DoRequest(cReq, token)
 	if err != nil {
 		if resp == nil {
