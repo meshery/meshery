@@ -20,6 +20,7 @@ Before diving into troubleshooting, you need to identify how your extension conn
 #### Integration Method: Tightly-Coupled vs. Loosely-Coupled
 
 - **Tightly-Coupled Plugins** rely on shared software libraries and package versions with the Meshery Server
+  - These tightly-coupled plugins can be more brittle than other types of extensions, meaning they are highly sensitive to changes in their environment, especially to dependency versions
   - Example: [Meshery Kanvas](https://docs.meshery.io/extensions/kanvas)
 - **Loosely-Coupled Extensions** communicate with Meshery Server through standard APIs like gRPC
   - Example: [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) like the [`meshery-istio`](https://github.com/meshery-extensions/meshery-istio) adapter
@@ -40,13 +41,27 @@ Before diving into troubleshooting, you need to identify how your extension conn
 除了没办法本地布置以外，If you want to working with closed-source extensions like Kanvas, the solution is community engagement:
 
 - **Community Contribution Path**: To access features like Kanvas, you'll need to become more involved in the community
-  - Learn about joining the development team through the [Community Handbook](？？？？)
+  - The path to joining involves demonstrating your commitment and consistency. A good first step is to contribute to other open-source areas of Meshery for a period of time, showing your interest and growing your expertise within the community. This 'soft' contribution is the key to unlocking the 'hard' access to more advanced projects
+
+> Learn about 哪些仓库需要program participation required：https://layer5.io/community/handbook/repository-overview
 
 {% include alert.html type="note" title="Kanvas Access Issues" content="If you have Kanvas permissions but still encounter problems, check this forum discussion: https://discuss.layer5.io/t/unable-to-setup-kanvas-locally/6431" %}
 
 > 如果你有kanvas权限，但是仍然遇到了问题，查看这个论坛的回复：https://discuss.layer5.io/t/unable-to-setup-kanvas-locally/6431
 
+#### Open-Source Extensions
+
 For open-source extensions like Meshery Adapters, you can use standard technical debugging:
 
 - **Common Issues**: Networking problems, port conflicts, or component-specific errors
 - **Debugging Steps**: Use standard tools like `docker ps` and `docker logs` to identify the root cause
+
+### Package Mismatch Issues
+
+{% include alert.html type="warning" title="Critical: Package Version Matching" content="For tightly-coupled plugins like Kanvas, you must use the exact same packages in your Meshery server as in your plugins. This requirement is extremely strict - think of the plugin and server as two precise gears that must be identical to work together. Even a minor version difference in a single shared library can cause the entire extension to fail to load, often without a clear error message." %}
+
+When package versions don't match between your Meshery server and tightly-coupled plugins, the extension will never load successfully. This is one of the most common causes of extension failures in local development environments.
+
+### Pre-built Packages
+
+For some extensions, pre-built packages are available for download from the Layer5 Labs Meshery Extensions Packages repository. These packages can save you from having to build extensions from source code, but they must still match your Meshery server's package versions exactly.
