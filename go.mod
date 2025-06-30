@@ -27,7 +27,7 @@ require (
 	github.com/fatih/color v1.18.0
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/ghodss/yaml v1.0.0
-	github.com/go-openapi/runtime v0.27.2
+	github.com/go-openapi/runtime v0.27.2 // Downgraded to maintain compatibility with validate v0.23.0 - See #12185
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
@@ -185,7 +185,7 @@ require (
 	github.com/go-openapi/loads v0.22.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
-	github.com/go-openapi/validate v0.23.0 // indirect
+	github.com/go-openapi/validate v0.23.0 // indirect // Downgraded due to build compatibility issues with prometheus client - See #12185
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-redis/redis_rate/v9 v9.1.2 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
