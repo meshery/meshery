@@ -185,7 +185,7 @@ require (
 	github.com/go-openapi/loads v0.22.0 // indirect
 	github.com/go-openapi/spec v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
-	github.com/go-openapi/validate v0.23.0 // indirect // Downgraded due to build compatibility issues with prometheus client - See #12185
+	github.com/go-openapi/validate v0.23.0 // indirect - Downgraded due to build compatibility issues with prometheus client - See #12185
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-redis/redis_rate/v9 v9.1.2 // indirect
 	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
