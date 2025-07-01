@@ -39,7 +39,11 @@ import {
   FeedbackButton,
   SistentThemeProviderWithoutBaseLine,
 } from "@sistent/sistent";
-import { MESHMAP, providerUrl,SELECTED_PROVIDER_NAME } from "../utils/constants";
+import {
+  MESHMAP,
+  providerUrl,
+  SELECTED_PROVIDER_NAME,
+} from "../utils/constants";
 
 const AuthenticatedMsg = "Authenticated";
 const UnauthenticatedMsg = "Unauthenticated";
@@ -89,6 +93,109 @@ const httpPost = "POST";
 //     name: 'TRAEFIK_MESH',
 //   },
 // }
+
+function mergeFullHTMLIntoCurrentPage(htmlString, proxyBase = proxyUrl) {
+  const parser = new DOMParser();
+  const newDoc = parser.parseFromString(htmlString, "text/html");
+
+  if (!newDoc || !newDoc.head || !newDoc.body) {
+    console.error("Invalid HTML content");
+    return;
+  }
+
+  // === 🔁 Helper: Rewrite absolute paths ===
+  const rewriteAbsolutePaths = (str) =>
+    str.replace(/(["'`(=])\/(?!\/)/g, `$1${proxyBase}/`);
+
+  const rewriteUrls = (el, attr) => {
+    const val = el.getAttribute(attr);
+    if (val && val.startsWith("/")) {
+      el.setAttribute(attr, proxyBase + val);
+    }
+  };
+
+  const tagsToRewrite = [
+    { tag: "script", attr: "src" },
+    { tag: "link", attr: "href" },
+    { tag: "img", attr: "src" },
+    { tag: "iframe", attr: "src" },
+    { tag: "source", attr: "src" },
+    { tag: "video", attr: "src" },
+    { tag: "audio", attr: "src" },
+    { tag: "a", attr: "href" },
+  ];
+
+  // === 🔁 Rewrite URLs in newDoc ===
+  tagsToRewrite.forEach(({ tag, attr }) => {
+    newDoc.querySelectorAll(tag).forEach((el) => rewriteUrls(el, attr));
+  });
+
+  // === 🔁 Rewrite inline API references in <script>, <style>, etc. ===
+  const textContentTags = ["script", "style", "template"];
+  textContentTags.forEach((tag) => {
+    newDoc.querySelectorAll(tag).forEach((el) => {
+      if (el.textContent && el.textContent.includes('"api/')) {
+        el.textContent = rewriteAbsolutePaths(el.textContent);
+      }
+    });
+  });
+
+  // === ⚡ Replace <body> ===
+  document.body.replaceWith(newDoc.body.cloneNode(true));
+
+  // === 🧠 Merge <head> ===
+  const existingHead = document.head;
+  const existingTags = Array.from(existingHead.children).map(
+    (el) => el.outerHTML,
+  );
+
+  Array.from(newDoc.head.children).forEach((el) => {
+    const html = el.outerHTML;
+    if (existingTags.includes(html)) return;
+
+    if (tagsToRewrite.some(({ tag }) => tag === el.tagName.toLowerCase())) {
+      const { attr } = tagsToRewrite.find(
+        (t) => t.tag === el.tagName.toLowerCase(),
+      );
+      rewriteUrls(el, attr);
+    }
+
+    if (el.tagName === "SCRIPT") {
+      const newScript = document.createElement("script");
+      for (let attr of el.attributes) {
+        newScript.setAttribute(attr.name, attr.value);
+      }
+      newScript.textContent = rewriteAbsolutePaths(el.textContent || "");
+      existingHead.appendChild(newScript);
+    } else {
+      existingHead.appendChild(el.cloneNode(true));
+    }
+  });
+}
+
+export function RemoteShellLoader() {
+  useEffect(() => {
+    async function loadRemoteHTML() {
+      try {
+        const response = await fetch(proxyUrl, {
+          credentials: "include", // optional
+        });
+
+        if (!response.ok) throw new Error("Failed to load remote HTML");
+
+        const html = await response.text();
+
+        mergeFullHTMLIntoCurrentPage(html);
+      } catch (error) {
+        console.error("Failed to load remote index.html", error);
+      }
+    }
+
+    loadRemoteHTML();
+  }, []);
+
+  return null; // optionally show loading spinner
+}
 
 const useThemeDetector = () => {
   const getCurrentTheme = () =>
@@ -318,7 +425,7 @@ const ExtensionsComponent = () => {
       });
       if (!(type.includes(".yaml") || type.includes(".yml"))) {
         window.ddClient.desktopUI.toast.error(
-          "Some error occured while uploading the compose file. "
+          "Some error occured while uploading the compose file. ",
         );
         return;
       }
@@ -332,22 +439,28 @@ const ExtensionsComponent = () => {
       })
         .then((res) => {
           window.ddClient.desktopUI.toast.success(
-            "Compose file has been uploaded with name: " + name
+            "Compose file has been uploaded with name: " + name,
           );
         })
         .catch(() =>
           window.ddClient.desktopUI.toast.error(
-            "Some error occured while uploading the compose file."
-          )
+            "Some error occured while uploading the compose file.",
+          ),
         );
     });
     reader.readAsText(file);
   };
 
   const OpenDocs = () => {
+    // window.location.href = proxyUrl;
     window.ddClient.host.openExternal(
-      `https://docs.meshery.io/installation/docker/docker-extension`
+      `https://docs.meshery.io/installation/docker/docker-extension`,
     );
+  };
+
+  const launchMeshery = () => {
+    console.log("Launching Meshery...");
+    window.location.href = proxyUrl;
   };
 
   return (
@@ -423,15 +536,15 @@ const ExtensionsComponent = () => {
                   )}
                 </a>
                 {isLoggedIn ? (
-                  <LinkButton>
+                  <LinkButton onClick={launchMeshery}>
                     <StyledLink
                       style={{ textDecoration: "none", color: "white" }}
-                      href={
-                        token &&
-                        `http://localhost:9081/api/user/token?token=" +
-                          token +
-                          "&provider=${SELECTED_PROVIDER_NAME}`
-                      }
+                      // href={
+                      //   token &&
+                      //   `http://localhost:9081/api/user/token?token=" +
+                      //     token +
+                      //     "&provider=${SELECTED_PROVIDER_NAME}`
+                      // }
                     >
                       Launch Meshery
                     </StyledLink>
@@ -448,11 +561,11 @@ const ExtensionsComponent = () => {
                   color="primary"
                   component="span"
                   onClick={() => {
-                    const url =  providerUrl + "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14"
-                    console.log("provider url",url)
-                    window.ddClient.host.openExternal(
-                      url
-                    );
+                    const url =
+                      providerUrl +
+                      "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14";
+                    console.log("provider url", url);
+                    window.ddClient.host.openExternal(url);
                   }}
                 >
                   Login
@@ -467,6 +580,7 @@ const ExtensionsComponent = () => {
               className="second-step"
               sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}
             >
+              {/* <RemoteShellLoader /> */}
               <AccountDiv>
                 <Typography
                   sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}
@@ -608,7 +722,7 @@ const ExtensionsComponent = () => {
                                 <CatalogCard
                                   onCardClick={() => {
                                     window.ddClient.host.openExternal(
-                                      `${providerUrl}/catalog/content/catalog/${pattern?.id}`
+                                      `${providerUrl}/catalog/content/catalog/${pattern?.id}`,
                                     );
                                   }}
                                   pattern={pattern}
@@ -625,7 +739,7 @@ const ExtensionsComponent = () => {
                       <StyledButton
                         onClick={() => {
                           window.ddClient.host.openExternal(
-                            `${providerUrl}/catalog`
+                            `${providerUrl}/catalog`,
                           );
                         }}
                       >
