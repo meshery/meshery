@@ -166,50 +166,52 @@ export default function DesignConfigurator() {
           </div>
 
           {/* Action Toolbar */}
-          <TextField
-            label="Design Name"
-            value={designJson.name}
-            onChange={(e) => updateDesignName(e.target.value)}
-            variant="standard"
-          />
+          <div id="action-toolbar">
+            <TextField
+              label="Design Name"
+              value={designJson.name}
+              onChange={(e) => updateDesignName(e.target.value)}
+              variant="standard"
+            />
 
-          <CustomTooltip title="Save Design as New File">
-            <div>
-              <IconButton
-                aria-label="Save"
-                onClick={designSave}
-                disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
-              >
-                <SaveAsIcon style={iconMedium} />
-              </IconButton>
-            </div>
-          </CustomTooltip>
-          {designId && (
-            <>
-              <CustomTooltip title="Update Design">
-                <div>
-                  <IconButton
-                    aria-label="Update"
-                    onClick={designUpdate}
-                    disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                  >
-                    <SaveIcon style={iconMedium} />
-                  </IconButton>
-                </div>
-              </CustomTooltip>
-              <CustomTooltip title="Delete Design">
-                <div>
-                  <IconButton
-                    aria-label="Delete"
-                    onClick={designDelete}
-                    disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-                  >
-                    <DeleteIcon style={iconMedium} />
-                  </IconButton>
-                </div>
-              </CustomTooltip>
-            </>
-          )}
+            <CustomTooltip title="Save Design as New File">
+              <div>
+                <IconButton
+                  aria-label="Save"
+                  onClick={designSave}
+                  disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
+                >
+                  <SaveAsIcon style={iconMedium} />
+                </IconButton>
+              </div>
+            </CustomTooltip>
+            {designId && (
+              <>
+                <CustomTooltip title="Update Design">
+                  <div>
+                    <IconButton
+                      aria-label="Update"
+                      onClick={designUpdate}
+                      disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                    >
+                      <SaveIcon style={iconMedium} />
+                    </IconButton>
+                  </div>
+                </CustomTooltip>
+                <CustomTooltip title="Delete Design">
+                  <div>
+                    <IconButton
+                      aria-label="Delete"
+                      onClick={designDelete}
+                      disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                    >
+                      <DeleteIcon style={iconMedium} />
+                    </IconButton>
+                  </div>
+                </CustomTooltip>
+              </>
+            )}
+          </div>
         </Toolbar>
       </AppBarComponent>
       <Grid2 container spacing={3} size="grow">
