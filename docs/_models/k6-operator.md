@@ -10,7 +10,11 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
-components-count: 0
+- name: private-load-zone
+  colorIcon: assets/img/integrations/k6-operator/components/private-load-zone/icons/color/private-load-zone-color.svg
+  whiteIcon: assets/img/integrations/k6-operator/components/private-load-zone/icons/white/private-load-zone-white.svg
+  description: 
+components-count: 1
 relationships: 
 relationship-count: 0
 featureList: [
