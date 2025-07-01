@@ -48,16 +48,16 @@ mesheryctl exp model build [model-name]/[model-version]
 
 		// do not validate model name, path and version,
 		// as their purpose is to combine into the folder
-		// only check if they y are not empty and combined folder exists
+		// only check if they are not empty and combined folder exists
 
 		// validate name is not empty, version could be empty
 		if name == "" {
 			return ErrModelBuildFromStrings(errMsg)
 		}
 
+		folder := buildModelCompileFolderName(path, name, version)
 		// check if combined folder exists
 		{
-			folder := buildModelCompileFolderName(path, name, version)
 			// if folder does not exist return with error
 			_, err := os.Stat(folder)
 			if os.IsNotExist(err) {
@@ -67,6 +67,35 @@ mesheryctl exp model build [model-name]/[model-version]
 						"\nfolder %s does not exist",
 						folder,
 					),
+				)
+			}
+		}
+
+		// check that if only model name specified then model folder contains only one subfolder
+		if version == "" {
+			buildModelHasExactlyOneSubfolder := func(dir string) bool {
+				entries, err := os.ReadDir(dir)
+				if err != nil {
+					return false
+				}
+
+				count := 0
+				for _, entry := range entries {
+					if entry.IsDir() {
+						count++
+					} else {
+						// If there is a file, it's not exactly one subfolder
+						return false
+					}
+				}
+
+				return count == 1
+			}
+
+			if !buildModelHasExactlyOneSubfolder(folder) {
+				return ErrModelBuildFromStrings(
+					errMsg,
+					"\nCommand does not support multiple versions build under one image",
 				)
 			}
 		}
