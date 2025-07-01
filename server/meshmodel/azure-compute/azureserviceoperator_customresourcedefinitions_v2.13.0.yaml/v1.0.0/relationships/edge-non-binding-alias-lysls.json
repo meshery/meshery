@@ -3,7 +3,7 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A relationship between different type of components",
+    "description": "An edge relationship between DiskEncryptionSet and vault(azure-key-vault)",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
@@ -180,7 +180,7 @@
       }
     }
   ],
-  "subType": "alias",
+  "subType": "reference",
   "status": "enabled",
   "type": "non-binding",
   "version": "v1.0.0"
