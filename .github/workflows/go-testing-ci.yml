@@ -6,12 +6,16 @@ on:
     paths:
       - "**.go"
       - "**.golden"
+      - "go.mod"
+      - "go.sum"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
       - "**.golden"
+      - "go.mod"
+      - "go.sum"
   workflow_dispatch:
     inputs:
       logLevel:

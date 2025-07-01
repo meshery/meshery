@@ -6,6 +6,8 @@ on:
     paths:
       - "server/**"
       - "Makefile"
+      - "go.mod"
+      - "go.sum"
       - ".github/workflows/server-integration-tests.yml"
   pull_request:
     branches:
@@ -13,6 +15,8 @@ on:
     paths:
       - "server/**"
       - "Makefile"
+      - "go.mod"
+      - "go.sum"
       - ".github/workflows/server-integration-tests.yml"
 
 jobs:
