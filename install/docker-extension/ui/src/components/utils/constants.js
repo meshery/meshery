@@ -16,11 +16,11 @@ export const topicsList = [
 export const REMOTE_PROVIDERS = [
     {
         name: "Layer5",
-        url: "cloud.layer5.io",
+        url: "https://cloud.layer5.io",
     },
     {
         name: "Exoscale",
-        url: "cloud.exoscale.com",
+        url: "https://cloud.exoscale.com",
     },
 ];
 
