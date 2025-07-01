@@ -340,7 +340,6 @@ const ResourceDetailFormatData = ({ data }) => {
       <Grid2
         container
         style={{
-          display: 'flex',
           overflowWrap: 'break-word',
           gap: '0.3rem 1rem',
           flexDirection: 'column',
