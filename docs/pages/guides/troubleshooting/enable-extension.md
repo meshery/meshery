@@ -22,7 +22,7 @@ Before diving into troubleshooting, you need to identify how your extension conn
 - **Tightly-Coupled Plugins:**
   - Rely on shared software libraries and exact package versions with the Meshery Server.
   - Are highly sensitive ("brittle") to changes in their environment, especially to dependency versions.
-  - Example: [Meshery Kanvas](https://docs.meshery.io/extensions/kanvas)
+  - Example:[Meshery Kanvas](https://docs.meshery.io/extensions/kanvas)
 
 - **Loosely-Coupled Extensions:**
   - Communicate with Meshery Server through standard APIs like gRPC.
