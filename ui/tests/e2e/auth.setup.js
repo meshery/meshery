@@ -6,7 +6,7 @@ import { ENV } from './env';
 const PROVIDERS = {
   LOCAL: 'None',
   MESHERY: 'Layer5',
-}
+};
 
 setup('authenticate as Meshery provider', async ({ page }) => {
   // Perform authentication steps. Replace these actions with your own.

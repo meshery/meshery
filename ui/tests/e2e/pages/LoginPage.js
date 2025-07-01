@@ -17,10 +17,9 @@ export class LoginPage {
   }
 
   async waitForRedirection() {
-    await this.page.waitForURL(url => {
+    await this.page.waitForURL((url) => {
       const pathname = new URL(url).pathname;
       return ['/', '/dashboard'].includes(pathname);
     });
   }
-  
 }
