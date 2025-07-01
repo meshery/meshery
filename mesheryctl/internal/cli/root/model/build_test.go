@@ -89,7 +89,6 @@ func TestModelBuild(t *testing.T) {
 			},
 			SetupHooks: []func(){
 				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
-				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.1"),
 			},
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
@@ -108,7 +107,6 @@ func TestModelBuild(t *testing.T) {
 			},
 			SetupHooks: []func(){
 				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.0"),
-				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller", "--version", "v0.1.1"),
 			},
 			CleanupHooks: []func(){
 				cleanUpHookRemoveDirsAndFiles(
@@ -128,6 +126,22 @@ func TestModelBuild(t *testing.T) {
 			Args:             []string{"build", "aws-ec2-controller/v0.1.0/smthelse"},
 			ExpectError:      true,
 			ExpectedResponse: "model.build.error.usage.golden",
+		},
+		{
+			Name:             "model build from model name only (no version) not supporting multiple versions",
+			Args:             []string{"build", "test-case-model-build-aws-dynamodb-controller-gbxter34"},
+			ExpectError:      true,
+			ExpectedResponse: "model.build.error.not-supporting-multiple-versions-build.golden",
+			SetupHooks: []func(){
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.0"),
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.1"),
+				setupHookModelInit("init", "test-case-model-build-aws-dynamodb-controller-gbxter34", "--version", "v0.1.2"),
+			},
+			CleanupHooks: []func(){
+				cleanUpHookRemoveDirsAndFiles(
+					"test-case-model-build-aws-dynamodb-controller-gbxter34",
+				),
+			},
 		},
 		{
 			Name:             "model build folder does not exist",
