@@ -30,7 +30,7 @@ components-count: 4
 relationships: 
 - type: "Non Binding"
   kind: "Edge"
-  description: "A relationship between different type of components"
+  description: "An edge relationship between ContainerApp and ManagedEnvironment(azure-app-service)"
 relationship-count: 1
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
