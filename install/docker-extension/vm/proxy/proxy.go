@@ -41,10 +41,15 @@ var hopHeaders = []string{
 	"Upgrade",
 }
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Accept-Language,Content-Type, Access-Control-Request-Method")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+func enableCors(w http.ResponseWriter, req *http.Request) {
+	origin := req.Header.Get("Origin")
+	if origin != "" {
+		// Only allow known, safe origins
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		w.Header().Set("Access-Control-Allow-Headers", "Origin, Accept, Content-Type, Authorization, Access-Control-Allow-Credentials")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE")
+	}
 }
 
 func copyHeader(dst, src http.Header) {
@@ -95,11 +100,13 @@ func handleWsMessage(conn *websocket.Conn) {
 }
 
 func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
+
+	log.Println("Received request woo: ", req.Method, " ", req.URL.Path)
 	log.Println(req.RemoteAddr, " ", req.Method, " ", req.URL)
 
 	client := &http.Client{}
 
-	enableCors(&wr)
+	enableCors(wr, req)
 
 	switch req.URL.Path {
 	case "/ws":
@@ -243,7 +250,9 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 		log.Println(*req)
 		resp, err := client.Do(req)
 		if err != nil {
-			http.Error(wr, "Server Error", http.StatusInternalServerError)
+			http.Error(wr, err.Error(), http.StatusInternalServerError)
+			log.Println("Error in client.Do: ", err)
+			return
 		}
 		defer resp.Body.Close()
 
