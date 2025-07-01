@@ -14,7 +14,7 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/meshery/meshkit/logger"
 	"github.com/spf13/viper"
 	"golang.org/x/oauth2"
@@ -253,7 +253,7 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	_, ok := jtk["exp"]
 	if ok {
 		exp := int64(jtk["exp"].(float64))
-		if jwt.TimeFunc().Unix() > exp {
+		if time.Now().Unix()  > exp {
 			return nil, ErrTokenExpired
 		}
 	}
@@ -268,9 +268,7 @@ func (l *RemoteProvider) VerifyToken(tokenString string) (*jwt.MapClaims, error)
 	}
 
 	// Verifies the signature
-	tokenParser := jwt.Parser{
-		SkipClaimsValidation: true,
-	}
+	tokenParser := jwt.NewParser(jwt.WithoutClaimsValidation())
 	token, err := tokenParser.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		return key, nil
 	})
