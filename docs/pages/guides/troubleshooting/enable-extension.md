@@ -19,8 +19,7 @@ Before diving into troubleshooting, you need to identify how your extension conn
 
 #### Integration Method: Tightly-Coupled vs. Loosely-Coupled
 
-- **Tightly-Coupled Plugins** rely on shared software libraries and package versions with the Meshery Server.
-  - These tightly-coupled plugins can be more brittle than other types of extensions, meaning they are highly sensitive to changes in their environment, especially to dependency versions.
+- **Tightly-Coupled Plugins** rely on shared software libraries and package versions with the Meshery Server. These tightly-coupled plugins can be more brittle than other types of extensions, meaning they are highly sensitive to changes in their environment, especially to dependency versions.
   - Example: [Meshery Kanvas](https://docs.meshery.io/extensions/kanvas)
   
 - **Loosely-Coupled Extensions** communicate with Meshery Server through standard APIs like gRPC.
@@ -46,19 +45,23 @@ For open-source extensions like Meshery Adapters, you can use standard technical
 
 #### Closed-Source and Tightly-Coupled Extensions
 
-{% include alert.html type="info" title="闭源代码问题不能解决" content="Problems with closed-source, tightly-coupled extensions aren't typical technical bugs you can fix with code. Standard debugging methods won't be effective here." %}
+{% include alert.html type="info" title="Closed-Source Code Issues Cannot Be Resolved" content="Problems with closed-source extensions aren't typical technical bugs you can fix with code. The issue stems from a single root cause: lack of access to the source code." %}
 
-If you've identified the component as a tightly-coupled plugin, the reason for failure is almost always one of the following:
+##### The Root Cause: Lack of Source Code Access
 
-- **Permission Issues:** Because extensions like Kanvas can be closed-source, your user account may not have the necessary permissions to access its code repository. Without access, your local Meshery Server cannot build and load it.
+The fundamental reason a closed-source extension fails in a local development environment is that you don't not have the necessary permissions to access its private code repository.
 
-- **Dependency Package Mismatch:** This is the most critical technical reason for failure for tightly-coupled extensions.
+This lack of access prevents you from building the extension from source yourself. This leads directly to a critical technical problem:
 
-  For these plugins, you must use the **exact same packages** in your Meshery server as in your plugins. This requirement is extremely strict—think of the plugin and the server as two precise gears that must be identical to work together. Even a minor version difference in a single shared library can cause the entire extension to fail to load, often without a clear error message.
+##### The Result: Unresolvable Dependency Issues
 
-  This package mismatch issue is especially relevant when dealing with pre-built packages. While for some extensions you can download them from the [Layer5 Labs Meshery Extensions Packages repository](https://github.com/layer5labs/meshery-extensions-packages) to save time, you must be extremely careful. **These pre-built packages must still perfectly match the package versions used by your local Meshery server to work correctly.**
+Because you cannot build the extension from source, your only alternative for local use is to rely on a [pre-built package](https://github.com/layer5labs/meshery-extensions-packages). However, this introduces the critical technical challenge of a **Dependency Package Mismatch**.
 
-  When they don't match, the extension will likely never load successfully.
+The requirement for these tightly-coupled plugins is extremely strict: they must use the **exact same packages** as your Meshery server. Think of the plugin and the server as two precise gears that must be identical to work together.
+
+You might find that a pre-built package works on your local machine, but only if it so happens that its dependencies perfectly match the versions in your local Meshery Server environment.
+
+However, this is not a reliable method for development. Any update to your local Meshery instance can break this fragile match, causing the extension to fail to load, often without a clear error message. This is why, without the ability to build a fresh copy from source, these dependency issues are considered practically unresolvable for a consistent development workflow.
 
 ##### What Are the Next Steps?
 
