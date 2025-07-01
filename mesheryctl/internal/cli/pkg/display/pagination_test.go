@@ -145,15 +145,15 @@ func TestHandlePaginationAsync(t *testing.T) {
 
 				writer.Close()
 
-		// Read captured output.
-		var buf bytes.Buffer
-		_, _ = buf.ReadFrom(reader)
-		output := buf.String()
+				// Read captured output.
+				var buf bytes.Buffer
+				_, _ = buf.ReadFrom(reader)
+				output := buf.String()
 
-		// Strip terminal control sequences for test consistency
-		output = stripTerminalControlSequences(output)
+				// Strip terminal control sequences for test consistency
+				output = stripTerminalControlSequences(output)
 
-		assert.Equal(t, tt.exceptedResponse, output)
+				assert.Equal(t, tt.exceptedResponse, output)
 				assert.NoError(t, err)
 			}
 
