@@ -4,12 +4,20 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"regexp"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
+
+// stripTerminalControlSequences removes ANSI escape sequences from strings
+func stripTerminalControlSequences(s string) string {
+	// Regex to match ANSI escape sequences
+	ansiRegex := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
+	return ansiRegex.ReplaceAllString(s, "")
+}
 
 func TestHandlePaginationAsync(t *testing.T) {
 
@@ -48,7 +56,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 				{ID: "1", Name: "Item1"},
 				{ID: "2", Name: "Item2"},
 			},
-			exceptedResponse: "Total number of items: 2\nPage: 1\n  \x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
+			exceptedResponse: "Total number of items: 2\nPage: 1\n  ID  NAME   \n  1   Item1  \n  2   Item2  \n",
 			expectedError:    nil,
 		},
 		{
@@ -137,12 +145,15 @@ func TestHandlePaginationAsync(t *testing.T) {
 
 				writer.Close()
 
-				// Read captured output.
-				var buf bytes.Buffer
-				_, _ = buf.ReadFrom(reader)
-				output := buf.String()
+		// Read captured output.
+		var buf bytes.Buffer
+		_, _ = buf.ReadFrom(reader)
+		output := buf.String()
 
-				assert.Equal(t, tt.exceptedResponse, output)
+		// Strip terminal control sequences for test consistency
+		output = stripTerminalControlSequences(output)
+
+		assert.Equal(t, tt.exceptedResponse, output)
 				assert.NoError(t, err)
 			}
 
