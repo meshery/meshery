@@ -1,60 +1,36 @@
-import { expect, test as setup } from './fixtures/project';
+import { test as setup } from './fixtures/project';
+import { ProviderSelectionPage } from './pages/ProviderSelectionPage';
+import { LoginPage } from './pages/LoginPage';
 import { ENV } from './env';
 
-setup.describe.configure({ mode: 'serial' });
+const PROVIDERS = {
+  LOCAL: 'None',
+  MESHERY: 'Layer5',
+}
 
 setup('authenticate as Meshery provider', async ({ page }) => {
   // Perform authentication steps. Replace these actions with your own.
+  const providerSelectionPage = new ProviderSelectionPage(page);
+  await providerSelectionPage.navigateToProviderSelection();
+  await providerSelectionPage.selectProvider(PROVIDERS.MESHERY);
 
-  await page.goto(ENV.PROVIDER_SELECTION_URL);
-  await page.getByLabel('Select Provider').click();
-  await page.getByRole('menuitem', { name: 'Layer5' }).click();
+  const loginPage = new LoginPage(page);
+  await loginPage.login(ENV.REMOTE_PROVIDER_USER.email, ENV.REMOTE_PROVIDER_USER.password);
 
-  await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
-  await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await loginPage.waitForRedirection();
 
-  // Wait until the page receives the cookies.
-  // Sometimes login flow sets cookies in the process of several redirects.
-  // Wait for the final URL to ensure that the cookies are actually set.
-
-  await expect(async () => {
-    const url = page.url();
-
-    const redirect_urls = new Set([
-      ENV.MESHERY_SERVER_URL + '/',
-      ENV.REMOTE_PROVIDER_URL + '/',
-      ENV.REMOTE_PROVIDER_URL + '/dashboard',
-    ]);
-    const redirected = redirect_urls.has(url);
-    return expect(redirected).toBeTruthy();
-  }).toPass();
-  // End of authentication steps.
   await page.context().storageState({ path: ENV.AUTHFILEMESHERYPROVIDER });
 });
 
 setup('authenticate as None provider', async ({ page }) => {
   // Perform authentication steps. Replace these actions with your own.
 
-  await page.goto(ENV.PROVIDER_SELECTION_URL);
-  await page.getByLabel('Select Provider').click();
-  await page.getByRole('menuitem', { name: 'None' }).click();
+  const providerSelectionPage = new ProviderSelectionPage(page);
+  await providerSelectionPage.navigateToProviderSelection();
+  await providerSelectionPage.selectProvider(PROVIDERS.LOCAL);
 
-  // Wait until the page receives the cookies.
-  // Sometimes login flow sets cookies in the process of several redirects.
-  // Wait for the final URL to ensure that the cookies are actually set.
+  const loginPage = new LoginPage(page);
+  await loginPage.waitForRedirection();
 
-  await expect(async () => {
-    const url = page.url();
-
-    const redirect_urls = new Set([
-      ENV.MESHERY_SERVER_URL + '/',
-      ENV.REMOTE_PROVIDER_URL + '/',
-      ENV.REMOTE_PROVIDER_URL + '/dashboard',
-    ]);
-    const redirected = redirect_urls.has(url);
-    return expect(redirected).toBeTruthy();
-  }).toPass();
-  // End of authentication steps.
   await page.context().storageState({ path: ENV.AUTHFILELOCALPROVIDER });
 });
