@@ -19,14 +19,15 @@ Before diving into troubleshooting, you need to identify how your extension conn
 
 ### Integration Method: Tightly-Coupled vs. Loosely-Coupled
 
-- **Tightly-Coupled Plugins:**
-  - Rely on shared software libraries and exact package versions with the Meshery Server.
-  - Are highly sensitive ("brittle") to changes in their environment, especially to dependency versions.
-  - Example:[Meshery Kanvas](https://docs.meshery.io/extensions/kanvas)
-
 - **Loosely-Coupled Extensions:**
   - Communicate with Meshery Server through standard APIs like gRPC.
-  - Example: [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) like the [`meshery-istio`](https://github.com/meshery-extensions/meshery-istio) adapter.
+  - Example: [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) like the [meshery-istio](https://github.com/meshery-extensions/meshery-istio) adapter.
+
+- **Tightly-Coupled Plugins:**
+  - Rely on shared software libraries and exact package versions with the Meshery Server.
+  - Are highly sensitive to changes in their environment, especially to dependency versions.
+  - Example: [Meshery Kanvas](https://kanvas.new/), a visual designer for Kubernetes and cloud native applications. 
+
 
 ### Source Code Availability: Open vs. Closed
 
@@ -47,7 +48,7 @@ For open-source extensions like Meshery Adapters, you can use standard technical
 - **Debugging Steps**: Use standard tools like `docker ps` and `docker logs` to identify the cause of the issue.
 
 ### Closed-Source and Tightly-Coupled Extensions
-{% include alert.html type="info" title="Closed-Source Code Issues Cannot Be Resolved By code" content="Problems with these extensions aren't typical code bugs. The core issue is lack of source code access, which prevents standard debugging." %}
+{% include alert.html type="info" title="Closed-Source Issues: No Code Fix" content="Problems with these extensions aren't typical code bugs. The core issue is lack of source code access, which prevents standard debugging." %}
 
 #### Why you can't fix this locally
 
@@ -66,7 +67,7 @@ Tightly-coupled plugins require **exact package matches** between the extension 
 
 #### How to move forward
 
- If you want to work with extensions like Kanvas:
+If you want to work with extensions like Kanvas:
 1. Engage with the community 
 2. Contribute consistently to Meshery's open-source areas
 3. Gain access through demonstrated commitment
