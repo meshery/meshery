@@ -56,10 +56,10 @@ relationships:
   description: "A hierarchical inventory relationship in which the configuration of Virtual Machine(parent component) is patched with the configuration of Virtual Machine Extension(child component). "
 - type: "Non Binding"
   kind: "Edge"
-  description: "A relationship between different type of components"
+  description: "An edge relationship between DiskEncryptionSet and vault(azure-key-vault)"
 - type: "Non Binding"
   kind: "Edge"
-  description: "A relationship between different type of components"
+  description: "An edge relationship between Image and Snapshot(azure-compute)"
 relationship-count: 4
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
