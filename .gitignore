@@ -80,3 +80,6 @@ wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
 
 install/docker-extension/vm/vm
+ui/results.json
+coverage.txt
+mesheryctl/coverage.txt
