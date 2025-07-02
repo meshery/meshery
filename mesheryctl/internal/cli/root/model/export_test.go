@@ -215,7 +215,7 @@ func TestExportModel(t *testing.T) {
 			// Check for successful file creation
 			if tt.FileName != "" {
 				var expectedFile string
-				if tt.FileType == "tar" {
+				if tt.FileType != "oci" {
 					expectedFile = filepath.Join(tt.FileLocation, tt.FileName+".tar.gz")
 				} else {
 					expectedFile = filepath.Join(tt.FileLocation, tt.FileName+".tar")
