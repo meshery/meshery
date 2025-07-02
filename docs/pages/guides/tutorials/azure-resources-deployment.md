@@ -121,7 +121,7 @@ Azure Service Operator requires a Kubernetes secret with your Azure identity:
 1. In the Meshery UI, navigate to **Kanvas**.
 2. Click **Catalog**, filter by **Azure**, and select the **Azure Operator** design.
 3. Click **Clone** to add it to your canvas.
-4. Update the secret **aso-controller-settings** in the design tamplate. The details are also mentioned in the catalogue
+4. Update the secret **aso-controller-settings** in the design template. The details are also mentioned in the catalog
 5. Click **Actions → Deploy**.
 
 
