@@ -44,9 +44,9 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 `,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model export [model-name ]\nRun 'mesheryctl model export --help' to see detailed help message"
+		const errMsg = "\n\nUsage: mesheryctl model export [model-name ]\nRun 'mesheryctl model export --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
+			return utils.ErrInvalidArgument(errors.New("Please provide a model name" + errMsg))
 		}
 		return nil
 	},
