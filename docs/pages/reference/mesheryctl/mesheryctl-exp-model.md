@@ -37,7 +37,14 @@ mesheryctl exp model init [model-name]
 Create an OCI-compliant package from the model files
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp model build [model-name] --version [version]
+mesheryctl exp model build [model-name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp model build [model-name]/[model-version]
 
 </div>
 </pre> 
