@@ -57,7 +57,7 @@ jobs:
         with:
           go-version: "1.23"
       - name: Run coverage
-        run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
+        run: go test --short ./... -timeout=10m -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v4.3.0

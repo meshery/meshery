@@ -59,7 +59,7 @@ lint:
 # output a HTML coverage by using gocov and gocov-html
 .PHONY: coverage
 coverage:
-	go test -coverprofile=coverage.out ./...
+	go test -timeout=5m -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out -o coverage.html
 
 # Generate markdown for mesheryctl docs
