@@ -1362,8 +1362,6 @@ github.com/mattn/go-sqlite3 v1.14.24/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxU
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX48g9wI=
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
-github.com/meshery/meshery-operator v0.8.7 h1:SsiyDiPEcibYtoHlYyziwvCcBVfZOCJxq4HgMPLZKMM=
-github.com/meshery/meshery-operator v0.8.7/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
 github.com/meshery/meshkit v0.8.33 h1:OowG1gn3nsN0RPfgmoPj1Kota9TXP/TUppmZ80kYXmU=
 github.com/meshery/meshkit v0.8.33/go.mod h1:Ym2z/5oSQn1jDQr+Qjmm9pBW7jv+8oXqp5+RYr9NXQI=
 github.com/meshery/meshsync v0.8.15 h1:E0O+p6MtcKWsLPG8WSBXjUlIipg96hmwuk74Pbk6qbg=
@@ -1426,8 +1424,6 @@ github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f h1:KUppIJq7/+
 github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f h1:y5//uYreIhSUg3J1GEMiLbxo1LJaP8RfCpH6pymGZus=
 github.com/mxk/go-flowrate v0.0.0-20140419014527-cca7078d478f/go.mod h1:ZdcZmHo+o7JKHSa8/e818NopupXU1YMK5fe1lsApnBw=
-github.com/myntra/pipeline v0.0.0-20180618182531-2babf4864ce8 h1:b2uniQevKsIAdAgonACj+tW6eTotNBI30zvPQSVOWwQ=
-github.com/myntra/pipeline v0.0.0-20180618182531-2babf4864ce8/go.mod h1:9Viqaf1D6mzC977KNzp496RvO4I819iz5Q6gjbXY7Ow=
 github.com/nats-io/nats.go v1.38.0 h1:A7P+g7Wjp4/NWqDOOP/K6hfhr54DvdDQUznt5JFg9XA=
 github.com/nats-io/nats.go v1.38.0/go.mod h1:IGUM++TwokGnXPs82/wCuiHS02/aKrdYUQkU8If6yjw=
 github.com/nats-io/nkeys v0.4.9 h1:qe9Faq2Gxwi6RZnZMXfmGMZkg3afLLOtrU+gDZJ35b0=

@@ -1,0 +1,171 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "A PVC binds to a matching PV either dynamically (via a StorageClass) or statically (by explicitly matching fields like name, storage, and accessModes).\nThe PVC acts as an abstraction layer, allowing workloads to request storage without knowing the underlying volume details.\nOnce bound, the PV becomes \"claimed\" and is dedicated (or shared, depending on accessModes) for that PVC’s use.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "version": "",
+    "name": "kubernetes",
+    "displayName": "",
+    "status": "",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "",
+      "sub_type": "",
+      "kind": "",
+      "status": "",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": ""
+    },
+    "subCategory": "",
+    "metadata": null,
+    "model": {
+      "version": "v1.34.0-alpha.1"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "PersistentVolume",
+            "match": {},
+            "match_strategy_matrix": [
+              [
+                "equal_as_strings",
+                "not_null"
+              ]
+            ],
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "PersistentVolumeClaim",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "volumeName"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

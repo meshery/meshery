@@ -30,6 +30,8 @@ import {
   Grid2,
   Hidden,
   NoSsr,
+  useTheme,
+  useMediaQuery,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -269,7 +271,22 @@ function K8sContextMenu({
                 height="24px"
                 style={{ objectFit: 'contain' }}
               />
-              <CBadge>{contexts?.total_count || 0}</CBadge>
+              <CBadge
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullContextMenu((prev) => !prev);
+                }}
+                onMouseOver={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(false);
+                }}
+              >
+                {contexts?.total_count || 0}
+              </CBadge>
             </CBadgeContainer>
           </IconButton>
         </CanShow>
@@ -322,6 +339,7 @@ function K8sContextMenu({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          marginTop: '1rem',
                         }}
                       >
                         <div>
@@ -392,6 +410,8 @@ const Header = ({
   abilityUpdated,
 }) => {
   const { notify } = useNotification;
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
     data: providerCapabilities,
@@ -432,8 +452,9 @@ const Header = ({
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    minWidth: '34px',
+                    width: 'fit-content',
                     justifyContent: 'center',
+                    position: 'relative',
                   }}
                 ></div>
                 <OrganizationAndWorkSpaceSwitcher />
@@ -443,13 +464,13 @@ const Header = ({
                 style={{
                   position: 'relative',
                   display: 'flex',
-                  flexWrap: 'wrap',
                   gap: '1rem 0.5rem',
+                  width: 'fit-content',
                 }}
               >
                 {/* According to the capabilities load the component */}
                 <ErrorBoundary customFallback={() => null}>
-                  {collaboratorExtensionUri && (
+                  {collaboratorExtensionUri && isSmallScreen && (
                     <RemoteComponent
                       url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
                       loaderType={loaderType}
@@ -460,7 +481,15 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <UserSpan style={{ position: 'relative' }}>
+                  <UserSpan
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        sm: 'inline-flex',
+                      },
+                    }}
+                    style={{ position: 'relative' }}
+                  >
                     <K8sContextMenu
                       contexts={contexts}
                       activeContexts={activeContexts}
