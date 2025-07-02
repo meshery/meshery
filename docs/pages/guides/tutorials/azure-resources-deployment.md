@@ -142,7 +142,7 @@ You have successfully:
 * Connected your Kubernetes cluster to Meshery
 * Installed the Azure Service Operator (Meshery managed CRDs)
 * Created a Kubernetes secret for Azure credentials
-* Designed and deployed an Azure resources using Meshery’s Kanvas
+* Designed and deployed Azure resources using Meshery’s Kanvas
 
 ---
 
