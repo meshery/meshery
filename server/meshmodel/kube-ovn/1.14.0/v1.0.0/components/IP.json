@@ -1,0 +1,78 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "IP",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kube-ovn",
+    "displayName": "Kube-OVN",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Runtime"
+    },
+    "subCategory": "Cloud Native Network",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://skalanetworks.github.io/charts/kube-ovn-v1.14.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.14.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "https://skalanetworks.github.io/charts/kube-ovn-v1.14.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "kubeovn.io/v1",
+    "kind": "IP",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"attachIps\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"attachMacs\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"attachSubnets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"containerID\": {\n     \"type\": \"string\"\n    },\n    \"ipAddress\": {\n     \"type\": \"string\"\n    },\n    \"macAddress\": {\n     \"type\": \"string\"\n    },\n    \"namespace\": {\n     \"type\": \"string\"\n    },\n    \"nodeName\": {\n     \"type\": \"string\"\n    },\n    \"podName\": {\n     \"type\": \"string\"\n    },\n    \"podType\": {\n     \"type\": \"string\"\n    },\n    \"subnet\": {\n     \"type\": \"string\"\n    },\n    \"v4IpAddress\": {\n     \"type\": \"string\"\n    },\n    \"v6IpAddress\": {\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"IP\",\n \"type\": \"object\"\n}"
+  }
+}

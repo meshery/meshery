@@ -36,7 +36,7 @@ relationships:
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
 - type: "Non Binding"
   kind: "Edge"
-  description: "A relationship between different type of components"
+  description: "An edge relationship between EventSubscription and StorageAccount(azure-storage)"
 relationship-count: 3
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

@@ -98,6 +98,18 @@
                   "configuration",
                   "spec",
                   "owner",
+                  "group"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "owner",
+                  "kind"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "owner",
                   "name"
                 ]
               ]
@@ -149,7 +161,17 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "displayName"
+                  "configuration",
+                  "group"
+                ],
+                [
+                  "configuration",
+                  "kind"
+                ],
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
                 ]
               ]
             }

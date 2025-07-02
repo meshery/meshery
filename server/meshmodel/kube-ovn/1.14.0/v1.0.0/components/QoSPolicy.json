@@ -1,0 +1,78 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Qo S Policy",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kube-ovn",
+    "displayName": "Kube-OVN",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Runtime"
+    },
+    "subCategory": "Cloud Native Network",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://skalanetworks.github.io/charts/kube-ovn-v1.14.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.14.0"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false,
+    "source_uri": "https://skalanetworks.github.io/charts/kube-ovn-v1.14.0.tgz"
+  },
+  "configuration": null,
+  "component": {
+    "version": "kubeovn.io/v1",
+    "kind": "QoSPolicy",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"bandwidthLimitRules\": {\n     \"items\": {\n      \"properties\": {\n       \"burstMax\": {\n        \"type\": \"string\"\n       },\n       \"direction\": {\n        \"type\": \"string\"\n       },\n       \"interface\": {\n        \"type\": \"string\"\n       },\n       \"matchType\": {\n        \"type\": \"string\"\n       },\n       \"matchValue\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"priority\": {\n        \"type\": \"integer\"\n       },\n       \"rateMax\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\",\n     \"x-kubernetes-list-map-keys\": [\n      \"name\"\n     ],\n     \"x-kubernetes-list-type\": \"map\"\n    },\n    \"bindingType\": {\n     \"type\": \"string\"\n    },\n    \"shared\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Qo S Policy\",\n \"type\": \"object\"\n}"
+  }
+}
