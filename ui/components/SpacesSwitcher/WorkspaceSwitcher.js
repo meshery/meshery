@@ -8,6 +8,7 @@ import {
   MenuItem,
   CircularProgress,
   WorkspaceIcon,
+  useMediaQuery,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
@@ -47,6 +48,7 @@ function WorkspaceSwitcher({ open }) {
     error: workspaceError,
     isLoading: isLoadingWorkspaces,
   } = useGetSelectedWorkspace();
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
@@ -82,14 +84,19 @@ function WorkspaceSwitcher({ open }) {
   return (
     <NoSsr>
       {!isLoadingWorkspaces && allWorkspaces?.length > 0 && (
-        <div
-          style={{
-            width: open ? 'auto' : 0,
+        <Grid2
+          sx={{
+            width: isSmallScreen ? '80%' : open ? 'auto' : 0,
             overflow: open ? '' : 'hidden',
             transition: 'all 1s',
           }}
         >
-          <FormControl component="fieldset">
+          <FormControl
+            sx={{
+              width: isSmallScreen ? '100%' : 'auto',
+            }}
+            component="fieldset"
+          >
             <FormGroup>
               <FormControlLabel
                 key="SpacesPreferences"
@@ -104,8 +111,17 @@ function WorkspaceSwitcher({ open }) {
                             handleChangeWorkspace(e); // only call for new selection
                           }
                         }}
+                        SelectDisplayProps={{
+                          style: {
+                            display: 'flex',
+                            flexDirection: 'row',
+                            fill: '#eee',
+                            paddingBlock: '9px 8px',
+                            paddingInline: '18px 34px',
+                          },
+                        }}
                         renderValue={() => {
-                          return selectedWorkspace?.name || '';
+                          return <span>{selectedWorkspace?.name || ''}</span>;
                         }}
                         MenuProps={{
                           anchorOrigin: {
@@ -142,7 +158,7 @@ function WorkspaceSwitcher({ open }) {
               />
             </FormGroup>
           </FormControl>
-        </div>
+        </Grid2>
       )}
       <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
     </NoSsr>
