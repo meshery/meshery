@@ -37,6 +37,7 @@ Before you begin, ensure you have the following:
 1. [Create Azure Service Principal](#1-create-azure-service-principal)
 2. [Connect Meshery to Your Cluster](#2-connect-meshery-to-your-cluster)
 3. [Install Azure Service Operator (Operator Only)](#3-install-azure-service-operator-operator-only)
+   
    * 3.1 [Deploy ASO Operator](#31-deploy-aso-operator)
    * 3.2 [Create Azure Credentials Secret](#32-create-azure-credentials-secret)
 4. [Deploy ASO Operator using Kanvas](#4-deploy-aso-using-kanvas)
@@ -128,7 +129,7 @@ Azure Service Operator requires a Kubernetes secret with your Azure identity:
 
 ### 5. Start deployment of Azure resources using Kanvas
 
-* Go to Kanvas and start picking up components and putting it to design.
+* Go to Kanvas and start by picking up Azure components and putting it to design area.
 * Click **Actions → Deploy**.
 * **Azure Portal**: Confirm the new Storage Account appears in your specified resource group.
 
