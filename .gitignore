@@ -81,3 +81,5 @@ wasm/policies/temp-bundle-extract-dir/**
 
 install/docker-extension/vm/vm
 ui/results.json
+coverage.txt
+mesheryctl/coverage.txt
