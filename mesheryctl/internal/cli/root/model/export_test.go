@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -182,9 +181,7 @@ func TestExportModel(t *testing.T) {
 					t.Fatal("expected an error, but got nil")
 				}
 				expectedResponse := golden.Load()
-				if expectedResponse != err.Error() {
-					t.Errorf("expected error:\n'%s'\n\ngot:\n'%s'", expectedResponse, err.Error())
-				}
+				utils.Equals(t, expectedResponse, err.Error())
 				return
 			}
 			if err != nil {
@@ -208,9 +205,7 @@ func TestExportModel(t *testing.T) {
 			actualResponse := b.String()
 			expectedResponse := golden.Load()
 
-			if !strings.Contains(actualResponse, expectedResponse) {
-				t.Errorf("expected:\n'%s'\n\ngot:\n'%s'", expectedResponse, actualResponse)
-			}
+			utils.Equals(t, expectedResponse, actualResponse)
 		})
 	}
 
