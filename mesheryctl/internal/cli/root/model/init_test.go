@@ -29,6 +29,32 @@ func TestModelInit(t *testing.T) {
 		ExpectedFiles      []string
 		AfterTestRemoveDir string
 	}{
+		// NOTE:
+		// we need this test with full params on the first place,
+		// to prevent side effects of using same command object in model build test.
+		//
+		// TODO: think about how to fix this.
+		{
+			Name:             "model init with all default params",
+			Args:             []string{"init", "test-case-aws-ec2-controller", "--version", "v0.1.0", "--path", ".", "--output-format", "json"},
+			ExpectError:      false,
+			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
+			ExpectedDirs: []string{
+				"test-case-aws-ec2-controller",
+				"test-case-aws-ec2-controller/v0.1.0",
+				"test-case-aws-ec2-controller/v0.1.0/components",
+				"test-case-aws-ec2-controller/v0.1.0/connections",
+				"test-case-aws-ec2-controller/v0.1.0/credentials",
+				"test-case-aws-ec2-controller/v0.1.0/relationships",
+			},
+			ExpectedFiles: []string{
+				"test-case-aws-ec2-controller/v0.1.0/model.json",
+				"test-case-aws-ec2-controller/v0.1.0/components/component.json",
+				"test-case-aws-ec2-controller/v0.1.0/connections/connection.json",
+				"test-case-aws-ec2-controller/v0.1.0/relationships/relationship.json",
+			},
+			AfterTestRemoveDir: "test-case-aws-ec2-controller",
+		},
 		{
 			Name:             "model init with default params",
 			Args:             []string{"init", "test-case-aws-ec2-controller"},

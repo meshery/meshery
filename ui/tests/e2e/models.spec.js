@@ -22,8 +22,7 @@ const model_import = {
 
 test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.getByTestId('settings-button').click();
+    await page.goto('/settings');
     await page.getByTestId('settings-tab-registry').click();
   });
 

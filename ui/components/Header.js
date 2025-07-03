@@ -36,7 +36,6 @@ import {
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
@@ -52,7 +51,6 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
-  SettingsWrapper,
 } from './Header.styles';
 import {
   getUserAccessToken,
@@ -273,7 +271,22 @@ function K8sContextMenu({
                 height="24px"
                 style={{ objectFit: 'contain' }}
               />
-              <CBadge>{contexts?.total_count || 0}</CBadge>
+              <CBadge
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullContextMenu((prev) => !prev);
+                }}
+                onMouseOver={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(false);
+                }}
+              >
+                {contexts?.total_count || 0}
+              </CBadge>
             </CBadgeContainer>
           </IconButton>
         </CanShow>
@@ -326,6 +339,7 @@ function K8sContextMenu({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          marginTop: '1rem',
                         }}
                       >
                         <div>
@@ -388,13 +402,16 @@ function K8sContextMenu({
 const Header = ({
   onDrawerToggle,
   onDrawerCollapse,
-  abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
   searchContexts,
+  // eslint-disable-next-line no-unused-vars
+  abilityUpdated,
 }) => {
   const { notify } = useNotification;
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
     data: providerCapabilities,
@@ -414,8 +431,6 @@ const Header = ({
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
@@ -437,8 +452,9 @@ const Header = ({
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    minWidth: '34px',
+                    width: 'fit-content',
                     justifyContent: 'center',
+                    position: 'relative',
                   }}
                 ></div>
                 <OrganizationAndWorkSpaceSwitcher />
@@ -448,13 +464,13 @@ const Header = ({
                 style={{
                   position: 'relative',
                   display: 'flex',
-                  flexWrap: 'wrap',
                   gap: '1rem 0.5rem',
+                  width: 'fit-content',
                 }}
               >
                 {/* According to the capabilities load the component */}
                 <ErrorBoundary customFallback={() => null}>
-                  {collaboratorExtensionUri && (
+                  {collaboratorExtensionUri && isSmallScreen && (
                     <RemoteComponent
                       url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
                       loaderType={loaderType}
@@ -465,37 +481,27 @@ const Header = ({
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <CustomTooltip title="Kubernetes Connections">
-                    <UserSpan style={{ position: 'relative' }}>
-                      <K8sContextMenu
-                        contexts={contexts}
-                        activeContexts={activeContexts}
-                        setActiveContexts={setActiveContexts}
-                        searchContexts={searchContexts}
-                      />
-                    </UserSpan>
-                  </CustomTooltip>
-                  <SettingsWrapper
-                    isDesktop={isDesktop}
-                    data-testid="settings-button"
-                    aria-describedby={abilityUpdated}
+                  <UserSpan
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        sm: 'inline-flex',
+                      },
+                    }}
+                    style={{ position: 'relative' }}
                   >
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <CustomTooltip title="Settings">
-                        <IconButton onClick={() => Router.push('/settings')}>
-                          <SettingsIcon
-                            style={{ ...iconMedium, fill: theme.palette.common.white }}
-                          />
-                        </IconButton>
-                      </CustomTooltip>
-                    </CanShow>
-                  </SettingsWrapper>
+                    <K8sContextMenu
+                      contexts={contexts}
+                      activeContexts={activeContexts}
+                      setActiveContexts={setActiveContexts}
+                      searchContexts={searchContexts}
+                    />
+                  </UserSpan>
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
                       <NotificationDrawerButton />
                     </div>
                   </CustomTooltip>
-
                   <CustomTooltip title={'User Profile'}>
                     <UserSpan>
                       <User />
