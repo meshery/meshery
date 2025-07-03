@@ -555,7 +555,6 @@ func checkHelmReleaseExists(kubeClient *meshkitkube.Client, releaseName, namespa
 
 	secrets, err := kubeClient.KubeClient.CoreV1().Secrets(namespace).List(context.Background(), listOptions)
 	if err != nil {
-		// If we can't check, assume it doesn't exist to be safe
 		return false, err
 	}
 
