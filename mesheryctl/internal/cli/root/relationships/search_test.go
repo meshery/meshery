@@ -97,7 +97,7 @@ func TestSearch_WithFlags(t *testing.T) {
 	currDir := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Search registered relationships matching result(s) found",
 			Args:             []string{"search", "--model", "kubernetes"},
