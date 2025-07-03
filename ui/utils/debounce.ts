@@ -6,7 +6,7 @@
  * @param timeout - Time in milliseconds
  * @returns Debounced function
  */
-export default function debounce<T extends (...args: any[]) => void>(
+export default function debounce<T extends (...args: unknown[]) => void>(
   func: T,
   timeout = 500,
 ): (...args: Parameters<T>) => void {
