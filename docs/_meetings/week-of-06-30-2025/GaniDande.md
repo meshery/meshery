@@ -6,8 +6,8 @@ I’m someone driven by curiosity, always exploring new areas in tech. Over time
 Outside of tech, I’m a huge fan of cricket and absolutely love watching movies, especially ones that stay with you long after the credits roll.
 
 You can connect with me or check out more of what I do here:
-- Website: ganidande.com
-- Blogs: blog.ganidande.com
-- LinkedIn: linkedin.com/in/ganidande905
+- Website: https://www.ganidande.com
+- Blogs: https://www.blog.ganidande.com
+- LinkedIn: https://www.linkedin.com/in/ganeswaradande
 
 Always happy to talk tech, cricket, movies, or anything under the sun. Looking forward to connecting! 
