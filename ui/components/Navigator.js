@@ -10,6 +10,7 @@ import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_sv
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import ConfigurationIcon from '../assets/icons/ConfigurationIcon';
+import HoverIcon from '../components/HoverIcon';
 import DocumentIcon from '../assets/icons/DocumentIcon';
 import DocumentColorIcon from '../assets/icons/DocumentColorIcon';
 import SlackIcon from '../assets/icons/SlackIcon';
@@ -361,27 +362,6 @@ const Navigator_ = () => {
       fill={theme.palette.icon.default}
     />
   );
-
-  const HoverIcon = ({ defaultIcon: DefaultIcon, hoverIcon: HoverIconComp, ...props }) => {
-    const [hover, setHover] = useState(false);
-
-    return (
-      <div
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        style={{
-          display: 'inline-block',
-          transition: 'transform 0.2s ease',
-          padding: '0.8rem',
-          margin: '-0.5rem',
-          transform: hover ? 'scale(1.1)' : 'scale(1)',
-          borderRadius: '50%',
-        }}
-      >
-        {hover ? <HoverIconComp {...props} /> : <DefaultIcon {...props} />}
-      </div>
-    );
-  };
 
   const externlinks = [
     {
