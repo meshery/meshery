@@ -44,7 +44,7 @@ export const pingMesheryOperator = (id, successcb, errorcb) => {
  */
 
 export const getOperatorStatusFromQueryResult = (res) => {
-  var operatorInformation = {
+  let operatorInformation = {
     operatorInstalled: false,
     NATSInstalled: false,
     meshSyncInstalled: false,
