@@ -476,13 +476,13 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		// Check if Meshery Server release exists
 		serverExists, err := checkHelmReleaseExists(kubeClient, "meshery", utils.MesheryNamespace)
 		if err != nil {
-			utils.Log.Debug("Failed to check if Meshery Server release exists: ", err)
+			return fmt.Errorf("failed to check for existing Meshery Server release: %w", err)
 		}
 
 		// Check if Meshery Operator release exists
 		operatorExists, err := checkHelmReleaseExists(kubeClient, "meshery-operator", utils.MesheryNamespace)
 		if err != nil {
-			utils.Log.Debug("Failed to check if Meshery Operator release exists: ", err)
+			return fmt.Errorf("failed to check for existing Meshery Operator release: %w", err)
 		}
 
 		// If either release exists, use UPGRADE instead of INSTALL for idempotency
@@ -543,6 +543,10 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 
 // checkHelmReleaseExists checks if a Helm release exists in the given namespace
 func checkHelmReleaseExists(kubeClient *meshkitkube.Client, releaseName, namespace string) (bool, error) {
+	if kubeClient == nil {
+		return false, fmt.Errorf("kubernetes client is nil")
+	}
+
 	// Use kubectl to check for Helm release secrets (Helm v3 stores releases as secrets)
 	// Helm releases are stored as secrets with labels helm.sh/chart and name
 	listOptions := metav1.ListOptions{

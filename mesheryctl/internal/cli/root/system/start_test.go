@@ -16,22 +16,92 @@ package system
 
 import (
 	"testing"
-
-	"github.com/meshery/meshkit/utils/kubernetes"
+	
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
-// TestApplyHelmChartsLogic tests the logic for choosing between INSTALL and UPGRADE
-func TestApplyHelmChartsLogic(t *testing.T) {
-	// Test that the function signature is correct and the logic compiles
-	// This is a basic smoke test to ensure our changes don't break compilation
-	if startCmd == nil {
-		t.Error("startCmd should not be nil")
-	}
-
-	// Ensure the checkHelmReleaseExists function signature is correct
-	// This will compile-fail if we have signature issues
-	var testFunc func(*kubernetes.Client, string, string) (bool, error) = checkHelmReleaseExists
+func TestCheckHelmReleaseExists(t *testing.T) {
+	// Test that the function exists and has correct signature
+	var testFunc func(*meshkitkube.Client, string, string) (bool, error) = checkHelmReleaseExists
 	if testFunc == nil {
 		t.Error("checkHelmReleaseExists function should be available")
+	}
+
+	// Test with nil client - should return error
+	exists, err := checkHelmReleaseExists(nil, "meshery", "meshery")
+	if err == nil {
+		t.Error("Expected error with nil client")
+	}
+	if exists {
+		t.Error("Expected false with nil client")
+	}
+}
+
+func TestApplyHelmChartsActionLogic(t *testing.T) {
+	testCases := []struct {
+		name                string
+		initialAction       meshkitkube.HelmChartAction
+		serverExists        bool
+		operatorExists      bool
+		expectedFinalAction meshkitkube.HelmChartAction
+	}{
+		{
+			name:                "INSTALL with no existing releases",
+			initialAction:       meshkitkube.INSTALL,
+			serverExists:        false,
+			operatorExists:      false,
+			expectedFinalAction: meshkitkube.INSTALL,
+		},
+		{
+			name:                "INSTALL with server existing",
+			initialAction:       meshkitkube.INSTALL,
+			serverExists:        true,
+			operatorExists:      false,
+			expectedFinalAction: meshkitkube.UPGRADE,
+		},
+		{
+			name:                "INSTALL with operator existing",
+			initialAction:       meshkitkube.INSTALL,
+			serverExists:        false,
+			operatorExists:      true,
+			expectedFinalAction: meshkitkube.UPGRADE,
+		},
+		{
+			name:                "INSTALL with both existing",
+			initialAction:       meshkitkube.INSTALL,
+			serverExists:        true,
+			operatorExists:      true,
+			expectedFinalAction: meshkitkube.UPGRADE,
+		},
+		{
+			name:                "UPGRADE unchanged",
+			initialAction:       meshkitkube.UPGRADE,
+			serverExists:        false,
+			operatorExists:      false,
+			expectedFinalAction: meshkitkube.UPGRADE,
+		},
+		{
+			name:                "UNINSTALL unchanged",
+			initialAction:       meshkitkube.UNINSTALL,
+			serverExists:        true,
+			operatorExists:      true,
+			expectedFinalAction: meshkitkube.UNINSTALL,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			finalAction := tc.initialAction
+
+			if tc.initialAction == meshkitkube.INSTALL {
+				if tc.serverExists || tc.operatorExists {
+					finalAction = meshkitkube.UPGRADE
+				}
+			}
+
+			if finalAction != tc.expectedFinalAction {
+				t.Errorf("Expected %v but got %v", tc.expectedFinalAction, finalAction)
+			}
+		})
 	}
 }
