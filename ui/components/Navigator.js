@@ -98,7 +98,6 @@ import {
 import { useRouter } from 'next/router';
 import { setAdapter } from '@/store/slices/adapter';
 
-
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
 
@@ -373,10 +372,10 @@ const Navigator_ = () => {
         style={{
           display: 'inline-block',
           transition: 'transform 0.2s ease',
-          padding:'0.8rem',
-          margin:'-0.5rem',
+          padding: '0.8rem',
+          margin: '-0.5rem',
           transform: hover ? 'scale(1.1)' : 'scale(1)',
-          borderRadius :'50%'
+          borderRadius: '50%',
         }}
       >
         {hover ? <HoverIconComp {...props} /> : <DefaultIcon {...props} />}
@@ -389,10 +388,13 @@ const Navigator_ = () => {
       id: 'doc',
       href: 'https://docs.meshery.io',
       title: 'Documentation',
-      icon: <HoverIcon
-              defaultIcon={DocumentIcon}
-              hoverIcon={DocumentColorIcon}
-              style={drawerIconsStyle} />,
+      icon: (
+        <HoverIcon
+          defaultIcon={DocumentIcon}
+          hoverIcon={DocumentColorIcon}
+          style={drawerIconsStyle}
+        />
+      ),
       external_icon: ExternalLinkIcon,
     },
     {
@@ -412,20 +414,16 @@ const Navigator_ = () => {
       id: 'forum',
       href: 'https://meshery.io/community#community-forums',
       title: 'Discussion Forum',
-      icon: <HoverIcon
-              defaultIcon={ChatIcon}
-              hoverIcon={ChatColorIcon}
-              style={drawerIconsStyle} />,
+      icon: <HoverIcon defaultIcon={ChatIcon} hoverIcon={ChatColorIcon} style={drawerIconsStyle} />,
       external_icon: ExternalLinkIcon,
     },
     {
       id: 'issues',
       href: 'https://github.com/meshery/meshery/issues/new/choose',
       title: 'Issues',
-      icon: <HoverIcon
-              defaultIcon={GithubIcon}
-              hoverIcon={GithubColorIcon}
-              style={drawerIconsStyle} />,
+      icon: (
+        <HoverIcon defaultIcon={GithubIcon} hoverIcon={GithubColorIcon} style={drawerIconsStyle} />
+      ),
       external_icon: ExternalLinkIcon,
     },
   ];
@@ -699,9 +697,7 @@ const Navigator_ = () => {
             title={name}
             placement="right"
             disableFocusListener={!drawerCollapsed}
-            disableTouchListener={!drawerCollapsed} 
-            onOpen={() => setTooltipOpen(true)}
-            onClose={() => setTooltipOpen(false)}
+            disableTouchListener={!drawerCollapsed}
           >
             <MainListIcon>
               <img
