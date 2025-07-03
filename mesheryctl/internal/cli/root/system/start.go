@@ -44,6 +44,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var (
@@ -457,7 +458,7 @@ func init() {
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
 }
 
-// Apply Meshery helm charts
+// Apply Meshery helm charts with intelligent install/upgrade logic
 func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, mesheryImageVersion string, dryRun bool, act meshkitkube.HelmChartAction, callbackURL, providerURL string) error {
 	// get value overrides to install the helm chart
 	overrideValues := utils.SetOverrideValues(currCtx, mesheryImageVersion, callbackURL, providerURL)
@@ -467,10 +468,37 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if mesheryImageVersion != "latest" {
 		chartVersion = mesheryImageVersion
 	}
-	action := "install"
-	if act == meshkitkube.UNINSTALL {
-		action = "uninstall"
+
+	// If action is INSTALL, check if releases already exist and use UPGRADE instead
+	// This fixes the idempotency issue where Meshery Operator remains after non-graceful shutdowns
+	finalAction := act
+	if act == meshkitkube.INSTALL {
+		// Check if Meshery Server release exists
+		serverExists, err := checkHelmReleaseExists(kubeClient, "meshery", utils.MesheryNamespace)
+		if err != nil {
+			utils.Log.Debug("Failed to check if Meshery Server release exists: ", err)
+		}
+
+		// Check if Meshery Operator release exists
+		operatorExists, err := checkHelmReleaseExists(kubeClient, "meshery-operator", utils.MesheryNamespace)
+		if err != nil {
+			utils.Log.Debug("Failed to check if Meshery Operator release exists: ", err)
+		}
+
+		// If either release exists, use UPGRADE instead of INSTALL for idempotency
+		if serverExists || operatorExists {
+			utils.Log.Info("Existing Meshery releases detected. Using upgrade instead of install for idempotency...")
+			finalAction = meshkitkube.UPGRADE
+		}
 	}
+
+	action := "install"
+	if finalAction == meshkitkube.UNINSTALL {
+		action = "uninstall"
+	} else if finalAction == meshkitkube.UPGRADE {
+		action = "upgrade"
+	}
+
 	errServer := kubeClient.ApplyHelmChart(meshkitkube.ApplyHelmChartConfig{
 		Namespace:       utils.MesheryNamespace,
 		ReleaseName:     "meshery",
@@ -481,7 +509,7 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 			Version:    chartVersion,
 		},
 		OverrideValues: overrideValues,
-		Action:         act,
+		Action:         finalAction,
 		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
@@ -495,7 +523,7 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 			Chart:      utils.HelmChartOperatorName,
 			Version:    chartVersion,
 		},
-		Action: act,
+		Action: finalAction,
 		// the helm chart will be downloaded to ~/.meshery/manifests if it doesn't exist
 		DownloadLocation: path.Join(utils.MesheryFolder, utils.ManifestsFolder),
 		DryRun:           dryRun,
@@ -509,5 +537,23 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if errOperator != nil {
 		return fmt.Errorf("%s success for Meshery Server, but failed for Meshery Operator: %s", action, errOperator.Error())
 	}
+
 	return nil
+}
+
+// checkHelmReleaseExists checks if a Helm release exists in the given namespace
+func checkHelmReleaseExists(kubeClient *meshkitkube.Client, releaseName, namespace string) (bool, error) {
+	// Use kubectl to check for Helm release secrets (Helm v3 stores releases as secrets)
+	// Helm releases are stored as secrets with labels helm.sh/chart and name
+	listOptions := metav1.ListOptions{
+		LabelSelector: fmt.Sprintf("owner=helm,name=%s", releaseName),
+	}
+
+	secrets, err := kubeClient.KubeClient.CoreV1().Secrets(namespace).List(context.Background(), listOptions)
+	if err != nil {
+		// If we can't check, assume it doesn't exist to be safe
+		return false, err
+	}
+
+	return len(secrets.Items) > 0, nil
 }
