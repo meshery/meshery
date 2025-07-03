@@ -5,16 +5,9 @@ const nextConfig = removeImports({
   compiler: {
     relay: require('./relay.config'),
   },
-  eslint: {
-    // Temporary workaround to ignore ESLint errors during build
-    ignoreDuringBuilds: true,
-  },
   typescript: {
-    // !! WARNING !!
-    // This allows production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARNING !!
-    // This ignores TYPE errors
+    // NOTE: This is a temporary setting to ignore TypeScript build errors during the migration process.
+    // Please remove this once migration is finished and type errors are resolved.
     ignoreBuildErrors: true,
   },
   exportPathMap: function () {

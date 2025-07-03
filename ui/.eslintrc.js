@@ -4,35 +4,28 @@ module.exports = {
     es6: true,
     node: true,
   },
-
   settings: {
     react: {
       version: require('./package.json').dependencies.react,
     },
   },
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaFeatures: { jsx: true },
+    ecmaVersion: 2018,
+    sourceType: 'module',
+    project: './tsconfig.json', // optional, for stricter TS rules
+  },
+  plugins: ['react', 'prettier', 'unused-imports', '@typescript-eslint'],
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',    // TypeScript rules
+    'plugin:@typescript-eslint/recommended',
     'next',
     'plugin:prettier/recommended',
   ],
-  globals: {
-    Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
-    globalThis: 'readonly',
-  },
-  parser: '@typescript-eslint/parser',          // TypeScript parser
-  parserOptions: {
-    ecmaFeatures: {
-      jsx: true,
-    },
-    ecmaVersion: 2018,
-    sourceType: 'module',
-    project: './tsconfig.json',                 // (optional, for stricter rules)
-  },
-  plugins: ['react', 'prettier', 'unused-imports', '@typescript-eslint'],
   rules: {
+    // Common rules for all files
     '@next/next/no-img-element': 'off',
     'react-hooks/rules-of-hooks': 'warn',
     'react-hooks/exhaustive-deps': 'off',
@@ -46,8 +39,7 @@ module.exports = {
     'react/jsx-uses-vars': [2],
     'react/jsx-no-undef': 'error',
     'no-console': 0,
-    'no-unused-vars': 'off',                    // Disable base rule
-    '@typescript-eslint/no-unused-vars': 'error',// Use TS rule for unused vars
+    'no-unused-vars': 'off', // handled per filetype
     'unused-imports/no-unused-imports': 'error',
     'react/jsx-key': 'warn',
     'no-dupe-keys': 'error',
@@ -60,4 +52,27 @@ module.exports = {
     'react/prop-types': 'off',
     'prettier/prettier': ['error', { endOfLine: 'lf' }],
   },
+  overrides: [
+    // TypeScript files
+    {
+      files: ['*.ts', '*.tsx'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'error',
+        '@typescript-eslint/no-require-imports': 'error',
+        '@typescript-eslint/ban-ts-comment': 'warn',
+      },
+    },
+    // JavaScript files
+    {
+      files: ['*.js', '*.jsx'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-require-imports': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+        'no-unused-vars': 'error',
+        'no-unused-expressions': 'off',
+        '@typescript-eslint/no-unused-expressions': 'off',
+      },
+    },
+  ],
 };

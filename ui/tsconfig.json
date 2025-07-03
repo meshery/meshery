@@ -9,7 +9,7 @@
     ],
     "allowJs": true,
     "checkJs": false,
-    "jsx": "preserve", // For React 17 JSX transform
+    "jsx": "react-jsx", // For React 17 JSX transform
     "strict": false,
     "esModuleInterop": true,
     "skipLibCheck": true,
