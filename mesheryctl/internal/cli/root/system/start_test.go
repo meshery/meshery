@@ -22,12 +22,6 @@ import (
 )
 
 func TestCheckHelmReleaseExists(t *testing.T) {
-	// Test that the function exists and has correct signature
-	var testFunc func(*meshkitkube.Client, string, string) (bool, error) = checkHelmReleaseExists
-	if testFunc == nil {
-		t.Error("checkHelmReleaseExists function should be available")
-	}
-
 	// Test with nil client - should return error
 	exists, err := checkHelmReleaseExists(nil, "meshery", "meshery")
 	if err == nil {
