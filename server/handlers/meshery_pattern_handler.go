@@ -147,14 +147,14 @@ func (h *Handler) handleProviderPatternGetError(rw http.ResponseWriter, eventBui
 		rw.WriteHeader(http.StatusBadRequest)
 		_, _ = rw.Write(body)
 		h.log.Error(&meshkitErr)
-		event = eventBuilder.WithSeverity(events.Error).WithDescription(description).WithMetadata(map[string]interface{}{
+		event = eventBuilder.WithSeverity(events.Warning).WithDescription(description).WithMetadata(map[string]interface{}{
 			"error": meshkitErr,
 		}).Build()
 
 	} else {
 		h.log.Error(ErrGetPattern(err))
 		http.Error(rw, err.Error(), http.StatusBadRequest)
-		event = eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+		event = eventBuilder.WithSeverity(events.Warning).WithMetadata(map[string]interface{}{
 			"error": ErrGetPattern(err),
 		}).WithDescription(ErrGetPattern(err).Error()).Build()
 	}
