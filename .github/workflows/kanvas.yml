@@ -1,7 +1,7 @@
 name: Meshery Snapshot Service
 on: # rebuild any PRs and main branch changes
-  pull_request_target:
-    types: [opened, synchronize, reopened]
+  # pull_request_target:
+  #   types: [opened, synchronize, reopened]
   
   workflow_call:
     inputs:
@@ -24,6 +24,9 @@ permissions:
 jobs:
   KanvasScreenshot:
     runs-on: ubuntu-24.04
+    # Temporarily skip due to upstream buffer allocation bug in Kanvas-Snapshot
+    # See: KANVAS_BUG_REPORT.md for details
+    if: false
     outputs:
       resource_url: ${{ steps.test_result.outputs.resource_url }}
     steps:
