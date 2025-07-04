@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Enabling Extensions for Local Development
+title: Troubleshooting Extensions for Local Development
 permalink: guides/troubleshooting/enabling-extensions-locally
 type: guides
 category: troubleshooting
 language: en
-abstract: A guide on how to build and enable Meshery extensions for use in a local development environment.
+abstract: A guide to troubleshooting Meshery extensions in a local development environment.
 list: include
 ---
 
@@ -13,42 +13,29 @@ If you've set up your local Meshery development environment and an extension isn
 
 Meshery has different types of extensions that integrate in different ways. This means their failure modes and troubleshooting methods are also very different.
 
-## Identifying the Extension's Integration Type
+## Step 1: Locate the Extension's Repository
 
-Before diving into troubleshooting, you need to identify how your extension connects to Meshery. Here's how to determine its type:
+Most Meshery extensions are open source and their repositories can be found in the [meshery-extensions GitHub organization](https://github.com/orgs/meshery-extensions/repositories?type=all). Your first step is to find the specific repository for the extension you are troubleshooting.
 
-### Integration Method: Tightly-Coupled vs. Loosely-Coupled
+If you can find the repository and it is public, proceed with the steps for [Loosely-Coupled Extensions](#loosely-coupled-extensions).
 
-- **Loosely-Coupled Extensions:**
-  - Communicate with Meshery Server through standard APIs like gRPC.
-  - Example: [Meshery Adapters](https://docs.meshery.io/concepts/architecture/adapters) like the [meshery-istio](https://github.com/meshery-extensions/meshery-istio) adapter.
+If you cannot find the repository or it is private, the issue is likely related to a dependency mismatch, a common challenge with [Tightly-Coupled Extensions](#tightly-coupled-extensions).
 
-- **Tightly-Coupled Plugins:**
-  - Rely on shared software libraries and exact package versions with the Meshery Server.
-  - Are highly sensitive to changes in their environment, especially to dependency versions.
-  - Example: [Meshery Kanvas](https://kanvas.new/), a visual designer for Kubernetes and cloud native applications. 
+## Step 2: Follow the Troubleshooting Path
 
+### Loosely-Coupled Extensions
 
-### Source Code Availability: Open vs. Closed
-
-- **Open-source components** have publicly available source code.
-  - You'll find these in public repositories under the [meshery-extensions](https://github.com/orgs/meshery-extensions/repositories?type=all) GitHub organization.
-- **Closed-source components** have restricted access to their source code.
-  - These repositories are private and require an invitation to access.
-
-> Learn about which repositories [require program participation](https://layer5.io/community/handbook/repository-overview).
-
-## Troubleshooting by Extension Type
-
-### Open-Source and Loosely-Coupled Extensions
-
-For open-source extensions like Meshery Adapters, you can use standard technical debugging:
-
+These extensions communicate with Meshery Server through standard APIs. Issues are typically easier to diagnose.
+- Example: [Meshery Adapters](/concepts/architecture/adapters) like the [meshery-istio](https://github.com/meshery-extensions/meshery-istio) adapter.
 - **Common Issues**: Networking problems, port conflicts, or component-specific errors.
-- **Debugging Steps**: Use standard tools like `docker ps` and `docker logs` to identify the cause of the issue.
+- **Debugging Steps**: Use standard tools like `docker ps` to check if the container is running and `docker logs <container-id>` to inspect its logs for errors.
 
-### Closed-Source and Tightly-Coupled Extensions
-{% include alert.html type="info" title="Closed-Source Issues: No Code Fix" content="Problems with these extensions aren't typical code bugs. The core issue is lack of source code access, which prevents standard debugging." %}
+### Tightly-Coupled Extensions
+
+These extensions are highly sensitive to their environment because they require exact package versions to match the Meshery Server.
+- Example: [Meshery Kanvas](https://kanvas.new/), a visual designer for Kubernetes and cloud native applications.
+
+{% include alert.html type="info" title="Resolving Dependency Mismatches" content="Problems with tightly-coupled extensions are often not traditional code bugs but rather version conflicts between the extension and your local Meshery environment." %}
 
 #### Why you can't fix this locally
 
@@ -65,11 +52,12 @@ Tightly-coupled plugins require **exact package matches** between the extension 
 
 > Without source access, these dependency issues are practically unresolvable.
 
-#### How to move forward
+#### Next Steps
 
-If you want to work with extensions like Kanvas:
-1. Engage with the community 
-2. Contribute consistently to Meshery's open-source areas
-3. Gain access through demonstrated commitment
+Given that you cannot build the extension from source, a solution typically requires seeking assistance.
 
-> Already have Kanvas permissions? See this [forum guide](https://discuss.layer5.io/t/unable-to-setup-kanvas-locally/6431) for specific fixes.
+While you can attempt to experiment by manually testing different versions of packages from the [meshery-extensions-packages](https://github.com/layer5labs/meshery-extensions-packages) repository, this trial-and-error method is not guaranteed to work.
+
+The most reliable path forward is to:
+- **Seek assistance:** Ask for guidance in the [Layer5 community](/project/community). Please specify which extension you are trying to use and your Meshery version.
+- **Check for requirements:** To check access requirements or find maintainers, consult the [repository overview](https://layer5.io/community/handbook/repository-overview).
