@@ -24,10 +24,10 @@ var OrgCmd = &cobra.Command{
 Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations`,
 	Example: `
 // Number of  registered orgs
-mesheryctl organization --count 
+mesheryctl organization --count
 
 // List registerd orgs
-mesheryctl organization list	
+mesheryctl organization list
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ = cmd.Flags().GetBool("count")
