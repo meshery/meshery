@@ -65,7 +65,7 @@ jobs:
           path: action
           repository: layer5labs/kanvas-snapshot
       - id: test_result
-        uses: layer5labs/MeshMap-Snapshot@v0.0.4
+        uses: layer5labs/Kanvas-Snapshot@v0.2.37
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
           providerToken: ${{ secrets.PROVIDER_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
@@ -100,7 +100,7 @@ jobs:
           path: action
           repository: layer5labs/kanvas-snapshot
       - id: test_result
-        uses: layer5labs/MeshMap-Snapshot@v0.0.4
+        uses: layer5labs/Kanvas-Snapshot@v0.2.37
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
           providerToken: ${{ secrets.PROVIDER_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
@@ -204,7 +204,7 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 ```
  - id: test_result
-        uses: layer5labs/MeshMap-Snapshot@v0.0.5 # <-- Update the version to latest from the Kanvas-Snapshot release page
+        uses: layer5labs/Kanvas-Snapshot@v0.2.37 # <-- Update the version to latest from the Kanvas-Snapshot release page
         with:
         ...
 ```
