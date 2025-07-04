@@ -4,9 +4,9 @@ package meshes;
 
 option go_package = "github.com/meshery/meshery/server/meshes;meshes";
 
-service MeshService {
-    rpc MeshName(MeshNameRequest) returns (MeshNameResponse) {}
-    rpc MeshVersions(MeshVersionsRequest) returns (MeshVersionsResponse) {}
+service AdapterService {
+    rpc AdapterName(AdapterNameRequest) returns (AdapterNameResponse) {}
+    rpc AdapterVersions(AdapterVersionsRequest) returns (AdapterVersionsResponse) {}
     rpc ApplyOperation(ApplyRuleRequest) returns(ApplyRuleResponse) {}
     rpc SupportedOperations(SupportedOperationsRequest) returns (SupportedOperationsResponse) {}
     rpc StreamEvents(EventsRequest) returns (stream EventsResponse) {}
@@ -18,9 +18,9 @@ service MeshService {
 
 
 
-message MeshNameRequest{}
+message AdapterNameRequest{}
 
-message MeshNameResponse {
+message AdapterNameResponse {
     string name = 1;
 }
 
@@ -93,9 +93,9 @@ message ProvisionResponse {
     string message = 1;
 }
 
-message MeshVersionsRequest {}
+message AdapterVersionsRequest {}
 
-message MeshVersionsResponse {
+message AdapterVersionsResponse {
  repeated string version = 1;
 }
 
