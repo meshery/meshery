@@ -30,7 +30,10 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-relationship-count: 2
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between Database and NamespacesEventHub(azure-event-hub)"
+relationship-count: 3
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

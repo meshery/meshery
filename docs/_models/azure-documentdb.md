@@ -66,7 +66,19 @@ components:
   colorIcon: assets/img/integrations/azure-documentdb/components/sql-role-assignment/icons/color/sql-role-assignment-color.svg
   whiteIcon: assets/img/integrations/azure-documentdb/components/sql-role-assignment/icons/white/sql-role-assignment-white.svg
   description: 
-components-count: 14
+- name: firewall-rule
+  colorIcon: assets/img/integrations/azure-documentdb/components/firewall-rule/icons/color/firewall-rule-color.svg
+  whiteIcon: assets/img/integrations/azure-documentdb/components/firewall-rule/icons/white/firewall-rule-white.svg
+  description: 
+- name: mongo-cluster
+  colorIcon: assets/img/integrations/azure-documentdb/components/mongo-cluster/icons/color/mongo-cluster-color.svg
+  whiteIcon: assets/img/integrations/azure-documentdb/components/mongo-cluster/icons/white/mongo-cluster-white.svg
+  description: 
+- name: mongodb-role-definition
+  colorIcon: assets/img/integrations/azure-documentdb/components/mongodb-role-definition/icons/color/mongodb-role-definition-color.svg
+  whiteIcon: assets/img/integrations/azure-documentdb/components/mongodb-role-definition/icons/white/mongodb-role-definition-white.svg
+  description: 
+components-count: 17
 relationships: 
 - type: "Parent"
   kind: "Hierarchical"

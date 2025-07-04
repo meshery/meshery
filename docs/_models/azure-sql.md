@@ -170,7 +170,13 @@ relationships:
 - type: "Parent"
   kind: "Hierarchical"
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
-relationship-count: 22
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between ServersVirtualNetworkRule and VirtualNetworksSubnet(azure-network)"
+- type: "Non Binding"
+  kind: "Edge"
+  description: "An edge relationship between ServersFailoverGroup and Server(azure-sql)"
+relationship-count: 24
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

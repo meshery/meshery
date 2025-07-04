@@ -296,16 +296,15 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 
 func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName string) {
 	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
-		header := []string{"Component", "Category", "Version"}
+		header := []string{"Component", "Version"}
 		rows := [][]string{}
 
 		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
 			displayName, _ := comp["DisplayName"].(string)
 			modelDisplayName, _ := comp["Model"].(string)
-			category, _ := comp["Category"].(string)
 			modelVersion, _ := comp["Version"].(string)
 			if modelDisplayName == modelName {
-				rows = append(rows, []string{displayName, category, modelVersion})
+				rows = append(rows, []string{displayName, modelVersion})
 
 			}
 		}

@@ -36,7 +36,7 @@ relationships:
   description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
 - type: "Non Binding"
   kind: "Edge"
-  description: "An edge relationship between EventSubscription and StorageAccount(azure-storage)"
+  description: "An edge relationship between FlexibleServerAdministrator and UserAssignedIdentity(azure-managed-identity)"
 relationship-count: 3
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
