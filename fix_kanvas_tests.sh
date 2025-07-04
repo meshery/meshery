@@ -35,17 +35,20 @@ fi
 
 # 3. Display potential fixes
 echo "Potential fixes for buffer allocation errors:"
-echo "1. Update Kanvas-Snapshot to latest version (already done: v0.2.37)"
-echo "2. Increase Node.js heap size: NODE_OPTIONS='--max-old-space-size=8192'"
+echo "1. Update Kanvas-Snapshot to latest version (done: v0.2.39)"
+echo "2. Increase Node.js heap size: NODE_OPTIONS='--max-old-space-size=8192' (added to workflow)"
 echo "3. Reduce screenshot resolution or canvas size"
 echo "4. Check for memory leaks in browser automation"
 echo "5. Use headless browser with smaller viewport"
+echo "6. Add retry mechanism for failed screenshot operations"
 echo ""
 
 echo "The error 'size is invalid. Received -6667200' suggests:"
 echo "- Image crop dimensions are calculated incorrectly"
-echo "- Possible negative width/height in crop operation"
-echo "- Canvas size calculation overflow"
+echo "- Possible negative width/height in crop operation (width * height = negative)"
+echo "- Canvas size calculation overflow or underflow"
+echo "- Buffer allocation arithmetic error in image processing library"
+echo "- Potential issue: 5760x2823 screenshot size might be causing calculation issues"
 echo ""
 
 echo "Next steps:"

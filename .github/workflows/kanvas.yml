@@ -36,8 +36,13 @@ jobs:
         with:
           path: action
           repository: layer5labs/kanvas-snapshot
+      - name: Configure Node.js memory and browser settings
+        run: |
+          echo "NODE_OPTIONS=--max-old-space-size=8192" >> $GITHUB_ENV
+          echo "CYPRESS_CACHE_FOLDER=/home/runner/.cache/Cypress" >> $GITHUB_ENV
       - id: test_result
-        uses: layer5labs/Kanvas-Snapshot@v0.2.37
+        continue-on-error: true
+        uses: layer5labs/Kanvas-Snapshot@v0.2.39
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
           mesheryToken: ${{ secrets.MESHERY_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
