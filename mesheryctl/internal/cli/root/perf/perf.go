@@ -33,10 +33,16 @@ var (
 // PerfCmd represents the Performance Management CLI command
 var PerfCmd = &cobra.Command{
 	Use:   "perf",
-	Short: "Performance Management",
-	Long: `Performance Management & Benchmarking.
+	Short: "Performance Management & Benchmarking",
+	Long: `Performance Management & Benchmarking with Meshery Nighthawk adapter.
 Find more information at: https://docs.meshery.io/reference/mesheryctl#command-reference`,
 	Example: `
+// Start meshery-nighthawk adapter:
+mesheryctl perf start
+
+// Stop meshery-nighthawk adapter:
+mesheryctl perf stop
+
 // Run performance test:
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 	
@@ -56,7 +62,7 @@ mesheryctl perf result -o yaml
 			return cmd.Help()
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			availableSubCmds := []string{"apply", "profile", "result"}
+			availableSubCmds := []string{"apply", "profile", "result", "start", "stop"}
 
 			suggestedCmd := utils.FindClosestArg(args[0], availableSubCmds)
 			if suggestedCmd != "" && suggestedCmd[0] == args[0][0] {
@@ -73,6 +79,6 @@ func init() {
 	PerfCmd.PersistentFlags().StringVarP(&outputFormatFlag, "output-format", "o", "", "(optional) format to display in [json|yaml]")
 	PerfCmd.PersistentFlags().BoolVarP(&utils.SilentFlag, "yes", "y", false, "(optional) assume yes for user interactive prompts.")
 
-	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd}
+	availableSubcommands = []*cobra.Command{profileCmd, resultCmd, applyCmd, startCmd, stopCmd}
 	PerfCmd.AddCommand(availableSubcommands...)
 }
