@@ -16,6 +16,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 func init() {
@@ -151,7 +152,7 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -190,7 +191,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), statusCode)
@@ -239,7 +240,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -276,7 +277,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := provider.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := provider.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return

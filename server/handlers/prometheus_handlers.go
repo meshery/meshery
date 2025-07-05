@@ -17,6 +17,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 func init() {
@@ -297,7 +298,7 @@ func (h *Handler) PrometheusPingHandler(w http.ResponseWriter, req *http.Request
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return

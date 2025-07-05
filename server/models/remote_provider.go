@@ -4148,6 +4148,7 @@ func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, tok
 	if err != nil {
 		return nil, ErrDataRead(err, "Save Connection")
 	}
+	l.Log.Debugf("RemoteProvider::SaveConnection: bdr value is [%s]", string(bdr))
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusCreated {
 		connectionPage := &connections.ConnectionPage{}
