@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -44,9 +45,9 @@ mesheryctl model export [model-name] --discard-components --discard-relationship
 mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 `,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model export [model-name ]\nRun 'mesheryctl model export --help' to see detailed help message"
+		const errMsg = "\n\nUsage: mesheryctl model export [model-name ]\nRun 'mesheryctl model export --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
+			return utils.ErrInvalidArgument(errors.New("Please provide a model name" + errMsg))
 		}
 		return nil
 	},
@@ -90,6 +91,10 @@ func export(modelName string, url string, output *outputDetail) error {
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
+		// Extract useful error message if response is server error
+		if strings.Contains(err.Error(), "Server emitted an error: ") {
+			return errors.New(strings.Split(err.Error(), "Server emitted an error: ")[1])
+		}
 		return err
 	}
 
