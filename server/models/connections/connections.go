@@ -2,15 +2,11 @@ package connections
 
 import (
 	"context"
-	"database/sql"
-	"time"
 
 	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshery/server/helpers/utils"
-	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/logger"
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
@@ -68,24 +64,8 @@ type GrafanaCred struct {
 	APIKeyOrBasicAuth string `json:"secret,omitempty"`
 }
 
-type Connection = schemasConnection.Connection
-
 // swagger:response Connection
-type __ConnectionOld struct {
-	ID           uuid.UUID                      `json:"id,omitempty" db:"id"`
-	Name         string                         `json:"name,omitempty" db:"name"`
-	CredentialID uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
-	Type         string                         `json:"type,omitempty" db:"type"`
-	SubType      string                         `json:"sub_type,omitempty" db:"sub_type"`
-	Kind         string                         `json:"kind,omitempty" db:"kind"`
-	Metadata     utils.JSONMap                  `json:"metadata,omitempty" db:"metadata" gorm:"type:JSONB"`
-	Status       ConnectionStatus               `json:"status,omitempty" db:"status"`
-	UserID       *uuid.UUID                     `json:"user_id,omitempty" db:"user_id"`
-	CreatedAt    time.Time                      `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt    time.Time                      `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt    sql.NullTime                   `json:"deleted_at,omitempty" db:"deleted_at"`
-	Environments []environments.EnvironmentData `json:"environments,omitempty" db:"environments" gorm:"-"`
-}
+type Connection = schemasConnection.Connection
 
 var validConnectionStatusToManage = []ConnectionStatus{
 	DISCOVERED, REGISTERED, CONNECTED,
@@ -106,12 +86,7 @@ func ShouldConnectionBeManaged(c Connection) bool {
 }
 
 // swagger:response ConnectionPage
-type ConnectionPage struct {
-	Connections []*Connection `json:"connections"`
-	TotalCount  int           `json:"total_count"`
-	Page        int           `json:"page"`
-	PageSize    int           `json:"page_size"`
-}
+type ConnectionPage = schemasConnection.ConnectionPage
 
 type ConnectionStatusInfo struct {
 	Status string `json:"status" db:"status"`
