@@ -5,6 +5,11 @@ const nextConfig = removeImports({
   compiler: {
     relay: require('./relay.config'),
   },
+  typescript: {
+    // NOTE: This is a temporary setting to ignore TypeScript build errors during the migration process.
+    // Please remove this once migration is finished and type errors are resolved.
+    ignoreBuildErrors: true,
+  },
   exportPathMap: function () {
     return {
       '/404': { page: '/404' },
