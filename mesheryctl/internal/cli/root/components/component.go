@@ -147,7 +147,7 @@ func listComponents(cmd *cobra.Command, apiPath string) error {
 	modelData := display.DisplayDataAsync{
 		UrlPath:          componentApiPath,
 		DataType:         "component",
-		Header:           []string{"Model", "Category", "Version"},
+		Header:           []string{"Model", "Version"},
 		Page:             page,
 		IsPage:           cmd.Flags().Changed("page"),
 		DisplayCountOnly: cmd.Flags().Changed("count"),
