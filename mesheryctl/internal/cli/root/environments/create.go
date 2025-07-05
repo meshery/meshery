@@ -73,7 +73,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		payload := &environments.EnvironmentPayload{
 			Name:        name,
 			Description: description,
-			OrgId:       orgID, // TODO make OrgId in schema OrgID
+			OrgId:       orgID, // TODO update OrgId in schema to OrgID
 		}
 
 		payloadBytes, err := json.Marshal(payload)
@@ -92,7 +92,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		}
 
 		if resp.StatusCode == http.StatusOK {
-			// TODO make OrgId in schema OrgID
+			// TODO update OrgId in schema to OrgID
 			utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgId))
 			return nil
 		}
