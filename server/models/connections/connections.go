@@ -11,6 +11,7 @@ import (
 	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
+// swagger:response ConnectionStatus
 type ConnectionStatus = schemasConnection.ConnectionStatus
 
 type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
