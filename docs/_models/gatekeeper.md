@@ -66,7 +66,15 @@ components:
   colorIcon: assets/img/integrations/gatekeeper/components/config-pod-status/icons/color/config-pod-status-color.svg
   whiteIcon: assets/img/integrations/gatekeeper/components/config-pod-status/icons/white/config-pod-status-white.svg
   description: 
-components-count: 14
+- name: connection
+  colorIcon: assets/img/integrations/gatekeeper/components/connection/icons/color/connection-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/connection/icons/white/connection-white.svg
+  description: 
+- name: connection-pod-status
+  colorIcon: assets/img/integrations/gatekeeper/components/connection-pod-status/icons/color/connection-pod-status-color.svg
+  whiteIcon: assets/img/integrations/gatekeeper/components/connection-pod-status/icons/white/connection-pod-status-white.svg
+  description: 
+components-count: 16
 relationships: 
 relationship-count: 0
 featureList: [
