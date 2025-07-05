@@ -1086,13 +1086,13 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	connection := &connections.Connection{
 		ID:           id,
 		Name:         conn.Name,
-		CredentialID: uuid.Nil,
+		CredentialID: &uuid.Nil, // compatibilitiy
 		Type:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
 		Metadata:     conn.MetaData,
 		Status:       conn.Status,
-		UserID:       uuid.Nil,
+		UserID:       &uuid.Nil,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
 	}
@@ -1158,7 +1158,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *con
 		Status:       conn.Status,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-		CredentialID: *conn.CredentialID,
+		CredentialID: conn.CredentialID,
 	}
 	return l.UpdateConnection(req, &connection)
 }
