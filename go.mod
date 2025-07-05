@@ -8,9 +8,9 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // The following replaces are used for local development
 
-//replace github.com/meshery/schemas v0.8.20 => ../schemas
+//replace github.com/meshery/schemas v0.8.27 => ../schemas
 
-//replace github.com/meshery/meshkit v0.8.31 => ../meshkit
+//replace github.com/meshery/meshkit v0.8.33 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.1
@@ -47,7 +47,7 @@ require (
 	github.com/manifoldco/promptui v0.9.0
 	github.com/meshery/meshkit v0.8.33
 	github.com/meshery/meshsync v0.8.15
-	github.com/meshery/schemas v0.8.22
+	github.com/meshery/schemas v0.8.27
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -71,7 +71,7 @@ require (
 	google.golang.org/protobuf v1.36.6
 	gopkg.in/yaml.v2 v2.4.0
 	gopkg.in/yaml.v3 v3.0.1
-	gorm.io/gorm v1.25.12
+	gorm.io/gorm v1.30.0
 	k8s.io/api v0.32.3
 	k8s.io/apiextensions-apiserver v0.32.3
 	k8s.io/apimachinery v0.32.3
