@@ -9,6 +9,7 @@ import {
   CircularProgress,
   WorkspaceIcon,
   useMediaQuery,
+  useTheme,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
@@ -39,7 +40,7 @@ const WorkspaceIconWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
-function WorkspaceSwitcher({ open }) {
+function WorkspaceSwitcher({ open, fromMobileView }) {
   const { selectedOrganization } = useGetSelectedOrganization();
   const {
     selectedWorkspace,
@@ -115,7 +116,16 @@ function WorkspaceSwitcher({ open }) {
                           },
                         }}
                         renderValue={() => {
-                          return <span>{selectedWorkspace?.name || ''}</span>;
+                          const theme = useTheme();
+                          return (
+                            <span
+                              style={{
+                                color: fromMobileView ? theme.palette.text.default : undefined,
+                              }}
+                            >
+                              {selectedWorkspace?.name || ''}
+                            </span>
+                          );
                         }}
                         MenuProps={{
                           anchorOrigin: {
