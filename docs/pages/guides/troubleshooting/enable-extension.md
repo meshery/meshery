@@ -27,15 +27,15 @@ If you cannot find the repository or it is private, the issue is likely related 
 
 These extensions communicate with Meshery Server through standard APIs. Issues are typically easier to diagnose.
 - Example: [Meshery Adapters](/concepts/architecture/adapters) like the [meshery-istio](https://github.com/meshery-extensions/meshery-istio) adapter.
-- **Common Issues**: Networking problems, port conflicts, or component-specific errors.
-- **Debugging Steps**: Use standard tools like `docker ps` to check if the container is running and `docker logs <container-id>` to inspect its logs for errors.
+- Common Issues: Networking problems, port conflicts, or component-specific errors.
+- Debugging Steps: Use standard tools like `docker ps` to check if the container is running and `docker logs <container-id>` to inspect its logs for errors.
 
 ### Tightly-Coupled Extensions
 
 These extensions are highly sensitive to their environment because they require exact package versions to match the Meshery Server.
 - Example: [Meshery Kanvas](https://kanvas.new/), a visual designer for Kubernetes and cloud native applications.
 
-{% include alert.html type="info" title="Resolving Dependency Mismatches" content="Problems with tightly-coupled extensions are often not traditional code bugs but rather version conflicts between the extension and your local Meshery environment." %}
+{% include alert.html type="info" title="Resolving Dependency Mismatches" content="Problems with tightly-coupled extensions are often **not traditional code bugs** but rather version conflicts between the extension and your local Meshery environment." %}
 
 #### Why you can't fix this locally
 
@@ -59,5 +59,5 @@ Given that you cannot build the extension from source, a solution typically requ
 While you can attempt to experiment by manually testing different versions of packages from the [meshery-extensions-packages](https://github.com/layer5labs/meshery-extensions-packages) repository, this trial-and-error method is not guaranteed to work.
 
 The most reliable path forward is to:
-- **Seek assistance:** Ask for guidance in the [Layer5 community](/project/community). Please specify which extension you are trying to use and your Meshery version.
+- **Seek assistance:** Ask for guidance in the [Layer5 community](/project/community).
 - **Check for requirements:** To check access requirements or find maintainers, consult the [repository overview](https://layer5.io/community/handbook/repository-overview).
