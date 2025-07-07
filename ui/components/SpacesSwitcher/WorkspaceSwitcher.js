@@ -13,7 +13,6 @@ import {
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
 import { iconMedium } from 'css/icons.styles';
-import WorkspaceModal from './WorkspaceModal';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import {
   useGetSelectedOrganization,
@@ -53,12 +52,7 @@ function WorkspaceSwitcher({ open }) {
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
 
-  const {
-    open: workspaceModal,
-    setSelectedWorkspace,
-    openModal: openWorkspaceModal,
-    closeModal: closeWorkspaceModal,
-  } = useContext(WorkspaceModalContext);
+  const { setSelectedWorkspace, openModal: openWorkspaceModal } = useContext(WorkspaceModalContext);
 
   // useEffect(() => {
   //   if (selectedWorkspace?.id) {
@@ -160,7 +154,6 @@ function WorkspaceSwitcher({ open }) {
           </FormControl>
         </Grid2>
       )}
-      <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
     </NoSsr>
   );
 }
