@@ -24,7 +24,7 @@ var OrgCmd = &cobra.Command{
 Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations`,
 	Example: `
 // Number of  registered orgs
-mesheryctl organization --count
+mesheryctl exp organization --count
 
 // List registerd orgs
 mesheryctl organization list
