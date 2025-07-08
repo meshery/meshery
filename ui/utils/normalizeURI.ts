@@ -8,7 +8,7 @@
  * @param {string} uri
  * @returns {string}
  */
-export default function normalizeURI(uri) {
+export default function normalizeURI(uri: string): string {
   if (!uri.startsWith('/')) return '/' + uri;
   return uri;
 }
