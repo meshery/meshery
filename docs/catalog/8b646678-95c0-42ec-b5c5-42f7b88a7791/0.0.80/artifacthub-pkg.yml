@@ -1,0 +1,24 @@
+version: 0.0.80
+name: fluentbit-log-pipeline
+displayName: fluentbit-log-pipeline
+createdAt: "2025-07-07T05:22:00Z"
+description: A Kubernetes-native log processing pipeline using the Fluent Bit Operator. This design routes logs from an application pod through Fluent Bit components—input, filter, parser, and output—to a logging backend. The operator-driven architecture demonstrates observability and clean infrastructure configuration using CRDs.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8b646678-95c0-42ec-b5c5-42f7b88a7791/0.0.80/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "This design was created using Meshery Playground, so it hasn’t been deployed or tested on a live Kubernetes cluster yet. To actually run this in a cluster, you’ll need the Fluent Bit Operator installed and running — since the components used (like input, filter, parser, etc.) are CRDs managed by the operator \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: ccb3c48a-5bb7-484e-899e-6992fcfa2ac9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8b646678-95c0-42ec-b5c5-42f7b88a7791-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8b646678-95c0-42ec-b5c5-42f7b88a7791-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

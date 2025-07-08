@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: July 4th 2025, 7:09:04 am
+- Testing started at: July 8th 2025, 2:06:15 am
 
 **📦 Test Result Summary**
 
-- ✅ 79 passed
+- ✅ 76 passed
 - ❌ 0 failed
-- ⚠️ 1 flaked
+- ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 53 seconds_
+⌛ _Duration: 5 minutes and 22 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,7 +21,6 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Import a Model via CSV Import |  | ⚠️ |
 
 </div>
 </details>
