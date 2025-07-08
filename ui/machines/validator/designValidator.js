@@ -304,6 +304,9 @@ export const selectValidator = (state, validator) => state.context[validator];
 
 const useSelectValidator = (validationMachine, validatorName, selector) => {
   const validator = useSelector(validationMachine, (s) => selectValidator(s, validatorName));
+  if (!validator) {
+    return;
+  }
   const data = useSelector(validator, selector);
   return data;
 };
@@ -315,9 +318,11 @@ export const useDryRunValidationResults = (validationMachine) =>
   useSelectValidator(validationMachine, 'dryRunValidator', selectValidationResults);
 
 export const selectComponentValidationResults = (state, componentId) => {
-  const designValidationResults = selectValidationResults(
-    selectValidator(state, 'schemaValidator').getSnapshot(),
-  );
+  const schemaValidatorActor = selectValidator(state, 'schemaValidator');
+  if (!schemaValidatorActor) {
+    return null;
+  }
+  const designValidationResults = selectValidationResults(schemaValidatorActor.getSnapshot());
   if (!designValidationResults) return null;
   const componentResults = Object.values(designValidationResults).find(
     (result) => result?.component?.traits?.meshmap?.id === componentId,
@@ -326,14 +331,19 @@ export const selectComponentValidationResults = (state, componentId) => {
 };
 
 export const selectComponentDryRunResults = (state, componentName) => {
-  const designValidationResults = selectValidationResults(
-    selectValidator(state, 'dryRunValidator').getSnapshot(),
-  );
+  const dryRunValidatorActor = selectValidator(state, 'dryRunValidator');
+  if (!dryRunValidatorActor) {
+    return;
+  }
+  const designValidationResults = selectValidationResults(dryRunValidatorActor.getSnapshot());
   return designValidationResults?.find((result) => result.compName === componentName);
 };
 
 export const useIsValidatingDesign = (validationMachine, validatorName) => {
   const validator = useSelector(validationMachine, (s) => selectValidator(s, validatorName));
+  if (!validator) {
+    return false;
+  }
   const isValidating = useSelector(validator, selectIsValidating);
   return isValidating;
 };
