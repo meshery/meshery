@@ -158,7 +158,7 @@ const DesignViewListItem = ({
           <Grid2
             size={{ xl: 2 }}
             sx={{
-              flexBasis: showWorkspaceName ? '30px' : '45px',
+              flexBasis: showWorkspaceName ? '30px' : '35px',
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
