@@ -76,6 +76,9 @@ mesheryctl system start -p docker
 
 // Specify Provider to use.
 mesheryctl system start --provider Meshery
+
+// (optional) skip installation of CRDs for restricted clusters.
+mesheryctl system start --skip-crds
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -452,10 +455,10 @@ func start() error {
 
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
-	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
-	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
-	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
-	startCmd.Flags().BoolVarP(&skipCRDsFlag, "skip-crds", "", false, "Skip installation of Meshery's Custom Resource Definitions.") //skipCRDs logic
+	startCmd.PersistentFlags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
+	startCmd.PersistentFlags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
+	startCmd.PersistentFlags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.PersistentFlags().BoolVarP(&skipCRDsFlag, "skip-crds", "", false, "Skip installation of Meshery's Custom Resource Definitions.") //skipCRDs logic
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
 }
 
