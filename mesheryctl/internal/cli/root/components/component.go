@@ -131,11 +131,7 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componentVersion == "" {
 			componentVersion = "N/A"
 		}
-		componenttKind := component.Component.Kind
-		if componenttKind == "" {
-			componenttKind = "N/A"
-		}
-		rows = append(rows, []string{modelName, componenttKind, componentVersion})
+		rows = append(rows, []string{modelName, componentVersion})
 	}
 
 	return rows, int64(componentsResponse.Count)
