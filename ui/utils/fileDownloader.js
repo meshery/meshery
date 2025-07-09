@@ -11,7 +11,7 @@ const DOWNLOAD_PATH = {
 };
 
 export const downloadFileFromUrl = (url, name) => {
-  const linkElement = document.createElement('a');
+  let linkElement = document.createElement('a');
   linkElement.setAttribute('href', url);
   linkElement.setAttribute('download', name);
   linkElement.click();
