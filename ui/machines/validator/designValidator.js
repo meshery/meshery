@@ -300,15 +300,30 @@ export const designValidationMachine = createMachine({
   },
 });
 
-export const selectValidator = (state, validator) => state.context[validator];
+export const selectValidator = (state, validator) => {
+  try {
+    return state.context?.[validator] || null;
+  } catch (error) {
+    console.warn('Error accessing validator from state context:', error);
+    return null;
+  }
+};
 
 const useSelectValidator = (validationMachine, validatorName, selector) => {
   const validator = useSelector(validationMachine, (s) => selectValidator(s, validatorName));
-  if (!validator) {
-    return;
-  }
-  const data = useSelector(validator, selector);
-  return data;
+  const data = useSelector(validator, (state) => {
+    // If validator is null/undefined, return null instead of crashing
+    if (!validator || !state) return null;
+    try {
+      return selector(state);
+    } catch (error) {
+      console.warn('Error calling selector on validator state:', error);
+      return null;
+    }
+  });
+  
+  // Return data only if validator exists
+  return validator ? data : null;
 };
 
 export const useDesignSchemaValidationResults = (validationMachine) =>
@@ -322,30 +337,50 @@ export const selectComponentValidationResults = (state, componentId) => {
   if (!schemaValidatorActor) {
     return null;
   }
-  const designValidationResults = selectValidationResults(schemaValidatorActor.getSnapshot());
-  if (!designValidationResults) return null;
-  const componentResults = Object.values(designValidationResults).find(
-    (result) => result?.component?.traits?.meshmap?.id === componentId,
-  );
-  return componentResults;
+  
+  try {
+    const designValidationResults = selectValidationResults(schemaValidatorActor.getSnapshot());
+    if (!designValidationResults) return null;
+    const componentResults = Object.values(designValidationResults).find(
+      (result) => result?.component?.traits?.meshmap?.id === componentId,
+    );
+    return componentResults;
+  } catch (error) {
+    console.warn('Error getting component validation results:', error);
+    return null;
+  }
 };
 
 export const selectComponentDryRunResults = (state, componentName) => {
   const dryRunValidatorActor = selectValidator(state, 'dryRunValidator');
   if (!dryRunValidatorActor) {
-    return;
+    return null;
   }
-  const designValidationResults = selectValidationResults(dryRunValidatorActor.getSnapshot());
-  return designValidationResults?.find((result) => result.compName === componentName);
+  
+  try {
+    const designValidationResults = selectValidationResults(dryRunValidatorActor.getSnapshot());
+    return designValidationResults?.find((result) => result.compName === componentName);
+  } catch (error) {
+    console.warn('Error getting component dry run results:', error);
+    return null;
+  }
 };
 
 export const useIsValidatingDesign = (validationMachine, validatorName) => {
   const validator = useSelector(validationMachine, (s) => selectValidator(s, validatorName));
-  if (!validator) {
-    return false;
-  }
-  const isValidating = useSelector(validator, selectIsValidating);
-  return isValidating;
+  const isValidating = useSelector(validator, (state) => {
+    // If validator is null/undefined, return false instead of crashing
+    if (!validator || !state) return false;
+    try {
+      return selectIsValidating(state);
+    } catch (error) {
+      console.warn('Error checking validation state:', error);
+      return false;
+    }
+  });
+  
+  // Return isValidating only if validator exists, otherwise false
+  return validator ? isValidating : false;
 };
 
 export const useIsValidatingDesignSchema = (validationMachine) =>
