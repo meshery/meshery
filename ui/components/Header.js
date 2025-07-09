@@ -32,6 +32,7 @@ import {
   NoSsr,
   useTheme,
   useMediaQuery,
+  useRoomActivity,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -61,6 +62,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { ErrorBoundary } from '@sistent/sistent';
+import { ActiveUsersDisplay } from './DesignerPanel';
 
 async function loadActiveK8sContexts() {
   try {
@@ -426,10 +428,22 @@ const Header = ({
       details: providerCapabilitiesError?.data,
     });
   }
-
   const remoteProviderUrl = providerCapabilities?.provider_url;
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
+  const { capabilitiesRegistry } = useSelector((state) => state.ui);
+  const providerUrl = capabilitiesRegistry?.provider_url;
+  const isProviderReady = providerUrl && getUserAccessToken && getUserProfile;
+
+  const [activeUsers] = useRoomActivity(
+    isProviderReady
+      ? {
+          provider_url: providerUrl,
+          getUserAccessToken: getUserAccessToken,
+          getUserProfile: getUserProfile,
+        }
+      : {},
+  );
   const loaderType = 'circular';
   return (
     <NoSsr>
@@ -475,6 +489,13 @@ const Header = ({
                       url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
                       loaderType={loaderType}
                       providerUrl={remoteProviderUrl}
+                      getUserAccessToken={getUserAccessToken}
+                      getUserProfile={getUserProfile}
+                    />
+                  )}
+                  {collaboratorExtensionUri && isSmallScreen && (
+                    <ActiveUsersDisplay
+                      activeUsers={activeUsers || {}}
                       getUserAccessToken={getUserAccessToken}
                       getUserProfile={getUserProfile}
                     />
