@@ -321,7 +321,7 @@ const useSelectValidator = (validationMachine, validatorName, selector) => {
       return null;
     }
   });
-  
+
   // Return data only if validator exists
   return validator ? data : null;
 };
@@ -337,7 +337,7 @@ export const selectComponentValidationResults = (state, componentId) => {
   if (!schemaValidatorActor) {
     return null;
   }
-  
+
   try {
     const designValidationResults = selectValidationResults(schemaValidatorActor.getSnapshot());
     if (!designValidationResults) return null;
@@ -356,7 +356,7 @@ export const selectComponentDryRunResults = (state, componentName) => {
   if (!dryRunValidatorActor) {
     return null;
   }
-  
+
   try {
     const designValidationResults = selectValidationResults(dryRunValidatorActor.getSnapshot());
     return designValidationResults?.find((result) => result.compName === componentName);
@@ -378,7 +378,7 @@ export const useIsValidatingDesign = (validationMachine, validatorName) => {
       return false;
     }
   });
-  
+
   // Return isValidating only if validator exists, otherwise false
   return validator ? isValidating : false;
 };
