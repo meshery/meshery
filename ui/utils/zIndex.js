@@ -12,5 +12,5 @@ export const ziCalc = (p = 1) => {
     }
     return zIndex;
   }
-  return '0';
+  `0`;
 };

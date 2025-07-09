@@ -1,15 +1,10 @@
 import { useState, useEffect } from 'react';
 
-interface WindowDimensions {
-  width: number;
-  height: number;
-}
-
 /**
  * getWindowDimensions - Returns the width and height of the window
  * @returns {object} {width, height}
  */
-export function getWindowDimensions(): WindowDimensions {
+export function getWindowDimensions() {
   const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
@@ -34,11 +29,11 @@ export function getWindowDimensions(): WindowDimensions {
 // Eg:  React component that needs to respond to changes in the browser window's dimensions, for instance,
 // to make responsive design decisions. You can use the useWindowDimensions hook to achieve this.
 
-export function useWindowDimensions(): WindowDimensions {
-  const [windowDimensions, setWindowDimensions] = useState<WindowDimensions>(getWindowDimensions());
+export function useWindowDimensions() {
+  const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
   useEffect(() => {
-    let searchTimeout: ReturnType<typeof setTimeout> | undefined;
+    let searchTimeout;
 
     function handleResize() {
       if (searchTimeout) {

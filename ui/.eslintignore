@@ -8,4 +8,3 @@ nodemon.json
 lib/
 tests/samples/
 **/__generated__/**
-.eslintrc.js
