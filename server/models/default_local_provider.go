@@ -177,13 +177,12 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
 	orgId, _ := uuid.FromString(environmentPayload.OrgId)
-	owner := "Meshery"
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
-		Owner:          &owner,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -192,14 +191,13 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
 	id, _ := uuid.FromString(environmentID)
 	orgId, _ := uuid.FromString(environmentPayload.OrgId)
-	owner := "Meshery"
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
 		OrganizationID: orgId,
-		Owner:          &owner,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
