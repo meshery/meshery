@@ -65,6 +65,10 @@ MAX_ALIASES := 20
 
 # It is unlikely, that Meshery has a use case for supporting relationship.type == "child" aliases in the future.
 is_alias_relationship(relationship) if {
+	lower(relationship.subType) == "child"
+}
+
+is_alias_relationship(relationship) if {
 	lower(relationship.kind) == "hierarchical"
 	lower(relationship.type) == "parent"
 	lower(relationship.subType) == "alias"
@@ -91,14 +95,51 @@ identify_relationship(rel_definition, design_file, policy_identifier) := identif
 	policy_identifier == alias_policy_identifier
 	identified_relationships := union({rels |
 		some component in design_file.components
+
+		# print("checking feasibility for component", rel_definition.metadata.description, component.id, rel_definition.kind, rel_definition.type, rel_definition.subType)
 		is_relationship_feasible_to(component, rel_definition)
+		print("Identifying alias relationship for component", component.id, rel_definition.selectors)
 		rels := identify_alias_relationships(component, rel_definition)
+		print("Identified rels", count(rels))
 	})
+}
+
+default_display_name_for_added_component(component, path) := display_name if {
+	# print("default_display_name_for_added_component", component)
+	length := count(path)
+	length > 1
+	display_name := sprintf("%s.%s", [path[length - 2], path[length - 1]])
+}
+
+default_display_name_for_added_component(component, path) := display_name if {
+	length := count(path)
+	length == 1
+	display_name := sprintf("%s", [path[0]])
+}
+
+default_display_name_for_added_component(component, path) := display_name if {
+	length := count(path)
+	length == 0
+	display_name := "default"
+}
+
+new_added_component_declaration(component, path, selector, relationship, design_file) := new_component if {
+	# print("new_added_component_declaration", component, path, relationship, design_file)
+	display_name := default_display_name_for_added_component(component, path)
+	new_component := {
+		"id": component.id,
+		"component": {"kind": component.kind},
+		"model": component.model,
+		"displayName": display_name,
+		"metadata": {"isAnnotation": relationship.subType == "alias"},
+	}
 }
 
 # add alias components for pending and identified
 relationship_side_effects(relationship, design_file, policy_identifier) := side_effects if {
 	policy_identifier == alias_policy_identifier
+
+	print("Processing relationship", relationship.id, "with status", relationship.status, relationship)
 
 	relationship.status in {"identified", "pending"}
 
@@ -106,23 +147,22 @@ relationship_side_effects(relationship, design_file, policy_identifier) := side_
 		some selector in relationship.selectors
 		some from in selector.allow.from
 
+		print("Processing from", from.id, "with patch", from.patch)
 		path := from.patch.mutatorRef[0]
-		length := count(path)
-		displayName := sprintf("%s.%s", [path[length - 2], path[length - 1]])
+		print("Path for alias component", path)
 
-		component := {
-			"id": from.id,
-			"component": {"kind": from.kind},
-			"model": from.model,
-			"displayName": displayName,
-			"metadata": {"isAnnotation": true},
-		}
+		# length := count(path)
+		display_name := default_display_name_for_added_component(from, path)
+
+		component := new_added_component_declaration(from, path, selector, relationship, design_file)
 
 		action := {
 			"op": actions.add_component_op,
 			"value": {"item": component},
 		}
 	}
+
+	print("Side effects for relationship", relationship.id, ":", side_effects)
 }
 
 # remove alias components for deleted/invalid relationships
@@ -159,6 +199,7 @@ identify_alias_relationships(component, relationship) := {rel |
 	# identified_alias_paths := identify_alias_paths(from, to, component,input)
 
 	array_items := get_array_aware_configuration_for_component_at_path(from.patch.mutatorRef[0], component, input)
+	print("Array Items", array_items)
 	identified_alias_paths := array_items.paths
 
 	# print("Identified Alias Paths", identified_alias_paths)
