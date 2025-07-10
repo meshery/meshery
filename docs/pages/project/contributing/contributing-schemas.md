@@ -150,7 +150,7 @@ Schema-driven development can feel abstract until you are trying to implement so
 #### 1. **Mesheryctl Contributor Flow**
 **Example:** You want to add a `mesheryctl model build` command.
 **Steps:**
-- Add the new verb in `openapi.yaml` under the appropriate construct (e.g.,`model/`)
+- Add the new verb in `openapi.yaml` under the appropriate construct (e.g., `model/`)
 - Update `<construct>.json` if new properties are needed
 - Run:
 ```bash 
