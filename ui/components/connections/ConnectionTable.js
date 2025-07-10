@@ -604,7 +604,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           const server =
             getColumnValue(tableMeta.rowData, 'metadata.server', columns) ||
             getColumnValue(tableMeta.rowData, 'metadata.server_location', columns);
-          const name = getColumnValue(tableMeta.rowData, 'metadata.name', columns);
+          const name = getColumnValue(tableMeta.rowData, 'name', columns);
           const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
           return (
             <>
@@ -619,14 +619,11 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                   )
                 }
                 handlePing={() => {
-                  // e.stopPropagation();
-                  if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
-                    ping(
-                      getColumnValue(tableMeta.rowData, 'metadata.name', columns),
-                      getColumnValue(tableMeta.rowData, 'metadata.server', columns),
-                      getColumnValue(tableMeta.rowData, 'id', columns),
-                    );
+                  const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
+                  if (!name || !server || !connectionId) {
+                    return;
                   }
+                  ping(name, server, connectionId);
                 }}
                 iconSrc={`/${
                   getColumnValue(tableMeta.rowData, 'kindLogo', columns) ||
