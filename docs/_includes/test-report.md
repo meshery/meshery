@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: July 2nd 2025, 1:59:10 am
+- Testing started at: July 10th 2025, 5:35:14 am
 
 **📦 Test Result Summary**
 
-- ✅ 76 passed
-- ❌ 0 failed
-- ⚠️ 0 flaked
+- ✅ 70 passed
+- ❌ 2 failed
+- ⚠️ 8 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 45 seconds_
+⌛ _Duration: 8 minutes and 57 seconds_
 
-**Overall Result**: 👍 All tests passed.
+**Overall Result**: 👎 Some tests failed.
 
 
 
@@ -21,6 +21,12 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
+| 1 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 2 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 3 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 4 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 5 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 6 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 
 </div>
 </details>
