@@ -68,7 +68,7 @@
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "kubernetes",
+              "name": "*",
               "displayName": "",
               "status": "",
               "registrant": {
@@ -120,7 +120,7 @@
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
               "version": "",
-              "name": "kubernetes",
+              "name": "*",
               "displayName": "",
               "status": "",
               "registrant": {
