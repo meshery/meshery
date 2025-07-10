@@ -144,7 +144,7 @@ generate_schema_models "catalog" "v1alpha2"
 
 This ensures that schemas remain the **single source of truth**, making development **efficient, consistent, and scalable**.
 
-## **Real Contributor Scenarios: Schema in Action!**
+## Real Contributor Scenarios: Schema in Action!
 Schema-driven development can feel abstract until you are trying to implement something. Here are a few real world flows from different types of contributors. Whether you are building a new feature or just curious how others plug into schemas, this is the guide.
 
 #### 1. **Mesheryctl Contributor Flow**
