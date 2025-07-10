@@ -101,7 +101,7 @@
                   "0",
                   "http",
                   "paths",
-                  "_",
+                  "0",
                   "backend",
                   "serviceName"
                 ],
@@ -112,7 +112,7 @@
                   "0",
                   "http",
                   "paths",
-                  "_",
+                  "0",
                   "backend",
                   "servicePort"
                 ]
@@ -171,7 +171,7 @@
                   "configuration",
                   "spec",
                   "ports",
-                  "_",
+                  "0",
                   "port"
                 ]
               ]

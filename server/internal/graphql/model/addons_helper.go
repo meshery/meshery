@@ -5,7 +5,7 @@ import (
 
 	"github.com/meshery/meshery/server/models"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 )
 
 func GetAddonsState(ctx context.Context, selectors []MeshType, provider models.Provider, cid []string) ([]*AddonList, error) {

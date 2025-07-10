@@ -7,7 +7,7 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 
 	corev1 "k8s.io/api/core/v1"
 )

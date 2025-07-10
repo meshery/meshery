@@ -96,6 +96,7 @@
               "mutatedRef": [
                 [
                   "configuration",
+                  "spec",
                   "owner",
                   "name"
                 ]
@@ -148,9 +149,7 @@
               "patchStrategy": "replace",
               "mutatorRef": [
                 [
-                  "configuration",
-                  "metadata",
-                  "name"
+                  "displayName"
                 ]
               ]
             }

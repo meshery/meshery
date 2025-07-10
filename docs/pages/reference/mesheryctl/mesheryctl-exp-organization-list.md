@@ -31,7 +31,7 @@ mesheryctl exp organization list [flags]
 list all organizations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp organizations list
+mesheryctl exp organization list
 
 </div>
 </pre> 
@@ -39,7 +39,7 @@ mesheryctl exp organizations list
 list organizations for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp organizations list --page [page-number]
+mesheryctl exp organization list --page [page-number]
 
 </div>
 </pre> 
@@ -47,7 +47,7 @@ mesheryctl exp organizations list --page [page-number]
 list organizations for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp organizations list --count
+mesheryctl exp organization list --count
 
 </div>
 </pre> 

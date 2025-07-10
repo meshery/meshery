@@ -43,6 +43,11 @@ is_selector_and_declaration_model_name_matches(selector, declaration) if {
 	selector.model.name == "*"
 }
 
+# regex match for model name.
+is_selector_and_declaration_model_name_matches(selector, declaration) if {
+	regex.match(selector.model.name, declaration.model.name)
+}
+
 is_selector_and_declaration_model_name_matches(selector, declaration) if {
 	selector.model.name == declaration.model.name
 }

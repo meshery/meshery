@@ -1,0 +1,190 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "An edge relationship between SmartDetectorAlertRule and Components(azure-insights)",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "version": "",
+    "name": "azure-alerts-management",
+    "displayName": "",
+    "status": "",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "",
+      "sub_type": "",
+      "kind": "",
+      "status": "",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": ""
+    },
+    "subCategory": "",
+    "metadata": null,
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "SmartDetectorAlertRule",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "azure-alerts-management",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "actionGroups",
+                  "groupReferences",
+                  "group"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "actionGroups",
+                  "groupReferences",
+                  "kind"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "actionGroups",
+                  "groupReferences",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ActionGroup",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "azure-insights",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "group"
+                ],
+                [
+                  "configuration",
+                  "kind"
+                ],
+                [
+                  "configuration",
+                  "metadata",
+                  "name"
+                ]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "reference",
+  "status": "enabled",
+  "type": "non-binding",
+  "version": "v1.0.0"
+}

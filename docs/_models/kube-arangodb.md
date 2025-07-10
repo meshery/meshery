@@ -94,7 +94,11 @@ components:
   colorIcon: assets/img/integrations/kube-arangodb/components/arango-platform-storage/icons/color/arango-platform-storage-color.svg
   whiteIcon: assets/img/integrations/kube-arangodb/components/arango-platform-storage/icons/white/arango-platform-storage-white.svg
   description: 
-components-count: 21
+- name: arango-platform-service
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-platform-service/icons/color/arango-platform-service-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-platform-service/icons/white/arango-platform-service-white.svg
+  description: 
+components-count: 22
 relationships: 
 relationship-count: 0
 featureList: [

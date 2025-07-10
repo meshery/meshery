@@ -20,6 +20,6 @@ To import this model into Meshery:
 $ mesheryctl model import test_case_some_other_custom_dir/with/trailing/separator/test-case-aws-ec2-controller
 
 To export this model as OCI image:
-$ mesheryctl model build test_case_some_other_custom_dir/with/trailing/separator/test-case-aws-ec2-controller/v1.2.3 -t myregistry/test-case-aws-ec2-controller:v1.2.3
+$ mesheryctl exp model build test-case-aws-ec2-controller/v1.2.3 --path test_case_some_other_custom_dir/with/trailing/separator
 
 Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl

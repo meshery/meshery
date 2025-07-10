@@ -8,23 +8,19 @@ kind: deployments
 type: guides
 category: tutorials
 language: en
-
 ---
-
-## Introduction
-
 In this tutorial, we will explore the exact journey a request takes inside a Kubernetes cluster from the moment a user hits "Enter" in their browser, to the moment a response is sent back. We will understand the fundamental data path of a request - from the user to the container, using a **diagram built in Meshery Kanvas**.
 
 > **_Note:_** This tutorial is completely visual and beginner-friendly. No YAML or CLI is required.
 
 
-## Prerequisites
+### Prerequisites
 
 - Basic understanding of Kubernetes objects (Service, Pod, Container)
 - Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
 
 
-## Lab Scenario
+### Lab Scenario
 
 We will explore a simple application architecture in Kubernetes.
 - A **User** sending a request  
@@ -35,7 +31,7 @@ We will explore a simple application architecture in Kubernetes.
 This is a common real-world pattern seen in microservices architectures and backend systems.
 
 
-## Objective
+### Objective
 
  We will visually explore how all the kubernetes components come together using Meshery Kanvas, and learn how this understanding can simplify debugging and designing applications.
 
@@ -120,7 +116,7 @@ If we want to recreate this flow from scratch, we can drag and drop the same com
 
 ### Diagram Screenshot
 
-![Kubernetes Flow Diagram](kubernetes-request-flow/k8s-request-flow.png)
+[![Kubernetes Flow Diagram]({{site.baseurl}}/pages/guides/tutorials/kubernetes-request-flow/k8s-request-flow.png)]({{site.baseurl}}/pages/guides/tutorials/kubernetes-request-flow/k8s-request-flow.png)
 
 > Note: You can design this yourself using the components in Meshery Kanvas.
 

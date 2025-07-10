@@ -30,7 +30,7 @@ mesheryctl exp organization [flags]
 Number of  registered orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl organizations --count 
+mesheryctl exp organization --count
 
 </div>
 </pre> 
@@ -38,7 +38,7 @@ mesheryctl organizations --count
 List registerd orgs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl organizations list	
+mesheryctl exp organization list
 
 </div>
 </pre> 

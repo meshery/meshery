@@ -147,7 +147,7 @@ const RecentContent = () => {
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <Grid2 container spacing={2} alignItems="center" size="grow">
           {/* Search Bar */}
-          <Grid2 size={{ xs: 12, sm: 12, md: 6, lg: 4 }}>
+          <Grid2 size={{ xs: 12, sm: 12, md: 6, lg: 3.5 }}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
@@ -158,12 +158,12 @@ const RecentContent = () => {
               onChange={onSearchChange}
               endAdornment={
                 filters.type === RESOURCE_TYPE.DESIGN ? (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Designs: {designsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {designsData?.total_count ?? 0}
                   </p>
                 ) : (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Views: {viewsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {viewsData?.total_count ?? 0}
                   </p>
                 )
               }

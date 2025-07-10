@@ -30,15 +30,14 @@
 | [Ashish Tiwari](https://meshery.io/community/members/ashish-tiwari)       | @revolyssup    | API7        |
 | [Michael Gfeller](https://meshery.io/community/members/michael-gfeller)     | @mgfeller      | Computas AS |
 | [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)  | @acald-creator | Acquia      |
-| [Xin Huang](https://meshery.io/community/members/xin-huang)           | @gyohuangxin   | Intel       |
 
 ### CI / Build & Release Maintainers
 
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
 | [Ashish Tiwari](https://meshery.io/community/members/ashish-tiwari)         | @revolyssup         | API7        |
-| [Mario Arriaga](https://meshery.io/community/members/mario-arriaga)         | @MarioArriaga92     | F5          |
 | [Sangram Rath](https://meshery.io/community/members/sangram-rath)          | @sangramrath        | OD10        |
+| [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit |
 
 ### Docs Maintainers
 

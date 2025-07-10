@@ -482,7 +482,11 @@ components:
   colorIcon: assets/img/integrations/kubedb-crds/components/ignite/icons/color/ignite-color.svg
   whiteIcon: assets/img/integrations/kubedb-crds/components/ignite/icons/white/ignite-white.svg
   description: 
-components-count: 118
+- name: ignite-ops-request
+  colorIcon: assets/img/integrations/kubedb-crds/components/ignite-ops-request/icons/color/ignite-ops-request-color.svg
+  whiteIcon: assets/img/integrations/kubedb-crds/components/ignite-ops-request/icons/white/ignite-ops-request-white.svg
+  description: 
+components-count: 119
 relationships: 
 relationship-count: 0
 featureList: [

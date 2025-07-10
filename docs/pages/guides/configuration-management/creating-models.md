@@ -204,9 +204,15 @@ This section walks you through the **Create** workflow — perfect for users who
         <code>
           base64 -w 0 /path/to/your-service-account-creds.json
         </code>
+        [For Linux users]
         <br />
         <code>
-          echo 'export SHEET_CRED="[paste-base64-output-here]"' >> ~/.bashrc
+          base64 -b 0 -i /path/to/your-service-account-creds.json
+        </code>
+        [For MacOS users]
+        <br />
+        <code>
+          echo 'export SHEET_CRED="paste-base64-output-here"' >> ~/.bashrc
         </code>
         <br />
         <code>

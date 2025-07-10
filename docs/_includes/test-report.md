@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: June 14th 2025, 11:47:06 pm
+- Testing started at: July 10th 2025, 5:35:14 am
 
 **📦 Test Result Summary**
 
-- ✅ 67 passed
-- ❌ 1 failed
-- ⚠️ 2 flaked
-- ⏩ 1 skipped
+- ✅ 70 passed
+- ❌ 2 failed
+- ⚠️ 8 flaked
+- ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 2 seconds_
+⌛ _Duration: 8 minutes and 57 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -21,17 +21,12 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-meshery-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 2 | chromium-meshery-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 3 | chromium-meshery-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 4 | chromium-meshery-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 5 | chromium-local-provider | Add a cluster connection by uploading kubeconfig file | unstable | ⚠️ |
-| 6 | chromium-local-provider | Transition to disconnected state and then back to connected state | unstable | ⚠️ |
-| 7 | chromium-local-provider | Transition to ignored state and then back to connected state | unstable | ⚠️ |
-| 8 | chromium-local-provider | Transition to not found state and then back to connected state | unstable | ⚠️ |
-| 9 | chromium-local-provider | Delete Kubernetes cluster connections | unstable | ⚠️ |
-| 10 | chromium-local-provider | Compare test of a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ❌ |
-| 11 | chromium-local-provider | Delete a performance profile with load generator &quot;fortio&quot; and service mesh &quot;None&quot; |  | ➖ |
+| 1 | chromium-meshery-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 2 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 3 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 4 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
+| 5 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 6 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 
 </div>
 </details>

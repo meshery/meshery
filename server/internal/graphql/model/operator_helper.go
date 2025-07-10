@@ -92,19 +92,33 @@ func GetBrokerInfo(broker controllers.IMesheryController, log logger.Handler) Op
 }
 
 func GetMeshSyncInfo(meshsync controllers.IMesheryController, broker controllers.IMesheryController, log logger.Handler) OperatorControllerStatus {
-	meshsyncStatus := meshsync.GetStatus().String()
-
-	// Debug block
-	if broker != nil {
-		monitorEndpoint, err := broker.GetEndpointForPort("monitor")
-		log.Debug("broker monitor endpoint", monitorEndpoint, err)
+	if meshsync == nil {
+		log.Warn(fmt.Errorf("operator_helper::GetMeshSyncInfo: meshsync controller is nil"))
+		return OperatorControllerStatus{
+			Status: StatusUnknown,
+		}
 	}
+	meshsyncStatus := meshsync.GetStatus().String()
 
 	// change the type of IMesheryController GetName() to to models.MesheryController
 	// and use MesheryControllersStatusListItem instead of OperatorControllerStatus
-	if meshsyncStatus == controllers.Connected.String() && broker != nil {
-		brokerEndpoint, _ := broker.GetPublicEndpoint()
-		meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
+	if broker == nil {
+		meshsyncStatus = controllers.Unknown.String()
+	} else {
+		// Debug block
+		monitorEndpoint, err := broker.GetEndpointForPort("monitor")
+		log.Debug("broker monitor endpoint", monitorEndpoint, err)
+
+		if meshsyncStatus == controllers.Connected.String() {
+			brokerEndpoint, err := broker.GetPublicEndpoint()
+			if err != nil {
+				log.Warn(err) // Log the original error
+			} else if brokerEndpoint == "" {
+				log.Warn(fmt.Errorf("broker public endpoint is empty")) // Log a new error
+			} else {
+				meshsyncStatus = fmt.Sprintf("%s %s", meshsyncStatus, brokerEndpoint)
+			}
+		}
 	}
 	version, _ := meshsync.GetVersion()
 	meshsyncControllerStatus := OperatorControllerStatus{

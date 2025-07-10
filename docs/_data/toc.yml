@@ -137,6 +137,8 @@
           url: guides/configuration-management/push-pull-model-image
         - title: Cloud Native Design Patterns
           url: guides/configuration-management/pattern-management
+        - title: Identifying Components
+          url: guides/configuration-management/identifying-components
         - title: Edge Styles Guide
           url: guides/configuration-management/edges-guide
     - title: Performance Management ↆ
@@ -172,6 +174,8 @@
           url: guides/troubleshooting/meshery-operator-meshsync
         - title: Meshery Server
           url: guides/troubleshooting/meshery-server
+        - title: Enabling Extensions
+          url: guides/troubleshooting/enabling-extensions-locally
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
@@ -217,8 +221,6 @@
         - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
           grandchildren:
-            - title: Component Shape Guide
-              url: extensions/component-shape-guide
             - title: Import & Export Designs
               url: extensions/import-export-designs
         - title: Kanvas Snapshot

@@ -2069,7 +2069,7 @@ definitions:
                 type: string
                 x-go-name: Value
         type: object
-        x-go-package: github.com/layer5io/meshsync/pkg/model
+        x-go-package: github.com/meshery/meshsync/pkg/model
     KubernetesResource:
         properties:
             apiVersion:
@@ -2118,7 +2118,7 @@ definitions:
                 type: string
                 x-go-name: Type
         type: object
-        x-go-package: github.com/layer5io/meshsync/pkg/model
+        x-go-package: github.com/meshery/meshsync/pkg/model
     KubernetesResourceObjectMeta:
         properties:
             annotations:
@@ -2182,7 +2182,7 @@ definitions:
                 type: string
                 x-go-name: UID
         type: object
-        x-go-package: github.com/layer5io/meshsync/pkg/model
+        x-go-package: github.com/meshery/meshsync/pkg/model
     KubernetesResourceSpec:
         properties:
             attribute:
@@ -2192,7 +2192,7 @@ definitions:
                 type: string
                 x-go-name: ID
         type: object
-        x-go-package: github.com/layer5io/meshsync/pkg/model
+        x-go-package: github.com/meshery/meshsync/pkg/model
     KubernetesResourceStatus:
         properties:
             attribute:
@@ -2202,7 +2202,7 @@ definitions:
                 type: string
                 x-go-name: ID
         type: object
-        x-go-package: github.com/layer5io/meshsync/pkg/model
+        x-go-package: github.com/meshery/meshsync/pkg/model
     LatenciesMs:
         description: LatenciesMs - represents a collection of important latencies
         properties:

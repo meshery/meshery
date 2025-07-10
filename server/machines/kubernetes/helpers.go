@@ -35,9 +35,11 @@ func GetMachineCtx(machinectx interface{}, eb *events.EventBuilder) (*MachineCtx
 	machineCtx, ok := machinectx.(*MachineCtx)
 	if !ok {
 		err := machines.ErrAssertMachineCtx(fmt.Errorf("asserting of context %v failed", machinectx))
-		eb.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
+		if eb != nil {
+			eb.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+		}
 		return nil, err
 	}
 	return machineCtx, nil

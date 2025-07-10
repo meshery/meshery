@@ -26,7 +26,7 @@
   "subCategory": "Uncategorized",
   "metadata": {
     "capabilities": null,
-    "isAnnotation": true,
+    "isAnnotation": false,
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
