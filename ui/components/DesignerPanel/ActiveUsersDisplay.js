@@ -52,24 +52,25 @@ const ActiveUsersDisplay = ({
   getUserProfile,
   maxDisplayed = 5,
 }) => {
+  // console.log('activeUsers', activeUsers);
   const [selectedUser, setSelectedUser] = useState(null);
   const [designerPanelOpen, setDesignerPanelOpen] = useState(false);
   console.log('I am userDisplay');
-  // Convert activeUsers object to array and get unique users
-  const activeUsersList = Object.values(activeUsers)
-    .flat()
+  const activeUsersList = Object.entries(activeUsers)
+    .filter(([designId]) => designId !== 'meshery_ui') //->removethe meshery_ui design key, as these users are just active
+    .flatMap(([, users]) => users)
     .reduce((acc, user) => {
       if (!acc.find((u) => u.user_id === user.user_id || u.client_id === user.client_id)) {
         acc.push(user);
       }
       return acc;
     }, []);
-  console.log('activeUsersList', activeUsersList);
+  // console.log('activeUsersList', activeUsersList);
   const handleUserClick = (user, designId = null) => {
     setSelectedUser({
       ...user,
       currentDesignId: designId,
-      currentDesignName: designId ? getDesignNameFromActiveUsers(designId) : null,
+      currentDesignName: designId ? `Design ${designId}` : null,
     });
     setDesignerPanelOpen(true);
   };
@@ -79,18 +80,7 @@ const ActiveUsersDisplay = ({
     setSelectedUser(null);
   };
 
-  const getDesignNameFromActiveUsers = (designId) => {
-    // Try to find the design name from active users data
-    for (const [id, users] of Object.entries(activeUsers)) {
-      if (id === designId && users.length > 0) {
-        return users[0].designName || `Design ${designId}`;
-      }
-    }
-    return `Design ${designId}`;
-  };
-
   const getUserDesignInfo = (user) => {
-    // Find which design this user is currently working on
     for (const [designId, users] of Object.entries(activeUsers)) {
       const userInDesign = users.find(
         (u) => u.user_id === user.user_id || u.client_id === user.client_id,
@@ -98,7 +88,7 @@ const ActiveUsersDisplay = ({
       if (userInDesign) {
         return {
           designId,
-          designName: userInDesign.designName || `Design ${designId}`,
+          designName: `Design ${designId}`,
         };
       }
     }

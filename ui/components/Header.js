@@ -411,7 +411,7 @@ const Header = ({
   // eslint-disable-next-line no-unused-vars
   abilityUpdated,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 

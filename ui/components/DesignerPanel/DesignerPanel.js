@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Modal,
   ModalBody,
-  ModalHeader,
   Avatar,
   Typography,
   Button,
@@ -15,13 +14,12 @@ import {
   ListItemAvatar,
   ListItemText,
   Divider,
-  Chip,
   OpenInNewIcon,
   PersonIcon,
   DesignIcon,
 } from '@sistent/sistent';
 import { useGetUserProfileSummaryByIdQuery } from '@/rtk-query/user';
-import { useGetUserDesignsQuery } from '@/rtk-query/design';
+import { useGetDesignQuery, useGetUserDesignsQuery } from '@/rtk-query/design';
 import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
@@ -30,7 +28,6 @@ import { styled } from '@sistent/sistent';
 const StyledModalBody = styled(ModalBody)(({ theme }) => ({
   padding: theme.spacing(3),
   minWidth: '500px',
-  maxWidth: '600px',
 }));
 
 const UserInfoSection = styled(Box)(({ theme }) => ({
@@ -73,6 +70,8 @@ const DesignerPanel = ({
   // getUserAccessToken,
   // getUserProfile,
 }) => {
+  console.log('activeUser', activeUser);
+  console.log('currentDesignId', currentDesignId);
   const theme = useTheme();
   const router = useRouter();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
@@ -81,7 +80,13 @@ const DesignerPanel = ({
     { id: activeUser?.user_id },
     { skip: !activeUser?.user_id },
   );
-
+  const { data: designdata } = useGetDesignQuery(
+    {
+      design_id: currentDesignId,
+    },
+    { skip: !currentDesignId },
+  );
+  console.log('designdata', designdata);
   const { data: userDesigns } = useGetUserDesignsQuery(
     {
       user_id: activeUser?.user_id,
@@ -91,7 +96,7 @@ const DesignerPanel = ({
     },
     { skip: !activeUser?.user_id },
   );
-
+  console.log('userDesigns', userDesigns);
   const handleGoToProfile = () => {
     if (userProfile?.id) {
       window.open(`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`, '_blank');
@@ -119,13 +124,12 @@ const DesignerPanel = ({
     onClose();
   };
 
-  const currentDesign = userDesigns?.designs?.find((design) => design.id === currentDesignId);
+  // const currentDesign = userDesigns?.designs?.find((design) => design.id === currentDesignId);
 
   if (!activeUser) return null;
 
   return (
-    <Modal open={open} closeModal={onClose} maxWidth="md">
-      <ModalHeader title="Designer Activity" />
+    <Modal open={open} closeModal={onClose} maxWidth="md" title="Designer Activity">
       <StyledModalBody>
         {isUserLoading ? (
           <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -149,17 +153,18 @@ const DesignerPanel = ({
                 <Typography variant="body2" color="text.secondary" gutterBottom>
                   {userProfile?.email}
                 </Typography>
-                <Chip
-                  label={`Online • ${activeUser?.color ? 'Active' : 'Viewing'}`}
-                  color="success"
-                  size="small"
-                  sx={{ backgroundColor: activeUser?.color || theme.palette.success.main }}
-                />
               </Box>
+              <ActionButton
+                variant="outlined"
+                startIcon={<PersonIcon />}
+                onClick={handleGoToProfile}
+              >
+                View Profile
+              </ActionButton>
             </UserInfoSection>
 
             {/* Current Design Section */}
-            {currentDesign && (
+            {designdata && (
               <CurrentDesignSection>
                 <Typography variant="subtitle1" gutterBottom>
                   Currently Working On:
@@ -171,24 +176,28 @@ const DesignerPanel = ({
                     </Avatar>
                   </ListItemAvatar>
                   <ListItemText
-                    primary={currentDesign.name}
-                    secondary={`Updated: ${new Date(currentDesign.updated_at).toLocaleDateString()}`}
+                    primary={designdata.name}
+                    secondary={`Updated: ${new Date(designdata.updated_at).toLocaleDateString()}`}
                   />
-                  <CustomTooltip title="Open in Designer">
-                    <OpenInNewIcon />
-                  </CustomTooltip>
+                  <ActionButton
+                    variant="contained"
+                    startIcon={<DesignIcon />}
+                    onClick={handleOpenCurrentDesign}
+                  >
+                    Collaborate
+                  </ActionButton>
                 </DesignItem>
               </CurrentDesignSection>
             )}
 
             {/* Recent Designs Section */}
-            {userDesigns?.designs && userDesigns.designs.length > 0 && (
+            {userDesigns?.patterns && userDesigns.patterns.length > 0 && (
               <Box mt={3}>
                 <Typography variant="subtitle1" gutterBottom>
                   Recent Designs:
                 </Typography>
                 <List>
-                  {userDesigns.designs.slice(0, 3).map((design) => (
+                  {userDesigns.patterns.slice(0, 3).map((design) => (
                     <React.Fragment key={design.id}>
                       <DesignItem onClick={() => handleOpenDesign(design)}>
                         <ListItemAvatar>
@@ -210,26 +219,6 @@ const DesignerPanel = ({
                 </List>
               </Box>
             )}
-
-            {/* Action Buttons */}
-            <Box display="flex" justifyContent="space-between" mt={3} pt={2}>
-              <ActionButton
-                variant="outlined"
-                startIcon={<PersonIcon />}
-                onClick={handleGoToProfile}
-              >
-                View Profile
-              </ActionButton>
-              {currentDesign && (
-                <ActionButton
-                  variant="contained"
-                  startIcon={<DesignIcon />}
-                  onClick={handleOpenCurrentDesign}
-                >
-                  Open Current Design
-                </ActionButton>
-              )}
-            </Box>
           </>
         )}
       </StyledModalBody>
