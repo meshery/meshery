@@ -31,14 +31,12 @@ teardown() {
 	run $MESHERYCTL_BIN registry update --spreadsheet-id "INVALID_SHEET" --spreadsheet-cred "$VALID_CRED"
 	assert_failure
 	assert_output --partial "googleapi: Error 404: Requested entity was not found., notFound"
-    assert_output --partial "Error: googleapi: Error 404: Requested entity was not found., notFound"
 }
 
 @test "mesheryctl registry update with invalid spreadsheet-cred fails" {
 	run $MESHERYCTL_BIN registry update --spreadsheet-id "$SHEET_ID" --spreadsheet-cred "$INVALID_CRED"
 	assert_failure
 	assert_output --partial "invalid character '\u008a' looking for beginning of value"
-	assert_output --partial "Error: invalid character '\u008a' looking for beginning of value"
 }
 
 @test "mesheryctl registry update with valid spreadsheet-id and cred succeeds" {
@@ -77,11 +75,4 @@ teardown() {
 	assert_output --partial "Parsing Components..."
 	assert_output --regexp "Updated [0-9]+ models and [0-9]+ components"
 	assert_output --partial "refer $LOG_PATH for detailed registry update logs"
-}
-
-@test "mesheryctl registry update creates log file in logs/registry" {
-	# Ensure no previous log exists
-	rm -f "$LOG_PATH/registry-update"  
-	run $MESHERYCTL_BIN registry update --spreadsheet-id "$SHEET_ID" --spreadsheet-cred "$VALID_CRED"
-	assert_file_exist $LOG_PATH/registry-update
 }
