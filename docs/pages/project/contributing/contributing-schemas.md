@@ -144,6 +144,60 @@ generate_schema_models "catalog" "v1alpha2"
 
 This ensures that schemas remain the **single source of truth**, making development **efficient, consistent, and scalable**.
 
+## **Real Contributor Scenarios: Schema in Action!**
+Schema-driven development can feel abstract until you are trying to implement something. Here are a few real world flows from different types of contributors. Whether you are building a new feature or just curious how others plug into schemas, this is the guide.
+
+#### 1. **Mesheryctl Contributor Flow**
+**Example:** You want to add a `mesheryctl model build` command.
+**Steps:**
+- Add the new verb in `openapi.yaml` under the appropriate construct (e.g.,`model/`)
+- Update `<construct>.json` if new properties are needed
+- Run:
+```bash 
+make generate-types
+make golang-generate 
+```
+- Implement the CLI logic
+- Add tests (Check existing unit tests for format)
+
+*Why it matters:* This keeps CLI behavior consistent with API behavior, thanks to schema as the source of truth.
+
+#### 2. **Meshery Server Contributor Flow**
+ **Example:** Add a new `status` field to `component`.
+**Steps:**
+- Add the new property in `component.json`
+- Run:
+```bash 
+make validate-schemas
+make golang-generate
+```
+- Backend (GORM) auto-updates your DB schema
+
+*Never manually customize GORM-generated structs. Your changes will be overwritten by the next schema regen.*
+
+*Why it matters:* This reduces drift between backend logic and API contract.
+
+#### 3. **Meshery UI Contributor Flow**
+ **Example:** Show the new `version` field on the Model dashboard.
+
+**Steps:**
+- Check `openapi.yaml` to verify the new field exists
+- Wait for the backend to regenerate and expose the property
+- Use RTK + TypeScript types to access and render data
+- If you need templates, they’re already auto-generated for you!
+
+*Why it matters:* UI stays in sync with backend- fewer bugs, fewer mismatches, easier onboarding.
+
+#### 4. **Meshery Docs Contributor Flow**
+**Example:** You are writing a guide!
+**Steps:**
+- Read the schema structure and workflows
+- Walk through the scenarios above
+- Write a guide that's accurate, actionable, and friendly
+
+*Why it matters:* Docs are often the first impression contributors get. Schema-driven clarity starts here.
+
+
 {% include alert.html type="warning" title="Best Practices" content="
   <ul>
     <li>Do not commit the entire output of <code>make build</code> unless you're intentionally updating all the generated schemas.</li>
