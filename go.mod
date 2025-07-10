@@ -8,7 +8,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // The following replaces are used for local development
 
-//replace github.com/meshery/schemas v0.8.29 => ../schemas
+// replace github.com/meshery/schemas v0.8.30 => ../schemas
 
 //replace github.com/meshery/meshkit v0.8.33 => ../meshkit
 
@@ -45,9 +45,9 @@ require (
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/meshkit v0.8.33
+	github.com/meshery/meshkit v0.8.34
 	github.com/meshery/meshsync v0.8.15
-	github.com/meshery/schemas v0.8.29
+	github.com/meshery/schemas v0.8.30
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
