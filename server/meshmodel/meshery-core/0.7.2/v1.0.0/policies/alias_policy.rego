@@ -98,9 +98,7 @@ identify_relationship(rel_definition, design_file, policy_identifier) := identif
 
 		# print("checking feasibility for component", rel_definition.metadata.description, component.id, rel_definition.kind, rel_definition.type, rel_definition.subType)
 		is_relationship_feasible_to(component, rel_definition)
-		print("Identifying alias relationship for component", component.id, rel_definition.selectors)
 		rels := identify_alias_relationships(component, rel_definition)
-		print("Identified rels", count(rels))
 	})
 }
 
@@ -135,34 +133,71 @@ new_added_component_declaration(component, path, selector, relationship, design_
 	}
 }
 
-# add alias components for pending and identified
+# set configuration for added component ( not for alias)
+relationship_side_effects(relationship, design_file, policy_identifier) := side_effects if {
+	policy_identifier == alias_policy_identifier
+	relationship.status == "added-component"
+	relationship.subType != "alias"
+
+	set_config_side_effects := {action |
+		to := relationship.selectors[0].allow.to[0]
+		from := relationship.selectors[0].allow.from[0]
+		some i in numbers.range(0, count(from.patch.mutatorRef) - 1)
+		mutator_ref := from.patch.mutatorRef[i]
+		mutated_ref := to.patch.mutatedRef[i]
+		to_component := core_utils.component_declaration_by_id(design_file, to.id)
+		mutatedValue := core_utils.configuration_for_component_at_path(mutated_ref, to_component, design_file)
+
+		action := {
+			"op": actions.get_component_update_op(mutator_ref),
+			"value": {
+				"id": from.id,
+				"path": mutator_ref,
+				"value": mutatedValue,
+			},
+		}
+	}
+
+	update_status := {
+		"op": actions.update_relationship_op,
+		"value": {
+			"id": relationship.id,
+			"path": "/status",
+			"value": "identified",
+		},
+	}
+	side_effects := set_config_side_effects | {update_status}
+}
+
+# add components for relationships that have only been identified (with a status of "added-relationship")
 relationship_side_effects(relationship, design_file, policy_identifier) := side_effects if {
 	policy_identifier == alias_policy_identifier
 
-	print("Processing relationship", relationship.id, "with status", relationship.status, relationship)
+	relationship.status == "added-relationship"
 
-	relationship.status in {"identified", "pending"}
-
-	side_effects := {action |
+	add_side_effects := {action |
 		some selector in relationship.selectors
 		some from in selector.allow.from
 
-		print("Processing from", from.id, "with patch", from.patch)
 		path := from.patch.mutatorRef[0]
-		print("Path for alias component", path)
-
-		# length := count(path)
 		display_name := default_display_name_for_added_component(from, path)
-
 		component := new_added_component_declaration(from, path, selector, relationship, design_file)
-
 		action := {
 			"op": actions.add_component_op,
 			"value": {"item": component},
 		}
 	}
 
-	print("Side effects for relationship", relationship.id, ":", side_effects)
+	update_status := {
+		"op": actions.update_relationship_op,
+		"value": {
+			"id": relationship.id,
+			"path": "/status",
+			"value": "added-component",
+		},
+	}
+
+	side_effects := add_side_effects | {update_status}
 }
 
 # remove alias components for deleted/invalid relationships
@@ -190,19 +225,11 @@ alias_ref_from_relationship(relationship) := ref if {
 	ref := from.patch.mutatorRef[0]
 }
 
-identify_alias_relationships(component, relationship) := {rel |
-	some selector in relationship.selectors
-	some from in selector.allow.from # from is child or alias
-	some to in selector.allow.to # to is parent
+selector_for_identified_relationship(to, from, component, relationship, design_file) := selector_declaration if {
+	relationship.subType == "alias"
 
-	# identify if alias can be created
-	# identified_alias_paths := identify_alias_paths(from, to, component,input)
-
-	array_items := get_array_aware_configuration_for_component_at_path(from.patch.mutatorRef[0], component, input)
-	print("Array Items", array_items)
+	array_items := get_array_aware_configuration_for_component_at_path(to.patch.mutatedRef[0], component, design_file)
 	identified_alias_paths := array_items.paths
-
-	# print("Identified Alias Paths", identified_alias_paths)
 
 	count(identified_alias_paths) > 0 # if alias paths are present then alias can be created
 
@@ -213,6 +240,38 @@ identify_alias_relationships(component, relationship) := {rel |
 		"mutatorRef": [path], # path to the component that needs to be mutated ( basically the ref to alias)
 		"mutatedRef": [path],
 	}
+
+	selector_declaration := {
+		"to": selector_patch_declaration,
+		"from": selector_patch_declaration,
+	}
+}
+
+# need to modify mutators schemas ( use a map rather than ordered arrays) to support raay wildcards in path
+selector_for_identified_relationship(to, from, component, relationship, design_file) := selector_declaration if {
+	relationship.subType != "alias"
+
+	# if value is defined at the path then we can create an relationship
+	some mutated_ref in to.patch.mutatedRef
+	value := core_utils.configuration_for_component_at_path(mutated_ref, component, design_file)
+	value != null
+	value != ""
+
+	selector_declaration := {
+		"from": from.patch,
+		"to": to.patch,
+	}
+}
+
+identify_alias_relationships(component, relationship) := {rel |
+	some selector in relationship.selectors
+	some from in selector.allow.from # from is child or alias
+	some to in selector.allow.to # to is parent
+
+	# identify if alias can be created
+	# identified_alias_paths := identify_alias_paths(from, to, component,input)
+
+	selector_patch_declaration := selector_for_identified_relationship(to, from, component, relationship, input)
 
 	# create alias relationship declaration
 	selector_declaration := {
@@ -227,7 +286,7 @@ identify_alias_relationships(component, relationship) := {rel |
 				{
 					"op": "replace",
 					"path": "/patch",
-					"value": selector_patch_declaration,
+					"value": selector_patch_declaration.from,
 				},
 			])],
 			"to": [json.patch(to, [
@@ -239,7 +298,7 @@ identify_alias_relationships(component, relationship) := {rel |
 				{
 					"op": "replace",
 					"path": "/patch",
-					"value": selector_patch_declaration,
+					"value": selector_patch_declaration.to,
 				},
 			])],
 		},
@@ -262,7 +321,7 @@ identify_alias_relationships(component, relationship) := {rel |
 		{
 			"op": "replace",
 			"path": "/status",
-			"value": "identified",
+			"value": "added-relationship",
 		},
 	])
 }
