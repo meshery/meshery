@@ -62,16 +62,7 @@ const DesignItem = styled(ListItem)(({ theme }) => ({
   },
 }));
 
-const DesignerPanel = ({
-  open,
-  onClose,
-  activeUser,
-  currentDesignId,
-  // getUserAccessToken,
-  // getUserProfile,
-}) => {
-  console.log('activeUser', activeUser);
-  console.log('currentDesignId', currentDesignId);
+const DesignerPanel = ({ open, onClose, activeUser, currentDesignId }) => {
   const theme = useTheme();
   const router = useRouter();
   const isKanvasDesignerAvailable = useIsKanvasDesignerEnabled();
@@ -86,7 +77,7 @@ const DesignerPanel = ({
     },
     { skip: !currentDesignId },
   );
-  console.log('designdata', designdata);
+
   const { data: userDesigns } = useGetUserDesignsQuery(
     {
       user_id: activeUser?.user_id,
@@ -96,7 +87,7 @@ const DesignerPanel = ({
     },
     { skip: !activeUser?.user_id },
   );
-  console.log('userDesigns', userDesigns);
+
   const handleGoToProfile = () => {
     if (userProfile?.id) {
       window.open(`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`, '_blank');
@@ -123,8 +114,6 @@ const DesignerPanel = ({
     }
     onClose();
   };
-
-  // const currentDesign = userDesigns?.designs?.find((design) => design.id === currentDesignId);
 
   if (!activeUser) return null;
 

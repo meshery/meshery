@@ -52,10 +52,9 @@ const ActiveUsersDisplay = ({
   getUserProfile,
   maxDisplayed = 5,
 }) => {
-  // console.log('activeUsers', activeUsers);
   const [selectedUser, setSelectedUser] = useState(null);
   const [designerPanelOpen, setDesignerPanelOpen] = useState(false);
-  console.log('I am userDisplay');
+
   const activeUsersList = Object.entries(activeUsers)
     .filter(([designId]) => designId !== 'meshery_ui') //->removethe meshery_ui design key, as these users are just active
     .flatMap(([, users]) => users)
@@ -65,7 +64,7 @@ const ActiveUsersDisplay = ({
       }
       return acc;
     }, []);
-  // console.log('activeUsersList', activeUsersList);
+
   const handleUserClick = (user, designId = null) => {
     setSelectedUser({
       ...user,
@@ -98,9 +97,6 @@ const ActiveUsersDisplay = ({
   if (activeUsersList.length === 0) {
     return null;
   }
-  console.log('activeUsers', activeUsers);
-  console.log('getUserAccessToken', getUserAccessToken);
-  console.log('getUserProfile', getUserProfile);
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -132,9 +128,6 @@ const ActiveUsersDisplay = ({
                   src={user.avatar_url}
                   alt={user.name}
                   onClick={() => handleUserClick(user, designInfo?.designId)}
-                  sx={{
-                    border: user.color ? `2px solid ${user.color}` : undefined,
-                  }}
                 >
                   {!user.avatar_url && (user.name?.[0] || '?')}
                 </Avatar>
