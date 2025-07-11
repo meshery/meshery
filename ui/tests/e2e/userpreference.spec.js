@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
+import { DashboardPage } from './pages/DashboardPage';
 
 const userPreferenceTests = [
   // {
@@ -27,10 +28,6 @@ const userPreferenceTests = [
 
 test.describe(
   'User Preferences Page Tests',
-  {
-    tag: '@unstable',
-    annotation: [{ type: 'issue', description: 'https://github.com/meshery/meshery/issues/12329' }],
-  },
   () => {
     test.beforeEach(async ({ page }) => {
       const userPrefReq = page.waitForRequest(
@@ -44,8 +41,9 @@ test.describe(
           response.status() === 200,
       );
 
-      // Visit User Preferences Page
-      await page.goto(`${ENV.MESHERY_SERVER_URL}/user/preferences`);
+      const dashboardPage = new DashboardPage(page);
+      await dashboardPage.navigateToDashboard();
+      await dashboardPage.navigateToPreferences();
 
       // Verify requests and responses expected on initial page load
       await userPrefReq;
