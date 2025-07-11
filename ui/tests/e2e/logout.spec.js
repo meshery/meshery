@@ -18,7 +18,7 @@ test.describe('Logout Page Tests', () => {
     });
 
     const waitForLogoutRequest = page.waitForRequest('/user/logout');
-    
+
     await dashboardPage.navigateToLogout();
 
     const request = await waitForLogoutRequest;
