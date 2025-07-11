@@ -2,27 +2,27 @@
 * text=auto
 
 # Explicitly declare text files you want to always be normalized and converted
-# to native line endings on checkout.
-*.c text
-*.h text
-*.go text
-*.js text
-*.jsx text
-*.ts text
-*.tsx text
-*.json text
-*.md text
-*.txt text
-*.yml text
-*.yaml text
-*.xml text
-*.html text
-*.htm text
-*.css text
-*.scss text
-*.sass text
-*.less text
-*.sql text
+# to LF line endings on checkout for consistency across all environments.
+*.c text eol=lf
+*.h text eol=lf
+*.go text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+*.html text eol=lf
+*.htm text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+*.sql text eol=lf
 *.sh text eol=lf
 *.bash text eol=lf
 
