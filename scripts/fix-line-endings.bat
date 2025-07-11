@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 REM Git Line Ending Fix Script for Windows
 REM This script configures Git to handle line endings properly on Windows systems
 
