@@ -51,7 +51,7 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 
 	connectionsFetched := []*connections.Connection{}
 	query.Table("connections").Count(&count)
-	environmentsFetched := []environments.EnvironmentData{}
+	environmentsFetched := []*environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
 
 	for _, connectionFetched := range connectionsFetched {
