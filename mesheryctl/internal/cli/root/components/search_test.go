@@ -19,7 +19,7 @@ func TestSearchComponent(t *testing.T) {
 	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
-	tests := []utils.MesheryListCommamdTest{
+	tests := []utils.MesheryListCommandTest{
 		{
 			Name:             "Search components without query parameter",
 			Args:             []string{"search"},
