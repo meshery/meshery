@@ -2,6 +2,7 @@ import { expect, test } from './fixtures/project';
 import { ENV } from './env';
 import os from 'os';
 import { waitForSnackBar } from './utils/waitForSnackBar';
+import { DashboardPage } from './pages/DashboardPage';
 
 function waitForConnectionsApiRepsonse(page) {
   return page.waitForResponse(
@@ -37,8 +38,9 @@ const transitionTests = [
 
 test.describe.serial('Connection Management Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/');
-    await page.getByRole('button', { name: 'Lifecycle' }).click();
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToConnections();
     await page.getByTestId('connection-addCluster').waitFor();
   });
   test('Verify that UI components are displayed', async ({ page }) => {

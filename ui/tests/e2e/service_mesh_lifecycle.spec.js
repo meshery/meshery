@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
+import { DashboardPage } from './pages/DashboardPage';
 
 test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
   const mesheryAdapters = [{ adapterName: 'Istio', adapterPort: '10000', deploy: false }];
@@ -10,7 +11,9 @@ test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
       page,
     }) => {
       // Visit Settings Page
-      await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
+      const dashboardPage = new DashboardPage(page);
+      await dashboardPage.navigateToDashboard();
+      await dashboardPage.navigateToSettings();
 
       // Navigate to 'Adapters' tab
       await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });

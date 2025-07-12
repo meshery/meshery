@@ -1,6 +1,7 @@
 import { expect, test } from './fixtures/project';
 import { mockPerfApis } from './mocks/mockPerfApi';
-//
+import { DashboardPage } from './pages/DashboardPage';
+
 const performanceProfiles = [
   {
     profileName: 'Fortio-Perf-Test',
@@ -19,9 +20,9 @@ performanceProfiles.forEach((config) => {
   test.describe(`Performance Management Tests with ${loadGenerator}`, () => {
     test.beforeEach(async ({ page }) => {
       await mockPerfApis(page, config);
-      await page.goto('/');
-      await page.getByRole('button', { name: 'meshery-button-2 Performance' }).click();
-      await page.getByTestId('navigation').getByRole('button', { name: 'Profiles' }).click();
+      const dashboardPage = new DashboardPage(page);
+      await dashboardPage.navigateToDashboard();
+      await dashboardPage.navigateToProfiles();
     });
 
     test(`Add performance profile with load generator ${loadGenerator}`, async ({ page }) => {
