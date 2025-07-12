@@ -1238,7 +1238,7 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		remaining := len(data) - endIndex
 
 		// Print number of filter files and current page number
-		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
+		whiteBoardPrinter.Print("Total number of ", component, ": ", len(data))
 		fmt.Println()
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
