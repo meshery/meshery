@@ -32,16 +32,17 @@ type DisplayDataAsync struct {
 type dataProcessor[T any] func(*T) ([][]string, int64)
 
 func List(data DisplayedData) error {
-	utils.DisplayCount(data.DataType, data.Count)
-
 	// flag --count is set or no data available
 	if data.DisplayCountOnly || data.Count == 0 {
+		utils.DisplayCount(data.DataType, data.Count)
 		return nil
 	}
 
 	if data.IsPage {
+		utils.DisplayCount(data.DataType, data.Count)
 		utils.PrintToTable(data.Header, data.Rows)
 	} else {
+		// HandlePagination outputs count itself, so don't call DisplayCount
 		maxRowsPerPage := 25
 		err := utils.HandlePagination(maxRowsPerPage, data.DataType, data.Rows, data.Header)
 		if err != nil {
