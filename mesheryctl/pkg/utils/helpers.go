@@ -1232,9 +1232,13 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 	startIndex := 0
 	endIndex := min(len(data), startIndex+pageSize)
 
+	firstIteration := true
 	for {
-		// Clear the entire terminal screen
-		ClearLine()
+		// Clear the entire terminal screen (skip on first iteration to preserve DisplayCount output)
+		if !firstIteration {
+			ClearLine()
+		}
+		firstIteration = false
 		remaining := len(data) - endIndex
 
 		// Print current page number (count is already displayed by DisplayCount)
