@@ -483,12 +483,7 @@ func autoConfigureKubeconfig() error {
 	}
 
 	// Detect cluster type and process kubeconfig accordingly
-	clusterType, err := detectClusterType()
-	if err != nil {
-		log.Debug("Could not detect cluster type, using default processing")
-		clusterType = "default"
-	}
-
+	clusterType := detectClusterType()
 	log.Debugf("Detected cluster type: %s", clusterType)
 
 	// Process kubeconfig (minify and flatten)
@@ -505,55 +500,29 @@ func autoConfigureKubeconfig() error {
 }
 
 // detectClusterType attempts to detect the type of Kubernetes cluster
-func detectClusterType() (string, error) {
-	// Try to detect minikube
-	if isMinikube() {
-		return "minikube", nil
-	}
-
-	// Try to detect kind
-	if isKind() {
-		return "kind", nil
-	}
-
-	// Try to detect k3s/k3d
-	if isK3s() {
-		return "k3s", nil
-	}
-
-	// Default to generic kubernetes
-	return "kubernetes", nil
-}
-
-// isMinikube checks if the current context is minikube
-func isMinikube() bool {
+// Optimized to execute kubectl only once for better performance
+func detectClusterType() string {
 	cmd := exec.Command("kubectl", "config", "current-context")
 	output, err := cmd.Output()
 	if err != nil {
-		return false
+		log.Debugf("Could not get current kubectl context, defaulting to generic kubernetes: %v", err)
+		return "kubernetes"
 	}
-	return strings.Contains(strings.ToLower(string(output)), "minikube")
-}
 
-// isKind checks if the current context is kind
-func isKind() bool {
-	cmd := exec.Command("kubectl", "config", "current-context")
-	output, err := cmd.Output()
-	if err != nil {
-		return false
-	}
-	return strings.Contains(strings.ToLower(string(output)), "kind")
-}
+	context := strings.ToLower(strings.TrimSpace(string(output)))
+	log.Debugf("Detected kubectl context: %s", context)
 
-// isK3s checks if the current context is k3s/k3d
-func isK3s() bool {
-	cmd := exec.Command("kubectl", "config", "current-context")
-	output, err := cmd.Output()
-	if err != nil {
-		return false
+	if strings.Contains(context, "minikube") {
+		return "minikube"
 	}
-	context := strings.ToLower(string(output))
-	return strings.Contains(context, "k3s") || strings.Contains(context, "k3d")
+	if strings.Contains(context, "kind") {
+		return "kind"
+	}
+	if strings.Contains(context, "k3s") || strings.Contains(context, "k3d") {
+		return "k3s"
+	}
+
+	return "kubernetes"
 }
 
 // Apply Meshery helm charts

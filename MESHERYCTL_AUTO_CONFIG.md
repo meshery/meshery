@@ -82,8 +82,7 @@ mesheryctl system start
 
 ### New Functions Added
 - `autoConfigureKubeconfig()`: Main auto-config logic
-- `detectClusterType()`: Cluster type detection
-- `isMinikube()`, `isKind()`, `isK3s()`: Specific cluster detectors
+- `detectClusterType()`: Optimized cluster type detection (single kubectl call)
 
 ### Modified Files
 - `mesheryctl/internal/cli/root/system/start.go`: Added auto-config integration
