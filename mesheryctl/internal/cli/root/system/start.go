@@ -55,7 +55,7 @@ var (
 var startCmd = &cobra.Command{
 	Use:   "start",
 	Short: "Start Meshery",
-	Long:  `Start Meshery and each of its cloud native components.`,
+	Long:  `Start Meshery and each of its cloud native components. When deploying to Kubernetes, automatically configures kubeconfig for detected cluster types (minikube, kind, k3s, etc.).`,
 	Args:  cobra.NoArgs,
 	Example: `
 // Start meshery
@@ -75,6 +75,9 @@ mesheryctl system start -p docker
 
 // Specify Provider to use.
 mesheryctl system start --provider Meshery
+
+// Disable automatic kubeconfig configuration.
+mesheryctl system start --auto-config=false
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		//Check prerequisite
@@ -410,6 +413,11 @@ func start() error {
 			return err
 		}
 
+		// Auto-configure kubeconfig if enabled
+		if err := autoConfigureKubeconfig(); err != nil {
+			log.WithError(err).Warn("Auto-configuration failed, continuing with startup")
+		}
+
 		// log.Info("Starting Meshery...")
 
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
@@ -449,12 +457,72 @@ func start() error {
 	return dashboardCmd.RunE(nil, nil)
 }
 
+var autoConfigFlag bool
+
 func init() {
 	startCmd.PersistentFlags().StringVarP(&utils.PlatformFlag, "platform", "p", "", "platform to deploy Meshery to.")
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.Flags().BoolVarP(&autoConfigFlag, "auto-config", "", true, "(optional) automatically configure kubeconfig for the detected cluster type.")
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
+}
+
+// autoConfigureKubeconfig automatically processes and configures kubeconfig for detected cluster types
+func autoConfigureKubeconfig() error {
+	if !autoConfigFlag {
+		return nil
+	}
+
+	log.Info("Auto-configuring kubeconfig for detected cluster...")
+
+	// Check if kubeconfig exists
+	if _, err := os.Stat(utils.KubeConfig); err != nil {
+		log.Debug("No kubeconfig found, skipping auto-configuration")
+		return nil
+	}
+
+	// Detect cluster type and process kubeconfig accordingly
+	clusterType := detectClusterType()
+	log.Debugf("Detected cluster type: %s", clusterType)
+
+	// Process kubeconfig (minify and flatten)
+	_, _, err = meshkitkube.ProcessConfig(utils.KubeConfig, utils.ConfigPath)
+	if err != nil {
+		log.WithError(err).Warn("Failed to process kubeconfig automatically")
+		return nil // Don't fail the start process
+	}
+
+	log.Debugf("Kubeconfig processed and written to: %s", utils.ConfigPath)
+	log.Info("Kubeconfig auto-configuration completed successfully")
+
+	return nil
+}
+
+// detectClusterType attempts to detect the type of Kubernetes cluster
+// Optimized to execute kubectl only once for better performance
+func detectClusterType() string {
+	cmd := exec.Command("kubectl", "config", "current-context")
+	output, err := cmd.Output()
+	if err != nil {
+		log.Debugf("Could not get current kubectl context, defaulting to generic kubernetes: %v", err)
+		return "kubernetes"
+	}
+
+	context := strings.ToLower(strings.TrimSpace(string(output)))
+	log.Debugf("Detected kubectl context: %s", context)
+
+	if strings.Contains(context, "minikube") {
+		return "minikube"
+	}
+	if strings.Contains(context, "kind") {
+		return "kind"
+	}
+	if strings.Contains(context, "k3s") || strings.Contains(context, "k3d") {
+		return "k3s"
+	}
+
+	return "kubernetes"
 }
 
 // Apply Meshery helm charts
