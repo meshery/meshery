@@ -415,7 +415,7 @@ func start() error {
 
 		// Auto-configure kubeconfig if enabled
 		if err := autoConfigureKubeconfig(); err != nil {
-			log.Warn("Auto-configuration failed, continuing with startup:", err)
+			log.WithError(err).Warn("Auto-configuration failed, continuing with startup")
 		}
 
 		// log.Info("Starting Meshery...")
@@ -489,7 +489,7 @@ func autoConfigureKubeconfig() error {
 	// Process kubeconfig (minify and flatten)
 	_, _, err = meshkitkube.ProcessConfig(utils.KubeConfig, utils.ConfigPath)
 	if err != nil {
-		log.Warn("Failed to process kubeconfig automatically:", err)
+		log.WithError(err).Warn("Failed to process kubeconfig automatically")
 		return nil // Don't fail the start process
 	}
 
