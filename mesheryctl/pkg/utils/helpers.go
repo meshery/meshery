@@ -1238,10 +1238,16 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		if !firstIteration {
 			ClearLine()
 		}
-		firstIteration = false
 		remaining := len(data) - endIndex
 
-		// Print current page number (count is already displayed by DisplayCount)
+		// On first iteration, output count to ensure it's visible in test output
+		if firstIteration {
+			whiteBoardPrinter.Print("Total number of ", component, ": ", len(data))
+			fmt.Println()
+		}
+		firstIteration = false
+
+		// Print current page number
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
