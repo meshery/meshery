@@ -1,5 +1,5 @@
 import React from 'react';
-import { CircularProgress, Typography, Box, Paper } from '@mui/material';
+import { CircularProgress, Typography, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 
 const LoaderContainer = styled(Paper)(({ theme }) => ({

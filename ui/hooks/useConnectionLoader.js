@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 
 const useConnectionLoader = () => {
@@ -6,43 +6,44 @@ const useConnectionLoader = () => {
   const [verificationMessage, setVerificationMessage] = useState('');
   const { enqueueSnackbar } = useSnackbar();
 
-  useEffect(() => {
-    // Listen for connection verification events
-    const handleConnectionEvent = (event) => {
-      if (event.category === 'connection' && event.action === 'verifying') {
+  const handleConnectionEvent = useCallback((event) => {
+    if (event.category !== 'connection') {
+      return;
+    }
+    switch (event.action) {
+      case 'verifying':
         setIsVerifying(true);
         setVerificationMessage(event.description || 'Verifying connection...');
-      } else if (event.category === 'connection' && event.action === 'create') {
+        break;
+      case 'create':
+      case 'update': {
         setIsVerifying(false);
         setVerificationMessage('');
+        const successMessage = `Connection ${event.action}d successfully!`;
+        const errorMessage = `Failed to ${event.action} connection.`;
         if (event.severity === 'informational') {
-          enqueueSnackbar('Connection created successfully!', { variant: 'success' });
+          enqueueSnackbar(successMessage, { variant: 'success' });
         } else if (event.severity === 'error') {
-          enqueueSnackbar('Failed to create connection', { variant: 'error' });
+          enqueueSnackbar(errorMessage, { variant: 'error' });
         }
-      } else if (event.category === 'connection' && event.action === 'update') {
-        setIsVerifying(false);
-        setVerificationMessage('');
-        if (event.severity === 'informational') {
-          enqueueSnackbar('Connection updated successfully!', { variant: 'success' });
-        } else if (event.severity === 'error') {
-          enqueueSnackbar('Failed to update connection', { variant: 'error' });
-        }
+        break;
       }
-    };
+      default:
+        // Do nothing for other actions
+        break;
+    }
+  }, [enqueueSnackbar]);
 
-    // Subscribe to events (assuming you have an event system)
-    // This would need to be integrated with your existing event system
+  useEffect(() => {
     if (window.mesheryEventBus) {
       window.mesheryEventBus.subscribe('connection', handleConnectionEvent);
     }
-
     return () => {
       if (window.mesheryEventBus) {
         window.mesheryEventBus.unsubscribe('connection', handleConnectionEvent);
       }
     };
-  }, [enqueueSnackbar]);
+  }, [handleConnectionEvent]);
 
   const startVerification = (message = 'Verifying connection...') => {
     setIsVerifying(true);

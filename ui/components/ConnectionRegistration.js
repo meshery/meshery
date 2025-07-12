@@ -11,10 +11,10 @@ import {
   Select,
   MenuItem,
   Box,
-  Typography,
 } from '@mui/material';
 import ConnectionLoader from './ConnectionLoader';
 import useConnectionLoader from '../hooks/useConnectionLoader';
+import { useSnackbar } from 'notistack';
 
 const ConnectionRegistration = ({ open, onClose, onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -25,15 +25,16 @@ const ConnectionRegistration = ({ open, onClose, onSuccess }) => {
     url: '',
     credentials: {},
   });
-  
-  const { isVerifying, verificationMessage, startVerification } = useConnectionLoader();
+
+  const { isVerifying, verificationMessage, startVerification, stopVerification } = useConnectionLoader();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Start verification process
     startVerification('Verifying connection...');
-    
+
     try {
       const response = await fetch('/api/integrations/connections', {
         method: 'POST',
@@ -50,11 +51,13 @@ const ConnectionRegistration = ({ open, onClose, onSuccess }) => {
         onSuccess?.();
         onClose();
       } else {
-        const error = await response.text();
-        console.error('Connection registration failed:', error);
+        const errorText = await response.text();
+        enqueueSnackbar(`Connection registration failed: ${errorText}`, { variant: 'error' });
+        stopVerification();
       }
     } catch (error) {
-      console.error('Connection registration error:', error);
+      enqueueSnackbar(`An error occurred: ${error.message}`, { variant: 'error' });
+      stopVerification();
     }
   };
 
@@ -88,7 +91,7 @@ const ConnectionRegistration = ({ open, onClose, onSuccess }) => {
               required
               fullWidth
             />
-            
+
             <FormControl fullWidth required>
               <InputLabel>Connection Kind</InputLabel>
               <Select
@@ -138,12 +141,12 @@ const ConnectionRegistration = ({ open, onClose, onSuccess }) => {
             </FormControl>
           </Box>
         </DialogContent>
-        
+
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
-          <Button 
-            type="submit" 
-            variant="contained" 
+          <Button
+            type="submit"
+            variant="contained"
             color="primary"
             disabled={!formData.name || !formData.kind}
           >

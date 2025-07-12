@@ -33,7 +33,7 @@ describe('ConnectionLoader', () => {
     renderWithTheme(<ConnectionLoader />);
     
     // Check if the circular progress is rendered
-    const progressElement = document.querySelector('.MuiCircularProgress-root');
+    const progressElement = screen.getByRole('progressbar');
     expect(progressElement).toBeInTheDocument();
   });
 
