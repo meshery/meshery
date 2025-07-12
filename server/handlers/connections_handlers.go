@@ -37,6 +37,10 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*h.SystemID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
+	// Send loading state event to notify UI that verification is in progress
+	loadingEvent := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("verifying").FromSystem(*h.SystemID).FromUser(userUUID).WithDescription("Verifying connection...").WithSeverity(events.Informational).Build()
+	go h.config.EventBroadcaster.Publish(userUUID, loadingEvent)
+
 	if string(connectionRegisterPayload.Status) == string(machines.Init) {
 		h.handleRegistrationInitEvent(w, req, &connectionRegisterPayload)
 	} else {
@@ -148,6 +152,10 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	}
 
 	eventBuilder := events.NewEvent().ActedUpon(userID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("create")
+
+	// Send loading state event to notify UI that connection verification is in progress
+	loadingEvent := events.NewEvent().ActedUpon(userID).WithCategory("connection").WithAction("verifying").FromSystem(*h.SystemID).FromUser(userID).WithDescription("Verifying connection...").WithSeverity(events.Informational).Build()
+	go h.config.EventBroadcaster.Publish(userID, loadingEvent)
 
 	_, err = provider.SaveConnection(&connection, "", false)
 	if err != nil {

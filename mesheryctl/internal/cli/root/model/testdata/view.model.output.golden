@@ -1,0 +1,6 @@
+displayName: Test Model
+version: v1.0.0
+description: A test model for view command.
+metadata: {}
+components: []
+relationships: [] 
