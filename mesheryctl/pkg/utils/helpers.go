@@ -1232,14 +1232,22 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 	startIndex := 0
 	endIndex := min(len(data), startIndex+pageSize)
 
+	firstIteration := true
 	for {
-		// Clear the entire terminal screen
-		ClearLine()
+		// Clear the entire terminal screen (skip on first iteration to preserve DisplayCount output)
+		if !firstIteration {
+			ClearLine()
+		}
 		remaining := len(data) - endIndex
 
-		// Print number of filter files and current page number
-		whiteBoardPrinter.Print("Total number of ", component, ":", len(data))
-		fmt.Println()
+		// On first iteration, output count to ensure it's visible in test output
+		if firstIteration {
+			whiteBoardPrinter.Print("Total number of ", component, ": ", len(data))
+			fmt.Println()
+		}
+		firstIteration = false
+
+		// Print current page number
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
