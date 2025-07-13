@@ -1242,14 +1242,12 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 
 		// On first iteration, output count to ensure it's visible in test output
 		if firstIteration {
-			whiteBoardPrinter.Print("Total number of ", component, ": ", len(data))
-			fmt.Println()
+			whiteBoardPrinter.Print("Total number of ", component, ": ", len(data), "\n")
 		}
 		firstIteration = false
 
 		// Print current page number
-		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
-		fmt.Println()
+		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1, "\n")
 
 		if len(footer) > 0 {
 			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
