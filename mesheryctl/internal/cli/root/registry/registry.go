@@ -29,7 +29,7 @@ var (
 
 	spreadsheeetID          string
 	spreadsheeetCred        string
-	modelName               string
+	modelNames              []string
 	modelCSVFilePath        string
 	componentCSVFilePath    string
 	relationshipCSVFilePath string
