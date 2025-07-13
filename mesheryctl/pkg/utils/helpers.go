@@ -1246,8 +1246,8 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		}
 		firstIteration = false
 
-		// Print current page number
-		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1, "\n")
+		// Print current page number with extra newline for table spacing
+		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1, "\n\n")
 
 		if len(footer) > 0 {
 			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
