@@ -111,6 +111,7 @@ type ConnectionPayload struct {
 	CredentialID               *uuid.UUID             `json:"credential_id,omitempty"`
 	Model                      string                 `json:"model,omitempty"`
 	SkipCredentialVerification bool                   `json:"skip_credential_verification"`
+	MeshsyncDeploymentMode     string                 `json:"meshsync_deployment_mode,omitempty"`
 }
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {

@@ -57,9 +57,10 @@ type DefaultLocalProvider struct {
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
 
-	GenericPersister *database.Handler
-	KubeClient       *mesherykube.Client
-	Log              logger.Handler
+	GenericPersister          *database.Handler
+	KubeClient                *mesherykube.Client
+	Log                       logger.Handler
+	TMPMeshsyncDeploymentMode string
 }
 
 // Initialize will initialize the local provider
@@ -80,6 +81,10 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
 		{Feature: PersistCredentials},
+	}
+	l.TMPMeshsyncDeploymentMode = "operator"
+	if viper.GetBool("TMP_MESHSYNC_AS_A_LIBRARY_MODE") {
+		l.TMPMeshsyncDeploymentMode = "library"
 	}
 }
 
@@ -280,6 +285,8 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		Status:           connections.DISCOVERED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
+		// TODO: pass from above
+		MeshsyncDeploymentMode: l.TMPMeshsyncDeploymentMode,
 	}
 	connectionCreated, err := l.SaveConnection(conn, "", true)
 	if err != nil {
@@ -1095,6 +1102,8 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		UserID:       &uuid.Nil,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
+		// // TODO
+		// MeshsyncDeploymentMode: conn.MeshsyncDeploymentMode,
 	}
 	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
 	if err != nil {
