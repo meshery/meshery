@@ -82,7 +82,19 @@ const EnvironmentCard = ({
   );
   const environmentConnectionsCount = environmentConnections?.total_count || 0;
 
-  const deleted = environmentDetails.deleted_at.Valid;
+  
+  // this allows to handle both cases when deleted at is: 
+  // - [timestamp, null]
+  // - object in format {Time: timestamp, Valid: boolean}
+  // --
+  // TODO:
+  // - switch remote provider to have format of deleted_at as [timestamp, null]
+  // - or update serialisation for deleted_at field of Environment to return object in format {Time: timestamp, Valid: boolean}
+  const deleted = environmentDetails.deleted_at === null
+  ? false
+  : (typeof environmentDetails.deleted_at === 'object' && environmentDetails.deleted_at !== null && 'Valid' in environmentDetails.deleted_at)
+    ? !!environmentDetails.deleted_at.Valid
+    : true;
 
   return (
     <>
