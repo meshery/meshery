@@ -2,12 +2,12 @@ package kubernetes
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/spf13/viper"
 )
 
 type ConnectAction struct{}
@@ -30,30 +30,19 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
-	token, ok := ctx.Value(models.TokenCtxKey).(string)
-	if !ok {
-		errToken := ErrConnectAction(fmt.Errorf("failed to retrieve user token"))
-		eventBuilder.WithMetadata(map[string]interface{}{"error": errToken})
-		return machines.NoOp, eventBuilder.Build(), errToken
 
-	}
-	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ID)
-	connection, _, err := provider.GetConnectionByIDAndKind(
-		token,
-		connectionID,
-		"kubernetes",
-	)
-	if err != nil {
-		errConnection := ErrConnectAction(err)
-		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
-		return machines.NoOp, eventBuilder.Build(), errConnection
-
+	meshsyncDeploymentMode := models.MeshsyncDeploymentModeOperator
+	//  TODO:
+	// this viper value check here is a temporal thing
+	// meshsync deployment mode will be propagated from connection entity
+	if viper.GetBool("TMP_MESHSYNC_AS_A_LIBRARY_MODE") {
+		meshsyncDeploymentMode = models.MeshsyncDeploymentModeLibrary
 	}
 
 	go func() {
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
 			AddCtxControllerHandlers(machinectx.K8sContext).
-			SetMeshsyncDeploymentMode(models.MeshsyncDeploymentModeFromString(connection.MeshsyncDeploymentMode)).
+			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker)
 		ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
