@@ -22,6 +22,8 @@ import {
   OutlinedResetIcon,
   useTheme,
   ErrorBoundary,
+  lightPalette,
+  darkPalette,
 } from '@sistent/sistent';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
@@ -33,22 +35,7 @@ import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
 import { useSelector } from 'react-redux';
-
-const MESHERY_COLORS = {
-  primary: '#00B39F',
-  primaryDark: 'rgba(0, 179, 159, 0.3)',
-  primaryLight: 'rgba(0, 179, 159, 0.2)',
-  glassDark: 'rgba(255, 255, 255, 0.3)',
-  glassLight: 'rgba(35, 35, 35, 0.2)',
-  glassHoverDark: 'rgba(255, 255, 255, 0.5)',
-  glassHoverLight: 'rgba(35, 35, 35, 0.5)',
-  activeDark: 'rgba(0, 179, 159, 0.2)',
-  activeLight: 'rgba(0, 179, 159, 0.1)',
-  shadowDark: 'rgba(0, 179, 159, 0.2)',
-  shadowLight: 'rgba(60, 73, 79, 0.1)',
-  shadowHoverDark: 'rgba(0, 179, 159, 0.3)',
-  shadowHoverLight: 'rgba(0, 179, 159, 0.15)',
-};
+import { pink } from '@mui/material/colors';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -204,18 +191,11 @@ const Dashboard = () => {
     label: 'Edit',
     Icon: EditIcon,
     action: toggleEditMode,
-    description: 'Configure dashboard layout',
+    description: 'Edit Dashboard layout',
     isShown: !isEditMode,
   };
   
   const LayoutActions = {
-    START_EDIT: {
-      label: 'Edit',
-      Icon: EditIcon,
-      action: toggleEditMode,
-      description: 'Configure dashboard layout for the current organization',
-      isShown: !isEditMode,
-    },
     CANCEL_EDIT: {
       label: 'Cancel',
       Icon: CloseIcon,
@@ -348,15 +328,24 @@ const Dashboard = () => {
                     sx={{
                       background: 'none',
                       border: 'none',
-                      color: theme.palette.text.secondary,
                       cursor: 'pointer',
                       p: 1,
-                      '&:hover': {
-                        color: theme.palette.primary.main,
+                      '& svg': {
+                        fill: theme.palette.mode === 'dark' 
+                          ? theme.palette.text.primary 
+                          : theme.palette.text.secondary,
+                      },
+                      '& svg path': {
+                        fill: theme.palette.mode === 'dark' 
+                          ? theme.palette.text.primary 
+                          : theme.palette.text.secondary,
+                      },
+                      '&:hover svg, &:hover svg path': {
+                        fill: theme.palette.primary.main,
                       },
                     }}
                   >
-                    <EditTrigger.Icon sx={{ fontSize: 12 }} />
+                    <EditTrigger.Icon/>
                   </Box>
                 </CustomTooltip>
               </Box>
@@ -392,14 +381,11 @@ const Dashboard = () => {
                         borderRadius: theme.spacing(2),
                         border: `1px solid ${
                           theme.palette.mode === 'dark'
-                            ? MESHERY_COLORS.primaryDark
-                            : MESHERY_COLORS.primaryLight
+                            ? theme.palette.primary.light
+                            : theme.palette.primary.dark
                         }`,
-                        backgroundColor:
-                          theme.palette.mode === 'dark'
-                            ? MESHERY_COLORS.glassDark
-                            : MESHERY_COLORS.glassLight,
-                        backdropFilter: 'blur(20px)',
+                        backgroundColor: theme.palette.background.blur.light,
+                        backdropFilter: 'blur(10px)',
                         color: theme.palette.common.white,
                         display: 'flex',
                         alignItems: 'center',
@@ -407,28 +393,32 @@ const Dashboard = () => {
                         cursor: 'pointer',
                         boxShadow:
                           theme.palette.mode === 'dark'
-                            ? `0 ${theme.spacing(1)} ${theme.spacing(4)} ${MESHERY_COLORS.shadowDark}`
-                            : `0 ${theme.spacing(1)} ${theme.spacing(4)} ${MESHERY_COLORS.shadowLight}`,
+                            ? theme.shadows[2]
+                            : theme.shadows[1],
                         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                        '& svg': {
+                          fill: theme.palette.mode === 'dark' 
+                            ? theme.palette.common.white 
+                            : theme.palette.common.black,
+                        },
                         '&:hover': {
                           transform: 'translateY(-2px) scale(1.05)',
                           backgroundColor:
                             theme.palette.mode === 'dark'
-                              ? MESHERY_COLORS.glassHoverDark
-                              : MESHERY_COLORS.glassHoverLight,
-                          borderColor:
-                            MESHERY_COLORS.primary,
+                              ? theme.palette.action.hover
+                              : theme.palette.action.selected,
+                          borderColor: theme.palette.primary.main,
                           boxShadow:
                             theme.palette.mode === 'dark'
-                              ? `0 ${theme.spacing(1.5)} ${theme.spacing(5)} ${MESHERY_COLORS.shadowHoverDark}`
-                              : `0 ${theme.spacing(1.5)} ${theme.spacing(5)} ${MESHERY_COLORS.shadowHoverLight}`,
+                              ? theme.shadows[4]
+                              : theme.shadows[3],
                         },
                         '&:active': {
                           transform: 'translateY(0) scale(0.95)',
                           backgroundColor:
                             theme.palette.mode === 'dark'
-                              ? MESHERY_COLORS.activeDark
-                              : MESHERY_COLORS.activeLight,
+                              ? theme.palette.action.selected
+                              : theme.palette.action.focus, 
                         },
                       }}
                     >
