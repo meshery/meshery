@@ -114,7 +114,7 @@ During model generation, corresponding components are created. Next step is to e
      - Consider enriching components' details based on what they represent
      - Reference Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for possible shapes
      - Example: Use a pentagon shape to represent a Deployment
-     - Know more about [components shapes and colors](https://docs.meshery.io/extensions/component-shape-guide)
+     - Know more about [components shapes and colors](https://docs.meshery.io/guides/configuration-management/identifying-components)
 
    - **1.2. Customize Icons**
 

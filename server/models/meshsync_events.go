@@ -8,7 +8,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/utils"
 
-	meshsyncmodel "github.com/layer5io/meshsync/pkg/model"
+	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"gorm.io/gorm"
 )
@@ -287,4 +287,20 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 	}
 
 	return
+}
+
+func (mh *MeshsyncDataHandler) Resync() error {
+	if mh.broker.Info() == broker.NotConnected {
+		mh.log.Warnf("Resync meshsync: broker is not connected")
+		return nil
+	}
+	err := mh.broker.Publish(MeshsyncRequestSubject, &broker.Message{
+		Request: &broker.RequestObject{
+			Entity: broker.ReSyncDiscoveryEntity,
+		},
+	})
+	if err != nil {
+		return ErrMeshsyncDataHandler(err)
+	}
+	return nil
 }

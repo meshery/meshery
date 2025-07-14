@@ -3305,6 +3305,42 @@
         "short_description": "Request was not successful",
         "probable_cause": "The server might be down or temporarily unavailable.\nThere could be network connectivity issues between the client and the server.\nThe API endpoint might be misconfigured, or the server is experiencing high load.",
         "suggested_remediation": "Check if the server is online and operational.\nVerify network connectivity and ensure there are no firewalls or DNS issues blocking the request.\nConfirm the API endpoint is correct and functional."
+      },
+      "1369": {
+        "name": "ErrResyncClusterCode",
+        "code": "1369",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to process resync cluster request",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "1370": {
+        "name": "ErrMeshsyncDataHandlerCode",
+        "code": "1370",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error in meshsync data hadler",
+        "probable_cause": "not deployed operator\nissue with connection to broker",
+        "suggested_remediation": "check that operator is deployed\ncheck that server can establish connection to broker"
+      },
+      "1371": {
+        "name": "ErrResyncResourcesCode",
+        "code": "1371",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Error resync resources",
+        "probable_cause": "Fail to resync resources for the machine",
+        "suggested_remediation": "Check if machine supports resource resync"
+      },
+      "1372": {
+        "name": "ErrResyncK8SResourcesCode",
+        "code": "1372",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Error resync resources",
+        "probable_cause": "Fail to resync resources for the kubernetes machine",
+        "suggested_remediation": "Check if machine context is assign to machine\nCheck if machine context contains a reference to MesheryControllersHelper"
       }
     }
   }

@@ -42,7 +42,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
     );
   };
   return (
-    <Grid2 container size="grow">
+    <Grid2 size="grow">
       {' '}
       <div>
         {event?.description && <FormatStructuredData data={event.description} />}

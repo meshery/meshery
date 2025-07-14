@@ -13,7 +13,7 @@ components:
 - name: hyper-node
   colorIcon: assets/img/integrations/volcano/components/hyper-node/icons/color/hyper-node-color.svg
   whiteIcon: assets/img/integrations/volcano/components/hyper-node/icons/white/hyper-node-white.svg
-  description: Orchestration & Management
+  description: 
 - name: job
   colorIcon: assets/img/integrations/volcano/components/job/icons/color/job-color.svg
   whiteIcon: assets/img/integrations/volcano/components/job/icons/white/job-white.svg

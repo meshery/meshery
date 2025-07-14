@@ -249,7 +249,9 @@ function Dashboard() {
                   boardConfigs={grafana.selectedBoardsConfigs}
                   grafanaURL={grafana.grafanaURL}
                   grafanaAPIKey={grafana.grafanaAPIKey}
-                  handleGrafanaChartAddition={() => router.push('/settings/#metrics')}
+                  handleGrafanaChartAddition={() =>
+                    router.push('/settings?settingsCategory=Metrics&tab=Grafana')
+                  }
                 />
               </StyledPaper>
             </Grid2>

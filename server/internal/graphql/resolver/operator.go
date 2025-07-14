@@ -54,14 +54,17 @@ func (r *Resolver) changeOperatorStatus(ctx context.Context, provider models.Pro
 	var k8scontext models.K8sContext
 	var err error
 	if ctxID != "" {
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			r.Log.Error(ErrNilClient)
 			return model.StatusUnknown, ErrNilClient
 		}
 		for _, ctx := range allContexts {
+			if ctx == nil {
+				continue
+			}
 			if ctx.ID == ctxID {
-				k8scontext = ctx
+				k8scontext = *ctx
 				break
 			}
 		}

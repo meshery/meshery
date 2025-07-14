@@ -397,7 +397,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 				"evaluation_response": evaluationResponse,
 				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 
 		// write the response
 		ec := json.NewEncoder(rw)

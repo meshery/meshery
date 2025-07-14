@@ -94,6 +94,9 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 		path, _ := cmd.Flags().GetString("path")
 		// immediately remove trailing folder separator
 		path = strings.TrimRight(path, string(os.PathSeparator))
+		// this will make it in one format
+		path = filepath.Join(path)
+
 		version, _ := cmd.Flags().GetString("version")
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
@@ -171,6 +174,7 @@ mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default 
 				initModelReplacePlaceholders(
 					initModelNextStepsText,
 					map[string]string{
+						"{path}":               path,
 						"{modelName}":          modelName,
 						"{modelVersion}":       version,
 						"{modelFolder}":        modelFolder,
@@ -217,7 +221,7 @@ const initModelDirPerm = 0755
 const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
 const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
 const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
-const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection_template"
+const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
 
 // TODO
@@ -236,7 +240,7 @@ To import this model into Meshery:
 $ mesheryctl model import {modelFolder}
 
 To export this model as OCI image:
-$ mesheryctl model build {modelVersionFolder} -t myregistry/{modelName}:{modelVersion}
+$ mesheryctl exp model build {modelName}/{modelVersion} --path {path}
 
 Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
 

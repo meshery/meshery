@@ -154,7 +154,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 			go func(inst *machines.StateMachine) {
 				event, err := inst.SendEvent(req.Context(), machines.EventType(mhelpers.StatusToEvent(status)), nil)
 				if err != nil {
-					_ = provider.PersistEvent(event)
+					_ = provider.PersistEvent(*event, nil)
 					go h.config.EventBroadcaster.Publish(userID, event)
 				}
 			}(inst)
@@ -168,7 +168,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	}
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	if err := json.NewEncoder(w).Encode(saveK8sContextResponse); err != nil {
@@ -222,7 +222,7 @@ func (h *Handler) GetContextsFromK8SConfig(w http.ResponseWriter, req *http.Requ
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
 
 	event := eventBuilder.WithMetadata(eventMetadata).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userUUID, event)
 
 	err = json.NewEncoder(w).Encode(contexts)
@@ -354,7 +354,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		h.log.Debug(conn)
-		if conn.ShouldConnectionBeManaged() {
+		if connections.ShouldConnectionBeManaged(conn) {
 			cc.ConnectionID = conn.ID.String()
 			contexts = append(contexts, cc)
 			metadata["context"] = models.RedactCredentialsForContext(cc)
@@ -387,7 +387,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		}
 		ctx.ConnectionID = conn.ID.String()
 		h.log.Debug(conn)
-		if conn.ShouldConnectionBeManaged() {
+		if connections.ShouldConnectionBeManaged(conn) {
 			contexts = append(contexts, ctx)
 		}
 	}

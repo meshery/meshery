@@ -873,7 +873,7 @@ function MesheryPatterns({
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showModal(1, name);
-      if (response == 'No') {
+      if (response == 'CANCEL') {
         updateProgress({ showProgress: false });
         return;
       }
@@ -1418,6 +1418,7 @@ function MesheryPatterns({
           message: `"${name}" design uploaded`,
           event_type: EVENT_TYPES.SUCCESS,
         });
+        setImportModal((prev) => ({ ...prev, open: false }));
         getPatterns();
       })
       .catch(() => {

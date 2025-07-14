@@ -8,8 +8,8 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshsync/pkg/model"
 	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshsync/pkg/model"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"

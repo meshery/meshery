@@ -379,7 +379,6 @@ export default function Provider() {
           <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
           <ul>
             <li>Academic research and advanced studies by Ph.D. researchers</li>
-            <li></li>
             <li>Used by school of Electrical and Computer Engineering (ECE)</li>
           </ul>
           <p style={{ fontWeight: 700 }}>
@@ -389,7 +388,6 @@ export default function Provider() {
             <li>
               Performance and compatibility-centric research and validation
             </li>
-            <li></li>
             <li>Used by various cloud native projects</li>
           </ul>
           <p style={{ fontWeight: 700 }}>HPE Security</p>

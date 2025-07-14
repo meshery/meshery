@@ -114,7 +114,7 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		cg.log.Info("Registration of ", ctxName, " components started for contextID: ", ctxID)
 
 		event := events.NewEvent().ActedUpon(connectionID).FromSystem(*ctx.MesheryInstanceID).WithSeverity(events.Informational).WithCategory("connection").WithAction(Registering.String()).FromUser(userUUID).WithDescription(fmt.Sprintf("Registration for Kubernetes context %s started", ctxName)).Build()
-		err := provider.PersistEvent(event)
+		err := provider.PersistEvent(*event, nil)
 		if err != nil {
 			// Even if event was not persisted continue with the operation and publish the event to user.
 			cg.log.Warn(err)

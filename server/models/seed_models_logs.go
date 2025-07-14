@@ -3,6 +3,8 @@ package models
 import (
 	"fmt"
 
+	"strings"
+
 	gofrs "github.com/gofrs/uuid"
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
@@ -11,7 +13,6 @@ import (
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	mutils "github.com/meshery/meshkit/utils"
 	"github.com/spf13/viper"
-	"strings"
 )
 
 var TAB = "    "
@@ -113,7 +114,7 @@ func FailedEventCompute(hostname string, mesheryInstanceID gofrs.UUID, provider 
 			"ViewLink":     filePath,
 			"error":        ErrImportFailure(hostname, failedMsg),
 		})
-		_ = (*provider).PersistEvent(errorEvent)
+		_ = (*provider).PersistEvent(*errorEvent, nil)
 		if userID != "" {
 			userUUID := gofrs.FromStringOrNil(userID)
 			ec.Publish(userUUID, errorEvent)
@@ -189,12 +190,12 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 
 		log.Info(successMessage)
 		eventBuilder.WithMetadata(map[string]interface{}{
-			"kind": host.Kind,
+			"kind":    host.Kind,
 			"doclink": "https://docs.meshery.io/concepts/logical#logical-concepts",
 		})
 		eventBuilder.WithSeverity(events.Informational).WithDescription(successMessage)
 		successEvent := eventBuilder.Build()
-		_ = provider.PersistEvent(successEvent)
+		_ = provider.PersistEvent(*successEvent, nil)
 
 		failLog, err := FailedEventCompute(host.Kind, sysID, &provider, "", handlerConfig.EventBroadcaster, regErrorStore)
 		if err != nil {

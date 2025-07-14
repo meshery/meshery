@@ -183,7 +183,7 @@ const WorkspaceContent = ({ workspace }) => {
       <Box style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <Grid2 container spacing={2} alignItems="center" size="grow">
           {/* Search Bar */}
-          <Grid2 size={{ xs: 12, md: 5 }}>
+          <Grid2 size={{ xs: 12, md: 4.5 }}>
             <StyledSearchBar
               sx={{ backgroundColor: 'transparent' }}
               width="auto"
@@ -194,12 +194,12 @@ const WorkspaceContent = ({ workspace }) => {
               onChange={onSearchChange}
               endAdornment={
                 filters.type === RESOURCE_TYPE.DESIGN ? (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Designs: {designsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {designsData?.total_count ?? 0}
                   </p>
                 ) : (
-                  <p style={{ color: theme.palette.text.default }}>
-                    Total Views: {viewsData?.total_count ?? 0}
+                  <p style={{ color: theme.palette.text.default, paddingLeft: '0.25rem' }}>
+                    Total: {viewsData?.total_count ?? 0}
                   </p>
                 )
               }
@@ -297,10 +297,14 @@ const WorkspaceContent = ({ workspace }) => {
               RESOURCE_TYPE.DESIGN === filters.type ? designsData?.designs : viewsData?.views
             }
             isMultiSelectMode={true}
+            showOrganizationName={false}
+            showWorkspaceName={false}
           />
 
           {filters.type == RESOURCE_TYPE.DESIGN && (
             <MainDesignsContent
+              showWorkspaceName={false}
+              showOrganizationName={false}
               page={filters.designsPage}
               setPage={setDesignsPage}
               isLoading={isLoading}
@@ -315,6 +319,8 @@ const WorkspaceContent = ({ workspace }) => {
           )}
           {filters.type == RESOURCE_TYPE.VIEW && (
             <MainViewsContent
+              showWorkspaceName={false}
+              showOrganizationName={false}
               page={filters.viewsPage}
               setPage={setViewsPage}
               isLoading={isViewLoading}

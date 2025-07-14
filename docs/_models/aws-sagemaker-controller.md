@@ -113,7 +113,7 @@ components:
 - name: labeling-job
   colorIcon: assets/img/integrations/aws-sagemaker-controller/components/labeling-job/icons/color/labeling-job-color.svg
   whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/labeling-job/icons/white/labeling-job-white.svg
-  description: Machine Learning
+  description: 
 components-count: 26
 relationships: 
 relationship-count: 0

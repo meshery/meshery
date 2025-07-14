@@ -30,7 +30,7 @@ export const MenuComponent = ({ options = [] }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('xl'));
 
   const handleClick = (event) => {
     event.stopPropagation();
@@ -45,10 +45,13 @@ export const MenuComponent = ({ options = [] }) => {
 
   const renderDirectIcons = () => {
     return (
-      <div style={{ display: 'flex' }}>
+      <div style={{ display: 'flex', gap: '0' }}>
         {options.map((option) => (
           <CustomTooltip key={option.title} title={option.title}>
             <IconButton
+              sx={{
+                padding: '0.15rem',
+              }}
               disabled={option.disabled}
               style={{ cursor: 'pointer' }}
               onClick={(event) => {
@@ -102,6 +105,7 @@ export const MenuComponent = ({ options = [] }) => {
         onClose={handleClose}
         style={{
           borderRadius: '3px',
+          zIndex: 9999999999,
         }}
       >
         {options.map((option) => (

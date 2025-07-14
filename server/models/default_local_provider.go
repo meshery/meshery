@@ -181,8 +181,8 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -196,8 +196,8 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
@@ -1086,7 +1086,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	connection := &connections.Connection{
 		ID:           id,
 		Name:         conn.Name,
-		CredentialID: uuid.Nil,
+		CredentialID: &uuid.Nil, // compatibilitiy
 		Type:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
@@ -1158,7 +1158,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *con
 		Status:       conn.Status,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-		CredentialID: *conn.CredentialID,
+		CredentialID: conn.CredentialID,
 	}
 	return l.UpdateConnection(req, &connection)
 }
@@ -1814,6 +1814,134 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 				outFile.Close()
 			}
 		}
+	}
+	return nil
+}
+
+// Events
+
+func (e *EventsPersister) PersistEvent(event events.Event, token *string) error {
+	err := e.DB.Save(event).Error
+	if err != nil {
+		return ErrPersistEvent(err)
+	}
+	return nil
+}
+
+func (l *DefaultLocalProvider) GetEvents(token string, eventsFilter *events.EventsFilter, page int, userID uuid.UUID, sysID uuid.UUID) (*EventsResponse, error) {
+	e := l.EventsPersister
+	eventsDB := []*events.Event{}
+	finder := e.DB.Model(&events.Event{}).Where("user_id = ? OR user_id = ?", userID, sysID)
+
+	if len(eventsFilter.Category) != 0 {
+		finder = finder.Where("category IN ?", eventsFilter.Category)
+	}
+
+	if len(eventsFilter.Action) != 0 {
+		finder = finder.Where("action IN ?", eventsFilter.Action)
+	}
+
+	if len(eventsFilter.Severity) != 0 {
+		finder = finder.Where("severity IN ?", eventsFilter.Severity)
+	}
+
+	if eventsFilter.Search != "" {
+		finder = finder.Where("description LIKE ?", "%"+eventsFilter.Search+"%")
+	}
+
+	if eventsFilter.Status != "" {
+		finder = finder.Where("status = ?", eventsFilter.Status)
+	}
+
+	if len(eventsFilter.ActedUpon) != 0 {
+		finder = finder.Where("acted_upon in ?", eventsFilter.ActedUpon)
+	}
+
+	sortOn := SanitizeOrderInput(fmt.Sprintf("%s %s", eventsFilter.SortOn, eventsFilter.Order), []string{"created_at", "updated_at", "name"})
+	finder = finder.Order(sortOn)
+
+	var count int64
+	finder.Count(&count)
+	if eventsFilter.Offset != 0 {
+		finder = finder.Offset(eventsFilter.Offset)
+	}
+
+	if eventsFilter.Limit != 0 {
+		finder = finder.Limit(eventsFilter.Limit)
+	}
+
+	err := finder.Scan(&eventsDB).Error
+	if err != nil {
+		return nil, err
+	}
+
+	countBySeverity, err := e.getCountBySeverity(userID, eventsFilter.Status)
+	if err != nil {
+		return nil, err
+	}
+
+	return &EventsResponse{
+		Events:               eventsDB,
+		PageSize:             eventsFilter.Limit,
+		TotalCount:           count,
+		CountBySeverityLevel: countBySeverity,
+	}, nil
+}
+
+func (l *DefaultLocalProvider) GetEventTypes(token string, userID uuid.UUID, sysID uuid.UUID) (EventTypesResponse, error) {
+	e := l.EventsPersister
+
+	eventTypes := EventTypesResponse{}
+
+	var categories, actions []string
+	err := e.DB.Table("events").Distinct("category").Where("user_id = ? OR user_id = ?", userID, sysID).Find(&categories).Error
+	if err != nil {
+		return eventTypes, err
+	}
+
+	err = e.DB.Table("events").Distinct("action").Where("user_id = ?", userID).Find(&actions).Error
+	if err != nil {
+		return eventTypes, err
+	}
+
+	eventTypes.Action = actions
+	eventTypes.Category = categories
+	return eventTypes, err
+}
+
+func (l *DefaultLocalProvider) UpdateEventStatus(token string, eventID uuid.UUID, status string) error {
+	e := l.EventsPersister
+	err := e.DB.Model(&events.Event{ID: eventID, Status: events.EventStatus(status)}).Update("status", status).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
+
+func (l *DefaultLocalProvider) BulkUpdateEventStatus(token string, eventIDs []*uuid.UUID, status string) error {
+
+	err := l.EventsPersister.DB.Model(&events.Event{Status: events.EventStatus(status)}).Where("id IN ?", eventIDs).Update("status", status).Error
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (l *DefaultLocalProvider) DeleteEvent(token string, eventID uuid.UUID) error {
+	err := l.EventsPersister.DB.Delete(&events.Event{ID: eventID}).Error
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (l *DefaultLocalProvider) BulkDeleteEvent(token string, eventIDs []*uuid.UUID) error {
+	err := l.EventsPersister.DB.Where("id IN ?", eventIDs).Delete(&events.Event{}).Error
+	if err != nil {
+		return err
 	}
 	return nil
 }

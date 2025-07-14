@@ -2,62 +2,61 @@
 
 | Name                    | GitHub            | Affiliation |
 | ----------------------- | ----------------- | ----------- |
-| Hussaina Begum          | @hexxdump          | VMware      |
-| Aadhitya Amarendiran    | @alphaX86          | Citi        |
-| Jerod Culpepper         | @cpepper96         | SAIC        |
-| Antonette Caldwell      | @acald-creator     | Acquia      |
-| Matthieu Evrin          | @lekaf974          | Moneris     |
+| [Hussaina Begum](https://meshery.io/community/members/hussaina-begum)          | @hexxdump          | VMware      |
+| [Aadhitya Amarendiran](https://meshery.io/community/members/aadhitya-amarendiran)    | @alphaX86          | Citi        |
+| [Jerod Culpepper](https://meshery.io/community/members/jerod-culpepper)         | @cpepper96         | SAIC        |
+| [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)      | @acald-creator     | Acquia      |
+| [Matthieu Evrin](https://meshery.io/community/members/matthieu-evrin)          | @lekaf974          | Moneris     |
 
 ### UI Maintainers
 
 | Name                | GitHub                 | Affiliation |
 | ------------------- | ---------------------- | --------------|
-| Nikhil Ladha        | @Nikhil-Ladha           | Red Hat       |
-| Antonette Caldwell  | @acald-creator          | Acquia        |
-| Aabid Sofi          | @aabidsofi19            | Layer5        |
-| Yash Sharma         | @Yashsharma1911         | Digital Ocean |
-| Sudhanshu Dasgupta  | @sudhanshutech          | SafeDep       |
-| Ian Whitney         | @ianrwhitney            | Intuit |
+| [Nikhil Ladha](https://meshery.io/community/members/nikhil-ladha)        | @Nikhil-Ladha           | Red Hat       |
+| [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)  | @acald-creator          | Acquia        |
+| [Aabid Sofi](https://meshery.io/community/members/aabid-sofi)          | @aabidsofi19            | Layer5        |
+| [Yash Sharma](https://meshery.io/community/members/yash-sharma)         | @Yashsharma1911         | Digital Ocean |
+| [Sudhanshu Dasgupta](https://meshery.io/community/members/sudhanshu-dasgupta)  | @sudhanshutech          | SafeDep       |
+| [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit |
 
 ### Adapter Maintainers
 
 | Name                | GitHub        | Affiliation |
 | ------------------- | ------------- | ----------- |
-| Aisuko Li           | @aisuko        | RMIT        |
-| Dheeraj Gedam       | @dheerajng     | Citrix      |
-| Haim Helman         | @thehh1974     | VMware      |
-| Hussaina Begum      | @hexxdump      | VMware      |
-| Ashish Tiwari       | @revolyssup    | API7        |
-| Michael Gfeller     | @mgfeller      | Computas AS |
-| Antonette Caldwell  | @acald-creator | Acquia      |
-| Xin Huang           | @gyohuangxin   | Intel       |
+| [Aisuko Li](https://meshery.io/community/members/aisuko)           | @aisuko        | RMIT        |
+| [Dheeraj Gedam](https://meshery.io/community/members/dheeraj-gedam)        | @dheerajng     | Citrix      |
+| [Haim Helman](https://meshery.io/community/members/haim-helman)         | @thehh1974     | VMware      |
+| [Hussaina Begum](https://meshery.io/community/members/hussaina-begum)      | @hexxdump      | VMware      |
+| [Ashish Tiwari](https://meshery.io/community/members/ashish-tiwari)       | @revolyssup    | API7        |
+| [Michael Gfeller](https://meshery.io/community/members/michael-gfeller)     | @mgfeller      | Computas AS |
+| [Antonette Caldwell](https://meshery.io/community/members/antonette-caldwell)  | @acald-creator | Acquia      |
 
 ### CI / Build & Release Maintainers
 
 | Name                  | GitHub             | Affiliation |
 | --------------------- | ------------------ | ----------- |
-| Ashish Tiwari         | @revolyssup         | API7        |
-| Mario Arriaga         | @MarioArriaga92     | F5          |
-| Sangram Rath          | @sangramrath        | OD10        |
+| [Ashish Tiwari](https://meshery.io/community/members/ashish-tiwari)         | @revolyssup         | API7        |
+| [Sangram Rath](https://meshery.io/community/members/sangram-rath)          | @sangramrath        | OD10        |
+| [Ian Whitney](https://meshery.io/community/members/ian-whitney) | @ianrwhitney | Intuit |
 
 ### Docs Maintainers
 
 | Name              | GitHub          | Affiliation |
 | ----------------- | --------------- | ----------- |
-| Adithya Krishna   | @adithyaakrishna | Red Hat     |
-| Lee Calcote       | @leecalcote      | Layer5      |
-| Mia Grenell       | @miacycle        | USyd        |
+| [Adithya Krishna](https://meshery.io/community/members/adithya-krishna)   | @adithyaakrishna | Red Hat     |
+| [Lee Calcote](https://meshery.io/community/members/lee-calcote)       | @leecalcote      | Layer5      |
+| [Mia Grenell](https://meshery.io/community/members/mia-grenell)       | @miacycle        | USyd        |
 
 ### Site Maintainers
 
 | Name                    | GitHub       | Affiliation    |
 | ----------------------  | -----------  | -------------- |
-| Nikhil Ladha            | @Nikhil-Ladha | Red Hat        |
-| Aaditya Narayan Subedy  | @asubedy      | Fast Retailing |
+| [Nikhil Ladha](https://meshery.io/community/members/nikhil-ladha)            | @Nikhil-Ladha | Red Hat        |
+| [Aaditya Narayan Subedy](https://meshery.io/community/members/aaditya-narayan-subedy)  | @asubedy      | Fast Retailing |
 
 ### Meshery Extensions Maintainers
 
 | Name                    | GitHub         | Affiliation    |
 | ----------------------  | -------------- | -------------- |
-| Ijeoma Eti              | @Aijeyomah      | Manufactured   |
-| Pranav Singh            | @theBeginner86  | Intel          |
+| [Ijeoma Eti](https://meshery.io/community/members/eti-ijeoma)              | @Aijeyomah      | Manufactured   |
+| [Pranav Singh](https://meshery.io/community/members/pranav-singh)            | @theBeginner86  | Intel          |
