@@ -16,7 +16,6 @@ import {
   CircularProgress,
   CustomTooltip,
   useMediaQuery,
-  Tooltip,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
