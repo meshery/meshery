@@ -22,8 +22,6 @@ import {
   OutlinedResetIcon,
   useTheme,
   ErrorBoundary,
-  lightPalette,
-  darkPalette,
 } from '@sistent/sistent';
 import { WrapperPaper } from './style';
 import _ from 'lodash';
@@ -194,7 +192,7 @@ const Dashboard = () => {
     description: 'Edit Dashboard layout',
     isShown: !isEditMode,
   };
-  
+
   const LayoutActions = {
     CANCEL_EDIT: {
       label: 'Cancel',
@@ -330,17 +328,23 @@ const Dashboard = () => {
                       border: 'none',
                       cursor: 'pointer',
                       p: 1,
+                      width: 32,
+                      height: 32, 
+                      display: 'flex',
+                      alignItems: 'center', 
+                      justifyContent: 'center',
                       '& svg': {
-                        fill: theme.palette.mode === 'dark'
-                          ? alpha(theme.palette.text.primary, 0.5)
-                          : alpha(theme.palette.text.secondary, 0.5),
+                        fill:
+                          theme.palette.mode === 'dark'
+                            ? alpha(theme.palette.text.primary, 0.5)
+                            : alpha(theme.palette.text.secondary, 0.5),
                       },
                       '&:hover svg, &:hover svg path': {
                         fill: theme.palette.primary.main,
                       },
                     }}
                   >
-                    <EditTrigger.Icon/>
+                    <EditTrigger.Icon />
                   </Box>
                 </CustomTooltip>
               </Box>
@@ -363,65 +367,61 @@ const Dashboard = () => {
                   alignItems: 'center',
                 }}
               >
-                {topBarActions.map(({ key, label, Icon, action, description }) =>{
-                
-                return (
-                  <CustomTooltip key={key} title={description || label} placement="bottom">
-                    <Box
-                      component="button"
-                      onClick={action}
-                      sx={{
-                        width: theme.spacing(6),
-                        height: theme.spacing(6),
-                        borderRadius: theme.spacing(2),
-                        border: `1px solid ${
-                          theme.palette.mode === 'dark'
-                            ? theme.palette.primary.light
-                            : theme.palette.primary.dark
-                        }`,
-                        backgroundColor: theme.palette.background.blur.light,
-                        backdropFilter: 'blur(10px)',
-                        color: theme.palette.common.white,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        boxShadow:
-                          theme.palette.mode === 'dark'
-                            ? theme.shadows[2]
-                            : theme.shadows[1],
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        '& svg': {
-                          fill: theme.palette.mode === 'dark' 
-                            ? theme.palette.common.white 
-                            : theme.palette.common.black,
-                        },
-                        '&:hover': {
-                          transform: 'translateY(-2px) scale(1.05)',
-                          backgroundColor:
+                {topBarActions.map(({ key, label, Icon, action, description }) => {
+                  return (
+                    <CustomTooltip key={key} title={description || label} placement="bottom">
+                      <Box
+                        component="button"
+                        onClick={action}
+                        sx={{
+                          width: theme.spacing(6),
+                          height: theme.spacing(6),
+                          borderRadius: theme.spacing(2),
+                          border: `1px solid ${
                             theme.palette.mode === 'dark'
-                              ? theme.palette.action.hover
-                              : theme.palette.action.selected,
-                          borderColor: theme.palette.primary.main,
+                              ? theme.palette.primary.light
+                              : theme.palette.primary.dark
+                          }`,
+                          backgroundColor: theme.palette.background.blur.light,
+                          backdropFilter: 'blur(10px)',
+                          color: theme.palette.common.white,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
                           boxShadow:
-                            theme.palette.mode === 'dark'
-                              ? theme.shadows[4]
-                              : theme.shadows[3],
-                        },
-                        '&:active': {
-                          transform: 'translateY(0) scale(0.95)',
-                          backgroundColor:
-                            theme.palette.mode === 'dark'
-                              ? theme.palette.action.selected
-                              : theme.palette.action.focus, 
-                        },
-                      }}
-                    >
-                      <Icon sx={{ fontSize: theme.spacing(2.75) }} />
-                    </Box>
-                  </CustomTooltip>
-                );
-              })}
+                            theme.palette.mode === 'dark' ? theme.shadows[2] : theme.shadows[1],
+                          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                          '& svg': {
+                            fill:
+                              theme.palette.mode === 'dark'
+                                ? theme.palette.common.white
+                                : theme.palette.common.black,
+                          },
+                          '&:hover': {
+                            transform: 'translateY(-2px) scale(1.05)',
+                            backgroundColor:
+                              theme.palette.mode === 'dark'
+                                ? theme.palette.action.hover
+                                : theme.palette.action.selected,
+                            borderColor: theme.palette.primary.main,
+                            boxShadow:
+                              theme.palette.mode === 'dark' ? theme.shadows[4] : theme.shadows[3],
+                          },
+                          '&:active': {
+                            transform: 'translateY(0) scale(0.95)',
+                            backgroundColor:
+                              theme.palette.mode === 'dark'
+                                ? theme.palette.action.selected
+                                : theme.palette.action.focus,
+                          },
+                        }}
+                      >
+                        <Icon sx={{ fontSize: theme.spacing(2.75) }} />
+                      </Box>
+                    </CustomTooltip>
+                  );
+                })}
               </Box>
 
               <ResponsiveReactGridLayout
