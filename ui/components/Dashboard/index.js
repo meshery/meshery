@@ -199,6 +199,15 @@ const Dashboard = () => {
     setDashboardLayout(defaultLayout);
     updateLayout(defaultLayout);
   };
+
+  const EditTrigger = {
+    label: 'Edit',
+    Icon: EditIcon,
+    action: toggleEditMode,
+    description: 'Configure dashboard layout',
+    isShown: !isEditMode,
+  };
+  
   const LayoutActions = {
     START_EDIT: {
       label: 'Edit',
@@ -243,7 +252,7 @@ const Dashboard = () => {
     },
   };
 
-  const topBarActions = Object.entries(LayoutActions)
+  const topBarActions = Object.entries(_.omit(LayoutActions, 'START_EDIT'))
     .filter(([, action]) => action.isShown)
     .map(([key, layoutAction]) => ({ key, ...layoutAction }));
 
@@ -284,7 +293,7 @@ const Dashboard = () => {
   return (
     <>
       <>
-        <WrapperPaper>
+        <WrapperPaper sx={{ position: 'relative' }}>
           <Tabs
             sx={{
               [`& .${tabsClasses.scrollButtons}`]: {
@@ -325,6 +334,33 @@ const Dashboard = () => {
                 </CustomTooltip>
               );
             })}
+            {EditTrigger && resourceCategory === 'Overview' && (
+              <Box
+                position="absolute"
+                top={0}
+                left={`max(60px, calc(${100 / ResourceCategoryTabs.length}% - 32px))`}
+                zIndex={10}
+              >
+                <CustomTooltip title={EditTrigger.description} placement="right">
+                  <Box
+                    component="button"
+                    onClick={EditTrigger.action}
+                    sx={{
+                      background: 'none',
+                      border: 'none',
+                      color: theme.palette.text.secondary,
+                      cursor: 'pointer',
+                      p: 1,
+                      '&:hover': {
+                        color: theme.palette.primary.main,
+                      },
+                    }}
+                  >
+                    <EditTrigger.Icon sx={{ fontSize: 12 }} />
+                  </Box>
+                </CustomTooltip>
+              </Box>
+            )}
           </Tabs>
         </WrapperPaper>
 
