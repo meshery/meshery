@@ -34,8 +34,8 @@ import Popup from '../General/Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
 import { tabsClasses } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
-import { pink } from '@mui/material/colors';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -331,14 +331,9 @@ const Dashboard = () => {
                       cursor: 'pointer',
                       p: 1,
                       '& svg': {
-                        fill: theme.palette.mode === 'dark' 
-                          ? theme.palette.text.primary 
-                          : theme.palette.text.secondary,
-                      },
-                      '& svg path': {
-                        fill: theme.palette.mode === 'dark' 
-                          ? theme.palette.text.primary 
-                          : theme.palette.text.secondary,
+                        fill: theme.palette.mode === 'dark'
+                          ? alpha(theme.palette.text.primary, 0.5)
+                          : alpha(theme.palette.text.secondary, 0.5),
                       },
                       '&:hover svg, &:hover svg path': {
                         fill: theme.palette.primary.main,
