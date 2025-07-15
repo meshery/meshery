@@ -24,6 +24,8 @@ import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
 import { openDesignInKanvas, useIsKanvasDesignerEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
 import { styled } from '@sistent/sistent';
+import DesignViewListItem from '../SpacesSwitcher/DesignViewListItem';
+import { RESOURCE_TYPE } from '@/utils/Enum';
 
 const StyledModalBody = styled(ModalBody)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -50,16 +52,6 @@ const CurrentDesignSection = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),
   borderRadius: theme.spacing(1),
   backgroundColor: theme.palette.background.secondary,
-}));
-
-const DesignItem = styled(ListItem)(({ theme }) => ({
-  borderRadius: theme.spacing(1),
-  marginBottom: theme.spacing(1),
-  backgroundColor: theme.palette.background.card,
-  '&:hover': {
-    backgroundColor: theme.palette.action.hover,
-    cursor: 'pointer',
-  },
 }));
 
 const DesignerPanel = ({ open, onClose, activeUser, currentDesignId }) => {
@@ -118,7 +110,7 @@ const DesignerPanel = ({ open, onClose, activeUser, currentDesignId }) => {
   if (!activeUser) return null;
 
   return (
-    <Modal open={open} closeModal={onClose} maxWidth="md" title="Designer Activity">
+    <Modal open={open} closeModal={onClose} maxWidth="lg" title="Designer Activity">
       <StyledModalBody>
         {isUserLoading ? (
           <Box display="flex" justifyContent="center" alignItems="center" minHeight="200px">
@@ -126,57 +118,21 @@ const DesignerPanel = ({ open, onClose, activeUser, currentDesignId }) => {
           </Box>
         ) : (
           <>
-            {/* User Information Section */}
-            <UserInfoSection>
-              <Avatar
-                src={userProfile?.avatar_url || activeUser?.avatar_url}
-                sx={{ width: 64, height: 64 }}
-              >
-                {!userProfile?.avatar_url && !activeUser?.avatar_url && <PersonIcon />}
-              </Avatar>
-              <Box flex={1}>
-                <Typography variant="h6" gutterBottom>
-                  {userProfile?.first_name || activeUser?.name || 'Unknown User'}
-                  {userProfile?.last_name && ` ${userProfile.last_name}`}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" gutterBottom>
-                  {userProfile?.email}
-                </Typography>
-              </Box>
-              <ActionButton
-                variant="outlined"
-                startIcon={<PersonIcon />}
-                onClick={handleGoToProfile}
-              >
-                View Profile
-              </ActionButton>
-            </UserInfoSection>
-
             {/* Current Design Section */}
             {designdata && (
-              <CurrentDesignSection>
+              <Box>
                 <Typography variant="subtitle1" gutterBottom>
                   Currently Working On:
                 </Typography>
-                <DesignItem onClick={handleOpenCurrentDesign}>
-                  <ListItemAvatar>
-                    <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
-                      <DesignIcon />
-                    </Avatar>
-                  </ListItemAvatar>
-                  <ListItemText
-                    primary={designdata.name}
-                    secondary={`Updated: ${new Date(designdata.updated_at).toLocaleDateString()}`}
-                  />
-                  <ActionButton
-                    variant="contained"
-                    startIcon={<DesignIcon />}
-                    onClick={handleOpenCurrentDesign}
-                  >
-                    Collaborate
-                  </ActionButton>
-                </DesignItem>
-              </CurrentDesignSection>
+                <DesignViewListItem
+                  type={RESOURCE_TYPE.DESIGN}
+                  selectedItem={designdata}
+                  handleItemClick={handleOpenCurrentDesign}
+                  showWorkspaceName={false}
+                  showOrganizationName={false}
+                  isMultiSelectMode={false}
+                />
+              </Box>
             )}
 
             {/* Recent Designs Section */}
@@ -188,20 +144,14 @@ const DesignerPanel = ({ open, onClose, activeUser, currentDesignId }) => {
                 <List>
                   {userDesigns.patterns.slice(0, 3).map((design) => (
                     <React.Fragment key={design.id}>
-                      <DesignItem onClick={() => handleOpenDesign(design)}>
-                        <ListItemAvatar>
-                          <Avatar sx={{ bgcolor: theme.palette.secondary.main }}>
-                            <DesignIcon />
-                          </Avatar>
-                        </ListItemAvatar>
-                        <ListItemText
-                          primary={design.name}
-                          secondary={`Updated: ${new Date(design.updated_at).toLocaleDateString()}`}
-                        />
-                        <CustomTooltip title="Open in Designer">
-                          <OpenInNewIcon />
-                        </CustomTooltip>
-                      </DesignItem>
+                      <DesignViewListItem
+                        type={RESOURCE_TYPE.DESIGN}
+                        selectedItem={design}
+                        handleItemClick={() => handleOpenDesign(design)}
+                        showWorkspaceName={false}
+                        showOrganizationName={false}
+                        isMultiSelectMode={false}
+                      />
                       <Divider />
                     </React.Fragment>
                   ))}
