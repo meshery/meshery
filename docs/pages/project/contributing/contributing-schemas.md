@@ -139,7 +139,7 @@ This ensures that schemas remain the **single source of truth**, making developm
 Schema-driven development can feel abstract until you are trying to implement something. Here are a few real world flows from different types of contributors. Whether you are building a new feature or just curious how others plug into schemas, this is the guide.
 
 ### 1. Mesheryctl Contributor Flow
-**Example:** You want to add a `mesheryctl model build` command.
+**Example:** You want to add a `mesheryctl model build` command. 
 **Steps:**
 - Add the new verb in `openapi.yaml` under the appropriate construct (e.g., `model/`)
 - Update `<construct>.json` if new properties are needed
@@ -162,21 +162,21 @@ make golang-generate
 make validate-schemas
 make golang-generate
 ```
-- Backend (GORM) auto-updates your DB schema
-
-*Never manually customize GORM-generated structs. Your changes will be overwritten by the next schema regen.*
+- The generated Go structs (from `oapi-codegen`) are used in the backend.
+- If the backend uses GORM with auto-migration enabled, these structs may be used to update the DB schema.
+- Avoid manually editing the generated models, as they will be overwritten when schemas are regenerated.
 
 *Why it matters:* This reduces drift between backend logic and API contract.
 
 ### 3. Meshery UI Contributor Flow
-**Example:** Show the new `version` field on the Model dashboard.
+**Example:** Show the new `version` field on the Model dashboard. 
 **Steps:**
 - Check `openapi.yaml` to verify the new field exists
 - Wait for the backend to regenerate and expose the property
 - Use RTK + TypeScript types to access and render data
 - If you need templates, they’re already auto-generated for you!
 
-*Why it matters:* UI stays in sync with backend- fewer bugs, fewer mismatches, easier onboarding.
+*Why it matters:* UI stays in sync with the backend - fewer bugs, fewer mismatches, easier onboarding.
 
 ### 4. Meshery Docs Contributor Flow
 **Example:** You are writing a guide!
