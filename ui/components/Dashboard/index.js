@@ -353,6 +353,7 @@ const Dashboard = () => {
                           key={widget.key}
                           widget={widget}
                           removeWidget={removeWidget}
+                          onEnterEditMode={toggleEditMode}
                         />
                       </ErrorBoundary>
                     </div>
