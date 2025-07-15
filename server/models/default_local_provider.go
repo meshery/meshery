@@ -181,8 +181,8 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -196,8 +196,8 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
@@ -1086,7 +1086,7 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 	connection := &connections.Connection{
 		ID:           id,
 		Name:         conn.Name,
-		CredentialID: uuid.Nil,
+		CredentialID: &uuid.Nil, // compatibilitiy
 		Type:         conn.Type,
 		SubType:      conn.SubType,
 		Kind:         conn.Kind,
@@ -1158,7 +1158,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *con
 		Status:       conn.Status,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-		CredentialID: *conn.CredentialID,
+		CredentialID: conn.CredentialID,
 	}
 	return l.UpdateConnection(req, &connection)
 }

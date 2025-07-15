@@ -221,7 +221,7 @@ const initModelDirPerm = 0755
 const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
 const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
 const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
-const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection_template"
+const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
 
 // TODO
