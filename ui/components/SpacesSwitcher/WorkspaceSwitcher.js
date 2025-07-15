@@ -50,6 +50,7 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
     isLoading: isLoadingWorkspaces,
   } = useGetSelectedWorkspace();
   const isSmallScreen = useMediaQuery('(max-width:400px)');
+  const theme = useTheme();
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
@@ -122,7 +123,6 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                           },
                         }}
                         renderValue={() => {
-                          const theme = useTheme();
                           return (
                             <span
                               style={{
