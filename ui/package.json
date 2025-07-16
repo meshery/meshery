@@ -106,6 +106,7 @@
     "@babel/types": "^7.27.0",
     "@next/eslint-plugin-next": "^13.1.2",
     "@playwright/test": "^1.51.1",
+    "@types/lodash": "^4.17.20",
     "@types/node": "^22.15.29",
     "@types/react": "^19.1.7",
     "@types/react-dom": "^19.1.6",
