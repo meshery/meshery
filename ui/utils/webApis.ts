@@ -3,7 +3,7 @@
  * localhost:{port} or an IP adress or a webadress
  * @returns {string} application host
  */
-function getHost() {
+function getHost(): string {
   return window.location.host;
 }
 
@@ -12,7 +12,7 @@ function getHost() {
  * It could be , "http:" or "https:"
  * @returns {string}
  */
-export function getProtocol() {
+export function getProtocol(): string {
   return window.location.protocol;
 }
 
@@ -21,7 +21,7 @@ export function getProtocol() {
  * @returns {string} base url on which Meshery is runnning,
  * @example http://localhost:9081
  */
-export function getWebAdress() {
+export function getWebAdress(): string {
   return getProtocol() + '//' + getHost();
 }
 
@@ -32,13 +32,13 @@ export function getWebAdress() {
  * @param {string} queryKey
  * @returns {string} queryVal
  */
-export function getQueryParam(queryKey) {
-  let queryParamString = window.location.search;
+export function getQueryParam(queryKey: string): string {
+  let queryParamString: string = window.location.search;
   queryParamString = queryParamString.replace('?', '');
 
-  let queryVal = '';
+  let queryVal: string = '';
 
-  queryParamString.split('&').forEach((query) => {
+  queryParamString.split('&').forEach((query: string) => {
     if (query.split('=')[0] === queryKey) {
       if (!queryVal) {
         queryVal = query.split('=')[1];
@@ -49,7 +49,7 @@ export function getQueryParam(queryKey) {
   return queryVal;
 }
 
-export function getRawUrlFromCssUrlString(url) {
+export function getRawUrlFromCssUrlString(url?: string): string | undefined {
   if (!url) return;
 
   // turns url(http://localhost:9081/path/to/svg) to http://localhost:9081/path/to/svg

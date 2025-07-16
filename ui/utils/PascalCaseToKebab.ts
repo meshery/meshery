@@ -4,7 +4,7 @@
  * @param {string} str string in pascal case or camel case
  * @returns
  */
-export default function PascalCaseToKebab(str) {
+export default function PascalCaseToKebab(str: string): string {
   return pascalCaseToCamelCase(str).replace(/[A-Z]/g, '-$&').toLowerCase();
 }
 
@@ -13,6 +13,6 @@ export default function PascalCaseToKebab(str) {
  * returns it in camelcase format
  * @param {string} str string that needs to be transformed
  */
-function pascalCaseToCamelCase(str) {
+function pascalCaseToCamelCase(str: string): string {
   return str.charAt(0).toLowerCase() + str.slice(1);
 }
