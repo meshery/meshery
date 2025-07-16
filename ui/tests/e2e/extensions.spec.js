@@ -1,96 +1,83 @@
-import { expect, test } from '@playwright/test';
-import { DashboardPage } from './pages/DashboardPage';
-// URLs used in tests
-const URLS = {
-  KANVAS: {
-    DOCS: 'https://docs.layer5.io/kanvas/',
-    DESIGNER_EMBED: 'https://docs.layer5.io/kanvas/designer/embedding-designs/',
-  },
-  DOCKER: {
-    EXTENSION: 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
-  },
-  MESHERY: {
-    CATALOG: 'https://meshery.io/catalog',
-    ADATPER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
-  },
-};
+import { test } from '@playwright/test';
+import { ExtensionsPage } from './pages/ExtensionsPage';
 
-// Extensions Section Tests
-test.describe('Extensions Section Tests', () => {
+test.describe('Extensions Page Tests', () => {
+  let extensionsPage;
+
   test.beforeEach(async ({ page }) => {
-    const dashboardPage = new DashboardPage(page);
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToExtensions();
+    extensionsPage = new ExtensionsPage(page);
+    await page.goto('/extensions');
   });
 
-  test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
-    await expect(page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
-    await expect(page.getByTestId('kanvas-snapshot-description')).toBeVisible();
-
-    const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
-    await expect(enableButton).toBeVisible();
-    await expect(enableButton).toBeEnabled();
-
-    await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
+  test('should verify Kanvas Snapshot visibility', async () => {
+    await extensionsPage.verifyKanvasSnapshotVisibility();
   });
 
-  test('Verify Performance Analysis Details', async ({ page }) => {
-    await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
-    const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
-    await expect(performanceEnableButton).toBeVisible();
-    await expect(performanceEnableButton).toBeEnabled();
+  test('should click Kanvas Snapshot enable button', async () => {
+    await extensionsPage.clickKanvasSnapshotEnableBtn();
   });
 
-  test('Verify Kanvas Details', async ({ page, context }) => {
-    await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
-    const kanvasDetailsButton = page.getByTestId('kanvas-signup-btn');
-    await expect(kanvasDetailsButton).toBeVisible();
-    if (await kanvasDetailsButton.isEnabled()) {
-      const [docsPage] = await Promise.all([
-        context.waitForEvent('page'),
-        kanvasDetailsButton.click(),
-      ]);
-      await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
-      await docsPage.close();
-    }
+  test('should verify Performance Analysis visibility', async () => {
+    await extensionsPage.verifyPerformanceAnalysisVisibility();
   });
 
-  test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
-    await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      page.getByTestId('docker-extension-download-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
+  test('should click Performance Analysis enable button', async () => {
+    await extensionsPage.clickPerformanceAnalysisEnableBtn();
+  });
+
+  test('should verify Kanvas Details visibility', async () => {
+    await extensionsPage.verifyKanvasDetailsVisibility();
+  });
+
+  test('should click Kanvas Signup button and open new page', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickKanvasSignupBtn(),
+    );
     await newPage.close();
   });
 
-  test('Verify Meshery Design Embed Details', async ({ page, context }) => {
-    await expect(page.getByTestId('design-embed-learn-more-btn')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      page.getByTestId('design-embed-learn-more-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.KANVAS.DESIGNER_EMBED);
+  test('should verify Docker Extension visibility', async () => {
+    await extensionsPage.verifyDockerExtensionVisibility();
+  });
+
+  test('should click Docker Extension download button', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickDockerExtensionDownloadBtn(),
+    );
     await newPage.close();
   });
 
-  test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
-    await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
-    const toggleButton = page.getByTestId('catalog-toggle-switch');
-    await toggleButton.click();
-    const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
-    const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
-    await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
+  test('should verify Design Embed visibility', async () => {
+    await extensionsPage.verifyDesignEmbedVisibility();
+  });
+
+  test('should click Design Embed learn more button', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickDesignEmbedLearnMoreBtn(),
+    );
     await newPage.close();
   });
 
-  test('Verify Meshery Adapter for Istio Section', async ({ page, context }) => {
-    const [docsPage] = await Promise.all([
-      context.waitForEvent('page'),
-      await page.getByTestId('adapter-docs-istio').click(),
-    ]);
-    await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
-    await docsPage.close();
+  test('should verify Catalog Section visibility', async () => {
+    await extensionsPage.verifyCatalogSectionVisibility();
+  });
+
+  test('should click Catalog toggle switch', async () => {
+    await extensionsPage.clickCatalogToggleSwitch();
+  });
+
+  test('should click Catalog link and verify URL', async ({ context }) => {
+    await extensionsPage.verifyNewPageURL(
+      context,
+      () => extensionsPage.clickCatalogLink(),
+      'https://meshery.io/catalog',
+    );
+  });
+
+  test('should click Adapter docs Istio', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickAdapterDocsIstio(),
+    );
+    await newPage.close();
   });
 });
