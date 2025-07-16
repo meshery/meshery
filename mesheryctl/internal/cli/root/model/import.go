@@ -458,7 +458,7 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 			}
 		}
 		if entityType == "unknown" {
-			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s", utils.BoldString("ERROR"), name.(string), longDescription)
+			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s\n\n    Import model command is only used for importing an existing model.\n    Refer \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\ for existing models.", utils.BoldString("ERROR"), name.(string), longDescription)
 			if probableCause != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause)
 			}
