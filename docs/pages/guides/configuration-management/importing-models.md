@@ -21,7 +21,7 @@ Before you can use the Meshery CLI to import a [Model](/concepts/logical/models)
 
 **Step 2: Import the Model**
 
-Model can imported in 2 different format ```URL, File```.The only cretiria for this import is the model should be a Meshery exported Model.
+Model can imported in 2 different format ```URL, File```. The only cretiria for this import is the model should be a Meshery exported Model, refer [Meshery catalog](https://meshery.io/catalog/models) for the models.
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f [file/url] </div></div>
@@ -41,6 +41,8 @@ https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "https://github.com/{owner}/{repo}/raw/refs/heads/main/filename"</div></div>
 </pre>
 
+Note that `mesheryctl model import` is only used for importing an existing model, this cannot create a new model.
+
 
 
 
@@ -58,7 +60,9 @@ Once you have accessed the Meshery UI, navigate to the Registry under Settings. 
 
 **Step 3: Upload the Model**
 
-On the Registry page, you can import your model clicking the import button in registry page. Selecting URL or File and then hitting Import
+On the Registry page, you can import your model clicking the import button in registry page. Selecting URL or File and then hitting Import button.  
+
+Note that you can import only an existing model, refer [Meshery catalog](https://meshery.io/catalog/models) for models.
 
 This Meshery model will include components, relationships.
 
