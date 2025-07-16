@@ -3,33 +3,33 @@ import { expect } from '@playwright/test';
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
-    
+
     // Kanvas Snapshot Locators
     this.kanvasSnapshotHeading = page.getByTestId('kanvas-snapshot-heading');
     this.kanvasSnapshotDescription = page.getByTestId('kanvas-snapshot-description');
     this.kanvasSnapshotEnableBtn = page.getByTestId('kanvas-snapshot-enable-btn');
     this.kanvasSnapshotImage = page.getByTestId('kanvas-snapshot-image');
-    
+
     // Performance Analysis Locators
     this.performanceAnalysisHeading = page.getByTestId('performance-analysis-heading');
     this.performanceAnalysisEnableBtn = page.getByTestId('performance-analysis-enable-btn');
-    
+
     // Kanvas Details Locators
     this.kanvasSignupHeading = page.getByTestId('kanvas-signup-heading');
     this.kanvasSignupBtn = page.getByTestId('kanvas-signup-btn');
-    
+
     // Docker Extension Locators
     this.dockerExtensionHeading = page.getByTestId('docker-extension-heading');
     this.dockerExtensionDownloadBtn = page.getByTestId('docker-extension-download-btn');
-    
+
     // Design Embed Locators
     this.designEmbedLearnMoreBtn = page.getByTestId('design-embed-learn-more-btn');
-    
+
     // Catalog Section Locators
     this.catalogSectionHeading = page.getByTestId('catalog-section-heading');
     this.catalogToggleSwitch = page.getByTestId('catalog-toggle-switch');
     this.catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
-    
+
     // Adapter Locators
     this.adapterDocsIstio = page.getByTestId('adapter-docs-istio');
   }
@@ -110,10 +110,7 @@ export class ExtensionsPage {
 
   // Helper method to handle new page opening
   async clickAndWaitForNewPage(context, clickAction) {
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      clickAction()
-    ]);
+    const [newPage] = await Promise.all([context.waitForEvent('page'), clickAction()]);
     return newPage;
   }
 

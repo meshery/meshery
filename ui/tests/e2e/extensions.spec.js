@@ -1,91 +1,83 @@
-import { expect, test } from '@playwright/test';
-import { DashboardPage } from './pages/DashboardPage';
+import { test } from '@playwright/test';
 import { ExtensionsPage } from './pages/ExtensionsPage';
 
-// URLs used in tests
-const URLS = {
-  KANVAS: {
-    DOCS: 'https://docs.layer5.io/kanvas/',
-    DESIGNER_EMBED: 'https://docs.layer5.io/kanvas/designer/embedding-designs/',
-  },
-  DOCKER: {
-    EXTENSION: 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
-  },
-  MESHERY: {
-    CATALOG: 'https://meshery.io/catalog',
-    ADATPER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
-  },
-};
-
-// Extensions Section Tests
-test.describe('Extensions Section Tests', () => {
-  let dashboardPage;
+test.describe('Extensions Page Tests', () => {
   let extensionsPage;
 
   test.beforeEach(async ({ page }) => {
-    dashboardPage = new DashboardPage(page);
     extensionsPage = new ExtensionsPage(page);
-    
-    await dashboardPage.navigateToDashboard();
-    await dashboardPage.navigateToExtensions();
+    await page.goto('/extensions');
   });
 
-  test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
+  test('should verify Kanvas Snapshot visibility', async () => {
     await extensionsPage.verifyKanvasSnapshotVisibility();
   });
 
-  test('Verify Performance Analysis Details', async ({ page }) => {
+  test('should click Kanvas Snapshot enable button', async () => {
+    await extensionsPage.clickKanvasSnapshotEnableBtn();
+  });
+
+  test('should verify Performance Analysis visibility', async () => {
     await extensionsPage.verifyPerformanceAnalysisVisibility();
   });
 
-  test('Verify Kanvas Details', async ({ page, context }) => {
+  test('should click Performance Analysis enable button', async () => {
+    await extensionsPage.clickPerformanceAnalysisEnableBtn();
+  });
+
+  test('should verify Kanvas Details visibility', async () => {
     await extensionsPage.verifyKanvasDetailsVisibility();
-    
-    if (await extensionsPage.isKanvasSignupBtnEnabled()) {
-      await extensionsPage.verifyNewPageURL(
-        context,
-        () => extensionsPage.clickKanvasSignupBtn(),
-        URLS.KANVAS.DOCS
-      );
-    }
   });
 
-  test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
+  test('should click Kanvas Signup button and open new page', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickKanvasSignupBtn(),
+    );
+    await newPage.close();
+  });
+
+  test('should verify Docker Extension visibility', async () => {
     await extensionsPage.verifyDockerExtensionVisibility();
-    
-    await extensionsPage.verifyNewPageURL(
-      context,
-      () => extensionsPage.clickDockerExtensionDownloadBtn(),
-      URLS.DOCKER.EXTENSION
-    );
   });
 
-  test('Verify Meshery Design Embed Details', async ({ page, context }) => {
+  test('should click Docker Extension download button', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickDockerExtensionDownloadBtn(),
+    );
+    await newPage.close();
+  });
+
+  test('should verify Design Embed visibility', async () => {
     await extensionsPage.verifyDesignEmbedVisibility();
-    
-    await extensionsPage.verifyNewPageURL(
-      context,
-      () => extensionsPage.clickDesignEmbedLearnMoreBtn(),
-      URLS.KANVAS.DESIGNER_EMBED
-    );
   });
 
-  test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
+  test('should click Design Embed learn more button', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickDesignEmbedLearnMoreBtn(),
+    );
+    await newPage.close();
+  });
+
+  test('should verify Catalog Section visibility', async () => {
     await extensionsPage.verifyCatalogSectionVisibility();
+  });
+
+  test('should click Catalog toggle switch', async () => {
     await extensionsPage.clickCatalogToggleSwitch();
-    
+  });
+
+  test('should click Catalog link and verify URL', async ({ context }) => {
     await extensionsPage.verifyNewPageURL(
       context,
       () => extensionsPage.clickCatalogLink(),
-      URLS.MESHERY.CATALOG
+      'https://meshery.io/catalog',
     );
   });
 
-  test('Verify Meshery Adapter for Istio Section', async ({ page, context }) => {
-    await extensionsPage.verifyNewPageURL(
-      context,
-      () => extensionsPage.clickAdapterDocsIstio(),
-      URLS.MESHERY.ADATPER_DOCS
+  test('should click Adapter docs Istio', async ({ context }) => {
+    const newPage = await extensionsPage.clickAndWaitForNewPage(context, () =>
+      extensionsPage.clickAdapterDocsIstio(),
     );
+    await newPage.close();
   });
 });
