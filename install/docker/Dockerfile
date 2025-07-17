@@ -17,13 +17,13 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
-RUN npm ci --legacy-peer-deps --ignore-scripts
+RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
 
 FROM base-node AS meshery-ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --legacy-peer-deps
+RUN npm ci --omit=dev --legacy-peer-deps
 
 # Build NextJS Application
 FROM base-node AS meshery-ui-builder

@@ -1,7 +1,6 @@
 {
   "presets": [
-    ["next/babel", { "transform-runtime": { "corejs": 3 } }],
-    "@babel/preset-typescript"
+    "next/babel"
   ],
   "plugins": [
     "relay",
