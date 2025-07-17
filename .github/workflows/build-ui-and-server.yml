@@ -8,7 +8,7 @@ on:
       - "docs/**"
       - "mesheryctl/**"
       - "*.md"
-      - "*.github/**"
+      - ".github/**"
       - "Makefile"
   push:
     branches:
@@ -16,7 +16,7 @@ on:
     paths-ignore:
       - "docs/**"
       - "*.md"
-      - "*.github/**"
+      - ".github/**"
 
 permissions: read-all
 
@@ -31,31 +31,100 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
+      
       - uses: actions/setup-node@v4
         with:
           node-version: "20.x"
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-      - name: Build meshery-ui and provider-ui
+      
+      - name: Free up disk space and memory
         run: |
-          make ui-build
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/local/share/boost
+          sudo rm -rf /usr/local/graalvm
+          sudo rm -rf /usr/local/share/chromium
+          sudo rm -rf /usr/local/share/chrome_driver
+          sudo rm -rf /usr/local/share/edge_driver
+          sudo rm -rf /usr/local/share/gecko_driver
+          sudo apt-get clean
+          docker system prune -af
+          # Force garbage collection
+          echo 3 | sudo tee /proc/sys/vm/drop_caches
+          
+      - name: Configure memory limits
+        run: |
+          # Set memory limits
+          echo "Setting memory limits..."
+          ulimit -v 15728640  # 15GB virtual memory limit
+          ulimit -m 15728640  # 15GB physical memory limit
+          
+      - name: Install dependencies with memory optimization
+        run: |
+          export NODE_OPTIONS="--max-old-space-size=15360 --max-semi-space-size=1024 --optimize-for-size"
+          export NODE_ENV=production
+          export CI=true
+          cd ui && npm ci --no-audit --no-fund --maxsockets 1 --prefer-offline
+          cd ../provider-ui && npm ci --no-audit --no-fund --maxsockets 1 --prefer-offline
+      
+      - name: Build UI components sequentially
+        run: |
+          export NODE_OPTIONS="--max-old-space-size=15360 --max-semi-space-size=1024 --optimize-for-size --gc-interval=100"
+          export GENERATE_SOURCEMAP=false
+          export DISABLE_ESLINT_PLUGIN=true
+          export NODE_ENV=production
+          export CI=true
+          export NEXT_TELEMETRY_DISABLED=1
+          export BABEL_ENV=production
+          
+          echo "Building UI..."
+          cd ui
+          npm run build
+          
+          echo "Clearing memory..."
+          node -e "if (global.gc) { global.gc(); } else { console.log('Garbage collection unavailable'); }"
+          
+          echo "Building Provider UI..."
+          cd ../provider-ui
+          npm run build
+        
+      - name: Verify build outputs
+        run: |
+          echo "Checking if build outputs exist..."
+          ls -la /home/runner/work/meshery/meshery/ui/
+          ls -la /home/runner/work/meshery/meshery/provider-ui/
+          if [ ! -d "/home/runner/work/meshery/meshery/ui/out" ]; then
+            echo "Error: UI build output directory not found"
+            exit 1
+          fi
+          if [ ! -d "/home/runner/work/meshery/meshery/provider-ui/out" ]; then
+            echo "Error: Provider UI build output directory not found"
+            exit 1
+          fi
+        
       - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: meshery-ui
-          retention-days: 30
+          name: meshery-ui-${{ github.run_id }}
+          retention-days: 1
           path: /home/runner/work/meshery/meshery/ui/out
+          if-no-files-found: error
+          
       - name: Upload provider-ui artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: provider-ui
-          retention-days: 30
+          name: provider-ui-${{ github.run_id }}
+          retention-days: 1
           path: /home/runner/work/meshery/meshery/provider-ui/out
+          if-no-files-found: error
+
   tests-ui-e2e:
     needs: [ui-build]
     name: UI end-to-end tests
-    environment: staging-playground
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' && needs.ui-build.result == 'success'
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -64,60 +133,71 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || '' }}
+          
       - name: Check out meshery-istio code
         uses: actions/checkout@v4
         with:
           repository: meshery-extensions/meshery-istio
           path: ./meshery-istio
-      # - name: Check out meshery-consul code
-      #   uses: actions/checkout@v4
-      #   with:
-      #     repository: meshery-extensions/meshery-consul
-      #     path: ./meshery-consul
+          
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.10.0
         with:
           cluster_name: "kind-cluster"
+          
       - name: Setup Go
         uses: actions/setup-go@master
         with:
           go-version: "1.23"
+          
       - name: Run meshery-istio
         run: |
           mkdir -p /home/runner/.meshery/bin
           cd ./meshery-istio
           make run &
           sleep 60
-      # - name: Run meshery-consul
-      #   run: |
-      #     mkdir -p /home/runner/.meshery/bin
-      #     cd ./meshery-consul
-      #     go run main.go &
-      #     sleep 60
+          
       - name: Setup node
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
+          
+      - name: Create artifact directories
+        run: |
+          mkdir -p /home/runner/work/meshery/meshery/ui/out
+          mkdir -p /home/runner/work/meshery/meshery/provider-ui/out
+          
       - name: Download meshery-ui artifacts
         uses: actions/download-artifact@v4
         with:
-          name: meshery-ui
+          name: meshery-ui-${{ github.run_id }}
           path: /home/runner/work/meshery/meshery/ui/out
+          
       - name: Download provider-ui artifacts
         uses: actions/download-artifact@v4
         with:
-          name: provider-ui
+          name: provider-ui-${{ github.run_id }}
           path: /home/runner/work/meshery/meshery/provider-ui/out
+          
+      - name: Verify downloaded artifacts
+        run: |
+          echo "Verifying downloaded artifacts..."
+          ls -la /home/runner/work/meshery/meshery/ui/out/
+          ls -la /home/runner/work/meshery/meshery/provider-ui/out/
+          
       - name: Run Meshery UI and Server
         run: |
           make server &
           sleep 90
+          
       - name: Install Playwright
         run: make ui-setup-ci
+        
       - name: Install Playwright Browsers
         run: make test-setup-ui
+        
       - name: Run Playwright End-to-End Tests
         env:
           MESHERY_SERVER_URL: "http://localhost:9081"
@@ -125,30 +205,34 @@ jobs:
           REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_TEST_USER_EMAIL }}
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_TEST_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.REMOTE_PROVIDER_TEST_USER_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.MESHERY_CI  }}
+          GITHUB_TOKEN: ${{ secrets.MESHERY_CI }}
         run: make test-e2e-ci
+        
       - name: Save PR metadata
         if: ${{ !cancelled() && github.event_name == 'pull_request_target' }}
         run: |
           mkdir -p ./pr
           echo "${{ github.event.number }}" > ./pr/number
           echo "${{ github.event.pull_request.head.sha }}" > ./pr/sha    
+          
       - name: Upload Test Report
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+        uses: actions/upload-artifact@v4
         with:
-          name: e2e-test-reporter
+          name: e2e-test-reporter-${{ github.run_id }}
           path: |
             ui/test-report.md
             pr/
           retention-days: 14
+          
       - name: Upload Test Trace
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-report
+          name: playwright-report-${{ github.run_id }}
           path: ui/test-results/
           retention-days: 14
+
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
@@ -158,12 +242,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
+          
       - name: Docker edge build & tag
         if: startsWith(github.ref, 'refs/tags/') != true && success()
         env:
@@ -171,19 +257,22 @@ jobs:
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}
+          
       - name: Docker edge push
-        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
+        if: github.event_name != 'pull_request' && github.event_name != 'pull_request_target' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
         run: |
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          
       - name: Docker Hub Description
-        if: github.event_name != 'pull_request' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
+        if: github.event_name != 'pull_request' && github.event_name != 'pull_request_target' && github.event_name != 'workflow_dispatch' && startsWith(github.ref, 'refs/tags/') && success()
         uses: peter-evans/dockerhub-description@v4
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           repository: ${{ secrets.IMAGE_NAME }}
+
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'
@@ -211,7 +300,7 @@ jobs:
         run: swagger generate spec -o ./docs/_data/swagger.yml --scan-models && swagger flatten ./docs/_data/swagger.yml -o ./docs/_data/swagger.yml --with-expand --format=yaml
 
   # validate graphQL schema
-  garphql_validate:
+  graphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04

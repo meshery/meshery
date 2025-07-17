@@ -13,17 +13,32 @@ jobs:
         with:
           repository: meshery/meshery
           fetch-depth: 1
+          
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.23"
-      - run: |
-          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft ./server/cmd/main.go ./server/cmd/error.go
+          
+      - name: Build backend
+        run: |
+          GOPROXY=https://proxy.golang.org,direct GOSUMDB=off GO111MODULE=on go build -tags draft -o main ./server/cmd/main.go ./server/cmd/error.go
+          
+      - name: Verify build output
+        run: |
+          if [ ! -f "./main" ]; then
+            echo "Error: Backend build failed - main executable not found"
+            exit 1
+          fi
+          ls -la ./main
+          
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: meshery
+          name: meshery-backend-${{ github.run_id }}
           path: ./main
+          if-no-files-found: error
+          retention-days: 1
+
   ui-build:
     name: UI build
     runs-on: ubuntu-24.04
@@ -33,22 +48,49 @@ jobs:
         with:
           repository: meshery/meshery
           fetch-depth: 1
-      - uses: actions/setup-node@v4
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: "20.x"
           check-latest: true
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-      - name: Install dependencies
+          
+      - name: Build UI with memory optimization
         run: |
+          export NODE_OPTIONS="--max-old-space-size=8192"
           make ui-build
-      - name: upload meshery-ui artifact
+          
+      - name: Verify build outputs
+        run: |
+          echo "Checking UI build outputs..."
+          if [ ! -d "./ui/out" ]; then
+            echo "Error: UI build output directory not found"
+            ls -la ./ui/
+            exit 1
+          fi
+          if [ ! -d "./provider-ui/out" ]; then
+            echo "Error: Provider UI build output directory not found"
+            ls -la ./provider-ui/
+            exit 1
+          fi
+          echo "UI build outputs verified:"
+          ls -la ./ui/out/
+          ls -la ./provider-ui/out/
+          
+      - name: Upload meshery-ui artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: meshery-ui-build
+          name: meshery-ui-build-${{ github.run_id }}
           path: ui/out/
-      - name: upload Meshery-provider-ui artifacts
+          if-no-files-found: error
+          retention-days: 1
+          
+      - name: Upload meshery-provider-ui artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: meshery-provider-ui build
+          name: meshery-provider-ui-build-${{ github.run_id }}
           path: provider-ui/out/
+          if-no-files-found: error
+          retention-days: 1
