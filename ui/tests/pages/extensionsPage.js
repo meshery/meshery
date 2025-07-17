@@ -44,7 +44,7 @@ export class ExtensionsPage {
   async verifyKanvasDetails(context) {
     await expect(this.page.getByTestId('kanvas-signup-heading')).toBeVisible();
     const button = this.page.getByTestId('kanvas-signup-btn');
-    await expect(button).toBeVisible();
+    await expect(button).toBeVisible(); 
     if (await button.isEnabled()) {
       const [docsPage] = await Promise.all([
         context.waitForEvent('page'),

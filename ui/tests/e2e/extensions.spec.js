@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { ExtensionsPage } from '../pages/ExtensionsPage.js';
+import { ExtensionsPage } from '../pages/extensionsPage.js';
 
 test.describe('Extensions Section Tests', () => {
   let extensionsPage;
