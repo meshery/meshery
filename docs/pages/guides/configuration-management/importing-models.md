@@ -21,15 +21,13 @@ Before you can use the Meshery CLI to import a [Model](/concepts/logical/models)
 
 **Step 2: Import the Model**
 
-A Model can be imported using `Directory, URL` or `File` formats. This command is used for only importing an model and not for creating a new Model. You can also use an exported model from Meshery, refer [Meshery catalog](https://meshery.io/catalog/models) for the models.
+A model can be imported using `Directory, URL` or `File` formats. This command is used for specifically importing models and not for creating a new model. For Meshery models, you can refer to the exported models at [Meshery catalog](https://meshery.io/catalog/models).
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f [file/url] </div></div>
 </pre>
 
-The extensions supported for this operation are `.yml`, `.tar.gz`, `.gz`, `.tgz`, `.yaml`, `.json`, `.tar`, `.tar.tgz`.
-
-The supported registrants are `github`,`meshery` and `artifacthub`. The URL format must be in this order.
+The extensions supported for this operation are `.yml`, `.tar.gz`, `.gz`, `.tgz`, `.yaml`, `.json`, `.tar`, `.tar.tgz` and the supported registrants are `Github`,`Meshery` and `Artifacthub`. The URL format must be in this order.
 
 https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
 
@@ -43,7 +41,7 @@ https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "https://github.com/{owner}/{repo}/raw/refs/heads/main/filename"</div></div>
 </pre>
 
-Using [Meshery catalog](https://meshery.io/catalog/models), click on the model you want to import, download it and use:
+For importing Meshery models, go to [Meshery catalog](https://meshery.io/catalog/models), click on the model you want to import, download it and use:
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f path/to/your/file</div></div>
@@ -65,9 +63,9 @@ Once you have accessed the Meshery UI, navigate to the Registry under Settings. 
 
 **Step 3: Upload the Model**
 
-On the Registry page, you can import your model clicking the import button in registry page. Selecting URL or File and then hitting Import button. Extensions supported for this operation are `.yml`, `.tar.gz`, `.gz`, `.tgz`, `.yaml`, `.json`, `.tar`, `.tar.tgz`.
+On the Registry page, you can import your model by clicking the import button in registry page. Select URL or File and then hit Import. Extensions supported for this operation are `.yml`, `.tar.gz`, `.gz`, `.tgz`, `.yaml`, `.json`, `.tar`, `.tar.tgz`.
 
-This operation is only used for importing an existing model and not for creating one. For meshery models refer [Meshery catalog](https://meshery.io/catalog/models). 
+This operation is only used for importing an existing model and not for creating one. For importing meshery models head over to [Meshery catalog](https://meshery.io/catalog/models). 
 
 This Meshery model will include components, relationships.
 
