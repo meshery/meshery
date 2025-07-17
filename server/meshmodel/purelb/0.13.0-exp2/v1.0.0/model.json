@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "permission-manager",
-  "displayName": "Permission Manager",
+  "name": "purelb",
+  "displayName": "Purelb",
   "status": "ignored",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
@@ -19,7 +19,7 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "Security \u0026 Compliance"
+    "name": "Uncategorized"
   },
   "subCategory": "Uncategorized",
   "metadata": {
@@ -34,7 +34,7 @@
     "svgWhite": ""
   },
   "model": {
-    "version": "1.8.0"
+    "version": "0.13.0-exp2"
   },
   "components_count": 0,
   "relationships_count": 0,
