@@ -257,11 +257,13 @@ export default function DesignConfigurator() {
                   if (metadata) {
                     let { primaryColor, svgWhite } = metadata;
                     // Ensure primaryColor is 'transparent' if not set or fully transparent
-                    if (!primaryColor ||
-                        primaryColor.trim() === '' ||
-                        primaryColor.toLowerCase() === 'transparent' ||
-                        /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(primaryColor) ||
-                        /^#([A-Fa-f0-9]{6})00$/i.test(primaryColor)) {
+                    if (
+                      !primaryColor ||
+                      primaryColor.trim() === '' ||
+                      primaryColor.toLowerCase() === 'transparent' ||
+                      /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(primaryColor) ||
+                      /^#([A-Fa-f0-9]{6})00$/i.test(primaryColor)
+                    ) {
                       primaryColor = 'transparent';
                     }
                     return (
