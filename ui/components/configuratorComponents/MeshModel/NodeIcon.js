@@ -37,11 +37,13 @@ const NODE_ICON_WRAPPER_CLASS = 'node-icon-wrapper-svg';
 export function ShapeOfSVG({ color, shape, styles }) {
   // Ensure color is 'transparent' if not set or fully transparent
   let safeColor = color;
-  if (!safeColor ||
-      safeColor.trim() === '' ||
-      safeColor.toLowerCase() === 'transparent' ||
-      /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(safeColor) ||
-      /^#([A-Fa-f0-9]{6})00$/i.test(safeColor)) {
+  if (
+    !safeColor ||
+    safeColor.trim() === '' ||
+    safeColor.toLowerCase() === 'transparent' ||
+    /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(safeColor) ||
+    /^#([A-Fa-f0-9]{6})00$/i.test(safeColor)
+  ) {
     safeColor = 'transparent';
   }
   switch (shape) {
@@ -185,11 +187,13 @@ export default function GetNodeIcon({ metadata, otherOverrides = {}, className }
   const customStyles = convertToSvgStyle(styleOverrides, componentMetadata.primaryColor);
   // Ensure primaryColor is 'transparent' if not set or fully transparent
   let safePrimaryColor = metadata.primaryColor;
-  if (!safePrimaryColor ||
-      safePrimaryColor.trim() === '' ||
-      safePrimaryColor.toLowerCase() === 'transparent' ||
-      /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(safePrimaryColor) ||
-      /^#([A-Fa-f0-9]{6})00$/i.test(safePrimaryColor)) {
+  if (
+    !safePrimaryColor ||
+    safePrimaryColor.trim() === '' ||
+    safePrimaryColor.toLowerCase() === 'transparent' ||
+    /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(safePrimaryColor) ||
+    /^#([A-Fa-f0-9]{6})00$/i.test(safePrimaryColor)
+  ) {
     safePrimaryColor = 'transparent';
   }
   return (
