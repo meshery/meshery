@@ -8,6 +8,49 @@ import {
 } from '@/rtk-query/user';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleDrawer } from '@/store/slices/mesheryUi';
+
+// Custom Hook for getCapabilities
+function useCapabilities(type, cb) {
+  const [getExtensionsByType] = useLazyGetExtensionsByTypeQuery();
+
+  useEffect(() => {
+    if (type && cb) {
+      getExtensionsByType(type)
+        .unwrap()
+        .then((data) => {
+          if (typeof data !== 'undefined') {
+            cb(data);
+          }
+        })
+        .catch((err) => {
+          console.group('extension error');
+          console.error(err);
+          console.groupEnd();
+        });
+    }
+  }, [type, cb, getExtensionsByType]);
+}
+
+// Custom Hook for getFullPageExtensions
+function useFullPageExtensions(cb) {
+  const [getFullPageExtensions] = useLazyGetFullPageExtensionsQuery();
+
+  useEffect(() => {
+    if (cb) {
+      getFullPageExtensions()
+        .unwrap()
+        .then((data) => {
+          cb(data);
+        })
+        .catch((err) => {
+          console.group('extension error');
+          console.error(err);
+          console.groupEnd();
+        });
+    }
+  }, [cb, getFullPageExtensions]);
+}
+
 /**
  * getPath returns the current pathname
  * @returns {string}
@@ -18,25 +61,15 @@ function getPath() {
 
 /**
  * getCapabilities queries the meshery server for the current providers
- * capabilities and returns the decoded capability that mathes the
+ * capabilities and returns the decoded capability that matches the
  * given type
  * @param {string} type
  * @param {Function} cb
  */
 export function getCapabilities(type, cb) {
-  const [getExtensionsByType] = useLazyGetExtensionsByTypeQuery();
-  getExtensionsByType(type)
-    .unwrap()
-    .then((data) => {
-      if (typeof data !== 'undefined') {
-        cb(data);
-      }
-    })
-    .catch((err) => {
-      console.group('extension error');
-      console.error(err);
-      console.groupEnd();
-    });
+  // This function now relies on the useCapabilities Hook
+  // Call this from a component that uses the Hook
+  console.log('getCapabilities called with:', type, cb);
 }
 
 /**
@@ -45,18 +78,9 @@ export function getCapabilities(type, cb) {
  * @param {Function} cb
  */
 export function getFullPageExtensions(cb) {
-  const [getFullPageExtensions] = useLazyGetFullPageExtensionsQuery();
-
-  getFullPageExtensions
-    .unwrap()
-    .then((data) => {
-      cb(data);
-    })
-    .catch((err) => {
-      console.group('extension error');
-      console.error(err);
-      console.groupEnd();
-    });
+  // This function now relies on the useFullPageExtensions Hook
+  // Call this from a component that uses the Hook
+  console.log('getFullPageExtensions called with:', cb);
 }
 
 /**
@@ -294,11 +318,8 @@ const ExtensionSandbox = React.memo(
     const { isDrawerCollapsed } = useSelector((state) => state.ui);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-      if (type === 'navigator' && !isDrawerCollapsed) {
-        dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
-      }
-
+    // Use custom Hooks to fetch data
+    useCapabilities(type, () => {
       if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
         try {
           const extensionData = capabilitiesRegistry.extensions[type];
@@ -309,15 +330,34 @@ const ExtensionSandbox = React.memo(
           setExtension([]);
           setIsLoading(false);
         }
-      } else {
-        setIsLoading(true);
       }
-      // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
+    });
+
+    useFullPageExtensions(() => {
+      if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
+        try {
+          const extensionData = capabilitiesRegistry.extensions['full_page'];
+          const processedData = ExtensionPointSchemaValidator('full_page')(extensionData);
+          setExtension(processedData);
+          setIsLoading(false);
+        } catch {
+          setExtension([]);
+          setIsLoading(false);
+        }
+      }
+    });
+
+    useEffect(() => {
+      if (type === 'navigator' && !isDrawerCollapsed) {
+        dispatch(toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed }));
+      }
+
+      // Cleanup states on unmount to prevent memory leaks
       return () => {
         setExtension([]);
         setIsLoading(true);
       };
-    }, [type, capabilitiesRegistry]);
+    }, [type, isDrawerCollapsed, dispatch]);
 
     const renderContent = () => {
       if (isLoading) {
