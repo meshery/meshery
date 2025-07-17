@@ -255,7 +255,15 @@ export default function DesignConfigurator() {
                 function renderAvatarFromServices(service, idx) {
                   const metadata = service.traits?.['meshmodel-metadata'];
                   if (metadata) {
-                    const { primaryColor, svgWhite } = metadata;
+                    let { primaryColor, svgWhite } = metadata;
+                    // Ensure primaryColor is 'transparent' if not set or fully transparent
+                    if (!primaryColor ||
+                        primaryColor.trim() === '' ||
+                        primaryColor.toLowerCase() === 'transparent' ||
+                        /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(primaryColor) ||
+                        /^#([A-Fa-f0-9]{6})00$/i.test(primaryColor)) {
+                      primaryColor = 'transparent';
+                    }
                     return (
                       <Avatar
                         key={idx}

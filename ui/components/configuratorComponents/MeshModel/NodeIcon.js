@@ -35,65 +35,74 @@ import {
 const NODE_ICON_WRAPPER_CLASS = 'node-icon-wrapper-svg';
 
 export function ShapeOfSVG({ color, shape, styles }) {
+  // Ensure color is 'transparent' if not set or fully transparent
+  let safeColor = color;
+  if (!safeColor ||
+      safeColor.trim() === '' ||
+      safeColor.toLowerCase() === 'transparent' ||
+      /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(safeColor) ||
+      /^#([A-Fa-f0-9]{6})00$/i.test(safeColor)) {
+    safeColor = 'transparent';
+  }
   switch (shape) {
     case 'circle':
-      return <CircleShape color={color} styles={styles} />;
+      return <CircleShape color={safeColor} styles={styles} />;
     case 'triangle':
-      return <TriangleShape color={color} styles={styles} />;
+      return <TriangleShape color={safeColor} styles={styles} />;
     case 'round-triangle':
-      return <RoundTriangleShape color={color} styles={styles} />;
+      return <RoundTriangleShape color={safeColor} styles={styles} />;
     case 'pentagon':
-      return <PentagonShape color={color} styles={styles} />;
+      return <PentagonShape color={safeColor} styles={styles} />;
     case 'round-pentagon':
-      return <RoundPentagonShape color={color} styles={styles} />;
+      return <RoundPentagonShape color={safeColor} styles={styles} />;
     case 'round-rectangle':
-      return <RoundRectangleShape color={color} styles={styles} />;
+      return <RoundRectangleShape color={safeColor} styles={styles} />;
     case 'rectangle':
-      return <RectangleShape color={color} styles={styles} />;
+      return <RectangleShape color={safeColor} styles={styles} />;
     case 'tall-round-rectangle':
-      return <TallRoundRectangleShape color={color} styles={styles} />;
+      return <TallRoundRectangleShape color={safeColor} styles={styles} />;
     case 'bottom-round-rectangle':
-      return <BottomRoundRectangleShape color={color} styles={styles} />;
+      return <BottomRoundRectangleShape color={safeColor} styles={styles} />;
     case 'cut-rectangle':
-      return <CutRectangle color={color} styles={styles} />;
+      return <CutRectangle color={safeColor} styles={styles} />;
     // todos, rn, defaulted by diamond, why not adding default?
     // because the shapes may go unnoticed later in time
     case 'diamond':
-      return <DiamondShape color={color} styles={styles} />;
+      return <DiamondShape color={safeColor} styles={styles} />;
     case 'round-diamond':
-      return <RoundDiamondShape color={color} styles={styles} />;
+      return <RoundDiamondShape color={safeColor} styles={styles} />;
     case 'cylinder':
-      return <CylinderShape color={color} styles={styles} />;
+      return <CylinderShape color={safeColor} styles={styles} />;
     case 'tag':
-      return <TagShape color={color} styles={styles} />;
+      return <TagShape color={safeColor} styles={styles} />;
     case 'round-tag':
-      return <RoundTagShape color={color} styles={styles} />;
+      return <RoundTagShape color={safeColor} styles={styles} />;
     case 'star':
-      return <StarShape color={color} styles={styles} />;
+      return <StarShape color={safeColor} styles={styles} />;
     case 'vee':
-      return <VeeShape color={color} styles={styles} />;
+      return <VeeShape color={safeColor} styles={styles} />;
     case 'hexagon':
-      return <HexagonShape color={color} styles={styles} />;
+      return <HexagonShape color={safeColor} styles={styles} />;
     case 'round-hexagon':
-      return <RoundHexagonShape color={color} styles={styles} />;
+      return <RoundHexagonShape color={safeColor} styles={styles} />;
     case 'concave-hexagon':
-      return <ConcaveHexagonShape color={color} styles={styles} />;
+      return <ConcaveHexagonShape color={safeColor} styles={styles} />;
     case 'heptagon':
-      return <HeptagonShape color={color} styles={styles} />;
+      return <HeptagonShape color={safeColor} styles={styles} />;
     case 'round-heptagon':
-      return <RoundHeptagonShape color={color} styles={styles} />;
+      return <RoundHeptagonShape color={safeColor} styles={styles} />;
     case 'octagon':
-      return <OctagonShape color={color} styles={styles} />;
+      return <OctagonShape color={safeColor} styles={styles} />;
     case 'round-octagon':
-      return <RoundOctagonShape color={color} styles={styles} />;
+      return <RoundOctagonShape color={safeColor} styles={styles} />;
     case 'polygon':
-      return <PolygonShape color={color} styles={styles} />;
+      return <PolygonShape color={safeColor} styles={styles} />;
     case 'rhomboid':
-      return <RhomboidShape color={color} styles={styles} />;
+      return <RhomboidShape color={safeColor} styles={styles} />;
     case 'right-rhomboid':
-      return <RightRhomboidShape color={color} styles={styles} />;
+      return <RightRhomboidShape color={safeColor} styles={styles} />;
     case 'barrel':
-      return <BarrelShape color={color} styles={styles} />;
+      return <BarrelShape color={safeColor} styles={styles} />;
     default:
       return null;
   }
@@ -174,6 +183,15 @@ export default function GetNodeIcon({ metadata, otherOverrides = {}, className }
   const styles = styleProps(componentMetadata);
   const styleOverrides = getStyleOverrides(metadata?.styleOverrides);
   const customStyles = convertToSvgStyle(styleOverrides, componentMetadata.primaryColor);
+  // Ensure primaryColor is 'transparent' if not set or fully transparent
+  let safePrimaryColor = metadata.primaryColor;
+  if (!safePrimaryColor ||
+      safePrimaryColor.trim() === '' ||
+      safePrimaryColor.toLowerCase() === 'transparent' ||
+      /^rgba\([^,]+,[^,]+,[^,]+,\s*0\)$/i.test(safePrimaryColor) ||
+      /^#([A-Fa-f0-9]{6})00$/i.test(safePrimaryColor)) {
+    safePrimaryColor = 'transparent';
+  }
   return (
     <>
       <svg
@@ -182,7 +200,7 @@ export default function GetNodeIcon({ metadata, otherOverrides = {}, className }
         className={clsx(className, NODE_ICON_WRAPPER_CLASS)}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <ShapeOfSVG color={metadata.primaryColor} shape={metadata.shape} styles={customStyles} />
+        <ShapeOfSVG color={safePrimaryColor} shape={metadata.shape} styles={customStyles} />
         {styles['background-image'] !== 'none' && componentMetadata.svgColor && (
           <image href={getSvgUrl(metadata.svgWhite)} {...styles} />
         )}
