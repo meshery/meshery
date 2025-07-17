@@ -70,7 +70,10 @@ class ExtensionPage {
   }
 
   // Meshery Docker Extension section methods
-  async verifyMesheryDockerExtensionDetails(context, expectedUrl = 'https://hub.docker.com/extensions/meshery/docker-extension-meshery') {
+  async verifyMesheryDockerExtensionDetails(
+    context,
+    expectedUrl = 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
+  ) {
     await expect(this.dockerExtensionHeading).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -81,7 +84,10 @@ class ExtensionPage {
   }
 
   // Meshery Design Embed section methods
-  async verifyMesheryDesignEmbedDetails(context, expectedUrl = 'https://docs.layer5.io/kanvas/designer/embedding-designs/') {
+  async verifyMesheryDesignEmbedDetails(
+    context,
+    expectedUrl = 'https://docs.layer5.io/kanvas/designer/embedding-designs/',
+  ) {
     await expect(this.designEmbedLearnMoreButton).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -95,16 +101,16 @@ class ExtensionPage {
   async verifyMesheryCatalogSectionDetails(context, expectedUrl = 'https://meshery.io/catalog') {
     await expect(this.catalogSectionHeading).toBeVisible();
     await this.catalogToggleSwitch.click();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      this.catalogLink.click(),
-    ]);
+    const [newPage] = await Promise.all([context.waitForEvent('page'), this.catalogLink.click()]);
     await expect(newPage).toHaveURL(expectedUrl);
     await newPage.close();
   }
 
   // Meshery Adapter for Istio section methods
-  async verifyMesheryAdapterIstioSection(context, expectedUrl = 'https://docs.meshery.io/concepts/architecture/adapters') {
+  async verifyMesheryAdapterIstioSection(
+    context,
+    expectedUrl = 'https://docs.meshery.io/concepts/architecture/adapters',
+  ) {
     const [docsPage] = await Promise.all([
       context.waitForEvent('page'),
       this.adapterDocsIstioButton.click(),
