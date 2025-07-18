@@ -71,6 +71,13 @@ const K8sContextConnection = ({ connection, environment }) => {
 };
 
 const EnvironmentConnections = ({ environment, connections }) => {
+  if (!connections || connections.length === 0) {
+    return (
+      <Box display="flex" alignItems="center" justifyContent="center" width="100%" py={2}>
+        No connections configured. Add a connection to get started.
+      </Box>
+    );
+  }
   return (
     <Box display="flex" gap={1} flexWrap={'wrap'} justifyContent="flex-start">
       {connections.map((connection) => (
@@ -104,7 +111,7 @@ const EnvironmentCard = ({ environment }) => {
   return (
     <StyledEnvironmentCard>
       <StyledEnvironmentHeader>
-        <Box gap={1} display="flex" alignItems="center">
+        <Box gap={.5} display="flex" alignItems="center">
           <Checkbox
             data-testid={`env-${environment.id}`}
             checked={isEnvSelected}
