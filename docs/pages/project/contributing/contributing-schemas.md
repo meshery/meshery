@@ -174,7 +174,8 @@ make golang-generate
 - Check `openapi.yaml` to verify the new field exists
 - Wait for the backend to regenerate and expose the property
 - Use RTK + TypeScript types to access and render data
-- If you need templates, they’re already auto-generated for you!
+
+> **Note**: `make generate-types` now generates only TypeScript types and schema-related objects. `_template.json` / `_template.yaml` files are no longer auto-generated.
 
 *Why it matters:* UI stays in sync with the backend - fewer bugs, fewer mismatches, easier onboarding.
 
