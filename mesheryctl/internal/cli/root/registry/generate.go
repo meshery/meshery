@@ -24,13 +24,16 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkitRegistryUtils "github.com/meshery/meshkit/registry"
 	mutils "github.com/meshery/meshkit/utils"
+	"github.com/meshery/schemas/models/v1beta1/component"
+    "github.com/meshery/schemas/models/v1alpha1/capability"
+
 
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
 	
 	"encoding/json"
-    "strings"
-    "github.com/meshery/schemas"
+	"strings"
+	"github.com/meshery/schemas"
 )
 
 var (
@@ -135,7 +138,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		}
 
 		utils.Log.Info("Applying minimal UI capabilities to generated components...")
-		err = applyMinimalUICapabilities(registryLocation)
+		err = enhanceGeneratedComponents(registryLocation)
 		if err != nil {
 			utils.LogError.Error(fmt.Errorf("Error applying minimal UI capabilities: %v", err))
 		} else {
@@ -171,22 +174,23 @@ func init() {
 
 }
 
-func getMinimalUICapabilitiesFromSchema() ([]interface{}, error) {
-    schema, err := schemas.Schemas.ReadFile("schemas/constructs/v1beta1/component/component.json")
-    if err != nil {
-        return nil, fmt.Errorf("failed to read component schema: %v", err)
-    }
+func getMinimalUICapabilitiesFromSchema() ([]capability.Capability, error) {
+	schema, err := schemas.Schemas.ReadFile("schemas/constructs/v1beta1/component/component.json")
+	if err != nil {
+		return nil, fmt.Errorf("failed to read component schema: %v", err)
+	}
 
-    allDefaults, err := extractCapabilitiesDefaultFromSchema(schema)
-    if err != nil {
-        return nil, fmt.Errorf("failed to extract capabilities from schema: %v", err)
-    }
+	allDefaults, err := extractCapabilitiesDefaultFromSchema(schema)
+	if err != nil {
+		return nil, fmt.Errorf("failed to extract capabilities from schema: %v", err)
+	}
 
-    if len(allDefaults) >= 3 {
-        return allDefaults[len(allDefaults)-3:], nil
-    }
+	if len(allDefaults) >= 3 {
+		lastThree := allDefaults[len(allDefaults)-3:]
+		return convertToCapabilityStructs(lastThree)
+	}
 
-    return nil, fmt.Errorf("insufficient default capabilities in schema, found %d", len(allDefaults))
+	return nil, fmt.Errorf("insufficient default capabilities in schema, found %d", len(allDefaults))
 }
 
 func extractCapabilitiesDefaultFromSchema(schema []byte) ([]interface{}, error) {
@@ -206,71 +210,125 @@ func extractCapabilitiesDefaultFromSchema(schema []byte) ([]interface{}, error) 
     return nil, fmt.Errorf("default capabilities not found in schema")
 }
 
-func applyMinimalUICapabilities(registryLocation string) error {
-    minimalCaps, err := getMinimalUICapabilitiesFromSchema()
-    if err != nil {
-        return fmt.Errorf("failed to get minimal UI capabilities: %v", err)
-    }
+func enhanceGeneratedComponents(registryLocation string) error {
+	return filepath.Walk(registryLocation, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
 
-    return filepath.Walk(registryLocation, func(path string, info os.FileInfo, err error) error {
-        if err != nil {
-            return err
-        }
+		if !strings.HasSuffix(path, ".json") || !strings.Contains(path, "components") {
+			return nil
+		}
 
-        if !strings.HasSuffix(path, ".json") || !strings.Contains(path, "components") {
-            return nil
-        }
+		var comp component.ComponentDefinition
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		
+		err = json.Unmarshal(data, &comp)
+		if err != nil {
+			return err
+		}
 
-        data, err := os.ReadFile(path)
-        if err != nil {
-            return err
-        }
+		if needsMinimalCapabilities(&comp) {
+			err = applyCapabilitiesToComponent(&comp)
+			if err != nil {
+				return err
+			}
+			
+			updatedData, err := json.MarshalIndent(comp, "", "  ")
+			if err != nil {
+				return err
+			}
 
-        var componentFile map[string]interface{}
-        if err := json.Unmarshal(data, &componentFile); err != nil {
-            return err
-        }
+			err = os.WriteFile(path, updatedData, info.Mode())
+			if err != nil {
+				return err
+			}
 
-        if needsMinimalCapabilities(componentFile) {
-            if err := applyCapabilitiesToComponent(componentFile, minimalCaps); err != nil {
-                return err
-            }
+			utils.Log.Info("Applied minimal UI capabilities to: ", filepath.Base(path))
+		}
 
-            updatedData, err := json.MarshalIndent(componentFile, "", "  ")
-            if err != nil {
-                return err
-            }
-
-            err = os.WriteFile(path, updatedData, info.Mode())
-            if err != nil {
-                return err
-            }
-
-            utils.Log.Info("Applied minimal UI capabilities to: ", filepath.Base(path))
-        }
-
-        return nil
-    })
+		return nil
+	})
 }
 
-func needsMinimalCapabilities(componentFile map[string]interface{}) bool {
-    if component, ok := componentFile["component"].(map[string]interface{}); ok {
-        capabilities, exists := component["capabilities"]
-        if !exists || capabilities == nil {
-            return true
-        }
 
-        if capSlice, ok := capabilities.([]interface{}); ok && len(capSlice) == 0 {
-            return true
-        }
-    }
-    return false
+func needsMinimalCapabilities(comp *component.ComponentDefinition) bool {
+    return comp.Capabilities == nil || len(*comp.Capabilities) == 0
 }
 
-func applyCapabilitiesToComponent(componentFile map[string]interface{}, capabilities []interface{}) error {
-    if component, ok := componentFile["component"].(map[string]interface{}); ok {
-        component["capabilities"] = capabilities
-        return nil
-    }
-    return fmt.Errorf("invalid component file structure")
+
+func applyCapabilitiesToComponent(comp *component.ComponentDefinition) error {
+	if !needsMinimalCapabilities(comp) {
+		return nil
+	}
+
+	capabilities, err := getMinimalUICapabilitiesFromSchema()
+	if err != nil {
+		return err
+	}
+	
+	comp.Capabilities = &capabilities
+	return nil
+}
+
+func convertToCapabilityStructs(rawCaps []interface{}) ([]capability.Capability, error) {
+	var capabilities []capability.Capability
+	
+	for _, rawCap := range rawCaps {
+		capMap, ok := rawCap.(map[string]interface{})
+		if !ok {
+			return nil, fmt.Errorf("invalid capability format")
+		}
+		
+		cap := capability.Capability{
+			SchemaVersion: getString(capMap, "schemaVersion"),
+			Version:       getString(capMap, "version"),
+			DisplayName:   getString(capMap, "displayName"),
+			Description:   getString(capMap, "description"),
+			Kind:          getString(capMap, "kind"),
+			Type:          getString(capMap, "type"),
+			SubType:       getString(capMap, "subType"),
+			Key:           getString(capMap, "key"),
+			Status:        capability.CapabilityStatus(getString(capMap, "status")),
+			EntityState:   convertEntityState(capMap["entityState"]),
+			Metadata:      convertMetadata(capMap["metadata"]),
+		}
+		
+		capabilities = append(capabilities, cap)
+	}
+	
+	return capabilities, nil
+}
+
+func getString(m map[string]interface{}, key string) string {
+	if val, ok := m[key].(string); ok {
+		return val
+	}
+	return ""
+}
+
+func convertEntityState(raw interface{}) []capability.CapabilityEntityState {
+	if arr, ok := raw.([]interface{}); ok {
+		var states []capability.CapabilityEntityState
+		for _, item := range arr {
+			if str, ok := item.(string); ok {
+				states = append(states, capability.CapabilityEntityState(str))
+			}
+		}
+		return states
+	}
+	return nil
+}
+
+func convertMetadata(raw interface{}) *map[string]interface{} {
+	if raw == nil {
+		return nil
+	}
+	if metadata, ok := raw.(map[string]interface{}); ok {
+		return &metadata
+	}
+	return nil
 }
