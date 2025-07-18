@@ -111,7 +111,7 @@ const EnvironmentCard = ({ environment }) => {
   return (
     <StyledEnvironmentCard>
       <StyledEnvironmentHeader>
-        <Box gap={.5} display="flex" alignItems="center">
+        <Box gap={0.5} display="flex" alignItems="center">
           <Checkbox
             data-testid={`env-${environment.id}`}
             checked={isEnvSelected}
