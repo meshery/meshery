@@ -7,6 +7,7 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
+	"github.com/spf13/viper"
 )
 
 type ConnectAction struct{}
@@ -30,9 +31,18 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
+	meshsyncDeploymentMode := models.MeshsyncDeploymentModeOperator
+	//  TODO:
+	// this viper value check here is a temporal thing
+	// meshsync deployment mode will be propagated from connection entity
+	if viper.GetBool("TMP_MESHSYNC_AS_A_LIBRARY_MODE") {
+		meshsyncDeploymentMode = models.MeshsyncDeploymentModeLibrary
+	}
+
 	go func() {
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
 			AddCtxControllerHandlers(machinectx.K8sContext).
+			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker)
 		ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)
