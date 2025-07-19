@@ -128,7 +128,10 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext)
 		} else if mch.meshsyncDeploymentMode == MeshsyncDeploymentModeLibrary {
 			brokerHandler = channelBroker.NewChannelBrokerHandler()
-			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(ctx, brokerHandler, k8scontext)
+			// use a standalone context here context.Background(), as
+			// meshsync run must be stopped only when meshsync data handler is deregistered
+			// and ctx which is passed from above, could be closed earlier
+			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(context.Background(), brokerHandler, k8scontext)
 			if err != nil {
 				mch.log.Error(err)
 				return mch
