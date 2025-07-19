@@ -1765,7 +1765,11 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 	if isCatalogItem {
 		version = pattern.CatalogData.PublishedVersion
 	}
-	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt.Format(time.RFC3339), &pattern.CatalogData)
+	var createdAt time.Time
+	if pattern.CreatedAt != nil {
+		createdAt = *pattern.CreatedAt
+	}
+	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, createdAt, &pattern.CatalogData)
 
 	data, err := yaml.Marshal(artifactHubPkg)
 	if err != nil {
