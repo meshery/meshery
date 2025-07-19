@@ -196,10 +196,6 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
 	k8scontext K8sContext,
 ) broker.Handler {
 	br := channelBroker.NewChannelBrokerHandler()
-	// TODO
-	// as we will be running per connection base,
-	// we need to double check that the state is not shared anywhere in meshsync internally,
-	// otherwise we will have hard to detect errors.
 	go func(handler broker.Handler) {
 		kubeConfig, err := k8scontext.GenerateKubeConfig()
 		if err != nil {
