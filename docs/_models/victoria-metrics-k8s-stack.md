@@ -90,7 +90,11 @@ components:
   colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-agent/icons/color/vl-agent-color.svg
   whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-agent/icons/white/vl-agent-white.svg
   description: 
-components-count: 20
+- name: vl-agent
+  colorIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-agent/icons/color/vl-agent-color.svg
+  whiteIcon: assets/img/integrations/victoria-metrics-k8s-stack/components/vl-agent/icons/white/vl-agent-white.svg
+  description: 
+components-count: 21
 relationships: 
 relationship-count: 0
 featureList: [
