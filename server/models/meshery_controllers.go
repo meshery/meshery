@@ -122,22 +122,31 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 	ctxID := k8scontext.ID
 	if mch.ctxMeshsyncDataHandler == nil {
 		var brokerHandler broker.Handler
+		var stopFunc func()
+
 		if mch.meshsyncDeploymentMode == MeshsyncDeploymentModeOperator {
 			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext)
 		} else if mch.meshsyncDeploymentMode == MeshsyncDeploymentModeLibrary {
-			brokerHandler = mch.meshsynDataHandlersChannelBroker(k8scontext)
+			brokerHandler = channelBroker.NewChannelBrokerHandler()
+			stop, err := mch.meshsynDataHandlersStartLibMeshsyncRun(ctx, brokerHandler, k8scontext)
+			if err != nil {
+				mch.log.Error(err)
+				return mch
+			}
+			stopFunc = stop
 		} else {
 			mch.log.Warnf(
 				"MesheryControllersHelper unsupported meshsyncDeploymentMode %s",
 				mch.meshsyncDeploymentMode,
 			)
+			return mch
 		}
 		if brokerHandler == nil {
-			// all messages has been logged already
+			mch.log.Warnf("MesheryControllersHelper::AddMeshsynDataHandlers brokerHandler is nil")
 			return mch
 		}
 		token, _ := ctx.Value(TokenCtxKey).(string)
-		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token)
+		msDataHandler := NewMeshsyncDataHandler(brokerHandler, *mch.dbHandler, mch.log, provider, userID, uuid.FromStringOrNil(k8scontext.ConnectionID), mesheryInstanceID, token, stopFunc)
 		err := msDataHandler.Run()
 		if err != nil {
 			mch.log.Warn(err)
@@ -192,39 +201,37 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersNatsBroker(
 	return brokerHandler
 }
 
-func (mch *MesheryControllersHelper) meshsynDataHandlersChannelBroker(
-	k8scontext K8sContext,
-) broker.Handler {
-	br := channelBroker.NewChannelBrokerHandler()
-	go func(handler broker.Handler) {
-		kubeConfig, err := k8scontext.GenerateKubeConfig()
-		if err != nil {
-			mch.log.Error(
-				fmt.Errorf("error generating kubeconfig from context %v", err),
-			)
-			return
-		}
+// meshsynDataHandlersStartLibMeshsyncRun starts the libmeshsync run for the given context.
+// returns stop function to stop goroutine
+func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
+	ctx context.Context,
+	brokerHandler broker.Handler,
+	k8sContext K8sContext,
+) (func(), error) {
+	kubeConfig, err := k8sContext.GenerateKubeConfig()
+	if err != nil {
+		return nil, fmt.Errorf("MesheryControllersHelper::meshsynDataHandlersStartLibMeshsyncRun error generating kubeconfig from context: %v", err)
+	}
 
-		// TODO add option to stop meshsync run (f.e. when switch deployment modes)
+	cancelCtx, stopFunc := context.WithCancel(ctx)
+
+	go func() {
 		if err := libmeshsync.Run(
-			// TODO
-			// provide a mechanism to distinguish server logs from meshsync logs
 			mch.log,
 			libmeshsync.WithOutputMode("broker"),
-			libmeshsync.WithBrokerHandler(handler),
+			libmeshsync.WithBrokerHandler(brokerHandler),
 			libmeshsync.WithKubeConfig(kubeConfig),
+			libmeshsync.WithContext(cancelCtx),
 		); err != nil {
-			mch.log.Error(
-				fmt.Errorf("error running meshsync lib %v", err),
-			)
+			mch.log.Error(fmt.Errorf("MesheryControllersHelper::meshsynDataHandlersStartLibMeshsyncRun error running meshsync lib: %v", err))
 		}
-	}(br)
+	}()
 
-	return br
+	return stopFunc, nil
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-
+	mch.ctxMeshsyncDataHandler.Stop()
 	mch.ctxMeshsyncDataHandler = nil
 }
 
