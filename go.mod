@@ -1,6 +1,6 @@
 module github.com/meshery/meshery
 
-go 1.24
+go 1.24.5
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
