@@ -1,5 +1,7 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 import { DashboardPage } from './pages/DashboardPage';
+import { ExtensionPage } from './pages/ExtensionPage';
+
 // URLs used in tests
 const URLS = {
   KANVAS: {
@@ -24,73 +26,37 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
-    await expect(page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
-    await expect(page.getByTestId('kanvas-snapshot-description')).toBeVisible();
-
-    const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
-    await expect(enableButton).toBeVisible();
-    await expect(enableButton).toBeEnabled();
-
-    await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
+    const extensionPage = new ExtensionPage(page);
+    await extensionPage.verifyKanvasSnapshotVisible();
   });
 
   test('Verify Performance Analysis Details', async ({ page }) => {
-    await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
-    const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
-    await expect(performanceEnableButton).toBeVisible();
-    await expect(performanceEnableButton).toBeEnabled();
+    const extensionPage = new ExtensionPage(page);
+    await extensionPage.verifyPerformanceAnalysisDetails();
   });
 
   test('Verify Kanvas Details', async ({ page, context }) => {
-    await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
-    const kanvasDetailsButton = page.getByTestId('kanvas-signup-btn');
-    await expect(kanvasDetailsButton).toBeVisible();
-    if (await kanvasDetailsButton.isEnabled()) {
-      const [docsPage] = await Promise.all([
-        context.waitForEvent('page'),
-        kanvasDetailsButton.click(),
-      ]);
-      await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
-      await docsPage.close();
-    }
+    const extensionPage = new ExtensionPage(page);
+    await extensionPage.verifyKanvasDetails(context, URLS.KANVAS.DOCS);
   });
 
   test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
-    await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      page.getByTestId('docker-extension-download-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
-    await newPage.close();
+    const extensionPage = new ExtensionPage(page);
+    await extensionPage.verifyMesheryDockerExtensionDetails(context, URLS.DOCKER.EXTENSION);
   });
 
   test('Verify Meshery Design Embed Details', async ({ page, context }) => {
-    await expect(page.getByTestId('design-embed-learn-more-btn')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      page.getByTestId('design-embed-learn-more-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.KANVAS.DESIGNER_EMBED);
-    await newPage.close();
+    const extensionPage = new ExtensionPage(page);
+    await extensionPage.verifyMesheryDesignEmbedDetails(context, URLS.KANVAS.DESIGNER_EMBED);
   });
 
   test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
-    await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
-    const toggleButton = page.getByTestId('catalog-toggle-switch');
-    await toggleButton.click();
-    const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
-    const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
-    await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
-    await newPage.close();
+    const extensionPage = new ExtensionPage(page);
+    await extensionPage.verifyMesheryCatalogSectionDetails(context, URLS.MESHERY.CATALOG);
   });
 
   test('Verify Meshery Adapter for Istio Section', async ({ page, context }) => {
-    const [docsPage] = await Promise.all([
-      context.waitForEvent('page'),
-      await page.getByTestId('adapter-docs-istio').click(),
-    ]);
-    await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
-    await docsPage.close();
+    const extensionPage = new ExtensionPage(page);
+    await extensionPage.verifyMesheryAdapterIstioSection(context, URLS.MESHERY.ADATPER_DOCS);
   });
 });
