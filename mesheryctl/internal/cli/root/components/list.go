@@ -41,7 +41,7 @@ mesheryctl component list --count
 		modelData := display.DisplayDataAsync{
 			UrlPath:          componentApiPath,
 			DataType:         "component",
-			Header:           []string{"Model", "Category", "Version"},
+			Header:           []string{"Model", "Version"},
 			Page:             page,
 			PageSize:         pageSize,
 			IsPage:           cmd.Flags().Changed("page"),
