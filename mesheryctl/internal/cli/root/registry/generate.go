@@ -48,7 +48,7 @@ var (
 var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
-	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
+	Long:  "Prerequisite: Execute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
@@ -129,6 +129,13 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			utils.LogError.Error(err)
 			return nil
 		}
+
+		if err != nil {
+			utils.LogError.Error(fmt.Errorf("Error applying minimal UI capabilities: %v", err))
+		} else {
+			utils.Log.Info("Successfully applied minimal UI capabilities to generated components")
+		}
+
 		_ = logFile.Close()
 		_ = errorLogFile.Close()
 
