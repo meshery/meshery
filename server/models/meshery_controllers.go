@@ -231,8 +231,10 @@ func (mch *MesheryControllersHelper) meshsynDataHandlersStartLibMeshsyncRun(
 }
 
 func (mch *MesheryControllersHelper) RemoveMeshSyncDataHandler(ctx context.Context, contextID string) {
-	mch.ctxMeshsyncDataHandler.Stop()
-	mch.ctxMeshsyncDataHandler = nil
+	if mch.ctxMeshsyncDataHandler != nil {
+		mch.ctxMeshsyncDataHandler.Stop()
+		mch.ctxMeshsyncDataHandler = nil
+	}
 }
 
 func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
