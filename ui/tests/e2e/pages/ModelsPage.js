@@ -3,52 +3,52 @@ import { expect } from '@playwright/test';
 export class ModelsPage {
   constructor(page) {
     this.page = page;
-    
+
     // Navigation elements
     this.createModelButton = page.getByTestId('TabBar-Button-CreateModel');
     this.importModelButton = page.getByTestId('TabBar-Button-ImportModel');
     this.searchIcon = page.getByTestId('search-icon');
     this.searchInput = page.locator('#searchClick');
-    
+
     // Model creation form elements
     this.modelNameInput = page.locator('#model-name');
     this.modelDisplayNameInput = page.locator('#model-display-name');
     this.modelUrlInput = page.locator('#model-url');
-    
+
     // Stepper navigation
     this.nextButton = page.getByTestId('UrlStepper-Button-Next');
     this.generateButton = page.getByTestId('UrlStepper-Button-Generate');
     this.finishButton = page.getByTestId('UrlStepper-Button-Finish');
-    
+
     // Category and subcategory selects
     this.categorySelect = page.getByTestId('UrlStepper-Select-Category');
     this.subcategorySelect = page.getByTestId('UrlStepper-Select-Subcategory');
-    
+
     // Logo and styling elements
     this.logoDarkThemeSelect = page.getByTestId('UrlStepper-Select-Logo-Dark-Theme');
     this.logoLightThemeSelect = page.getByTestId('UrlStepper-Select-Logo-Light-Theme');
     this.primaryColorSelect = page.getByTestId('UrlStepper-Select-Primary-Color');
     this.secondaryColorSelect = page.getByTestId('UrlStepper-Select-Secondary-Color');
     this.shapeSelect = page.getByTestId('UrlStepper-Select-Shape');
-    
+
     // Source selection
     this.githubSourceRadio = page.getByTestId('UrlStepper-Select-Source-GitHub');
     this.visualAnnotationCheckbox = page.getByTestId('UrlStepper-Visual-Annotation-Checkbox');
-    
+
     // Import sections
     this.fileImportHeading = page.getByRole('heading', { name: 'File Import' });
     this.urlImportHeading = page.getByRole('heading', { name: 'URL Import' });
     this.csvImportHeading = page.getByRole('heading', { name: 'CSV Import' });
     this.urlImportTextbox = page.getByRole('textbox', { name: 'URL' });
     this.fileInput = page.locator('input[type="file"]');
-    
+
     // Results and messages
     this.modelImportMessagesWrapper = page.getByTestId('ModelImportMessages-Wrapper');
     this.exportModelButton = page.getByTestId('export-model-button');
     this.enabledCombobox = page.getByRole('combobox', { name: 'enabled' });
     this.ignoredOption = page.getByRole('option', { name: 'ignored' });
     this.ignoredCombobox = page.getByRole('combobox', { name: 'ignored' });
-    
+
     // Generic buttons for import flows
     this.nextButtonGeneric = page.getByRole('button', { name: 'Next' });
     this.finishButtonGeneric = page.getByRole('button', { name: 'Finish' });
@@ -99,7 +99,7 @@ export class ModelsPage {
   async verifyModelImported(modelName) {
     // Fixed template literal syntax
     await expect(
-      this.page.getByTestId(`ModelImportedSection-ModelHeader-${modelName}`)
+      this.page.getByTestId(`ModelImportedSection-ModelHeader-${modelName}`),
     ).toBeVisible();
     await expect(this.modelImportMessagesWrapper).toBeVisible();
   }
@@ -196,19 +196,19 @@ export class ModelsPage {
     await this.clickImportModel();
     await this.selectCsvImport();
     await this.proceedWithImport();
-    
+
     // Upload models CSV
     await this.uploadFile(csvData.Models);
     await this.proceedWithImport();
-    
+
     // Upload components CSV
     await this.uploadFile(csvData.Components);
     await this.proceedWithImport();
-    
+
     // Upload relationships CSV
     await this.uploadFile(csvData.Relationships);
     await this.generateFromCsv();
-    
+
     await this.verifyModelImported(csvData.Model_Name);
     await this.finishImport();
   }

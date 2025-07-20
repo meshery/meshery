@@ -29,30 +29,30 @@ test.describe.serial('Model Workflow Tests', () => {
   test.beforeEach(async ({ page }) => {
     dashboardPage = new DashboardPage(page);
     modelsPage = new ModelsPage(page);
-    
+
     await dashboardPage.navigateToDashboard();
     await dashboardPage.navigateToSettings();
     await page.getByTestId('settings-tab-registry').click();
   });
 
-  test('Create a Model', async ({ page }) => {
+  test('Create a Model', async () => {
     await modelsPage.createModelWorkflow(model);
   });
 
-  test('Search a Model and Export it', async ({ page }) => {
+  test('Search a Model and Export it', async () => {
     const download = await modelsPage.searchExportAndChangeStatus(model.MODEL_DISPLAY_NAME);
     expect(download).toBeDefined();
   });
 
-  test('Import a Model via File Import', async ({ page }) => {
+  test('Import a Model via File Import', async () => {
     await modelsPage.importModelViaFile(model_import);
   });
 
-  test('Import a Model via Url Import', async ({ page }) => {
+  test('Import a Model via Url Import', async () => {
     await modelsPage.importModelViaUrl(model_import);
   });
 
-  test('Import a Model via CSV Import', async ({ page }) => {
+  test('Import a Model via CSV Import', async () => {
     await modelsPage.importModelViaCsv(model_import.MODEL_CSV_IMPORT);
   });
 });

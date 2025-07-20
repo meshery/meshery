@@ -21,7 +21,7 @@ const ExportOption = ({
   description = 'Download the design in the selected format',
 }) => {
   const theme = useTheme();
-  
+
   const handleClick = (e) => {
     if (disabled) return;
     onClick(e);
@@ -73,26 +73,26 @@ const ExportOption = ({
           justifyContent: 'space-between',
         }}
       >
-        <ListItemIcon 
-          sx={{ 
-            minWidth: '2rem', 
+        <ListItemIcon
+          sx={{
+            minWidth: '2rem',
             marginRight: '1rem',
             color: disabled ? theme.palette.text.disabled : 'inherit',
           }}
         >
           {Icon}
         </ListItemIcon>
-        <ListItemText 
-          primary={title} 
+        <ListItemText
+          primary={title}
           sx={{
             '& .MuiListItemText-primary': {
               color: disabled ? theme.palette.text.disabled : theme.palette.text.primary,
-            }
+            },
           }}
         />
-        <InfoTooltip 
-          placement="top" 
-          title={description} 
+        <InfoTooltip
+          placement="top"
+          title={description}
           content={description}
           sx={{ marginRight: '0.5rem' }}
         />
@@ -110,14 +110,12 @@ const ExportOption = ({
             },
           }}
         >
-          <DownloadIcon fill={disabled ? theme.palette.text.disabled : theme.palette.icon.default} />
+          <DownloadIcon
+            fill={disabled ? theme.palette.text.disabled : theme.palette.icon.default}
+          />
         </IconButton>
       </Box>
-      {content && (
-        <Box sx={{ padding: theme.spacing(0, 1, 1, 1), width: '100%' }}>
-          {content}
-        </Box>
-      )}
+      {content && <Box sx={{ padding: theme.spacing(0, 1, 1, 1), width: '100%' }}>{content}</Box>}
     </ListItem>
   );
 };
@@ -133,63 +131,66 @@ const ExportModal = (props) => {
   const theme = useTheme();
 
   // Memoize export options to prevent unnecessary re-renders
-  const exportOptions = useMemo(() => [
-    {
-      title: 'Meshery Design (yaml)',
-      icon: <PatternIcon width={'30'} height="30" fill={Colors.caribbeanGreen} />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content),
-      description:
-        'Export your design as a complete, self-contained Meshery Design file (YAML). This file includes embedded images and all configuration details. It\'s the perfect format for creating backups, sharing with colleagues using Meshery, or transferring designs between Meshery environments without losing any information (lossless transfer).',
-    },
-    {
-      title: 'Meshery Design (OCI image)',
-      icon: <OCIImageIcon width={'30'} height="30" />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true'),
-      description:
-        'Download your design as an OCI compatible container image, which can be pushed to and pulled from container registries like Docker Hub, AWS ECR, and so on.',
-    },
-    {
-      title: 'Kubernetes Manifest (yaml)',
-      icon: <KubernetesIcon width={'30'} height="30" />,
-      onClick: (e) =>
-        handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
-      description: (
-        <Box component="div">
-          <Box component="p" sx={{ margin: '0 0 0.5rem 0' }}>
-            Download your design as a standard Kubernetes Manifest file. This file contains the
-            Kubernetes resource definitions from your design and can be directly applied to a
-            cluster using tools like <code>kubectl</code>.
+  const exportOptions = useMemo(
+    () => [
+      {
+        title: 'Meshery Design (yaml)',
+        icon: <PatternIcon width={'30'} height="30" fill={Colors.caribbeanGreen} />,
+        onClick: (e) => handleDesignDownload(e, downloadModal.content),
+        description:
+          "Export your design as a complete, self-contained Meshery Design file (YAML). This file includes embedded images and all configuration details. It's the perfect format for creating backups, sharing with colleagues using Meshery, or transferring designs between Meshery environments without losing any information (lossless transfer).",
+      },
+      {
+        title: 'Meshery Design (OCI image)',
+        icon: <OCIImageIcon width={'30'} height="30" />,
+        onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true'),
+        description:
+          'Download your design as an OCI compatible container image, which can be pushed to and pulled from container registries like Docker Hub, AWS ECR, and so on.',
+      },
+      {
+        title: 'Kubernetes Manifest (yaml)',
+        icon: <KubernetesIcon width={'30'} height="30" />,
+        onClick: (e) =>
+          handleDesignDownload(e, downloadModal.content, null, 'export=Kubernetes Manifest'),
+        description: (
+          <Box component="div">
+            <Box component="p" sx={{ margin: '0 0 0.5rem 0' }}>
+              Download your design as a standard Kubernetes Manifest file. This file contains the
+              Kubernetes resource definitions from your design and can be directly applied to a
+              cluster using tools like <code>kubectl</code>.
+            </Box>
+            <Box component="p" sx={{ margin: 0 }}>
+              <Box component="strong">Lossy Export:</Box> This process strips out Meshery-specific
+              information (e.g., visual arrangement, comments, and so on). The resulting manifest
+              only includes the core Kubernetes resource definitions, not the extra context that
+              might be present in your Meshery design.
+            </Box>
           </Box>
-          <Box component="p" sx={{ margin: 0 }}>
-            <Box component="strong">Lossy Export:</Box> This process strips out Meshery-specific information
-            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
-            the core Kubernetes resource definitions, not the extra context that might be present in
-            your Meshery design.
+        ),
+      },
+      {
+        title: 'Helm Chart (tar.gz)',
+        icon: <HelmIcon width={'30'} height="30" />,
+        onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=helm-chart'),
+        disabled: false,
+        description: (
+          <Box component="div">
+            <Box component="p" sx={{ margin: '0 0 0.5rem 0' }}>
+              Download your design as a Helm Chart.
+            </Box>
+            <Box component="p" sx={{ margin: 0 }}>
+              <Box component="strong">Lossy Export:</Box> This process strips out Meshery-specific
+              information (e.g., visual arrangement, comments, and so on). The resulting manifest
+              only includes the core Kubernetes resource definitions, not the extra context that
+              might be present in your Meshery design.
+            </Box>
           </Box>
-        </Box>
-      ),
-    },
-    {
-      title: 'Helm Chart (tar.gz)',
-      icon: <HelmIcon width={'30'} height="30" />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=helm-chart'),
-      disabled: false,
-      description: (
-        <Box component="div">
-          <Box component="p" sx={{ margin: '0 0 0.5rem 0' }}>
-            Download your design as a Helm Chart.
-          </Box>
-          <Box component="p" sx={{ margin: 0 }}>
-            <Box component="strong">Lossy Export:</Box> This process strips out Meshery-specific information
-            (e.g., visual arrangement, comments, and so on). The resulting manifest only includes
-            the core Kubernetes resource definitions, not the extra context that might be present in
-            your Meshery design.
-          </Box>
-        </Box>
-      ),
-    },
-    ...extensionExportOptions,
-  ], [downloadModal.content, handleDesignDownload, extensionExportOptions]);
+        ),
+      },
+      ...extensionExportOptions,
+    ],
+    [downloadModal.content, handleDesignDownload, extensionExportOptions],
+  );
 
   const exportModal = useModal({
     headerIcon: <PatternIcon fill={'#fff'} height={'2rem'} width="2rem" />,
@@ -205,9 +206,9 @@ const ExportModal = (props) => {
       aria-describedby="export-modal-description"
     >
       <ModalBody>
-        <Box 
-          id="export-modal-description" 
-          sx={{ 
+        <Box
+          id="export-modal-description"
+          sx={{
             marginBottom: theme.spacing(2),
             color: theme.palette.text.secondary,
             fontSize: theme.typography.body2.fontSize,
