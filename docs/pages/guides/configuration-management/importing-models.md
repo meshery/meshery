@@ -21,7 +21,7 @@ Before you can use the Meshery CLI to import a [Model](/concepts/logical/models)
 
 **Step 2: Import the Model**
 
-A model can be imported using `Directory, URL` or `File` formats. This command is used for specifically importing models and not for creating a new model. For Meshery models, you can refer to the exported models at [Meshery catalog](https://meshery.io/catalog/models).
+A model can be imported using `Directory, URL` or `File`. This command is used for specifically importing models and not for creating a new model. For Meshery models, you can refer to the exported models at [Meshery catalog](https://meshery.io/catalog/models).
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f [file/url] </div></div>
