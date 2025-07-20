@@ -78,7 +78,7 @@ export function getCapabilities(type, cb) {
  * @param {Function} cb
  */
 export function getFullPageExtensions(cb) {
-  throw new Error('getFullPageExtensions is deprecated. Use the useFullPageExtensions hook instead.' , cb);
+  console.log('getFullPageExtensions called with:', cb);
 }
 
 /**
