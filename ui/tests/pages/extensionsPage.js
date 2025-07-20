@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { DashboardPage } from './DashboardPage.js';
+import { DashboardPage } from '../e2e/pages/DashboardPage.js';
 const URLS = {
   KANVAS: {
     DOCS: 'https://docs.layer5.io/kanvas/',
@@ -44,12 +44,9 @@ export class ExtensionsPage {
   async verifyKanvasDetails(context) {
     await expect(this.page.getByTestId('kanvas-signup-heading')).toBeVisible();
     const button = this.page.getByTestId('kanvas-signup-btn');
-    await expect(button).toBeVisible(); 
+    await expect(button).toBeVisible();
     if (await button.isEnabled()) {
-      const [docsPage] = await Promise.all([
-        context.waitForEvent('page'),
-        button.click(),
-      ]);
+      const [docsPage] = await Promise.all([context.waitForEvent('page'), button.click()]);
       await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
       await docsPage.close();
     }
@@ -80,10 +77,7 @@ export class ExtensionsPage {
     const toggle = this.page.getByTestId('catalog-toggle-switch');
     await toggle.click();
     const catalogLink = this.page.locator('a[href="https://meshery.io/catalog"]');
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      catalogLink.click(),
-    ]);
+    const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
     await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
     await newPage.close();
   }
