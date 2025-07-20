@@ -66,21 +66,23 @@ function getPath() {
  * @param {string} type
  * @param {Function} cb
  */
-export function getCapabilities(type, cb) {
-  // This function now relies on the useCapabilities Hook
-  // Call this from a component that uses the Hook
-  console.log('getCapabilities called with:', type, cb);
-}
+// export function getCapabilities(type, cb) {
+//   // This function now relies on the useCapabilities Hook
+//   // Call this from a component that uses the Hook
+//   console.log('getCapabilities called with:', type, cb);
+// }
 
+
+export function getCapabilities(type, cb) {
+  throw new Error('getCapabilities is deprecated. Use the useCapabilities hook instead.');
+}
 /**
  * getFullPageExtensions queries the meshery server for the current providers
  * capabilities and returns all the extensions names and URIs having full_page type as true
  * @param {Function} cb
  */
 export function getFullPageExtensions(cb) {
-  // This function now relies on the useFullPageExtensions Hook
-  // Call this from a component that uses the Hook
-  console.log('getFullPageExtensions called with:', cb);
+  throw new Error('getFullPageExtensions is deprecated. Use the useFullPageExtensions hook instead.');
 }
 
 /**
