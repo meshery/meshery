@@ -333,17 +333,20 @@ const ExtensionSandbox = React.memo(
       }
     });
 
-    useFullPageExtensions(() => {
-      if (capabilitiesRegistry && capabilitiesRegistry.extensions) {
+    useFullPageExtensions((extensionData) => {
+      if (extensionData) {
         try {
-          const extensionData = capabilitiesRegistry.extensions['full_page'];
           const processedData = ExtensionPointSchemaValidator('full_page')(extensionData);
           setExtension(processedData);
-          setIsLoading(false);
-        } catch {
+        } catch (err) {
+          console.error('Error processing full page extension data:', err);
           setExtension([]);
+        } finally {
           setIsLoading(false);
         }
+      } else {
+        setExtension([]);
+        setIsLoading(false);
       }
     });
 

@@ -3,33 +3,26 @@ const { expect } = require('@playwright/test');
 class ExtensionPage {
   constructor(page) {
     this.page = page;
-    // Locators for Kanvas Snapshot section
     this.kanvasSnapshotHeading = page.getByTestId('kanvas-snapshot-heading');
     this.kanvasSnapshotDescription = page.getByTestId('kanvas-snapshot-description');
     this.kanvasSnapshotEnableButton = page.getByTestId('kanvas-snapshot-enable-btn');
     this.kanvasSnapshotImage = page.getByTestId('kanvas-snapshot-image');
 
-    // Locators for Performance Analysis section
     this.performanceAnalysisHeading = page.getByTestId('performance-analysis-heading');
     this.performanceAnalysisEnableButton = page.getByTestId('performance-analysis-enable-btn');
 
-    // Locators for Kanvas Details section
     this.kanvasSignupHeading = page.getByTestId('kanvas-signup-heading');
     this.kanvasSignupButton = page.getByTestId('kanvas-signup-btn');
 
-    // Locators for Meshery Docker Extension section
     this.dockerExtensionHeading = page.getByTestId('docker-extension-heading');
     this.dockerExtensionDownloadButton = page.getByTestId('docker-extension-download-btn');
 
-    // Locators for Meshery Design Embed section
     this.designEmbedLearnMoreButton = page.getByTestId('design-embed-learn-more-btn');
 
-    // Locators for Meshery Catalog section
     this.catalogSectionHeading = page.getByTestId('catalog-section-heading');
     this.catalogToggleSwitch = page.getByTestId('catalog-toggle-switch');
     this.catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
 
-    // Locators for Meshery Adapter for Istio section
     this.adapterDocsIstioButton = page.getByTestId('adapter-docs-istio');
   }
 
