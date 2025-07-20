@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ENV } from './env';
+import { DashboardPage } from './pages/DashboardPage';
 
 const SETTINGS_TABS = [
   'settings-tab-adapters',
@@ -20,9 +20,9 @@ const COMMON_UI_ELEMENTS = ['navigation', 'notification-button', 'profile-button
 
 test.describe('Performance Section Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(ENV.MESHERY_SERVER_URL);
-    const performanceNav = page.locator('[data-cy="performance"]');
-    await performanceNav.click();
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToPerformance();
   });
 
   test('Common UI elements', async ({ page }) => {
