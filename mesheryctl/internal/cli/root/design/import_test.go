@@ -2,6 +2,8 @@ package design
 
 import (
 	"testing"
+
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 )
 
 func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
@@ -21,7 +23,7 @@ func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
 		{
 			name:    "Import invalid source type",
 			args:    args{"invalid source type", "file.yaml", "", false},
-			want:    ErrInValidSource("invalid source type", []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}),
+			want:    ErrInValidSource("invalid source type", []string{string(coreV1.HelmChart), string(coreV1.K8sManifest), string(coreV1.DockerCompose), string(coreV1.MesheryDesign)}),
 			wantErr: true,
 		},
 		{

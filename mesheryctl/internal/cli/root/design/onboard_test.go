@@ -7,6 +7,7 @@ import (
 
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/spf13/pflag"
 )
 
@@ -45,7 +46,7 @@ func TestOnboardCmd(t *testing.T) {
 	}{
 		{
 			Name:             "Onboard Design",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", "Kubernetes Manifest"},
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "-s", string(coreV1.K8sManifest)},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{
 				{
@@ -78,7 +79,7 @@ func TestOnboardCmd(t *testing.T) {
 		},
 		{
 			Name:             "Onboard design with --skip-save",
-			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", "Kubernetes Manifest"},
+			Args:             []string{"onboard", "-f", filepath.Join(fixturesDir, "sampleDesign.golden"), "--skip-save", "-s", string(coreV1.K8sManifest)},
 			ExpectedResponse: "onboard.output.golden",
 			URLs: []utils.MockURL{
 				{

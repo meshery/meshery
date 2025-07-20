@@ -29,6 +29,7 @@ import (
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/patterns"
+	coreV1 "github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -52,7 +53,7 @@ var onboardCmd = &cobra.Command{
 	Example: `
 // Onboard design by providing file path
 mesheryctl design onboard -f [filepath] -s [source type]
-mesheryctl design onboard -f ./pattern.yml -s "k8s-manifest"
+mesheryctl design onboard -f ./pattern.yml -s k8s-manifest
 	`,
 	Annotations: linkDocpatternOnboard,
 	Args: func(_ *cobra.Command, args []string) error {
@@ -266,7 +267,16 @@ func getFullSourceType(sType string) (string, error) {
 }
 
 func init() {
+
+	validSourceTypes = []string{
+		string(coreV1.K8sManifest),
+		string(coreV1.DockerCompose),
+		string(coreV1.HelmChart),
+		string(coreV1.K8sKustomize),
+		string(coreV1.MesheryDesign),
+	}
 	onboardCmd.Flags().StringVarP(&file, "file", "f", "", "Path to design file")
 	onboardCmd.Flags().BoolVarP(&skipSave, "skip-save", "", false, "Skip saving a design")
-	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. k8s-manifest / docker-compose / helm-chart)")
+	onboardCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", fmt.Sprintf("Type of source file (ex. %s / %s / %s / %s / %s)",
+		coreV1.K8sManifest, coreV1.DockerCompose, coreV1.HelmChart, coreV1.K8sKustomize, coreV1.MesheryDesign))
 }

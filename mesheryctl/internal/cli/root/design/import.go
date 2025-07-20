@@ -17,6 +17,7 @@ package design
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -51,7 +52,7 @@ mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 
 mesheryctl design import -f design.tar
 mesheryctl design import -f design.yml -n design-name
-mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
+mesheryctl design import -f design.yml -s k8s-manifest -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
@@ -78,20 +79,26 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 		// If pattern file is passed via flags
 		if sourceType != "" {
 			if sourceType, err = getFullSourceType(sourceType); err != nil {
-				utils.Log.Debugf("%s is not a valid source type. Valid types are Helm Chart, Kubernetes Manifest, Docker Compose, Meshery Design", sourceType)
-				validSourceTypes := []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}
+				utils.Log.Debugf("%s is not a valid source type. Valid types are: %s, %s, %s, %s, %s", sourceType,
+					coreV1.K8sManifest, coreV1.DockerCompose, coreV1.HelmChart, coreV1.K8sKustomize, coreV1.MesheryDesign)
+				validSourceTypes := []string{
+					string(coreV1.K8sManifest),
+					string(coreV1.DockerCompose),
+					string(coreV1.HelmChart),
+					string(coreV1.K8sKustomize),
+					string(coreV1.MesheryDesign)}
 				return ErrInValidSource(sourceType, validSourceTypes)
 			}
 		}
 
 		switch sourceType {
-		case "Helm Chart":
+		case "Helm Chart", "helm-chart":
 			sourceType = string(coreV1.HelmChart)
-		case "Kubernetes Manifest":
+		case "Kubernetes Manifest", "k8s-manifest":
 			sourceType = string(coreV1.K8sManifest)
-		case "Meshery Design":
+		case "Meshery Design", "meshery-design":
 			sourceType = string(coreV1.MesheryDesign)
-		case "Docker Compose":
+		case "Docker Compose", "docker-compose":
 			sourceType = string(coreV1.DockerCompose)
 		}
 
@@ -203,6 +210,13 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 func init() {
 	importCmd.Flags().StringVarP(&file, "file", "f", "", "Path/URL to design file")
-	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", "Type of source file (ex. manifest / compose / helm / design)")
 	importCmd.Flags().StringVarP(&name, "name", "n", "", "Name for the design file")
+	importCmd.Flags().StringVarP(&sourceType, "source-type", "s", "", fmt.Sprintf(
+		"Type of source file (ex. %s / %s / %s / %s / %s)",
+		coreV1.K8sManifest,
+		coreV1.DockerCompose,
+		coreV1.HelmChart,
+		coreV1.K8sKustomize,
+		coreV1.MesheryDesign,
+	))
 }
