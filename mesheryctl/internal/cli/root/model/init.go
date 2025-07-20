@@ -223,8 +223,8 @@ const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_templ
 const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
 const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
 
-// // TODO
-// // temporarily not in use
+// TODO: Connection templates are temporarily disabled.
+// This constant is not currently in use.
 // const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 
 // TODO
