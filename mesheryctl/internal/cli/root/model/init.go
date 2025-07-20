@@ -221,8 +221,11 @@ const initModelDirPerm = 0755
 const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
 const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
 const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
-const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+
+// TODO: Connection templates are temporarily disabled.
+// This constant is not currently in use.
+// const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 
 // TODO
 // if csv output is not directory based
@@ -285,9 +288,7 @@ var initModelData = []struct {
 	{
 		folderPath: "connections",
 		// map file name to template key
-		files: map[string]string{
-			"connection": initModelTemplatePathConnection,
-		},
+		files: nil,
 		beforeHook: func() {
 			utils.Log.Info("Adding sample connections...")
 		},
