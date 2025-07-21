@@ -98,11 +98,7 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/color/secret-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/white/secret-white.svg
   description: 
-- name: role-binding
-  colorIcon: assets/img/integrations/pulsar-resources-operator/components/role-binding/icons/color/role-binding-color.svg
-  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/role-binding/icons/white/role-binding-white.svg
-  description: 
-components-count: 23
+components-count: 22
 relationships: 
 relationship-count: 0
 featureList: [
