@@ -1,18 +1,35 @@
-import { expect } from '@playwright/test';
 import { DashboardPage } from '../e2e/pages/DashboardPage.js';
-const URLS = {
-  KANVAS: {
-    DOCS: 'https://docs.layer5.io/kanvas/',
-    DESIGNER_EMBED: 'https://docs.layer5.io/kanvas/designer/embedding-designs/',
+
+const SELECTORS = {
+  kanvasSnapshot: {
+    heading: 'kanvas-snapshot-heading',
+    description: 'kanvas-snapshot-description',
+    enableBtn: 'kanvas-snapshot-enable-btn',
+    image: 'kanvas-snapshot-image',
   },
-  DOCKER: {
-    EXTENSION: 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
+  performanceAnalysis: {
+    heading: 'performance-analysis-heading',
+    enableBtn: 'performance-analysis-enable-btn',
   },
-  MESHERY: {
-    CATALOG: 'https://meshery.io/catalog',
-    ADATPER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
+  kanvasDetails: {
+    heading: 'kanvas-signup-heading',
+    button: 'kanvas-signup-btn',
   },
+  dockerExtension: {
+    heading: 'docker-extension-heading',
+    downloadBtn: 'docker-extension-download-btn',
+  },
+  designEmbed: {
+    learnMoreBtn: 'design-embed-learn-more-btn',
+  },
+  catalog: {
+    heading: 'catalog-section-heading',
+    toggle: 'catalog-toggle-switch',
+    link: 'a[href="https://meshery.io/catalog"]',
+  },
+  adapterIstio: 'adapter-docs-istio',
 };
+
 export class ExtensionsPage {
   constructor(page) {
     this.page = page;
@@ -24,70 +41,91 @@ export class ExtensionsPage {
     await dashboardPage.navigateToExtensions();
   }
 
-  async verifyKanvasSnapshot() {
-    await expect(this.page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
-    await expect(this.page.getByTestId('kanvas-snapshot-description')).toBeVisible();
-
-    const enableButton = this.page.getByTestId('kanvas-snapshot-enable-btn');
-    await expect(enableButton).toBeVisible();
-    await expect(enableButton).toBeEnabled();
-    await expect(this.page.getByTestId('kanvas-snapshot-image')).toBeVisible();
+  // Kanvas Snapshot
+  getKanvasSnapshotElements() {
+    return {
+      heading: this.page.getByTestId(SELECTORS.kanvasSnapshot.heading),
+      description: this.page.getByTestId(SELECTORS.kanvasSnapshot.description),
+      enableBtn: this.page.getByTestId(SELECTORS.kanvasSnapshot.enableBtn),
+      image: this.page.getByTestId(SELECTORS.kanvasSnapshot.image),
+    };
   }
 
-  async verifyPerformanceAnalysis() {
-    await expect(this.page.getByTestId('performance-analysis-heading')).toBeVisible();
-    const enableButton = this.page.getByTestId('performance-analysis-enable-btn');
-    await expect(enableButton).toBeVisible();
-    await expect(enableButton).toBeEnabled();
+  // Performance Analysis
+  getPerformanceAnalysisElements() {
+    return {
+      heading: this.page.getByTestId(SELECTORS.performanceAnalysis.heading),
+      enableBtn: this.page.getByTestId(SELECTORS.performanceAnalysis.enableBtn),
+    };
   }
 
-  async verifyKanvasDetails(context) {
-    await expect(this.page.getByTestId('kanvas-signup-heading')).toBeVisible();
-    const button = this.page.getByTestId('kanvas-signup-btn');
-    await expect(button).toBeVisible();
-    if (await button.isEnabled()) {
-      const [docsPage] = await Promise.all([context.waitForEvent('page'), button.click()]);
-      await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
-      await docsPage.close();
-    }
+  // Kanvas Details
+  getKanvasDetailsElements() {
+    return {
+      heading: this.page.getByTestId(SELECTORS.kanvasDetails.heading),
+      button: this.page.getByTestId(SELECTORS.kanvasDetails.button),
+    };
   }
 
-  async verifyDockerExtension(context) {
-    await expect(this.page.getByTestId('docker-extension-heading')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      this.page.getByTestId('docker-extension-download-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
-    await newPage.close();
-  }
-
-  async verifyDesignEmbed(context) {
-    await expect(this.page.getByTestId('design-embed-learn-more-btn')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      this.page.getByTestId('design-embed-learn-more-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.KANVAS.DESIGNER_EMBED);
-    await newPage.close();
-  }
-
-  async verifyCatalogSection(context) {
-    await expect(this.page.getByTestId('catalog-section-heading')).toBeVisible();
-    const toggle = this.page.getByTestId('catalog-toggle-switch');
-    await toggle.click();
-    const catalogLink = this.page.locator('a[href="https://meshery.io/catalog"]');
-    const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
-    await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
-    await newPage.close();
-  }
-
-  async verifyAdapterIstio(context) {
+  async openKanvasDocs(context) {
+    const button = this.page.getByTestId(SELECTORS.kanvasDetails.button);
     const [docsPage] = await Promise.all([
       context.waitForEvent('page'),
-      this.page.getByTestId('adapter-docs-istio').click(),
+      button.click(),
     ]);
-    await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
-    await docsPage.close();
+    return docsPage;
+  }
+
+  // Docker Extension
+  async openDockerExtension(context) {
+    const [newPage] = await Promise.all([
+      context.waitForEvent('page'),
+      this.page.getByTestId(SELECTORS.dockerExtension.downloadBtn).click(),
+    ]);
+    return newPage;
+  }
+
+  getDockerExtensionHeading() {
+    return this.page.getByTestId(SELECTORS.dockerExtension.heading);
+  }
+
+  // Design Embed
+  async openDesignEmbed(context) {
+    const [newPage] = await Promise.all([
+      context.waitForEvent('page'),
+      this.page.getByTestId(SELECTORS.designEmbed.learnMoreBtn).click(),
+    ]);
+    return newPage;
+  }
+
+  getDesignEmbedButton() {
+    return this.page.getByTestId(SELECTORS.designEmbed.learnMoreBtn);
+  }
+
+  // Catalog Section
+  getCatalogHeading() {
+    return this.page.getByTestId(SELECTORS.catalog.heading);
+  }
+
+  async toggleCatalogSection() {
+    await this.page.getByTestId(SELECTORS.catalog.toggle).click();
+  }
+
+  async openCatalogLink(context) {
+    const link = this.page.locator(SELECTORS.catalog.link);
+    const [newPage] = await Promise.all([
+      context.waitForEvent('page'),
+      link.click(),
+    ]);
+    return newPage;
+  }
+
+  // Adapter Istio
+  async openAdapterIstioDocs(context) {
+    const [docsPage] = await Promise.all([
+      context.waitForEvent('page'),
+      this.page.getByTestId(SELECTORS.adapterIstio).click(),
+    ]);
+    return docsPage;
   }
 }
