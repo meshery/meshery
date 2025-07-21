@@ -1183,7 +1183,7 @@ exp:
           version:
             name: --version
             description: (optional) model version, defaults to v0.1.0   
-            usage: mesheryctl model init [model-name] --path [path]
+            usage: mesheryctl model init [model-name] --version [version]
             example:
               mesheryctl model init aws-ec2-controller --version v1.2.3
       build:
