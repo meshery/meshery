@@ -6,15 +6,13 @@ import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../../constan
 import {
   MeshModelToolbar,
   MainContainer,
-  InnerContainer,
-  CardStyle,
   TreeWrapper,
   DetailsContainer,
 } from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
@@ -31,14 +29,11 @@ import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from '@/components/RelationshipBuilder/CreateRelationshipModal';
 
 const MeshModelComponent_ = ({
-  modelsCount: initialModelsCount,
-  componentsCount: initialComponentsCount,
-  relationshipsCount: initialRelationshipsCount,
-  registrantCount: initialRegistrantCount,
-  settingsRouter,
+  // settingsRouter,
+  externalView = null, // External view from modal
 }) => {
-  const router = useRouter();
-  const { handleChangeSelectedTab, selectedTab } = settingsRouter(router);
+  // const router = useRouter();
+  // const { handleChangeSelectedTab, selectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const { searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
@@ -48,16 +43,10 @@ const MeshModelComponent_ = ({
     Registrants: 0,
   });
 
-  const [counts, setCounts] = useState({
-    models: initialModelsCount,
-    components: initialComponentsCount,
-    relationships: initialRelationshipsCount,
-    registrants: initialRegistrantCount,
-  });
-
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [view, setView] = useState(selectedTab ?? 'Models');
+  // Use external view if provided, otherwise use selectedTab or default to 'Models'
+  const [view, setView] = useState(externalView || 'Models');
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
@@ -143,12 +132,7 @@ const MeshModelComponent_ = ({
             },
             true, // arg to use cache as default
           );
-          if (response.data && response.data.total_count !== undefined) {
-            setCounts((prevCounts) => ({
-              ...prevCounts,
-              models: response.data.total_count,
-            }));
-          }
+
           break;
         case COMPONENTS:
           response = await getComponentsData(
@@ -162,12 +146,7 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-          if (response.data && response.data.total_count !== undefined) {
-            setCounts((prevCounts) => ({
-              ...prevCounts,
-              components: response.data.total_count,
-            }));
-          }
+
           break;
         case RELATIONSHIPS:
           response = await getRelationshipsData(
@@ -180,21 +159,10 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-          if (response.data && response.data.total_count !== undefined) {
-            setCounts((prevCounts) => ({
-              ...prevCounts,
-              relationships: response.data.total_count,
-            }));
-          }
           break;
         case REGISTRANTS:
           response = await getRegistrants();
-          if (response?.data?.registrants) {
-            setCounts((prevCounts) => ({
-              ...prevCounts,
-              registrants: response.data.registrants.length,
-            }));
-          }
+
           break;
         default:
           break;
@@ -290,28 +258,28 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
-  const handleTabClick = (selectedView) => {
-    handleChangeSelectedTab(selectedView);
-    if (view !== selectedView) {
-      setSearchText(null);
-      setResourcesDetail([]);
-    }
-    setModelsFilters({ page: 0 });
-    setRegistrantsFilters({ page: 0 });
-    setComponentsFilters({ page: 0 });
-    setRelationshipsFilters({ page: 0 });
-    setPage({
-      Models: 0,
-      Components: 0,
-      Relationships: 0,
-      Registrants: 0,
-    });
-    setView(selectedView);
-    setShowDetailsData({
-      type: '',
-      data: {},
-    });
-  };
+  // const handleTabClick = (selectedView) => {
+  //   handleChangeSelectedTab(selectedView);
+  //   if (view !== selectedView) {
+  //     setSearchText(null);
+  //     setResourcesDetail([]);
+  //   }
+  //   setModelsFilters({ page: 0 });
+  //   setRegistrantsFilters({ page: 0 });
+  //   setComponentsFilters({ page: 0 });
+  //   setRelationshipsFilters({ page: 0 });
+  //   setPage({
+  //     Models: 0,
+  //     Components: 0,
+  //     Relationships: 0,
+  //     Registrants: 0,
+  //   });
+  //   setView(selectedView);
+  //   setShowDetailsData({
+  //     type: '',
+  //     data: {},
+  //   });
+  // };
 
   const modifyData = () => {
     if (!resourcesDetail) return [];
@@ -344,15 +312,32 @@ const MeshModelComponent_ = ({
     fetchData();
   }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
 
+  // Update view when external view changes (for modal usage)
+  useEffect(() => {
+    if (externalView && externalView !== view) {
+      setView(externalView);
+      // Reset data when view changes
+      setResourcesDetail([]);
+      setSearchText(null);
+      setModelsFilters({ page: 0 });
+      setRegistrantsFilters({ page: 0 });
+      setComponentsFilters({ page: 0 });
+      setRelationshipsFilters({ page: 0 });
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
+      });
+      setShowDetailsData({
+        type: '',
+        data: {},
+      });
+    }
+  }, [externalView]);
+
   return (
     <div data-test="workloads">
-      <TabBar
-        openImportModal={() => setIsImportModalOpen(true)}
-        openCreateModal={() => setIsCreateModalOpen(true)}
-        openRelationshipModal={() => setIsRelationshipModalOpen(true)}
-        view={view}
-      />
-
       <ImportModelModal
         isImportModalOpen={isImportModalOpen}
         setIsImportModalOpen={setIsImportModalOpen}
@@ -367,32 +352,14 @@ const MeshModelComponent_ = ({
       />
 
       <MainContainer>
-        <InnerContainer>
-          <TabCard
-            label="Models"
-            count={counts.models}
-            active={view === MODELS}
-            onClick={() => handleTabClick(MODELS)}
+        {(view === MODELS || view === RELATIONSHIPS) && (
+          <TabBar
+            openImportModal={() => setIsImportModalOpen(true)}
+            openCreateModal={() => setIsCreateModalOpen(true)}
+            openRelationshipModal={() => setIsRelationshipModalOpen(true)}
+            view={view}
           />
-          <TabCard
-            label="Components"
-            count={counts.components}
-            active={view === COMPONENTS}
-            onClick={() => handleTabClick(COMPONENTS)}
-          />
-          <TabCard
-            label="Relationships"
-            count={counts.relationships}
-            active={view === RELATIONSHIPS}
-            onClick={() => handleTabClick(RELATIONSHIPS)}
-          />
-          <TabCard
-            label="Registrants"
-            count={counts.registrants}
-            active={view === REGISTRANTS}
-            onClick={() => handleTabClick(REGISTRANTS)}
-          />
-        </InnerContainer>
+        )}
 
         <TreeWrapper>
           <DetailsContainer
@@ -456,30 +423,35 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
           gap: '1rem', // Add some space between buttons
         }}
       >
-        <Button
-          aria-label="Create Model"
-          variant="contained"
-          color="primary"
-          onClick={openCreateModal}
-          style={{ display: 'flex' }}
-          disabled={false} //TODO: Need to make key for this component
-          startIcon={<AddIcon style={iconSmall} />}
-          data-testid="TabBar-Button-CreateModel"
-        >
-          Create
-        </Button>
-        <Button
-          aria-label="Import Model"
-          variant="contained"
-          color="primary"
-          onClick={openImportModal}
-          style={{ display: 'flex' }}
-          disabled={false} //TODO: Need to make key for this component
-          startIcon={<UploadIcon />}
-          data-testid="TabBar-Button-ImportModel"
-        >
-          Import
-        </Button>
+        {view === MODELS && (
+          <>
+            <Button
+              aria-label="Create Model"
+              variant="contained"
+              color="primary"
+              onClick={openCreateModal}
+              style={{ display: 'flex' }}
+              disabled={false} //TODO: Need to make key for this component
+              startIcon={<AddIcon style={iconSmall} />}
+              data-testid="TabBar-Button-CreateModel"
+            >
+              Create Model
+            </Button>
+            <Button
+              aria-label="Import Model"
+              variant="contained"
+              color="primary"
+              onClick={openImportModal}
+              style={{ display: 'flex' }}
+              disabled={false} //TODO: Need to make key for this component
+              startIcon={<UploadIcon />}
+              data-testid="TabBar-Button-ImportModel"
+            >
+              Import Model
+            </Button>
+          </>
+        )}
+
         {view === RELATIONSHIPS && (
           <Button
             aria-label="Create Relationship"
@@ -504,21 +476,21 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
   );
 };
 
-const TabCard = ({ label, count, active, onClick }) => {
-  return (
-    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
-      <span
-        style={{
-          fontSize: '1rem',
-          marginLeft: '4px',
-        }}
-      >
-        {`(${count})`}
-      </span>
-      {label}
-    </CardStyle>
-  );
-};
+// const TabCard = ({ label, count, active, onClick }) => {
+//   return (
+//     <CardStyle isSelected={active} elevation={3} onClick={onClick}>
+//       <span
+//         style={{
+//           fontSize: '1rem',
+//           marginLeft: '4px',
+//         }}
+//       >
+//         {`(${count})`}
+//       </span>
+//       {label}
+//     </CardStyle>
+//   );
+// };
 
 const MeshModelComponent = (props) => {
   return (

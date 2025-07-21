@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { NoSsr } from '@sistent/sistent';
@@ -25,7 +25,6 @@ import MeshAdapterConfigComponent from '../MeshAdapterConfigComponent';
 import PrometheusComponent from '../telemetry/prometheus/PrometheusComponent';
 import _PromptComponent from '../PromptComponent';
 import { iconMedium } from '../../css/icons.styles';
-import MeshModelComponent from './Registry/MeshModelComponent';
 import DatabaseSummary from '../DatabaseSummary';
 import {
   getComponentsDetail,
@@ -50,6 +49,8 @@ import MesheryConfigurationChart from '../Dashboard/charts/MesheryConfigurationC
 import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useSelector } from 'react-redux';
+import RegistryModal from '../Registry/RegistryModal';
+import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -137,6 +138,7 @@ const MesherySettings = () => {
   const { prometheus } = useSelector((state) => state.telemetry);
   const { grafana } = useSelector((state) => state.telemetry);
   const { meshAdapters } = useSelector((state) => state.adapter);
+  const registryModalContext = useContext(RegistryModalContext);
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -200,7 +202,11 @@ const MesherySettings = () => {
 
     return (event, newVal) => {
       if (val === 'tabVal') {
-        if (newVal === METRICS) {
+        if (newVal === REGISTRY) {
+          // Open the registry modal instead of changing tabs
+          registryModalContext.openModal();
+          return;
+        } else if (newVal === METRICS) {
           handleChangeSelectedTabCustomCategory(newVal, GRAFANA);
           setState((prevState) => ({
             ...prevState,
@@ -396,21 +402,6 @@ const MesherySettings = () => {
                 )}
               </TabContainer>
             )}
-            {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
-              <TabContainer>
-                <TabContainer>
-                  <TabContainer>
-                    <MeshModelComponent
-                      modelsCount={state.modelsCount}
-                      componentsCount={state.componentsCount}
-                      relationshipsCount={state.relationshipsCount}
-                      registrantCount={state.registrantCount}
-                      settingsRouter={settingsRouter}
-                    />
-                  </TabContainer>
-                </TabContainer>
-              </TabContainer>
-            )}
 
             {tabVal === RESET && (
               <TabContainer>
@@ -420,6 +411,16 @@ const MesherySettings = () => {
             {backToPlay}
             <_PromptComponent ref={systemResetPromptRef} />
           </div>
+
+          {/* Registry Modal */}
+          <RegistryModal
+            registryModal={registryModalContext.open}
+            closeRegistryModal={registryModalContext.closeModal}
+            modelsCount={state.modelsCount}
+            componentsCount={state.componentsCount}
+            relationshipsCount={state.relationshipsCount}
+            registrantCount={state.registrantCount}
+          />
         </>
       ) : (
         <DefaultError />

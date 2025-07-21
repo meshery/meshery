@@ -16,8 +16,8 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
 export const MeshModelToolbar = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  backgroundColor: theme.palette.background.card,
-  boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
+  // backgroundColor: theme.palette.background.card,
+  // boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
   height: '4rem',
   padding: '0.68rem',
   borderRadius: '0.5rem',
@@ -28,14 +28,16 @@ export const MeshModelToolbar = styled(Box)(({ theme }) => ({
 }));
 
 export const MainContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: 'inherit',
+  backgroundColor: accentGrey[30],
+  marginTop: '0.5rem',
   borderRadius: '0.25rem',
-  height: '68vh',
+  // height: '68vh',
   display: 'flex',
+  flexDirection: 'column',
   position: 'relative',
-  [theme.breakpoints.down('sm')]: {
-    height: '73rem',
-  },
+  // [theme.breakpoints.down('sm')]: {
+  //   height: '73rem',
+  // },
 }));
 
 export const InnerContainer = styled(Box)(({ theme }) => ({
@@ -102,7 +104,7 @@ export const CardStyle = styled(Box, {
 export const DetailsContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isEmpty',
 })(({ theme, isEmpty }) => ({
-  height: '60vh',
+  // height: '60vh',
   width: '50%',
   backgroundColor:
     theme.palette.mode === 'dark'
@@ -143,8 +145,8 @@ export const TreeWrapper = styled(Box)(({ theme }) => ({
   padding: '1rem',
   flexDirection: 'row',
   width: '100%',
-  position: 'absolute',
-  top: '3.7rem',
+  // position: 'absolute',
+  // top: '3.7rem',
   borderBottomLeftRadius: '0.5rem',
   borderBottomRightRadius: '0.5rem',
   [theme.breakpoints.down('sm')]: {
