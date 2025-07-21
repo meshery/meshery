@@ -41,7 +41,6 @@ export class ExtensionsPage {
     await dashboardPage.navigateToExtensions();
   }
 
-  // Kanvas Snapshot
   getKanvasSnapshotElements() {
     return {
       heading: this.page.getByTestId(SELECTORS.kanvasSnapshot.heading),
@@ -51,7 +50,6 @@ export class ExtensionsPage {
     };
   }
 
-  // Performance Analysis
   getPerformanceAnalysisElements() {
     return {
       heading: this.page.getByTestId(SELECTORS.performanceAnalysis.heading),
@@ -59,7 +57,6 @@ export class ExtensionsPage {
     };
   }
 
-  // Kanvas Details
   getKanvasDetailsElements() {
     return {
       heading: this.page.getByTestId(SELECTORS.kanvasDetails.heading),
@@ -69,14 +66,10 @@ export class ExtensionsPage {
 
   async openKanvasDocs(context) {
     const button = this.page.getByTestId(SELECTORS.kanvasDetails.button);
-    const [docsPage] = await Promise.all([
-      context.waitForEvent('page'),
-      button.click(),
-    ]);
+    const [docsPage] = await Promise.all([context.waitForEvent('page'), button.click()]);
     return docsPage;
   }
 
-  // Docker Extension
   async openDockerExtension(context) {
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -89,7 +82,6 @@ export class ExtensionsPage {
     return this.page.getByTestId(SELECTORS.dockerExtension.heading);
   }
 
-  // Design Embed
   async openDesignEmbed(context) {
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -102,7 +94,6 @@ export class ExtensionsPage {
     return this.page.getByTestId(SELECTORS.designEmbed.learnMoreBtn);
   }
 
-  // Catalog Section
   getCatalogHeading() {
     return this.page.getByTestId(SELECTORS.catalog.heading);
   }
@@ -113,14 +104,10 @@ export class ExtensionsPage {
 
   async openCatalogLink(context) {
     const link = this.page.locator(SELECTORS.catalog.link);
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      link.click(),
-    ]);
+    const [newPage] = await Promise.all([context.waitForEvent('page'), link.click()]);
     return newPage;
   }
 
-  // Adapter Istio
   async openAdapterIstioDocs(context) {
     const [docsPage] = await Promise.all([
       context.waitForEvent('page'),

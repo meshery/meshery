@@ -45,33 +45,48 @@ test.describe('Extensions Section Tests', () => {
     await expect(button).toBeVisible();
     if (await button.isEnabled()) {
       const docsPage = await extensionsPage.openKanvasDocs(context);
-      await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
-      await docsPage.close();
+      try {
+        await expect(docsPage).toHaveURL(URLS.KANVAS.DOCS);
+      } finally {
+        await docsPage.close();
+      }
     }
   });
 
   test('Verify Meshery Docker Extension Details', async ({ context }) => {
     const newPage = await extensionsPage.openDockerExtension(context);
-    await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
-    await newPage.close();
+    try {
+      await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
+    } finally {
+      await newPage.close();
+    }
   });
 
   test('Verify Meshery Design Embed Details', async ({ context }) => {
     const newPage = await extensionsPage.openDesignEmbed(context);
-    await expect(newPage).toHaveURL(URLS.KANVAS.DESIGNER_EMBED);
-    await newPage.close();
+    try {
+      await expect(newPage).toHaveURL(URLS.KANVAS.DESIGNER_EMBED);
+    } finally {
+      await newPage.close();
+    }
   });
 
   test('Verify Meshery Catalog Section Details', async ({ context }) => {
     await extensionsPage.toggleCatalogSection();
     const newPage = await extensionsPage.openCatalogLink(context);
-    await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
-    await newPage.close();
+    try {
+      await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
+    } finally {
+      await newPage.close();
+    }
   });
 
   test('Verify Meshery Adapter for Istio Section', async ({ context }) => {
     const docsPage = await extensionsPage.openAdapterIstioDocs(context);
-    await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
-    await docsPage.close();
+    try {
+      await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
+    } finally {
+      await docsPage.close();
+    }
   });
 });
