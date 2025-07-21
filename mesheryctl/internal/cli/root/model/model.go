@@ -64,7 +64,7 @@ mesheryctl model search [model-name]
 mesheryctl model view [model-name]
 
 // Scaffold a folder structure for model creation
-mesheryct model init [model-name]
+mesheryctl model init [model-name]
 
 // Create an OCI-compliant package from the model files
 mesheryctl model build [model-name]
