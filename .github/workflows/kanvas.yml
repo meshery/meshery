@@ -53,7 +53,9 @@ jobs:
           echo "🔍 Verifying fix was applied..."
           if [ -f "action/cypress-action/cypress/e2e/e2e/loadDesign.js" ]; then
             echo "📋 Checking for our fix in the file:"
-            grep -n "cytoscape object not found" action/cypress-action/cypress/e2e/e2e/loadDesign.js || echo "Fix pattern not found"
+            grep -n "Safe cytoscape handling" action/cypress-action/cypress/e2e/e2e/loadDesign.js || echo "Fix pattern not found"
+            echo "📊 File size after fix:"
+            wc -l action/cypress-action/cypress/e2e/e2e/loadDesign.js
           fi
         shell: bash
 
