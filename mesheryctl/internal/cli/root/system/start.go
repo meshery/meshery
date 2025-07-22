@@ -565,7 +565,7 @@ func autoConfigureKubeconfig() error {
 		return fmt.Errorf("failed to detect kubeconfig: %w", err)
 	}
 
-	processedConfig, err := meshkitkube.ProcessConfig(config, clusterType)
+	processedConfig, _, err := meshkitkube.ProcessConfig(config, clusterType)
 	if err != nil {
 		return fmt.Errorf("failed to process kubeconfig: %w", err)
 	}
