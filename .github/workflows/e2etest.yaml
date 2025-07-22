@@ -18,6 +18,7 @@ on:
 
 jobs:
   SetPatternfileForEmojivotoInstall:
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout Code
@@ -29,6 +30,7 @@ jobs:
           path: ./.github/samples/emojivoto.yaml
 
   TestAdapterForEmojivotoInstall:
+    if: github.repository == 'meshery/meshery'
     needs: SetPatternfileForEmojivotoInstall
     uses: meshery/meshery/.github/workflows/test_adaptersv2.yaml@master
     with: 

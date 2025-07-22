@@ -272,29 +272,33 @@ function OrganizationAndWorkSpaceSwitcher() {
         {!isSmallScreen && (
           <>
             <CustomTooltip title={'Organization'}>
-              <Button
-                onClick={() => {
-                  setOrgOpen(!orgOpen);
-                }}
-                style={{ marginRight: orgOpen ? '1rem' : '0' }}
-              >
-                <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-              </Button>
+              <div>
+                <Button
+                  onClick={() => {
+                    setOrgOpen(!orgOpen);
+                  }}
+                  style={{ marginRight: orgOpen ? '1rem' : '0' }}
+                >
+                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+                </Button>
+              </div>
             </CustomTooltip>
             <OrgMenu open={orgOpen} organization={organization} />/
-            <CustomTooltip title={'Workspace'}>
-              <Button
-                onClick={() => {
-                  setWorkspaceOpen(!workspaceOpen);
-                }}
-                style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-              >
-                <WorkspaceIcon
-                  {...iconLarge}
-                  secondaryFill={theme.palette.common.white}
-                  fill={theme.palette.common.white}
-                />
-              </Button>
+            <CustomTooltip title={'Workspaces'}>
+              <div>
+                <Button
+                  onClick={() => {
+                    setWorkspaceOpen(!workspaceOpen);
+                  }}
+                  style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+                >
+                  <WorkspaceIcon
+                    {...iconLarge}
+                    secondaryFill={theme.palette.common.white}
+                    fill={theme.palette.common.white}
+                  />
+                </Button>
+              </div>
             </CustomTooltip>
             <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
           </>

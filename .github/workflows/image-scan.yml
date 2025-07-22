@@ -61,11 +61,25 @@ jobs:
           echo '```' >> issue_body.txt
           echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
           
-      - name: Create GitHub Issue
+      - name: Check for existing Trivy issue
+        id: check_issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing_issue=$(gh issue list --label "security" --state open --limit 100 --json title,number | \
+            jq -r '.[] | select(.title | contains("Trivy Scan")) | .number' | head -n 1)
+          echo "existing_issue=$existing_issue" >> $GITHUB_OUTPUT
+
+      - name: Create or update GitHub issue
         if: steps.parse_trivy.outputs.vuln_count != '0'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue create \
-            --title "Trivy Scan: CRITICAL/HIGH Vulnerabilities Found - $(date +'%Y-%m-%d %H:%M:%S')" \
-            --body-file issue_body.txt \
+          if [ -z "${{ steps.check_issue.outputs.existing_issue }}" ]; then
+            gh issue create \
+              --title "Trivy Scan: CRITICAL/HIGH Vulnerabilities Found - $(date +'%Y-%m-%d %H:%M:%S')" \
+              --body-file issue_body.txt \
+              --label "security,auto-triaged"
+          else
+            gh issue comment ${{ steps.check_issue.outputs.existing_issue }} --body "$(cat issue_body.txt)"
+          fi
