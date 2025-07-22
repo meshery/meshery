@@ -6,10 +6,9 @@ export const CardRoot = styled(Card)({
   position: 'sticky',
 });
 
-export const CodeMirrorWrapper = styled(CodeMirror)(({ scrollPos }) => ({
+export const CodeMirrorWrapper = styled(CodeMirror)(() => ({
   '& .CodeMirror': {
-    minHeight: '300px',
-    height: `${getDynamicVh(scrollPos)}`,
+    height: '54vh',
   },
 }));
 
@@ -45,7 +44,7 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth, onC
     <Wrapper scrollPos={scrollPos} fullWidth={fullWidth}>
       <CardRoot elevation={0}>
         <CardContent>
-          <CodeMirror
+          <CodeMirrorWrapper
             value={yaml}
             options={{
               theme: 'material',
@@ -58,41 +57,9 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth, onC
               onChange(a, b, c);
             }}
             onBlur={(a) => saveCodeEditorChanges(a)}
-            style={{
-              '& .CodeMirror': {
-                minHeight: '300px',
-                height: '54vh',
-              },
-            }}
           />
         </CardContent>
       </CardRoot>
     </Wrapper>
   );
-}
-
-/**
- * Provides dynamic height according to scroll calculations
- *
- * @param {DoubleRange} scrollPos
- * @returns dynamically calcultaed height in vh
- */
-function getDynamicVh(scrollPos) {
-  if (window.scrollY === 0) {
-    return '67vh';
-  }
-  const per = getScrollPercentage();
-  const threshold = 0.06;
-  const vh = 67 + 15 * (per / threshold); // calc(67vh)
-  if (per < threshold) {
-    return scrollPos > 106 ? `${vh}vh` : '67vh';
-  } else if (per > 0.95) {
-    return 'calc(100vh - 232px)';
-  } else {
-    return '82vh';
-  }
-}
-
-function getScrollPercentage() {
-  return window.scrollY / (document.body.scrollHeight - window.innerHeight);
 }
