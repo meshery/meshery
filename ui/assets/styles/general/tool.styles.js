@@ -27,7 +27,6 @@ export const MeshModelToolbar = styled(Box)(({ theme }) => ({
 }));
 
 export const MainContainer = styled(Box)(({ theme }) => ({
-  backgroundColor: accentGrey[30],
   borderRadius: '0.25rem',
   // height: '68vh',
   display: 'flex',
@@ -136,7 +135,6 @@ export const TreeContainer = styled(Box)(({ theme }) => ({
 }));
 
 export const TreeWrapper = styled(Box)(({ theme }) => ({
-  backgroundColor: accentGrey[30],
   display: 'flex',
   gap: '1rem',
   paddingTop: '0.5rem',

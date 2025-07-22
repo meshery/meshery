@@ -49,7 +49,6 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
     '& .MuiDrawer-paper': {
       position: 'relative',
       height: '100%',
-      border: 'none',
     },
     ...(open && {
       width: DRAWER_WIDTH,
@@ -61,7 +60,6 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
       '& .MuiDrawer-paper': {
         position: 'relative',
         height: '100%',
-        border: 'none',
         width: DRAWER_WIDTH,
         backgroundColor:
           theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
@@ -85,7 +83,8 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
       '& .MuiDrawer-paper': {
         position: 'relative',
         height: '100%',
-        border: 'none',
+        backgroundColor:
+          theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
         transition: theme.transitions.create('width', {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.leavingScreen,
@@ -255,7 +254,7 @@ export const Navigation = ({
     if (item) {
       setHeaderInfo({
         title: `Registry - ${selectedView}`,
-        icon: <FileIcon {...iconMedium} fill={theme.palette.icon.default} />,
+        icon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
       });
     }
   };
