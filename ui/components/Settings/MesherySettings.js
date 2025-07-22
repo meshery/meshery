@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import { NoSsr } from '@sistent/sistent';
@@ -49,8 +49,6 @@ import MesheryConfigurationChart from '../Dashboard/charts/MesheryConfigurationC
 import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
 import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useSelector } from 'react-redux';
-import RegistryModal from '../Registry/RegistryModal';
-import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -138,7 +136,6 @@ const MesherySettings = () => {
   const { prometheus } = useSelector((state) => state.telemetry);
   const { grafana } = useSelector((state) => state.telemetry);
   const { meshAdapters } = useSelector((state) => state.adapter);
-  const registryModalContext = useContext(RegistryModalContext);
   const [state, setState] = useState({
     meshAdapters,
     grafana,
@@ -202,11 +199,7 @@ const MesherySettings = () => {
 
     return (event, newVal) => {
       if (val === 'tabVal') {
-        if (newVal === REGISTRY) {
-          // Open the registry modal instead of changing tabs
-          registryModalContext.openModal();
-          return;
-        } else if (newVal === METRICS) {
+        if (newVal === METRICS) {
           handleChangeSelectedTabCustomCategory(newVal, GRAFANA);
           setState((prevState) => ({
             ...prevState,
@@ -302,16 +295,6 @@ const MesherySettings = () => {
                     // tab="tabMetrics"
                     value={METRICS}
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
-                  />
-                </CustomTooltip>
-                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
-                  <Tab
-                    icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
-                    label="Registry"
-                    data-testid="settings-tab-registry"
-                    // tab="registry"
-                    value={REGISTRY}
-                    disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
                   />
                 </CustomTooltip>
 
@@ -411,16 +394,6 @@ const MesherySettings = () => {
             {backToPlay}
             <_PromptComponent ref={systemResetPromptRef} />
           </div>
-
-          {/* Registry Modal */}
-          <RegistryModal
-            registryModal={registryModalContext.open}
-            closeRegistryModal={registryModalContext.closeModal}
-            modelsCount={state.modelsCount}
-            componentsCount={state.componentsCount}
-            relationshipsCount={state.relationshipsCount}
-            registrantCount={state.registrantCount}
-          />
         </>
       ) : (
         <DefaultError />

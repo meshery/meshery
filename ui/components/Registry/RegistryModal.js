@@ -16,7 +16,6 @@ import {
   styled,
   Drawer,
   DatabaseIcon,
-  PollIcon,
   DARK_BLUE_GRAY,
 } from '@sistent/sistent';
 import ConnectionIcon from '@/assets/icons/Connection';
@@ -25,7 +24,6 @@ import MeshModelComponent from '../Settings/Registry/MeshModelComponent';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ExtensionIcon from '@mui/icons-material/Extension';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
 
