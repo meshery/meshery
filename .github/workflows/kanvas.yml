@@ -39,8 +39,22 @@ jobs:
 
       - name: Apply Cypress Test Fix
         run: |
+          echo "🔍 Debugging: Checking directory structure..."
+          ls -la action/ || echo "action directory not found"
+          ls -la action/cypress-action/ || echo "cypress-action directory not found"
+          ls -la action/cypress-action/cypress/ || echo "cypress directory not found"
+          ls -la action/cypress-action/cypress/e2e/ || echo "e2e directory not found"
+          ls -la action/cypress-action/cypress/e2e/e2e/ || echo "e2e/e2e directory not found"
+
+          echo "🔧 Running Cypress fix script..."
           chmod +x .github/scripts/fix-kanvas-cypress.sh
           .github/scripts/fix-kanvas-cypress.sh
+
+          echo "🔍 Verifying fix was applied..."
+          if [ -f "action/cypress-action/cypress/e2e/e2e/loadDesign.js" ]; then
+            echo "📋 Checking for our fix in the file:"
+            grep -n "cytoscape object not found" action/cypress-action/cypress/e2e/e2e/loadDesign.js || echo "Fix pattern not found"
+          fi
         shell: bash
 
       - id: test_result
