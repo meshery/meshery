@@ -148,7 +148,7 @@ export function OrgMenu(props) {
   if (!selectedOrganization) return null;
 
   const organization = selectedOrganization;
-  const { open } = props;
+  const { open, fromMobileView } = props;
 
   console.log('selectedOrganization', organization);
 
@@ -189,7 +189,9 @@ export function OrgMenu(props) {
                             fill: '#eee',
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
-                            color: theme.palette.background.constant.white,
+                            color: fromMobileView
+                              ? theme.palette.text.default
+                              : theme.palette.background.constant.white,
                           },
                         }}
                         MenuProps={{
