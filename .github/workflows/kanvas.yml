@@ -36,6 +36,13 @@ jobs:
         with:
           path: action
           repository: layer5labs/kanvas-snapshot
+
+      - name: Apply Cypress Test Fix
+        run: |
+          chmod +x .github/scripts/fix-kanvas-cypress.sh
+          .github/scripts/fix-kanvas-cypress.sh
+        shell: bash
+
       - id: test_result
         uses: layer5labs/Kanvas-Snapshot@v0.2.41
         continue-on-error: true # Continue workflow even if snapshot fails
