@@ -17,7 +17,10 @@ import {
   Drawer,
   DatabaseIcon,
   PollIcon,
+  DARK_BLUE_GRAY,
 } from '@sistent/sistent';
+import ConnectionIcon from '@/assets/icons/Connection';
+import ComponentIcon from '@/assets/icons/Component';
 import MeshModelComponent from '../Settings/Registry/MeshModelComponent';
 import { iconMedium, iconSmall } from 'css/icons.styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -60,6 +63,8 @@ const StyledDrawer = styled(Drawer, { shouldForwardProp: (prop) => prop !== 'ope
         height: '100%',
         border: 'none',
         width: DRAWER_WIDTH,
+        backgroundColor:
+          theme.palette.mode == 'light' ? theme.palette.background.paper : DARK_BLUE_GRAY,
         transition: theme.transitions.create('width', {
           easing: theme.transitions.easing.sharp,
           duration: theme.transitions.duration.enteringScreen,
@@ -136,12 +141,19 @@ const getNavItems = (theme, counts) => {
     {
       id: COMPONENTS,
       label: `Components (${counts.components})`,
-      icon: <ExtensionIcon {...iconSmall} style={{ color: theme.palette.icon.default }} />,
+      icon: <ComponentIcon {...iconSmall} fill={theme.palette.icon.default} />,
     },
     {
       id: RELATIONSHIPS,
       label: `Relationships (${counts.relationships})`,
-      icon: <PollIcon {...iconSmall} fill={theme.palette.icon.default} />,
+      icon: (
+        <ConnectionIcon
+          {...iconSmall}
+          fill={theme.palette.icon.default}
+          primaryFill={theme.palette.icon.default}
+          secondaryFill={theme.palette.icon.default}
+        />
+      ),
     },
     {
       id: REGISTRANTS,
@@ -260,7 +272,7 @@ export const Navigation = ({
   }, [selectedId, theme]);
 
   return (
-    <Box sx={{ display: 'flex', position: 'relative', height: '100%', gap: '2rem' }}>
+    <Box sx={{ display: 'flex', position: 'relative', height: '100%', gap: '1rem' }}>
       <StyledDrawer variant="permanent" open={open}>
         <List>
           {navConfig.map((item) => (

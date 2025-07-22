@@ -284,32 +284,36 @@ const MesheryTreeView = React.memo(
       setIsSearchExpanded(isExpand);
     };
 
-    const renderTree = (treeComponent, type, isLoading) => (
-      <>
-        {renderHeader(type, !!data.length)}
-        {data.length === 0 && !searchText ? (
-          <JustifyAndAlignCenter style={{ height: '27rem' }}>
-            {isLoading || (data.length === 0 && !searchText) ? (
-              <CircularProgress sx={{ color: Colors.keppelGreen }} />
-            ) : (
-              <Typography>No {type.toLowerCase()} found</Typography>
-            )}
-          </JustifyAndAlignCenter>
-        ) : data.length === 0 && searchText ? (
-          <JustifyAndAlignCenter style={{ height: '27rem' }}>
-            <p>No result found</p>
-          </JustifyAndAlignCenter>
-        ) : (
-          <div
-            className="scrollElement"
-            style={{ overflowY: 'auto', height: '55vh' }}
-            onScroll={handleScroll(type)}
-          >
-            {treeComponent}
-          </div>
-        )}
-      </>
-    );
+    const renderTree = (treeComponent, type, isLoading) => {
+      const hasControlButtons = type === MODELS || type === RELATIONSHIPS;
+      const scrollHeight = hasControlButtons ? '70vh' : '100vh';
+      return (
+        <>
+          {renderHeader(type, !!data.length)}
+          {data.length === 0 && !searchText ? (
+            <JustifyAndAlignCenter style={{ height: '27rem' }}>
+              {isLoading || (data.length === 0 && !searchText) ? (
+                <CircularProgress sx={{ color: Colors.keppelGreen }} />
+              ) : (
+                <Typography>No {type.toLowerCase()} found</Typography>
+              )}
+            </JustifyAndAlignCenter>
+          ) : data.length === 0 && searchText ? (
+            <JustifyAndAlignCenter style={{ height: '27rem' }}>
+              <p>No result found</p>
+            </JustifyAndAlignCenter>
+          ) : (
+            <div
+              className="scrollElement"
+              style={{ overflowY: 'auto', height: scrollHeight }}
+              onScroll={handleScroll(type)}
+            >
+              {treeComponent}
+            </div>
+          )}
+        </>
+      );
+    };
 
     return (
       <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>

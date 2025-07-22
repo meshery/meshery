@@ -366,7 +366,11 @@ const MeshModelComponent_ = ({
             isEmpty={!resourcesDetail.length}
             style={{
               padding: '0.6rem',
-              overflow: 'hidden',
+              overflow: 'auto',
+              height: '100%',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             <MesheryTreeView
