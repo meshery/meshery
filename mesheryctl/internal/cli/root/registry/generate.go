@@ -151,7 +151,7 @@ func init() {
 
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
 	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
-	generateCmd.PersistentFlags().StringSliceVarP(&modelNames, "model", "m", []string{}, "comma-seperated list of models to be generated")
+generateCmd.PersistentFlags().StringSliceVarP(&modelNames, "model", "m", []string{}, "comma-separated list of models to be generated")
 	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
