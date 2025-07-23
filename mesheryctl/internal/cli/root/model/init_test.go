@@ -11,6 +11,16 @@ import (
 )
 
 func TestModelInit(t *testing.T) {
+	// Clean up any existing test directories before running tests
+	cleanupDirs := []string{
+		"test-case-aws-ec2-controller",
+		"test-case-aws-dynamodb-controller",
+		"test_case_some_other_custom_dir",
+	}
+	for _, dir := range cleanupDirs {
+		os.RemoveAll(dir)
+	}
+
 	utils.SetupContextEnv(t)
 
 	// get current directory

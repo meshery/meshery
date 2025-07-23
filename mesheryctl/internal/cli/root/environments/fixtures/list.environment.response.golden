@@ -4,7 +4,7 @@
     "total_count": 1,
     "environments": [
         {
-            "id": "303ed294-1e3a-4d7f-acf8-dbc8ba4b765e",
+            "id": "2d2c0b60-076a-4f0a-8a63-de538570a553",
             "name": "test-environment",
             "description": "integration test",
             "owner": "test",
