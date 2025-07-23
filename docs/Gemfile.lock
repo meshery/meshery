@@ -460,7 +460,7 @@ GEM
     temple (0.10.3)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
-    thor (1.3.2)
+    thor (1.4.0)
     tilt (2.4.0)
     timeout (0.4.3)
     typhoeus (1.4.1)
