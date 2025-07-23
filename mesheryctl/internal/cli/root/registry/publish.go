@@ -118,7 +118,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				err := modelCSVHelper.ParseModelsSheet(true, modelName)
+				err := modelCSVHelper.ParseModelsSheet(true, modelNames)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -129,7 +129,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				err := componentCSVHelper.ParseComponentsSheet(modelName)
+				err := componentCSVHelper.ParseComponentsSheet(modelNames)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
@@ -140,7 +140,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
-				err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
+				err = relationshipCSVHelper.ParseRelationshipsSheet(modelNames)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil
