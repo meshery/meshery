@@ -32,7 +32,7 @@ import (
 var (
 	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommads
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd, buildModelCmd}
 )
 
 // ModelCmd represents the mesheryctl model command
@@ -62,6 +62,13 @@ mesheryctl model search [model-name]
 
 // View a specific model
 mesheryctl model view [model-name]
+
+// Scaffold a folder structure for model creation
+mesheryctl model init [model-name]
+
+// Create an OCI-compliant package from the model files
+mesheryctl model build [model-name]
+mesheryctl model build [model-name]/[model-version]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")

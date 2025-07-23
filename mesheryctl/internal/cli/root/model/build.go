@@ -19,14 +19,14 @@ var buildModelCmd = &cobra.Command{
 	Long: `Create an OCI-compliant package from the model files.
 Model files are taken from [path]/[model-name]/[model-version] folder.
 Expects input to be in the format scaffolded by the model init command.
-Documentation for exp model and subcommands can be found at https://docs.meshery.io/reference/mesheryctl/exp/model`,
+Documentation for model build can be found at https://docs.meshery.io/reference/mesheryctl/model/build`,
 	Example: `
 // Create an OCI-compliant package from the model files
-mesheryctl exp model build [model-name]
-mesheryctl exp model build [model-name]/[model-version]
+mesheryctl model build [model-name]
+mesheryctl model build [model-name]/[model-version]
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage:\nmesheryctl exp model build [model-name]\nor\nmesheryctl exp model build [model-name]/[model-version]\n\nRun 'mesheryctl exp model build --help' to see detailed help message"
+		const errMsg = "Usage:\nmesheryctl model build [model-name]\nor\nmesheryctl model build [model-name]/[model-version]\n\nRun 'mesheryctl model build --help' to see detailed help message"
 		if len(args) != 1 {
 			return ErrModelBuildFromStrings(errMsg)
 		}

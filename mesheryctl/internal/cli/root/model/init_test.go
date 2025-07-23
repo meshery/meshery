@@ -216,9 +216,7 @@ func TestModelInit(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			// TODO replace ModelExpCmd with  ModelCmd
-			cmd := ModelExpCmd
-			// cmd := ModelCmd
+			cmd := ModelCmd
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()
