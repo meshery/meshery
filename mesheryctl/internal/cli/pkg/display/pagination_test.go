@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
-	"regexp"
 	"testing"
 
 	"github.com/jarcoal/httpmock"
@@ -12,11 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// stripANSI removes ANSI color codes from a string
-func stripANSI(str string) string {
-	ansiRegex := regexp.MustCompile(`\x1b\[[0-9;]*m`)
-	return ansiRegex.ReplaceAllString(str, "")
-}
+
 
 func TestHandlePaginationAsync(t *testing.T) {
 
@@ -150,7 +145,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 				output := buf.String()
 
 				// Strip ANSI codes for comparison to make test more robust
-				cleanOutput := stripANSI(output)
+				cleanOutput := utils.CleanStringFromHandlePagination(output)
 
 				// Make test more robust by checking key content based on test case
 				if tt.name == "Successful pagination" {
