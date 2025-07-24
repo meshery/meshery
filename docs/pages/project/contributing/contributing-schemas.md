@@ -158,7 +158,7 @@ make golang-generate
 **Steps:**
 - Add the new property in `component.json`
 - Run:
-```bash 
+```bash
 make validate-schemas
 make golang-generate
 ```
