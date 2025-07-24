@@ -111,7 +111,7 @@ jobs:
           files: ./coverage.txt
           flags: gointegrationtests
   e2e-bats-tests:
-    name: Integration BATS Test
+    name: e2e BATS Test
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
