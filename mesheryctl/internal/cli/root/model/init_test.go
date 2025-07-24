@@ -19,6 +19,8 @@ func TestModelInit(t *testing.T) {
 	}
 	for _, dir := range cleanupDirs {
 		os.RemoveAll(dir)
+		d := dir // Capture for t.Cleanup
+		t.Cleanup(func() { os.RemoveAll(d) })
 	}
 
 	utils.SetupContextEnv(t)
