@@ -1,1 +1,2 @@
 
+Hi, I'm Tiisetso Dinoko. My specialties are JavaScript, Dart. I have built projects with Next.js and React. I will be participating on the front-end and would love to learn more about contributing to some of the projects in the backend.
