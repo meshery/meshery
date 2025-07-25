@@ -22,19 +22,19 @@ var initModelCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Generates scaffolding for convenient model creation",
 	Long: `Generates a folder structure and guides user on model creation
-Documentation for exp models init can be found at https://docs.meshery.io/reference/mesheryctl/exp/model/init`,
+Documentation for models init can be found at https://docs.meshery.io/reference/mesheryctl/model/init`,
 	Example: `
 // generates a folder structure
-mesheryctl exp model init [model-name]
+mesheryctl model init [model-name]
 
 // generates a folder structure and sets up model version
-mesheryctl exp model init [model-name] --version [version] (default is v0.1.0)
+mesheryctl model init [model-name] --version [version] (default is v0.1.0)
 
 // generates a folder structure under specified path
-mesheryctl exp model init [model-name] --path [path-to-location] (default is current folder)
+mesheryctl model init [model-name] --path [path-to-location] (default is current folder)
 
 // generate a folder structure in json format
-mesheryctl exp model init [model-name] --output-format [json|yaml|csv] (default is json)
+mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		{
@@ -221,8 +221,11 @@ const initModelDirPerm = 0755
 const initModelModelSchema = "schemas/constructs/v1beta1/model/model.json"
 const initModelTemplatePathModel = "schemas/constructs/v1beta1/model/model_template"
 const initModelTemplatePathComponent = "schemas/constructs/v1beta1/component/component_template"
-const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 const initModelTemplatePathRelathionship = "schemas/constructs/v1alpha3/relationship_template"
+
+// TODO: Connection templates are temporarily disabled.
+// This constant is not currently in use.
+// const initModelTemplatePathConnection = "schemas/constructs/v1beta1/connection/connection_template"
 
 // TODO
 // if csv output is not directory based
@@ -240,7 +243,7 @@ To import this model into Meshery:
 $ mesheryctl model import {modelFolder}
 
 To export this model as OCI image:
-$ mesheryctl exp model build {modelName}/{modelVersion} --path {path}
+$ mesheryctl model build {modelName}/{modelVersion} --path {path}
 
 Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
 
@@ -285,9 +288,7 @@ var initModelData = []struct {
 	{
 		folderPath: "connections",
 		// map file name to template key
-		files: map[string]string{
-			"connection": initModelTemplatePathConnection,
-		},
+		files: nil,
 		beforeHook: func() {
 			utils.Log.Info("Adding sample connections...")
 		},

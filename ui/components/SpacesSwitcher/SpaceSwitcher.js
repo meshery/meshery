@@ -1,5 +1,5 @@
 import { useGetOrgsQuery } from '@/rtk-query/organization';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Button,
   FormControl,
@@ -30,6 +30,8 @@ import {
   useUpdateSelectedOrganizationMutation,
 } from '@/rtk-query/user';
 import { MobileOrgWksSwither } from './MobileViewSwitcher';
+import WorkspaceModal from './WorkspaceModal';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -148,7 +150,7 @@ export function OrgMenu(props) {
   if (!selectedOrganization) return null;
 
   const organization = selectedOrganization;
-  const { open } = props;
+  const { open, fromMobileView } = props;
 
   console.log('selectedOrganization', organization);
 
@@ -189,7 +191,9 @@ export function OrgMenu(props) {
                             fill: '#eee',
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
-                            color: theme.palette.background.constant.white,
+                            color: fromMobileView
+                              ? theme.palette.text.default
+                              : theme.palette.background.constant.white,
                           },
                         }}
                         MenuProps={{
@@ -253,6 +257,10 @@ function OrganizationAndWorkSpaceSwitcher() {
   const { title } = useSelector((state) => state.ui.page);
   const { selectedOrganization } = useGetSelectedOrganization();
 
+  //->using the wksp cntxt
+  const { open: workspaceModal, closeModal: closeWorkspaceModal } =
+    useContext(WorkspaceModalContext);
+
   if (!selectedOrganization) return null;
 
   return (
@@ -266,35 +274,40 @@ function OrganizationAndWorkSpaceSwitcher() {
         {!isSmallScreen && (
           <>
             <CustomTooltip title={'Organization'}>
-              <Button
-                onClick={() => {
-                  setOrgOpen(!orgOpen);
-                }}
-                style={{ marginRight: orgOpen ? '1rem' : '0' }}
-              >
-                <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-              </Button>
+              <div>
+                <Button
+                  onClick={() => {
+                    setOrgOpen(!orgOpen);
+                  }}
+                  style={{ marginRight: orgOpen ? '1rem' : '0' }}
+                >
+                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+                </Button>
+              </div>
             </CustomTooltip>
             <OrgMenu open={orgOpen} organization={organization} />/
-            <CustomTooltip title={'Workspace'}>
-              <Button
-                onClick={() => {
-                  setWorkspaceOpen(!workspaceOpen);
-                }}
-                style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-              >
-                <WorkspaceIcon
-                  {...iconLarge}
-                  secondaryFill={theme.palette.common.white}
-                  fill={theme.palette.common.white}
-                />
-              </Button>
+            <CustomTooltip title={'Workspaces'}>
+              <div>
+                <Button
+                  onClick={() => {
+                    setWorkspaceOpen(!workspaceOpen);
+                  }}
+                  style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+                >
+                  <WorkspaceIcon
+                    {...iconLarge}
+                    secondaryFill={theme.palette.common.white}
+                    fill={theme.palette.common.white}
+                  />
+                </Button>
+              </div>
             </CustomTooltip>
             <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
           </>
         )}
         <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
+        <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
       </StyledSwitcher>
     </NoSsr>
   );

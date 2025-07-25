@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { ENV } from './env';
-
+import { DashboardPage } from './pages/DashboardPage';
 // URLs used in tests
 const URLS = {
   KANVAS: {
@@ -19,10 +18,9 @@ const URLS = {
 // Extensions Section Tests
 test.describe('Extensions Section Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Visit The Meshery Serve URL
-    await page.goto(ENV.MESHERY_SERVER_URL);
-    const extensionsNav = page.locator('[data-cy="Extensions"]');
-    await extensionsNav.click();
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToExtensions();
   });
 
   test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
