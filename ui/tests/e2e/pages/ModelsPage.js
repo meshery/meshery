@@ -1,7 +1,6 @@
 import { expect } from '@playwright/test';
 
 export class ModelsPage {
-
   constructor(page) {
     this.page = page;
 
@@ -136,7 +135,6 @@ export class ModelsPage {
     await this.verifyImportMessagesVisible();
     await this.finishButton.click();
   }
-
 
   async verifyModelImported(modelName) {
     await expect(
