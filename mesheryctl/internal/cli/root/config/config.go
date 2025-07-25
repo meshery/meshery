@@ -294,7 +294,7 @@ func (ctx *Context) SetOperatorStatus(status string) {
 	ctx.Operator = status
 }
 
-// GetOperatorStatus returns a string that denotes the operator status
+// GetEnvs returns the environment variables from the context
 func (ctx *Context) GetEnvs() map[string]string {
 	return ctx.EnvVars
 }
