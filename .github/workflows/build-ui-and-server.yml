@@ -233,6 +233,7 @@ jobs:
         with:
           ruby-version: 3.2.6
           bundler-cache: true
+          working-directory: docs
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'
         run: |
