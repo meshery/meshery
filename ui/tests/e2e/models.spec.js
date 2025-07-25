@@ -44,7 +44,7 @@ test.describe.serial('Model Workflow Tests', () => {
     await expect(page.getByText(model.MODEL_DISPLAY_NAME)).toBeVisible();
   });
 
-  test('Search a Model and Export it', async ({ page }) => {
+  test('Search a Model and Export it', async () => {
     await modelsPage.searchAndExportModel(model.MODEL_DISPLAY_NAME);
   });
 
