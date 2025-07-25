@@ -1207,6 +1207,17 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		envOverrides["DISABLE_OPERATOR"] = "'true'"
 	}
 
+	if len(ctx.GetEnvs()) > 0 {
+		if _, ok := valueOverrides["env"]; !ok {
+			valueOverrides["env"] = make(map[string]any)
+		}
+		envMap := valueOverrides["env"].(map[string]any)
+		for k, v := range ctx.GetEnvs() {
+			envMap[strings.ToUpper(k)] = v
+		}
+		valueOverrides["env"] = envMap
+	}
+
 	return valueOverrides
 }
 
