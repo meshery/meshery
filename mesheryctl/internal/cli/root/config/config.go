@@ -299,7 +299,7 @@ func (ctx *Context) GetEnvs() map[string]string {
 	return ctx.EnvVars
 }
 
-// SetOperatorStatus can be used to set operator status
+// SetEnvs sets the environment variables for the context
 func (ctx *Context) SetEnvs(value map[string]string) {
 	ctx.EnvVars = value
 }
