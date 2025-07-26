@@ -1193,9 +1193,8 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		// Define values that need quoting (even if already strings)
 		shouldQuote := func(s string) bool {
 			lower := strings.ToLower(s)
-			return lower == "true" || lower == "false" ||
+return lower == "true" || lower == "false" ||
 				lower == "yes" || lower == "no" ||
-				s == "0" || s == "1" ||
 				isNumeric(s)
 		}
 
