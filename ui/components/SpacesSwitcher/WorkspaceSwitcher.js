@@ -9,11 +9,11 @@ import {
   CircularProgress,
   WorkspaceIcon,
   useMediaQuery,
+  useTheme,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
 import { iconMedium } from 'css/icons.styles';
-import WorkspaceModal from './WorkspaceModal';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import {
   useGetSelectedOrganization,
@@ -23,7 +23,6 @@ import {
 
 export const HoverMenuItem = styled(MenuItem)(() => ({
   display: 'flex',
-  justifyContent: 'space-between',
   alignItems: 'center',
   gap: '1rem',
   '& .workspace-icon': {
@@ -40,7 +39,7 @@ const WorkspaceIconWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
-function WorkspaceSwitcher({ open }) {
+function WorkspaceSwitcher({ open, fromMobileView }) {
   const { selectedOrganization } = useGetSelectedOrganization();
   const {
     selectedWorkspace,
@@ -49,16 +48,12 @@ function WorkspaceSwitcher({ open }) {
     isLoading: isLoadingWorkspaces,
   } = useGetSelectedWorkspace();
   const isSmallScreen = useMediaQuery('(max-width:400px)');
+  const theme = useTheme();
 
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
 
-  const {
-    open: workspaceModal,
-    setSelectedWorkspace,
-    openModal: openWorkspaceModal,
-    closeModal: closeWorkspaceModal,
-  } = useContext(WorkspaceModalContext);
+  const { setSelectedWorkspace, openModal: openWorkspaceModal } = useContext(WorkspaceModalContext);
 
   // useEffect(() => {
   //   if (selectedWorkspace?.id) {
@@ -121,7 +116,15 @@ function WorkspaceSwitcher({ open }) {
                           },
                         }}
                         renderValue={() => {
-                          return <span>{selectedWorkspace?.name || ''}</span>;
+                          return (
+                            <span
+                              style={{
+                                color: fromMobileView ? theme.palette.text.default : undefined,
+                              }}
+                            >
+                              {selectedWorkspace?.name || ''}
+                            </span>
+                          );
                         }}
                         MenuProps={{
                           anchorOrigin: {
@@ -160,7 +163,6 @@ function WorkspaceSwitcher({ open }) {
           </FormControl>
         </Grid2>
       )}
-      <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
     </NoSsr>
   );
 }
