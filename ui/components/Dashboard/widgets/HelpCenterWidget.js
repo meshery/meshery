@@ -1,4 +1,4 @@
-import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 import { useTheme, PlainCard, DocumentIcon } from '@sistent/sistent';
 import React from 'react';
 import { iconMedium } from 'css/icons.styles';
@@ -20,7 +20,7 @@ const HelpCenterWidget = (props) => {
     },
     {
       name: 'Support Request',
-      link: `${MESHERY_CLOUD_PROD}/support`,
+      link: `${REMOTE_PROVIDER_URL}/support`,
       external: true,
       icon: '/static/img/designs.svg',
     },

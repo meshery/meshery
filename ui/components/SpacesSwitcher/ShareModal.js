@@ -13,7 +13,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { ShareModal as CatalogShare } from '@sistent/sistent';
 import { getShareableResourceRoute } from './hooks';
 import { JsonParse } from '@/utils/utils';
-import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 import { RESOURCE_TYPE } from '@/utils/Enum';
 
 export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose }) => {
@@ -104,7 +104,7 @@ export const ShareModal_ = ({ selectedResource, dataName, handleShareModalClose 
       useGetAllUsersQuery={useGetAllUsersQuery}
       ownerData={{ ...ownerData, user_id: ownerData?.id }}
       fetchAccessActors={fetchAccessActors}
-      hostURL={MESHERY_CLOUD_PROD}
+      hostURL={REMOTE_PROVIDER_URL}
       handleUpdateVisibility={handleUpdateVisibility}
       accessActorsInfoOfResource={accessActorsInfoOfResource?.users}
     />
