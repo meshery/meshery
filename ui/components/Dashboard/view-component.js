@@ -188,9 +188,10 @@ const propertyFormatter = {
     />
   ),
   totalCapacity: (value) => {
-    const readableData = Object.fromEntries(
-      Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
-    );
+    // const readableData = Object.fromEntries(
+      // Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
+    // );
+    const readableData = value
     return (
       <KeyValueInRow
         Key={'Capacity'}
@@ -203,9 +204,11 @@ const propertyFormatter = {
     );
   },
   totalAllocatable: (value) => {
-    const readableData = Object.fromEntries(
-      Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
-    );
+    // const readableData = Object.fromEntries(
+    //   Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
+    // );
+
+    const readableData = value
     return (
       <KeyValueInRow
         Key={'Allocatable'}
