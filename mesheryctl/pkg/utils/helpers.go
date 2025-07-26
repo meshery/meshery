@@ -1165,10 +1165,14 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
-		"env": map[string]any{}, // this is assigned in the bottom of the function
+		"env": map[string]any{},
 	}
 
-	envsMap := make(map[string]string)
+	setToEnvMap := func(key string, value any) {
+		envs := valueOverrides["env"].(map[string]any)
+		envs[key] = value
+		valueOverrides["env"] = envs
+	}
 
 	// set the "enabled" field to true only for the components listed in the context
 	for _, component := range ctx.GetComponents() {
@@ -1186,29 +1190,27 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 
 	// set the provider
 	if ctx.GetProvider() != "" {
-		envsMap[constants.ProviderENV] = ctx.GetProvider()
+		setToEnvMap(constants.ProviderENV, ctx.GetProvider())
 	}
 
 	if callbackURL != "" {
-		envsMap[constants.CallbackURLENV] = callbackURL
+		setToEnvMap(constants.CallbackURLENV, callbackURL)
 	}
 
 	if providerURL != "" {
-		envsMap[constants.ProviderURLsENV] = providerURL
+		setToEnvMap(constants.ProviderURLsENV, providerURL)
 	}
 
 	// disable the operator
 	if ctx.GetOperatorStatus() == "disabled" {
-		envsMap["DISABLE_OPERATOR"] = "'true'"
+		setToEnvMap("DISABLE_OPERATOR", "'true'")
 	}
 
 	if len(ctx.GetEnvs()) > 0 {
 		for k, v := range ctx.GetEnvs() {
-			envsMap[strings.ToUpper(k)] = v
+			setToEnvMap(strings.ToUpper(k), v)
 		}
 	}
-
-	valueOverrides["env"] = envsMap
 
 	return valueOverrides
 }
