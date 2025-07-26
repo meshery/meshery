@@ -59,7 +59,7 @@ type Context struct {
 	Version    string         `yaml:"version,omitempty" mapstructure:"version,omitempty"`
 	Provider   string         `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
 	Operator   string         `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
-	EnvVars    map[string]any `yaml:"environment,omitempty" mapstructure:"environment,omitempty"`
+	EnvVars    map[string]any `yaml:"env,omitempty" mapstructure:"env,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
