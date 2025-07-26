@@ -6,12 +6,14 @@ on:
     paths:
       - "**.go"
       - "**.golden"
+      - ".github/workflows/**"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
       - "**.golden"
+      - ".github/workflows/**"
   workflow_dispatch:
     inputs:
       logLevel:
