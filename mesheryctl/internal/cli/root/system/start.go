@@ -268,7 +268,8 @@ func start() error {
 				for k, v := range currCtx.GetEnvs() {
 					temp.Environment = append(
 						temp.Environment,
-						fmt.Sprintf("%s=%s", strings.ToUpper(k), v),
+						// use to upper here, as meshery keeps its context yaml lowercased
+						fmt.Sprintf("%s=%v", strings.ToUpper(k), v),
 					)
 				}
 

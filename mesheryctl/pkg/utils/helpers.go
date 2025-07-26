@@ -1170,7 +1170,43 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 
 	setToEnvMap := func(key string, value any) {
 		envs := valueOverrides["env"].(map[string]any)
-		envs[key] = value
+		// Ensure the environment variable value is a string.
+		// If the value is not a string (e.g., an int or bool), Helm will render it as a raw type,
+		// causing Kubernetes to fail with an error like:
+		// "Deployment in version 'v1' cannot be handled as a Deployment:
+		//  json: cannot unmarshal number into Go struct field
+		//  EnvVar.spec.template.spec.containers.env.value of type string"
+		strVal := ""
+		switch v := value.(type) {
+		case string:
+			strVal = v
+		default:
+			strVal = fmt.Sprintf("%v", v)
+		}
+
+		// Helper to detect numeric strings
+		isNumeric := func(s string) bool {
+			_, err := strconv.ParseFloat(s, 64)
+			return err == nil
+		}
+
+		// Define values that need quoting (even if already strings)
+		shouldQuote := func(s string) bool {
+			lower := strings.ToLower(s)
+			return lower == "true" || lower == "false" ||
+				lower == "yes" || lower == "no" ||
+				s == "0" || s == "1" ||
+				isNumeric(s)
+		}
+
+		// we need this because even if value is a string, but contains numeric or boolean
+		// when pass to helm error described above occurs
+		if shouldQuote(strVal) {
+			envs[key] = fmt.Sprintf("\"%s\"", strVal)
+		} else {
+			envs[key] = strVal
+		}
+
 		valueOverrides["env"] = envs
 	}
 
@@ -1208,6 +1244,7 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 
 	if len(ctx.GetEnvs()) > 0 {
 		for k, v := range ctx.GetEnvs() {
+			// use to upper here, as meshery keeps its context yaml lowercased
 			setToEnvMap(strings.ToUpper(k), v)
 		}
 	}
