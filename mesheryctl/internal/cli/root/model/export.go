@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -91,11 +90,7 @@ func export(modelName string, url string, output *outputDetail) error {
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
-		// Extract useful error message if response is server error
-		if strings.Contains(err.Error(), "Server emitted an error: ") {
-			return errors.New(strings.Split(err.Error(), "Server emitted an error: ")[1])
-		}
-		return err
+		return ErrServerResponse(err)
 	}
 
 	// ensure proper cleaning of resources
