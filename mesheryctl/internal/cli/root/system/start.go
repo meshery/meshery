@@ -182,10 +182,10 @@ func start() error {
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
-		// download the docker-compose.yaml file corresponding to the current version
-		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
-			return utils.ErrDownloadFile(err, utils.DockerComposeFile)
-		}
+		// // download the docker-compose.yaml file corresponding to the current version
+		// if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
+		// 	return utils.ErrDownloadFile(err, utils.DockerComposeFile)
+		// }
 
 		// viper instance used for docker compose
 		utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
@@ -264,6 +264,14 @@ func start() error {
 				}
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
+
+				for k, v := range currCtx.GetEnvs() {
+					temp.Environment = append(
+						temp.Environment,
+						fmt.Sprintf("%s=%s", strings.ToUpper(k), v),
+					)
+				}
+
 			}
 			utils.Services[v] = temp
 			AllowedServices[v] = utils.Services[v]
