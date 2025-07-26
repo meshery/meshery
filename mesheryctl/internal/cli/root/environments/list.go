@@ -15,75 +15,75 @@
 package environments
 
 import (
-    "fmt"
+	"fmt"
 
-    "github.com/google/uuid"
-    "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
-    "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
-    "github.com/meshery/meshery/mesheryctl/pkg/utils"
-    "github.com/meshery/meshery/server/models/environments"
-    "github.com/pkg/errors"
+	"github.com/google/uuid"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models/environments"
+	"github.com/pkg/errors"
 
-    "github.com/spf13/cobra"
+	"github.com/spf13/cobra"
 )
 
 var listEnvironmentCmd = &cobra.Command{
-    Use:   "list",
-    Short: "List registered environments",
-    Long: `List name of all registered environments
+	Use:   "list",
+	Short: "List registered environments",
+	Long: `List name of all registered environments
 Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/list`,
-    Example: `
+	Example: `
 // List all registered environment
 mesheryctl environment list --orgID [orgID]
 `,
 
-    Args: func(cmd *cobra.Command, args []string) error {
-        // Check if all flag is set
-        orgIDFlag, _ := cmd.Flags().GetString("orgID")
+	Args: func(cmd *cobra.Command, args []string) error {
+		// Check if all flag is set
+		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
-        if orgIDFlag == "" {
-            const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message"
-            return utils.ErrInvalidArgument(errors.New(errMsg))
-        }
-        return nil
-    },
-    RunE: func(cmd *cobra.Command, args []string) error {
-        orgID, _ := cmd.Flags().GetString("orgID")
+		if orgIDFlag == "" {
+			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
+		}
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		orgID, _ := cmd.Flags().GetString("orgID")
 
-        // Validate UUID before making API call
-        if _, err := uuid.Parse(orgID); err != nil {
-            return fmt.Errorf("invalid organization ID format: %w", err)
-        }
+		// Validate UUID before making API call
+		if _, err := uuid.Parse(orgID); err != nil {
+			return utils.ErrInvalidOrgID(err)
+		}
 
-        environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
+		environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
 
-        if err != nil {
-            return fmt.Errorf("failed to fetch environments: %w", err)
-        }
+		if err != nil {
+			return utils.ErrFetchEnvironments(err)
+		}
 
-        header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
-        rows := [][]string{}
-        for _, environment := range environmentResponse.Environments {
-            rows = append(rows, []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()})
-        }
+		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
+		rows := [][]string{}
+		for _, environment := range environmentResponse.Environments {
+			rows = append(rows, []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()})
+		}
 
-        dataToDisplay := display.DisplayedData{
-            DataType:         "environments",
-            Header:           header,
-            Rows:             rows,
-            Count:            int64(environmentResponse.TotalCount),
-            DisplayCountOnly: false,
-            IsPage:           cmd.Flags().Changed("page"),
-        }
-        err = display.List(dataToDisplay)
-        if err != nil {
-            return err
-        }
+		dataToDisplay := display.DisplayedData{
+			DataType:         "environments",
+			Header:           header,
+			Rows:             rows,
+			Count:            int64(environmentResponse.TotalCount),
+			DisplayCountOnly: false,
+			IsPage:           cmd.Flags().Changed("page"),
+		}
+		err = display.List(dataToDisplay)
+		if err != nil {
+			return err
+		}
 
-        return nil
-    },
+		return nil
+	},
 }
 
 func init() {
-    listEnvironmentCmd.Flags().StringP("orgID", "", "", "Organization ID")
+	listEnvironmentCmd.Flags().StringP("orgID", "", "", "Organization ID")
 }
