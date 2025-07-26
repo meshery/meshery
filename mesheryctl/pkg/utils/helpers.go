@@ -1238,7 +1238,7 @@ return lower == "true" || lower == "false" ||
 
 	// disable the operator
 	if ctx.GetOperatorStatus() == "disabled" {
-		setToEnvMap("DISABLE_OPERATOR", "'true'")
+setToEnvMap("DISABLE_OPERATOR", "true")
 	}
 
 	if len(ctx.GetEnvs()) > 0 {
