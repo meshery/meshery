@@ -81,12 +81,12 @@ var (
 			// if no mesh was specified, the user will be prompted to select one
 			meshName, err = validateMesh(mctlCfg, meshName)
 			if err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
-				utils.Log.Error(err)
+				return err
 			}
 			return nil
 		},
@@ -104,6 +104,7 @@ func init() {
 
 func validateAdapter(mctlCfg *config.MesheryCtlConfig, meshName string) error {
 	// get details about the current meshery session
+	utils.Log.Info("Validating adapter...")
 	prefs, err := utils.GetSessionData(mctlCfg)
 	if err != nil {
 		return ErrGettingSessionData(err)
