@@ -23,6 +23,7 @@ jobs:
         with:
           ruby-version: 2.7.5
           bundler-cache: true
+          working-directory: docs
 
       - name: graphql-docs
         run: |
