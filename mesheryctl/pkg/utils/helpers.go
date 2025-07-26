@@ -347,10 +347,8 @@ var Services = map[string]Service{
 		Ports:  []string{"10012:10012"},
 	},
 	"watchtower": {
-		Image:   "containrrr/watchtower",
-		Labels:  []string{"com.centurylinklabs.watchtower.enable=true"},
-		Volumes: []string{"/var/run/docker.sock:/var/run/docker.sock"},
-		Command: []string{"--label-enable"},
+		Image:  "containrrr/watchtower",
+		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 	},
 }
 
@@ -1193,7 +1191,7 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		// Define values that need quoting (even if already strings)
 		shouldQuote := func(s string) bool {
 			lower := strings.ToLower(s)
-return lower == "true" || lower == "false" ||
+			return lower == "true" || lower == "false" ||
 				lower == "yes" || lower == "no" ||
 				isNumeric(s)
 		}
@@ -1238,7 +1236,7 @@ return lower == "true" || lower == "false" ||
 
 	// disable the operator
 	if ctx.GetOperatorStatus() == "disabled" {
-setToEnvMap("DISABLE_OPERATOR", "true")
+		setToEnvMap("DISABLE_OPERATOR", "true")
 	}
 
 	if len(ctx.GetEnvs()) > 0 {

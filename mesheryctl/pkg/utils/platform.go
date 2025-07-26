@@ -82,7 +82,6 @@ type Service struct {
 	Environment []string `yaml:"environment,omitempty"`
 	Volumes     []string `yaml:"volumes,omitempty"`
 	Ports       []string `yaml:"ports,omitempty"`
-	Command     []string `yaml:"command,omitempty"`
 }
 
 type Volumes struct {
