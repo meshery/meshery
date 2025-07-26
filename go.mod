@@ -10,7 +10,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // replace github.com/meshery/schemas v0.8.35 => ../schemas
 
-// replace github.com/meshery/meshkit v0.8.35 => ../meshkit
+// replace github.com/meshery/meshkit v0.8.37 => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.20 => ../meshsync
 
@@ -47,7 +47,7 @@ require (
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/meshkit v0.8.35
+	github.com/meshery/meshkit v0.8.37
 	github.com/meshery/meshsync v0.8.20
 	github.com/meshery/schemas v0.8.35
 	github.com/nsf/termbox-go v1.1.1
