@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
@@ -16,6 +16,15 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RegistryModal from './Registry/RegistryModal';
+import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
+import {
+  getComponentsDetail,
+  getMeshModels,
+  getRelationshipsDetail,
+  getMeshModelRegistrants,
+} from '../api/meshmodel';
+import { removeDuplicateVersions } from './Settings/Registry/helper';
 import {
   Checkbox,
   Box,
@@ -32,6 +41,7 @@ import {
   NoSsr,
   useTheme,
   useMediaQuery,
+  FileIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -412,6 +422,45 @@ const Header = ({
   const { notify } = useNotification;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
+  const registryModalContext = useContext(RegistryModalContext);
+
+  const [registryData, setRegistryData] = useState({
+    modelsCount: 0,
+    componentsCount: 0,
+    relationshipsCount: 0,
+    registrantCount: 0,
+  });
+
+  //->fetch registry data,component mounts
+  useEffect(() => {
+    const fetchRegistryData = async () => {
+      try {
+        const [modelsResponse, componentsResponse, relationshipsResponse, registrantResponse] =
+          await Promise.all([
+            getMeshModels(),
+            getComponentsDetail(),
+            getRelationshipsDetail(),
+            getMeshModelRegistrants(),
+          ]);
+
+        const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
+        const componentsCount = componentsResponse.total_count;
+        const relationshipsCount = relationshipsResponse.total_count;
+        const registrantCount = registrantResponse.total_count;
+
+        setRegistryData({
+          modelsCount,
+          componentsCount,
+          relationshipsCount,
+          registrantCount,
+        });
+      } catch (error) {
+        console.error('Error fetching registry data:', error);
+      }
+    };
+
+    fetchRegistryData();
+  }, []);
 
   const {
     data: providerCapabilities,
@@ -497,6 +546,15 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
+                  <CustomTooltip title="Registry">
+                    <IconButton
+                      onClick={() => registryModalContext.openModal()}
+                      style={{ color: theme.palette.icon.default }}
+                      data-testid="registry-button"
+                    >
+                      <FileIcon {...iconMedium} fill={theme.palette.common.white} />
+                    </IconButton>
+                  </CustomTooltip>
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
                       <NotificationDrawerButton />
@@ -515,6 +573,14 @@ const Header = ({
             </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
+        <RegistryModal
+          registryModal={registryModalContext.open}
+          closeRegistryModal={registryModalContext.closeModal}
+          modelsCount={registryData.modelsCount}
+          componentsCount={registryData.componentsCount}
+          relationshipsCount={registryData.relationshipsCount}
+          registrantCount={registryData.registrantCount}
+        />
       </>
     </NoSsr>
   );
