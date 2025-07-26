@@ -131,11 +131,7 @@ func generateComponentDataToDisplay(componentsResponse *models.MeshmodelComponen
 		if componentVersion == "" {
 			componentVersion = "N/A"
 		}
-		componenttKind := component.Component.Kind
-		if componenttKind == "" {
-			componenttKind = "N/A"
-		}
-		rows = append(rows, []string{modelName, componenttKind, componentVersion})
+		rows = append(rows, []string{modelName, componentVersion})
 	}
 
 	return rows, int64(componentsResponse.Count)
@@ -147,7 +143,7 @@ func listComponents(cmd *cobra.Command, apiPath string) error {
 	modelData := display.DisplayDataAsync{
 		UrlPath:          componentApiPath,
 		DataType:         "component",
-		Header:           []string{"Model", "Category", "Version"},
+		Header:           []string{"Model", "Version"},
 		Page:             page,
 		IsPage:           cmd.Flags().Changed("page"),
 		DisplayCountOnly: cmd.Flags().Changed("count"),
