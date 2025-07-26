@@ -1165,6 +1165,48 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
+		"env": map[string]any{},
+	}
+
+	setToEnvMap := func(key string, value any) {
+		envs := valueOverrides["env"].(map[string]any)
+		// Ensure the environment variable value is a string.
+		// If the value is not a string (e.g., an int or bool), Helm will render it as a raw type,
+		// causing Kubernetes to fail with an error like:
+		// "Deployment in version 'v1' cannot be handled as a Deployment:
+		//  json: cannot unmarshal number into Go struct field
+		//  EnvVar.spec.template.spec.containers.env.value of type string"
+		strVal := ""
+		switch v := value.(type) {
+		case string:
+			strVal = v
+		default:
+			strVal = fmt.Sprintf("%v", v)
+		}
+
+		// Helper to detect numeric strings
+		isNumeric := func(s string) bool {
+			_, err := strconv.ParseFloat(s, 64)
+			return err == nil
+		}
+
+		// Define values that need quoting (even if already strings)
+		shouldQuote := func(s string) bool {
+			lower := strings.ToLower(s)
+			return lower == "true" || lower == "false" ||
+				lower == "yes" || lower == "no" ||
+				isNumeric(s)
+		}
+
+		// we need this because even if value is a string, but contains numeric or boolean
+		// when pass to helm error described above occurs
+		if shouldQuote(strVal) {
+			envs[key] = fmt.Sprintf("\"%s\"", strVal)
+		} else {
+			envs[key] = strVal
+		}
+
+		valueOverrides["env"] = envs
 	}
 
 	// set the "enabled" field to true only for the components listed in the context
@@ -1183,30 +1225,27 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 
 	// set the provider
 	if ctx.GetProvider() != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.ProviderENV: ctx.GetProvider(),
-		}
+		setToEnvMap(constants.ProviderENV, ctx.GetProvider())
 	}
 
 	if callbackURL != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.CallbackURLENV: callbackURL,
-		}
+		setToEnvMap(constants.CallbackURLENV, callbackURL)
 	}
 
 	if providerURL != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.ProviderURLsENV: providerURL,
-		}
+		setToEnvMap(constants.ProviderURLsENV, providerURL)
 	}
 
 	// disable the operator
 	if ctx.GetOperatorStatus() == "disabled" {
-		if _, ok := valueOverrides["env"]; !ok {
-			valueOverrides["env"] = map[string]interface{}{}
+		setToEnvMap("DISABLE_OPERATOR", "true")
+	}
+
+	if len(ctx.GetEnvs()) > 0 {
+		for k, v := range ctx.GetEnvs() {
+			// use to upper here, as meshery keeps its context yaml lowercased
+			setToEnvMap(strings.ToUpper(k), v)
 		}
-		envOverrides := valueOverrides["env"].(map[string]interface{})
-		envOverrides["DISABLE_OPERATOR"] = "'true'"
 	}
 
 	return valueOverrides

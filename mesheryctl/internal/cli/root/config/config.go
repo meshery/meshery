@@ -51,14 +51,15 @@ type Token struct {
 
 // Context defines a meshery environment
 type Context struct {
-	Endpoint   string   `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
-	Token      string   `yaml:"token,omitempty" mapstructure:"token,omitempty"`
-	Platform   string   `yaml:"platform" mapstructure:"platform"`
-	Components []string `yaml:"components,omitempty" mapstructure:"components,omitempty"`
-	Channel    string   `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
-	Version    string   `yaml:"version,omitempty" mapstructure:"version,omitempty"`
-	Provider   string   `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
-	Operator   string   `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
+	Endpoint   string         `yaml:"endpoint,omitempty" mapstructure:"endpoint,omitempty"`
+	Token      string         `yaml:"token,omitempty" mapstructure:"token,omitempty"`
+	Platform   string         `yaml:"platform" mapstructure:"platform"`
+	Components []string       `yaml:"components,omitempty" mapstructure:"components,omitempty"`
+	Channel    string         `yaml:"channel,omitempty" mapstructure:"channel,omitempty"`
+	Version    string         `yaml:"version,omitempty" mapstructure:"version,omitempty"`
+	Provider   string         `yaml:"provider,omitempty" mapstructure:"provider,omitempty"`
+	Operator   string         `yaml:"operator,omitempty" mapstructure:"operator,omitempty"`
+	EnvVars    map[string]any `yaml:"env,omitempty" mapstructure:"env,omitempty"`
 }
 
 // GetMesheryCtl returns a reference to the mesheryctl configuration object
@@ -291,6 +292,16 @@ func (ctx *Context) GetOperatorStatus() string {
 // SetOperatorStatus can be used to set operator status
 func (ctx *Context) SetOperatorStatus(status string) {
 	ctx.Operator = status
+}
+
+// GetEnvs returns the environment variables from the context
+func (ctx *Context) GetEnvs() map[string]any {
+	return ctx.EnvVars
+}
+
+// SetEnvs sets the environment variables for the context
+func (ctx *Context) SetEnvs(value map[string]any) {
+	ctx.EnvVars = value
 }
 
 // GetName returns the token name

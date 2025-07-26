@@ -264,6 +264,15 @@ func start() error {
 				}
 
 				temp.Image = fmt.Sprintf("%s:%s-%s", spliter[0], currCtx.GetChannel(), mesheryImageVersion)
+
+				for k, v := range currCtx.GetEnvs() {
+					temp.Environment = append(
+						temp.Environment,
+						// use to upper here, as meshery keeps its context yaml lowercased
+						fmt.Sprintf("%s=%v", strings.ToUpper(k), v),
+					)
+				}
+
 			}
 			utils.Services[v] = temp
 			AllowedServices[v] = utils.Services[v]
