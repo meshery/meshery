@@ -17,13 +17,13 @@ setup() {
 @test "Count components" {
   run $MESHERYCTL_BIN component list --count
   assert_success
-  clean_output="$(echo "$output" | sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g')"
-  output="$clean_output"
+  output="$(printf '%s' "$output" | sed -r 's/\x1B\[[0-9;]*[A-Za-z]//g')"
   assert_output --regexp "$LIST_COMMAND_OUTPUT_REGEX_PATTERN"
 }
 
 @test "component list shows header and pagination info" {
   run $MESHERYCTL_BIN component list --page 1
+  assert_success
   assert_line --index 0 --partial "Total number of components:"
   assert_line --index 1 --partial "Page:"
   assert_line --index 2 --partial "MODEL"
