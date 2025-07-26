@@ -55,6 +55,7 @@ func TestBackupConfigFile(t *testing.T) {
 		t.Fatal(err)
 	}
 	defer os.Remove(tmpFile.Name())
+
 	data, err := os.ReadFile(cfgFile)
 	if err != nil {
 		t.Fatal(err)
@@ -62,9 +63,19 @@ func TestBackupConfigFile(t *testing.T) {
 	if _, err := tmpFile.Write(data); err != nil {
 		t.Fatal(err)
 	}
+	tmpFile.Close()
+
+	// Act
 	BackupConfigFile(tmpFile.Name())
-	if _, err := os.Stat("/tmp/config.bak.yaml"); os.IsNotExist(err) {
-		t.Errorf("BackupConfigFile failed: backup file does not exist")
+
+	// Check backup in same dir as tmpFile
+	dir := filepath.Dir(tmpFile.Name())
+	backupFilePath := filepath.Join(dir, "config.bak.yaml")
+	if _, err := os.Stat(backupFilePath); os.IsNotExist(err) {
+		t.Errorf("BackupConfigFile failed: backup file %s does not exist", backupFilePath)
+	} else {
+		// optional cleanup
+		defer os.Remove(backupFilePath)
 	}
 }
 func TestStringWithCharset(t *testing.T) {
