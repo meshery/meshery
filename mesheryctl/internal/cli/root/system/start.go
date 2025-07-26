@@ -182,10 +182,10 @@ func start() error {
 	// deploy to platform specified in the config.yaml
 	switch currCtx.GetPlatform() {
 	case "docker":
-		// // download the docker-compose.yaml file corresponding to the current version
-		// if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
-		// 	return utils.ErrDownloadFile(err, utils.DockerComposeFile)
-		// }
+		// download the docker-compose.yaml file corresponding to the current version
+		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
+			return utils.ErrDownloadFile(err, utils.DockerComposeFile)
+		}
 
 		// viper instance used for docker compose
 		utils.ViperCompose.SetConfigFile(utils.DockerComposeFile)
