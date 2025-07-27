@@ -96,7 +96,7 @@ An _instance_ represents a realized entity. An _instance_ is a dynamic represent
 
 ### Capabilities
 
-**Capabilities** *_(static?)_* **: Capabilities are used to describe the operations that a model supports.**.
+**Capabilities**: Capabilities are used to describe the operations that a model supports.
 
 Models use **capabilities** to describe the operations which they support, such as styling, configurations, interactions, and runtime behavior. Entities may define a broad array of capabilities, which are in turn dynamically interpreted by Meshery for full lifecycle management.
 
