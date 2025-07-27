@@ -161,7 +161,7 @@ To simplify the assignment of these capabilities, Meshery organizes these capabi
   .
   .
   .
-</pre></details> See <a href="https://github.com/meshery/schemas/blob/master/typescript/constructs/v1alpha1/capability/CapabilityOpenApiSchema.ts">Capabilties Schema</a> for more details.' %}
+</pre></details> See <a href="https://github.com/meshery/schemas/blob/master/typescript/constructs/v1alpha1/capability/CapabilityOpenApiSchema.ts">Capabilities Schema</a> for more details.' %}
 
 ### Importing and Creating Models
 
