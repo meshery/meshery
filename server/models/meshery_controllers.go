@@ -17,6 +17,7 @@ import (
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	libmeshsync "github.com/meshery/meshsync/pkg/lib/meshsync"
 	channelBroker "github.com/meshery/meshsync/pkg/lib/tmp_meshkit/broker/channel"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 )
 
@@ -38,27 +39,6 @@ const (
 	MesheryOperator
 )
 
-type MeshsyncDeploymentModeType string
-
-const (
-	MeshsyncDeploymentModeUndefined MeshsyncDeploymentModeType = "undefined"
-	MeshsyncDeploymentModeOperator  MeshsyncDeploymentModeType = "operator"
-	MeshsyncDeploymentModeLibrary   MeshsyncDeploymentModeType = "library"
-)
-
-func MeshsyncDeploymentModeFromString(value string) MeshsyncDeploymentModeType {
-	switch value {
-	// if empty value, default to operator mode
-	case "", string(MeshsyncDeploymentModeOperator):
-		return MeshsyncDeploymentModeOperator
-	case string(MeshsyncDeploymentModeLibrary):
-		return MeshsyncDeploymentModeLibrary
-	// if some random string, undefined mode
-	default:
-		return MeshsyncDeploymentModeUndefined
-	}
-}
-
 type MesheryControllersHelper struct {
 	// context that is being manged by a particular controllerHelper instance
 	contextID string
@@ -76,7 +56,7 @@ type MesheryControllersHelper struct {
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
 
-	meshsyncDeploymentMode MeshsyncDeploymentModeType
+	meshsyncDeploymentMode schemasConnection.ConnectionMeshsyncDeploymentMode
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
@@ -102,11 +82,11 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 		// Resetting this value results in again subscribing to the Broker.
 		ctxMeshsyncDataHandler: nil,
 		dbHandler:              dbHandler,
-		meshsyncDeploymentMode: MeshsyncDeploymentModeOperator,
+		meshsyncDeploymentMode: schemasConnection.MeshsyncDeploymentModeOperator,
 	}
 }
 
-func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value MeshsyncDeploymentModeType) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value schemasConnection.ConnectionMeshsyncDeploymentMode) *MesheryControllersHelper {
 	mch.meshsyncDeploymentMode = value
 	return mch
 }
@@ -124,9 +104,10 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 		var brokerHandler broker.Handler
 		var stopFunc func()
 
-		if mch.meshsyncDeploymentMode == MeshsyncDeploymentModeOperator {
+		switch mch.meshsyncDeploymentMode {
+		case schemasConnection.MeshsyncDeploymentModeOperator:
 			brokerHandler = mch.meshsynDataHandlersNatsBroker(k8scontext)
-		} else if mch.meshsyncDeploymentMode == MeshsyncDeploymentModeLibrary {
+		case schemasConnection.MeshsyncDeploymentModeEmbedded:
 			brokerHandler = channelBroker.NewChannelBrokerHandler()
 			// use a standalone context here context.Background(), as
 			// meshsync run must be stopped only when meshsync data handler is deregistered
@@ -137,13 +118,14 @@ func (mch *MesheryControllersHelper) AddMeshsynDataHandlers(ctx context.Context,
 				return mch
 			}
 			stopFunc = stop
-		} else {
+		default:
 			mch.log.Warnf(
 				"MesheryControllersHelper unsupported meshsyncDeploymentMode %s",
 				mch.meshsyncDeploymentMode,
 			)
 			return mch
 		}
+
 		if brokerHandler == nil {
 			mch.log.Warnf("MesheryControllersHelper::AddMeshsynDataHandlers brokerHandler is nil")
 			return mch
@@ -283,7 +265,7 @@ func (mch *MesheryControllersHelper) RemoveCtxControllerHandler(ctx context.Cont
 // should be called after AddCtxControllerHandlers
 func (mch *MesheryControllersHelper) UpdateOperatorsStatusMap(ot *OperatorTracker) *MesheryControllersHelper {
 	// go func(mch *MesheryControllersHelper) {
-	if mch.meshsyncDeploymentMode != MeshsyncDeploymentModeOperator {
+	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
 		return mch
 	}
 
@@ -343,7 +325,7 @@ func (mch *MesheryControllersHelper) DeployUndeployedOperators(ot *OperatorTrack
 	if ot.DisableOperator { //Return true everytime so that operators stay in undeployed state across all contexts
 		return mch
 	}
-	if mch.meshsyncDeploymentMode != MeshsyncDeploymentModeOperator {
+	if mch.meshsyncDeploymentMode != schemasConnection.MeshsyncDeploymentModeOperator {
 		return mch
 	}
 	// go func(mch *MesheryControllersHelper) {
