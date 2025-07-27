@@ -347,8 +347,10 @@ var Services = map[string]Service{
 		Ports:  []string{"10012:10012"},
 	},
 	"watchtower": {
-		Image:  "containrrr/watchtower",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Image:   "containrrr/watchtower",
+		Labels:  []string{"com.centurylinklabs.watchtower.enable=true"},
+		Volumes: []string{"/var/run/docker.sock:/var/run/docker.sock"},
+		Command: []string{"--label-enable"},
 	},
 }
 
