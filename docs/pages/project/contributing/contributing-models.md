@@ -144,7 +144,7 @@ To simplify the assignment of these capabilities, Meshery organizes these capabi
 "type": "object",
 "required": 
 .
-.
+...
 .
 "kind": {
 "description": "Top-level categorization of the capability",
