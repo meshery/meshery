@@ -17,6 +17,7 @@ package organizations
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/meshery/meshery/server/models"
@@ -49,7 +50,19 @@ mesheryctl exp organization list --count
 		header := []string{"NAME", "ID", "CREATED-AT"}
 
 		for _, org := range orgs.Organizations {
-			rows = append(rows, []string{org.Name, org.ID.String(), fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day())})
+			idStr := org.ID.String()
+
+			// Validate UUID
+			if _, parseErr := uuid.Parse(idStr); parseErr != nil || idStr == "00000000-0000-0000-0000-000000000000" {
+				fmt.Printf("WARNING: Invalid UUID detected for org %s\n", org.Name)
+				continue
+			}
+
+			rows = append(rows, []string{
+				org.Name,
+				idStr,
+				fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day()),
+			})
 		}
 
 		count, _ := cmd.Flags().GetBool("count")

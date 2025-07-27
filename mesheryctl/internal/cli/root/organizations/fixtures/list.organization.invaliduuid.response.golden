@@ -1,0 +1,35 @@
+{
+    "page": 0,
+    "page_size": 10,
+    "total_count": 1,
+    "organizations": [
+        {
+            "id": "00000000-0000-0000-0000-000000000000",
+            "name": "Invalid Org",
+            "country": "country",
+            "region": "(UTC-04:00) Atlantic Time (Canada)",
+            "owner": "00000000-0000-0000-0000-000000000000",
+            "metadata": {
+                "preferences": {
+                    "theme": {
+                        "logo": {
+                            "desktop_view": {},
+                            "mobile_view": {},
+                            "dark_desktop_view": {},
+                            "dark_mobile_view": {}
+                        }
+                    },
+                    "dashboard": {
+                        "layout": null
+                    }
+                }
+            },
+            "created_at": "2024-03-16T01:39:35.179176Z",
+            "updated_at": "2024-05-01T14:25:36.491489Z",
+            "deleted_at": {
+                "Time": "0001-01-01T00:00:00Z",
+                "Valid": false
+            }
+        }
+    ]
+}
