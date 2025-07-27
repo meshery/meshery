@@ -93,8 +93,7 @@ export const NodeTableConfig = (
           customBodyRender: function CustomBody(val) {
             let attribute = JSON.parse(val);
             let capacity = attribute?.capacity;
-            let cpu = getResourceStr(resourceParsers['cpu'](capacity?.cpu), 'cpu');
-            return <>{cpu}</>;
+            return <>{capacity?.cpu}</>;
           },
         },
       },

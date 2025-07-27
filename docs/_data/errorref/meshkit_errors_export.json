@@ -1676,6 +1676,15 @@
         "short_description": "Helm packaging failed",
         "probable_cause": "Issues with the Helm chart structure or configuration",
         "suggested_remediation": "Verify the chart structure is valid for Helm"
+      },
+      "11319": {
+        "name": "ErrGetControllerEndpointForPortCode",
+        "code": "11319",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get endpoint for port of the controller",
+        "probable_cause": "Client configuration may not be valid",
+        "suggested_remediation": "Make sure the client configuration is valid"
       }
     }
   }
