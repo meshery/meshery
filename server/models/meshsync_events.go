@@ -28,9 +28,10 @@ type MeshsyncDataHandler struct {
 	ConnectionID uuid.UUID
 	InstanceID   uuid.UUID
 	Token        string
+	StopFunc     func()
 }
 
-func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string) *MeshsyncDataHandler {
+func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, log logger.Handler, provider Provider, userID, connID, instanceID uuid.UUID, token string, stopFunc func()) *MeshsyncDataHandler {
 	return &MeshsyncDataHandler{
 		broker:       broker,
 		dbHandler:    dbHandler,
@@ -40,6 +41,7 @@ func NewMeshsyncDataHandler(broker broker.Handler, dbHandler database.Handler, l
 		ConnectionID: connID,
 		InstanceID:   instanceID,
 		Token:        token,
+		StopFunc:     stopFunc,
 	}
 }
 
@@ -303,4 +305,10 @@ func (mh *MeshsyncDataHandler) Resync() error {
 		return ErrMeshsyncDataHandler(err)
 	}
 	return nil
+}
+
+func (mh *MeshsyncDataHandler) Stop() {
+	if mh.StopFunc != nil {
+		mh.StopFunc()
+	}
 }
