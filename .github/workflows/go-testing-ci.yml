@@ -6,14 +6,16 @@ on:
     paths:
       - "**.go"
       - "**.golden"
-      - ".github/workflows/**"
+      - ".github/workflows/go-testing-ci.yml"
+      - ".github/workflows/mesheryctl-bats-test.yml"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
       - "**.golden"
-      - ".github/workflows/**"
+      - ".github/workflows/go-testing-ci.yml"
+      - ".github/workflows/mesheryctl-bats-test.yml"
   workflow_dispatch:
     inputs:
       logLevel:
