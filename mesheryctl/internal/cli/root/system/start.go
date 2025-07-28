@@ -49,6 +49,7 @@ import (
 var (
 	skipUpdateFlag  bool
 	skipBrowserFlag bool
+	autoConfigFlag  bool = true
 )
 
 // startCmd represents the start command
@@ -72,6 +73,9 @@ mesheryctl system start --reset
 
 // Specify Platform to deploy Meshery to.
 mesheryctl system start -p docker
+
+// Disable auto-configuration of kubeconfig for Kubernetes deployments.
+mesheryctl system start --auto-config=false
 
 // Specify Provider to use.
 mesheryctl system start --provider Meshery
@@ -412,6 +416,11 @@ func start() error {
 			return err
 		}
 
+		// Auto-configure kubeconfig if enabled
+		if err := autoConfigureKubeconfig(); err != nil {
+			log.WithError(err).Warn("Auto-configuration failed, continuing with startup")
+		}
+
 		// log.Info("Starting Meshery...")
 
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
@@ -456,6 +465,7 @@ func init() {
 	startCmd.Flags().BoolVarP(&skipUpdateFlag, "skip-update", "", false, "(optional) skip checking for new Meshery's container images.")
 	startCmd.Flags().BoolVarP(&utils.ResetFlag, "reset", "", false, "(optional) reset Meshery's configuration file to default settings.")
 	startCmd.Flags().BoolVarP(&skipBrowserFlag, "skip-browser", "", false, "(optional) skip opening of MesheryUI in browser.")
+	startCmd.Flags().BoolVar(&autoConfigFlag, "auto-config", true, "(optional) automatically configure kubeconfig for Kubernetes deployments.")
 	startCmd.PersistentFlags().StringVar(&providerFlag, "provider", "", "(optional) Defaults to the provider specified in the current context")
 }
 
@@ -511,5 +521,64 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 	if errOperator != nil {
 		return fmt.Errorf("%s success for Meshery Server, but failed for Meshery Operator: %s", action, errOperator.Error())
 	}
+	return nil
+}
+
+// detectClusterType detects the type of Kubernetes cluster from the current context
+func detectClusterType() string {
+	cmd := exec.Command("kubectl", "config", "current-context")
+	output, err := cmd.Output()
+	if err != nil {
+		log.Debugf("could not get current kubectl context, defaulting to generic kubernetes: %v", err)
+		return "kubernetes"
+	}
+
+	context := strings.ToLower(strings.TrimSpace(string(output)))
+
+	if strings.Contains(context, "minikube") {
+		return "minikube"
+	}
+	if strings.Contains(context, "kind") {
+		return "kind"
+	}
+	if strings.Contains(context, "k3s") || strings.Contains(context, "k3d") {
+		return "k3s"
+	}
+
+	return "kubernetes"
+}
+
+// autoConfigureKubeconfig automatically configures kubeconfig for Kubernetes deployments
+func autoConfigureKubeconfig() error {
+	if !autoConfigFlag {
+		log.Debug("Auto-configuration disabled")
+		return nil
+	}
+
+	log.Info("Auto-configuring kubeconfig...")
+
+	// Detect cluster type
+	clusterType := detectClusterType()
+	log.Debugf("Detected cluster type: %s", clusterType)
+
+	// Process kubeconfig using meshkit
+	config, err := meshkitkube.DetectKubeConfig([]byte(""))
+	if err != nil {
+		return fmt.Errorf("failed to detect kubeconfig: %w", err)
+	}
+
+	processedConfig, _, err := meshkitkube.ProcessConfig(config, clusterType)
+	if err != nil {
+		return fmt.Errorf("failed to process kubeconfig: %w", err)
+	}
+
+	// Write processed config to ~/.meshery/kubeconfig.yaml
+	kubeconfigPath := utils.MesheryFolder + "/kubeconfig.yaml"
+	err = os.WriteFile(kubeconfigPath, processedConfig, 0644)
+	if err != nil {
+		return fmt.Errorf("failed to write kubeconfig: %w", err)
+	}
+
+	log.Infof("Successfully configured kubeconfig for %s cluster at %s", clusterType, kubeconfigPath)
 	return nil
 }

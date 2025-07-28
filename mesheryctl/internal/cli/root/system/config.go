@@ -289,15 +289,19 @@ mesheryctl system config gke
 }
 
 var minikubeConfigCmd = &cobra.Command{
-	Use:   "minikube",
-	Short: "Configure Meshery to use minikube cluster",
-	Long:  `Configure Meshery to connect to minikube cluster`,
+	Use:        "minikube",
+	Short:      "Configure Meshery to use minikube cluster",
+	Long:       `Configure Meshery to connect to minikube cluster`,
+	Deprecated: "This command is deprecated. Use 'mesheryctl system start' which now automatically configures kubeconfig for detected cluster types including minikube.",
 	Example: `
 // Configure Meshery to connect to minikube cluster using auth token
 mesheryctl system config minikube --token auth.json
 
 // Configure Meshery to connect to minikube cluster (if session is logged in using login subcommand)
 mesheryctl system config minikube
+
+// RECOMMENDED: Use the new integrated approach
+mesheryctl system start
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) >= 1 {
@@ -306,6 +310,7 @@ mesheryctl system config minikube
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		log.Warn("DEPRECATED: This command is deprecated. Consider using 'mesheryctl system start' which automatically configures kubeconfig.")
 		log.Info("Configuring Meshery to access Minikube...")
 		// Get the config from the default config path
 		if _, err = os.Stat(utils.KubeConfig); err != nil {
