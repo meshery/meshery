@@ -47,7 +47,6 @@ setup() {
 }
 
 @test "mesheryctl model generate skips registration with --register flag" {
-    export TESTDATA_DIR="$BATS_TEST_DIRNAME/testdata"
     run $MESHERYCTL_BIN model generate --file "$FIXTURES_DIR/valid-csv-dir" --register 
     assert_success
     assert_output --partial "Model can be accessed from $FIXTURES_DIR"
