@@ -34,18 +34,16 @@ For quick reference on command usage in the CLI, use `-h` (help flag):
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -h </div></div>
 </pre>
 
-The extensions supported for this operation are `.yml`, `.tar.gz`, `.gz`, `.tgz`, `.yaml`, `.json`, `.tar`, `.tar.tgz` and the supported registrants are `Github`,`Meshery` and `Artifacthub`. The URL format must be in this order.
+The extensions supported for this operation are `.yml`, `.tar.gz`, `.gz`, `.tgz`, `.yaml`, `.json`, `.tar`, `.tar.tgz` and the supported registrants are `Github`,`Meshery` and `Artifacthub`.
 
-https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
+ For using URL to import a model, it must be in this order:
+
+`https://github.com/{owner}/{repo}/raw/refs/heads/main/filename`
 
 **Example :**
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f istio-base.tar</div></div>
-</pre>
-
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "https://github.com/{owner}/{repo}/raw/refs/heads/main/filename"</div></div>
 </pre>
 
 For importing Meshery models, go to [Meshery catalog](https://meshery.io/catalog/models) where exported models are avaliable, click on the model you want to import, download it and use:
