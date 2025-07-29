@@ -48,7 +48,7 @@ https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "https://github.com/{owner}/{repo}/raw/refs/heads/main/filename"</div></div>
 </pre>
 
-For importing Meshery models, go to [Meshery catalog](https://meshery.io/catalog/models) where Meshery exported models are avaliable, click on the model you want to import, download it and use:
+For importing Meshery models, go to [Meshery catalog](https://meshery.io/catalog/models) where exported models are avaliable, click on the model you want to import, download it and use:
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f path/to/your/file</div></div>
