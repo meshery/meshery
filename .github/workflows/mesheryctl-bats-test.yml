@@ -1,4 +1,4 @@
-name: Mehseryctl BATS Test
+name: Mesheryctl BATS Test
 on:
   workflow_call:
     secrets:
