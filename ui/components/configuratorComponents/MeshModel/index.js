@@ -9,6 +9,7 @@ import {
   TextField,
   Toolbar,
   CustomTooltip,
+  styled,
 } from '@sistent/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
@@ -27,6 +28,12 @@ import TooltipButton from '../../../utils/TooltipButton';
 import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+
+const ScrollContainer = styled('div')({
+  overflowY: 'auto',
+  width: '100%',
+  height: '58.5vh',
+});
 
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -214,21 +221,29 @@ export default function DesignConfigurator() {
       </AppBarComponent>
       <Grid2 container spacing={3} size="grow">
         {meshmodelComponents?.[selectedModel] && (
-          <Grid2 size={{ xs: 12, md: 6 }}>
-            {meshmodelComponents[selectedModel]?.[0]?.components?.map(
-              function ShowRjsfComponentsLazily(trimmedComponent, idx) {
-                const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
-                return (
-                  <LazyComponentForm
-                    key={`${trimmedComponent.component.kind}-${idx}`}
-                    component={trimmedComponent}
-                    onSettingsChange={onSettingsChange(trimmedComponent, formReference)}
-                    reference={formReference}
-                    disabled={hasInvalidSchema}
-                  />
-                );
-              },
-            )}
+          <Grid2
+            size={{ xs: 12, md: 6 }}
+            sx={{
+              height: '100%',
+              display: 'flex',
+            }}
+          >
+            <ScrollContainer>
+              {meshmodelComponents[selectedModel]?.[0]?.components?.map(
+                function ShowRjsfComponentsLazily(trimmedComponent, idx) {
+                  const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
+                  return (
+                    <LazyComponentForm
+                      key={`${trimmedComponent.component.kind}-${idx}`}
+                      component={trimmedComponent}
+                      onSettingsChange={onSettingsChange(trimmedComponent, formReference)}
+                      reference={formReference}
+                      disabled={hasInvalidSchema}
+                    />
+                  );
+                },
+              )}
+            </ScrollContainer>
           </Grid2>
         )}
         <Grid2 size={{ xs: 12, md: selectedCategory && selectedModel ? 6 : 12 }}>
