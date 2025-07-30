@@ -78,12 +78,12 @@ func TestView(t *testing.T) {
 			originalStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
-			
+
 			// Ensure stdout is always restored
 			defer func() {
 				os.Stdout = originalStdout
 			}()
-			
+
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
 			RelationshipCmd.SetOut(originalStdout)
