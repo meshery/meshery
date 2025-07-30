@@ -46,7 +46,11 @@ components:
   colorIcon: assets/img/integrations/cloudnative-pg/components/subscription/icons/color/subscription-color.svg
   whiteIcon: assets/img/integrations/cloudnative-pg/components/subscription/icons/white/subscription-white.svg
   description: 
-components-count: 9
+- name: failover-quorum
+  colorIcon: assets/img/integrations/cloudnative-pg/components/failover-quorum/icons/color/failover-quorum-color.svg
+  whiteIcon: assets/img/integrations/cloudnative-pg/components/failover-quorum/icons/white/failover-quorum-white.svg
+  description: 
+components-count: 10
 relationships: 
 relationship-count: 0
 featureList: [
