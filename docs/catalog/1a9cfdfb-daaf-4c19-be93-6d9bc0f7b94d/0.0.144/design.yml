@@ -2,7 +2,7 @@
   "id": "1a9cfdfb-daaf-4c19-be93-6d9bc0f7b94d",
   "name": "Kubernetes Workload Controllers Overview",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.144",
+  "version": "0.0.145",
   "metadata": {
     "resolvedAliases": {}
   },
