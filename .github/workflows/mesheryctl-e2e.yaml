@@ -17,6 +17,12 @@ on:
       bats_test: 
         description: "run only bats suite test"
         required: false
+  pull_request:
+    branches:
+      - "master"
+    paths:
+      - "**.go"
+      - ".github/workflows/mesheryctl-bats-test.yml"
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
     - cron: '43 */24 * * *'
@@ -27,7 +33,14 @@ jobs:
     uses: ./.github/workflows/mesheryctl-bats-test.yml
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }} 
     secrets:
-      PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+       PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+
+  pr-bats-test:
+      if: ${{ github.event_name == 'pull_request'}}
+      name: Mesheryctl BATS Test
+      uses: ./.github/workflows/mesheryctl-bats-test.yml
+      secrets:
+        PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
 
   manual-test:
     name: Manual e2e Test

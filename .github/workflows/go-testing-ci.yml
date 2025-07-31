@@ -6,16 +6,12 @@ on:
     paths:
       - "**.go"
       - "**.golden"
-      - ".github/workflows/go-testing-ci.yml"
-      - ".github/workflows/mesheryctl-bats-test.yml"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
       - "**.golden"
-      - ".github/workflows/go-testing-ci.yml"
-      - ".github/workflows/mesheryctl-bats-test.yml"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -114,8 +110,3 @@ jobs:
         with:
           files: ./coverage.txt
           flags: gointegrationtests
-  mesheryctl-bats-test:
-    name: Mesheryctl BATS Test
-    uses: ./.github/workflows/mesheryctl-bats-test.yml
-    secrets:
-      PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
