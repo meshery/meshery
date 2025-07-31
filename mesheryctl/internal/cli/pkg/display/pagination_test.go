@@ -3,11 +3,11 @@ package display
 import (
 	"bytes"
 	"encoding/json"
-	"os"
-	"testing"
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"os"
+	"testing"
 )
 
 func TestHandlePaginationAsync(t *testing.T) {

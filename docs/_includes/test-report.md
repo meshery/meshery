@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: July 30th 2025, 11:58:52 am
+- Testing started at: July 31st 2025, 7:10:46 am
 
 **📦 Test Result Summary**
 
-- ✅ 71 passed
+- ✅ 68 passed
 - ❌ 3 failed
-- ⚠️ 9 flaked
+- ⚠️ 8 flaked
 - ⏩ 3 skipped
 
-⌛ _Duration: 9 minutes and 7 seconds_
+⌛ _Duration: 9 minutes and 1 seconds_
 
 **Overall Result**: 👎 Some tests failed.
 
@@ -29,9 +29,8 @@
 | 6 | chromium-meshery-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
 | 7 | chromium-meshery-provider | Ping Istio Adapter | unstable | ⚠️ |
 | 8 | chromium-local-provider | Configure Existing Istio adapter through Mesh Adapter URL from Management page | unstable | ⚠️ |
-| 9 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
-| 10 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
-| 11 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
+| 9 | chromium-local-provider | Connect to Meshery Istio Adapter and configure it |  | ❌ |
+| 10 | chromium-local-provider | Ping Istio Adapter | unstable | ⚠️ |
 
 </div>
 </details>

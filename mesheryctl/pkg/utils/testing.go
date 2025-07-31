@@ -374,7 +374,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			originalStdout := os.Stdout
 			r, w, _ := os.Pipe()
 			os.Stdout = w
-			
+
 			// Ensure stdout is always restored
 			defer func() {
 				os.Stdout = originalStdout
@@ -385,10 +385,10 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			cmd.SetArgs(tt.Args)
 			cmd.SetOut(originalStdout)
 			err := cmd.Execute()
-			
+
 			// Close write end before reading
 			w.Close()
-			
+
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
