@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
@@ -419,6 +420,8 @@ func TestSetOverrideValues(t *testing.T) {
 		name                string
 		ctx                 *config.Context
 		mesheryImageVersion string
+		customCallbackURL   string
+		customProviderURL   string
 		want                map[string]interface{}
 	}{
 		{
@@ -543,10 +546,12 @@ func TestSetOverrideValues(t *testing.T) {
 			},
 		},
 		{
-			name: "Context contains no components and no meshery image version and custom env variables",
+			name: "Context contains custom env variables and disabled operator and provider, custom callback url and provider url is specified",
 			ctx: &config.Context{
 				Components: nil,
 				Channel:    testChannel,
+				Operator:   "disabled",
+				Provider:   "Custom",
 				EnvVars: map[string]any{
 					"debug":                            "0",
 					"playground":                       true,
@@ -557,6 +562,8 @@ func TestSetOverrideValues(t *testing.T) {
 					"custom_var_bool_string":           "true",
 				},
 			},
+			customCallbackURL:   "http://localhost:9081/api/system/oauth/callback",
+			customProviderURL:   "http://localhost:9876",
 			mesheryImageVersion: "",
 			want: map[string]interface{}{
 				"meshery-app-mesh": map[string]interface{}{
@@ -592,6 +599,10 @@ func TestSetOverrideValues(t *testing.T) {
 				// non string values (numeric and bool) must go as string in quotes
 				// otherwise helm will return unmarshaling error
 				"env": map[string]any{
+					"DISABLE_OPERATOR":                 "\"true\"",
+					constants.ProviderENV:              "Custom",
+					constants.CallbackURLENV:           "http://localhost:9081/api/system/oauth/callback",
+					constants.ProviderURLsENV:          "http://localhost:9876",
 					"DEBUG":                            "\"0\"",
 					"PLAYGROUND":                       "\"true\"",
 					"MESHSYNC_DEFAULT_DEPLOYMENT_MODE": "embedded",
@@ -605,7 +616,7 @@ func TestSetOverrideValues(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion, "", "")
+		got := SetOverrideValues(tt.ctx, tt.mesheryImageVersion, tt.customCallbackURL, tt.customProviderURL)
 		eq := reflect.DeepEqual(got, tt.want)
 		if !eq {
 			t.Errorf("SetOverrideValues %s got = %v want = %v", tt.name, got, tt.want)
