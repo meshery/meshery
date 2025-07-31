@@ -19,7 +19,7 @@ on:
         required: false
   pull_request:
     branches:
-      - "master"
+      - "automate-manual-bats-test"
     paths:
       - "**.go"
       - ".github/workflows/mesheryctl-bats-test.yml"
