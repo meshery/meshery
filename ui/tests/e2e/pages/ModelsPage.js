@@ -142,7 +142,7 @@ export class ModelsPage {
   }
 
   async uploadFile(filePath) {
-    await this.page.setInputFiles('input[type="file"]', filePath);
+    await this.fileInput.setInputFiles(filePath);
   }
 
   async fillUrlImport(url) {
