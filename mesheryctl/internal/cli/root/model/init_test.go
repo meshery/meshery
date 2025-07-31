@@ -11,6 +11,18 @@ import (
 )
 
 func TestModelInit(t *testing.T) {
+	// Clean up any existing test directories before running tests
+	cleanupDirs := []string{
+		"test-case-aws-ec2-controller",
+		"test-case-aws-dynamodb-controller",
+		"test_case_some_other_custom_dir",
+	}
+	for _, dir := range cleanupDirs {
+		os.RemoveAll(dir)
+		d := dir // Capture for t.Cleanup
+		t.Cleanup(func() { os.RemoveAll(d) })
+	}
+
 	utils.SetupContextEnv(t)
 
 	// get current directory
@@ -50,7 +62,6 @@ func TestModelInit(t *testing.T) {
 			ExpectedFiles: []string{
 				"test-case-aws-ec2-controller/v0.1.0/model.json",
 				"test-case-aws-ec2-controller/v0.1.0/components/component.json",
-				"test-case-aws-ec2-controller/v0.1.0/connections/connection.json",
 				"test-case-aws-ec2-controller/v0.1.0/relationships/relationship.json",
 			},
 			AfterTestRemoveDir: "test-case-aws-ec2-controller",
@@ -71,7 +82,6 @@ func TestModelInit(t *testing.T) {
 			ExpectedFiles: []string{
 				"test-case-aws-ec2-controller/v0.1.0/model.json",
 				"test-case-aws-ec2-controller/v0.1.0/components/component.json",
-				"test-case-aws-ec2-controller/v0.1.0/connections/connection.json",
 				"test-case-aws-ec2-controller/v0.1.0/relationships/relationship.json",
 			},
 			AfterTestRemoveDir: "test-case-aws-ec2-controller",
@@ -92,7 +102,6 @@ func TestModelInit(t *testing.T) {
 			ExpectedFiles: []string{
 				"test-case-aws-dynamodb-controller/v0.1.0/model.yaml",
 				"test-case-aws-dynamodb-controller/v0.1.0/components/component.yaml",
-				"test-case-aws-dynamodb-controller/v0.1.0/connections/connection.yaml",
 				"test-case-aws-dynamodb-controller/v0.1.0/relationships/relationship.yaml",
 			},
 			AfterTestRemoveDir: "test-case-aws-dynamodb-controller",
@@ -117,7 +126,6 @@ func TestModelInit(t *testing.T) {
 			ExpectedFiles: []string{
 				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/model.json",
 				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/components/component.json",
-				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/connections/connection.json",
 				"test_case_some_custom_dir/subdir/one_more_subdir/test-case-aws-ec2-controller/v1.2.3/relationships/relationship.json",
 			},
 			AfterTestRemoveDir: "test_case_some_custom_dir",
@@ -220,9 +228,7 @@ func TestModelInit(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			// TODO replace ModelExpCmd with  ModelCmd
-			cmd := ModelExpCmd
-			// cmd := ModelCmd
+			cmd := ModelCmd
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()

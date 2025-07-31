@@ -17,6 +17,7 @@ Model Database
 ## Synopsis
 
 Manage the state and contents of Meshery’s internal registry of capabilities.
+Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/registry
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry [flags]

@@ -98,7 +98,15 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/color/secret-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/white/secret-white.svg
   description: 
-components-count: 22
+- name: role-binding
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/role-binding/icons/color/role-binding-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/role-binding/icons/white/role-binding-white.svg
+  description: 
+- name: role-binding
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/role-binding/icons/color/role-binding-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/role-binding/icons/white/role-binding-white.svg
+  description: 
+components-count: 24
 relationships: 
 relationship-count: 0
 featureList: [
