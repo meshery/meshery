@@ -542,6 +542,66 @@ func TestSetOverrideValues(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "Context contains no components and no meshery image version and custom env variables",
+			ctx: &config.Context{
+				Components: nil,
+				Channel:    testChannel,
+				EnvVars: map[string]any{
+					"debug":                            "0",
+					"playground":                       true,
+					"meshsync_default_deployment_mode": "embedded",
+					"custom_var_int":                   1,
+					"custom_var_int_string":            "1",
+					"custom_var_bool":                  true,
+					"custom_var_bool_string":           "true",
+				},
+			},
+			mesheryImageVersion: "",
+			want: map[string]interface{}{
+				"meshery-app-mesh": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-istio": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-cilium": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-linkerd": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-consul": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-kuma": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-nsm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-nginx-sm": map[string]interface{}{
+					"enabled": false,
+				},
+				"meshery-traefik-mesh": map[string]interface{}{
+					"enabled": false,
+				},
+				"image": map[string]interface{}{
+					"tag": testChannel + "-",
+				},
+				// non string values (numeric and bool) must go as string in quotes
+				// otherwise helm will return unmarshaling error
+				"env": map[string]any{
+					"DEBUG":                            "\"0\"",
+					"PLAYGROUND":                       "\"true\"",
+					"MESHSYNC_DEFAULT_DEPLOYMENT_MODE": "embedded",
+					"CUSTOM_VAR_INT":                   "\"1\"",
+					"CUSTOM_VAR_INT_STRING":            "\"1\"",
+					"CUSTOM_VAR_BOOL":                  "\"true\"",
+					"CUSTOM_VAR_BOOL_STRING":           "\"true\"",
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
