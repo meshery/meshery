@@ -1,5 +1,5 @@
 ---
-name: Adan Shahid
+Name: Adan Shahid
 description: Final Year Electrical Engineering student
 tech_stack:
   - Python
