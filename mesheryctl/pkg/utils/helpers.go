@@ -1165,11 +1165,11 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		"meshery-app-mesh": map[string]interface{}{
 			"enabled": false,
 		},
-		"env": map[string]any{},
 	}
 
+	envOverrides := make(map[string]any)
+
 	setToEnvMap := func(key string, value any) {
-		envs := valueOverrides["env"].(map[string]any)
 		// Ensure the environment variable value is a string.
 		// If the value is not a string (e.g., an int or bool), Helm will render it as a raw type,
 		// causing Kubernetes to fail with an error like:
@@ -1201,12 +1201,10 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		// we need this because even if value is a string, but contains numeric or boolean
 		// when pass to helm error described above occurs
 		if shouldQuote(strVal) {
-			envs[key] = fmt.Sprintf("\"%s\"", strVal)
+			envOverrides[key] = fmt.Sprintf("\"%s\"", strVal)
 		} else {
-			envs[key] = strVal
+			envOverrides[key] = strVal
 		}
-
-		valueOverrides["env"] = envs
 	}
 
 	// set the "enabled" field to true only for the components listed in the context
@@ -1246,6 +1244,10 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 			// use to upper here, as meshery keeps its context yaml lowercased
 			setToEnvMap(strings.ToUpper(k), v)
 		}
+	}
+
+	if len(envOverrides) > 0 {
+		valueOverrides["env"] = envOverrides
 	}
 
 	return valueOverrides
