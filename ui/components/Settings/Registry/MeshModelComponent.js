@@ -454,21 +454,6 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
   );
 };
 
-// const TabCard = ({ label, count, active, onClick }) => {
-//   return (
-//     <CardStyle isSelected={active} elevation={3} onClick={onClick}>
-//       <span
-//         style={{
-//           fontSize: '1rem',
-//           marginLeft: '4px',
-//         }}
-//       >
-//         {`(${count})`}
-//       </span>
-//       {label}
-//     </CardStyle>
-//   );
-// };
 
 const MeshModelComponent = (props) => {
   return (
