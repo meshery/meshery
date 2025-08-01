@@ -424,43 +424,6 @@ const Header = ({
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
   const registryModalContext = useContext(RegistryModalContext);
 
-  const [registryData, setRegistryData] = useState({
-    modelsCount: 0,
-    componentsCount: 0,
-    relationshipsCount: 0,
-    registrantCount: 0,
-  });
-
-  //->fetch registry data,component mounts
-  useEffect(() => {
-    const fetchRegistryData = async () => {
-      try {
-        const [modelsResponse, componentsResponse, relationshipsResponse, registrantResponse] =
-          await Promise.all([
-            getMeshModels(),
-            getComponentsDetail(),
-            getRelationshipsDetail(),
-            getMeshModelRegistrants(),
-          ]);
-
-        const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
-        const componentsCount = componentsResponse.total_count;
-        const relationshipsCount = relationshipsResponse.total_count;
-        const registrantCount = registrantResponse.total_count;
-
-        setRegistryData({
-          modelsCount,
-          componentsCount,
-          relationshipsCount,
-          registrantCount,
-        });
-      } catch (error) {
-        console.error('Error fetching registry data:', error);
-      }
-    };
-
-    fetchRegistryData();
-  }, []);
 
   const {
     data: providerCapabilities,
@@ -576,10 +539,6 @@ const Header = ({
         <RegistryModal
           registryModal={registryModalContext.open}
           closeRegistryModal={registryModalContext.closeModal}
-          modelsCount={registryData.modelsCount}
-          componentsCount={registryData.componentsCount}
-          relationshipsCount={registryData.relationshipsCount}
-          registrantCount={registryData.registrantCount}
         />
       </>
     </NoSsr>

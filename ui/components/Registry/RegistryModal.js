@@ -26,6 +26,13 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
+import {
+  useGetMeshModelsQuery,
+  useGetComponentsQuery,
+  useGetRelationshipsQuery,
+  useGetRegistrantsQuery,
+} from '@/rtk-query/meshModel';
+import { removeDuplicateVersions } from '../Settings/Registry/helper';
 
 const DRAWER_WIDTH = 250;
 
@@ -189,13 +196,7 @@ const NavItem = ({ item, open, selectedId, onSelect }) => {
   );
 };
 
-const RegistryContentWrapper = ({
-  selectedView,
-  modelsCount,
-  componentsCount,
-  relationshipsCount,
-  registrantCount,
-}) => {
+const RegistryContentWrapper = ({ selectedView }) => {
   // Create a mock settingsRouter function that returns the expected structure
   const mockSettingsRouter = () => ({
     selectedSettingsCategory: 'registry',
@@ -209,10 +210,6 @@ const RegistryContentWrapper = ({
 
   return (
     <MeshModelComponent
-      modelsCount={modelsCount}
-      componentsCount={componentsCount}
-      relationshipsCount={relationshipsCount}
-      registrantCount={registrantCount}
       settingsRouter={mockSettingsRouter}
       externalView={selectedView} // Pass the external view
       hideInternalTabs={true} // Hide the internal tab cards
@@ -220,13 +217,7 @@ const RegistryContentWrapper = ({
   );
 };
 
-export const Navigation = ({
-  setHeaderInfo,
-  modelsCount,
-  componentsCount,
-  relationshipsCount,
-  registrantCount,
-}) => {
+export const Navigation = ({ setHeaderInfo }) => {
   const theme = useTheme();
   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
   const [open, setOpen] = useState(!closeList);
@@ -234,13 +225,25 @@ export const Navigation = ({
   const { selectedView } = registryContext;
   const [selectedId, setSelectedId] = useState(selectedView || MODELS);
 
+  
+  const { data: modelsData, isLoading: modelsLoading } = useGetMeshModelsQuery({
+    params: { pagesize: 'all' }
+  });
+  const { data: componentsData, isLoading: componentsLoading } = useGetComponentsQuery({
+    params: { pagesize: 'all' }
+  });
+  const { data: relationshipsData, isLoading: relationshipsLoading } = useGetRelationshipsQuery({
+    params: { pagesize: 'all' }
+  });
+  const { data: registrantsData, isLoading: registrantsLoading } = useGetRegistrantsQuery({
+    params: { pagesize: 'all' }
+  });
   const counts = {
-    models: modelsCount,
-    components: componentsCount,
-    relationships: relationshipsCount,
-    registrants: registrantCount,
+    models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
+    components: componentsData?.total_count || 0,
+    relationships: relationshipsData?.total_count || 0,
+    registrants: registrantsData?.total_count || 0,
   };
-
   const navConfig = getNavItems(theme, counts);
 
   const handleDrawerToggle = () => {
@@ -292,10 +295,8 @@ export const Navigation = ({
       <StyledMainContent>
         <RegistryContentWrapper
           selectedView={selectedId}
-          modelsCount={modelsCount}
-          componentsCount={componentsCount}
-          relationshipsCount={relationshipsCount}
-          registrantCount={registrantCount}
+          counts={counts}
+          isLoading={modelsLoading || componentsLoading || relationshipsLoading || registrantsLoading}
         />
       </StyledMainContent>
     </Box>
@@ -305,10 +306,6 @@ export const Navigation = ({
 const RegistryModal = ({
   registryModal,
   closeRegistryModal,
-  modelsCount,
-  componentsCount,
-  relationshipsCount,
-  registrantCount,
 }) => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -326,15 +323,7 @@ const RegistryModal = ({
       isFullScreenModeAllowed={!isSmallScreen}
     >
       <ModalBody style={{ height: '100%', padding: '0' }}>
-        {registryModal && (
-          <Navigation
-            setHeaderInfo={setHeaderInfo}
-            modelsCount={modelsCount}
-            componentsCount={componentsCount}
-            relationshipsCount={relationshipsCount}
-            registrantCount={registrantCount}
-          />
-        )}
+        {registryModal && <Navigation setHeaderInfo={setHeaderInfo} />}
       </ModalBody>
     </StyledModal>
   );

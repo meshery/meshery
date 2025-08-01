@@ -16,7 +16,7 @@ const MesheryTreeViewItem = ({
   selected,
   expanded,
 }) => {
-  const imgSrc = modelDef?.metadata?.svgColor;
+  const imgSrc = modelDef?.metadata?.svgColor ? `/${modelDef.metadata.svgColor}` : null;
   return (
     <StyledTreeItem
       key={modelDef.id}

@@ -132,7 +132,6 @@ const MeshModelComponent_ = ({
             },
             true, // arg to use cache as default
           );
-
           break;
         case COMPONENTS:
           response = await getComponentsData(
@@ -146,7 +145,6 @@ const MeshModelComponent_ = ({
             },
             true,
           );
-
           break;
         case RELATIONSHIPS:
           response = await getRelationshipsData(
@@ -167,7 +165,6 @@ const MeshModelComponent_ = ({
         default:
           break;
       }
-
       if (response?.data && response.data[view.toLowerCase()]) {
         // When search or "show duplicates" functionality is active:
         // Avoid appending data to the previous dataset.
@@ -258,28 +255,6 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
-  // const handleTabClick = (selectedView) => {
-  //   handleChangeSelectedTab(selectedView);
-  //   if (view !== selectedView) {
-  //     setSearchText(null);
-  //     setResourcesDetail([]);
-  //   }
-  //   setModelsFilters({ page: 0 });
-  //   setRegistrantsFilters({ page: 0 });
-  //   setComponentsFilters({ page: 0 });
-  //   setRelationshipsFilters({ page: 0 });
-  //   setPage({
-  //     Models: 0,
-  //     Components: 0,
-  //     Relationships: 0,
-  //     Registrants: 0,
-  //   });
-  //   setView(selectedView);
-  //   setShowDetailsData({
-  //     type: '',
-  //     data: {},
-  //   });
-  // };
 
   const modifyData = () => {
     if (!resourcesDetail) return [];
@@ -316,7 +291,6 @@ const MeshModelComponent_ = ({
   useEffect(() => {
     if (externalView && externalView !== view) {
       setView(externalView);
-      // Reset data when view changes
       setResourcesDetail([]);
       setSearchText(null);
       setModelsFilters({ page: 0 });
