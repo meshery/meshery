@@ -2,7 +2,7 @@
   "id": "bcd881e4-eaf6-4fe0-9d8c-80a07140cab7",
   "name": "Kubernetes Cluster Access Model",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.110",
+  "version": "0.0.131",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -73,7 +73,7 @@
         "body-text-vertical-align": "center",
         "border-width": 2,
         "height": 359.32196,
-        "locked": true,
+        "locked": false,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -177,6 +177,7 @@
         "body-text-vertical-align": "center",
         "border-width": 2,
         "height": 362.64163,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -487,6 +488,7 @@
           "label": ""
         },
         "height": 63.585415,
+        "locked": true,
         "opacity": 1,
         "padding": 0,
         "position": {
@@ -588,6 +590,7 @@
           "label": ""
         },
         "height": 106.35395,
+        "locked": true,
         "opacity": 1,
         "padding": 0,
         "position": {
@@ -689,6 +692,7 @@
           "label": ""
         },
         "height": 148.89624,
+        "locked": false,
         "opacity": 1,
         "padding": 0,
         "position": {
@@ -892,6 +896,7 @@
           "label": ""
         },
         "height": 181.47826,
+        "locked": false,
         "opacity": 1,
         "padding": 0,
         "position": {
@@ -997,8 +1002,8 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 1826.1457462686294,
-          "y": 608.0384568042049
+          "x": 1822.178381512082,
+          "y": 604.0710920476575
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -1095,6 +1100,7 @@
           "label": ""
         },
         "height": 95.965485,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -1196,6 +1202,7 @@
           "label": ""
         },
         "height": 63.280186,
+        "locked": false,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -1297,6 +1304,7 @@
           "label": ""
         },
         "height": 63.280186,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -1398,6 +1406,7 @@
           "label": ""
         },
         "height": 92.45099,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -1601,6 +1610,7 @@
           "label": ""
         },
         "height": 88.83961,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -1804,6 +1814,7 @@
           "label": ""
         },
         "height": 91.68162,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -1910,7 +1921,7 @@
         "padding": 6,
         "position": {
           "x": 1681.48810070152,
-          "y": 560.976899760961
+          "y": 568.9116292740556
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -2007,6 +2018,7 @@
           "label": ""
         },
         "height": 36,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
@@ -2413,11 +2425,12 @@
           "label": ""
         },
         "height": 41.236866,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 1487.9208116765594,
-          "y": 268.7027681180097
+          "x": 1478.0994742382818,
+          "y": 252.9886282167654
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#FFDE00",
@@ -2514,6 +2527,7 @@
           "label": ""
         },
         "height": 41.236866,
+        "locked": true,
         "opacity": 1,
         "padding": 6,
         "position": {
