@@ -49,6 +49,7 @@ const DesignViewListItem = ({
     id: selectedItem.user_id,
   });
   const { multiSelectedContent, setMultiSelectedContent } = useContext(WorkspaceModalContext);
+
   return (
     <>
       <StyledListItem
