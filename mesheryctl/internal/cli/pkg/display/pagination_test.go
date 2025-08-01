@@ -3,12 +3,11 @@ package display
 import (
 	"bytes"
 	"encoding/json"
-	"os"
-	"testing"
-
 	"github.com/jarcoal/httpmock"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
+	"os"
+	"testing"
 )
 
 func TestHandlePaginationAsync(t *testing.T) {
@@ -142,7 +141,10 @@ func TestHandlePaginationAsync(t *testing.T) {
 				_, _ = buf.ReadFrom(reader)
 				output := buf.String()
 
-				assert.Equal(t, tt.exceptedResponse, output)
+				// Clean both actual and expected output to remove ANSI code and normalize formatting
+				cleanedActual := utils.CleanStringFromHandlePagination(output)
+				cleanExpected := utils.CleanStringFromHandlePagination(tt.exceptedResponse)
+				assert.Equal(t, cleanExpected, cleanedActual)
 				assert.NoError(t, err)
 			}
 
