@@ -31,7 +31,7 @@ export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
   '&.Mui-selected': {
     backgroundColor: theme.palette.action.selected,
     '&:hover': {
-      backgroundColor: theme.palette.action.selected +'!important',
+      backgroundColor: theme.palette.action.selected + '!important',
     },
   },
 }));
