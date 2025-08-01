@@ -21,12 +21,18 @@ import {
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
 
-export const HoverMenuItem = styled(MenuItem)(() => ({
+export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '1rem',
   '& .workspace-icon': {
     display: 'flex',
+  },
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.action.selected,
+    '&:hover': {
+      backgroundColor: theme.palette.action.selected +'!important',
+    },
   },
 }));
 
