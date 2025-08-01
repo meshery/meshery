@@ -41,7 +41,7 @@ func TestListEnvironment(t *testing.T) {
 			URL:              fmt.Sprintf("/api/environments?orgID=%s", testConstants["orgID"]),
 			Fixture:          "list.environment.response.golden",
 			ExpectedResponse: "list.environment.success.golden",
-			ExpectError:      true,
+			ExpectError:      false,
 		},
 	}
 
