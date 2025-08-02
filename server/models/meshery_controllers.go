@@ -56,7 +56,7 @@ type MesheryControllersHelper struct {
 	oprDepConfig controllers.OperatorDeploymentConfig
 	dbHandler    *database.Handler
 
-	meshsyncDeploymentMode schemasConnection.ConnectionMeshsyncDeploymentMode
+	meshsyncDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 func (mch *MesheryControllersHelper) GetControllerHandlersForEachContext() map[MesheryController]controllers.IMesheryController {
@@ -86,7 +86,7 @@ func NewMesheryControllersHelper(log logger.Handler, operatorDepConfig controlle
 	}
 }
 
-func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value schemasConnection.ConnectionMeshsyncDeploymentMode) *MesheryControllersHelper {
+func (mch *MesheryControllersHelper) SetMeshsyncDeploymentMode(value schemasConnection.MeshsyncDeploymentMode) *MesheryControllersHelper {
 	mch.meshsyncDeploymentMode = value
 	return mch
 }
