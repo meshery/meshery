@@ -27,6 +27,14 @@ func TestListOrganizations(t *testing.T) {
 			ExpectedResponse: "list.organization.golden",
 			ExpectError:      true,
 		},
+		{
+			Name:             "List organizations with invalid UUID",
+			Args:             []string{"list"},
+			URL:              fmt.Sprintf("/%s?all=true", organizationsApiPath),
+			Fixture:          "list.organization.invaliduuid.response.golden",
+			ExpectedResponse: "list.organization.invaliduuid.golden",
+			ExpectError:      false,
+		},
 	}
 
 	utils.InvokeMesheryctlTestListCommand(t, update, OrgCmd, tests, currentDirectory, "organization")
