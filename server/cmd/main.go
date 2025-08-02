@@ -32,11 +32,11 @@ import (
 	"github.com/meshery/meshkit/utils/broadcast"
 	"github.com/meshery/meshkit/utils/events"
 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
-	"github.com/spf13/viper"
-
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -114,13 +114,15 @@ func main() {
 	viper.SetDefault("SKIP_DOWNLOAD_CONTENT", false)
 	viper.SetDefault("SKIP_COMP_GEN", false)
 	viper.SetDefault("PLAYGROUND", false)
-	viper.SetDefault("TMP_MESHSYNC_AS_A_LIBRARY_MODE", false)
+	viper.SetDefault("MESHSYNC_DEFAULT_DEPLOYMENT_MODE", schemasConnection.MeshsyncDeploymentModeDefault)
 	store.Initialize()
 
 	log.Info("Local Provider capabilities are: ", version)
 
 	// Get the channel
 	log.Info("Meshery Server release channel is: ", releasechannel)
+
+	log.Infof("MESHSYNC_DEFAULT_DEPLOYMENT_MODE is %s", viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"))
 
 	home, err := os.UserHomeDir()
 	if viper.GetString("USER_DATA_FOLDER") == "" {
