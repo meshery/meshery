@@ -88,7 +88,7 @@
     "redux": "^4.2.0",
     "redux-thunk": "^2.4.0",
     "rehype-sanitize": "^6.0.0",
-    "relay-runtime": "^18.2.0",
+    "relay-runtime": "^20.1.0",
     "resize-observer-polyfill": "^1.5.1",
     "rxjs": "^7.8.2",
     "styled-jsx": "^5.1.6",
