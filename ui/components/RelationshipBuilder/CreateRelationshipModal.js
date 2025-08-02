@@ -10,7 +10,7 @@ const CreateRelationshipModal = ({ isRelationshipModalOpen, setIsRelationshipMod
       closeModal={() => setIsRelationshipModalOpen(false)}
       title="Create Relationship"
       style={{
-        zIndex: 1200,
+        zIndex: 1500,
       }}
       disableBackdropClick={false}
       disableEscapeKeyDown={false}

@@ -25,7 +25,6 @@ import MeshAdapterConfigComponent from '../MeshAdapterConfigComponent';
 import PrometheusComponent from '../telemetry/prometheus/PrometheusComponent';
 import _PromptComponent from '../PromptComponent';
 import { iconMedium } from '../../css/icons.styles';
-import MeshModelComponent from './Registry/MeshModelComponent';
 import DatabaseSummary from '../DatabaseSummary';
 import {
   getComponentsDetail,
@@ -298,16 +297,6 @@ const MesherySettings = () => {
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
                   />
                 </CustomTooltip>
-                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
-                  <Tab
-                    icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
-                    label="Registry"
-                    data-testid="settings-tab-registry"
-                    // tab="registry"
-                    value={REGISTRY}
-                    disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
-                  />
-                </CustomTooltip>
 
                 <CustomTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
@@ -394,21 +383,6 @@ const MesherySettings = () => {
                     />
                   </TabContainer>
                 )}
-              </TabContainer>
-            )}
-            {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
-              <TabContainer>
-                <TabContainer>
-                  <TabContainer>
-                    <MeshModelComponent
-                      modelsCount={state.modelsCount}
-                      componentsCount={state.componentsCount}
-                      relationshipsCount={state.relationshipsCount}
-                      registrantCount={state.registrantCount}
-                      settingsRouter={settingsRouter}
-                    />
-                  </TabContainer>
-                </TabContainer>
               </TabContainer>
             )}
 

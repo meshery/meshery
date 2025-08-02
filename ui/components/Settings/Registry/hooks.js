@@ -70,13 +70,22 @@ export const useRegistryRouter = () => {
 
   const handleUpdateSelectedRoute = (nodeIds, filters) => {
     const id = nodeIds[0];
+    const validSettingsCategory = settingsCategory || 'Registry';
+    const validTab = tab || 'Models';
+
     const queryString = new URLSearchParams({
-      settingsCategory,
-      tab,
+      settingsCategory: validSettingsCategory,
+      tab: validTab,
       selectedItemUUID: id,
       ...filters,
     }).toString();
-    pushRoute(`${route}?${queryString}`, undefined, { shallow: true });
+
+    let targetRoute = route;
+    if (typeof window !== 'undefined') {
+      targetRoute = window.location.pathname;
+    }
+
+    pushRoute(`${targetRoute}?${queryString}`, undefined, { shallow: true });
   };
 
   return {
