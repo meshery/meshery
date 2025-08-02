@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { NoSsr } from '@sistent/sistent';
 import { Chip, Box, styled } from '@sistent/sistent';
 import MUIDataTable from 'mui-datatables';
+import { createEnhancedChipHoverStyles } from '../../../utils/chipHoverStyles';
 
 const Root = styled(Box)(({ theme }) => ({
   padding: theme.spacing(5),
@@ -15,6 +16,8 @@ const PanelChips = styled(Box)(() => ({
 
 const StyledChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.25),
+  maxWidth: '200px',
+  ...createEnhancedChipHoverStyles(theme),
 }));
 
 const GrafanaDisplaySelection = ({ boardPanelConfigs, deleteSelectedBoardPanelConfig }) => {

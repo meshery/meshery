@@ -1,5 +1,6 @@
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
+import { createEnhancedChipHoverStyles } from '../../utils/chipHoverStyles';
 import {
   Box,
   Button,
@@ -92,15 +93,10 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   width: '13rem',
   textAlign: 'left',
   cursor: 'pointer',
-  '& .MuiChip-label': {
-    flexGrow: 1,
-  },
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
   border: '1px solid rgba(255, 255, 255, 0.23)',
   textTransform: 'lowercase',
   color: theme.palette.text.primary,
+  ...createEnhancedChipHoverStyles(theme),
 }));
 
 const baseChipStyles = {

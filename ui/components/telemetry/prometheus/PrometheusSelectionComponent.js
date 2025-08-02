@@ -6,6 +6,7 @@ import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
 import CodeIcon from '@mui/icons-material/Code';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { createEnhancedChipHoverStyles } from '../../../utils/chipHoverStyles';
 
 const PrometheusContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -29,6 +30,8 @@ const PanelChipsContainer = styled('div')(({ theme }) => ({
   flexWrap: 'wrap',
   '& .chip': {
     margin: theme.spacing(0.25),
+    maxWidth: '200px',
+    ...createEnhancedChipHoverStyles(theme),
   },
 }));
 

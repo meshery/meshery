@@ -5,6 +5,7 @@ import { TextField, Grid2, Button, Chip, MenuItem, useTheme, styled, Box } from 
 import dataFetch from '../../../lib/data-fetch';
 import { trueRandom } from '../../../lib/trueRandom';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import { createEnhancedChipHoverStyles } from '../../../utils/chipHoverStyles';
 
 const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
@@ -41,6 +42,8 @@ const PanelChips = styled(Box)({
 
 const StyledChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.25),
+  maxWidth: '200px',
+  ...createEnhancedChipHoverStyles(theme),
 }));
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
