@@ -2,7 +2,7 @@
   "id": "294946e9-2079-4e6e-8a44-489fbdcf9e3f",
   "name": "Complete Kubernetes Application Pattern",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.15",
+  "version": "0.0.25",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -182,8 +182,8 @@
         "opacity": 1,
         "padding": 0,
         "position": {
-          "x": 345.193515128161,
-          "y": 116.21583902744557
+          "x": 307.3533173494386,
+          "y": 108.42521007300273
         },
         "primaryColor": "#00B39F",
         "secondaryColor": "#00D3A9",
@@ -1101,7 +1101,7 @@
           "x": 559.450385186435,
           "y": 280.8653761544783
         },
-        "primaryColor": "#00B39F",
+        "primaryColor": "transparent",
         "secondaryColor": "#00D3A9",
         "shape": "round-rectangle",
         "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
@@ -1656,7 +1656,8 @@
       },
       "styles": {
         "background-image": "none",
-        "background-opacity": 0.1,
+        "background-image-opacity": 0,
+        "background-opacity": 0,
         "body-text": "",
         "body-text-color": "#808080",
         "body-text-font-family": "Qanelas Soft",
@@ -1675,10 +1676,10 @@
         "opacity": 1,
         "padding": 6,
         "position": {
-          "x": 561.4665959454348,
-          "y": 284.14773974044897
+          "x": 558.127754964959,
+          "y": 271.90532281203866
         },
-        "primaryColor": "#00B39F",
+        "primaryColor": "rgb(255,255,255)",
         "secondaryColor": "#00D3A9",
         "shape": "rectangle",
         "svgColor": "ui/public/static/img/meshmodels/meshery-shapes/color/roundrectangle-color.svg",
