@@ -6,7 +6,7 @@ import (
 
 var (
 	ErrResyncK8SResourcesCode = "meshery-server-1372"
-	ErrConnectActionCode      = "replace_me"
+	ErrConnectActionCode      = "meshery-server-1373"
 )
 
 func ErrResyncK8SResources(err error) error {
