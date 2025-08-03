@@ -56,8 +56,8 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.Metadata)
 	if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
 		// TODO:
-		// this viper value get here is a temporal thing
-		// meshsync deployment mode will be propagated from connection entity
+		// maybe not call to viper here and propagate default value from above,
+		// f.e. when machine is created
 		meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeFromString(
 			viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
 		)
