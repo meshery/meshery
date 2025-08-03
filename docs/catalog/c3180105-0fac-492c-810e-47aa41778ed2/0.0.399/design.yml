@@ -2,7 +2,7 @@
   "id": "c3180105-0fac-492c-810e-47aa41778ed2",
   "name": "Kubernetes Cluster Architecture",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.399",
+  "version": "0.0.400",
   "metadata": {
     "resolvedAliases": {}
   },
