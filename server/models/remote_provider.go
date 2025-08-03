@@ -28,6 +28,7 @@ import (
 	"github.com/meshery/meshkit/logger"
 	"github.com/meshery/meshkit/models/events"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"github.com/spf13/viper"
@@ -64,6 +65,8 @@ type RemoteProvider struct {
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
 	Log                logger.Handler
+
+	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 type userSession struct {

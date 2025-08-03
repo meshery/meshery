@@ -26,6 +26,7 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/walker"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
@@ -56,6 +57,7 @@ type DefaultLocalProvider struct {
 	ConnectionPersister             *ConnectionPersister
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
+	MeshsyncDefaultDeploymentMode   schemasConnection.MeshsyncDeploymentMode
 
 	GenericPersister *database.Handler
 	KubeClient       *mesherykube.Client
