@@ -16,7 +16,6 @@ setup(){
     export START_PROVIDER="mesheryctl system start --provider Meshery"
     export START_MESSAGE_DOCKER="Starting Meshery..."
     export START_MESSAGE_KUBE="Meshery is starting..."
-    export SKIP_UPDATE_MESSAGE="Skipping Meshery update..."
 }
 
 teardown() {
@@ -29,7 +28,9 @@ common_start_assertions() {
 }
 
 common_kube_assertions() {
-    
+    if ! kubectl cluster-info >/dev/null 2>&1; then
+        skip "Kubernetes cluster not accessible"
+    fi
     assert_success
     assert_output --partial "$START_MESSAGE_KUBE"
 }
@@ -78,9 +79,6 @@ common_kube_assertions() {
 }
 
 @test "mesheryctl system start -p kubernetes succeeds" {
-    if ! kubectl cluster-info >/dev/null 2>&1; then
-        skip "Kubernetes cluster not accessible"
-    fi
     run $MESHERYCTL_BIN system start -p kubernetes 
     common_kube_assertions
 }
@@ -96,9 +94,6 @@ common_kube_assertions() {
 }
 
 @test "mesheryctl system start with all flags on kubernetes succeeds" {
-    if ! kubectl cluster-info >/dev/null 2>&1; then
-        skip "Kubernetes cluster not accessible"
-    fi
     run $MESHERYCTL_BIN system start --skip-browser --skip-update --reset -p kubernetes 
     common_kube_assertions
 }
