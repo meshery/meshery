@@ -7,6 +7,7 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 )
 
@@ -31,12 +32,14 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	meshsyncDeploymentMode := models.MeshsyncDeploymentModeOperator
-	//  TODO:
-	// this viper value check here is a temporal thing
+	// TODO:
+	// this viper value get here is a temporal thing
 	// meshsync deployment mode will be propagated from connection entity
-	if viper.GetBool("TMP_MESHSYNC_AS_A_LIBRARY_MODE") {
-		meshsyncDeploymentMode = models.MeshsyncDeploymentModeLibrary
+	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
+	)
+	if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+		meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
 	}
 
 	go func() {
