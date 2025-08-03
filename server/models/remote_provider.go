@@ -727,6 +727,9 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		metadata[k] = v
 	}
 
+	// TODO accept from above
+	schemasConnection.SetMeshsyncDeploymentModeToMetadata(metadata, l.MeshsyncDefaultDeploymentMode)
+
 	cred := map[string]interface{}{
 		"auth":    k8sContext.Auth,
 		"cluster": k8sContext.Cluster,

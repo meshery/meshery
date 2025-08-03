@@ -266,6 +266,9 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		metadata[k] = v
 	}
 
+	// TODO accept from above
+	schemasConnection.SetMeshsyncDeploymentModeToMetadata(metadata, l.MeshsyncDefaultDeploymentMode)
+
 	cred := map[string]interface{}{
 		"auth":    k8sContext.Auth,
 		"cluster": k8sContext.Cluster,
