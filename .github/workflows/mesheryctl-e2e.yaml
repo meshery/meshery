@@ -23,6 +23,7 @@ on:
     paths:
       - "**.go"
       - ".github/workflows/mesheryctl-bats-test.yml"
+      - ".github/workflows/mesheryctl-e2e.yml" 
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
     - cron: '43 */24 * * *'
