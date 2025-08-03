@@ -9,6 +9,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
@@ -65,8 +66,6 @@ type RemoteProvider struct {
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
 	Log                logger.Handler
-
-	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 type userSession struct {
@@ -709,7 +708,7 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 	http.Redirect(w, req, "/provider", http.StatusFound)
 }
 
-func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error) {
+func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -722,13 +721,17 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext) (co
 		"name":                 k8sContext.Name,
 		"kubernetes_server_id": k8sServerID.String(),
 	}
-	metadata := make(map[string]interface{}, len(_metadata))
+	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
 		metadata[k] = v
 	}
 
-	// TODO accept from above
-	schemasConnection.SetMeshsyncDeploymentModeToMetadata(metadata, l.MeshsyncDefaultDeploymentMode)
+	maps.Copy(metadata, additionalMetadata)
+
+	// if undefined -> set to default
+	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(metadata, schemasConnection.MeshsyncDeploymentModeDefault)
+	}
 
 	cred := map[string]interface{}{
 		"auth":    k8sContext.Auth,
