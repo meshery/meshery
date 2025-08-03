@@ -66,6 +66,8 @@ type RemoteProvider struct {
 	GenericPersister   *database.Handler
 	KubeClient         *mesherykube.Client
 	Log                logger.Handler
+
+	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 type userSession struct {
@@ -730,7 +732,10 @@ func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, add
 
 	// if undefined -> set to default
 	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
-		schemasConnection.SetMeshsyncDeploymentModeToMetadata(metadata, schemasConnection.MeshsyncDeploymentModeDefault)
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			metadata,
+			l.MeshsyncDefaultDeploymentMode,
+		)
 	}
 
 	cred := map[string]interface{}{

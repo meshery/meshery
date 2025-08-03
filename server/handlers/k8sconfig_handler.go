@@ -106,6 +106,9 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 	schemasConnection.SetMeshsyncDeploymentModeToMetadata(
 		k8sContextsMetadata,
 		schemasConnection.MeshsyncDeploymentModeFromString(
+			// TODO:
+			// right now empty value is treated as default from schema repo
+			// not as default from env variable
 			req.FormValue(MeshsyncDeploymentModeFormKey),
 		),
 	)

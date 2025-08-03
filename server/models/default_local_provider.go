@@ -62,6 +62,8 @@ type DefaultLocalProvider struct {
 	GenericPersister *database.Handler
 	KubeClient       *mesherykube.Client
 	Log              logger.Handler
+
+	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 // Initialize will initialize the local provider
@@ -268,9 +270,11 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 
 	maps.Copy(metadata, additionalMetadata)
 
-	// if undefined -> set to default
 	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
-		schemasConnection.SetMeshsyncDeploymentModeToMetadata(metadata, schemasConnection.MeshsyncDeploymentModeDefault)
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			metadata,
+			l.MeshsyncDefaultDeploymentMode,
+		)
 	}
 
 	cred := map[string]interface{}{
