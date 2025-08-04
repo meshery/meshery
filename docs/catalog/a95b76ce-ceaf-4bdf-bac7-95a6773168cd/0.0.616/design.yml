@@ -2,7 +2,7 @@
   "id": "a95b76ce-ceaf-4bdf-bac7-95a6773168cd",
   "name": "Kubernetes Service Traffic Distribution",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.616",
+  "version": "0.0.617",
   "metadata": {
     "resolvedAliases": {}
   },

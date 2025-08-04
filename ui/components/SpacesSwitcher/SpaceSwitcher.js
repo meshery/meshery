@@ -51,6 +51,12 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   alignItems: 'center',
   textAlign: 'center',
   fill: theme.palette.text.default,
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.action.selected,
+    '&:hover': {
+      backgroundColor: theme.palette.action.selected + '!important',
+    },
+  },
 }));
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
