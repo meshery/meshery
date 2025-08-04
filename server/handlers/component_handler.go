@@ -215,6 +215,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 
 	filter := &regv1beta1.ModelFilter{
 		Id:          queryParams.Get("id"),
@@ -228,7 +229,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
-		Status:        queryParams.Get("status"),
+		Status:        statusFilter,
 		Trim:          queryParams.Get("trim") == "true",
 	}
 	if search != "" {
@@ -996,6 +997,8 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
+
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
 		Version:     v,
@@ -1013,6 +1016,19 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := prettifyCompDefSchema(entities)
+
+	// Filter by status if specified
+	if statusFilter != "" {
+		filteredComps := []component.ComponentDefinition{}
+		for _, comp := range comps {
+			if string(comp.Model.Status) == statusFilter {
+				filteredComps = append(filteredComps, comp)
+			}
+		}
+		comps = filteredComps
+		// Update count to reflect filtered results
+		count = int64(len(filteredComps))
+	}
 
 	var pgSize int64
 

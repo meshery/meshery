@@ -543,6 +543,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 				host,
 				sap.skipCrdAndOperator,
 				sap.upgradeExistingRelease,
+				sap.registry,
 			)
 			return resp, err
 		}

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -512,4 +513,40 @@ func getCytoscapeJSPosition(component *component.ComponentDefinition, log logger
 	}
 
 	return pos, nil
+}
+
+// FilterEnabledComponents filters out disabled components from a pattern file
+func FilterEnabledComponents(patternFile *pattern.PatternFile, registryManager *registry.RegistryManager) {
+	enabledComponents := []*component.ComponentDefinition{}
+
+	for _, comp := range patternFile.Components {
+		if isComponentEnabled(*comp, registryManager) {
+			enabledComponents = append(enabledComponents, comp)
+		}
+	}
+
+	patternFile.Components = enabledComponents
+}
+
+// Add this function to check component status
+func isComponentEnabled(comp component.ComponentDefinition, registryManager *registry.RegistryManager) bool {
+	// Check for Kubernetes List resources specifically first
+	if isKubernetesListResource(comp) {
+		return false
+	}
+
+	// Check if the component's model has a disabled status
+	if comp.Model.Status == "disabled" {
+		return false
+	}
+
+	// For now, assume all other components are enabled
+	// This should be enhanced to read from CSV/registry
+	return true
+}
+
+// Add this function to check for Kubernetes List resources
+func isKubernetesListResource(comp component.ComponentDefinition) bool {
+	return strings.HasSuffix(comp.Component.Kind, "List") &&
+		comp.Model.Name == "kubernetes"
 }

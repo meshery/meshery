@@ -7,6 +7,7 @@ import (
 
 	"github.com/meshery/meshery/server/models"
 	_models "github.com/meshery/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
 
 	"github.com/meshery/meshery/server/models/pattern/patterns/k8s"
 	"github.com/meshery/meshkit/utils/kubernetes"
@@ -31,7 +32,7 @@ type DeploymentMessagePerContext struct {
 	Location   string
 }
 
-func Process(kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool) ([]DeploymentMessagePerContext, error) {
+func Process(kconfigs []string, componets []component.ComponentDefinition, isDel bool, patternName string, ec *models.Broadcast, userID string, provider models.Provider, connection connection.Connection, skipCrdAndOperator, upgradeExistingRelease bool, registryManager *registry.RegistryManager) ([]DeploymentMessagePerContext, error) {
 	action := "deploy"
 	if isDel {
 		action = "undeploy"
@@ -67,6 +68,22 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
 			for _, comp := range componets {
 				fmt.Println("TEST INSIDE line 70 : ", comp.Component.Kind)
+
+				// ADD STATUS CHECK HERE
+				if registryManager != nil && !isComponentEnabled(comp, registryManager) {
+					// Skip disabled components
+					deploymentMsg := DeploymentMessagePerComp{
+						Kind:       comp.Component.Kind,
+						Model:      comp.Model.Name,
+						CompName:   comp.DisplayName,
+						Success:    true,
+						DesignName: patternName,
+						Message:    fmt.Sprintf("Skipped disabled component %s/%s", patternName, comp.DisplayName),
+					}
+					msgsPerComp = append(msgsPerComp, deploymentMsg)
+					continue // Skip deployment for disabled components
+				}
+
 				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
 					fmt.Println("TEST INSIDE line 72 : ")
 					deploymentMsg := DeploymentMessagePerComp{
@@ -135,4 +152,24 @@ func mergeErrors(errs []error) error {
 	}
 
 	return fmt.Errorf("%s", strings.Join(msgs, "\n"))
+}
+
+func isComponentEnabled(comp component.ComponentDefinition, registryManager *registry.RegistryManager) bool {
+	// Check for Kubernetes List resources
+	if isKubernetesListResource(comp) {
+		return false
+	}
+
+	// Check if the component's model has a disabled status
+	if comp.Model.Status == "disabled" {
+		return false
+	}
+
+	// For now, assume all other components are enabled
+	return true
+}
+
+func isKubernetesListResource(comp component.ComponentDefinition) bool {
+	return strings.HasSuffix(comp.Component.Kind, "List") &&
+		comp.Model.Name == "kubernetes"
 }
