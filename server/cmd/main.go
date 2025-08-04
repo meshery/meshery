@@ -224,6 +224,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	meshsyncDefaultDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
+		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
+	)
+
+	if meshsyncDefaultDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+		meshsyncDefaultDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+	}
+
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
@@ -245,6 +253,7 @@ func main() {
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
+		MeshsyncDefaultDeploymentMode:   meshsyncDefaultDeploymentMode,
 	}
 
 	// Local remote provider is initalized here.
@@ -309,19 +318,20 @@ func main() {
 			continue
 		}
 		cp := &models.RemoteProvider{
-			RemoteProviderURL:          parsedURL.String(),
-			RefCookieName:              parsedURL.Host + "_ref",
-			SessionName:                parsedURL.Host,
-			TokenStore:                 make(map[string]string),
-			LoginCookieDuration:        1 * time.Hour,
-			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
-			UserCapabilitiesPersister:  &models.UserCapabilitiesPersister{DB: dbHandler},
-			ProviderVersion:            version,
-			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
-			GenericPersister:           dbHandler,
-			EventsPersister:            &models.EventsPersister{DB: dbHandler},
-			Log:                        log,
-			CookieDuration:             24 * time.Hour,
+			RemoteProviderURL:             parsedURL.String(),
+			RefCookieName:                 parsedURL.Host + "_ref",
+			SessionName:                   parsedURL.Host,
+			TokenStore:                    make(map[string]string),
+			LoginCookieDuration:           1 * time.Hour,
+			SessionPreferencePersister:    &models.SessionPreferencePersister{DB: dbHandler},
+			UserCapabilitiesPersister:     &models.UserCapabilitiesPersister{DB: dbHandler},
+			ProviderVersion:               version,
+			SmiResultPersister:            &models.SMIResultsPersister{DB: dbHandler},
+			GenericPersister:              dbHandler,
+			EventsPersister:               &models.EventsPersister{DB: dbHandler},
+			Log:                           log,
+			CookieDuration:                24 * time.Hour,
+			MeshsyncDefaultDeploymentMode: meshsyncDefaultDeploymentMode,
 		}
 
 		cp.Initialize()
