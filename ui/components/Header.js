@@ -411,7 +411,7 @@ const Header = ({
   abilityUpdated,
 }) => {
   const { notify } = useNotification;
-  const { openModal } = useContext(WorkspaceModalContext);
+  const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
