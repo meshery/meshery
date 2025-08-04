@@ -313,13 +313,11 @@ const MeshModelComponent_ = ({
     }
   }, [externalView, externalSearchText]);
 
-  
   useEffect(() => {
     if (externalSearchText !== null && externalSearchText !== searchText) {
       setSearchText(externalSearchText);
     }
   }, [externalSearchText]);
-
 
   return (
     <div data-test="workloads">
@@ -371,6 +369,7 @@ const MeshModelComponent_ = ({
               setResourcesDetail={setResourcesDetail}
               setModelsFilters={setModelsFilters}
               externalSelectedItemUUID={externalSelectedItemUUID} // Pass external UUID
+              isModalMode={externalView !== null} // Modal mode // external view
               lastItemRef={{
                 [MODELS]: lastModelRef,
                 [REGISTRANTS]: lastRegistrantRef,

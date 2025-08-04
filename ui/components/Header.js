@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
@@ -502,15 +502,6 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
-                  <CustomTooltip title="Registry">
-                    <IconButton
-                      onClick={() => registryModal.openModal()}
-                      style={{ color: theme.palette.icon.default }}
-                      data-testid="registry-button"
-                    >
-                      <FileIcon {...iconMedium} fill={theme.palette.common.white} />
-                    </IconButton>
-                  </CustomTooltip>
                   <CustomTooltip title="Notifications">
                     <div data-testid="notification-button">
                       <NotificationDrawerButton />

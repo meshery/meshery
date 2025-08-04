@@ -40,10 +40,12 @@ const MesheryTreeView = React.memo(
     lastItemRef,
     isFetching,
     isLoading,
-    externalSelectedItemUUID = null, 
+    externalSelectedItemUUID = null,
+    isModalMode = false, //(disables URL updates)
   }) => {
-    const { handleUpdateSelectedRoute, selectedItemUUID: routerSelectedItemUUID } = useRegistryRouter();
-    
+    const { handleUpdateSelectedRoute, selectedItemUUID: routerSelectedItemUUID } =
+      useRegistryRouter();
+
     const selectedItemUUID = externalSelectedItemUUID || routerSelectedItemUUID;
     const [expanded, setExpanded] = React.useState([]);
     const [selected, setSelected] = React.useState([]);
@@ -104,13 +106,16 @@ const MesheryTreeView = React.memo(
         let selectedIdArr = nodeIds[0].split('.');
         let indx = data.findIndex((item) => item.id === selectedIdArr[0]);
 
-        // Filter object contains current filter applied to data
-        // Route will contain filters to support deeplink
-        const filter = {
-          ...(searchText && { searchText }),
-          pagesize: indx + 14,
-        };
-        handleUpdateSelectedRoute(nodeIds, filter);
+        // update route -> not in modal mode
+        if (!isModalMode) {
+          // Filter object contains current filter applied to data
+          // Route will contain filters to support deeplink
+          const filter = {
+            ...(searchText && { searchText }),
+            pagesize: indx + 14,
+          };
+          handleUpdateSelectedRoute(nodeIds, filter);
+        }
         setSelected([0, nodeIds]);
       } else {
         setSelected([]);

@@ -113,6 +113,7 @@ const StyledMainContent = styled(Box)(() => ({
 }));
 
 const StyledModal = styled(Modal)(({ theme }) => ({
+  zIndex:'1500',
   '& .MuiDialog-paperFullScreen': {
     margin: '0',
   },
@@ -214,7 +215,6 @@ export const Navigation = ({ setHeaderInfo }) => {
   const { selectedView, searchText, selectedItemUUID } = registryContext;
   const [selectedId, setSelectedId] = useState(selectedView || MODELS);
 
-  
   useEffect(() => {
     if (selectedView && selectedView !== selectedId) {
       setSelectedId(selectedView);
