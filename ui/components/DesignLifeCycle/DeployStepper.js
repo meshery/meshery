@@ -237,7 +237,7 @@ export const UpdateDeploymentStepper = ({
           </StepContent>
         ),
         helpText:
-          'Select the environment  and cluster to deploy the design,[learn more](https://docs.meshery.io/guides/infrastructure-management/overview)  about the environment selection',
+          'Select the environment  and cluster to deploy the design, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview)  about the environment selection',
         icon: EnvironmentIcon,
         label: 'Identify Environments',
       },
