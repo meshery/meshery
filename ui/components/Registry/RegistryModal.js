@@ -196,23 +196,12 @@ const NavItem = ({ item, open, selectedId, onSelect }) => {
   );
 };
 
-const RegistryContentWrapper = ({ selectedView }) => {
-  // Create a mock settingsRouter function that returns the expected structure
-  const mockSettingsRouter = () => ({
-    selectedSettingsCategory: 'registry',
-    selectedTab: selectedView,
-    handleChangeSelectedTab: () => {
-      // This will be handled by the modal's own state in the parent Navigation component
-    },
-    handleChangeSettingsCategory: () => {},
-    handleChangeSelectedTabCustomCategory: () => {},
-  });
-
+const RegistryContentWrapper = ({ selectedView, searchText, selectedItemUUID }) => {
   return (
     <MeshModelComponent
-      settingsRouter={mockSettingsRouter}
-      externalView={selectedView} // Pass the external view
-      hideInternalTabs={true} // Hide the internal tab cards
+      externalView={selectedView}
+      externalSearchText={searchText}
+      externalSelectedItemUUID={selectedItemUUID}
     />
   );
 };
@@ -222,21 +211,27 @@ export const Navigation = ({ setHeaderInfo }) => {
   const closeList = useMediaQuery(theme.breakpoints.down('xl'));
   const [open, setOpen] = useState(!closeList);
   const registryContext = useContext(RegistryModalContext);
-  const { selectedView } = registryContext;
+  const { selectedView, searchText, selectedItemUUID } = registryContext;
   const [selectedId, setSelectedId] = useState(selectedView || MODELS);
 
   
+  useEffect(() => {
+    if (selectedView && selectedView !== selectedId) {
+      setSelectedId(selectedView);
+    }
+  }, [selectedView]);
+
   const { data: modelsData, isLoading: modelsLoading } = useGetMeshModelsQuery({
-    params: { pagesize: 'all' }
+    params: { pagesize: 'all' },
   });
   const { data: componentsData, isLoading: componentsLoading } = useGetComponentsQuery({
-    params: { pagesize: 'all' }
+    params: { pagesize: 'all' },
   });
   const { data: relationshipsData, isLoading: relationshipsLoading } = useGetRelationshipsQuery({
-    params: { pagesize: 'all' }
+    params: { pagesize: 'all' },
   });
   const { data: registrantsData, isLoading: registrantsLoading } = useGetRegistrantsQuery({
-    params: { pagesize: 'all' }
+    params: { pagesize: 'all' },
   });
   const counts = {
     models: modelsData ? removeDuplicateVersions(modelsData.models || []).length : 0,
@@ -254,7 +249,7 @@ export const Navigation = ({ setHeaderInfo }) => {
     const item = navConfig.find((nav) => nav.id === id);
     if (item) {
       setHeaderInfo({
-        title: `Registry - ${selectedView}`,
+        title: `Registry - ${id}`,
         icon: <FileIcon {...iconMedium} fill={theme.palette.common.white} />,
       });
     }
@@ -295,20 +290,22 @@ export const Navigation = ({ setHeaderInfo }) => {
       <StyledMainContent>
         <RegistryContentWrapper
           selectedView={selectedId}
+          searchText={searchText}
+          selectedItemUUID={selectedItemUUID}
           counts={counts}
-          isLoading={modelsLoading || componentsLoading || relationshipsLoading || registrantsLoading}
+          isLoading={
+            modelsLoading || componentsLoading || relationshipsLoading || registrantsLoading
+          }
         />
       </StyledMainContent>
     </Box>
   );
 };
 
-const RegistryModal = ({
-  registryModal,
-  closeRegistryModal,
-}) => {
+const RegistryModal = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const registryContext = useContext(RegistryModalContext);
   const [headerInfo, setHeaderInfo] = useState({
     title: 'Registry',
     icon: <FileIcon {...iconMedium} fill={theme.palette.icon.default} />,
@@ -316,14 +313,14 @@ const RegistryModal = ({
 
   return (
     <StyledModal
-      closeModal={closeRegistryModal}
-      open={registryModal}
+      closeModal={registryContext.closeModal}
+      open={registryContext.open}
       headerIcon={headerInfo.icon}
       title={headerInfo.title}
       isFullScreenModeAllowed={!isSmallScreen}
     >
       <ModalBody style={{ height: '100%', padding: '0' }}>
-        {registryModal && <Navigation setHeaderInfo={setHeaderInfo} />}
+        {registryContext.open && <Navigation setHeaderInfo={setHeaderInfo} />}
       </ModalBody>
     </StyledModal>
   );

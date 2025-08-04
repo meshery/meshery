@@ -31,6 +31,8 @@ import CreateRelationshipModal from '@/components/RelationshipBuilder/CreateRela
 const MeshModelComponent_ = ({
   // settingsRouter,
   externalView = null, // External view from modal
+  externalSearchText = null, // External search text from modal
+  externalSelectedItemUUID = null, // External selected item UUID from modal
 }) => {
   // const router = useRouter();
   // const { handleChangeSelectedTab, selectedTab } = settingsRouter(router);
@@ -43,7 +45,8 @@ const MeshModelComponent_ = ({
     Registrants: 0,
   });
 
-  const [searchText, setSearchText] = useState(searchQuery);
+  // Use external search text if provided, otherwise use query from router
+  const [searchText, setSearchText] = useState(externalSearchText || searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   // Use external view if provided, otherwise use selectedTab or default to 'Models'
   const [view, setView] = useState(externalView || 'Models');
@@ -292,7 +295,7 @@ const MeshModelComponent_ = ({
     if (externalView && externalView !== view) {
       setView(externalView);
       setResourcesDetail([]);
-      setSearchText(null);
+      setSearchText(externalSearchText || null);
       setModelsFilters({ page: 0 });
       setRegistrantsFilters({ page: 0 });
       setComponentsFilters({ page: 0 });
@@ -308,7 +311,15 @@ const MeshModelComponent_ = ({
         data: {},
       });
     }
-  }, [externalView]);
+  }, [externalView, externalSearchText]);
+
+  
+  useEffect(() => {
+    if (externalSearchText !== null && externalSearchText !== searchText) {
+      setSearchText(externalSearchText);
+    }
+  }, [externalSearchText]);
+
 
   return (
     <div data-test="workloads">
@@ -359,6 +370,7 @@ const MeshModelComponent_ = ({
               showDetailsData={showDetailsData}
               setResourcesDetail={setResourcesDetail}
               setModelsFilters={setModelsFilters}
+              externalSelectedItemUUID={externalSelectedItemUUID} // Pass external UUID
               lastItemRef={{
                 [MODELS]: lastModelRef,
                 [REGISTRANTS]: lastRegistrantRef,
@@ -453,7 +465,6 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
     </MeshModelToolbar>
   );
 };
-
 
 const MeshModelComponent = (props) => {
   return (

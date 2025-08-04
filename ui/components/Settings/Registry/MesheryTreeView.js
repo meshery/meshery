@@ -40,8 +40,11 @@ const MesheryTreeView = React.memo(
     lastItemRef,
     isFetching,
     isLoading,
+    externalSelectedItemUUID = null, 
   }) => {
-    const { handleUpdateSelectedRoute, selectedItemUUID } = useRegistryRouter();
+    const { handleUpdateSelectedRoute, selectedItemUUID: routerSelectedItemUUID } = useRegistryRouter();
+    
+    const selectedItemUUID = externalSelectedItemUUID || routerSelectedItemUUID;
     const [expanded, setExpanded] = React.useState([]);
     const [selected, setSelected] = React.useState([]);
     const { width } = useWindowDimensions();

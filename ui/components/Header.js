@@ -17,14 +17,8 @@ import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RegistryModal from './Registry/RegistryModal';
-import { RegistryModalContext } from '@/utils/context/RegistryModalContextProvider';
-import {
-  getComponentsDetail,
-  getMeshModels,
-  getRelationshipsDetail,
-  getMeshModelRegistrants,
-} from '../api/meshmodel';
-import { removeDuplicateVersions } from './Settings/Registry/helper';
+import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
+
 import {
   Checkbox,
   Box,
@@ -422,8 +416,7 @@ const Header = ({
   const { notify } = useNotification;
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
-  const registryModalContext = useContext(RegistryModalContext);
-
+  const registryModal = useRegistryModal();
 
   const {
     data: providerCapabilities,
@@ -511,7 +504,7 @@ const Header = ({
                   </UserSpan>
                   <CustomTooltip title="Registry">
                     <IconButton
-                      onClick={() => registryModalContext.openModal()}
+                      onClick={() => registryModal.openModal()}
                       style={{ color: theme.palette.icon.default }}
                       data-testid="registry-button"
                     >
@@ -536,10 +529,7 @@ const Header = ({
             </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
-        <RegistryModal
-          registryModal={registryModalContext.open}
-          closeRegistryModal={registryModalContext.closeModal}
-        />
+        <RegistryModal />
       </>
     </NoSsr>
   );
