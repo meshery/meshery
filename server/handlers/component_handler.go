@@ -1017,7 +1017,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := prettifyCompDefSchema(entities)
 
-	// Filter by status if specified
+	// Filter by status 
 	if statusFilter != "" {
 		filteredComps := []component.ComponentDefinition{}
 		for _, comp := range comps {
