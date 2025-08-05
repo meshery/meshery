@@ -75,23 +75,19 @@ export const useRegistryModal = () => {
   };
 
   return {
-    
     open: context.open,
     openModal: context.openModal,
     closeModal: context.closeModal,
-    
-    
+
     openRegistryWithParams,
     openToModel,
     openToComponent,
     openToRelationship,
     openToRegistrant,
-    
-    
+
     selectedView: context.selectedView,
     searchText: context.searchText,
     selectedItemUUID: context.selectedItemUUID,
-    
 
     setSelectedView: context.setSelectedView,
     setSearchText: context.setSearchText,
