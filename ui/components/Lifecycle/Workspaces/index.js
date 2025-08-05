@@ -212,7 +212,7 @@ const Workspaces = ({ onSelectWorkspace }) => {
       handleWorkspaceModalOpen(event, WORKSPACE_ACTION_TYPES.CREATE, {});
       workspaceModalContext.setCreateNewWorkspaceModalOpen(false);
     }
-  }, [workspaceModalContext]);
+  }, [workspaceModalContext.createNewWorkspaceModalOpen]);
 
   const handleEditWorkspace = ({ organization, name, description }) => {
     updateWorkspace({
