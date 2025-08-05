@@ -165,7 +165,6 @@ func isComponentEnabled(comp component.ComponentDefinition, registryManager *reg
 		return false
 	}
 
-	// For now, assume all other components are enabled
 	return true
 }
 
