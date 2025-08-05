@@ -10,6 +10,9 @@ import {
   WorkspaceIcon,
   useMediaQuery,
   useTheme,
+  Divider,
+  Button,
+  Box,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
@@ -59,7 +62,11 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
 
-  const { setSelectedWorkspace, openModal: openWorkspaceModal } = useContext(WorkspaceModalContext);
+  const {
+    setSelectedWorkspace,
+    openModal: openWorkspaceModal,
+    setCreateNewWorkspaceModalOpen,
+  } = useContext(WorkspaceModalContext);
 
   // useEffect(() => {
   //   if (selectedWorkspace?.id) {
@@ -160,6 +167,30 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             <span>{works.name}</span>
                           </HoverMenuItem>
                         ))}
+                        <Divider />
+                        <Box gap={2} px={2} display={'flex'}>
+                          <Button
+                            variant="contained"
+                            onClick={() => {
+                              openWorkspaceModal(true);
+                            }}
+                          >
+                            Explore Workspaces
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            onClick={() => {
+                              setSelectedWorkspace({
+                                id: 'All Workspaces',
+                                name: 'All Workspaces',
+                              });
+                              setCreateNewWorkspaceModalOpen(true);
+                              openWorkspaceModal(true);
+                            }}
+                          >
+                            Create Workspace
+                          </Button>
+                        </Box>
                       </StyledSelect>
                     </Grid2>
                   </Grid2>
