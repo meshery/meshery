@@ -17,7 +17,7 @@ create_meshery_config_folder() {
     echo "done: Create meshery config folder"
 }
 
-# Generate auth file to comunicate with meshery server
+# Generate auth file to communicate with meshery server
 create_auth_file() {
     echo "start: authentication configuration" 
     echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "${HOME}/.meshery/auth.json"
@@ -36,7 +36,11 @@ port_forwarding() {
 config_mesheryctl_port_forwarding_endpoint() {
     echo "start: meshery Config file endpoint"
     echo "retrieving current context"
-    context=$(yq '.current-context' "${HOME}/.meshery/config.yaml")
+    context="$(yq '.current-context' "${HOME}/.meshery/config.yaml")"
+    if [[ -z "${context}" ]]; then
+        echo "Error: Failed to retrieve current context from meshery config." >&2
+        exit 1
+    fi
     yq -i ".contexts.\"${context}\".endpoint = \"http://localhost:${MESHERYCTL_PORT_FORWARDING}\"" "${HOME}/.meshery/config.yaml"
     echo "done: meshery Config file endpoint"
 }
