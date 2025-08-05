@@ -1,0 +1,46 @@
+{
+  "id": "kubernetes-to-aws-rds-binding",
+  "kind": "edge",
+  "metadata": {
+    "description": "A relationship that connects Kubernetes resources to AWS RDS resources",
+    "isAnnotation": false
+  },
+  "model": {
+    "name": "kubernetes",
+    "version": "v1.34.0-beta.0"
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "Pod",
+            "match": {
+              "refs": [
+                ["metadata", "annotations", "rds.aws.amazon.com/cluster-identifier"],
+                ["spec", "containers", "*", "env", "*", "valueFrom", "secretKeyRef", "name"]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "DBCluster",
+            "match": {
+              "refs": [
+                ["spec", "dbClusterIdentifier"]
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "rds-connection",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}
