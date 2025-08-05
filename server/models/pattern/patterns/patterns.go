@@ -69,7 +69,6 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 			for _, comp := range componets {
 				fmt.Println("TEST INSIDE line 70 : ", comp.Component.Kind)
 
-				// ADD STATUS CHECK HERE
 				if registryManager != nil && !isComponentEnabled(comp, registryManager) {
 					// Skip disabled components
 					deploymentMsg := DeploymentMessagePerComp{
@@ -160,7 +159,6 @@ func isComponentEnabled(comp component.ComponentDefinition, registryManager *reg
 		return false
 	}
 
-	// Check if the component's model has a disabled status
 	if comp.Model.Status == "disabled" {
 		return false
 	}

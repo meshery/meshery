@@ -528,24 +528,21 @@ func FilterEnabledComponents(patternFile *pattern.PatternFile, registryManager *
 	patternFile.Components = enabledComponents
 }
 
-// Add this function to check component status
+// function to check component status
 func isComponentEnabled(comp component.ComponentDefinition, registryManager *registry.RegistryManager) bool {
-	// Check for Kubernetes List resources specifically first
+
 	if isKubernetesListResource(comp) {
 		return false
 	}
 
-	// Check if the component's model has a disabled status
 	if comp.Model.Status == "disabled" {
 		return false
 	}
 
-	// For now, assume all other components are enabled
-	// This should be enhanced to read from CSV/registry
 	return true
 }
 
-// Add this function to check for Kubernetes List resources
+// checks for Kubernetes List resources
 func isKubernetesListResource(comp component.ComponentDefinition) bool {
 	return strings.HasSuffix(comp.Component.Kind, "List") &&
 		comp.Model.Name == "kubernetes"
