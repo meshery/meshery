@@ -172,7 +172,7 @@ const MainDesignsContent = ({
   const DESIGN_ACTIONS = {
     MERGE_DESIGN: {
       id: 'merge_design',
-      title: 'Merge Design Into Current Design',
+      title: 'Merge Into Current Design',
       icon: <MergeOutlined fill={theme.palette.icon.default} />,
       enabled: () =>
         isDesignOpenInKanvas() && CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
@@ -231,6 +231,10 @@ const MainDesignsContent = ({
   }) => {
     const options = [
       {
+        ...DESIGN_ACTIONS.MERGE_DESIGN,
+        handler: () => handleMerge(design),
+      },
+      {
         ...DESIGN_ACTIONS.EXPORT_DESIGN,
         handler: () => handleDesignDownloadModal(design),
       },
@@ -247,10 +251,6 @@ const MainDesignsContent = ({
       {
         ...DESIGN_ACTIONS.DELETE_DESIGN,
         handler: () => handleDelete([design], RESOURCE_TYPE.DESIGN, refetch),
-      },
-      {
-        ...DESIGN_ACTIONS.MERGE_DESIGN,
-        handler: () => handleMerge(design),
       },
     ];
 
