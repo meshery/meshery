@@ -10,6 +10,9 @@ import {
   WorkspaceIcon,
   useMediaQuery,
   useTheme,
+  Divider,
+  Button,
+  Box,
 } from '@sistent/sistent';
 import { NoSsr } from '@sistent/sistent';
 import { StyledSelect } from './SpaceSwitcher';
@@ -21,12 +24,18 @@ import {
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
 
-export const HoverMenuItem = styled(MenuItem)(() => ({
+export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '1rem',
   '& .workspace-icon': {
     display: 'flex',
+  },
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.action.selected,
+    '&:hover': {
+      backgroundColor: theme.palette.action.selected + '!important',
+    },
   },
 }));
 
@@ -53,7 +62,11 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
   const [updateSelectedWorkspace, { isLoading: isUpdatingSelectedWorkspace }] =
     useUpdateSelectedWorkspaceMutation();
 
-  const { setSelectedWorkspace, openModal: openWorkspaceModal } = useContext(WorkspaceModalContext);
+  const {
+    setSelectedWorkspace,
+    openModal: openWorkspaceModal,
+    setCreateNewWorkspaceModalOpen,
+  } = useContext(WorkspaceModalContext);
 
   // useEffect(() => {
   //   if (selectedWorkspace?.id) {
@@ -154,6 +167,30 @@ function WorkspaceSwitcher({ open, fromMobileView }) {
                             <span>{works.name}</span>
                           </HoverMenuItem>
                         ))}
+                        <Divider />
+                        <Box gap={2} px={2} display={'flex'}>
+                          <Button
+                            variant="contained"
+                            onClick={() => {
+                              openWorkspaceModal(true);
+                            }}
+                          >
+                            Explore Workspaces
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            onClick={() => {
+                              setSelectedWorkspace({
+                                id: 'All Workspaces',
+                                name: 'All Workspaces',
+                              });
+                              setCreateNewWorkspaceModalOpen(true);
+                              openWorkspaceModal(true);
+                            }}
+                          >
+                            Create Workspace
+                          </Button>
+                        </Box>
                       </StyledSelect>
                     </Grid2>
                   </Grid2>

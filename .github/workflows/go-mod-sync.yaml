@@ -1,3 +1,10 @@
+# Meshery Extension Point
+# ---
+# Purpose: Notify Remote Providers of changes in Golang dependencies
+# Learn more: See https://docs.meshery.io/extensibility
+# Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+# ---
+
 name: Meshery extensions go.mod sync
 on:
   workflow_dispatch:
