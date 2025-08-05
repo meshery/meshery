@@ -54,7 +54,7 @@ export const useRegistryModal = () => {
    * @param {string} relationshipId - The relationship ID to navigate to
    * @param {string} searchText - Optional search text to apply
    */
-  const openToRelationship = (relationshipId, searchText = '') => {
+  const openToRelationship = (relationshipId) => {
     openRegistryWithParams({
       tab: 'Relationships',
       selectedItemUUID: relationshipId,

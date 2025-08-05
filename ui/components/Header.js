@@ -17,7 +17,6 @@ import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
 import RegistryModal from './Registry/RegistryModal';
-import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 
 import {
   Checkbox,
@@ -35,7 +34,6 @@ import {
   NoSsr,
   useTheme,
   useMediaQuery,
-  FileIcon,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -418,7 +416,6 @@ const Header = ({
   const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
-  const registryModal = useRegistryModal();
 
   const {
     data: providerCapabilities,

@@ -113,7 +113,7 @@ const StyledMainContent = styled(Box)(() => ({
 }));
 
 const StyledModal = styled(Modal)(({ theme }) => ({
-  zIndex:'1500',
+  zIndex: '1500',
   '& .MuiDialog-paperFullScreen': {
     margin: '0',
   },

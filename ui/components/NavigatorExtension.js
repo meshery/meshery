@@ -47,7 +47,7 @@ function NavigatorExtension({ url }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const { openModalWithDefault } = useContext(WorkspaceModalContext);
-    const registryModal = useRegistryModal();
+  const registryModal = useRegistryModal();
   if (err != null) {
     return (
       <div role="alert">

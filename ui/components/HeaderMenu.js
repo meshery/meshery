@@ -37,7 +37,7 @@ const HeaderMenu = () => {
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
   const registryModal = useRegistryModal();
-  
+
   const {
     data: userData,
     isSuccess: isGetUserSuccess,
@@ -64,8 +64,7 @@ const HeaderMenu = () => {
   const handleRegistry = () => {
     registryModal?.openModal();
     handleClose();
-
-  }
+  };
   const handleConnections = () => {
     router.push('/management/connections');
     handleClose();

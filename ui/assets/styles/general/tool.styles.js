@@ -13,7 +13,7 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   zIndex: '101',
 }));
 
-export const MeshModelToolbar = styled(Box)(({ theme }) => ({
+export const MeshModelToolbar = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'space-between',
   height: '4rem',
@@ -24,7 +24,7 @@ export const MeshModelToolbar = styled(Box)(({ theme }) => ({
   marginBottom: '0.5rem',
 }));
 
-export const MainContainer = styled(Box)(({ theme }) => ({
+export const MainContainer = styled(Box)(() => ({
   borderRadius: '0.25rem',
   display: 'flex',
   flexDirection: 'column',

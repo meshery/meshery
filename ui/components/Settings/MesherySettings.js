@@ -14,7 +14,6 @@ import {
   LeftArrowIcon,
   PollIcon,
   DatabaseIcon,
-  FileIcon,
   MendeleyIcon,
   useTheme,
 } from '@sistent/sistent';
@@ -34,15 +33,7 @@ import {
 } from '../../api/meshmodel';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import {
-  REGISTRY,
-  METRICS,
-  ADAPTERS,
-  RESET,
-  GRAFANA,
-  PROMETHEUS,
-  OVERVIEW,
-} from '@/constants/navigator';
+import { METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS, OVERVIEW } from '@/constants/navigator';
 import { removeDuplicateVersions } from './Registry/helper';
 import DefaultError from '../General/error-404';
 import MesheryConfigurationChart from '../Dashboard/charts/MesheryConfigurationCharts';
