@@ -2,6 +2,7 @@ package kubernetes
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/machines"
@@ -32,14 +33,37 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), err
 	}
 
-	// TODO:
-	// this viper value get here is a temporal thing
-	// meshsync deployment mode will be propagated from connection entity
-	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromString(
-		viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
+	token, ok := ctx.Value(models.TokenCtxKey).(string)
+	if !ok {
+		errToken := ErrConnectAction(fmt.Errorf("failed to retrieve user token"))
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errToken})
+		return machines.NoOp, eventBuilder.Build(), errToken
+
+	}
+	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID)
+	connection, _, err := provider.GetConnectionByIDAndKind(
+		token,
+		connectionID,
+		"kubernetes",
 	)
+	if err != nil {
+		errConnection := ErrConnectAction(err)
+		eventBuilder.WithMetadata(map[string]interface{}{"error": errConnection})
+		return machines.NoOp, eventBuilder.Build(), errConnection
+
+	}
+
+	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.Metadata)
 	if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
-		meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+		// TODO:
+		// maybe not call to viper here and propagate default value from above,
+		// f.e. when machine is created
+		meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeFromString(
+			viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
+		)
+		if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+			meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+		}
 	}
 
 	go func() {
