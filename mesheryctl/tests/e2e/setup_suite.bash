@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-MESHERYCTL_PORT_FORWARDING=8080
+MESHERYCTL_PORT_FORWARDING=9999
 
 install_mesheryctl() {
     echo "start: Install mesheryctl"
