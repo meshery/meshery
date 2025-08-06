@@ -8,11 +8,13 @@ import {
   MainContainer,
   TreeWrapper,
   DetailsContainer,
+  InnerContainer,
+  CardStyle,
 } from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
-// import { useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
@@ -29,15 +31,19 @@ import CreateModelModal from './CreateModelModal';
 import CreateRelationshipModal from '@/components/RelationshipBuilder/CreateRelationshipModal';
 
 const MeshModelComponent_ = ({
-  // settingsRouter,
+  settingsRouter,
   externalView = null, // External view from modal
   externalSearchText = null, // External search text from modal
   externalSelectedItemUUID = null, // External selected item UUID from modal
 }) => {
-  // const router = useRouter();
-  // const { handleChangeSelectedTab, selectedTab } = settingsRouter(router);
+  const router = useRouter();
+  // -> use settingsRouter when not in modal mode (Settings page)
+  const { handleChangeSelectedTab } =
+    settingsRouter && externalView === null
+      ? settingsRouter(router)
+      : { handleChangeSelectedTab: null };
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const { searchQuery, selectedPageSize } = useMeshModelComponentRouter();
+  const { searchQuery, selectedPageSize, selectedTab } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
     Components: 0,
@@ -49,7 +55,7 @@ const MeshModelComponent_ = ({
   const [searchText, setSearchText] = useState(externalSearchText || searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   // Use external view if provided, otherwise use selectedTab or default to 'Models'
-  const [view, setView] = useState(externalView || 'Models');
+  const [view, setView] = useState(externalView || selectedTab || 'Models');
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
@@ -258,7 +264,31 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
-
+  const handleTabClick = (selectedView) => {
+    // -> use settingsRouter when not in modal mode (Settings page)
+    if (handleChangeSelectedTab && externalView === null) {
+      handleChangeSelectedTab(selectedView);
+    }
+    setView(selectedView);
+    if (view !== selectedView) {
+      setSearchText(null);
+      setResourcesDetail([]);
+    }
+    setModelsFilters({ page: 0 });
+    setRegistrantsFilters({ page: 0 });
+    setComponentsFilters({ page: 0 });
+    setRelationshipsFilters({ page: 0 });
+    setPage({
+      Models: 0,
+      Components: 0,
+      Relationships: 0,
+      Registrants: 0,
+    });
+    setShowDetailsData({
+      type: '',
+      data: {},
+    });
+  };
   const modifyData = () => {
     if (!resourcesDetail) return [];
 
@@ -342,6 +372,34 @@ const MeshModelComponent_ = ({
             openRelationshipModal={() => setIsRelationshipModalOpen(true)}
             view={view}
           />
+        )}
+        {externalView === null && (
+          <InnerContainer>
+            <TabCard
+              label="Models"
+              count={modelsData?.total_count || 0}
+              active={view === MODELS}
+              onClick={() => handleTabClick(MODELS)}
+            />
+            <TabCard
+              label="Components"
+              count={componentsData?.total_count || 0}
+              active={view === COMPONENTS}
+              onClick={() => handleTabClick(COMPONENTS)}
+            />
+            <TabCard
+              label="Relationships"
+              count={relationshipsData?.total_count || 0}
+              active={view === RELATIONSHIPS}
+              onClick={() => handleTabClick(RELATIONSHIPS)}
+            />
+            <TabCard
+              label="Registrants"
+              count={registrantsData?.total_count || 0}
+              active={view === REGISTRANTS}
+              onClick={() => handleTabClick(REGISTRANTS)}
+            />
+          </InnerContainer>
         )}
 
         <TreeWrapper>
@@ -465,6 +523,21 @@ const TabBar = ({ openImportModal, openCreateModal, view, openRelationshipModal 
   );
 };
 
+const TabCard = ({ label, count, active, onClick }) => {
+  return (
+    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
+      <span
+        style={{
+          fontSize: '1rem',
+          marginLeft: '4px',
+        }}
+      >
+        {`(${count})`}
+      </span>
+      {label}
+    </CardStyle>
+  );
+};
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
