@@ -23,7 +23,7 @@ on:
     paths:
       - "**.go"
       - ".github/workflows/mesheryctl-bats-test.yml"
-      - ".github/workflows/mesheryctl-e2e.yml" 
+      - ".github/workflows/mesheryctl-e2e.yaml" 
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
     - cron: '43 */24 * * *'
@@ -35,6 +35,16 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }} 
     secrets:
        PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.24']
+        k8s_version: ['v1.31.4', 'v1.32.0']
+        platform: ['kubernetes']
+    with:
+      go-version: ${{ matrix.go }}
+      k8s-version: ${{ matrix.k8s_version }}
+      platform: ${{ matrix.platform }}
 
   pr-bats-test:
     if: ${{ github.event_name == 'pull_request'}}
