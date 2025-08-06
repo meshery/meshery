@@ -37,21 +37,21 @@ jobs:
        PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
 
   pr-bats-test:
-      if: ${{ github.event_name == 'pull_request'}}
-      name: Mesheryctl BATS Test
-      uses: ./.github/workflows/mesheryctl-bats-test.yml
-      secrets:
-        PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
-      strategy:
-        fail-fast: false
-        matrix:
-          go: ['1.24']
-          k8s_version: ['v1.31.4', 'v1.32.0']
-          platform: ['kubernetes']
-      with:
-        go-version: ${{ matrix.go }}
-        k8s-version: ${{ matrix.k8s_version }}
-        platform: ${{ matrix.platform }}
+    if: ${{ github.event_name == 'pull_request'}}
+    name: Mesheryctl BATS Test
+    uses: ./.github/workflows/mesheryctl-bats-test.yml
+    secrets:
+      PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ['1.24']
+        k8s_version: ['v1.31.4', 'v1.32.0']
+        platform: ['kubernetes']
+    with:
+      go-version: ${{ matrix.go }}
+      k8s-version: ${{ matrix.k8s_version }}
+      platform: ${{ matrix.platform }}
 
   manual-test:
     name: Manual e2e Test
