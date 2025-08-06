@@ -63,20 +63,16 @@
         jsonData.shift();
 
         // Remove unnecessary columns
+        const processedData = [];
+
         jsonData.forEach(row => {
-          row.splice(10, 1);
-          row.splice(9, 1);
-          row.splice(8, 1);
-          row.splice(7, 1);
-          row.splice(6, 1);
-          row.splice(5, 1);
-          row.splice(4, 1);
-          row.splice(3, 1);
+          const trimmedRow = [row[0], row[1], row[2], row[3], row[10]];
+          processedData.push(trimmedRow);
         });
 
         // Group rows by category
         const categories = {};
-        jsonData.forEach(row => {
+        processedData.forEach(row => {
           const category = row[0].replace(/\s+/g, '');
           if (!categories[category]) {
             categories[category] = [];
@@ -124,7 +120,7 @@
 
             const keyIdColumn = document.createElement('td');
             keyIdColumn.style.padding = '1rem';
-            keyIdColumn.innerHTML = `<b>Key ID: </b><br>${row[5]}`;  // 5th column is the Key ID
+            keyIdColumn.innerHTML = `<b>Key ID: </b><br>${row[4]}`;  
             newRow.appendChild(keyIdColumn);
 
             const secondColumn = document.createElement('td');
