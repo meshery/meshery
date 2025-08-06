@@ -709,6 +709,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
 		Trim:        queryParams.Get("trim") == "true",
@@ -721,6 +722,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      statusFilter,
 	})
 
 	comps := prettifyCompDefSchema(entities)
@@ -779,6 +781,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	v := queryParams.Get("version")
 
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
 		ModelName:   typ,
