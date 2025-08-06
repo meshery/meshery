@@ -12,6 +12,17 @@ import (
 )
 
 func TestModelBuild(t *testing.T) {
+	// Clean up any existing test directories before running tests
+	cleanupDirs := []string{
+		"test-case-model-build-aws-dynamodb-controller",
+		"test-case-model-build-aws-dynamodb-controller-gbxter34",
+	}
+	for _, dir := range cleanupDirs {
+		os.RemoveAll(dir)
+		d := dir // Capture for t.Cleanup
+		t.Cleanup(func() { os.RemoveAll(d) })
+	}
+
 	utils.SetupContextEnv(t)
 
 	// get current directory
@@ -23,11 +34,9 @@ func TestModelBuild(t *testing.T) {
 
 	setupHookModelInit := func(modelInitArgs ...string) func() {
 		return func() {
-			// TODO replace ModelExpCmd with ModelCmd
 			// TODO this is a bad idea, it is somehow has affect on init_test
 			// probably because ModelExpCmd is the same object
-			cmd := ModelExpCmd
-			// cmd := ModelCmd
+			cmd := ModelCmd
 			cmd.SetArgs(modelInitArgs)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd.SetOut(buff)
@@ -166,9 +175,7 @@ func TestModelBuild(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			// TODO replace ModelExpCmd with  ModelCmd
-			cmd := ModelExpCmd
-			// cmd := ModelCmd
+			cmd := ModelCmd
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()
