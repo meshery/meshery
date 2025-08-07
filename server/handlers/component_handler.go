@@ -1012,7 +1012,6 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	statusFilter := queryParams.Get("status")
-
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
 		Version:     v,

@@ -67,7 +67,6 @@ func Process(kconfigs []string, componets []component.ComponentDefinition, isDel
 			msgsPerComp := make([]DeploymentMessagePerComp, 0)
 			for _, comp := range componets {
 				fmt.Println("TEST INSIDE line 70 : ", comp.Component.Kind)
-
 				if !skipCrdAndOperator && depHandler != nil && comp.Model.Name != (_models.Kubernetes{}).String() {
 					fmt.Println("TEST INSIDE line 72 : ")
 					deploymentMsg := DeploymentMessagePerComp{

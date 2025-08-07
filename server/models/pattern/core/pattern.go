@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/meshery/meshery/server/models/pattern/utils"
@@ -514,5 +513,3 @@ func getCytoscapeJSPosition(component *component.ComponentDefinition, log logger
 
 	return pos, nil
 }
-
-
