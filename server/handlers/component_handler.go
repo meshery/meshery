@@ -485,6 +485,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	cat := mux.Vars(r)["category"]
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
@@ -497,6 +498,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       statusFilter,
 	})
 
 	comps := prettifyCompDefSchema(entities)
@@ -560,6 +562,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	cat := mux.Vars(r)["category"]
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
@@ -573,6 +576,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       statusFilter,
 	})
 	comps := prettifyCompDefSchema(entities)
 
@@ -635,6 +639,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	v := queryParams.Get("version")
 
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
@@ -647,6 +652,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      statusFilter,
 	})
 	comps := prettifyCompDefSchema(entities)
 
@@ -793,6 +799,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      statusFilter,
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -856,6 +863,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		ModelName:    typ,
@@ -867,6 +875,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       statusFilter,
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -928,6 +937,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
+	statusFilter := queryParams.Get("status")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		Version:      v,
@@ -938,6 +948,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
+		Status:       statusFilter,
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -1012,6 +1023,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
+		Status:      statusFilter,
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -1019,19 +1031,6 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
 	comps := prettifyCompDefSchema(entities)
-
-	// Filter by status 
-	if statusFilter != "" {
-		filteredComps := []component.ComponentDefinition{}
-		for _, comp := range comps {
-			if string(comp.Model.Status) == statusFilter {
-				filteredComps = append(filteredComps, comp)
-			}
-		}
-		comps = filteredComps
-		// Update count to reflect filtered results
-		count = int64(len(filteredComps))
-	}
 
 	var pgSize int64
 

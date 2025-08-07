@@ -515,35 +515,4 @@ func getCytoscapeJSPosition(component *component.ComponentDefinition, log logger
 	return pos, nil
 }
 
-// FilterEnabledComponents filters out disabled components from a pattern file
-func FilterEnabledComponents(patternFile *pattern.PatternFile, registryManager *registry.RegistryManager) {
-	enabledComponents := []*component.ComponentDefinition{}
 
-	for _, comp := range patternFile.Components {
-		if isComponentEnabled(*comp, registryManager) {
-			enabledComponents = append(enabledComponents, comp)
-		}
-	}
-
-	patternFile.Components = enabledComponents
-}
-
-// function to check component status
-func isComponentEnabled(comp component.ComponentDefinition, registryManager *registry.RegistryManager) bool {
-
-	if isKubernetesListResource(comp) {
-		return false
-	}
-
-	if comp.Model.Status == "disabled" {
-		return false
-	}
-
-	return true
-}
-
-// checks for Kubernetes List resources
-func isKubernetesListResource(comp component.ComponentDefinition) bool {
-	return strings.HasSuffix(comp.Component.Kind, "List") &&
-		comp.Model.Name == "kubernetes"
-}
