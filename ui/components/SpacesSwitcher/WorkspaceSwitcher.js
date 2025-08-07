@@ -23,7 +23,6 @@ import {
   useGetSelectedWorkspace,
   useUpdateSelectedWorkspaceMutation,
 } from '@/rtk-query/user';
-import { set } from 'lodash/fp';
 
 export const HoverMenuItem = styled(MenuItem)(({ theme }) => ({
   display: 'flex',
