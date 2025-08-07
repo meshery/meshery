@@ -15,15 +15,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updatePage } from '@/store/slices/mesheryUi';
 import { getPath } from 'lib/path';
 
-
 // Updated CardContainer with consistent height
 const UniformCardContainer = ({ children }) => (
-  <CardContainer 
-    style={{ 
-      height: '280px', 
-      display: 'flex', 
+  <CardContainer
+    style={{
+      height: '280px',
+      display: 'flex',
       flexDirection: 'column',
-      position: 'relative'
+      position: 'relative',
     }}
   >
     {children}
@@ -32,13 +31,13 @@ const UniformCardContainer = ({ children }) => (
 
 // Updated FrontSideDescription with flex properties
 const UniformDescription = ({ children, ...props }) => (
-  <FrontSideDescription 
+  <FrontSideDescription
     {...props}
-    style={{ 
-      flex: 1, 
-      display: 'flex', 
+    style={{
+      flex: 1,
+      display: 'flex',
       alignItems: 'flex-start',
-      marginBottom: '60px' // Space for button
+      marginBottom: '60px', // Space for button
     }}
   >
     {children}
@@ -47,13 +46,15 @@ const UniformDescription = ({ children, ...props }) => (
 
 // Button container positioned at bottom
 const ButtonContainer = ({ children }) => (
-  <div style={{ 
-    position: 'absolute', 
-    bottom: '16px', 
-    right: '16px', 
-    left: '16px',
-    textAlign: 'right' 
-  }}>
+  <div
+    style={{
+      position: 'absolute',
+      bottom: '16px',
+      right: '16px',
+      left: '16px',
+      textAlign: 'right',
+    }}
+  >
     {children}
   </div>
 );
@@ -76,7 +77,7 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
           Collaboratively design and manage your infra and apps. Kanvas is now publicly available.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for access!'}
         </UniformDescription>
-        
+
         <ButtonContainer>
           <Button
             variant="contained"
@@ -229,7 +230,7 @@ const MesheryDockerExtension = () => {
           your clusters. Use Kanvas&apos;s no-code designer to collaboratively design and manage
           your infrastructure with ready-made patterns from Meshery Catalog.
         </UniformDescription>
-        
+
         <ButtonContainer>
           <Button
             variant="contained"
@@ -294,7 +295,7 @@ const MesheryHelmKanvasExtension = () => {
           charts directly from the command line. It simplifies the process of creating Meshery
           Snapshots, providing a visual representation of packaged Helm charts.
         </UniformDescription>
-        
+
         <ButtonContainer>
           <Button
             variant="contained"
@@ -325,11 +326,11 @@ const MesheryDesignEmbedExtension = () => {
 
         <UniformDescription variant="body">
           <MesheryDesignEmbedLogo />
-          Meshery Design Embedding lets you export designs in an interactive format that
-          seamlessly integrates with websites, blogs, and platforms using HTML, CSS, and
-          JavaScript, making it easy to share with stakeholders.
+          Meshery Design Embedding lets you export designs in an interactive format that seamlessly
+          integrates with websites, blogs, and platforms using HTML, CSS, and JavaScript, making it
+          easy to share with stakeholders.
         </UniformDescription>
-        
+
         <ButtonContainer>
           <Button
             variant="contained"
@@ -375,10 +376,10 @@ const Layer5CloudExtension = () => {
         </Typography>
 
         <UniformDescription variant="body">
-          <Layer5CloudLogo />A comprehensive platform offering identity and collaboration
-          services, private catalogs, GitOps, and multi-Meshery management. Leverage its
-          extensible authorization framework and organizational hierarchy for streamlined cloud
-          infrastructure management.
+          <Layer5CloudLogo />A comprehensive platform offering identity and collaboration services,
+          private catalogs, GitOps, and multi-Meshery management. Leverage its extensible
+          authorization framework and organizational hierarchy for streamlined cloud infrastructure
+          management.
         </UniformDescription>
 
         <ButtonContainer>
