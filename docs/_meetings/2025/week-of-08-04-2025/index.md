@@ -1,4 +1,3 @@
-Attendance folder for 7th august
 ---
 title: August 7th, 2025 Newcomers Meeting
 date: 2025-08-07
@@ -13,17 +12,17 @@ date: 2025-08-07
 ### Attendees  
 _Note: Mark your attendance by committing your names:_
 
-- Nehal Hassan ✅  
-- Faheem Mushtaq ✅  
-- Emmanuel Sasere ✅  
-- Heerak Kashyap ✅  
-- Ifrah Ashraf  
-- Oscar Gonzalez  
-- Varad Gupta ✅  
-- Aman V Shafeeq ✅  
-- Naman Verma ✅  
-- Rinshad Ibn Abu  
-- **Ahmed Samaila ✅**  
+- Nehal Hassan ✅
+- Faheem Mushtaq ✅
+- Emmanuel Sasere ✅
+- Heerak Kashyap ✅
+- Ifrah Ashraf
+- Oscar Gonzalez
+- Varad Gupta ✅
+- Aman V Shafeeq ✅
+- Naman Verma ✅
+- Rinshad Ibn Abu
+- Ahmed Samaila ✅
 - Rajesh Nagarajan ✅
 
 ---
