@@ -38,19 +38,58 @@ const useFilterSchema = () => {
   };
 };
 
-const Filter = ({ handleFilter }) => {
+const Filter = ({ handleFilter, currentFilters }) => {
   const filterSchema = useFilterSchema();
-  return (
-    <TypingFilter
-      handleFilter={handleFilter}
-      filterSchema={filterSchema}
-      defaultFilters={[
+
+  const transformToFilterArray = (filters) => {
+    if (!filters || typeof filters !== 'object') return [];
+
+    const filterArray = [];
+    Object.entries(filters).forEach(([key, value]) => {
+      const schemaKey = Object.keys(filterSchema).find(
+        (schemaKey) => filterSchema[schemaKey].value === key,
+      );
+
+      if (schemaKey && filterSchema[schemaKey]) {
+        if (Array.isArray(value)) {
+          value.forEach((v) => {
+            filterArray.push({
+              type: schemaKey,
+              value: v,
+              label: `${filterSchema[schemaKey].value}: ${v}`,
+            });
+          });
+        } else {
+          filterArray.push({
+            type: schemaKey,
+            value: value,
+            label: `${filterSchema[schemaKey].value}: ${value}`,
+          });
+        }
+      }
+    });
+
+    return filterArray;
+  };
+
+  const defaultFilters = currentFilters
+    ? transformToFilterArray(currentFilters)
+    : [
         {
           type: 'STATUS',
           value: 'unread',
           label: 'status: unread',
         },
-      ]}
+      ];
+
+  const filterKey = currentFilters ? JSON.stringify(currentFilters) : 'default';
+
+  return (
+    <TypingFilter
+      key={filterKey}
+      handleFilter={handleFilter}
+      filterSchema={filterSchema}
+      defaultFilters={defaultFilters}
       placeholder="Filter Notifications"
     />
   );
