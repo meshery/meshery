@@ -1,0 +1,4 @@
+model name isn't specified
+
+Usage: mesheryctl model view [model-name]
+Run 'mesheryctl model view --help' to see detailed help message
