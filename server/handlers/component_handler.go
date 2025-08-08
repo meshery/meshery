@@ -215,7 +215,6 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 
 	filter := &regv1beta1.ModelFilter{
 		Id:          queryParams.Get("id"),
@@ -229,7 +228,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
-		Status:        statusFilter,
+		Status:        queryParams.Get("status"),
 		Trim:          queryParams.Get("trim") == "true",
 	}
 	if search != "" {
@@ -485,7 +484,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 	cat := mux.Vars(r)["category"]
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
 		CategoryName: cat,
@@ -498,7 +496,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModelByCategory(rw http.Response
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
-		Status:       statusFilter,
+		Status:       queryParams.Get("status"),
 	})
 
 	comps := prettifyCompDefSchema(entities)
@@ -562,7 +560,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 	cat := mux.Vars(r)["category"]
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:         name,
@@ -576,7 +573,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByCategory(rw http.ResponseWriter,
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
-		Status:       statusFilter,
+		Status:       queryParams.Get("status"),
 	})
 	comps := prettifyCompDefSchema(entities)
 
@@ -639,7 +636,6 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 	v := queryParams.Get("version")
 
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
@@ -652,7 +648,7 @@ func (h *Handler) GetMeshmodelComponentsByNameByModel(rw http.ResponseWriter, r 
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
-		Status:      statusFilter,
+		Status:      queryParams.Get("status"),
 	})
 	comps := prettifyCompDefSchema(entities)
 
@@ -715,7 +711,6 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 	}
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 	entities, count, _, _ := h.registryManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:        name,
 		Trim:        queryParams.Get("trim") == "true",
@@ -728,7 +723,7 @@ func (h *Handler) GetAllMeshmodelComponentsByName(rw http.ResponseWriter, r *htt
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
-		Status:      statusFilter,
+		Status:      queryParams.Get("status"),
 	})
 
 	comps := prettifyCompDefSchema(entities)
@@ -787,7 +782,6 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 	v := queryParams.Get("version")
 
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
 		ModelName:   typ,
@@ -799,7 +793,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
-		Status:      statusFilter,
+		Status:      queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -863,7 +857,6 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		ModelName:    typ,
@@ -875,7 +868,7 @@ func (h *Handler) GetMeshmodelComponentByModelByCategory(rw http.ResponseWriter,
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
-		Status:       statusFilter,
+		Status:       queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -937,7 +930,6 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 	filter := &regv1beta1.ComponentFilter{
 		CategoryName: cat,
 		Version:      v,
@@ -948,7 +940,7 @@ func (h *Handler) GetMeshmodelComponentByCategory(rw http.ResponseWriter, r *htt
 		OrderOn:      order,
 		Sort:         sort,
 		Annotations:  returnAnnotationComp,
-		Status:       statusFilter,
+		Status:       queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
@@ -1011,7 +1003,6 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	queryParams := r.URL.Query()
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
-	statusFilter := queryParams.Get("status")
 	filter := &regv1beta1.ComponentFilter{
 		Id:          queryParams.Get("id"),
 		Version:     v,
@@ -1022,7 +1013,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 		OrderOn:     order,
 		Sort:        sort,
 		Annotations: returnAnnotationComp,
-		Status:      statusFilter,
+		Status:      queryParams.Get("status"),
 	}
 	if search != "" {
 		filter.Greedy = true
