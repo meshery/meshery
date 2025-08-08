@@ -31,8 +31,6 @@ common_kube_assertions() {
     if ! kubectl cluster-info >/dev/null 2>&1; then
         skip "Kubernetes cluster not accessible"
     fi
-    assert_success
-    assert_output --partial "$START_MESSAGE_KUBE"
 }
 
 @test "mesheryctl system start --help displays help" {
@@ -79,8 +77,9 @@ common_kube_assertions() {
 }
 
 @test "mesheryctl system start -p kubernetes succeeds" {
-    run $MESHERYCTL_BIN system start -p kubernetes 
     common_kube_assertions
+    run $MESHERYCTL_BIN system start -p kubernetes 
+    common_start_assertions
 }
 
 @test "mesheryctl system start --provider succeeds" {
@@ -94,6 +93,7 @@ common_kube_assertions() {
 }
 
 @test "mesheryctl system start with all flags on kubernetes succeeds" {
-    run $MESHERYCTL_BIN system start --skip-browser --skip-update --reset -p kubernetes 
     common_kube_assertions
+    run $MESHERYCTL_BIN system start --skip-browser --skip-update --reset -p kubernetes 
+    common_start_assertions
 }
