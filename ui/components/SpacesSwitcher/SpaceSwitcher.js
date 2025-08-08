@@ -158,8 +158,6 @@ export function OrgMenu(props) {
   const organization = selectedOrganization;
   const { open, fromMobileView } = props;
 
-  console.log('selectedOrganization', organization);
-
   const handleOrgSelect = (e) => {
     const id = e.target.value;
     updateSelectedOrg(id);
