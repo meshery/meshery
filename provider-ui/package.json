@@ -21,11 +21,11 @@
     "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.14.0",
-    "@sistent/sistent": "^0.14.203",
+    "@sistent/sistent": "^0.14.211",
     "babel-plugin-istanbul": "^7.0.0",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
-    "next": "^15.3.1",
+    "next": "^15.4.5",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

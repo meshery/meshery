@@ -323,8 +323,6 @@ export const useGetSelectedOrganization = () => {
     (org) => org.id === userPrefs?.selectedOrganizationID,
   );
 
-  console.log('existingSelectedOrganization', existingSelectedOrganization);
-
   const selectedOrganization = existingSelectedOrganization ?? allOrgs?.organizations?.[0];
 
   return {

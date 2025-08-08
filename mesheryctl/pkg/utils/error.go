@@ -51,6 +51,8 @@ var (
 	ErrWalkManifestsCode          = "mesheryctl-1144"
 	ErrGetChannelVersionCode      = "mesheryctl-1145"
 	ErrInvalidModelCode           = "mesheryctl-1150"
+	ErrInvalidOrgIDCode           = "mesheryctl-1152"
+	ErrFetchEnvironmentsCode      = "mesheryctl-1153"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -664,6 +666,22 @@ func ErrClearLine(err error) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
+}
+
+func ErrInvalidOrgID(err error) error {
+	return errors.New(ErrInvalidOrgIDCode, errors.Alert,
+		[]string{"Invalid organization ID format"},
+		[]string{err.Error()},
+		[]string{"Organization ID is not a valid UUID format", "Organization ID contains invalid characters"},
+		[]string{"Ensure the organization ID is a valid UUID format", "Check the orgID parameter for typos or formatting issues"})
+}
+
+func ErrFetchEnvironments(err error) error {
+	return errors.New(ErrFetchEnvironmentsCode, errors.Alert,
+		[]string{"Failed to fetch environments"},
+		[]string{err.Error()},
+		[]string{"Network connection issues", "Meshery server is not reachable", "Invalid API endpoint", "Authentication issues"},
+		[]string{"Check your network connection", "Verify Meshery server status via `mesheryctl system status`", "Ensure you have proper authentication credentials"})
 }
 
 func ErrUpdateComponent(err error, modelName, compName string) error {

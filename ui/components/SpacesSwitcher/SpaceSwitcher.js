@@ -1,5 +1,5 @@
 import { useGetOrgsQuery } from '@/rtk-query/organization';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Button,
   FormControl,
@@ -30,6 +30,8 @@ import {
   useUpdateSelectedOrganizationMutation,
 } from '@/rtk-query/user';
 import { MobileOrgWksSwither } from './MobileViewSwitcher';
+import WorkspaceModal from './WorkspaceModal';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -49,6 +51,12 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   alignItems: 'center',
   textAlign: 'center',
   fill: theme.palette.text.default,
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.action.selected,
+    '&:hover': {
+      backgroundColor: theme.palette.action.selected + '!important',
+    },
+  },
 }));
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
@@ -149,8 +157,6 @@ export function OrgMenu(props) {
 
   const organization = selectedOrganization;
   const { open, fromMobileView } = props;
-
-  console.log('selectedOrganization', organization);
 
   const handleOrgSelect = (e) => {
     const id = e.target.value;
@@ -255,6 +261,10 @@ function OrganizationAndWorkSpaceSwitcher() {
   const { title } = useSelector((state) => state.ui.page);
   const { selectedOrganization } = useGetSelectedOrganization();
 
+  //->using the wksp cntxt
+  const { open: workspaceModal, closeModal: closeWorkspaceModal } =
+    useContext(WorkspaceModalContext);
+
   if (!selectedOrganization) return null;
 
   return (
@@ -301,6 +311,7 @@ function OrganizationAndWorkSpaceSwitcher() {
         )}
         <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
+        <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
       </StyledSwitcher>
     </NoSsr>
   );

@@ -11,6 +11,18 @@ import (
 )
 
 func TestModelInit(t *testing.T) {
+	// Clean up any existing test directories before running tests
+	cleanupDirs := []string{
+		"test-case-aws-ec2-controller",
+		"test-case-aws-dynamodb-controller",
+		"test_case_some_other_custom_dir",
+	}
+	for _, dir := range cleanupDirs {
+		os.RemoveAll(dir)
+		d := dir // Capture for t.Cleanup
+		t.Cleanup(func() { os.RemoveAll(d) })
+	}
+
 	utils.SetupContextEnv(t)
 
 	// get current directory
@@ -216,9 +228,7 @@ func TestModelInit(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			// TODO replace ModelExpCmd with  ModelCmd
-			cmd := ModelExpCmd
-			// cmd := ModelCmd
+			cmd := ModelCmd
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()
