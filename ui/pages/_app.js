@@ -322,7 +322,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
 
   const initSubscriptions = useCallback(
     (contexts) => {
-      if (!k8sConfig?.length) return;
+      if (!k8sConfig?.length) {
+        return;
+      }
       const connectionIDs = getConnectionIDsFromContextIds(contexts, k8sConfig);
       // No need to create a controller subscription if there are no connections
       if (connectionIDs.length < 1) {
@@ -337,6 +339,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
           dispatch(setControllerState({ controllerState: data }));
         },
       });
+      mesheryControllerSubscription.initSubscription();
 
       setState((prevState) => ({ ...prevState, mesheryControllerSubscription }));
     },
@@ -595,12 +598,18 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
       Router.push(mesheryExtensionRoute);
     }
 
-    const { mesheryControllerSubscription } = state;
-    if (mesheryControllerSubscription) {
+    if (k8sConfig?.length > 0) {
+      const { mesheryControllerSubscription } = state;
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      mesheryControllerSubscription.updateSubscription(
-        getConnectionIDsFromContextIds(ids, k8sConfig),
-      );
+      if (
+        mesheryControllerSubscription
+      ) {
+        mesheryControllerSubscription.updateSubscription(
+          getConnectionIDsFromContextIds(ids, k8sConfig),
+        );
+      } else {
+        initSubscriptions(ids);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [k8sConfig, capabilitiesRegistry]);
