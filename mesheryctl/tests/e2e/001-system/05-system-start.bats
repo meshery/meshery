@@ -15,7 +15,6 @@ setup(){
     export START_PLATFORM_DOCKER="mesheryctl system start -p docker"
     export START_PROVIDER="mesheryctl system start --provider Meshery"
     export START_MESSAGE_DOCKER="Starting Meshery..."
-    export START_MESSAGE_KUBE="Meshery is starting..."
 }
 
 teardown() {
