@@ -1,2 +1,5 @@
-Attendance folder for 7th august
-Name: Rinshad
+# Meeting Attendance – August 7th, 2025
+
+## Attendees
+- Ahmed Samaila
+- Rinshad
