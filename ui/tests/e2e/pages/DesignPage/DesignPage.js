@@ -59,7 +59,7 @@ export class DesignPage {
   getPublishedDesign() {
     const card = this.designCards
       .filter({
-        has: this.page.getByTestId('design-visibility-published'),
+        has: this.page.getByTestId('design-visibility-public'),
       })
       .first();
 
