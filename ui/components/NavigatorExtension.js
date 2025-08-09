@@ -36,6 +36,7 @@ import { store } from '../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 import { RelationshipEvaluationTraceFormatter } from './NotificationCenter/formatters/relationship_evaluation';
+import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -46,7 +47,7 @@ function NavigatorExtension({ url }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const { openModalWithDefault } = useContext(WorkspaceModalContext);
-
+  const registryModal = useRegistryModal();
   if (err != null) {
     return (
       <div role="alert">
@@ -125,6 +126,7 @@ function NavigatorExtension({ url }) {
           mesheryStore: extensionExposedMesheryStore,
           currentOrganization,
           openWorkspaceModal: openModalWithDefault,
+          openRegistryModal: registryModal,
         }}
       />
     </DynamicFullScrrenLoader>

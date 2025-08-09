@@ -16,6 +16,8 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RegistryModal from './Registry/RegistryModal';
+
 import {
   Checkbox,
   Box,
@@ -518,6 +520,7 @@ const Header = ({
             </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
+        <RegistryModal />
       </>
     </NoSsr>
   );

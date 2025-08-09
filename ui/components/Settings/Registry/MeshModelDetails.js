@@ -191,7 +191,10 @@ const ModelContents = ({ modelDef }) => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
+        <TitleWithImg
+          displayName={modelDef.displayName}
+          iconSrc={`/${modelDef?.metadata?.svgColor}`}
+        />
         <div style={{ display: 'flex', gap: '1rem' }}>
           {ExportAvailable ? (
             <Button

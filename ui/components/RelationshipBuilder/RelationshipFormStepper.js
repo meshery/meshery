@@ -195,6 +195,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                           vertical: 'bottom',
                           horizontal: 'left',
                         },
+                        style: { zIndex: 1500 },
                         getContentAnchorEl: null,
                       },
                       renderValue: (selected) => {
@@ -235,6 +236,7 @@ const RelationshipFormStepper = React.memo(({ handleClose }) => {
                           vertical: 'bottom',
                           horizontal: 'left',
                         },
+                        style: { zIndex: 1500 },
                         getContentAnchorEl: null,
                       },
                       renderValue: (selected) => {

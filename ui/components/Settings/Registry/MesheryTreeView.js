@@ -40,8 +40,13 @@ const MesheryTreeView = React.memo(
     lastItemRef,
     isFetching,
     isLoading,
+    externalSelectedItemUUID = null,
+    isModalMode = false, //(disables URL updates)
   }) => {
-    const { handleUpdateSelectedRoute, selectedItemUUID } = useRegistryRouter();
+    const { handleUpdateSelectedRoute, selectedItemUUID: routerSelectedItemUUID } =
+      useRegistryRouter();
+
+    const selectedItemUUID = externalSelectedItemUUID || routerSelectedItemUUID;
     const [expanded, setExpanded] = React.useState([]);
     const [selected, setSelected] = React.useState([]);
     const { width } = useWindowDimensions();
@@ -101,13 +106,16 @@ const MesheryTreeView = React.memo(
         let selectedIdArr = nodeIds[0].split('.');
         let indx = data.findIndex((item) => item.id === selectedIdArr[0]);
 
-        // Filter object contains current filter applied to data
-        // Route will contain filters to support deeplink
-        const filter = {
-          ...(searchText && { searchText }),
-          pagesize: indx + 14,
-        };
-        handleUpdateSelectedRoute(nodeIds, filter);
+        // update route -> not in modal mode
+        if (!isModalMode) {
+          // Filter object contains current filter applied to data
+          // Route will contain filters to support deeplink
+          const filter = {
+            ...(searchText && { searchText }),
+            pagesize: indx + 14,
+          };
+          handleUpdateSelectedRoute(nodeIds, filter);
+        }
         setSelected([0, nodeIds]);
       } else {
         setSelected([]);
@@ -284,32 +292,36 @@ const MesheryTreeView = React.memo(
       setIsSearchExpanded(isExpand);
     };
 
-    const renderTree = (treeComponent, type, isLoading) => (
-      <>
-        {renderHeader(type, !!data.length)}
-        {data.length === 0 && !searchText ? (
-          <JustifyAndAlignCenter style={{ height: '27rem' }}>
-            {isLoading || (data.length === 0 && !searchText) ? (
-              <CircularProgress sx={{ color: Colors.keppelGreen }} />
-            ) : (
-              <Typography>No {type.toLowerCase()} found</Typography>
-            )}
-          </JustifyAndAlignCenter>
-        ) : data.length === 0 && searchText ? (
-          <JustifyAndAlignCenter style={{ height: '27rem' }}>
-            <p>No result found</p>
-          </JustifyAndAlignCenter>
-        ) : (
-          <div
-            className="scrollElement"
-            style={{ overflowY: 'auto', height: '55vh' }}
-            onScroll={handleScroll(type)}
-          >
-            {treeComponent}
-          </div>
-        )}
-      </>
-    );
+    const renderTree = (treeComponent, type, isLoading) => {
+      const hasControlButtons = type === MODELS || type === RELATIONSHIPS;
+      const scrollHeight = hasControlButtons ? '70vh' : '100vh';
+      return (
+        <>
+          {renderHeader(type, !!data.length)}
+          {data.length === 0 && !searchText ? (
+            <JustifyAndAlignCenter style={{ height: '27rem' }}>
+              {isLoading || (data.length === 0 && !searchText) ? (
+                <CircularProgress sx={{ color: Colors.keppelGreen }} />
+              ) : (
+                <Typography>No {type.toLowerCase()} found</Typography>
+              )}
+            </JustifyAndAlignCenter>
+          ) : data.length === 0 && searchText ? (
+            <JustifyAndAlignCenter style={{ height: '27rem' }}>
+              <p>No result found</p>
+            </JustifyAndAlignCenter>
+          ) : (
+            <div
+              className="scrollElement"
+              style={{ overflowY: 'auto', height: scrollHeight }}
+              onScroll={handleScroll(type)}
+            >
+              {treeComponent}
+            </div>
+          )}
+        </>
+      );
+    };
 
     return (
       <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
