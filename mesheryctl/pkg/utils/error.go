@@ -51,8 +51,8 @@ var (
 	ErrWalkManifestsCode          = "mesheryctl-1144"
 	ErrGetChannelVersionCode      = "mesheryctl-1145"
 	ErrInvalidModelCode           = "mesheryctl-1150"
-	ErrInvalidOrgIDCode           = "mesheryctl-1151"
-	ErrFetchEnvironmentsCode      = "mesheryctl-1152"
+	ErrInvalidOrgIDCode           = "mesheryctl-1152"
+	ErrFetchEnvironmentsCode      = "mesheryctl-1153"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
