@@ -40,7 +40,7 @@ export const ComponentIcon = ({ iconSrc, label }) => {
   );
 };
 
-export const Loading = ({ message, 'data-testId': testId = 'loading' }) => {
+export const Loading = ({ message, 'data-testid': testId = 'loading' }) => {
   return (
     <Box
       display="flex"

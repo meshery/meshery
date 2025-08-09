@@ -1472,7 +1472,7 @@ function MesheryPatterns({
                         <div style={{ display: 'flex', order: '1' }}>
                           <TooltipButton
                             title="Create Design"
-                            data-testId="meshery-patterns-create-design-btn"
+                            data-testid="meshery-patterns-create-design-btn"
                             aria-label="Add Pattern"
                             variant="contained"
                             color="primary"
@@ -1489,7 +1489,7 @@ function MesheryPatterns({
                           </TooltipButton>
                           <TooltipButton
                             title="Import Design"
-                            data-testId="meshery-patterns-import-design-btn"
+                            data-testid="meshery-patterns-import-design-btn"
                             aria-label="Add Pattern"
                             variant="contained"
                             color="primary"
@@ -1672,7 +1672,7 @@ export const ImportDesignModal = React.memo((props) => {
           }
           maxWidth="sm"
           title="Import Design"
-          data-testId="import-design-modal"
+          data-testid="import-design-modal"
         >
           <RJSFModalWrapper
             schema={importDesignSchema}

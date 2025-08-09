@@ -2,7 +2,6 @@ export class ImportModal {
   constructor(page) {
     this.page = page;
     this.modal = page.getByTestId('import-design-modal');
-    this.importType = this.page.getByTestId('meshery-patterns-import-design-button');
     this.designFileInput = page.getByLabel('Design file name');
     this.urlInput = page.getByLabel('URL *');
     this.fileChoose = page.getByRole('textbox', { name: 'file', exact: true });
