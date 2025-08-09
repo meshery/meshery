@@ -40,7 +40,7 @@ export const ComponentIcon = ({ iconSrc, label }) => {
   );
 };
 
-export const Loading = ({ message }) => {
+export const Loading = ({ message, 'data-testid': testId = 'loading' }) => {
   return (
     <Box
       display="flex"
@@ -48,9 +48,10 @@ export const Loading = ({ message }) => {
       flexDirection="column"
       spacing={1}
       justifyContent="center"
+      data-testid={testId}
     >
-      <CircularProgress />
-      <Typography variant="body2" style={{ marginTo: '1rem' }}>
+      <CircularProgress data-testid={`${testId}-spinner`} />
+      <Typography variant="body2" style={{ marginTop: '1rem' }} data-testid={`${testId}-message`}>
         {message}
       </Typography>
     </Box>
@@ -67,6 +68,7 @@ export const CheckBoxField = ({
   onChange,
   disabled = false,
   helpText = 'Open in Operator',
+  'data-testid': testId = 'checkbox-field',
 }) => {
   const theme = useTheme();
   const color = disabled ? theme.palette.text.disabled : theme.palette.text.neutral.default;
@@ -80,16 +82,29 @@ export const CheckBoxField = ({
       style={{
         cursor: disabled && 'not-allowed',
       }}
+      data-testid={testId}
     >
-      <Stack spacing={2} direction="row" alignItems="center">
-        <Checkbox value={checked} onChange={onChange} disabled={disabled} />
-        <Typography variant="body2" color={color}>
+      <Stack
+        spacing={2}
+        direction="row"
+        alignItems="center"
+        data-testid={`${testId}-label-section`}
+      >
+        <Checkbox
+          value={checked}
+          onChange={onChange}
+          disabled={disabled}
+          slotProps={{
+            input: { 'data-testid': `${testId}-checkbox` },
+          }}
+        />
+        <Typography variant="body2" color={color} data-testid={`${testId}-label`}>
           {label}
         </Typography>
       </Stack>
       {helpText && (
         <CustomTooltip title={helpText} placement="top">
-          <IconButton>
+          <IconButton data-testid={`${testId}-help-icon`}>
             <InfoCircleIcon fill={color} />
           </IconButton>
         </CustomTooltip>

@@ -170,6 +170,7 @@ const DryRunStep = ({
           label="Bypass errors and initiate deployment"
           checked={bypassValidation}
           onChange={toggleBypassValidation}
+          data-testid="bypass-dry-run"
         />
       )}
 
@@ -178,6 +179,7 @@ const DryRunStep = ({
         checked={includeDependencies}
         helpText="Deploys Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered, [learn more](https://docs.meshery.io/guides/infrastructure-management/overview#auto-deployment-of-crds-and-operators) about auto deployment of dependencies"
         onChange={toggleIncludeDependencies}
+        data-testid="include-dependencies"
       />
     </Box>
   );
@@ -219,6 +221,7 @@ export const UpdateDeploymentStepper = ({
         component: (
           <StepContent>
             <ValidateDesign
+              data-testid="validate-design-step"
               handleClose={handleClose}
               validationMachine={validationMachine}
               design={design}
@@ -349,10 +352,15 @@ export const UpdateDeploymentStepper = ({
         }
       >
         <Box style={{ width: '100%', display: 'flex', gap: '1rem', justifyContent: 'end' }}>
-          <ModalButtonSecondary onClick={deployStepper.goBack} disabled={!deployStepper.canGoBack}>
+          <ModalButtonSecondary
+            data-testid="deploy-stepper-back-btn"
+            onClick={deployStepper.goBack}
+            disabled={!deployStepper.canGoBack}
+          >
             Back
           </ModalButtonSecondary>
           <ModalButtonPrimary
+            data-testid="deploy-stepper-next-btn"
             disabled={!canGoNext}
             onClick={transitionConfig[deployStepper.activeStep].nextAction}
           >
