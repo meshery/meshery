@@ -117,18 +117,23 @@ function SwitcherMenu({ organization, router }) {
               <CMenuContainer>
                 <Grid2 container spacing={2} alignItems="center" flexDirection={'column'}>
                   <StyledGrid container>
-                    <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-                    <OrgMenu open={true} organization={organization} />
+                    <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.icon.default} />
+                    <OrgMenu open={true} fromMobileView={true} organization={organization} />
                   </StyledGrid>
 
                   <StyledGrid container>
                     <WorkspaceIcon
                       {...iconLarge}
                       style={{ marginLeft: '0.2rem' }}
-                      secondaryFill={theme.palette.common.white}
-                      fill={theme.palette.common.white}
+                      secondaryFill={theme.palette.icon.default}
+                      fill={theme.palette.icon.default}
                     />
-                    <WorkspaceSwitcher open={true} organization={organization} router={router} />
+                    <WorkspaceSwitcher
+                      open={true}
+                      fromMobileView={true}
+                      organization={organization}
+                      router={router}
+                    />
                   </StyledGrid>
                 </Grid2>
               </CMenuContainer>

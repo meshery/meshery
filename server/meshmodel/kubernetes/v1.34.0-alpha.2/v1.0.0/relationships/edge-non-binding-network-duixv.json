@@ -27,7 +27,8 @@
       "status": "",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": null
+      "deleted_at": null,
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -82,7 +83,84 @@
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null
+                "deleted_at": null,
+                "schemaVersion": ""
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "selector"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "0",
+                  "targetPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "0",
+                  "protocol"
+                ]
+              ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "Service",
+            "match": {},
+            "match_strategy_matrix": [
+              [
+                "to_contains_from",
+                "not_null"
+              ],
+              [
+                "equal_as_strings",
+                "not_null"
+              ],
+              [
+                "equal"
+              ]
+            ],
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
@@ -147,7 +225,8 @@
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
@@ -197,6 +276,79 @@
                 ]
               ]
             }
+          },
+          {
+            "id": null,
+            "kind": "Deployment",
+            "match": {},
+            "match_strategy_matrix": null,
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": null,
+                "schemaVersion": ""
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": null,
+              "model": {
+                "version": ""
+              },
+              "components_count": 0,
+              "relationships_count": 0,
+              "components": null,
+              "relationships": null
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "selector",
+                  "matchLabels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "0",
+                  "name"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "0",
+                  "protocol"
+                ]
+              ]
+            }
           }
         ]
       },
@@ -223,7 +375,8 @@
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
@@ -265,7 +418,8 @@
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
@@ -305,7 +459,8 @@
                 "status": "",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": null
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {

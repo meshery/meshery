@@ -3341,6 +3341,15 @@
         "short_description": "Error resync resources",
         "probable_cause": "Fail to resync resources for the kubernetes machine",
         "suggested_remediation": "Check if machine context is assign to machine\nCheck if machine context contains a reference to MesheryControllersHelper"
+      },
+      "1373": {
+        "name": "ErrConnectActionCode",
+        "code": "1373",
+        "severity": "Critical",
+        "long_description": "",
+        "short_description": "Error connect action",
+        "probable_cause": "Fail to perform connect action for the kubernetes machine",
+        "suggested_remediation": "Check if token is passed machine from golang context correctly\nCheck if there is connection data stored in database for this kubernetes machine"
       }
     }
   }
