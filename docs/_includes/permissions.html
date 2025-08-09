@@ -63,20 +63,16 @@
         jsonData.shift();
 
         // Remove unnecessary columns
+
+        const processedData = [];
         jsonData.forEach(row => {
-          row.splice(10, 1);
-          row.splice(9, 1);
-          row.splice(8, 1);
-          row.splice(7, 1);
-          row.splice(6, 1);
-          row.splice(5, 1);
-          row.splice(4, 1);
-          row.splice(3, 1);
+          const trimmedRow = [row[0], row[1], row[2], row[10]];
+          processedData.push(trimmedRow);
         });
 
         // Group rows by category
         const categories = {};
-        jsonData.forEach(row => {
+        processedData.forEach(row => {
           const category = row[0].replace(/\s+/g, '');
           if (!categories[category]) {
             categories[category] = [];
@@ -84,7 +80,7 @@
           categories[category].push(row);
         });
 
-        const headers = ["Category", "Key Name", "Description", "Keychain Name"];
+        const headers = ["Category", "Key Name", "Description", "Key ID"];
 
         // Generate tables
         const container = document.getElementById('tablesContainer');
@@ -122,22 +118,17 @@
             const newRow = document.createElement('tr');
             newRow.classList.add('hidden-row');
 
-            const keyIdColumn = document.createElement('td');
-            keyIdColumn.style.padding = '1rem';
-            keyIdColumn.innerHTML = `<b>Key ID: </b><br>${row[5]}`;  // 5th column is the Key ID
-            newRow.appendChild(keyIdColumn);
-
-            const secondColumn = document.createElement('td');
-            secondColumn.style.padding = '1rem';
-            secondColumn.colSpan = headers.length - 1;
+            const monikerColumn = document.createElement('td');
+            monikerColumn.style.padding = '1rem';
+            monikerColumn.colSpan = headers.length - 1;
 
             const matchingPermissionKey = Object.keys(keys).find(key => keys[key].subject === row[1]);
             if (matchingPermissionKey) {
-              secondColumn.innerHTML = `<b>Moniker:</b><br> ${matchingPermissionKey}`;
+              monikerColumn.innerHTML = `<b>Moniker:</b><br> ${matchingPermissionKey}`;
             } else {
-              secondColumn.textContent = 'No matching permission moniker found';
+              monikerColumn.textContent = 'No matching permission moniker found';
             }
-            newRow.appendChild(secondColumn);
+            newRow.appendChild(monikerColumn);
 
             tbody.appendChild(newRow);
 
