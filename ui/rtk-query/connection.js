@@ -89,6 +89,14 @@ const connectionsApi = api.injectEndpoints({
       }),
       invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
     }),
+    updateConnectionById: builder.mutation({
+      query: (queryArg) => ({
+        url: `integrations/connections/${queryArg.connectionId}`,
+        method: 'PUT',
+        body: queryArg.body,
+      }),
+      invalidatesTags: () => [{ type: TAGS.CONNECTIONS }],
+    }),
     getAllConnectionStatus: builder.query({
       query: () => ({
         url: `integrations/connections/status`,
@@ -137,6 +145,7 @@ export const {
   useConnectionMetaDataMutation,
   useConfigureConnectionMutation,
   useUpdateConnectionMutation,
+  useUpdateConnectionByIdMutation,
   useGetAllConnectionStatusQuery,
   useGetConnectionByKindQuery,
   useCancelConnectionRegisterMutation,
