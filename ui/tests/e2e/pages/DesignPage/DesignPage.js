@@ -9,6 +9,7 @@ export class DesignPage {
     this.DeployModal = new DeployModal(page);
     this.ImportModal = new ImportModal(page);
 
+    this.pageLoader = page.getByTestId('page-loader');
     this.createDesignBtn = page.getByTestId('meshery-patterns-create-design-btn');
     this.importDesignBtn = this.page.getByTestId('meshery-patterns-import-design-btn');
     this.searchBar = this.page.getByTestId('meshery-patterns-search-bar');
@@ -18,11 +19,13 @@ export class DesignPage {
 
     this.deleteDesignModalHeader = page.getByTestId('modal-header');
     this.deleteConfirmationBtn = page.getByTestId('prompt-primary-button');
+    
   }
 
   async navigateTo() {
     await this.DashboardPage.navigateToDashboard();
     await this.DashboardPage.navigateToDesigns();
+    await this.pageLoader.waitFor({ state: 'detached' });
   }
 
   async navigateToDesignConfigurator() {
@@ -59,7 +62,7 @@ export class DesignPage {
   getPublishedDesign() {
     const card = this.designCards
       .filter({
-        has: this.page.getByTestId('design-visibility-public'),
+        has: this.page.getByTestId('design-visibility-published'),
       })
       .first();
 
