@@ -711,6 +711,15 @@ func (l *RemoteProvider) HandleUnAuthenticated(w http.ResponseWriter, req *http.
 }
 
 func (l *RemoteProvider) SaveK8sContext(token string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
+	if k8sContext.ConnectionID != "" {
+		connectionID := uuid.FromStringOrNil(k8sContext.ConnectionID)
+		if connectionID != uuid.Nil {
+			_, status, _ := l.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
+			if status >= http.StatusOK && status < http.StatusMultipleChoices {
+				return connections.Connection{}, ErrContextAlreadyPersisted
+			}
+		}
+	}
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
