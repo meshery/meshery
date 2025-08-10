@@ -7,15 +7,15 @@ export class DesignConfiguratorPage {
     this.DashboardPage = new DashboardPage(page);
     this.DesignPage = new DesignPage(page);
 
-    this.appBar = this.page.getByTestId('design-configurator-app-bar');
-    this.codeEditor = this.page.getByTestId('design-configurator-code-editor');
-    this.categorySelector = this.page.getByTestId('category-selector');
-    this.databaseCategory = this.page.getByTestId('Database');
-    this.modelSelector = this.page.getByTestId('model-selector');
-    this.modelAzure = this.page.getByTestId('azure-db-for-mysql');
-    this.modelContainer = this.page.getByTestId('model-component-list');
-    this.saveButton = this.page.getByTestId('design-configurator-save-design-btn');
-    this.updateButton = this.page.getByTestId('design-configurator-update-design-btn');
+    this.appBar = page.getByTestId('design-configurator-app-bar');
+    this.codeEditor = page.getByTestId('design-configurator-code-editor');
+    this.categorySelector = page.getByTestId('category-selector');
+    this.databaseCategory = page.getByTestId('Database');
+    this.modelSelector = page.getByTestId('model-selector');
+    this.modelAzure = page.getByTestId('azure-db-for-mysql');
+    this.modelContainer = page.getByTestId('model-component-list');
+    this.saveButton = page.getByTestId('design-configurator-save-design-btn');
+    this.updateButton = page.getByTestId('design-configurator-update-design-btn');
   }
 
   async navigateTo() {
