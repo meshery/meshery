@@ -24,11 +24,10 @@ export class ImportModal {
 
   async _importDesignFromFile(filePath, designName) {
     await this.designFileInput.fill(designName);
-    const [fileChooser] = await Promise.all([
-      this.page.waitForEvent('filechooser'),
-      this.fileChoose.click(),
-    ]);
-    await fileChooser.setFiles(filePath);
+    const fileChooserPromoise = this.page.waitForEvent('filechooser');
+    await this.fileChoose.click();
+    const fileChooser = await fileChooserPromoise;
+    await fileChooser.setFiles(path.resolve('tests/e2e/assets', filePath));
     await this.importBtn.click();
   }
 

@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import {test, expect} from './fixtures/project';
 import { DesignPage } from './pages/DesignPage/DesignPage';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 import { mockEnvironmentsApi, mockConnectionsApi } from './pages/DesignPage/utils/mockApiRoutes';
@@ -19,9 +19,10 @@ const IMPORT_SOURCES = [
 const DESIGN_TYPES = [
   {
     type: 'published',
-    getCard: (designPage) => designPage.getPublishedDesign(),
   },
-  // TODO add private/unpublised design cards
+  {
+    type: 'public',
+  },
 ];
 
 test.describe('Design Page Tests', () => {
@@ -41,19 +42,25 @@ test.describe('Design Page Tests', () => {
     expect(await designPage.designCards.count()).toBeGreaterThan(0);
   });
 
-  DESIGN_TYPES.forEach(({ type, getCard }) => {
-    test(`displays ${type} design card correctly`, async () => {
-      const card = getCard(designPage);
+  DESIGN_TYPES.forEach(({ type }) => {
+    test(`displays ${type} design card correctly`, async ({provider}) => {
+      test.skip(provider === 'None' && type === 'public', `Skipping test for provider: ${provider}`);
+      await designPage.applyVisibilityFilter(type);
 
-      const visibleElements = [...Object.values(card.display)];
+      const card = await designPage.getFirstCardByVisibilityBadge(type);
+
+      const cardElements = designPage.getCardElements(card, type);
+
+
+      const visibleElements = [...Object.values(cardElements.display)];
 
       for (const el of visibleElements) {
         await expect(el).toBeVisible();
       }
 
-      await card.actionToggleBtn.click();
+      await cardElements.actionToggleBtn.click();
 
-      const visibleActions = [...Object.values(card.actionElements)];
+      const visibleActions = [...Object.values(cardElements.actionElements)];
 
       for (const el of visibleActions) {
         await expect(el).toBeVisible();
