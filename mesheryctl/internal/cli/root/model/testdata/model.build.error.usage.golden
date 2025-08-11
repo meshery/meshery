@@ -1,6 +1,6 @@
 Usage:
-mesheryctl exp model build [model-name]
+mesheryctl model build [model-name]
 or
-mesheryctl exp model build [model-name]/[model-version]
+mesheryctl model build [model-name]/[model-version]
 
-Run 'mesheryctl exp model build --help' to see detailed help message
+Run 'mesheryctl model build --help' to see detailed help message

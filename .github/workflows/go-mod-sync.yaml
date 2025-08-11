@@ -1,3 +1,10 @@
+# Meshery Extension Point
+# ---
+# Purpose: Notify Remote Providers of changes in Golang dependencies
+# Learn more: See https://docs.meshery.io/extensibility
+# Add your repository to the list: https://github.com/meshery/meshery/issues/new/choose
+# ---
+
 name: Meshery extensions go.mod sync
 on:
   workflow_dispatch:
@@ -27,7 +34,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@master
       with:
-        go-version: "1.23"
+        go-version: "1.24"
     - name: Go mod sync utility
       run: cd meshery-extensions;make graphql-sync;
 

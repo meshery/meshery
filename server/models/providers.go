@@ -400,7 +400,7 @@ type Provider interface {
 	// if the token is null then then a safe pass is used if the provider supports it else an error is returned
 	PersistEvent(event events.Event, token *string) error
 
-	SaveK8sContext(token string, k8sContext K8sContext) (connections.Connection, error)
+	SaveK8sContext(token string, k8sContext K8sContext, metadata map[string]any) (connections.Connection, error)
 	GetK8sContexts(token, page, pageSize, search, order string, withStatus string, withCredentials bool) ([]byte, error)
 	DeleteK8sContext(token, id string) (K8sContext, error)
 	GetK8sContext(token, connectionID string) (K8sContext, error)
