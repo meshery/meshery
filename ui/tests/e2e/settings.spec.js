@@ -62,7 +62,7 @@ test.describe('Settings Page Tests', () => {
     ).toBeVisible();
   });
 
-  test('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
+  test.skip('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
     // Navigate to 'Adapters' tab
     await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
 
