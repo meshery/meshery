@@ -33,8 +33,10 @@ export class DesignPage {
   }
 
   async navigateToDesignConfigurator() {
-    const card = this.getPublishedDesign();
-    await card.actionElements.edit.click();
+    await this.applyVisibilityFilter('published');
+    const firstCard = await this.getFirstCardByVisibilityBadge('published');
+    const cardElements = this.getCardElements(firstCard, 'published');
+    await cardElements.actionElements.edit.click();
   }
 
   async clickImportDesignButton() {

@@ -1,3 +1,5 @@
+import path from 'path';
+
 export class ImportModal {
   constructor(page) {
     this.page = page;
@@ -27,7 +29,7 @@ export class ImportModal {
     const fileChooserPromoise = this.page.waitForEvent('filechooser');
     await this.fileChoose.click();
     const fileChooser = await fileChooserPromoise;
-    await fileChooser.setFiles(path.resolve('tests/e2e/assets', filePath));
+    await fileChooser.setFiles(path.resolve(filePath));
     await this.importBtn.click();
   }
 

@@ -84,8 +84,10 @@ test.describe('Design Page Tests', () => {
 
   test('deletes a published design from the list', async () => {
     await designPage.page.route('**/api/pattern/*', async (route) => await route.fulfill());
-    const card = designPage.getPublishedDesign();
-    await card.display.name.click();
+    await designPage.applyVisibilityFilter('published');
+    const card = await designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
+    await cardElements.display.name.click();
     await designPage.deleteDesignBtn.click();
     await expect(designPage.deleteDesignModalHeader).toHaveText('Delete 1 Design?');
     await designPage.deleteConfirmationBtn.click();
@@ -105,9 +107,12 @@ test.describe('Design Page Tests', () => {
       async (route) => await route.fulfill(),
     );
 
-    const card = designPage.getPublishedDesign();
-    await card.actionToggleBtn.click();
-    await card.actionElements.deploy.click();
+    await designPage.applyVisibilityFilter('published');
+    const card = await designPage.getFirstCardByVisibilityBadge('published');
+    const cardElements = designPage.getCardElements(card, 'published');
+
+    await cardElements.actionToggleBtn.click();
+    await cardElements.actionElements.deploy.click();
 
     const deployModal = designPage.DeployModal;
 
