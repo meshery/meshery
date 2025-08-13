@@ -188,9 +188,13 @@ func (ep *EnvironmentPersister) UpdateEnvironment(environmentID uuid.UUID, paylo
 		return nil, err
 	}
 
-	env.Name = payload.Name
-	env.Description = payload.Description
-	env.OrganizationID = uuid.FromStringOrNil(payload.OrgId)
+       env.Name = payload.Name
+       env.Description = payload.Description
+       orgID, err := uuid.FromString(payload.OrgId)
+       if err != nil {
+	       return nil, fmt.Errorf("invalid OrganizationID UUID: %w", err)
+       }
+       env.OrganizationID = orgID
 
 	return ep.UpdateEnvironmentByID(env)
 }

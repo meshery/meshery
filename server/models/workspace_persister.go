@@ -188,9 +188,13 @@ func (wp *WorkspacePersister) UpdateWorkspace(workspaceID uuid.UUID, payload *wo
 		return nil, err
 	}
 
-	ws.Name = payload.Name
-	ws.Description = payload.Description
-	ws.OrganizationId = uuid.FromStringOrNil(payload.OrganizationID)
+       ws.Name = payload.Name
+       ws.Description = payload.Description
+       orgID, err := uuid.FromString(payload.OrganizationID)
+       if err != nil {
+	       return nil, fmt.Errorf("invalid OrganizationID UUID: %w", err)
+       }
+       ws.OrganizationId = orgID
 
 	return wp.UpdateWorkspaceByID(ws)
 }

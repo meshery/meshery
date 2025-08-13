@@ -21,7 +21,11 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+       userUUID, err := uuid.FromString(user.ID)
+       if err != nil {
+	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       return
+       }
 	credential := models.Credential{
 		UserID: &userUUID,
 		Secret: map[string]interface{}{},
@@ -46,7 +50,12 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 }
 
 func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	credentialID := uuid.FromStringOrNil(mux.Vars(req)["credentialID"])
+       credentialIDStr := mux.Vars(req)["credentialID"]
+       credentialID, err := uuid.FromString(credentialIDStr)
+       if err != nil {
+	       http.Error(w, "Invalid credentialID UUID", http.StatusBadRequest)
+	       return
+       }
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	credential, statusCode, err := provider.GetCredentialByID(token, credentialID)
 	if err != nil {
@@ -107,7 +116,11 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+       userUUID, err := uuid.FromString(user.ID)
+       if err != nil {
+	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       return
+       }
 	credential := &models.Credential{
 		UserID: &userUUID,
 		Secret: map[string]interface{}{},
@@ -133,7 +146,12 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	q := req.URL.Query()
 
-	credentialID := uuid.FromStringOrNil(q.Get("credential_id"))
+       credentialIDStr := q.Get("credential_id")
+       credentialID, err := uuid.FromString(credentialIDStr)
+       if err != nil {
+	       http.Error(w, "Invalid credential_id UUID", http.StatusBadRequest)
+	       return
+       }
 	_, err := provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error deleting user credential: %v", err))

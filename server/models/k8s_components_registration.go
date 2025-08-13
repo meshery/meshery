@@ -92,7 +92,11 @@ func (cg *ComponentsRegistrationHelper) RegisterComponents(ctxs []*K8sContext, r
 		return
 	}
 
-	userUUID, _ := uuid.FromString(userID)
+       userUUID, err := uuid.FromString(userID)
+       if err != nil {
+	       cg.log.Error(fmt.Errorf("invalid userID UUID: %w", err))
+	       return
+       }
 
 	for _, ctx := range ctxs {
 		ctxID := ctx.ID
