@@ -138,6 +138,8 @@ const MeshMapSnapShotLogo = () => {
         width: 'auto',
         maxWidth: '120px',
         maxHeight: '75px',
+        maxWidth: '120px',
+        maxHeight: '75px',
       }}
       data-testid="kanvas-snapshot-image"
       src="/static/img/meshmap-snapshot-logo.svg"
@@ -554,6 +556,9 @@ const KubectlMeshSyncExtension = () => {
 export const WrappedLayer5CloudExtension = Layer5CloudExtension;
 export const WrappedKubectlPluginExtension = KubectlPluginExtension;
 export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
+export const WrappedLayer5CloudExtension = Layer5CloudExtension;
+export const WrappedKubectlPluginExtension = KubectlPluginExtension;
+export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
 export const WrappedMeshMapSignupCard = MeshMapSignUpcard;
 export const WrappedMeshMapSnapShopCard = MeshMapSnapShotCard;
 export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
@@ -655,6 +660,8 @@ const Extensions = () => {
                     data-testid="catalog-toggle-switch"
                     style={{
                       paddingRight: '1rem',
+                      height: '75px',
+                      width: '120px',
                       height: '75px',
                       width: '120px',
                       flexShrink: 0,

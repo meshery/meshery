@@ -94,3 +94,4 @@ Workspace,Remove environment from workspace,Remove environment from workspace,,,
 Workspace,Assign Designs to Workspaces,Assign designs to workspaces,,,X,,X,X,Workspace Management,64a1bad5-30f1-431a-aea0-8073d14a0262,X,TRUE
 Workspace,Remove Designs from Workspaces,Remove designs from workspaces,,,X,,X,X,Workspace Management,076515f1-f696-4211-ae27-58d5463a229e,X,TRUE
 Settings,Reset Database,Reset Meshery database,,,,,X,X,Settings Management,84fc402c-f33e-4a21-a0e3-e14f9e20b125,X,TRUE
+Academy,View Academy Metrics,View organizations academy metrics,,,,,,,Academy Management,045fad17-d2cc-46e8-bb10-f9ee026c799f,,FALSE
