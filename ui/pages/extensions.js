@@ -553,9 +553,7 @@ const KubectlMeshSyncExtension = () => {
   );
 };
 
-export const WrappedLayer5CloudExtension = Layer5CloudExtension;
-export const WrappedKubectlPluginExtension = KubectlPluginExtension;
-export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
+
 export const WrappedLayer5CloudExtension = Layer5CloudExtension;
 export const WrappedKubectlPluginExtension = KubectlPluginExtension;
 export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
