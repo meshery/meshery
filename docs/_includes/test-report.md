@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: August 13th 2025, 7:17:18 pm
+- Testing started at: August 13th 2025, 11:49:23 pm
 
 **📦 Test Result Summary**
 
-- ✅ 71 passed
+- ✅ 70 passed
 - ❌ 0 failed
-- ⚠️ 1 flaked
+- ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 45 seconds_
+⌛ _Duration: 4 minutes and 51 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,7 +21,6 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Transition to disconnected state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
