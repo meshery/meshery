@@ -117,7 +117,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
 
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
-		if err != nil {
+		if err != nil && !errors.Is(err, models.ErrContextAlreadyPersisted) {
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
 			metadata["error"] = err
