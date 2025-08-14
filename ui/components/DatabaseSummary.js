@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Typography, ResponsiveDataTable } from '@sistent/sistent';
+import { Button, Typography, ResponsiveDataTable, styled } from '@sistent/sistent';
 import PropTypes from 'prop-types';
 import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
@@ -12,14 +12,13 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
-import { styled } from '@sistent/sistent';
 
-const StyledTableContainer = styled('div')({
+const StyledTableContainer = styled('div')(({ theme }) => ({
   '& .MuiTableHead-root': {
     position: 'sticky',
     top: 0,
-    backgroundColor: '#212121',
-    zIndex: 10,
+    backgroundColor: theme.palette.background.tabs,
+    zIndex: theme.zIndex.appBar,
   },
   '& .MuiPaper-root': {
     position: 'relative',
@@ -28,10 +27,10 @@ const StyledTableContainer = styled('div')({
     tableLayout: 'fixed',
   },
   '& .MuiTableCell-head': {
-    backgroundColor: '#212121',
-    color: '#fff',
+    backgroundColor: theme.palette.background.tabs,
+    color: theme.palette.background.constant.white,
   },
-});
+}));
 
 const DatabaseSummary = (props) => {
   const [page, setPage] = useState(0);
