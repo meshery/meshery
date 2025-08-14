@@ -540,6 +540,23 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
+	// First, get the existing connection entity from provider
+	token, _ := req.Context().Value(models.TokenCtxKey).(string)
+	_, statusCode, err := provider.GetConnectionByID(token, connectionID)
+	if err != nil {
+		_err := ErrRetrieveData(err)
+		metadata := map[string]any{
+			"error": _err,
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error retrieving connection before update").WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		h.log.Error(_err)
+		http.Error(w, _err.Error(), statusCode)
+		return
+	}
+
 	connection := &connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
