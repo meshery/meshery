@@ -17,6 +17,7 @@ import (
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
 	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
 type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
@@ -550,7 +551,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	}
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	_, statusCode, err := provider.GetConnectionByID(token, connectionID)
+	existingConnection, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
 		_err := ErrRetrieveData(err)
 		metadata := map[string]any{
@@ -578,6 +579,22 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// Handle meshsync deployment mode changes after successful connection update
+	if err := h.handleMeshSyncDeploymentModeChange(existingConnection, connection, connectionID); err != nil {
+		// Extract error and emit event for meshsync deployment mode change failure
+		meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
+		metadata := map[string]any{
+			"error": meshSyncErr,
+		}
+		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
+		_ = provider.PersistEvent(*event, nil)
+		go h.config.EventBroadcaster.Publish(userID, event)
+
+		h.log.Error(meshSyncErr)
+		// Don't fail the response since the connection update succeeded
+		// TODO: be sure there is not update in meshsync deployment mode if switch mode was failed above
 	}
 
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
@@ -624,4 +641,30 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
+}
+
+// handleMeshSyncDeploymentModeChange compares meshsync deployment modes between existing and new connections
+// and performs necessary actions when they differ
+func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connections.Connection, newConnection *connections.ConnectionPayload, connectionID uuid.UUID) error {
+	// Validate input parameters
+	if existingConnection == nil {
+		return fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
+	}
+
+	if newConnection == nil {
+		return fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
+	}
+
+	// Compare meshsync deployment mode between existing and new connection
+	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
+	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
+
+	meshSyncModeChanged := existingMeshSyncMode != newMeshSyncMode
+	if meshSyncModeChanged {
+		h.log.Info(fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s",
+			existingMeshSyncMode, newMeshSyncMode, connectionID))
+		// TODO:
+	}
+
+	return nil
 }
