@@ -20,7 +20,7 @@ export class DesignPage {
 
     this.deleteDesignModalHeader = page.getByTestId('modal-header');
     this.deleteConfirmationBtn = page.getByTestId('prompt-primary-button');
-    
+
     this.universalFilter = page.getByTestId('meshery-patterns-universal-filter');
     this.visibilityFilter = page.getByTestId('meshery-patterns-universal-filter-select-visibility');
     this.filterApplyBtn = page.getByTestId('meshery-patterns-universal-filter-apply-btn');
@@ -69,12 +69,9 @@ export class DesignPage {
   async applyVisibilityFilter(visibility) {
     await this.universalFilter.click();
     await this.visibilityFilter.first().click();
-    await this.page
-      .getByTestId(`meshery-patterns-universal-filter-option-${visibility}`)
-      .click();
+    await this.page.getByTestId(`meshery-patterns-universal-filter-option-${visibility}`).click();
 
     await this.filterApplyBtn.click();
-
   }
 
   getFirstCardByVisibilityBadge(visibility) {
@@ -83,12 +80,12 @@ export class DesignPage {
         has: this.page.getByTestId(`design-visibility-${visibility}`),
       })
       .first();
-  } 
+  }
 
   getCardElements(card, visibility) {
     const baseElements = this.getBaseCardElements(card);
 
-    const extraActions = {}
+    const extraActions = {};
     const actionElements = this._getCardActionsMap()[visibility] || [];
     actionElements.forEach((element) => {
       extraActions[element] = card.getByTestId(`pattern-btn-${element}`);
@@ -103,15 +100,13 @@ export class DesignPage {
         ...baseElements.actionElements,
         ...extraActions,
       },
-    }
-   
+    };
   }
 
-  _getCardActionsMap () {
+  _getCardActionsMap() {
     return {
       public: [],
       published: ['unpublish'],
     };
   }
-
 }

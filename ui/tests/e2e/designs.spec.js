@@ -1,4 +1,4 @@
-import {test, expect} from './fixtures/project';
+import { test, expect } from './fixtures/project';
 import { DesignPage } from './pages/DesignPage/DesignPage';
 import { waitForSnackBar } from './utils/waitForSnackBar';
 import { mockEnvironmentsApi, mockConnectionsApi } from './pages/DesignPage/utils/mockApiRoutes';
@@ -43,14 +43,16 @@ test.describe('Design Page Tests', () => {
   });
 
   DESIGN_TYPES.forEach(({ type }) => {
-    test(`displays ${type} design card correctly`, async ({provider}) => {
-      test.skip(provider === 'None' && type === 'public', `Skipping test for provider: ${provider}`);
+    test(`displays ${type} design card correctly`, async ({ provider }) => {
+      test.skip(
+        provider === 'None' && type === 'public',
+        `Skipping test for provider: ${provider}`,
+      );
       await designPage.applyVisibilityFilter(type);
 
       const card = await designPage.getFirstCardByVisibilityBadge(type);
 
       const cardElements = designPage.getCardElements(card, type);
-
 
       const visibleElements = [...Object.values(cardElements.display)];
 
