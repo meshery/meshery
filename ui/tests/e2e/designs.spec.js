@@ -6,7 +6,7 @@ import { mockEnvironmentsApi, mockConnectionsApi } from './pages/DesignPage/util
 const IMPORT_SOURCES = [
   {
     type: 'File',
-    pathOrUrl: 'ui/tests/e2e/assets/GuestBook App.yml',
+    pathOrUrl: 'tests/e2e/assets/GuestBook App.yml',
     designName: 'GuestBook App',
   },
   {
