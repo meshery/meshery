@@ -540,7 +540,15 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
-	// First, get the existing connection entity from provider
+	connection := &connections.ConnectionPayload{}
+	err = json.Unmarshal(bd, connection)
+	obj := "connection"
+	if err != nil {
+		h.log.Error(models.ErrUnmarshal(err, obj))
+		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
+		return
+	}
+
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
 	_, statusCode, err := provider.GetConnectionByID(token, connectionID)
 	if err != nil {
@@ -554,15 +562,6 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), statusCode)
-		return
-	}
-
-	connection := &connections.ConnectionPayload{}
-	err = json.Unmarshal(bd, connection)
-	obj := "connection"
-	if err != nil {
-		h.log.Error(models.ErrUnmarshal(err, obj))
-		http.Error(w, models.ErrUnmarshal(err, obj).Error(), http.StatusInternalServerError)
 		return
 	}
 
