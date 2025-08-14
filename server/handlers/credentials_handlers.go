@@ -152,7 +152,7 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
 	       http.Error(w, "Invalid credential_id UUID", http.StatusBadRequest)
 	       return
        }
-	_, err := provider.DeleteUserCredential(req, credentialID)
+	_, err = provider.DeleteUserCredential(req, credentialID)
 	if err != nil {
 		h.log.Error(fmt.Errorf("error deleting user credential: %v", err))
 		http.Error(w, "unable to delete user credential", http.StatusInternalServerError)

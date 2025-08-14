@@ -1446,7 +1446,7 @@ func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter
 func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
 	id, err := uuid.FromString(keyID)
 	if err != nil {
-		return nil, ErrInvalidUUID(err, "keyID")
+		return nil, err
 	}
 	return l.KeyPersister.GetUsersKey(id)
 }
@@ -1464,7 +1464,7 @@ func (l *DefaultLocalProvider) GetWorkspaces(_, page, pageSize, search, order, f
 func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID string, _ string) ([]byte, error) {
 	id, err := uuid.FromString(workspaceID)
 	if err != nil {
-		return nil, ErrInvalidUUID(err, "workspaceID")
+		return nil,err
 	}
 	return l.WorkspacePersister.GetWorkspaceByID(id)
 }
@@ -1472,7 +1472,7 @@ func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID str
 func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID string) ([]byte, error) {
 	id, err := uuid.FromString(workspaceID)
 	if err != nil {
-		return nil, ErrInvalidUUID(err, "workspaceID")
+		return nil, err
 	}
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
@@ -1480,7 +1480,7 @@ func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID stri
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
 	orgId, err := uuid.FromString(workspacePayload.OrganizationID)
 	if err != nil {
-		return nil, ErrInvalidUUID(err, "OrganizationID")
+		return nil, err
 	}
 	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
@@ -1496,11 +1496,11 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
 	id, err := uuid.FromString(workspaceID)
 	if err != nil {
-		return nil, ErrInvalidUUID(err, "workspaceID")
+		return nil, err
 	}
 	orgId, err := uuid.FromString(workspacePayload.OrganizationID)
 	if err != nil {
-		return nil, ErrInvalidUUID(err, "OrganizationID")
+		return nil, err
 	}
 	workspace := &workspace.Workspace{
 		ID:             id,

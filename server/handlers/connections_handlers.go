@@ -33,7 +33,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
 	       return
        }
-	err := json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
+	err = json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
 	if err != nil {
 		http.Error(w, models.ErrUnmarshal(err, "connection registration payload").Error(), http.StatusInternalServerError)
 		return
@@ -368,7 +368,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
        }
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
 
-	err := json.NewDecoder(req.Body).Decode(connectionStatusPayload)
+	err = json.NewDecoder(req.Body).Decode(connectionStatusPayload)
 	if err != nil {
 		errUnmarshal := models.ErrUnmarshal(err, "connection status payload")
 		eventBuilder.WithSeverity(events.Error).WithDescription("Unable to update connection status.").
