@@ -646,7 +646,6 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 // handleMeshSyncDeploymentModeChange compares meshsync deployment modes between existing and new connections
 // and performs necessary actions when they differ
 func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connections.Connection, newConnection *connections.ConnectionPayload, connectionID uuid.UUID) error {
-	// Validate input parameters
 	if existingConnection == nil {
 		return fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
 	}
@@ -655,7 +654,6 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connect
 		return fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
 	}
 
-	// Compare meshsync deployment mode between existing and new connection
 	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
 	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
 
@@ -663,7 +661,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connect
 	if meshSyncModeChanged {
 		h.log.Info(fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s",
 			existingMeshSyncMode, newMeshSyncMode, connectionID))
-		// TODO:
+		// TODO: stopped here
 	}
 
 	return nil
