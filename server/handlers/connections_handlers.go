@@ -594,7 +594,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 		h.log.Error(meshSyncErr)
 		// Don't fail the response since the connection update succeeded
-		// TODO: be sure there is not update in meshsync deployment mode if switch mode was failed above
+		// TODO: be sure there is no update in meshsync deployment mode if switch mode was failed above
 	}
 
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
