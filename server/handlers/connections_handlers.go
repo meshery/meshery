@@ -661,7 +661,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connect
 	if meshSyncModeChanged {
 		h.log.Info(fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s",
 			existingMeshSyncMode, newMeshSyncMode, connectionID))
-		// TODO: stopped here
+		// TODO: implement mode change
 	}
 
 	return nil
