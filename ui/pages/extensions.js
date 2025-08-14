@@ -87,7 +87,7 @@ const ResponsiveButtonContainer = ({ children }) => {
   );
 };
 
-
+// Responsive grid size prop
 const useResponsiveGridSize = () => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   return isMobile ? { xs: 12 } : LARGE_6_MED_12_GRID_STYLE;
