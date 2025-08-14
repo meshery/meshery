@@ -4,6 +4,7 @@ title: Meshery Adapter for Kuma
 name: Meshery Adapter for Kuma
 component: Kuma
 earliest_version: v1.2.2
+adapter_version: v0.8.1
 port: 10007/gRPC
 project_status: stable
 lab: kuma-meshery-adapter

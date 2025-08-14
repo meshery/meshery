@@ -4,6 +4,7 @@ title: Meshery Adapter for Cilium Service Mesh
 name: Meshery Adapter for Cilium Service Mesh
 component: Cilium
 earliest_version: v1.10.6
+adapter_version: v0.8.2
 port: 10012/gRPC
 project_status: stable
 lab: cilium-meshery-adapter
