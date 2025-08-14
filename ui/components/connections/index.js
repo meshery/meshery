@@ -13,6 +13,8 @@ import { useGetSchemaQuery } from '@/rtk-query/schema';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
 import { useRouter } from 'next/router';
+import ConnectionWizard from './ConnectionWizard';
+import RegisterConnectionModal from './meshSync/RegisterConnectionModal';
 
 /**
  * Parent Component for Connection Component
@@ -24,6 +26,16 @@ import { useRouter } from 'next/router';
 function ConnectionManagementPage(props) {
   const [createConnectionModal, setCreateConnectionModal] = useState({
     open: false,
+  });
+
+  const [connectionWizard, setConnectionWizard] = useState({
+    open: false,
+    connectionType: 'kubernetes',
+  });
+
+  const [registrationModal, setRegistrationModal] = useState({
+    open: false,
+    connectionData: null,
   });
 
   const { data: schemaResponse } = useGetSchemaQuery({
@@ -42,12 +54,67 @@ function ConnectionManagementPage(props) {
 
   const handleCreateConnectionSubmit = () => {};
 
+  const handleOpenConnectionWizard = (connectionType = 'kubernetes') => {
+    setConnectionWizard({
+      open: true,
+      connectionType,
+    });
+  };
+
+  const handleCloseConnectionWizard = () => {
+    setConnectionWizard({
+      open: false,
+      connectionType: 'kubernetes',
+    });
+  };
+
+  const handleConnectionWizardComplete = (results) => {
+    console.log('Connection wizard completed:', results);
+    // Refresh connections table or handle completion
+    setConnectionWizard({
+      open: false,
+      connectionType: 'kubernetes',
+    });
+  };
+
+  const handleOpenRegistrationModal = () => {
+    setRegistrationModal({
+      open: true,
+      connectionData: {
+        metadata: {},
+        capabilities: [],
+        kind: 'Connection',
+        onOpenConnectionWizard: () => {
+          // Close the registration modal
+          setRegistrationModal({
+            open: false,
+            connectionData: null,
+          });
+          // Open the Connection Wizard
+          setConnectionWizard({
+            open: true,
+            connectionType: 'kubernetes',
+          });
+        },
+      },
+    });
+  };
+
+  const handleCloseRegistrationModal = () => {
+    setRegistrationModal({
+      open: false,
+      connectionData: null,
+    });
+  };
+
   return (
     <>
       <Connections
         createConnectionModal={createConnectionModal}
         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
         onCloseCreateConnectionModal={handleCreateConnectionModalClose}
+        onOpenConnectionWizard={handleOpenConnectionWizard}
+        onOpenRegistrationModal={handleOpenRegistrationModal}
         {...props}
       />
       {createConnectionModal.open && (
@@ -61,10 +128,21 @@ function ConnectionManagementPage(props) {
           submitBtnText="Connect"
         />
       )}
+      <ConnectionWizard
+        open={connectionWizard.open}
+        connectionType={connectionWizard.connectionType}
+        onClose={handleCloseConnectionWizard}
+        onConnectionComplete={handleConnectionWizardComplete}
+      />
+      <RegisterConnectionModal
+        openRegistrationModal={registrationModal.open}
+        connectionData={registrationModal.connectionData}
+        handleRegistrationModalClose={handleCloseRegistrationModal}
+      />
     </>
   );
 }
-function Connections() {
+function Connections({ onOpenConnectionWizard, onOpenRegistrationModal }) {
   const router = useRouter();
   const [_operatorState] = useState([]);
   const _operatorStateRef = useRef(_operatorState);
@@ -145,6 +223,8 @@ function Connections() {
             <ConnectionTable
               selectedConnectionId={connectionId}
               updateUrlWithConnectionId={updateUrlWithConnectionId}
+              onOpenConnectionWizard={onOpenConnectionWizard}
+              onOpenRegistrationModal={onOpenRegistrationModal}
             />
           )}
           {tab === 1 && (

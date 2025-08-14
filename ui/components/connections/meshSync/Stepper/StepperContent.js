@@ -28,7 +28,7 @@ import {
 } from '@/rtk-query/connection';
 import { useGetCredentialsQuery } from '@/rtk-query/credentials';
 
-const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
+const CONNECTION_TYPES = ['Kubernetes Connection', 'Prometheus Connection', 'Grafana Connection'];
 
 const schema = selectCompSchema(
   CONNECTION_TYPES,
@@ -36,7 +36,7 @@ const schema = selectCompSchema(
   'Select type of Connection to register',
   'selectedConnectionType',
 );
-export const SelectConnection = ({ setSharedData, handleNext }) => {
+export const SelectConnection = ({ setSharedData, handleNext, sharedData }) => {
   const formRef = useRef();
   const [registerConnection] = useVerifyAndRegisterConnectionMutation();
 
@@ -78,9 +78,30 @@ export const SelectConnection = ({ setSharedData, handleNext }) => {
       const selectedConnectionType = data.selectedConnectionType;
       // The selectedConnectionType is the concatentaion of connectionType, ' ' and 'Connection' suffix.
       // Therefore, when initiating connection we are removing ' ' and suffix so that correct schema is retrieved.
-      handleRegisterConnection(
-        selectedConnectionType?.slice(0, selectedConnectionType.indexOf(' ')),
-      );
+      const connectionKind = selectedConnectionType?.slice(0, selectedConnectionType.indexOf(' '));
+
+      // Handle Kubernetes connections differently - close this modal and open Connection Wizard
+      if (connectionKind.toLowerCase() === 'kubernetes') {
+        // Store the callback before closing the modal
+        const openWizardCallback = sharedData?.onOpenConnectionWizard;
+
+        // Close the current modal first
+        if (sharedData?.onClose) {
+          sharedData.onClose();
+        }
+
+        // Then trigger the Connection Wizard to open
+        if (openWizardCallback) {
+          // Use setTimeout to ensure the modal closes first
+          setTimeout(() => {
+            openWizardCallback();
+          }, 100);
+        }
+        return;
+      }
+
+      // For other connection types, use the existing flow
+      handleRegisterConnection(connectionKind);
     }
   };
 
@@ -141,13 +162,9 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
       componentForm: data,
     }));
   };
-  const isDisabledNextButton =
-    sharedData?.componentForm &&
-    sharedData?.componentForm['name'] !== undefined &&
-    sharedData?.componentForm &&
-    sharedData?.componentForm['url'] !== undefined
-      ? false
-      : true;
+
+  const isDisabledNextButton = !(sharedData?.componentForm?.name && sharedData?.componentForm?.url);
+
   return (
     <StepperContent
       {...ConnectionDetailContent}

@@ -71,27 +71,32 @@ function StepperIcon({ active, completed, stepIcons, icon }) {
 
 export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
   const [activeStep, setActiveStep] = React.useState(0);
-  const stepData = {
-    stepContent: registerConnectionContent,
-    stepIcons: registerConnectionIcons,
-    steps: registerConnectionSteps,
-  };
-  const { stepContent, stepIcons, steps } = stepData;
 
   React.useEffect(() => {
-    setSharedData({
-      metadata: connectionData.metadata,
-      capabilities: connectionData.capabilities,
-      kind: connectionData.kind,
-    });
+    if (connectionData) {
+      setSharedData({
+        metadata: connectionData.metadata || {},
+        capabilities: connectionData.capabilities || [],
+        kind: connectionData.kind || 'Connection',
+      });
+    }
   }, [connectionData]);
 
   React.useEffect(() => {
     setSharedData((prevState) => ({
       ...prevState,
       onClose: onClose,
+      onOpenConnectionWizard: connectionData?.onOpenConnectionWizard,
     }));
-  }, [sharedData]);
+  }, [onClose, connectionData?.onOpenConnectionWizard]);
+
+  // Always use the original RegisterConnectionModal flow
+  const stepData = {
+    stepContent: registerConnectionContent,
+    stepIcons: registerConnectionIcons,
+    steps: registerConnectionSteps,
+  };
+  const { stepContent, stepIcons, steps } = stepData;
 
   const ActiveStepContent = stepContent[String(activeStep + 1)].component;
 
