@@ -657,6 +657,11 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connect
 	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
 	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
 
+	// draw back to default mode
+	if newMeshSyncMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+		newMeshSyncMode = h.MeshsyncDefaultDeploymentMode
+	}
+
 	meshSyncModeChanged := existingMeshSyncMode != newMeshSyncMode
 	if meshSyncModeChanged {
 		h.log.Info(fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s",
