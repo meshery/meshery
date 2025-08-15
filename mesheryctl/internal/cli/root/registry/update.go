@@ -128,7 +128,7 @@ func InvokeCompUpdate() error {
 		return err
 	}
 
-	err = componentCSVHelper.ParseComponentsSheet(modelName)
+	err = componentCSVHelper.ParseComponentsSheet(modelNames)
 	if err != nil {
 		err = ErrUpdateRegistry(err, modelLocation)
 		utils.Log.Error(err)
@@ -250,7 +250,7 @@ func init() {
 
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet it for the integration spreadsheet")
 	updateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
-	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
+	updateCmd.PersistentFlags().StringSliceVarP(&modelNames, "model", "m", []string{}, "comma-separated list of models to be generated")
 
 	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
 
