@@ -553,7 +553,8 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	}
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	existingConnection, statusCode, err := provider.GetConnectionByID(token, connectionID)
+	// TODO: probably need to use GetConnectionByID (but it returns error: Status Code: 500 .unable to retrieve connection with id <id>)
+	existingConnection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
 	if err != nil {
 		_err := ErrRetrieveData(err)
 		metadata := map[string]any{
