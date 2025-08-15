@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,6 +14,7 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
+	k8sMachines "github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
@@ -582,7 +584,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	}
 
 	// Handle meshsync deployment mode changes after successful connection update
-	if err := h.handleMeshSyncDeploymentModeChange(existingConnection, connection, connectionID); err != nil {
+	if err := h.handleMeshSyncDeploymentModeChange(existingConnection, connection, connectionID, userID, provider); err != nil {
 		// Extract error and emit event for meshsync deployment mode change failure
 		meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
 		metadata := map[string]any{
@@ -645,7 +647,13 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 
 // handleMeshSyncDeploymentModeChange compares meshsync deployment modes between existing and new connections
 // and performs necessary actions when they differ
-func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connections.Connection, newConnection *connections.ConnectionPayload, connectionID uuid.UUID) error {
+func (h *Handler) handleMeshSyncDeploymentModeChange(
+	existingConnection *connections.Connection,
+	newConnection *connections.ConnectionPayload,
+	connectionID uuid.UUID,
+	userID uuid.UUID,
+	provider models.Provider,
+) error {
 	if existingConnection == nil {
 		return fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
 	}
@@ -664,9 +672,54 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(existingConnection *connect
 
 	meshSyncModeChanged := existingMeshSyncMode != newMeshSyncMode
 	if meshSyncModeChanged {
-		h.log.Info(fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s",
+		instanceTracker := h.ConnectionToStateMachineInstanceTracker
+		if instanceTracker == nil {
+			return fmt.Errorf("instance tracker is nil in handler instance")
+		}
+
+		// TODO: is it a correct ID?
+		machine, ok := instanceTracker.Get(connectionID)
+		if !ok || machine == nil {
+			return fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
+		}
+
+		// Get the machine context
+		machineCtx, err := k8sMachines.GetMachineCtx(machine.Context, nil)
+		if err != nil {
+			return fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
+		}
+
+		if machineCtx == nil {
+			return fmt.Errorf("machine context is nil for connection %s", connectionID)
+		}
+
+		if machineCtx.MesheryCtrlsHelper == nil {
+			return fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
+		}
+
+		// Update the deployment mode in the controller helper
+		machineCtx.MesheryCtrlsHelper.SetMeshsyncDeploymentMode(newMeshSyncMode)
+
+		// Perform the mode switch
+		switch newMeshSyncMode {
+		case schemasConnection.MeshsyncDeploymentModeOperator:
+			machineCtx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(context.Background(), connectionID.String())
+			machineCtx.MesheryCtrlsHelper.DeployUndeployedOperators(machineCtx.OperatorTracker)
+		case schemasConnection.MeshsyncDeploymentModeEmbedded:
+			machineCtx.MesheryCtrlsHelper.UndeployDeployedOperators(machineCtx.OperatorTracker)
+			// Add meshsync data handler will automatically start embedded meshsync
+			// TODO: figure out where to get the correct system ID instead of using h.SystemID
+			machineCtx.MesheryCtrlsHelper.AddMeshsynDataHandlers(
+				context.Background(),
+				machineCtx.K8sContext,
+				userID, *h.SystemID, provider)
+		default:
+			return fmt.Errorf("unsupported meshsync deployment mode: %s for connection %s", newMeshSyncMode, connectionID)
+		}
+
+		h.log.Info(fmt.Sprintf("Successfully switched MeshSync deployment mode from '%s' to '%s' for connection %s",
 			existingMeshSyncMode, newMeshSyncMode, connectionID))
-		// TODO: implement mode change
+
 	}
 
 	return nil
