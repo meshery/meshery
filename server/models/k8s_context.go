@@ -148,7 +148,10 @@ func K8sContextsFromKubeconfig(provider Provider, userID string, _ *Broadcast, k
 		return kcs
 	}
 
-	userUUID := uuid.FromStringOrNil(userID)
+       userUUID, err := uuid.FromString(userID)
+       if err != nil {
+	       return kcs
+       }
 
 	kcfg := InternalKubeConfig{}
 	if err := yaml.Unmarshal(kubeconfig, &kcfg); err != nil {
@@ -427,8 +430,12 @@ func (kc *K8sContext) AssignServerID(handler *kubernetes.Client) error {
 // FlushMeshSyncData will flush the meshsync data for the passed kubernetes contextID
 func FlushMeshSyncData(ctx context.Context, k8sContext K8sContext, provider Provider, eventsChan *Broadcast, userID string, mesheryInstanceID *uuid.UUID, log logger.Handler) {
 	ctxID := k8sContext.ID
-	ctxUUID, _ := uuid.FromString(ctxID)
-	userUUID, _ := uuid.FromString(userID)
+       ctxUUID, _ := uuid.FromString(ctxID) // ctxID is from internal context, keep as is
+       userUUID, err := uuid.FromString(userID)
+       if err != nil {
+	       // Invalid userID, skip event publishing
+	       return
+       }
 	// Gets all the available kubernetes contexts
 
 	ctxName := k8sContext.Name

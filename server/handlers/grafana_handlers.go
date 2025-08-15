@@ -47,7 +47,11 @@ func init() {
 // GrafanaConfigHandler is used for fetching or persisting or removing Grafana configuration
 func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, p models.Provider) {
 	sysID := h.SystemID
-	userUUID := uuid.FromStringOrNil(user.ID)
+       userUUID, err := uuid.FromString(user.ID)
+       if err != nil {
+	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       return
+       }
 
 	eventBuilder := events.NewEvent().ActedUpon(userUUID).WithCategory("connection").WithAction("update").FromSystem(*sysID).FromUser(userUUID).WithDescription("Failed to interact with the connection.")
 
@@ -143,7 +147,12 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 // GrafanaPingHandler - used to initiate a Grafana ping
 func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, _ *models.User, p models.Provider) {
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+       connectionIDStr := mux.Vars(req)["connectionID"]
+       connectionID, err := uuid.FromString(connectionIDStr)
+       if err != nil {
+	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       return
+       }
 
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
@@ -181,7 +190,12 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+       connectionIDStr := mux.Vars(req)["connectionID"]
+       connectionID, err := uuid.FromString(connectionIDStr)
+       if err != nil {
+	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       return
+       }
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	h.log.Debug("connection id : ", connectionID)
 	if err != nil {
@@ -232,7 +246,12 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 
 	reqQuery := req.URL.Query()
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+       connectionIDStr := mux.Vars(req)["connectionID"]
+       connectionID, err := uuid.FromString(connectionIDStr)
+       if err != nil {
+	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       return
+       }
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
@@ -269,7 +288,12 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	reqQuery := req.URL.Query()
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+       connectionIDStr := mux.Vars(req)["connectionID"]
+       connectionID, err := uuid.FromString(connectionIDStr)
+       if err != nil {
+	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       return
+       }
 	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
@@ -334,7 +358,12 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
 	}
 
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	connectionID := uuid.FromStringOrNil(mux.Vars(req)["connectionID"])
+       connectionIDStr := mux.Vars(req)["connectionID"]
+       connectionID, err := uuid.FromString(connectionIDStr)
+       if err != nil {
+	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       return
+       }
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
