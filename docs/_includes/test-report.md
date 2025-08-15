@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: August 15th 2025, 12:01:01 pm
+- Testing started at: August 15th 2025, 11:49:51 pm
 
 **📦 Test Result Summary**
 
-- ✅ 70 passed
+- ✅ 72 passed
 - ❌ 0 failed
-- ⚠️ 0 flaked
+- ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 5 minutes and 10 seconds_
+⌛ _Duration: 5 minutes and 39 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,6 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
+| 1 | chromium-meshery-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
