@@ -599,6 +599,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		// TODO: be sure there is no update in meshsync deployment mode if switch mode was failed above
 	}
 
+	// TODO enhance event with information about meshsync deployment mode change
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
@@ -683,7 +684,6 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
 		}
 
-		// Get the machine context
 		machineCtx, err := k8sMachines.GetMachineCtx(machine.Context, nil)
 		if err != nil {
 			return fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
@@ -697,7 +697,6 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
 		}
 
-		// Update the deployment mode in the controller helper
 		machineCtx.MesheryCtrlsHelper.SetMeshsyncDeploymentMode(newMeshSyncMode)
 
 		// Perform the mode switch
@@ -707,8 +706,8 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			machineCtx.MesheryCtrlsHelper.DeployUndeployedOperators(machineCtx.OperatorTracker)
 		case schemasConnection.MeshsyncDeploymentModeEmbedded:
 			machineCtx.MesheryCtrlsHelper.UndeployDeployedOperators(machineCtx.OperatorTracker)
-			// Add meshsync data handler will automatically start embedded meshsync
-			// TODO: figure out where to get the correct system ID instead of using h.SystemID
+			// Add meshsync data handler will start embedded meshsync
+			// TODO: is h.SystemID a correct systemID ?
 			machineCtx.MesheryCtrlsHelper.AddMeshsynDataHandlers(
 				context.Background(),
 				machineCtx.K8sContext,
@@ -717,6 +716,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return fmt.Errorf("unsupported meshsync deployment mode: %s for connection %s", newMeshSyncMode, connectionID)
 		}
 
+		// TODO: perform this logging on the called side?
 		h.log.Info(fmt.Sprintf("Successfully switched MeshSync deployment mode from '%s' to '%s' for connection %s",
 			existingMeshSyncMode, newMeshSyncMode, connectionID))
 
