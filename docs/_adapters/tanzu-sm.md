@@ -4,6 +4,7 @@ title: Meshery Adapter for Tanzu Service Mesh
 name: Meshery Adapter for Tanzu Service Mesh
 component: Tanzu Service Mesh
 earliest_version: pre-GA
+adapter_version: v0.1.0
 port: 10011/gRPC
 project_status: alpha
 github_link: https://github.com/meshery/meshery-tanzu-sm
