@@ -552,36 +552,20 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	token, _ := req.Context().Value(models.TokenCtxKey).(string)
-	// TODO: probably need to use GetConnectionByID (but it returns error: Status Code: 500 .unable to retrieve connection with id <id>)
-	existingConnection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
-	if err != nil {
-		_err := ErrRetrieveData(err)
-		metadata := map[string]any{
-			"error": _err,
-		}
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error retrieving connection before update").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
-
-		h.log.Error(_err)
-		http.Error(w, _err.Error(), statusCode)
-		return
-	}
-
 	// Check if meshsync deployment mode is specified in the payload metadata.
 	// Only handle mode changes if a mode is explicitly provided (not undefined).
 	// In fact this method is used (for now) only for perform meshsync deployment mode change.
 	// If mode change fails return error.
 	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
-	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.MetaData)
-	if newMeshSyncMode != schemasConnection.MeshsyncDeploymentModeUndefined {
+	if schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != schemasConnection.MeshsyncDeploymentModeUndefined {
 		// Handle meshsync deployment mode changes before connection update
-		if err := h.handleMeshSyncDeploymentModeChange(existingConnection, connection, connectionID, userID, provider); err != nil {
-			// Extract error and emit event for meshsync deployment mode change failure
+		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(connectionID, connection, token, userID, provider)
+		if err != nil {
 			meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
 			metadata := map[string]any{
-				"error": meshSyncErr,
+				"error":         meshSyncErr,
+				"connection_id": connectionID.String(),
 			}
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
 			_ = provider.PersistEvent(*event, nil)
@@ -590,6 +574,21 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			h.log.Error(meshSyncErr)
 			http.Error(w, meshSyncErr.Error(), http.StatusInternalServerError)
 			return
+		}
+
+		// Log and emit event if mode actually changed
+		if modeChanged {
+			description := fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s", oldMode, newMode, connectionID)
+			metadata := map[string]any{
+				"meshsync_deployment_mode_old": oldMode,
+				"meshsync_deployment_mode_new": newMode,
+				"connection_id":                connectionID.String(),
+			}
+			event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+			_ = provider.PersistEvent(*event, nil)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			h.log.Info(description)
 		}
 	}
 
@@ -655,21 +654,28 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	w.WriteHeader(http.StatusOK)
 }
 
-// handleMeshSyncDeploymentModeChange compares meshsync deployment modes between existing and new connections
-// and performs necessary actions when they differ
+// handleMeshSyncDeploymentModeChange retrieves existing connection, compares meshsync deployment modes
+// between existing and new connections, and performs necessary actions when they differ
+// Returns: oldMode, newMode, changed, error
 func (h *Handler) handleMeshSyncDeploymentModeChange(
-	existingConnection *connections.Connection,
-	newConnection *connections.ConnectionPayload,
 	connectionID uuid.UUID,
+	newConnection *connections.ConnectionPayload,
+	token string,
 	userID uuid.UUID,
 	provider models.Provider,
-) error {
-	if existingConnection == nil {
-		return fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
+) (schemasConnection.MeshsyncDeploymentMode, schemasConnection.MeshsyncDeploymentMode, bool, error) {
+	if newConnection == nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
 	}
 
-	if newConnection == nil {
-		return fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
+	// Retrieve existing connection for mode comparison
+	existingConnection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
+	if err != nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
+	}
+
+	if existingConnection == nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
 	}
 
 	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
@@ -684,26 +690,25 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 	if meshSyncModeChanged {
 		instanceTracker := h.ConnectionToStateMachineInstanceTracker
 		if instanceTracker == nil {
-			return fmt.Errorf("instance tracker is nil in handler instance")
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker is nil in handler instance")
 		}
 
-		// TODO: is it a correct ID?
 		machine, ok := instanceTracker.Get(connectionID)
 		if !ok || machine == nil {
-			return fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
 		}
 
 		machineCtx, err := k8sMachines.GetMachineCtx(machine.Context, nil)
 		if err != nil {
-			return fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
 		}
 
 		if machineCtx == nil {
-			return fmt.Errorf("machine context is nil for connection %s", connectionID)
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
 		}
 
 		if machineCtx.MesheryCtrlsHelper == nil {
-			return fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
 		}
 
 		machineCtx.MesheryCtrlsHelper.SetMeshsyncDeploymentMode(newMeshSyncMode)
@@ -722,14 +727,10 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				machineCtx.K8sContext,
 				userID, *h.SystemID, provider)
 		default:
-			return fmt.Errorf("unsupported meshsync deployment mode: %s for connection %s", newMeshSyncMode, connectionID)
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("unsupported meshsync deployment mode: %s for connection %s", newMeshSyncMode, connectionID)
 		}
-
-		// TODO: perform this logging on the called side?
-		h.log.Info(fmt.Sprintf("Successfully switched MeshSync deployment mode from '%s' to '%s' for connection %s",
-			existingMeshSyncMode, newMeshSyncMode, connectionID))
 
 	}
 
-	return nil
+	return existingMeshSyncMode, newMeshSyncMode, meshSyncModeChanged, nil
 }
