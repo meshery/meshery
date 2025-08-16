@@ -11,6 +11,7 @@ import (
 	"github.com/meshery/meshkit/models/meshmodel/core/policies"
 	meshmodel "github.com/meshery/meshkit/models/meshmodel/registry"
 	"github.com/meshery/meshkit/utils/events"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/spf13/viper"
 	"github.com/vmihailenco/taskq/v3"
 )
@@ -32,6 +33,7 @@ type Handler struct {
 	EventsBuffer                            *events.EventStreamer
 	Rego                                    *policies.Rego
 	ConnectionToStateMachineInstanceTracker *machines.ConnectionToStateMachineInstanceTracker
+	MeshsyncDefaultDeploymentMode           schemasConnection.MeshsyncDeploymentMode
 }
 
 // NewHandlerInstance returns a Handler instance
@@ -48,6 +50,7 @@ func NewHandlerInstance(
 	provider string,
 	rego *policies.Rego,
 	connToInstanceTracker *machines.ConnectionToStateMachineInstanceTracker,
+	meshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode,
 ) models.HandlerInterface {
 
 	h := &Handler{
@@ -64,6 +67,7 @@ func NewHandlerInstance(
 		Rego:                                    rego,
 		SystemID:                                viper.Get("INSTANCE_ID").(*uuid.UUID),
 		ConnectionToStateMachineInstanceTracker: connToInstanceTracker,
+		MeshsyncDefaultDeploymentMode:           meshsyncDefaultDeploymentMode,
 	}
 
 	h.task = taskq.RegisterTask(&taskq.TaskOptions{

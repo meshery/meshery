@@ -360,7 +360,7 @@ func main() {
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
 	policies.SyncRelationship.Lock()
-	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
+	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker, meshsyncDefaultDeploymentMode)
 	policies.SyncRelationship.Unlock()
 
 	b := broadcast.NewBroadcaster(100)
