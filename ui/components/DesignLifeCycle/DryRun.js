@@ -195,6 +195,7 @@ export const FormatDryRunResponse = ({
             </Typography>
           )}
           <Typography
+            data-testid="dry-run-summary-errors"
             varaint="h6"
             disablePadding
             style={{
@@ -227,7 +228,12 @@ export const FormatDryRunResponse = ({
           />
         ))
       ) : (
-        <Typography varaint="h6" align="center" disablePadding>
+        <Typography
+          data-testid="dry-run-summary-success"
+          varaint="h6"
+          align="center"
+          disablePadding
+        >
           No deployment errors.
         </Typography>
       )}
