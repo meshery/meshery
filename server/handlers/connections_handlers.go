@@ -569,6 +569,30 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	// Check if meshsync deployment mode is specified in the payload metadata.
+	// Only handle mode changes if a mode is explicitly provided (not undefined).
+	// In fact this method is used (for now) only for perform meshsync deployment mode change.
+	// If mode change fails return error.
+	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
+	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.MetaData)
+	if newMeshSyncMode != schemasConnection.MeshsyncDeploymentModeUndefined {
+		// Handle meshsync deployment mode changes before connection update
+		if err := h.handleMeshSyncDeploymentModeChange(existingConnection, connection, connectionID, userID, provider); err != nil {
+			// Extract error and emit event for meshsync deployment mode change failure
+			meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
+			metadata := map[string]any{
+				"error": meshSyncErr,
+			}
+			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
+			_ = provider.PersistEvent(*event, nil)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			h.log.Error(meshSyncErr)
+			http.Error(w, meshSyncErr.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	updatedConnection, err := provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
@@ -582,22 +606,6 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		h.log.Error(_err)
 		http.Error(w, _err.Error(), http.StatusInternalServerError)
 		return
-	}
-
-	// Handle meshsync deployment mode changes after successful connection update
-	if err := h.handleMeshSyncDeploymentModeChange(existingConnection, connection, connectionID, userID, provider); err != nil {
-		// Extract error and emit event for meshsync deployment mode change failure
-		meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
-		metadata := map[string]any{
-			"error": meshSyncErr,
-		}
-		event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(*event, nil)
-		go h.config.EventBroadcaster.Publish(userID, event)
-
-		h.log.Error(meshSyncErr)
-		// Don't fail the response since the connection update succeeded
-		// TODO: be sure there is no update in meshsync deployment mode if switch mode was failed above
 	}
 
 	// TODO enhance event with information about meshsync deployment mode change
