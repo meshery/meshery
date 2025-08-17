@@ -560,7 +560,14 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 	if schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != schemasConnection.MeshsyncDeploymentModeUndefined {
 		// Handle meshsync deployment mode changes before connection update
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
-		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(connectionID, connection, token, userID, provider)
+		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
+			context.TODO(),
+			connectionID,
+			connection,
+			token,
+			userID,
+			provider,
+		)
 		if err != nil {
 			meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
 			metadata := map[string]any{
@@ -658,6 +665,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 // between existing and new connections, and performs necessary actions when they differ
 // Returns: oldMode, newMode, changed, error
 func (h *Handler) handleMeshSyncDeploymentModeChange(
+	ctx context.Context,
 	connectionID uuid.UUID,
 	newConnection *connections.ConnectionPayload,
 	token string,
@@ -707,27 +715,30 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
 		}
 
-		if machineCtx.MesheryCtrlsHelper == nil {
+		ctrlHelper := machineCtx.MesheryCtrlsHelper
+		if ctrlHelper == nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
 		}
 
-		machineCtx.MesheryCtrlsHelper.SetMeshsyncDeploymentMode(newMeshSyncMode)
-
-		// Perform the mode switch
-		switch newMeshSyncMode {
-		case schemasConnection.MeshsyncDeploymentModeOperator:
-			machineCtx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(context.Background(), connectionID.String())
-			machineCtx.MesheryCtrlsHelper.DeployUndeployedOperators(machineCtx.OperatorTracker)
-		case schemasConnection.MeshsyncDeploymentModeEmbedded:
-			machineCtx.MesheryCtrlsHelper.UndeployDeployedOperators(machineCtx.OperatorTracker)
-			// Add meshsync data handler will start embedded meshsync
-			// TODO: is h.SystemID a correct systemID ?
-			machineCtx.MesheryCtrlsHelper.AddMeshsynDataHandlers(
-				context.Background(),
-				machineCtx.K8sContext,
-				userID, *h.SystemID, provider)
-		default:
-			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("unsupported meshsync deployment mode: %s for connection %s", newMeshSyncMode, connectionID)
+		// disconnect
+		{
+			contextID := machineCtx.K8sContext.ID
+			ctrlHelper.
+				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
+				UndeployDeployedOperators(machineCtx.OperatorTracker).
+				RemoveCtxControllerHandler(ctx, contextID)
+			machineCtx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+		}
+		// connect
+		{
+			ctrlHelper.
+				AddCtxControllerHandlers(machineCtx.K8sContext).
+				SetMeshsyncDeploymentMode(newMeshSyncMode).
+				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
+				DeployUndeployedOperators(machineCtx.OperatorTracker)
+			// TODO is h.SystemID a correct instance id here?
+			// TODO check if h.SystemID is not nil
+			ctrlHelper.AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
 		}
 
 	}
