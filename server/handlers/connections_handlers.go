@@ -561,7 +561,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		// Handle meshsync deployment mode changes before connection update
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
-			context.TODO(),
+req.Context(),
 			connectionID,
 			connection,
 			token,
