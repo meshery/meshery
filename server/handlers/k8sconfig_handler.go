@@ -30,6 +30,12 @@ import (
 )
 
 const MeshsyncDeploymentModeFormKey = "meshsync_deployment_mode"
+const ContextsFormKey = "contexts"
+
+// ContextOptions represents the configuration options for a specific context
+type ContextOptions struct {
+	MeshsyncDeploymentMode string `json:"meshsync_deployment_mode"`
+}
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
@@ -100,21 +106,51 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
-	len := len(contexts)
+	contextsLen := len(contexts)
 
-	k8sContextsMetadata := make(map[string]any, 1)
-	schemasConnection.SetMeshsyncDeploymentModeToMetadata(
-		k8sContextsMetadata,
-		schemasConnection.MeshsyncDeploymentModeFromString(
-			req.FormValue(MeshsyncDeploymentModeFormKey),
-		),
-	)
+	// Parse contexts configuration if provided
+	var contextsConfig map[string]ContextOptions
+	if contextsJSON := req.FormValue(ContextsFormKey); contextsJSON != "" {
+		if err := json.Unmarshal([]byte(contextsJSON), &contextsConfig); err != nil {
+			h.log.Error(fmt.Errorf("failed to parse contexts configuration: %w", err))
+			http.Error(w, fmt.Sprintf("Invalid contexts configuration: %v", err), http.StatusBadRequest)
+			return
+		}
+	}
+
+	// Get global meshsync deployment mode for backward compatibility
+	globalMeshsyncMode := req.FormValue(MeshsyncDeploymentModeFormKey)
+
+	// Helper function to get meshsync deployment mode for a context
+	getMeshsyncModeForContext := func(ctx *models.K8sContext) string {
+		// If contexts config is provided and contains this context, use context-specific setting
+		if len(contextsConfig) > 0 {
+			if contextOpts, exists := contextsConfig[ctx.ID]; exists {
+				if contextOpts.MeshsyncDeploymentMode != "" {
+					return contextOpts.MeshsyncDeploymentMode
+				}
+			}
+		}
+		// Fall back to global setting
+		return globalMeshsyncMode
+	}
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+	// TODO:
+	// when new api with param "contexts" will be addopted,
+	// only take into account contexts from that param
 	for idx, ctx := range contexts {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
+
+		// Create context-specific metadata with appropriate meshsync deployment mode
+		k8sContextsMetadata := make(map[string]any, 1)
+		meshsyncMode := getMeshsyncModeForContext(ctx)
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			k8sContextsMetadata,
+			schemasConnection.MeshsyncDeploymentModeFromString(meshsyncMode),
+		)
 
 		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
 		if err != nil {
@@ -173,7 +209,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 		eventMetadata[ctx.Name] = metadata
 
-		if idx == len-1 {
+		if idx == contextsLen-1 {
 			h.config.K8scontextChannel.PublishContext()
 		}
 	}
