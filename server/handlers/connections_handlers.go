@@ -14,7 +14,6 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/machines/helpers"
 	"github.com/meshery/meshery/server/machines/kubernetes"
-	k8sMachines "github.com/meshery/meshery/server/machines/kubernetes"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshery/server/models/connections"
 	"github.com/meshery/meshkit/models/events"
@@ -706,7 +705,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
 		}
 
-		machineCtx, err := k8sMachines.GetMachineCtx(machine.Context, nil)
+		machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
 		if err != nil {
 			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
 		}
