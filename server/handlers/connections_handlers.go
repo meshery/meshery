@@ -560,7 +560,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		// Handle meshsync deployment mode changes before connection update
 		token, _ := req.Context().Value(models.TokenCtxKey).(string)
 		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
-req.Context(),
+			req.Context(),
 			connectionID,
 			connection,
 			token,
@@ -675,6 +675,12 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
 	}
 
+	if h.SystemID == nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("system ID is not configured in handler")
+	}
+	// TODO is h.SystemID a correct instance id here?
+	mesheryInstanceID := *h.SystemID
+
 	// Retrieve existing connection for mode comparison
 	existingConnection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
 	if err != nil {
@@ -734,10 +740,8 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				AddCtxControllerHandlers(machineCtx.K8sContext).
 				SetMeshsyncDeploymentMode(newMeshSyncMode).
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
-				DeployUndeployedOperators(machineCtx.OperatorTracker)
-			// TODO is h.SystemID a correct instance id here?
-			// TODO check if h.SystemID is not nil
-			ctrlHelper.AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, *h.SystemID, provider)
+				DeployUndeployedOperators(machineCtx.OperatorTracker).
+				AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
 		}
 
 	}
