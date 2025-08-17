@@ -27,7 +27,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
         // console.log(`res type: ${res.type}`);
         try {
           result = res.json();
-        } catch (e) {
+        } catch {
           result = res.text();
         }
         return result;
