@@ -8,21 +8,22 @@ on:
         default: v0.x.x
 
 jobs:
-
   ctlrelease:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
-    
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Set up Go
         uses: actions/setup-go@master
         with:
           go-version: "1.24"
+
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:
@@ -32,6 +33,20 @@ jobs:
         with:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
+
+      # ---------------- Cosign signing for binaries ----------------
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: "v2.2.3"
+
+      - name: Sign Mesheryctl binary
+        run: cosign sign ./mesheryctl_*.tar.gz --key ${{ secrets.COSIGN_PRIVATE_KEY }}
+
+      - name: Verify Mesheryctl signature
+        run: cosign verify ./mesheryctl_*.tar.gz --key ${{ secrets.COSIGN_PUBLIC_KEY }}
+      # ------------------------------------------------------------
+
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
@@ -40,4 +55,3 @@ jobs:
           tag-name: ${{inputs.release-tag}}
         env:
           COMMITTER_TOKEN: ${{ secrets.MESHERY_CI }}
- 

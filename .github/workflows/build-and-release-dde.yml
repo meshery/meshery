@@ -1,9 +1,6 @@
 name: Docker Extension for Meshery
 on:
   workflow_call:
-  # push:
-  #   tags:
-  #     - "v*"
   workflow_dispatch:
     inputs:
       release-ver:
@@ -31,7 +28,7 @@ jobs:
     steps:
       - run: |
           echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
-          echo " Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+          echo "Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
           echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
           echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
           echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
@@ -42,10 +39,10 @@ jobs:
     steps:
       - name: Checkout 🛎️ repo
         uses: actions/checkout@v4
+
       - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
-          # GIT_TAG=`git symbolic-ref HEAD`
           if [[ ${GITHUB_REF} = refs/tags* ]]
           then
             echo RELEASE_CHANNEL=stable >> $GITHUB_ENV
@@ -95,11 +92,21 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
 
-      # -
-      #   name: Docker Hub Description
-      #   uses: peter-evans/dockerhub-description@v3
-      #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
-      #     repository: meshery/meshery-docker-extension
-      #     readme-filepath: /install/docker-extension/README.md
+      # ---------------- Cosign signing for Docker image ----------------
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+        with:
+          cosign-release: "v2.2.3"
+
+      - name: Sign Docker image
+        run: |
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            cosign sign ghcr.io/meshery/meshery:${tag} --key ${{ secrets.COSIGN_PRIVATE_KEY }}
+          done
+
+      - name: Verify Docker image signature
+        run: |
+          for tag in ${{ steps.meta.outputs.tags }}; do
+            cosign verify ghcr.io/meshery/meshery:${tag} --key ${{ secrets.COSIGN_PUBLIC_KEY }}
+          done
+      # -----------------------------------------------------------------
