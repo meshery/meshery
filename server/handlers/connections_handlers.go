@@ -732,7 +732,7 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
 				UndeployDeployedOperators(machineCtx.OperatorTracker).
 				RemoveCtxControllerHandler(ctx, contextID)
-			machineCtx.MesheryCtrlsHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
 		}
 		// connect
 		{
