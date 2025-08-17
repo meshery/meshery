@@ -87,14 +87,14 @@ export default [
       ],
       'react/react-in-jsx-scope': 'off',
       'no-undef': 'error',
-      'react/jsx-uses-vars': [2],
+      'react/jsx-uses-vars': ['error'],
       'react/jsx-no-undef': 'error',
-      'no-console': 0,
+      'no-console': 'off',
       'no-unused-vars': 'error',
       'react/jsx-key': 'warn',
       'no-dupe-keys': 'error',
       'react/jsx-filename-extension': [
-        1,
+        'warn',
         {
           extensions: ['.js', '.jsx'],
         },
