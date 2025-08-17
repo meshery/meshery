@@ -26,9 +26,10 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
 <a href="https://twitter.com/intent/follow?screen_name=mesheryio" alt="Twitter Follow">
   <img src="https://img.shields.io/twitter/follow/mesheryio.svg?label=Follow+Meshery&style=social" /></a>
 <a href="https://github.com/meshery/meshery/releases" alt="Meshery Downloads">
-  <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>  
-<a href="https://gurubase.io/g/meshery" alt="Meshery Guru">
-  <img src="https://img.shields.io/badge/Gurubase-Ask%20Meshery%20Guru-006BFF" /></a>
+  <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>
+<a href="https://scorecard.dev/viewer/?uri=github.com/meshery/meshery" alt="OpenSSF Scorecard">
+  <img src="https://api.scorecard.dev/projects/github.com/meshery/meshery/badge" /></a> 
+
 <!-- <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery?ref=badge_shield" alt="License Scan Report">
   <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery.svg?type=shield"/></a>  
   -->
@@ -319,4 +320,8 @@ Please do! We're a warm and welcoming community of open source contributors. Ple
 ### License
 
 This repository and site are available as open-source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
+
+#### Software Bill of Materials (SBOM)
+
+Meshery's [Software Bill of Materials](https://github.com/meshery/meshery/actions/workflows/bom.yaml) (SBOM) is available as a build artifact.
 
