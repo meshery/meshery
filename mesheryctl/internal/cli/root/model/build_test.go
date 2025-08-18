@@ -9,7 +9,6 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -40,6 +39,33 @@ func TestModelBuild(t *testing.T) {
 		t.Fatal("Not able to get current working directory")
 	}
 	currDir := filepath.Dir(filename)
+
+	// Helper function to create fresh commands efficiently
+	createFreshCommands := func() *cobra.Command {
+		// Create fresh build command
+		freshBuildCmd := &cobra.Command{
+			Use:     buildModelCmd.Use,
+			Short:   buildModelCmd.Short,
+			Long:    buildModelCmd.Long,
+			Example: buildModelCmd.Example,
+			PreRunE: buildModelCmd.PreRunE,
+			RunE:    buildModelCmd.RunE,
+		}
+		freshBuildCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
+
+		// Create fresh model command
+		cmd := &cobra.Command{
+			Use:     ModelCmd.Use,
+			Short:   ModelCmd.Short,
+			Long:    ModelCmd.Long,
+			Example: ModelCmd.Example,
+			Args:    ModelCmd.Args,
+			RunE:    ModelCmd.RunE,
+		}
+		cmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
+		cmd.AddCommand(freshBuildCmd)
+		return cmd
+	}
 
 	setupHookModelInit := func(modelInitArgs ...string) func() {
 		return func() {
@@ -194,34 +220,8 @@ func TestModelBuild(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			// Create a completely fresh build command to avoid any state issues
-			freshBuildCmd := &cobra.Command{
-				Use:   buildModelCmd.Use,
-				Short: buildModelCmd.Short,
-				Long:  buildModelCmd.Long,
-				Example: buildModelCmd.Example,
-				PreRunE: buildModelCmd.PreRunE,
-				RunE:    buildModelCmd.RunE,
-			}
-			// Copy all flags from the original command
-			buildModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
-				freshBuildCmd.Flags().AddFlag(flag)
-			})
-
-			// Create a completely fresh model command to avoid any state issues
-			cmd := &cobra.Command{
-				Use:     ModelCmd.Use,
-				Short:   ModelCmd.Short,
-				Long:    ModelCmd.Long,
-				Example: ModelCmd.Example,
-				Args:    ModelCmd.Args,
-				RunE:    ModelCmd.RunE,
-			}
-			// Copy all flags from the original ModelCmd
-			ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
-				cmd.Flags().AddFlag(flag)
-			})
-			cmd.AddCommand(freshBuildCmd)
+			// Create fresh commands using helper function
+			cmd := createFreshCommands()
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()
