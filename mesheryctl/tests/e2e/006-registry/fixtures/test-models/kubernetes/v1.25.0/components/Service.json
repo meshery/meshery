@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Service",
+  "format": "JSON",
+  "name": "Service",
+  "metadata": {
+    "logoURL": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": "",
+    "primaryColor": "#326CE5",
+    "secondaryColor": "#7aa1f0",
+    "shape": "round-triangle"
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubernetes",
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration & Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "component": {
+    "kind": "Service",
+    "version": "v1",
+    "schema": ""
+  }
+}

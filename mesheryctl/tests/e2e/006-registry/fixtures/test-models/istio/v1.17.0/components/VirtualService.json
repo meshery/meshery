@@ -1,0 +1,32 @@
+{
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Virtual Service",
+  "format": "JSON",
+  "name": "VirtualService",
+  "metadata": {
+    "logoURL": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": "",
+    "primaryColor": "#466BB0",
+    "secondaryColor": "#93b0e7",
+    "shape": "circle"
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "istio",
+    "displayName": "Istio",
+    "category": {
+      "name": "Cloud Native Network",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "component": {
+    "kind": "VirtualService",
+    "version": "v1beta1",
+    "schema": ""
+  }
+}
