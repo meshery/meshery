@@ -118,22 +118,22 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		}
 	}
 
-	// Get global meshsync deployment mode for backward compatibility
-	globalMeshsyncMode := req.FormValue(MeshsyncDeploymentModeFormKey)
-
 	// Helper function to get meshsync deployment mode for a context
-	getMeshsyncModeForContext := func(ctx *models.K8sContext) string {
-		// If contexts config is provided and contains this context, use context-specific setting
-		if len(contextsConfig) > 0 {
+	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
+	getMeshsyncModeForContext := func() func(*models.K8sContext) string {
+		// Get global meshsync deployment mode for backward compatibility
+		globalMeshsyncMode := req.FormValue(MeshsyncDeploymentModeFormKey)
+		return func(ctx *models.K8sContext) string {
+			// If contexts config is provided and contains this context, use context-specific setting
 			if contextOpts, exists := contextsConfig[ctx.ID]; exists {
 				if contextOpts.MeshsyncDeploymentMode != "" {
 					return contextOpts.MeshsyncDeploymentMode
 				}
 			}
+			// Fall back to global setting
+			return globalMeshsyncMode
 		}
-		// Fall back to global setting
-		return globalMeshsyncMode
-	}
+	}()
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
 	// TODO:
