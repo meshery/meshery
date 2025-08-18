@@ -678,6 +678,11 @@ func (h *Handler) handleMeshSyncDeploymentModeChange(
 		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
 	}
 
+	// Verify the existing connection is of kubernetes kind
+	if existingConnection.Kind != "kubernetes" {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection kind is '%s', meshsync deployment mode switch is only supported for kind 'kubernetes'", existingConnection.Kind)
+	}
+
 	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
 	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
 
