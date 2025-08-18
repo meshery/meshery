@@ -1,7 +1,6 @@
 package model
 
 import (
-	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -14,22 +13,24 @@ import (
 )
 
 func TestModelBuild(t *testing.T) {
+	// Shared cleanup function for test directories and artifacts
+	cleanupTestArtifacts := func(dirs []string) {
+		for _, dir := range dirs {
+			os.RemoveAll(dir)
+			os.RemoveAll(dir + ".tar")
+		}
+	}
+
 	// Clean up any existing test directories before running tests
 	cleanupDirs := []string{
 		"test-case-model-build-aws-dynamodb-controller",
 		"test-case-model-build-aws-dynamodb-controller-gbxter34",
 	}
 	// Clean up all test artifacts from previous runs
-	for _, dir := range cleanupDirs {
-		os.RemoveAll(dir)
-		os.RemoveAll(dir + ".tar")
-	}
+	cleanupTestArtifacts(cleanupDirs)
 	// Register cleanup for after test completion
 	t.Cleanup(func() {
-		for _, dir := range cleanupDirs {
-			os.RemoveAll(dir)
-			os.RemoveAll(dir + ".tar")
-		}
+		cleanupTestArtifacts(cleanupDirs)
 	})
 
 	utils.SetupContextEnv(t)
@@ -41,7 +42,24 @@ func TestModelBuild(t *testing.T) {
 	}
 	currDir := filepath.Dir(filename)
 
-	// Helper function to create fresh commands efficiently
+	// Helper function to create a fresh ModelCmd with all original properties
+	createFreshModelCmd := func() *cobra.Command {
+		cmd := &cobra.Command{
+			Use:     ModelCmd.Use,
+			Short:   ModelCmd.Short,
+			Long:    ModelCmd.Long,
+			Example: ModelCmd.Example,
+			Args:    ModelCmd.Args,
+			RunE:    ModelCmd.RunE,
+		}
+		// Copy all flags from the original ModelCmd
+		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.Flags().AddFlag(flag)
+		})
+		return cmd
+	}
+
+	// Helper function to create fresh commands for build tests
 	createFreshCommands := func() *cobra.Command {
 		// Create fresh build command
 		freshBuildCmd := &cobra.Command{
@@ -57,38 +75,16 @@ func TestModelBuild(t *testing.T) {
 			freshBuildCmd.Flags().AddFlag(flag)
 		})
 
-		// Create fresh model command
-		cmd := &cobra.Command{
-			Use:     ModelCmd.Use,
-			Short:   ModelCmd.Short,
-			Long:    ModelCmd.Long,
-			Example: ModelCmd.Example,
-			Args:    ModelCmd.Args,
-			RunE:    ModelCmd.RunE,
-		}
-		// Copy all flags from the original ModelCmd
-		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
-			cmd.Flags().AddFlag(flag)
-		})
+		// Use the shared helper for ModelCmd
+		cmd := createFreshModelCmd()
 		cmd.AddCommand(freshBuildCmd)
 		return cmd
 	}
 
 	setupHookModelInit := func(modelInitArgs ...string) func() {
 		return func() {
-			// Create a fresh command to avoid interference between tests
-			cmd := &cobra.Command{
-				Use:     ModelCmd.Use,
-				Short:   ModelCmd.Short,
-				Long:    ModelCmd.Long,
-				Example: ModelCmd.Example,
-				Args:    ModelCmd.Args,
-				RunE:    ModelCmd.RunE,
-			}
-			// Copy all flags from the original ModelCmd
-			ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
-				cmd.Flags().AddFlag(flag)
-			})
+			// Use the shared helper to create a fresh ModelCmd
+			cmd := createFreshModelCmd()
 			cmd.AddCommand(initModelCmd)
 			cmd.SetArgs(modelInitArgs)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
@@ -100,16 +96,7 @@ func TestModelBuild(t *testing.T) {
 	}
 	cleanUpHookRemoveDirsAndFiles := func(dirs ...string) func() {
 		return func() {
-			errs := make([]error, 0, 1)
-			for _, dir := range dirs {
-				if err := os.RemoveAll(dir); err != nil {
-					errs = append(errs, err)
-				}
-			}
-			if len(errs) > 0 {
-				t.Fatal(errors.Join(errs...))
-			}
-
+			cleanupTestArtifacts(dirs)
 			t.Log("removed created dirs and files")
 		}
 	}
@@ -215,10 +202,7 @@ func TestModelBuild(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Clean up any lingering test artifacts before this subtest starts
-			for _, dir := range cleanupDirs {
-				os.RemoveAll(dir)
-				os.RemoveAll(dir + ".tar")
-			}
+			cleanupTestArtifacts(cleanupDirs)
 
 			if len(tc.CleanupHooks) > 0 {
 				for _, cleanupHook := range tc.CleanupHooks {
