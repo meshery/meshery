@@ -88,7 +88,7 @@ jobs:
           commit_message: "[Docs] Updated GraphQL API Documentation"
 
   build:
-    name: Docker build and push
+    name: Docker build, push and sign
     if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
@@ -107,6 +107,10 @@ jobs:
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
           docker system prune -af
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v2.2.4'
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
@@ -128,6 +132,26 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:playground-latest
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+      - name: Sign Docker images with Cosign
+        run: |
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:stable-latest
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:playground-latest
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+      - name: Verify Docker signatures
+        run: |
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:stable-latest
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:playground-latest
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+        env:
+          COSIGN_EXPERIMENTAL: "true"
       # SKIP STEP: FAILS BECAUSE README FILE SIZE IS TOO LARGE FOR DOCKER HUB
       # - name: Docker Hub Description
       #   uses: peter-evans/dockerhub-description@v3
@@ -144,6 +168,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v2.2.4'
       - name: Set up Go
         uses: actions/setup-go@master
         with:
@@ -156,6 +184,20 @@ jobs:
         with:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
+      - name: Sign mesheryctl binaries
+        run: |
+          for asset in dist/*; do
+            cosign sign-blob --keyless --yes $asset --output-signature $asset.sig --output-certificate $asset.pem
+          done
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+      - name: Verify mesheryctl signatures
+        run: |
+          for asset in dist/*; do
+            cosign verify-blob --keyless $asset --signature $asset.sig
+          done
+        env:
+          COSIGN_EXPERIMENTAL: "true"
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
