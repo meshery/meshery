@@ -246,7 +246,7 @@ func TestModelInit(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			// Clean up any lingering test artifacts before this subtest starts
 			cleanupTestArtifacts(cleanupDirs)
-			
+
 			defer func() {
 				// clean up created folders on any test case outcome
 				if tc.AfterTestRemoveDir != "" {
