@@ -9,6 +9,7 @@ import (
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,7 +52,10 @@ func TestModelBuild(t *testing.T) {
 			PreRunE: buildModelCmd.PreRunE,
 			RunE:    buildModelCmd.RunE,
 		}
-		freshBuildCmd.Flags().StringP("path", "p", ".", "(optional) target directory to get model from (default: current dir)")
+		// Copy all flags from the original build command
+		buildModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			freshBuildCmd.Flags().AddFlag(flag)
+		})
 
 		// Create fresh model command
 		cmd := &cobra.Command{
@@ -62,7 +66,10 @@ func TestModelBuild(t *testing.T) {
 			Args:    ModelCmd.Args,
 			RunE:    ModelCmd.RunE,
 		}
-		cmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
+		// Copy all flags from the original ModelCmd
+		ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+			cmd.Flags().AddFlag(flag)
+		})
 		cmd.AddCommand(freshBuildCmd)
 		return cmd
 	}
@@ -71,9 +78,17 @@ func TestModelBuild(t *testing.T) {
 		return func() {
 			// Create a fresh command to avoid interference between tests
 			cmd := &cobra.Command{
-				Use:   "model",
-				Short: "Manage models",
+				Use:     ModelCmd.Use,
+				Short:   ModelCmd.Short,
+				Long:    ModelCmd.Long,
+				Example: ModelCmd.Example,
+				Args:    ModelCmd.Args,
+				RunE:    ModelCmd.RunE,
 			}
+			// Copy all flags from the original ModelCmd
+			ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+				cmd.Flags().AddFlag(flag)
+			})
 			cmd.AddCommand(initModelCmd)
 			cmd.SetArgs(modelInitArgs)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
@@ -203,7 +218,6 @@ func TestModelBuild(t *testing.T) {
 			for _, dir := range cleanupDirs {
 				os.RemoveAll(dir)
 				os.RemoveAll(dir + ".tar")
-				os.RemoveAll(dir + "-v0-1-0.tar")
 			}
 
 			if len(tc.CleanupHooks) > 0 {
