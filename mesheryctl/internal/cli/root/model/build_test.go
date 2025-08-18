@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,11 +19,18 @@ func TestModelBuild(t *testing.T) {
 		"test-case-model-build-aws-dynamodb-controller",
 		"test-case-model-build-aws-dynamodb-controller-gbxter34",
 	}
+	// Clean up all test artifacts from previous runs
 	for _, dir := range cleanupDirs {
 		os.RemoveAll(dir)
-		d := dir // Capture for t.Cleanup
-		t.Cleanup(func() { os.RemoveAll(d) })
+		os.RemoveAll(dir + ".tar")
 	}
+	// Register cleanup for after test completion
+	t.Cleanup(func() {
+		for _, dir := range cleanupDirs {
+			os.RemoveAll(dir)
+			os.RemoveAll(dir + ".tar")
+		}
+	})
 
 	utils.SetupContextEnv(t)
 
@@ -34,9 +43,12 @@ func TestModelBuild(t *testing.T) {
 
 	setupHookModelInit := func(modelInitArgs ...string) func() {
 		return func() {
-			// TODO this is a bad idea, it is somehow has affect on init_test
-			// probably because ModelExpCmd is the same object
-			cmd := ModelCmd
+			// Create a fresh command to avoid interference between tests
+			cmd := &cobra.Command{
+				Use:   "model",
+				Short: "Manage models",
+			}
+			cmd.AddCommand(initModelCmd)
 			cmd.SetArgs(modelInitArgs)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd.SetOut(buff)
@@ -161,6 +173,13 @@ func TestModelBuild(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
+			// Clean up any lingering test artifacts before this subtest starts
+			for _, dir := range cleanupDirs {
+				os.RemoveAll(dir)
+				os.RemoveAll(dir + ".tar")
+				os.RemoveAll(dir + "-v0-1-0.tar")
+			}
+
 			if len(tc.CleanupHooks) > 0 {
 				for _, cleanupHook := range tc.CleanupHooks {
 					defer cleanupHook()
@@ -175,7 +194,34 @@ func TestModelBuild(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
-			cmd := ModelCmd
+			// Create a completely fresh build command to avoid any state issues
+			freshBuildCmd := &cobra.Command{
+				Use:   buildModelCmd.Use,
+				Short: buildModelCmd.Short,
+				Long:  buildModelCmd.Long,
+				Example: buildModelCmd.Example,
+				PreRunE: buildModelCmd.PreRunE,
+				RunE:    buildModelCmd.RunE,
+			}
+			// Copy all flags from the original command
+			buildModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+				freshBuildCmd.Flags().AddFlag(flag)
+			})
+
+			// Create a completely fresh model command to avoid any state issues
+			cmd := &cobra.Command{
+				Use:     ModelCmd.Use,
+				Short:   ModelCmd.Short,
+				Long:    ModelCmd.Long,
+				Example: ModelCmd.Example,
+				Args:    ModelCmd.Args,
+				RunE:    ModelCmd.RunE,
+			}
+			// Copy all flags from the original ModelCmd
+			ModelCmd.Flags().VisitAll(func(flag *pflag.Flag) {
+				cmd.Flags().AddFlag(flag)
+			})
+			cmd.AddCommand(freshBuildCmd)
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()
