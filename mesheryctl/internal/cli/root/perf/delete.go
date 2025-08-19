@@ -41,7 +41,8 @@ var linkDocPerfDelete = map[string]string{
 var deleteCmd = &cobra.Command{
 	Use:   "delete [profile-name]",
 	Short: "Delete a Performance profile",
-	Long:  `Delete Performance profiles by name or delete all profiles`,
+	Long:  `Delete Performance profiles by name or delete all profiles
+	Documentation for components can be found at https://docs.meshery.io/reference/mesheryctl/perf/delete`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
 // Delete a specific performance profile

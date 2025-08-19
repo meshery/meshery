@@ -66,6 +66,14 @@ mesheryctl perf result -o yaml
 </div>
 </pre> 
 
+Delete Perf profiles:
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl perf delete delete sam-test
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
@@ -93,5 +101,6 @@ mesheryctl perf result -o yaml
 * [mesheryctl perf apply](/reference/mesheryctl/perf/apply)
 * [mesheryctl perf profile](/reference/mesheryctl/perf/profile)
 * [mesheryctl perf result](/reference/mesheryctl/perf/result)
+* [mesheryctl perf delete](/reference/mesheryctl/perf/delete)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
