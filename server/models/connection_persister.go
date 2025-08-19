@@ -85,7 +85,7 @@ func (cp *ConnectionPersister) SaveConnection(connection *connections.Connection
 
 		// Check if there is already an entry for this context
 		if err := tx.First(&existingConnection, "id = ?", connection.ID).Error; err == nil {
-			return ErrConnectionAlreadyExist
+			return err
 		}
 
 		return tx.Save(&connection).Error

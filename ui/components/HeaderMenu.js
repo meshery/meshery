@@ -11,6 +11,7 @@ import { NavigationNavbar, Popover } from '@sistent/sistent';
 import { IconButtonMenu } from './Header.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateExtensionType, updateUser } from '@/store/slices/mesheryUi';
+import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -35,6 +36,7 @@ const HeaderMenu = () => {
   const { notify } = useNotification();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState(null);
+  const registryModal = useRegistryModal();
 
   const {
     data: userData,
@@ -59,7 +61,10 @@ const HeaderMenu = () => {
     router.push('/settings');
     handleClose();
   };
-
+  const handleRegistry = () => {
+    registryModal?.openModal();
+    handleClose();
+  };
   const handleConnections = () => {
     router.push('/management/connections');
     handleClose();
@@ -142,6 +147,12 @@ const HeaderMenu = () => {
         id: 'settings',
         title: 'Settings',
         onClick: handleSettings,
+      },
+      {
+        id: 'registry',
+        title: 'Registry',
+        onClick: handleRegistry,
+        permission: true,
       },
       {
         id: 'preferences',
