@@ -82,6 +82,7 @@ import { updateGrafanaConfig, updatePrometheusConfig } from '@/store/slices/tele
 import { updateAdaptersInfo } from '@/store/slices/adapter';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import WorkspaceModalContextProvider from '@/utils/context/WorkspaceModalContextProvider';
+import RegistryModalContextProvider from '@/utils/context/RegistryModalContextProvider';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -616,83 +617,85 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
               <ErrorBoundary customFallback={CustomErrorFallback}>
                 <LoadSessionGuard>
                   <WorkspaceModalContextProvider>
-                    <StyledRoot>
-                      <CssBaseline />
-                      <NavigationBar
-                        isDrawerCollapsed={isDrawerCollapsed}
-                        mobileOpen={state.mobileOpen}
-                        handleDrawerToggle={handleDrawerToggle}
-                        updateExtensionType={updateCurrentExtensionType}
-                        canShowNav={canShowNav}
+                    <RegistryModalContextProvider>
+                      <StyledRoot>
+                        <CssBaseline />
+                        <NavigationBar
+                          isDrawerCollapsed={isDrawerCollapsed}
+                          mobileOpen={state.mobileOpen}
+                          handleDrawerToggle={handleDrawerToggle}
+                          updateExtensionType={updateCurrentExtensionType}
+                          canShowNav={canShowNav}
+                        />
+                        <StyledAppContent canShowNav={canShowNav}>
+                          <SnackbarProvider
+                            anchorOrigin={{
+                              vertical: 'bottom',
+                              horizontal: 'right',
+                            }}
+                            iconVariant={{
+                              success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
+                              error: <Error style={{ marginRight: '0.5rem' }} />,
+                              warning: <Warning style={{ marginRight: '0.5rem' }} />,
+                              info: <Info style={{ marginRight: '0.5rem' }} />,
+                            }}
+                            Components={{
+                              info: ThemeResponsiveSnackbar,
+                              success: ThemeResponsiveSnackbar,
+                              error: ThemeResponsiveSnackbar,
+                              warning: ThemeResponsiveSnackbar,
+                              loading: ThemeResponsiveSnackbar,
+                            }}
+                            maxSnack={10}
+                          >
+                            <NotificationCenterProvider>
+                              <MesheryProgressBar />
+                              <KubernetesSubscription setAppState={setAppState} />
+                              {!state.isFullScreenMode && (
+                                <Header
+                                  onDrawerToggle={handleDrawerToggle}
+                                  onDrawerCollapse={isDrawerCollapsed}
+                                  contexts={state.k8sContexts}
+                                  activeContexts={state.activeK8sContexts}
+                                  setActiveContexts={setActiveContexts}
+                                  searchContexts={searchContexts}
+                                  updateExtensionType={updateCurrentExtensionType}
+                                  abilityUpdated={state.abilityUpdated}
+                                />
+                              )}
+                              <StyledContentWrapper>
+                                <StyledMainContent
+                                  style={{
+                                    padding: extensionType === 'navigator' && '0px',
+                                  }}
+                                >
+                                  <LocalizationProvider dateAdapter={AdapterMoment}>
+                                    <ErrorBoundary customFallback={CustomErrorFallback}>
+                                      <Component
+                                        pageContext={pageContext}
+                                        contexts={state.k8sContexts}
+                                        activeContexts={state.activeK8sContexts}
+                                        setActiveContexts={setActiveContexts}
+                                        searchContexts={searchContexts}
+                                        {...pageProps}
+                                      />
+                                    </ErrorBoundary>
+                                  </LocalizationProvider>
+                                </StyledMainContent>
+                                <Footer
+                                  handleMesheryCommunityClick={handleMesheryCommunityClick}
+                                  capabilitiesRegistry={capabilitiesRegistry}
+                                />
+                              </StyledContentWrapper>
+                            </NotificationCenterProvider>
+                          </SnackbarProvider>
+                        </StyledAppContent>
+                      </StyledRoot>
+                      <PlaygroundMeshDeploy
+                        closeForm={() => setState((prevState) => ({ ...prevState, isOpen: false }))}
+                        isOpen={state.isOpen}
                       />
-                      <StyledAppContent canShowNav={canShowNav}>
-                        <SnackbarProvider
-                          anchorOrigin={{
-                            vertical: 'bottom',
-                            horizontal: 'right',
-                          }}
-                          iconVariant={{
-                            success: <CheckCircle style={{ marginRight: '0.5rem' }} />,
-                            error: <Error style={{ marginRight: '0.5rem' }} />,
-                            warning: <Warning style={{ marginRight: '0.5rem' }} />,
-                            info: <Info style={{ marginRight: '0.5rem' }} />,
-                          }}
-                          Components={{
-                            info: ThemeResponsiveSnackbar,
-                            success: ThemeResponsiveSnackbar,
-                            error: ThemeResponsiveSnackbar,
-                            warning: ThemeResponsiveSnackbar,
-                            loading: ThemeResponsiveSnackbar,
-                          }}
-                          maxSnack={10}
-                        >
-                          <NotificationCenterProvider>
-                            <MesheryProgressBar />
-                            <KubernetesSubscription setAppState={setAppState} />
-                            {!state.isFullScreenMode && (
-                              <Header
-                                onDrawerToggle={handleDrawerToggle}
-                                onDrawerCollapse={isDrawerCollapsed}
-                                contexts={state.k8sContexts}
-                                activeContexts={state.activeK8sContexts}
-                                setActiveContexts={setActiveContexts}
-                                searchContexts={searchContexts}
-                                updateExtensionType={updateCurrentExtensionType}
-                                abilityUpdated={state.abilityUpdated}
-                              />
-                            )}
-                            <StyledContentWrapper>
-                              <StyledMainContent
-                                style={{
-                                  padding: extensionType === 'navigator' && '0px',
-                                }}
-                              >
-                                <LocalizationProvider dateAdapter={AdapterMoment}>
-                                  <ErrorBoundary customFallback={CustomErrorFallback}>
-                                    <Component
-                                      pageContext={pageContext}
-                                      contexts={state.k8sContexts}
-                                      activeContexts={state.activeK8sContexts}
-                                      setActiveContexts={setActiveContexts}
-                                      searchContexts={searchContexts}
-                                      {...pageProps}
-                                    />
-                                  </ErrorBoundary>
-                                </LocalizationProvider>
-                              </StyledMainContent>
-                              <Footer
-                                handleMesheryCommunityClick={handleMesheryCommunityClick}
-                                capabilitiesRegistry={capabilitiesRegistry}
-                              />
-                            </StyledContentWrapper>
-                          </NotificationCenterProvider>
-                        </SnackbarProvider>
-                      </StyledAppContent>
-                    </StyledRoot>
-                    <PlaygroundMeshDeploy
-                      closeForm={() => setState((prevState) => ({ ...prevState, isOpen: false }))}
-                      isOpen={state.isOpen}
-                    />
+                    </RegistryModalContextProvider>
                   </WorkspaceModalContextProvider>
                 </LoadSessionGuard>
               </ErrorBoundary>
