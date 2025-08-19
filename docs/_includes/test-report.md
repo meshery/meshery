@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: August 18th 2025, 11:49:10 pm
+- Testing started at: August 19th 2025, 5:25:23 pm
 
 **📦 Test Result Summary**
 
-- ✅ 73 passed
+- ✅ 72 passed
 - ❌ 0 failed
 - ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 6 seconds_
+⌛ _Duration: 5 minutes and 58 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,7 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | Import a Model via CSV Import |  | ⚠️ |
+| 1 | chromium-local-provider | Transition to ignored state and then back to connected state |  | ⚠️ |
 
 </div>
 </details>
