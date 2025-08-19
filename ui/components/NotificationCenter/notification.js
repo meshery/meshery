@@ -42,7 +42,11 @@ import {
   useDeleteEventMutation,
 } from '../../rtk-query/notificationCenter';
 import { useSelector } from 'react-redux';
-import { selectEventById, updateIsEventChecked } from '../../store/slices/events';
+import {
+  selectEventById,
+  selectIsEventVisible,
+  updateIsEventChecked,
+} from '../../store/slices/events';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
