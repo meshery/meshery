@@ -9,8 +9,10 @@ import {
   Box,
   styled,
   PROMPT_VARIANTS,
+  FormControl,
+  useTheme,
 } from '@sistent/sistent';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import _PromptComponent from './PromptComponent';
@@ -41,12 +43,18 @@ const styles = styled((theme) => ({
     [theme.breakpoints.down('md')]: { fontSize: '12px' },
   },
 }));
-
 const MesherySettingsEnvButtons = () => {
   let k8sfileElementVal = '';
   let formData = new FormData();
   const ref = useRef(null);
   const { notify } = useNotification();
+  const theme = useTheme(); 
+  const [deploymentMode, setDeploymentMode] = useState('operator');
+  const deploymentModeRef = useRef('operator'); 
+
+  useEffect(() => {
+    deploymentModeRef.current = deploymentMode; // -> Keep ref in sync
+  }, [deploymentMode]);
 
   let contextsRef = useRef();
 
@@ -84,6 +92,23 @@ const MesherySettingsEnvButtons = () => {
     }
   };
 
+  const handleValue = (mode) => {
+    setDeploymentMode(mode);
+    deploymentModeRef.current = mode; // Update ref immediately
+
+    const operatorBtn = document.querySelector('[data-deployment-mode="operator"]');
+    const embeddedBtn = document.querySelector('[data-deployment-mode="embedded"]');
+
+    if (operatorBtn && embeddedBtn) {
+      if (mode === 'operator') {
+        operatorBtn.style.backgroundColor = theme.palette.background.brand.default;
+        embeddedBtn.style.backgroundColor = 'transparent';
+      } else {
+        embeddedBtn.style.backgroundColor = theme.palette.background.brand.default;
+        operatorBtn.style.backgroundColor = 'transparent';
+      }
+    }
+  };
   const uploadK8SConfig = async () => {
     return await addK8sConfig({ body: formData }).unwrap();
   };
@@ -162,13 +187,62 @@ const MesherySettingsEnvButtons = () => {
                 }}
               />
             </FormGroup>
+
+            <FormControl style={{ marginTop: '16px' }}>
+              <Typography variant="h6" style={{ marginBottom: '8px' }}>
+                Deployment Mode
+              </Typography>
+              <Typography variant="body2" style={{ marginBottom: '12px' }}>
+                Choose how MeshSync should be deployed in your cluster
+              </Typography>
+
+              <Box style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
+                <Button
+                  data-deployment-mode="operator"
+                  variant="contained"
+                  onClick={() => handleValue('operator')}
+                  style={{
+                    textAlign: 'left',
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <Box>
+                    <Typography variant="body1">
+                      <strong>Operator Mode</strong>
+                    </Typography>
+                    <Typography variant="body2" style={{ color: 'inherit' }}>
+                      Deploy MeshSync as a separate operator in the cluster
+                    </Typography>
+                  </Box>
+                </Button>
+
+                <Button
+                  data-deployment-mode="embedded"
+                  variant="outlined"
+                  onClick={() => handleValue('embedded')}
+                  style={{
+                    textAlign: 'left',
+                    justifyContent: 'flex-start',
+                  }}
+                >
+                  <Box>
+                    <Typography variant="body1">
+                      <strong>Embedded Mode</strong>
+                    </Typography>
+                    <Typography variant="body2" style={{ color: 'inherit' }}>
+                      Run MeshSync embedded within Meshery Server
+                    </Typography>
+                  </Box>
+                </Button>
+              </Box>
+            </FormControl>
           </div>
         </>
       ),
       primaryOption: 'IMPORT',
       variant: PROMPT_VARIANTS.SUCCESS,
-      showInfoIcon:
-        'If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. [See Managing Kubernetes Clusters for more information](https://docs.meshery.io/installation/kubernetes).',
+      showInfoIcon: `If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files).
+      The deployment mode determines how MeshSync operates: Operator mode deploys MeshSync as a separate operator in your cluster, while Embedded mode runs MeshSync within Meshery Server. [See Managing Kubernetes Clusters for more information](https://docs.meshery.io/installation/kubernetes).`,
     });
 
     if (response === 'IMPORT') {
@@ -186,6 +260,10 @@ const MesherySettingsEnvButtons = () => {
       }
 
       try {
+        const currentDeploymentMode = deploymentModeRef.current;
+        formData.delete('meshsync_deployment_mode');
+        formData.append('meshsync_deployment_mode', currentDeploymentMode);
+
         const obj = await uploadK8SConfig();
         contextsRef.current = obj;
         await showUploadedContexts(inputFileName);
