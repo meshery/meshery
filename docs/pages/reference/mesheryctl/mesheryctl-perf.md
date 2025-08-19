@@ -69,7 +69,7 @@ mesheryctl perf result -o yaml
 Delete Perf profiles:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl perf delete delete sam-test
+mesheryctl perf delete sam-test
 
 </div>
 </pre> 

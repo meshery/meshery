@@ -68,8 +68,7 @@ mesheryctl perf delete --all --force
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
 
 		if deleteAllProfiles {
@@ -81,12 +80,8 @@ mesheryctl perf delete --all --force
 			return nil
 		}
 
-		// handles spaces in args if quoted args passed
-		for i, arg := range args {
-			args[i] = strings.ReplaceAll(arg, " ", "%20")
-		}
-		// join all args to form profile name
-		profileName := strings.Join(args, "%20")
+		// The profile name is the first argument. URL encode spaces for the request.
+		profileName := strings.ReplaceAll(args[0], " ", "%20")
 
 		return deletePerformanceProfile(mctlCfg, profileName)
 	},
@@ -163,7 +158,6 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 	for i, profileID := range profilesToDelete {
 		err := deleteProfileByID(mctlCfg, profileID, profileNamesToDelete[i])
 		if err != nil {
-			fmt.Printf("Failed to delete profile '%s': %v", profileNamesToDelete[i], err)
 			utils.Log.Error(err)
 		} else {
 			successCount++
@@ -240,7 +234,10 @@ func deleteProfileByID(mctlCfg *config.MesheryCtlConfig, profileID, profileName 
 	defer utils.SafeClose(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		data, _ := io.ReadAll(resp.Body)
+		data, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("failed to read response body: %w", err)
+		}
 		return fmt.Errorf("failed to delete profile: %s", string(data))
 	}
 
