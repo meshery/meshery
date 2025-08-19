@@ -115,7 +115,7 @@ const ResourcesTable = (props) => {
     if (!resourceName) search = '';
     if (!sortOrder) sortOrder = '';
 
-    let apiUrl = `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${encodedClusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+    let apiUrl = `/api/system/meshsync/resources?kind=${resourceCategory}&status=false&spec=false&annotations=false&labels=false&clusterIds=${encodedClusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
       resourceName,
     )}&order=${encodeURIComponent(sortOrder)}`;
 
