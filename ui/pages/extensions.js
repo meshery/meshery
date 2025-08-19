@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
-import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme } from '@sistent/sistent';
+import { Button, CatalogIcon, Grid2, Switch, Typography, useTheme, Box } from '@sistent/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { Adapters } from '../components/extensions';
 import DefaultError from '@/components/General/error-404';
@@ -9,40 +9,24 @@ import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
-import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
+import { CardContainer, FrontSideDescription } from '../css/icons.styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updatePage } from '@/store/slices/mesheryUi';
 import { getPath } from 'lib/path';
 
-// Hook to detect screen size
-const useMediaQuery = (query) => {
-  const [matches, setMatches] = useState(false);
-
-  useEffect(() => {
-    const media = window.matchMedia(query);
-    if (media.matches !== matches) {
-      setMatches(media.matches);
-    }
-    const listener = () => setMatches(media.matches);
-    media.addListener(listener);
-    return () => media.removeListener(listener);
-  }, [matches, query]);
-
-  return matches;
-};
-
-const ResponsiveCardContainer = ({ children }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-
+const UnifiedCardContainer = ({ children, sx = {} }) => {
   return (
     <CardContainer
-      style={{
-        height: isMobile ? 'auto' : '280px',
-        minHeight: isMobile ? '200px' : '280px',
+      sx={{
+        minHeight: {
+          xs: '280px',
+          sm: '260px',
+          lg: '280px',
+        },
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
+        ...sx,
       }}
     >
       {children}
@@ -50,17 +34,43 @@ const ResponsiveCardContainer = ({ children }) => {
   );
 };
 
-const ResponsiveFrontSideDescription = ({ children, ...props }) => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-
+const UnifiedDescription = ({ children, hasIcon = false, ...props }) => {
   return (
     <FrontSideDescription
       {...props}
-      style={{
+      sx={{
         flex: 1,
         display: 'flex',
-        alignItems: 'flex-start',
-        marginBottom: isMobile ? '50px' : '60px',
+        flexDirection: {
+          xs: hasIcon ? 'column' : 'row',
+          sm: 'row',
+        },
+        alignItems: {
+          xs: hasIcon ? 'center' : 'flex-start',
+          sm: 'flex-start',
+        },
+        textAlign: {
+          xs: hasIcon ? 'center' : 'left',
+          sm: 'left',
+        },
+        gap: {
+          xs: hasIcon ? '12px' : '8px',
+          sm: '8px',
+        },
+        marginBottom: {
+          xs: '50px',
+          sm: '45px',
+          lg: '40px',
+        },
+        overflow: 'hidden',
+        wordWrap: 'break-word',
+        hyphens: 'auto',
+        '& > *:not(img)': {
+          maxWidth: '100%',
+          overflow: 'hidden',
+          wordWrap: 'break-word',
+          hyphens: 'auto',
+        },
       }}
     >
       {children}
@@ -68,53 +78,76 @@ const ResponsiveFrontSideDescription = ({ children, ...props }) => {
   );
 };
 
-// Button container that adapts for mobile
-const ResponsiveButtonContainer = ({ children }) => {
-  //const isMobile = useMediaQuery('(max-width: 768px)');
-
+const UnifiedButtonContainer = ({ children }) => {
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         position: 'absolute',
-        bottom: '16px',
-        right: '16px',
-        left: '16px',
+        bottom: 12,
+        left: 12,
+        right: 12,
         textAlign: 'right',
       }}
     >
       {children}
-    </div>
+    </Box>
   );
 };
 
+// Responsive image component with slightly smaller sizes
+const ResponsiveImage = ({ src, alt, testId }) => {
+  return (
+    <img
+      style={{
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '140px',
+        maxHeight: '85px',
+        minWidth: '100px',
+        minHeight: '60px',
+        flexShrink: 0,
+      }}
+      data-testid={testId}
+      src={src}
+      alt={alt || ''}
+    />
+  );
+};
 
-const useResponsiveGridSize = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
-  return isMobile ? { xs: 12 } : LARGE_6_MED_12_GRID_STYLE;
+const GRID_SIZE = {
+  xs: 12,
+  sm: 12,
+  md: 12,
+  lg: 6,
+  xl: 4,
 };
 
 const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
-  const gridSize = useResponsiveGridSize();
-
   const handleSignUp = (e) => {
     window.open('https://docs.layer5.io/kanvas', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography data-testid="kanvas-signup-heading" variant="h5" component="div">
           Kanvas
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <ImageWrapper src="/static/img/kanvas-icon-color.svg" />
-          Collaboratively design and manage your infra and apps. Kanvas is now publicly available.{' '}
-          {!hasAccessToMeshMap && 'Sign-up today to for access!'}
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/kanvas-icon-color.svg"
+            alt="Kanvas Icon"
+            testId="kanvas-signup-icon"
+          />
+          <div>
+            Collaboratively design and manage your infra and apps. Kanvas is now publicly available.{' '}
+            {!hasAccessToMeshMap && 'Sign-up today for access!'}
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             data-testid="kanvas-signup-btn"
@@ -123,50 +156,38 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
           >
             {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
-const MeshMapSnapShotLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      data-testid="kanvas-snapshot-image"
-      src="/static/img/meshmap-snapshot-logo.svg"
-    />
-  );
-};
-
 const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
-  const gridSize = useResponsiveGridSize();
-
   const handleEnable = (e) => {
     window.open('https://cloud.layer5.io/connect/github/new/', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography data-testid="kanvas-snapshot-heading" variant="h5" component="div">
           GitHub Action: Kanvas Snapshot
         </Typography>
 
-        <ResponsiveFrontSideDescription data-testid="kanvas-snapshot-description" variant="body">
-          <MeshMapSnapShotLogo />
-          Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
-          snapshots of your infrastructure directly in your PRs.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription data-testid="kanvas-snapshot-description" variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/meshmap-snapshot-logo.svg"
+            alt="Kanvas Snapshot Logo"
+            testId="kanvas-snapshot-image"
+          />
+          <div>
+            Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
+            snapshots of your infrastructure directly in your PRs.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             color="primary"
@@ -176,30 +197,13 @@ const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
           >
             {githubActionEnabled ? 'Remove' : 'Enable'}
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
-const MesheryPerformanceActionLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/smp-dark.svg"
-    />
-  );
-};
-
 const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
-  const gridSize = useResponsiveGridSize();
-
   const handleEnable = (e) => {
     window.open(
       'https://github.com/marketplace/actions/performance-testing-with-meshery',
@@ -209,19 +213,25 @@ const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography data-testid="performance-analysis-heading" variant="h5" component="div">
           GitHub Action: Performance Analysis
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <MesheryPerformanceActionLogo />
-          Characterize the performance of your services using Meshery&apos;s performance analysis
-          GitHub Action to benchmark and visually compare percentiles (e.g. P99) over time.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/smp-dark.svg"
+            alt="Meshery Performance Logo"
+            testId="performance-analysis-icon"
+          />
+          <div>
+            Characterize the performance of your services using Meshery&apos;s performance analysis
+            GitHub Action to benchmark and visually compare percentiles (e.g. P99) over time.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             data-testid="performance-analysis-enable-btn"
@@ -230,50 +240,39 @@ const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
           >
             {githubActionEnabled ? 'Remove' : 'Enable'}
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
-const MesheryDockerExtensionLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/docker.svg"
-    />
-  );
-};
-
 const MesheryDockerExtension = () => {
-  const gridSize = useResponsiveGridSize();
-
   const handleDownload = (e) => {
     window.open('https://hub.docker.com/extensions/meshery/docker-extension-meshery', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography data-testid="docker-extension-heading" variant="h5" component="div">
           Meshery Docker Extension
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <MesheryDockerExtensionLogo />
-          Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
-          your clusters. Use Kanvas&apos;s no-code designer to collaboratively design and manage
-          your infrastructure with ready-made patterns from Meshery Catalog.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/docker.svg"
+            alt="Docker Logo"
+            testId="docker-extension-icon"
+          />
+          <div>
+            Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
+            your clusters. Use Kanvas&apos;s no-code designer to collaboratively design and manage
+            your infrastructure with ready-made patterns from Meshery Catalog.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             color="primary"
@@ -282,65 +281,39 @@ const MesheryDockerExtension = () => {
           >
             Download
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
-const MesheryDesignEmbedLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/meshmap.svg"
-    />
-  );
-};
-
-const MesheryHelmKanvasLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/helm_chart.svg"
-    />
-  );
-};
-
 const MesheryHelmKanvasExtension = () => {
-  const gridSize = useResponsiveGridSize();
-
   const handleLearnMore = (e) => {
     window.open('https://docs.meshery.io/extensions/helm-kanvas-snapshot', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography variant="h5" component="div">
           Kanvas Snapshot Helm Plugin
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <MesheryHelmKanvasLogo />
-          The Kanvas Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm
-          charts directly from the command line. It simplifies the process of creating Meshery
-          Snapshots, providing a visual representation of packaged Helm charts.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/helm_chart.svg"
+            alt="Helm Chart Logo"
+            testId="helm-kanvas-icon"
+          />
+          <div>
+            The Kanvas Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm
+            charts directly from the command line. It simplifies the process of creating Meshery
+            Snapshots, providing a visual representation of packaged Helm charts.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             color="primary"
@@ -349,35 +322,39 @@ const MesheryHelmKanvasExtension = () => {
           >
             Learn More
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
 const MesheryDesignEmbedExtension = () => {
-  const gridSize = useResponsiveGridSize();
-
   const handleLearnMore = (e) => {
     window.open('https://docs.layer5.io/kanvas/designer/embedding-designs/', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography variant="h5" component="div">
           Meshery Design Embed
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <MesheryDesignEmbedLogo />
-          Meshery Design Embedding lets you export designs in an interactive format that seamlessly
-          integrates with websites, blogs, and platforms using HTML, CSS, and JavaScript, making it
-          easy to share with stakeholders.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/meshmap.svg"
+            alt="Meshery Design Logo"
+            testId="design-embed-icon"
+          />
+          <div>
+            Meshery Design Embedding lets you export designs in an interactive format that
+            seamlessly integrates with websites, blogs, and platforms using HTML, CSS, and
+            JavaScript, making it easy to share with stakeholders.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             color="primary"
@@ -386,51 +363,39 @@ const MesheryDesignEmbedExtension = () => {
           >
             Learn More
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
-const Layer5CloudLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/layer5.svg"
-      data-testid="layer5-cloud-image"
-    />
-  );
-};
-
 const Layer5CloudExtension = () => {
-  const gridSize = useResponsiveGridSize();
-
   const handleLearnMore = (e) => {
     window.open('https://meshery.io/extensions/layer5-cloud', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography data-testid="layer5-cloud-heading" variant="h5" component="div">
           Layer5 Cloud
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <Layer5CloudLogo />A comprehensive platform offering identity and collaboration services,
-          private catalogs, GitOps, and multi-Meshery management. Leverage its extensible
-          authorization framework and organizational hierarchy for streamlined cloud infrastructure
-          management.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/layer5.svg"
+            alt="Layer5 Cloud Logo"
+            testId="layer5-cloud-image"
+          />
+          <div>
+            A comprehensive platform offering identity and collaboration services, private catalogs,
+            GitOps, and multi-Meshery management. Leverage its extensible authorization framework
+            and organizational hierarchy for streamlined cloud infrastructure management.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             color="primary"
@@ -439,51 +404,39 @@ const Layer5CloudExtension = () => {
           >
             Learn More
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
-const KubectlPluginLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/kubectl.svg"
-      data-testid="kubectl-plugin-image"
-    />
-  );
-};
-
 const KubectlPluginExtension = () => {
-  const gridSize = useResponsiveGridSize();
-
   const handleLearnMore = (e) => {
     window.open('https://docs.meshery.io/extensions/kubectl-kanvas-snapshot', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography data-testid="kubectl-plugin-heading" variant="h5" component="div">
           Kubectl Plugin for Kanvas Snapshot
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <KubectlPluginLogo />
-          Generate visual snapshots of your Kubernetes manifests directly from kubectl. cluster
-          configurations and workflows with Kanvas Snapshots. Receive snapshots via email or get
-          instant terminal URL display.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/kubectl.svg"
+            alt="Kubectl Plugin Logo"
+            testId="kubectl-plugin-image"
+          />
+          <div>
+            Generate visual snapshots of your Kubernetes manifests directly from kubectl. Cluster
+            configurations and workflows with Kanvas Snapshots. Receive snapshots via email or get
+            instant terminal URL display.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             color="primary"
@@ -492,51 +445,39 @@ const KubectlPluginExtension = () => {
           >
             Learn More
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
 
-const KubectlMeshSyncLogo = () => {
-  return (
-    <img
-      style={{
-        paddingRight: '1rem',
-        height: 'auto',
-        width: 'auto',
-        maxWidth: '120px',
-        maxHeight: '75px',
-      }}
-      src="/static/img/meshsync.svg"
-      data-testid="kubectl-meshsync-image"
-    />
-  );
-};
-
 const KubectlMeshSyncExtension = () => {
-  const gridSize = useResponsiveGridSize();
-
   const handleLearnMore = (e) => {
     window.open('https://docs.meshery.io/extensions/kubectl-meshsync-snapshot', '_blank');
     e.stopPropagation();
   };
 
   return (
-    <Grid2 size={gridSize}>
-      <ResponsiveCardContainer>
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
         <Typography data-testid="kubectl-meshsync-heading" variant="h5" component="div">
           Kubectl Plugin for MeshSync Snapshot
         </Typography>
 
-        <ResponsiveFrontSideDescription variant="body">
-          <KubectlMeshSyncLogo />
-          Capture cluster state directly from kubectl with simplified networking and access
-          requirements. Generate MeshSync snapshots for offline management and visualization in
-          Meshery Server, without requiring full Meshery Operator deployment.
-        </ResponsiveFrontSideDescription>
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <ResponsiveImage
+            src="/static/img/meshsync.svg"
+            alt="MeshSync Logo"
+            testId="kubectl-meshsync-image"
+          />
+          <div>
+            Capture cluster state directly from kubectl with simplified networking and access
+            requirements. Generate MeshSync snapshots for offline management and visualization in
+            Meshery Server, without requiring full Meshery Operator deployment.
+          </div>
+        </UnifiedDescription>
 
-        <ResponsiveButtonContainer>
+        <UnifiedButtonContainer>
           <Button
             variant="contained"
             color="primary"
@@ -545,8 +486,78 @@ const KubectlMeshSyncExtension = () => {
           >
             Learn More
           </Button>
-        </ResponsiveButtonContainer>
-      </ResponsiveCardContainer>
+        </UnifiedButtonContainer>
+      </UnifiedCardContainer>
+    </Grid2>
+  );
+};
+
+// Catalog card with special layout considerations
+const CatalogCard = ({ catalogContent, handleToggle, theme }) => {
+  return (
+    <Grid2 size={GRID_SIZE}>
+      <UnifiedCardContainer>
+        <Typography data-testid="catalog-section-heading" variant="h5" component="div">
+          {'Meshery Catalog'}
+        </Typography>
+
+        <UnifiedDescription variant="body" hasIcon={true}>
+          <CatalogIcon
+            data-testid="catalog-toggle-switch"
+            style={{
+              height: '85px', // Reduced from 100px
+              width: '140px', // Reduced from 160px
+              flexShrink: 0,
+            }}
+          />
+
+          <div
+            style={{
+              display: 'inline',
+              position: 'relative',
+            }}
+          >
+            Enable access to the cloud native catalog, supporting design patterns, WebAssembly
+            filters (<span style={{ fontStyle: 'italic' }}>soon</span>), and OPA policies (
+            <span style={{ fontStyle: 'italic' }}>soon</span>). Import any catalog item and
+            customize.
+          </div>
+        </UnifiedDescription>
+
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 12, // Reduced from 16
+            left: 12, // Reduced from 16
+            right: 12, // Reduced from 16
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
+            Explore the{' '}
+            <a
+              href="https://meshery.io/catalog"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                textDecoration: 'none',
+                color: theme.palette.text.brand,
+              }}
+            >
+              Meshery Catalog
+            </a>
+          </Typography>
+
+          <Switch
+            checked={catalogContent}
+            onChange={handleToggle}
+            name="OperatorSwitch"
+            color="primary"
+          />
+        </Box>
+      </UnifiedCardContainer>
     </Grid2>
   );
 };
@@ -568,7 +579,7 @@ const Extensions = () => {
   const { notify } = useNotification();
   const [updateUserPref] = useUpdateUserPrefMutation();
   const dispatch = useDispatch();
-  const gridSize = useResponsiveGridSize();
+  const theme = useTheme();
 
   useEffect(() => {
     dispatch(updatePage({ path: getPath(), title: 'Extensions' }));
@@ -597,6 +608,7 @@ const Extensions = () => {
       console.log(userError);
     }
   };
+
   useEffect(() => {
     fetchUser();
   }, [userData]);
@@ -625,8 +637,6 @@ const Extensions = () => {
       setHasAccessToMeshMap(true);
   }, []);
 
-  const theme = useTheme();
-
   return (
     <>
       <React.Fragment>
@@ -634,7 +644,7 @@ const Extensions = () => {
           <title>Extensions | Meshery</title>
         </Head>
         {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
-          <Grid2 container spacing={1} size="grow">
+          <Grid2 container spacing={2} size="grow">
             <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
             <WrappedMesheryPerformanceAction githubActionEnabled={false} />
             <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
@@ -644,76 +654,11 @@ const Extensions = () => {
             <WrappedLayer5CloudExtension />
             <WrappedKubectlPluginExtension />
             <WrappedKubectlMeshSyncExtension />
-            <Grid2 size={gridSize}>
-              <ResponsiveCardContainer>
-                <Typography data-testid="catalog-section-heading" variant="h5" component="div">
-                  {'Meshery Catalog'}
-                </Typography>
-
-                <ResponsiveFrontSideDescription variant="body">
-                  <CatalogIcon
-                    data-testid="catalog-toggle-switch"
-                    style={{
-                      paddingRight: '1rem',
-                      height: '75px',
-                      width: '120px',
-                      flexShrink: 0,
-                    }}
-                  />
-
-                  <div
-                    style={{
-                      display: 'inline',
-                      position: 'relative',
-                    }}
-                  >
-                    Enable access to the cloud native catalog, supporting design patterns,
-                    WebAssembly filters (<span style={{ fontStyle: 'italic' }}>soon</span>), and OPA
-                    policies (<span style={{ fontStyle: 'italic' }}>soon</span>). Import any catalog
-                    item and customize.
-                  </div>
-                </ResponsiveFrontSideDescription>
-
-                <Grid2
-                  container
-                  spacing={2}
-                  direction="row"
-                  justifyContent="space-between"
-                  alignItems="baseline"
-                  size="grow"
-                  style={{
-                    position: 'absolute',
-                    paddingRight: '3rem',
-                    paddingLeft: '.5rem',
-                    bottom: '1.5rem',
-                  }}
-                >
-                  <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
-                    Explore the{' '}
-                    <a
-                      href="https://meshery.io/catalog"
-                      target="_blank"
-                      rel="noreferrer"
-                      style={{
-                        textDecoration: 'none',
-                        color: theme.palette.text.brand,
-                      }}
-                    >
-                      Meshery Catalog
-                    </a>
-                  </Typography>
-
-                  <div style={{ textAlign: 'right' }}>
-                    <Switch
-                      checked={catalogContent}
-                      onChange={handleToggle}
-                      name="OperatorSwitch"
-                      color="primary"
-                    />
-                  </div>
-                </Grid2>
-              </ResponsiveCardContainer>
-            </Grid2>
+            <CatalogCard
+              catalogContent={catalogContent}
+              handleToggle={handleToggle}
+              theme={theme}
+            />
             <Adapters />
           </Grid2>
         ) : (
