@@ -81,7 +81,7 @@ jobs:
 
   build:
     name: Docker build, push and sign
-    if: github.repository == 'meshery/meshery'
+    if: github.repository == 'meshery/meshery' && github.event_name == 'push'
     env:
       RELEASE_CHANNEL: "stable"
     runs-on: ubuntu-24.04
@@ -119,6 +119,7 @@ jobs:
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
 
       - name: Docker stable and playground push
+        if: github.repository == 'meshery/meshery' && github.event_name == 'push'
         run: |
           docker push ${{ secrets.IMAGE_NAME }}:stable-latest
           docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
@@ -133,6 +134,7 @@ jobs:
           cosign-release: "v2.2.3"
 
       - name: Sign Docker images
+        if: github.repository == 'meshery/meshery' && github.event_name == 'push'
         run: |
           images=(
             "${{ secrets.IMAGE_NAME }}:stable-latest"
@@ -147,6 +149,7 @@ jobs:
           done
 
       - name: Verify Docker image signatures
+        if: github.repository == 'meshery/meshery' && github.event_name == 'push'
         run: |
           for img in "${images[@]}"; do
             cosign verify $img --key ${{ secrets.COSIGN_PUBLIC_KEY }}
@@ -173,6 +176,22 @@ jobs:
         with:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
+
+      - name: Sign release artifacts
+        run: |
+          ARTIFACTS_DIR=dist
+          for file in $ARTIFACTS_DIR/*; do
+            echo "Signing $file"
+            cosign sign-blob --key ${{ secrets.COSIGN_PRIVATE_KEY }} $file
+          done
+
+      - name: Verify signed artifacts
+        run: |
+          for file in $ARTIFACTS_DIR/*; do
+            echo "Verifying $file"
+            cosign verify-blob --key ${{ secrets.COSIGN_PUBLIC_KEY }} $file
+          done
+
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
