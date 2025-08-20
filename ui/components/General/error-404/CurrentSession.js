@@ -16,7 +16,6 @@ import { useGetSelectedOrganization } from '@/rtk-query/user';
 
 const CurrentSessionInfo = () => {
   const { selectedOrganization } = useGetSelectedOrganization();
-  console.log('selectedOrganization error page', selectedOrganization);
 
   const {
     data: rolesRes,

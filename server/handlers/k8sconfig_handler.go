@@ -24,9 +24,18 @@ import (
 	"github.com/meshery/meshkit/models/events"
 
 	"github.com/meshery/meshkit/utils"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
+
+const MeshsyncDeploymentModeFormKey = "meshsync_deployment_mode"
+const ContextsFormKey = "contexts"
+
+// ContextOptions represents the configuration options for a specific context
+type ContextOptions struct {
+	MeshsyncDeploymentMode string `json:"meshsync_deployment_mode"`
+}
 
 // SaveK8sContextResponse - struct used as (json marshaled) response to requests for saving k8s contexts
 type SaveK8sContextResponse struct {
@@ -97,15 +106,53 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 		WithDescription("Kubernetes config uploaded.").WithSeverity(events.Informational)
 	eventMetadata := map[string]interface{}{}
 	contexts := models.K8sContextsFromKubeconfig(provider, user.ID, h.config.EventBroadcaster, *k8sConfigBytes, h.SystemID, eventMetadata, h.log)
-	len := len(contexts)
+	contextsLen := len(contexts)
+
+	// Parse contexts configuration if provided
+	var contextsConfig map[string]ContextOptions
+	if contextsJSON := req.FormValue(ContextsFormKey); contextsJSON != "" {
+		if err := json.Unmarshal([]byte(contextsJSON), &contextsConfig); err != nil {
+			h.log.Error(fmt.Errorf("failed to parse contexts configuration: %w", err))
+			http.Error(w, fmt.Sprintf("Invalid contexts configuration: %v", err), http.StatusBadRequest)
+			return
+		}
+	}
+
+	// Helper function to get meshsync deployment mode for a context
+	// Uses closure pattern to call req.FormValue only once while keeping globalMeshsyncMode scoped
+	getMeshsyncModeForContext := func() func(*models.K8sContext) string {
+		// Get global meshsync deployment mode for backward compatibility
+		globalMeshsyncMode := req.FormValue(MeshsyncDeploymentModeFormKey)
+		return func(ctx *models.K8sContext) string {
+			// If contexts config is provided and contains this context, use context-specific setting
+			if contextOpts, exists := contextsConfig[ctx.ID]; exists {
+				if contextOpts.MeshsyncDeploymentMode != "" {
+					return contextOpts.MeshsyncDeploymentMode
+				}
+			}
+			// Fall back to global setting
+			return globalMeshsyncMode
+		}
+	}()
 
 	smInstanceTracker := h.ConnectionToStateMachineInstanceTracker
+	// TODO:
+	// when new api with param "contexts" will be addopted,
+	// only take into account contexts from that param
 	for idx, ctx := range contexts {
 		metadata := map[string]interface{}{}
 		metadata["context"] = models.RedactCredentialsForContext(ctx)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
 
-		connection, err := provider.SaveK8sContext(token, *ctx)
+		// Create context-specific metadata with appropriate meshsync deployment mode
+		k8sContextsMetadata := make(map[string]any, 1)
+		meshsyncMode := getMeshsyncModeForContext(ctx)
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			k8sContextsMetadata,
+			schemasConnection.MeshsyncDeploymentModeFromString(meshsyncMode),
+		)
+
+		connection, err := provider.SaveK8sContext(token, *ctx, k8sContextsMetadata)
 		if err != nil {
 			saveK8sContextResponse.ErroredContexts = append(saveK8sContextResponse.ErroredContexts, *ctx)
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)
@@ -162,7 +209,7 @@ func (h *Handler) addK8SConfig(user *models.User, _ *models.Preference, w http.R
 
 		eventMetadata[ctx.Name] = metadata
 
-		if idx == len-1 {
+		if idx == contextsLen-1 {
 			h.config.K8scontextChannel.PublishContext()
 		}
 	}
@@ -346,7 +393,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 			return contexts, err
 		}
 		cc.DeploymentType = "in_cluster"
-		conn, err := prov.SaveK8sContext(token, *cc)
+		conn, err := prov.SaveK8sContext(token, *cc, nil)
 		if err != nil {
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", cc.Name, cc.Server)
 			metadata["error"] = err
@@ -378,7 +425,7 @@ func (h *Handler) DiscoverK8SContextFromKubeConfig(userID string, token string, 
 		metadata["description"] = fmt.Sprintf("K8S context \"%s\" discovered with cluster at %s", ctx.Name, ctx.Server)
 		metadata["description"] = fmt.Sprintf("Connection established with context \"%s\" at %s", ctx.Name, ctx.Server)
 		ctx.DeploymentType = "out_of_cluster"
-		conn, err := prov.SaveK8sContext(token, *ctx)
+		conn, err := prov.SaveK8sContext(token, *ctx, nil)
 		if err != nil {
 			h.log.Warn(ErrFailToSaveContext(err))
 			metadata["description"] = fmt.Sprintf("Unable to establish connection with context \"%s\" at %s", ctx.Name, ctx.Server)

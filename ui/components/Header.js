@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
@@ -16,6 +16,8 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RegistryModal from './Registry/RegistryModal';
+
 import {
   Checkbox,
   Box,
@@ -61,6 +63,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { ErrorBoundary } from '@sistent/sistent';
+import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
 
 async function loadActiveK8sContexts() {
   try {
@@ -410,6 +413,7 @@ const Header = ({
   abilityUpdated,
 }) => {
   const { notify } = useNotification;
+  const { openModal } = useContext(WorkspaceModalContext) || {};
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -477,6 +481,7 @@ const Header = ({
                       providerUrl={remoteProviderUrl}
                       getUserAccessToken={getUserAccessToken}
                       getUserProfile={getUserProfile}
+                      onOpenWorkspace={openModal}
                     />
                   )}
                 </ErrorBoundary>
@@ -515,6 +520,7 @@ const Header = ({
             </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
+        <RegistryModal />
       </>
     </NoSsr>
   );
