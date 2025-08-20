@@ -2,7 +2,7 @@
   "id": "7191dfdd-2c44-4235-acb7-688f5e99750d",
   "name": "Kubernetes DaemonSet Pattern",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.382",
+  "version": "0.0.384",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -2660,106 +2660,6 @@
       "component": {
         "version": "core.meshery.io/v1alpha1",
         "kind": "RoundRectangle",
-        "schema": ""
-      }
-    },
-    {
-      "id": "fed39071-ba24-4030-8fbf-e10842cd03c2",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-08-05T05:47:54.136952179Z",
-          "updated_at": "2025-08-05T05:47:54.136952179Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-opacity": 0,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-style": "dashed",
-        "border-width": 1,
-        "data": {
-          "label": ""
-        },
-        "height": 30,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 910.9101357506787,
-          "y": 366.01016482020066
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#00D3A9",
-        "shape": "rectangle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
-        "width": 30,
-        "z-index": 394
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "parent",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {},
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Section",
         "schema": ""
       }
     },
