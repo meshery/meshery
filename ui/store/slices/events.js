@@ -56,15 +56,25 @@ export const eventsSlice = createSlice({
     setEvents: (state, action) => {
       // state.events = action.payload || []
       eventsEntityAdapter.removeAll(state);
-      eventsEntityAdapter.addMany(state, action.payload);
 
-      state.current_view.has_more = action.payload.length == 0 ? false : true;
+      // Filter out events that are marked as deleted since server doesn't handle it properly
+      const eventsToAdd = (action.payload || []).filter((event) => {
+        return !event.is_deleted;
+      });
+
+      eventsEntityAdapter.addMany(state, eventsToAdd);
+
+      state.current_view.has_more = eventsToAdd.length == 0 ? false : true;
     },
 
     pushEvents: (state, action) => {
       // state.events = [...state.events, ...action.payload]
-      eventsEntityAdapter.addMany(state, action.payload);
-      state.current_view.has_more = action.payload.length == 0 ? false : true;
+      const eventsToAdd = (action.payload || []).filter((event) => {
+        return !event.is_deleted;
+      });
+
+      eventsEntityAdapter.addMany(state, eventsToAdd);
+      state.current_view.has_more = eventsToAdd.length == 0 ? false : true;
     },
 
     pushEvent: (state, action) => {
@@ -137,6 +147,14 @@ export const eventsSlice = createSlice({
         };
       }
     },
+
+    // Remove deleted events from store completely
+    removeDeletedEvents: (state) => {
+      const deletedEventIds = Object.values(state.entities)
+        .filter((event) => event.is_deleted)
+        .map((event) => event.id);
+      eventsEntityAdapter.removeMany(state, deletedEventIds);
+    },
   },
 });
 
@@ -151,9 +169,10 @@ export const {
   pushEvents,
   setCurrentView,
   updateEvent,
+  updateEvents,
   toggleNotificationCenter,
   closeNotificationCenter,
-  updateEvents,
+  removeDeletedEvents,
 } = eventsSlice.actions;
 
 export default eventsSlice.reducer;
@@ -187,17 +206,17 @@ export const loadNextPage = (fetch) => async (dispatch, getState) => {
 
 export const updateEventStatus =
   ({ id, status }) =>
-  (dispatch) => {
-    //const currentView = getState().events.current_view;
-    dispatch(
-      updateEvent({
-        id,
-        changes: {
-          status,
-        },
-      }),
-    );
-  };
+    (dispatch) => {
+      //const currentView = getState().events.current_view;
+      dispatch(
+        updateEvent({
+          id,
+          changes: {
+            status,
+          },
+        }),
+      );
+    };
 
 // does a soft deletion on ui
 export const deleteEvent =
@@ -229,8 +248,52 @@ export const selectEvents = (state) => {
   return eventsEntityAdapter.getSelectors().selectAll(state.events);
 };
 
+//select only non-deleted events
+export const selectVisibleEvents = (state) => {
+  return selectEvents(state).filter((event) => !event.is_deleted);
+};
+
+//select only non-deleted events that match current filters
+export const selectFilteredEvents = (state) => {
+  const events = selectVisibleEvents(state);
+  const currentFilters = state.events.current_view?.filters || {};
+
+  return events.filter((event) => {
+    if (currentFilters.status && event.status !== currentFilters.status) {
+      return false;
+    }
+
+    if (currentFilters.severity && currentFilters.severity.length > 0) {
+      if (!currentFilters.severity.includes(event.severity)) {
+        return false;
+      }
+    }
+
+    return true;
+  });
+};
+
+// compute counts used by header chips
+export const selectUnreadCountsBySeverity = (state) => {
+  const counts = {};
+  for (const e of selectVisibleEvents(state)) {
+    if (e.status === STATUS.UNREAD) {
+      counts[e.severity] = (counts[e.severity] || 0) + 1;
+    }
+  }
+  return counts;
+};
+
+export const selectReadCount = (state) => {
+  let count = 0;
+  for (const e of selectVisibleEvents(state)) {
+    if (e.status === STATUS.READ) count += 1;
+  }
+  return count;
+};
+
 export const selectCheckedEvents = (state) => {
-  return selectEvents(state).filter((e) => e.checked);
+  return selectVisibleEvents(state).filter((e) => e.checked);
 };
 
 export const selectEventById = (state, id) => {
@@ -238,18 +301,22 @@ export const selectEventById = (state, id) => {
 };
 
 export const selectIsEventChecked = (state, id) => {
-  return Boolean(selectEventById(state, id).checked);
+  return Boolean(selectEventById(state, id)?.checked);
 };
 
 export const selectAreAllEventsChecked = (state) => {
-  if (selectEvents(state).length == 0) {
+  const visibleEvents = selectVisibleEvents(state);
+  if (visibleEvents.length == 0) {
     return false;
   }
-  return selectEvents(state).reduce((selected, event) => (event.checked ? selected : false), true);
+  return visibleEvents.reduce((selected, event) => (event.checked ? selected : false), true);
 };
 
 export const selectIsEventVisible = (state, id) => {
   const event = selectEventById(state, id);
+  if (!event) {
+    return false;
+  }
   const currentFilters = state.events.current_view?.filters || {};
   const shouldBeInCurrentFilteredView = currentFilters.status
     ? currentFilters.status == event.status
