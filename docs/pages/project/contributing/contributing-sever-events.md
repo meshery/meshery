@@ -175,6 +175,12 @@ sendClientEvent(clientId, eventPayload);
 
 Meshery provides immediate notifications through the GraphQL subscription → XState machine → Redux → UI notification pipeline, with events being both persisted and broadcast in real-time.
 
-### Event Control Mechanisms
+### How User Notifications Are Sent
 
+### How Notification Control Works
 
+### Anti-Spam & Rate Limiting Measures
+
+### Best Practices to Avoid Under/Over-Notification
+
+### Example
