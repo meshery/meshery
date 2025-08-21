@@ -170,3 +170,11 @@ async function sendClientEvent(clientId, eventPayload) {
 
 sendClientEvent(clientId, eventPayload);
 ```
+
+## Sending Events to Meshery UI for immediate user notification
+
+Meshery provides immediate notifications through the GraphQL subscription → XState machine → Redux → UI notification pipeline, with events being both persisted and broadcast in real-time.
+
+### Event Control Mechanisms
+
+
