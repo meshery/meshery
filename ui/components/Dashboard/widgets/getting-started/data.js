@@ -222,7 +222,10 @@ export const stepsData = [
         previousButton: false,
         actionName: ActionName.LEARN,
         primaryAction: () => {
-          window.open(`${MESHERY_CLOUD_PROD}/academy/learning-paths/mastering-meshery`, '_blank');
+          window.open(
+            `${MESHERY_CLOUD_PROD}/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery`,
+            '_blank',
+          );
         },
       },
     ],
