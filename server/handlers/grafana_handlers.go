@@ -150,7 +150,7 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
        connectionIDStr := mux.Vars(req)["connectionID"]
        connectionID, err := uuid.FromString(connectionIDStr)
        if err != nil {
-	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 
@@ -193,7 +193,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
        connectionIDStr := mux.Vars(req)["connectionID"]
        connectionID, err := uuid.FromString(connectionIDStr)
        if err != nil {
-	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
@@ -249,7 +249,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
        connectionIDStr := mux.Vars(req)["connectionID"]
        connectionID, err := uuid.FromString(connectionIDStr)
        if err != nil {
-	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")
@@ -291,7 +291,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
        connectionIDStr := mux.Vars(req)["connectionID"]
        connectionID, err := uuid.FromString(connectionIDStr)
        if err != nil {
-	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	connection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "grafana")
@@ -361,7 +361,7 @@ func (h *Handler) SaveSelectedGrafanaBoardsHandler(w http.ResponseWriter, req *h
        connectionIDStr := mux.Vars(req)["connectionID"]
        connectionID, err := uuid.FromString(connectionIDStr)
        if err != nil {
-	       http.Error(w, "Invalid connectionID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	connection, statusCode, err := p.GetConnectionByIDAndKind(token, connectionID, "grafana")

@@ -23,7 +23,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
        userUUID, err := uuid.FromString(user.ID)
        if err != nil {
-	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	credential := models.Credential{
@@ -53,7 +53,7 @@ func (h *Handler) GetUserCredentialByID(w http.ResponseWriter, req *http.Request
        credentialIDStr := mux.Vars(req)["credentialID"]
        credentialID, err := uuid.FromString(credentialIDStr)
        if err != nil {
-	       http.Error(w, "Invalid credentialID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	token, _ := req.Context().Value(models.TokenCtxKey).(string)
@@ -118,7 +118,7 @@ func (h *Handler) UpdateUserCredential(w http.ResponseWriter, req *http.Request,
 
        userUUID, err := uuid.FromString(user.ID)
        if err != nil {
-	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	credential := &models.Credential{
@@ -149,7 +149,7 @@ func (h *Handler) DeleteUserCredential(w http.ResponseWriter, req *http.Request,
        credentialIDStr := q.Get("credential_id")
        credentialID, err := uuid.FromString(credentialIDStr)
        if err != nil {
-	       http.Error(w, "Invalid credential_id UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	_, err = provider.DeleteUserCredential(req, credentialID)

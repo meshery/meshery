@@ -30,7 +30,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 	connectionRegisterPayload := connections.ConnectionPayload{}
        userUUID, err := uuid.FromString(user.ID)
        if err != nil {
-	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	err = json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
@@ -92,7 +92,7 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
        if ok {
 	       uuidVal, err := uuid.FromString(id)
 	       if err != nil {
-		       http.Error(w, "Invalid id UUID", http.StatusBadRequest)
+		       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 		       return
 	       }
 	       smInstancetracker.Remove(uuidVal)
@@ -141,7 +141,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	bd, err := io.ReadAll(req.Body)
        userID, err := uuid.FromString(user.ID)
        if err != nil {
-	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	if err != nil {
@@ -363,7 +363,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
        userID, err := uuid.FromString(user.ID)
        if err != nil {
-	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userID).WithCategory("connection").WithAction("update").ActedUpon(userID)
@@ -548,12 +548,12 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
        connectionIDStr := mux.Vars(req)["connectionId"]
        connectionID, err := uuid.FromString(connectionIDStr)
        if err != nil {
-	       http.Error(w, "Invalid connectionId UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
        userID, err := uuid.FromString(user.ID)
        if err != nil {
-	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 
@@ -609,12 +609,12 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
        connectionIDStr := mux.Vars(req)["connectionId"]
        connectionID, err := uuid.FromString(connectionIDStr)
        if err != nil {
-	       http.Error(w, "Invalid connectionId UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
        userID, err := uuid.FromString(user.ID)
        if err != nil {
-	       http.Error(w, "Invalid user ID UUID", http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
 	       return
        }
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("delete")
