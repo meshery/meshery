@@ -3,7 +3,7 @@ name: Callistus Ndiwe
 linkedin: https://www.linkedin.com/in/callistus-ndiwe-ab3842242
 ---
 
-My mane is Callistus Ndiwe (Nemy), a passionate DevOps Engineer at ReconxiHQ with expertise
+I'm Callistus Ndiwe (Nemy), a passionate DevOps Engineer at ReconxiHQ with expertise
 in Kubernetes, Kubespray, Azure DevOps, AWS, Jenkins, Helm, Prometheus, and Grafana.
 My work includes optimizing CI/CD pipelines, implementing infrastructure as code, and
 enhancing observability for scalable applications. I’m Kubernetes and Cloud Native
