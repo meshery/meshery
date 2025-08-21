@@ -173,14 +173,42 @@ sendClientEvent(clientId, eventPayload);
 
 ## Sending Events to Meshery UI for immediate user notification
 
-Meshery provides immediate notifications through the GraphQL subscription → XState machine → Redux → UI notification pipeline, with events being both persisted and broadcast in real-time.
+Meshery delivers immediate notifications through the GraphQL subscription → XState machine → Redux → UI notification pipeline. Events are both persisted and broadcast in real time. In addition, Meshery provides comprehensive controls to balance user awareness with notification fatigue, enabling developers and users to fine-tune the notification experience based on context and preferences.
+
 
 ### How User Notifications Are Sent
 
+
+**1. Notification Flow Architecture**
+
+1. Event Creation: [events.NewEvent()]() builder pattern in Go
+2. Broadcasting: [EventBroadcaster.Publish(userID, event)]()
+3. GraphQL Subscription: Real-time delivery via [subscribeEvents]()
+4. XState Processing: Operations center machine processes events
+5. Multiple UI Channels:
+    - Toast Notifications: Immediate popups via [enqueueSnackbar()]()
+    - Notification Center: Persistent storage in Redux + UI drawer
+    - Event Persistence: Database storage via [provider.PersistEvent()]()
+
+
 ### How Notification Control Works
+
+**1. Severity-Based Control**
+
+**2. Visibility Controls**
+
+**3. User Filtering System**
+
+**4. Event Processing Controls**
 
 ### Anti-Spam & Rate Limiting Measures
 
 ### Best Practices to Avoid Under/Over-Notification
+
+**1. Preventing Over-Notification**
+
+**2. Preventing Under-Notification**
+
+**3. Smart Notification Strategies**
 
 ### Example
