@@ -296,16 +296,15 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 
 func displaySuccessfulComponents(response *models.RegistryAPIResponse, modelName string) {
 	if len(response.EntityTypeSummary.SuccessfulComponents) > 0 {
-		header := []string{"Component", "Category", "Version"}
+		header := []string{"Component", "Version"}
 		rows := [][]string{}
 
 		for _, comp := range response.EntityTypeSummary.SuccessfulComponents {
 			displayName, _ := comp["DisplayName"].(string)
 			modelDisplayName, _ := comp["Model"].(string)
-			category, _ := comp["Category"].(string)
 			modelVersion, _ := comp["Version"].(string)
 			if modelDisplayName == modelName {
-				rows = append(rows, []string{displayName, category, modelVersion})
+				rows = append(rows, []string{displayName, modelVersion})
 
 			}
 		}
@@ -459,7 +458,7 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 			}
 		}
 		if entityType == "unknown" {
-			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s", utils.BoldString("ERROR"), name.(string), longDescription)
+			utils.Log.Infof("\n%s: Error encountered while importing model %s: \n    %s\n\n    Ensure that you are importing an existing model.\n    Create a new model to import or find an existing model in the Meshery \x1b]8;;https://meshery.io/catalog/models\x1b\\catalog\x1b]8;;\x1b\\.", utils.BoldString("ERROR"), name.(string), longDescription)
 			if probableCause != "" {
 				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause)
 			}

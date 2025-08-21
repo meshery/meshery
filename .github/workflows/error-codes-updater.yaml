@@ -31,7 +31,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.23"
+          go-version: "1.24"
 
       - name: Build Error Utility
         run: |
@@ -40,7 +40,7 @@ jobs:
 
       - name: Run Utility For Meshery Server
         run: |
-          ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl
+          ~/errorutil update -d . -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl,docs
           output=$(~/errorutil -d . analyze -i ./server/helpers -o ./server/helpers --skip-dirs mesheryctl | wc -c)
           if [ "$output" -ne 0 ]; then
             exit 1

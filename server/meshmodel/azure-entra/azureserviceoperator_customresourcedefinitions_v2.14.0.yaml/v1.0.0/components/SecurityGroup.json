@@ -1,0 +1,122 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Security Group",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "azure-entra",
+    "displayName": "Azure Entra",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Security Identity Compliance",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2384f1",
+      "secondaryColor": "#3990f2",
+      "shape": "rectangle",
+      "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.14.0/azureserviceoperator_customresourcedefinitions_v2.14.0.yaml",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#1988d9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".9\" stop-color=\"#54aef0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".1\" stop-color=\"#54aef0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".29\" stop-color=\"#4fabee\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".51\" stop-color=\"#41a2e9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".74\" stop-color=\"#2a93e0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".88\" stop-color=\"#1988d9\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#50e6ff\" d=\"M1.01 10.19l7.92 5.14 8.06-5.16L18 11.35l-9.07 5.84L0 11.35l1.01-1.16z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M1.61 9.53L8.93.81l7.47 8.73-7.47 4.72-7.32-4.73z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#50e6ff\" d=\"M8.93.81v13.45L1.61 9.53 8.93.81z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#a)\" d=\"M8.93.81v13.45l7.47-4.72L8.93.81z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#53b1e0\" d=\"M8.93 7.76l7.47 1.78-7.47 4.72v-6.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#9cebff\" d=\"M8.93 14.26L1.61 9.53l7.32-1.77v6.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#b)\" d=\"M8.93 17.19L18 11.35l-1.01-1.18-8.06 5.16v1.86z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#1988d9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".9\" stop-color=\"#54aef0\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".1\" stop-color=\"#54aef0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".29\" stop-color=\"#4fabee\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".51\" stop-color=\"#41a2e9\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".74\" stop-color=\"#2a93e0\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".88\" stop-color=\"#1988d9\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#50e6ff\" d=\"M1.01 10.19l7.92 5.14 8.06-5.16L18 11.35l-9.07 5.84L0 11.35l1.01-1.16z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M1.61 9.53L8.93.81l7.47 8.73-7.47 4.72-7.32-4.73z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#50e6ff\" d=\"M8.93.81v13.45L1.61 9.53 8.93.81z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#a)\" d=\"M8.93.81v13.45l7.47-4.72L8.93.81z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#53b1e0\" d=\"M8.93 7.76l7.47 1.78-7.47 4.72v-6.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#9cebff\" d=\"M8.93 14.26L1.61 9.53l7.32-1.77v6.5z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"url(#b)\" d=\"M8.93 17.19L18 11.35l-1.01-1.18-8.06 5.16v1.86z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"a\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\"/\u003e\u003cstop offset=\".9\" stop-color=\"#54aef0\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"b\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\".1\" stop-color=\"#54aef0\"/\u003e\u003cstop offset=\".29\" stop-color=\"#4fabee\"/\u003e\u003cstop offset=\".51\" stop-color=\"#41a2e9\"/\u003e\u003cstop offset=\".74\" stop-color=\"#2a93e0\"/\u003e\u003cstop offset=\".88\" stop-color=\"#1988d9\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath fill=\"#50e6ff\" d=\"M1.01 10.19l7.92 5.14 8.06-5.16L18 11.35l-9.07 5.84L0 11.35l1.01-1.16z\"/\u003e\u003cpath fill=\"#fff\" d=\"M1.61 9.53L8.93.81l7.47 8.73-7.47 4.72-7.32-4.73z\"/\u003e\u003cpath fill=\"#50e6ff\" d=\"M8.93.81v13.45L1.61 9.53 8.93.81z\"/\u003e\u003cpath fill=\"url(#a)\" d=\"M8.93.81v13.45l7.47-4.72L8.93.81z\"/\u003e\u003cpath fill=\"#53b1e0\" d=\"M8.93 7.76l7.47 1.78-7.47 4.72v-6.5z\"/\u003e\u003cpath fill=\"#9cebff\" d=\"M8.93 14.26L1.61 9.53l7.32-1.77v6.5z\"/\u003e\u003cpath fill=\"url(#b)\" d=\"M8.93 17.19L18 11.35l-1.01-1.18-8.06 5.16v1.86z\"/\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"a\" x1=\"13.25\" y1=\"13.02\" x2=\"8.62\" y2=\"4.25\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#1988d9\"/\u003e\u003cstop offset=\".9\" stop-color=\"#54aef0\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"b\" x1=\"11.26\" y1=\"10.47\" x2=\"14.46\" y2=\"15.99\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\".1\" stop-color=\"#54aef0\"/\u003e\u003cstop offset=\".29\" stop-color=\"#4fabee\"/\u003e\u003cstop offset=\".51\" stop-color=\"#41a2e9\"/\u003e\u003cstop offset=\".74\" stop-color=\"#2a93e0\"/\u003e\u003cstop offset=\".88\" stop-color=\"#1988d9\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003cpath fill=\"#50e6ff\" d=\"M1.01 10.19l7.92 5.14 8.06-5.16L18 11.35l-9.07 5.84L0 11.35l1.01-1.16z\"/\u003e\u003cpath fill=\"#fff\" d=\"M1.61 9.53L8.93.81l7.47 8.73-7.47 4.72-7.32-4.73z\"/\u003e\u003cpath fill=\"#50e6ff\" d=\"M8.93.81v13.45L1.61 9.53 8.93.81z\"/\u003e\u003cpath fill=\"url(#a)\" d=\"M8.93.81v13.45l7.47-4.72L8.93.81z\"/\u003e\u003cpath fill=\"#53b1e0\" d=\"M8.93 7.76l7.47 1.78-7.47 4.72v-6.5z\"/\u003e\u003cpath fill=\"#9cebff\" d=\"M8.93 14.26L1.61 9.53l7.32-1.77v6.5z\"/\u003e\u003cpath fill=\"url(#b)\" d=\"M8.93 17.19L18 11.35l-1.01-1.18-8.06 5.16v1.86z\"/\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.14.0/azureserviceoperator_customresourcedefinitions_v2.14.0.yaml"
+  },
+  "configuration": null,
+  "component": {
+    "version": "entra.azure.com/v1",
+    "kind": "SecurityGroup",
+    "schema": "{\n \"description\": \"SecurityGroup is an Entra Security Group.\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description: The description of the group.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"DisplayName: The display name of the group.\",\n     \"type\": \"string\"\n    },\n    \"isAssignableToRole\": {\n     \"description\": \"IsAssignableToRole: Indicates whether the group can be assigned to a role.\",\n     \"type\": \"boolean\"\n    },\n    \"mailNickname\": {\n     \"description\": \"MailNickname: The email address of the group, specified either as a mail nickname (`mygroup`)\\nor as a full email address (`mygroup@mydomain.com`).\",\n     \"type\": \"string\"\n    },\n    \"membershipType\": {\n     \"description\": \"MembershipType: The membership type of the group.\",\n     \"enum\": [\n      \"assigned\",\n      \"enabled\",\n      \"assignedm365\",\n      \"enabledm365\"\n     ],\n     \"type\": \"string\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The operator specific configuration for the resource.\",\n     \"properties\": {\n      \"configmaps\": {\n       \"description\": \"ConfigMaps specifies any config maps that should be created by the operator.\",\n       \"properties\": {\n        \"entraID\": {\n         \"description\": \"EntraID: The Entra ID of the group.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key is the key in the ConfigMap being referenced\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name is the name of the Kubernetes ConfigMap to write to.\\nThe ConfigMap will be created in the same namespace as the resource.\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"creationMode\": {\n       \"description\": \"CreationMode: Specifies how ASO will try to create the resource.\\nSpecify \\\"AlwaysCreate\\\" to always create a new security group when first reconciled.\\nOr specify \\\"AdoptOrCreate\\\" to first try to adopt an existing security group with the same display name.\\nIf multiple security groups with the same display name are found, the resource condition will show an error.\\nIf not specified, defaults to \\\"AdoptOrCreate\\\".\",\n       \"enum\": [\n        \"AdoptOrCreate\",\n        \"AlwaysCreate\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"displayName\",\n    \"mailNickname\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Security Group\",\n \"type\": \"object\"\n}"
+  }
+}

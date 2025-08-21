@@ -1,0 +1,64 @@
+{
+    "perfResults": {
+        "meshery_id": "mock-1",
+        "name": "No mesh_1234567890",
+        "mesh": null,
+        "performance_profile": "PLACEHOLDER_PROFILE_ID",
+        "test_id": "",
+        "server_metrics": null,
+        "test_start_time": "2025-06-21T03:46:00.769Z",
+        "created_at": null,
+        "updated_at": null,
+        "user_id": null,
+        "runner_results": {
+          "RunType": "HTTP",
+          "RequestedQPS": "1",
+          "ActualQPS": 0.9873,
+          "DurationHistogram": {
+            "Avg": 0.221,
+            "Count": 15,
+            "Max": 0.377,
+            "Min": 0.171,
+            "Sum": 3.32,
+            "Percentiles": [
+              { "Percentile": 50, "Value": 0.198 },
+              { "Percentile": 75, "Value": 0.240 },
+              { "Percentile": 90, "Value": 0.325 },
+              { "Percentile": 99, "Value": 0.373 },
+              { "Percentile": 99.9, "Value": 0.377 }
+            ],
+            "Data": [
+                {
+                    "Count": 2,
+                    "End": 0.18,
+                    "Percent": 13.333333333333334,
+                    "Start": 0.171183932
+                },
+                {
+                    "Count": 6,
+                    "End": 0.2,
+                    "Percent": 53.333333333333336,
+                    "Start": 0.18
+                }
+               
+            ],
+            "StdDev": 0.05
+          },
+          "RetCodes": { "200": 15 },
+          "Sizes": {
+            "Avg": 567008,
+            "Count": 15,
+            "Max": 567008,
+            "Min": 567008,
+            "Sum": 8505120,
+            "Data": []
+          },
+          "ID": "mock-id",
+          "URL": "PLACEHOLDER_URL",
+          "Labels": "Mock Run",
+          "Version": "1.66.2"
+        }
+    }
+   
+}
+  

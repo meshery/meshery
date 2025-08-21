@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
@@ -16,6 +16,8 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RegistryModal from './Registry/RegistryModal';
+
 import {
   Checkbox,
   Box,
@@ -30,6 +32,8 @@ import {
   Grid2,
   Hidden,
   NoSsr,
+  useTheme,
+  useMediaQuery,
 } from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -59,6 +63,7 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
 import { ErrorBoundary } from '@sistent/sistent';
+import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
 
 async function loadActiveK8sContexts() {
   try {
@@ -269,7 +274,22 @@ function K8sContextMenu({
                 height="24px"
                 style={{ objectFit: 'contain' }}
               />
-              <CBadge>{contexts?.total_count || 0}</CBadge>
+              <CBadge
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullContextMenu((prev) => !prev);
+                }}
+                onMouseOver={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(false);
+                }}
+              >
+                {contexts?.total_count || 0}
+              </CBadge>
             </CBadgeContainer>
           </IconButton>
         </CanShow>
@@ -322,6 +342,7 @@ function K8sContextMenu({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          marginTop: '1rem',
                         }}
                       >
                         <div>
@@ -392,6 +413,9 @@ const Header = ({
   abilityUpdated,
 }) => {
   const { notify } = useNotification;
+  const { openModal } = useContext(WorkspaceModalContext) || {};
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
     data: providerCapabilities,
@@ -432,8 +456,9 @@ const Header = ({
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    minWidth: '34px',
+                    width: 'fit-content',
                     justifyContent: 'center',
+                    position: 'relative',
                   }}
                 ></div>
                 <OrganizationAndWorkSpaceSwitcher />
@@ -443,24 +468,33 @@ const Header = ({
                 style={{
                   position: 'relative',
                   display: 'flex',
-                  flexWrap: 'wrap',
                   gap: '1rem 0.5rem',
+                  width: 'fit-content',
                 }}
               >
                 {/* According to the capabilities load the component */}
                 <ErrorBoundary customFallback={() => null}>
-                  {collaboratorExtensionUri && (
+                  {collaboratorExtensionUri && isSmallScreen && (
                     <RemoteComponent
                       url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
                       loaderType={loaderType}
                       providerUrl={remoteProviderUrl}
                       getUserAccessToken={getUserAccessToken}
                       getUserProfile={getUserProfile}
+                      onOpenWorkspace={openModal}
                     />
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <UserSpan style={{ position: 'relative' }}>
+                  <UserSpan
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        sm: 'inline-flex',
+                      },
+                    }}
+                    style={{ position: 'relative' }}
+                  >
                     <K8sContextMenu
                       contexts={contexts}
                       activeContexts={activeContexts}
@@ -486,6 +520,7 @@ const Header = ({
             </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
+        <RegistryModal />
       </>
     </NoSsr>
   );

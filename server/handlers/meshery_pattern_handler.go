@@ -13,7 +13,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
@@ -189,6 +188,7 @@ func (h *Handler) handlePatternPOST(
 	requestPayload := &DesignPostPayload{}
 	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
 		h.logErrorParsingRequestBody(rw, provider, err, userID, eventBuilder)
+		return
 	}
 
 	token, err := provider.GetProviderToken(r)
@@ -196,7 +196,11 @@ func (h *Handler) handlePatternPOST(
 		h.logErrorGettingUserToken(rw, provider, err, userID, eventBuilder)
 		return
 	}
-	eventBuilder = eventBuilder.ActedUpon(*requestPayload.ID)
+
+	// Set the event builder with the pattern ID if available
+	if requestPayload.ID != nil {
+		eventBuilder = eventBuilder.ActedUpon(*requestPayload.ID)
+	}
 
 	designFileBytes, err := encoding.Marshal(requestPayload.DesignFile)
 
@@ -1760,7 +1764,7 @@ func createArtifactHubPkg(pattern *models.MesheryPattern, user string) ([]byte, 
 	if isCatalogItem {
 		version = pattern.CatalogData.PublishedVersion
 	}
-	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt.Format(time.RFC3339), &pattern.CatalogData)
+	artifactHubPkg := catalog.BuildArtifactHubPkg(pattern.Name, "", user, version, pattern.CreatedAt, &pattern.CatalogData)
 
 	data, err := yaml.Marshal(artifactHubPkg)
 	if err != nil {

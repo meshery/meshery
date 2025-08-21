@@ -2,32 +2,32 @@ package connections
 
 import (
 	"context"
-	"database/sql"
-	"time"
 
 	"github.com/meshery/meshkit/models/events"
 	"github.com/spf13/viper"
 
 	"github.com/gofrs/uuid"
-	"github.com/meshery/meshery/server/helpers/utils"
-	"github.com/meshery/meshery/server/models/environments"
 	"github.com/meshery/meshkit/logger"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
 // swagger:response ConnectionStatus
-type ConnectionStatus string
+type ConnectionStatus = schemasConnection.ConnectionStatus
 
 type InitFunc func(ctx context.Context, machineCtx interface{}, log logger.Handler) (interface{}, *events.Event, error)
 
+// TODO
+// Caps lock values are left for compatibility for now,
+// update later on to Pascal case everywhere
 const (
-	DISCOVERED   ConnectionStatus = "discovered"
-	REGISTERED   ConnectionStatus = "registered"
-	CONNECTED    ConnectionStatus = "connected"
-	IGNORED      ConnectionStatus = "ignored"
-	MAINTENANCE  ConnectionStatus = "maintenance"
-	DISCONNECTED ConnectionStatus = "disconnected"
-	DELETED      ConnectionStatus = "deleted"
-	NOTFOUND     ConnectionStatus = "not found"
+	DISCOVERED   ConnectionStatus = schemasConnection.Discovered
+	REGISTERED   ConnectionStatus = schemasConnection.Registered
+	CONNECTED    ConnectionStatus = schemasConnection.Connected
+	IGNORED      ConnectionStatus = schemasConnection.Ignored
+	MAINTENANCE  ConnectionStatus = schemasConnection.Maintenance
+	DISCONNECTED ConnectionStatus = schemasConnection.Disconnected
+	DELETED      ConnectionStatus = schemasConnection.Deleted
+	NOTFOUND     ConnectionStatus = schemasConnection.NotFound
 )
 
 type ConnectionRegisterPayload struct {
@@ -66,22 +66,7 @@ type GrafanaCred struct {
 }
 
 // swagger:response Connection
-type Connection struct {
-	ID                     uuid.UUID                      `json:"id,omitempty" db:"id"`
-	Name                   string                         `json:"name,omitempty" db:"name"`
-	CredentialID           uuid.UUID                      `json:"credential_id,omitempty" db:"credential_id"`
-	Type                   string                         `json:"type,omitempty" db:"type"`
-	SubType                string                         `json:"sub_type,omitempty" db:"sub_type"`
-	Kind                   string                         `json:"kind,omitempty" db:"kind"`
-	Metadata               utils.JSONMap                  `json:"metadata,omitempty" db:"metadata" gorm:"type:JSONB"`
-	Status                 ConnectionStatus               `json:"status,omitempty" db:"status"`
-	UserID                 *uuid.UUID                     `json:"user_id,omitempty" db:"user_id"`
-	CreatedAt              time.Time                      `json:"created_at,omitempty" db:"created_at"`
-	UpdatedAt              time.Time                      `json:"updated_at,omitempty" db:"updated_at"`
-	DeletedAt              sql.NullTime                   `json:"deleted_at,omitempty" db:"deleted_at"`
-	Environments           []environments.EnvironmentData `json:"environments,omitempty" db:"environments" gorm:"-"`
-	MeshsyncDeploymentMode string                         `json:"meshsync_deployment_mode,omitempty" db:"meshsync_deployment_mode"`
-}
+type Connection = schemasConnection.Connection
 
 var validConnectionStatusToManage = []ConnectionStatus{
 	DISCOVERED, REGISTERED, CONNECTED,
@@ -92,7 +77,7 @@ var validConnectionStatusToManage = []ConnectionStatus{
 // Check whether the Connection should be managed.
 // Connections with status as Discovered, Registered, Connected should only be managed.
 // Eg: If the status is set as Maintenance or Ignore do not try to mange it, not even during greedy import of K8sConnection from KubeConfig.
-func (c *Connection) ShouldConnectionBeManaged() bool {
+func ShouldConnectionBeManaged(c Connection) bool {
 	for _, validStatus := range validConnectionStatusToManage {
 		if validStatus == c.Status {
 			return true
@@ -102,12 +87,7 @@ func (c *Connection) ShouldConnectionBeManaged() bool {
 }
 
 // swagger:response ConnectionPage
-type ConnectionPage struct {
-	Connections []*Connection `json:"connections"`
-	TotalCount  int           `json:"total_count"`
-	Page        int           `json:"page"`
-	PageSize    int           `json:"page_size"`
-}
+type ConnectionPage = schemasConnection.ConnectionPage
 
 type ConnectionStatusInfo struct {
 	Status string `json:"status" db:"status"`
@@ -131,7 +111,6 @@ type ConnectionPayload struct {
 	CredentialID               *uuid.UUID             `json:"credential_id,omitempty"`
 	Model                      string                 `json:"model,omitempty"`
 	SkipCredentialVerification bool                   `json:"skip_credential_verification"`
-	MeshsyncDeploymentMode     string                 `json:"meshsync_deployment_mode,omitempty"`
 }
 
 func BuildMesheryConnectionPayload(serverURL string, credential map[string]interface{}) *ConnectionPayload {

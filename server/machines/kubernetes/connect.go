@@ -8,6 +8,8 @@ import (
 	"github.com/meshery/meshery/server/machines"
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/models/events"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
+	"github.com/spf13/viper"
 )
 
 type ConnectAction struct{}
@@ -30,6 +32,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		eventBuilder.WithMetadata(map[string]interface{}{"error": err})
 		return machines.NoOp, eventBuilder.Build(), err
 	}
+
 	token, ok := ctx.Value(models.TokenCtxKey).(string)
 	if !ok {
 		errToken := ErrConnectAction(fmt.Errorf("failed to retrieve user token"))
@@ -37,7 +40,7 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 		return machines.NoOp, eventBuilder.Build(), errToken
 
 	}
-	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ID)
+	connectionID := uuid.FromStringOrNil(machinectx.K8sContext.ConnectionID)
 	connection, _, err := provider.GetConnectionByIDAndKind(
 		token,
 		connectionID,
@@ -50,10 +53,23 @@ func (ca *ConnectAction) Execute(ctx context.Context, machineCtx interface{}, da
 
 	}
 
+	meshsyncDeploymentMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.Metadata)
+	if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+		// TODO:
+		// maybe not call to viper here and propagate default value from above,
+		// f.e. when machine is created
+		meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeFromString(
+			viper.GetString("MESHSYNC_DEFAULT_DEPLOYMENT_MODE"),
+		)
+		if meshsyncDeploymentMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+			meshsyncDeploymentMode = schemasConnection.MeshsyncDeploymentModeDefault
+		}
+	}
+
 	go func() {
 		ctrlHelper := machinectx.MesheryCtrlsHelper.
 			AddCtxControllerHandlers(machinectx.K8sContext).
-			SetMeshsyncDeploymentMode(models.MeshsyncDeploymentModeFromString(connection.MeshsyncDeploymentMode)).
+			SetMeshsyncDeploymentMode(meshsyncDeploymentMode).
 			UpdateOperatorsStatusMap(machinectx.OperatorTracker).
 			DeployUndeployedOperators(machinectx.OperatorTracker)
 		ctrlHelper.AddMeshsynDataHandlers(ctx, machinectx.K8sContext, userUUID, *sysID, provider)

@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"maps"
 	"net/http"
 	"net/url"
 	"os"
@@ -26,6 +27,7 @@ import (
 	"github.com/meshery/meshkit/utils"
 	mesherykube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/meshery/meshkit/utils/walker"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
@@ -57,10 +59,11 @@ type DefaultLocalProvider struct {
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
 
-	GenericPersister          *database.Handler
-	KubeClient                *mesherykube.Client
-	Log                       logger.Handler
-	TMPMeshsyncDeploymentMode string
+	GenericPersister *database.Handler
+	KubeClient       *mesherykube.Client
+	Log              logger.Handler
+
+	MeshsyncDefaultDeploymentMode schemasConnection.MeshsyncDeploymentMode
 }
 
 // Initialize will initialize the local provider
@@ -81,10 +84,6 @@ func (l *DefaultLocalProvider) Initialize() {
 		{Feature: PersistMesheryApplications},
 		{Feature: PersistMesheryFilters},
 		{Feature: PersistCredentials},
-	}
-	l.TMPMeshsyncDeploymentMode = "operator"
-	if viper.GetBool("TMP_MESHSYNC_AS_A_LIBRARY_MODE") {
-		l.TMPMeshsyncDeploymentMode = "library"
 	}
 }
 
@@ -186,8 +185,8 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.SaveEnvironment(environment)
@@ -201,8 +200,8 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
 		Name:           environmentPayload.Name,
-		OrganizationId: orgId,
-		Owner:          "Meshery",
+		OrganizationID: orgId,
+		Owner:          &uuid.Nil, // "Meshery"
 		UpdatedAt:      time.Now(),
 	}
 	return l.EnvironmentPersister.UpdateEnvironmentByID(environment)
@@ -245,7 +244,7 @@ func (l *DefaultLocalProvider) HandleUnAuthenticated(w http.ResponseWriter, req 
 	http.Redirect(w, req, "/user/login", http.StatusFound)
 }
 
-func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (connections.Connection, error) {
+func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, additionalMetadata map[string]any) (connections.Connection, error) {
 
 	k8sServerID := *k8sContext.KubernetesServerID
 
@@ -264,9 +263,18 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		"name":                 k8sContext.Name,
 		"kubernetes_server_id": k8sServerID.String(),
 	}
-	metadata := make(map[string]interface{}, len(_metadata))
+	metadata := make(map[string]interface{}, len(_metadata)+len(additionalMetadata))
 	for k, v := range _metadata {
 		metadata[k] = v
+	}
+
+	maps.Copy(metadata, additionalMetadata)
+
+	if schemasConnection.MeshsyncDeploymentModeFromMetadata(metadata) == schemasConnection.MeshsyncDeploymentModeUndefined {
+		schemasConnection.SetMeshsyncDeploymentModeToMetadata(
+			metadata,
+			l.MeshsyncDefaultDeploymentMode,
+		)
 	}
 
 	cred := map[string]interface{}{
@@ -285,8 +293,6 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext) (
 		Status:           connections.DISCOVERED,
 		MetaData:         metadata,
 		CredentialSecret: cred,
-		// TODO: pass from above
-		MeshsyncDeploymentMode: l.TMPMeshsyncDeploymentMode,
 	}
 	connectionCreated, err := l.SaveConnection(conn, "", true)
 	if err != nil {
@@ -1091,18 +1097,17 @@ func (l *DefaultLocalProvider) SaveConnection(conn *connections.ConnectionPayloa
 		id = conn.ID
 	}
 	connection := &connections.Connection{
-		ID:                     id,
-		Name:                   conn.Name,
-		CredentialID:           uuid.Nil,
-		Type:                   conn.Type,
-		SubType:                conn.SubType,
-		Kind:                   conn.Kind,
-		Metadata:               conn.MetaData,
-		Status:                 conn.Status,
-		UserID:                 &uuid.Nil,
-		CreatedAt:              time.Now(),
-		UpdatedAt:              time.Now(),
-		MeshsyncDeploymentMode: conn.MeshsyncDeploymentMode,
+		ID:           id,
+		Name:         conn.Name,
+		CredentialID: &uuid.Nil, // compatibilitiy
+		Type:         conn.Type,
+		SubType:      conn.SubType,
+		Kind:         conn.Kind,
+		Metadata:     conn.MetaData,
+		Status:       conn.Status,
+		UserID:       &uuid.Nil,
+		CreatedAt:    time.Now(),
+		UpdatedAt:    time.Now(),
 	}
 	connectionCreated, err := l.ConnectionPersister.SaveConnection(connection)
 	if err != nil {
@@ -1166,7 +1171,7 @@ func (l *DefaultLocalProvider) UpdateConnectionById(req *http.Request, conn *con
 		Status:       conn.Status,
 		CreatedAt:    time.Now(),
 		UpdatedAt:    time.Now(),
-		CredentialID: *conn.CredentialID,
+		CredentialID: conn.CredentialID,
 	}
 	return l.UpdateConnection(req, &connection)
 }
