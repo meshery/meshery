@@ -1,0 +1,39 @@
+header:
+  schema-version: 2.0.0
+  last-updated: '2025-03-01'
+  last-reviewed: '2025-04-01'
+  project-url: https://github.com/meshery/meshery/
+project-lifecycle:
+  stage: active
+  bug-fixes-only: false
+  core-maintainers:
+  - github:leecalcote
+  - github:aabidsofi19
+contribution-policy:
+  accepts-pull-requests: true
+  code-of-conduct: https://github.com/meshery/meshery/blob/master/CODE_OF_CONDUCT.md
+documentation:
+- https://github.com/meshery/meshery/blob/master/README.md
+security-testing:
+- tool-type: sca
+  tool-name: Dependabot
+  tool-version: latest
+  integration:
+    ad-hoc: false
+    ci: true
+    before-release: true
+  comment: |
+    Dependabot is enabled for this repo.
+security-contacts:
+- type: email
+  value: lee.calcote@layer5.io
+vulnerability-reporting:
+  accepts-vulnerability-reports: true
+  security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
+  email-contact: lee.calcote@layer5.io
+  comment: |
+    The first and best way to report a vulnerability is by using private security issues in GitHub.
+dependencies:
+  third-party-packages: true
+  dependencies-lists:
+  - https://github.com/meshery/meshery/blob/master/go.mod
