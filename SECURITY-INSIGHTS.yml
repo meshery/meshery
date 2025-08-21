@@ -26,7 +26,7 @@ security-testing:
     Dependabot is enabled for this repo.
 security-contacts:
 - type: email
-  value: lee.calcote@layer5.io
+  value: security@meshery.dev
 vulnerability-reporting:
   accepts-vulnerability-reports: true
   security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
