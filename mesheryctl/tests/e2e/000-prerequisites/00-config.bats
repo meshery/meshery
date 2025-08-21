@@ -26,5 +26,5 @@ setup() {
     run jq '."meshery-provider"' "$MESHERY_AUTH_FILE"
     assert_success
 
-    assert_output "\"Meshery\""
+    assert_output "\"Layer5\""
 }
