@@ -1,4 +1,4 @@
-import { MESHERY_CLOUD_PROD } from '@/constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '@/constants/endpoints';
 import { Link } from '@sistent/sistent';
 
 export const ActionName = {
@@ -82,7 +82,7 @@ export const stepsData = [
         actionName: ActionName.SETUP,
         // make it dynmic for cloud and the meshery ui
         primaryAction: () => {
-          window.open(`${MESHERY_CLOUD_PROD}/connect/github/new`, '_blank');
+          window.open(`${REMOTE_PROVIDER_URL}/connect/github/new`, '_blank');
         },
       },
     ],
@@ -222,7 +222,7 @@ export const stepsData = [
         previousButton: false,
         actionName: ActionName.LEARN,
         primaryAction: () => {
-          window.open(`${MESHERY_CLOUD_PROD}/academy/learning-paths/mastering-meshery`, '_blank');
+          window.open(`${REMOTE_PROVIDER_URL}/academy/learning-paths/mastering-meshery`, '_blank');
         },
       },
     ],

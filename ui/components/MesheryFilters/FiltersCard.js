@@ -35,7 +35,7 @@ import { VISIBILITY } from '../../utils/Enum';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
-import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
+import { REMOTE_PROVIDER_URL } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@sistent/sistent';
@@ -228,7 +228,7 @@ function FiltersCard_({
             <YamlDialogTitleGrid item xs={12}>
               <Typography variant="h6">{name}</Typography>
               <CardHeaderRight>
-                <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
+                <Link href={`${REMOTE_PROVIDER_URL}/user/${ownerId}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
                 <Tooltip title="Enter Fullscreen" arrow interactive placement="top">
