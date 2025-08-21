@@ -42,6 +42,7 @@ function PatternCardGridItem({
   return (
     <Grid2 size={gridProps}>
       <MesheryPatternCard
+        data-testid="meshery-pattern-card-item"
         id={pattern.id}
         user={user}
         name={pattern.name}
@@ -143,6 +144,7 @@ function MesheryPatternGrid({
   openDryRunModal,
   hideVisibility = false,
   arePatternsReadOnly = false,
+  'data-testid': testId = 'meshery-patterns-grid',
 }) {
   const { notify } = useNotification();
   const handlePublishModal = (pattern) => {
@@ -204,7 +206,7 @@ function MesheryPatternGrid({
         />
       )}
       {!selectedPattern.show && (
-        <Grid2 container spacing={3} size="grow">
+        <Grid2 container spacing={3} size="grow" data-testid={testId}>
           {patterns.map((pattern) => (
             <PatternCardGridItem
               key={pattern.id}

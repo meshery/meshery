@@ -4,6 +4,7 @@ title: Meshery Adapter for Istio
 name: Meshery Adapter for Istio
 component: Istio
 earliest_version: v1.6.0
+adapter_version: v0.8.3
 port: 10000/gRPC
 project_status: stable
 lab: istio-meshery-adapter
