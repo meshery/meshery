@@ -2,12 +2,20 @@ name: MeshKit Error Codes Updater
 
 on:
   push:
-    branches: [ "master" ]
-    paths: [ "**.go" ]
+    branches:
+      - master
+      - chore/reusable-error-codes-updater
+    paths:
+      - "**.go"
   pull_request:
-    branches: [ "master" ]
-    paths: [ "**.go" ]
+    branches:
+      - master
+      - chore/reusable-error-codes-updater
+    paths:
+      - "**.go"
+  workflow_dispatch:
 
 jobs:
   call-updater:
-    uses: meshery/meshery/.github/workflows/error-codes-updater-reusable.yaml@master
+    # Fixed branch for the reusable workflow
+    uses: meshery/meshery/.github/workflows/error-codes-updater-reusable.yaml@chore/reusable-error-codes-updater
