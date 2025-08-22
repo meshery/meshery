@@ -30,7 +30,7 @@ import {
 import { FormatId } from '../DataFormatter';
 import LoadingScreen from '../LoadingComponents/LoadingComponent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
-import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
+import ConnectionActions from './ConnectionActions';
 import { getVisibilityColums } from '../../utils/utils';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -94,7 +94,15 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithConnectionId }) => {
+// this file is just to add the connectionActions buttons inside the table
+
+const ConnectionTable = ({
+  selectedFilter,
+  selectedConnectionId,
+  updateUrlWithConnectionId,
+  onOpenConnectionWizard,
+  onOpenRegistrationModal,
+}) => {
   const router = useRouter();
   const { organization } = useSelector((state) => state.ui);
   const { connectionMetadataState } = useSelector((state) => state.ui);
@@ -1147,7 +1155,10 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
     <>
       <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <CreateButton>
-          <MesherySettingsEnvButtons />
+          <ConnectionActions
+            onOpenConnectionWizard={onOpenConnectionWizard}
+            onOpenRegistrationModal={onOpenRegistrationModal}
+          />
         </CreateButton>
         <div
           style={{
