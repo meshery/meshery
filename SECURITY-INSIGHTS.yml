@@ -38,3 +38,5 @@ dependencies:
   third-party-packages: true
   dependencies-lists:
   - https://github.com/meshery/meshery/blob/master/go.mod
+  - https://github.com/meshery/meshery/blob/master/ui/package.json
+  - Meshery's Software Bill of Materials (SBOM) is available as a build artifact - https://github.com/meshery/meshery/actions/workflows/bom.yaml
