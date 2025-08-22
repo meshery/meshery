@@ -31,7 +31,7 @@ security-contacts:
 vulnerability-reporting:
   accepts-vulnerability-reports: true
   security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
-  email-contact: lee.calcote@layer5.io
+  email-contact: security@meshery.dev
   comment: |
     The first and best way to report a vulnerability is by using private security issues in GitHub.
 dependencies:
