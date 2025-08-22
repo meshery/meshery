@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  Grid2,
-  List,
-  ListItem,
-  ListItemText,
-  Box,
-  styled,
-  useTheme,
-  Menu,
-  MenuItem,
-  Button,
-} from '@sistent/sistent';
+import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@sistent/sistent';
 
 import {
   FormatId,
@@ -26,7 +15,6 @@ import useKubernetesHook, {
   useMeshsSyncController,
   useNatsController,
 } from '../hooks/useKubernetesHook';
-import { useUpdateConnectionByIdMutation } from '@/rtk-query/connection';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
@@ -69,30 +57,6 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
 }));
 
 const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const [updateConnection] = useUpdateConnectionByIdMutation();
-  const open = Boolean(anchorEl);
-
-  const handleMeshSyncDeploymentModeClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleModeChange = (newMode) => {
-    updateConnection({
-      connectionId: connection.id,
-      body: {
-        metadata: {
-          ...metadata,
-          meshsync_deployment_mode: newMode,
-        },
-      },
-    });
-    handleClose();
-  };
   const pingKubernetes = useKubernetesHook();
   const { ping: pingMesheryOperator } = useMesheryOperator();
   const { ping: pingMeshSync } = useMeshsSyncController();
@@ -286,35 +250,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 <ListItem>
                   <StyledListItemText
                     primary="Deployment Mode"
-                    secondary={
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
-                        <Button
-                          variant="contained"
-                          onClick={handleMeshSyncDeploymentModeClick}
-                          sx={{ ml: 1, p: 1, minWidth: 'auto', height: '1.5rem' }}
-                        >
-                          Change
-                        </Button>
-                        <Menu
-                          id="deployment-mode-menu"
-                          anchorEl={anchorEl}
-                          open={open}
-                          onClose={handleClose}
-                        >
-                          <MenuItem
-                            onClick={() => handleModeChange(MESHSYNC_DEPLOYMENT_TYPE.OPERATOR)}
-                          >
-                            Operator
-                          </MenuItem>
-                          <MenuItem
-                            onClick={() => handleModeChange(MESHSYNC_DEPLOYMENT_TYPE.EMBEDDED)}
-                          >
-                            Embedded
-                          </MenuItem>
-                        </Menu>
-                      </Box>
-                    }
+                    secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
                   />
                 </ListItem>
               </List>
