@@ -33,7 +33,7 @@ vulnerability-reporting:
   security-policy: https://github.com/meshery/meshery/blob/master/SECURITY.md
   email-contact: security@meshery.dev
   comment: |
-    The first and best way to report a vulnerability is by using private security issues in GitHub.
+    The first and best way to report a vulnerability is by using private security issues in GitHub. See https://docs.meshery.io/project/security-vulnerabilities for a list of announced vulnerabilities.
 dependencies:
   third-party-packages: true
   dependencies-lists:
