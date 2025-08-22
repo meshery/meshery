@@ -1472,6 +1472,7 @@ function MesheryPatterns({
                         <div style={{ display: 'flex', order: '1' }}>
                           <TooltipButton
                             title="Create Design"
+                            data-testid="meshery-patterns-create-design-btn"
                             aria-label="Add Pattern"
                             variant="contained"
                             color="primary"
@@ -1488,6 +1489,7 @@ function MesheryPatterns({
                           </TooltipButton>
                           <TooltipButton
                             title="Import Design"
+                            data-testid="meshery-patterns-import-design-btn"
                             aria-label="Add Pattern"
                             variant="contained"
                             color="primary"
@@ -1534,6 +1536,7 @@ function MesheryPatterns({
                     expanded={isSearchExpanded}
                     setExpanded={setIsSearchExpanded}
                     placeholder={`Search ${pageTitle.toLowerCase()}...`}
+                    data-testid="meshery-patterns-search-bar"
                   />
                   {disableUniversalFilter ? null : (
                     <UniversalFilter
@@ -1542,10 +1545,12 @@ function MesheryPatterns({
                       selectedFilters={selectedFilters}
                       setSelectedFilters={setSelectedFilters}
                       handleApplyFilter={handleApplyFilter}
+                      data-testid="meshery-patterns-universal-filter"
                     />
                   )}
                   {viewType === 'table' && (
                     <CustomColumnVisibilityControl
+                      data-testid="meshery-patterns-column-visibility-control"
                       id="ref"
                       columns={columns}
                       customToolsProps={{ columnVisibility, setColumnVisibility }}
@@ -1667,6 +1672,7 @@ export const ImportDesignModal = React.memo((props) => {
           }
           maxWidth="sm"
           title="Import Design"
+          data-testid="import-design-modal"
         >
           <RJSFModalWrapper
             schema={importDesignSchema}
