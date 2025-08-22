@@ -18,7 +18,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strings"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -30,7 +29,6 @@ import (
 
 var (
 	deleteAllProfiles bool
-	forceDelete       bool
 )
 
 var linkDocPerfDelete = map[string]string{
@@ -46,19 +44,13 @@ var deleteCmd = &cobra.Command{
 	Args: cobra.MaximumNArgs(1),
 	Example: `
 // Delete a specific performance profile
-mesheryctl perf delete meshery-profile
+mesheryctl perf delete any-profile
 
 // Delete multiple profiles matching a pattern
-mesheryctl perf delete meshery-profile-
+mesheryctl perf delete some-profile-XXXXX
 
 // Delete all performance profiles (with confirmation)
 mesheryctl perf delete --all
-
-// Force delete without confirmation
-mesheryctl perf delete meshery-profile --force
-
-// Force delete all profiles without confirmation
-mesheryctl perf delete --all --force
 	`,
 	Annotations: linkDocPerfDelete,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -76,12 +68,8 @@ mesheryctl perf delete --all --force
 		}
 
 		if len(args) == 0 {
-			utils.Log.Error(ErrNoProfileName())
-			return nil
+			return ErrNoProfileName()
 		}
-
-		// The profile name is the first argument. URL encode spaces for the request.
-		profileName := strings.ReplaceAll(args[0], " ", "%20")
 
 		return deletePerformanceProfile(mctlCfg, profileName)
 	},
@@ -94,12 +82,12 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 	profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), profileName, pageSize, pageNumber-1)
 	if err != nil {
 		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	if len(profiles) == 0 {
 		utils.Log.Error(ErrNoProfileFound())
-		return nil
+		return ErrNoProfileFound()
 	}
 
 	var profilesToDelete []string
@@ -113,7 +101,7 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 		// Multiple profiles found - ask user to select
 		data := profilesToStringArrays(profiles)
 
-		if forceDelete {
+		if utils.SilentFlag {
 			// If force delete, delete all matching profiles
 			for _, profile := range profiles {
 				profilesToDelete = append(profilesToDelete, profile.ID.String())
@@ -123,7 +111,7 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 			index, err := userPrompt("profile", "Enter index of the profile to delete (or 'all' for all matching profiles)", data)
 			if err != nil {
 				utils.Log.Error(err)
-				return nil
+				return err
 			}
 
 			if index == -1 { // User selected 'all'
@@ -138,8 +126,8 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 		}
 	}
 
-	// Confirm deletion unless force flag is used
-	if !forceDelete && !utils.SilentFlag {
+	// Confirm deletion unless silent flag is used
+	if !utils.SilentFlag {
 		var confirmMsg string
 		if len(profilesToDelete) == 1 {
 			confirmMsg = fmt.Sprintf("Are you sure you want to delete profile '%s'?", profileNamesToDelete[0])
@@ -182,7 +170,7 @@ func deleteAllPerformanceProfiles(mctlCfg *config.MesheryCtlConfig) error {
 	profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), "", 0, 0)
 	if err != nil {
 		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	if len(profiles) == 0 {
@@ -191,7 +179,7 @@ func deleteAllPerformanceProfiles(mctlCfg *config.MesheryCtlConfig) error {
 	}
 
 	// Confirm deletion unless force flag is used
-	if !forceDelete && !utils.SilentFlag {
+	if !utils.SilentFlag {
 		confirmMsg := fmt.Sprintf("Are you sure you want to delete all %d performance profiles? This action cannot be undone.", len(profiles))
 		if !utils.AskForConfirmation(confirmMsg) {
 			log.Info("Profile deletion cancelled")
@@ -236,16 +224,15 @@ func deleteProfileByID(mctlCfg *config.MesheryCtlConfig, profileID, profileName 
 	if resp.StatusCode != http.StatusOK {
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return fmt.Errorf("failed to read response body: %w", err)
+			return ErrFailUnmarshal(err)
 		}
 		return fmt.Errorf("failed to delete profile: %s", string(data))
 	}
-
+	
 	log.Debugf("Profile '%s' deleted successfully", profileName)
 	return nil
 }
 
 func init() {
 	deleteCmd.Flags().BoolVar(&deleteAllProfiles, "all", false, "(optional) Delete all performance profiles")
-	deleteCmd.Flags().BoolVar(&forceDelete, "force", false, "(optional) Force delete without confirmation")
 }
