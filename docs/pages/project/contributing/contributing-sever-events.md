@@ -190,6 +190,18 @@ Meshery delivers immediate notifications through the GraphQL subscription → XS
     - Notification Center: Persistent storage in Redux + UI drawer
     - Event Persistence: Database storage via [provider.PersistEvent()]()
 
+**2. Notification Types & Delivery**
+
+Toast Notifications:
+  - Immediate visual feedback via snackbar
+  - Auto-hide after 8 seconds (autoHideDuration: 8000)
+  - Action buttons for opening notification center or dismissing
+
+Notification Center:
+  - Persistent event history and management
+  - Real-time updates via Redux state
+  - Filtering and bulk operations
+
 
 ### How Notification Control Works
 
