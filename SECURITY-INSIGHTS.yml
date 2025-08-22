@@ -1,13 +1,14 @@
 header:
   schema-version: 1.0.0
-  last-updated: '2023-09-28'
-  last-reviewed: '2023-09-28'
+  creation-date: '2025-04-03'
+  last-updated: '2025-08-21'
+  last-reviewed: '2025-08-21'
   project-url: https://github.com/meshery/meshery/
 project-lifecycle:
   stage: active
   bug-fixes-only: false
   core-maintainers:
-    - @meshery/core-maintainers
+  - @meshery/core-maintainers
   - github:leecalcote
   - github:aabidsofi19
 contribution-policy:
