@@ -1,0 +1,24 @@
+version: 0.0.9
+name: distributed-web-crawler
+displayName: Distributed Web Crawler
+createdAt: "2025-07-29T12:44:30Z"
+description: This distributed web crawler system is designed as a cloud-native, scalable solution for large-scale web data extraction. Built using Kubernetes-native components, it follows microservices architecture principles to ensure high availability, fault tolerance, and horizontal scalability.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/4085f7a4-34e4-45a5-b00b-7fb1c19543a7/0.0.9/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Configuration Dependencies: Container Images: Replace your-registry/crawler-worker:latest and your-registry/crawler-api:latest with actual image locations\nDatabase Credentials: Currently using hardcoded passwords (crawlerpass)  (should be moved to Kubernetes Secrets)\nService Discovery: Assumes internal DNS resolution works correctly between services\nStorage Limitations: PostgreSQL Single Instance: No built-in high availability or replication configured\nNo Persistent Volumes: Redis instances will lose data on pod restarts\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 3bccb62a-be71-4182-a987-2a1ec9e89155
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4085f7a4-34e4-45a5-b00b-7fb1c19543a7-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/4085f7a4-34e4-45a5-b00b-7fb1c19543a7-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

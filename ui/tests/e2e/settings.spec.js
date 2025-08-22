@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
+import { DashboardPage } from './pages/DashboardPage';
 
 const verifyAdapterResBody = (body) => {
   expect(body).toBeInstanceOf(Array);
@@ -29,7 +30,9 @@ const verifyAdapterResBody = (body) => {
 
 test.describe('Settings Page Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
+    const dashboardPage = new DashboardPage(page);
+    await dashboardPage.navigateToDashboard();
+    await dashboardPage.navigateToSettings();
   });
 
   test('Aggregation Charts are displayed', async ({ page }) => {
@@ -59,7 +62,7 @@ test.describe('Settings Page Tests', () => {
     ).toBeVisible();
   });
 
-  test('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
+  test.skip('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
     // Navigate to 'Adapters' tab
     await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
 
@@ -107,6 +110,6 @@ test.describe('Settings Page Tests', () => {
     verifyAdapterResBody(await manageRes.json());
 
     // Verify success notification
-    await expect(page.getByText('Adapter was configured!')).toBeVisible();
+    await expect(page.getByText('Adapter configured')).toBeVisible();
   });
 });

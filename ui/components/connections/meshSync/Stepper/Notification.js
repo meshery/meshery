@@ -1,6 +1,6 @@
 // Notification.js
 import React from 'react';
-import { Grid, Typography, Button } from '@layer5/sistent';
+import { Grid2, Typography, Button } from '@sistent/sistent';
 
 const Notification = ({ type, message, retry, onRetry }) => {
   return (
@@ -13,15 +13,15 @@ const Notification = ({ type, message, retry, onRetry }) => {
         marginBottom: '1rem',
       }}
     >
-      <Grid style={{ width: '80%' }}>
+      <Grid2 style={{ width: '80%' }}>
         <Typography variant="body2">
           <b>{type === 'success' ? 'Success' : 'Verification Failed'}</b>
         </Typography>
         <Typography variant="body2" sx={{ color: '#00000020' }}>
           {message}
         </Typography>
-      </Grid>
-      <Grid
+      </Grid2>
+      <Grid2
         style={{
           width: '20%',
           display: 'flex',
@@ -44,7 +44,7 @@ const Notification = ({ type, message, retry, onRetry }) => {
             <Typography variant="body2">Retry</Typography>
           </Button>
         )}
-      </Grid>
+      </Grid2>
     </div>
   );
 };

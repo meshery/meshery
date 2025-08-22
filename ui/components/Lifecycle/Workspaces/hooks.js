@@ -144,7 +144,7 @@ export const usePublishPattern = (meshModelModelsData, refetchPatternData) => {
         } else if (_.toLower(res.status) === 'approved') {
           handleSuccess(`${publishModal?.pattern?.name} published successfully`);
         }
-        refetchPatternData();
+        refetchPatternData && refetchPatternData();
       })
       .catch((error) => handleError(error.data));
   };

@@ -1,7 +1,7 @@
 package relationship_evaluation_policy
 
-import data.eval
 import data.actions
+import data.eval
 
 import rego.v1
 
@@ -30,29 +30,28 @@ filter_pending_relationships(rel, relationships) := rel if {
 # scope for relationships to evaluate against
 # NEEDS IMPROVEMENT: make this dynamic based on the models referenced in the design file
 
-relationship_preference_key(rel) := sprintf("%s-%s-%s",[lower(rel.kind),lower(rel.type),lower(rel.subType)])
+relationship_preference_key(rel) := sprintf("%s-%s-%s", [lower(rel.kind), lower(rel.type), lower(rel.subType)])
 
-models_in_design :=  {component.model | some component in input.components }
+models_in_design := {component.model | some component in input.components}
 
-is_rel_enabled(rel) := true if {
+is_rel_enabled(rel) if {
 	not input.preferences.layers.relationships
 }
 
-is_rel_enabled(rel) := true if {
+is_rel_enabled(rel) if {
 	rel_key := relationship_preference_key(rel)
-    not input.preferences.layers.relationships[rel_key] == false
+	not input.preferences.layers.relationships[rel_key] == false
 }
 
-is_rel_disabled(rel) := true  if {
+is_rel_disabled(rel) if {
 	not is_rel_enabled(rel)
 }
 
-
-
-relationships_to_evaluate_against := { rel |
-    some rel in data.relationships
+relationships_to_evaluate_against := {rel |
+	some rel in data.relationships
 	some model in models_in_design
 	rel_key := relationship_preference_key(rel)
+
 	# print("rel_key",rel_key)
 	model.name == rel.model.name
 	is_rel_enabled(rel) == true
@@ -62,26 +61,24 @@ relationships_to_evaluate_against := { rel |
 
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
+	print("model in design ", count(models_in_design))
+	print("all registered rels count", count(data.relationships))
+	print("rels to evaluate count", count(relationships_to_evaluate_against))
 
-    print("model in design ",count(models_in_design))
-	print("all registered rels count",count(data.relationships))
-	print("rels to evaluate count",count(relationships_to_evaluate_against))
-
-	
-
-    # list of policies that will be used during evaluation
+	# list of policies that will be used during evaluation
 	relationship_policy_identifiers := [
-        eval.match_labels_policy_identifier,
+		eval.match_labels_policy_identifier,
 		eval.alias_policy_identifier,
-		eval.edge_network_policy_identifier
+		eval.edge_network_policy_identifier,
+		eval.hierarchical_parent_child_policy_identifier,
 	]
-
 
 	# Iterate over relationships in the design file and resolve patches.
 	resultant_patches := {patched_object |
 		some rel in rels_in_design_file
 
-        rel.subType in  {"inventory"}
+		rel.subType in {"inventory"}
+
 		# Skip relationships with status "deleted".
 		status := lower(rel.status)
 		allowed_status := {"pending", "approved"}
@@ -184,7 +181,6 @@ evaluate := eval_results if {
 	relationships_added := evaluate_relationships_added(updated_pending_rels, all_valid_relationships)
 	relationships_deleted := evaluate_relationships_deleted(updated_pending_rels, all_valid_relationships)
 
-
 	# Concatenate updated relationships.
 	final_rels_added := array.concat(updated_pending_rels, relationships_added)
 
@@ -216,22 +212,19 @@ evaluate := eval_results if {
 		},
 	])
 
-
 	#1. Validate Relationships
 	validation_actions := union({rels |
 		some identifier in relationship_policy_identifiers
 		rels := eval.validate_relationships_in_design(design_file_to_evaluate, identifier)
-		print("Validated by ",identifier,rels)
+		print("Validated by ", identifier, rels)
 	})
 
-
 	design_file_with_validated_rels := actions.apply_all_actions_to_design(
-        design_file_to_evaluate,
-        validation_actions,
-    )
-    
-	
-	print("Validation actions",count(design_file_to_evaluate.relationships),count(design_file_with_validated_rels.relationships))
+		design_file_to_evaluate,
+		validation_actions,
+	)
+
+	print("Validation actions", count(design_file_to_evaluate.relationships), count(design_file_with_validated_rels.relationships))
 
 	# 2. Identify relationships in the design file.
 	new_identified_rels_actions := union({rels |
@@ -239,37 +232,32 @@ evaluate := eval_results if {
 		rels := eval.identify_relationships_in_design(design_file_with_validated_rels, relationships_to_evaluate_against, identifier)
 	})
 
-
-
-    design_file_with_identified_rels := actions.apply_all_actions_to_design(
-        design_file_to_evaluate,
-        validation_actions,
-    )
-    
-
+	design_file_with_identified_rels := actions.apply_all_actions_to_design(
+		design_file_to_evaluate,
+		validation_actions,
+	)
 
 	print("New identified rels", count(new_identified_rels_actions))
 
 	#3. Actions
 
 	design_file_to_apply_actions := actions.apply_all_actions_to_design(
-        design_file_with_identified_rels,
-        new_identified_rels_actions,
-    )
+		design_file_with_identified_rels,
+		new_identified_rels_actions,
+	)
 
 	print("All relationships", count(design_file_to_apply_actions.relationships))
 
 	actions_to_apply := union({actions |
 		some identifier in relationship_policy_identifiers
 		actions := eval.generate_actions_to_apply_on_design(design_file_to_apply_actions, identifier)
-		print("action for",identifier,count(actions))
+		print("action for", identifier, count(actions))
 	})
 
-	print("All Actions",count(actions_to_apply))
-
+	print("All Actions", count(actions_to_apply))
 
 	actions_response := trace_from_actions(actions_to_apply)
-    design_to_return := actions.apply_all_actions_to_design(design_file_to_apply_actions, actions_to_apply)
+	design_to_return := actions.apply_all_actions_to_design(design_file_to_apply_actions, actions_to_apply)
 
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
@@ -278,25 +266,25 @@ evaluate := eval_results if {
 		"trace": {
 			"componentsUpdated": [],
 			"componentsAdded": array_to_set(components_added) | actions_response.components_to_add,
-			"componentsRemoved":[],
-			"relationshipsRemoved":[],
-			"relationshipsAdded":[],
-			"relationshipsUpdated":[],
-#			"componentsRemoved": actions_response.components_to_delete,
-#			"relationshipsAdded": array_to_set(relationships_added) | actions_response.relationships_to_add,
-#			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
-#			"relationshipsUpdated": intermediate_rels,
+			"componentsRemoved": [],
+			"relationshipsRemoved": [],
+			"relationshipsAdded": [],
+			"relationshipsUpdated": [],
+			#			"componentsRemoved": actions_response.components_to_delete,
+			#			"relationshipsAdded": array_to_set(relationships_added) | actions_response.relationships_to_add,
+			#			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
+			#			"relationshipsUpdated": intermediate_rels,
 		},
 	}
 
 	print("Evaluation complete")
 }
 
-trace_from_actions(response) := {
-	"components_to_add": {action.value.item |
-		some action in response
-		action.op == actions.add_component_op
-	},
+trace_from_actions(response) := {"components_to_add": {action.value.item |
+	some action in response
+	action.op == actions.add_component_op
+}}
+
 #	"components_to_delete": {action.value |
 #		some action in response
 #		action.op == "delete_component"
@@ -309,7 +297,6 @@ trace_from_actions(response) := {
 #		some action in response
 #		action.op == "add_relationship"
 #	},
-}
 
 # --- Post Processing Phase ---##
 delete_components(all_comps, comps_to_delete) := new_comps if {

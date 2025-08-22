@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshkit/database"
 )
 
 // SmiResultsPersister assists with persisting session in store

@@ -2,8 +2,7 @@
 
 setup() {
   load "$E2E_HELPERS_PATH/bats_libraries"
-    _load_bats_libraries
-  MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
+  _load_bats_libraries
 }
 
 @test "mesheryctl model search displays usage instructions when no query provided" {

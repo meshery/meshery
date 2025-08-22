@@ -4,6 +4,7 @@ title: Meshery Adapter for Consul
 name: Meshery Adapter for Consul
 component: Consul
 earliest_version: v1.8.4
+adapter_version: v0.8.3
 port: 10002/gRPC
 project_status: stable
 lab: consul-meshery-adapter
@@ -34,7 +35,7 @@ redirect_from: service-meshes/adapters/consul
 
 {% include compatibility/adapter-status.html %}
 
-<!-- {% include adapter-labs.html %} -->
+
 
 ## Lifecycle management
 
@@ -75,8 +76,6 @@ Meshery supports the deployment of a variety of sample applications on {{ page.n
   - The sample BookInfo application displays information about a book, similar to a single catalog entry of an online book store.
 - [Image Hub]({{site.baseurl}}/guides/infrastructure-management/sample-apps#imagehub)
   - Image Hub is a sample application written to run on Consul for exploring WebAssembly modules used as Envoy filters.
-
-[![Layer5 Image Hub on HashiCorp Consul]({{ site.baseurl }}/extensibility/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)]({{ site.baseurl }}/extensibility/adapters/consul/layer5-image-hub-on-hashicorp-consul.png)
 
 ### Performance management of Consul and it workloads
 

@@ -12,9 +12,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/schemas/models/core"
 )
 
 func init() {
@@ -93,7 +95,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			_err := models.ErrPersistCredential(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to persist credential information for the connection %s", credName)).
 				WithSeverity(events.Error).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = p.PersistEvent(event)
+			_ = p.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
@@ -112,13 +114,13 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 		if err != nil {
 			_err := models.ErrPersistConnection(err)
 			event := eventBuilder.WithDescription(fmt.Sprintf("Unable to perisit the \"%s\" connection details", connName)).WithMetadata(map[string]interface{}{"error": _err}).Build()
-			_ = p.PersistEvent(event)
+			_ = p.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
 		event := eventBuilder.WithDescription(fmt.Sprintf("Connection %s with grafana created at %s", connName, grafanaURL)).WithSeverity(events.Success).ActedUpon(connection.ID).Build()
-		_ = p.PersistEvent(event)
+		_ = p.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userUUID, event)
 
 		h.log.Debug(fmt.Sprintf("connection to grafana @ %s succeeded", grafanaURL))
@@ -150,7 +152,7 @@ func (h *Handler) GrafanaPingHandler(w http.ResponseWriter, req *http.Request, p
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -189,7 +191,7 @@ func (h *Handler) GrafanaBoardsHandler(w http.ResponseWriter, req *http.Request,
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		h.log.Error(err)
 		http.Error(w, err.Error(), statusCode)
@@ -238,7 +240,7 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := p.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := p.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -256,7 +258,10 @@ func (h *Handler) GrafanaQueryHandler(w http.ResponseWriter, req *http.Request, 
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // GrafanaQueryRangeHandler is used for handling Grafana Range queries
@@ -272,7 +277,7 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 	}
 
 	url, _ := connection.Metadata["url"].(string)
-	cred, statusCode, err := provider.GetCredentialByID(token, connection.CredentialID)
+	cred, statusCode, err := provider.GetCredentialByID(token, core.UUIDOrUUIDNil(connection.CredentialID))
 	if err != nil {
 		http.Error(w, err.Error(), statusCode)
 		return
@@ -290,7 +295,10 @@ func (h *Handler) GrafanaQueryRangeHandler(w http.ResponseWriter, req *http.Requ
 		http.Error(w, ErrGrafanaQuery(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_, _ = w.Write(data)
+
+	if _, err := utils.WriteEscaped(w, data, ""); err != nil {
+		h.log.Error(err)
+	}
 }
 
 // swagger:route POST /api/telemetry/metrics/grafana/boards/{connectionID} GrafanaAPI idPostGrafanaBoards

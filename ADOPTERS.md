@@ -14,12 +14,15 @@
   - "We are a true Boutique Tech Consulting partner who understands the pain points of the all-sized company in terms of embracing cloud. Being obsessed about anything “cloud” and automation first, we drive our partner to success. We always strive to provide our customers, the cutting-edge technology and the trend is cloud native now. We enable our clients to make their microservices more secure with cloud-native solutions. When we talk about cloud native technologies, Meshery comes in handy. We have seen the impact Meshery has done for the cloud native infrastructure management and reduced the time to market. "
 - [Intel](https://www.intel.com)
   - "We are working on the acceleration and security of open source cloud native projects. Meshery is the best tool for managing and operating different cloud native projects, it greatly helped us compare the functions and performance of them, and demonstrate the results of our efforts. We also love Meshery's community where we can connect with talents and enthusiasts from all over the world!"
+- [DigitalOcean](https://www.digitalocean.com)
+  - "Our team at DigitalOcean creates many reference architectures for our users, helping them migrate more easily to our platform by following best practices. We later realized that manually creating such large reference architectures is both challenging and lacks collaboration and reusability. During our exploration, we discovered Meshery. It helps us manage both existing and new reference architectures for our users. With Meshery’s drag-and-drop functionality, it's now much faster to build complex architectures, integrate existing ones, and visualize them effectively as well. Our DevRel team extensively uses Meshery to create and maintain these large-scale reference architectures."
 - [Red Hat](https://www.redhat.com)
 - [Metabit Trading](https://www.metabit-trading.com/)
 - [PITS Global Data Recovery Services](https://www.pitsdatarecovery.net/)
 - [AYA Innovation Labs](https://ayapay.com/)
 - [OD10 Ventures](https://od10.in/)
   - "I stumbled upon **Meshery** while looking for tools that can help visualize Kubernetes and its components. This helps me during PoCs and solution design demonstrations. What surprised me is that the visual design was not just a bunch of icons but could be deployed and managed collaboratively. And these are just a few of the many features of **Meshery**. It was just the product of my area of interest, so I decided to be a contributor, too." [Sangram Rath](https://linkedin.com/in/sangramrath)
+- [F5](https://www.f5.com/)
 ---
 
 If you're using Meshery and aren't on this list, please [submit a pull request](https://github.com/meshery/meshery/pulls)!

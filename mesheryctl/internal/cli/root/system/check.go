@@ -26,14 +26,14 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
-	c "github.com/layer5io/meshery/mesheryctl/pkg/constants"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/handlers"
-	"github.com/layer5io/meshery/server/models"
-	meshkitutils "github.com/layer5io/meshkit/utils"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/constants"
+	c "github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/handlers"
+	"github.com/meshery/meshery/server/models"
+	meshkitutils "github.com/meshery/meshkit/utils"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	k8sVersion "k8s.io/apimachinery/pkg/version"
@@ -128,9 +128,11 @@ mesheryctl system check
 // Run Pre-mesh deployment checks (Docker and Kubernetes)
 mesheryctl system check --preflight
 
+// Run Pre-mesh deployment checks (Docker and Kubernetes)
+mesheryctl system check --pre
+
 // Run checks on specific mesh adapter
 mesheryctl system check --adapter meshery-istio:10000
-// or
 mesheryctl system check --adapter meshery-istio
 
 // Run checks for all the mesh adapters
@@ -647,7 +649,8 @@ func (hc *HealthChecker) runAdapterHealthChecks(adapterName string) error {
 		}
 	}
 	if len(adapters) == 0 {
-		return fmt.Errorf("!! Invalid adapter name provided")
+		log.Info("- No components configured in current context")
+		return nil
 	}
 	for _, adapter := range adapters {
 		name := adapter.Location

@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"sync"
 
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
-	"github.com/layer5io/meshkit/models/patterns"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/core"
+	"github.com/meshery/meshkit/models/patterns"
 )
 
 // ContentModifier To be used while adding metadata to patterns,filters and applicationss

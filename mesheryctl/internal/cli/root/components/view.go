@@ -20,16 +20,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils/format"
+	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 	"gopkg.in/yaml.v2"
 )
 
@@ -46,24 +43,21 @@ mesheryctl component view [component-name]
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl component view [component-name]\nRun 'mesheryctl component view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(fmt.Errorf("[component name] is requiredisn't specified\n\n%s", errMsg))
+			return utils.ErrInvalidArgument(fmt.Errorf("[component name] is required but not specified\n\n%s", errMsg))
 		} else if len(args) > 1 {
 			return utils.ErrInvalidArgument(fmt.Errorf("too many arguments specified\n\n%s", errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			log.Fatalln(err, "error processing config")
-		}
 
-		baseUrl := mctlCfg.GetBaseMesheryURL()
+		outFormatFlag, _ := cmd.Flags().GetString("output-format")
 		componentDefinition := args[0]
+		saveFlag, _ = cmd.Flags().GetBool("save")
 
-		url := fmt.Sprintf("%s/%s?search=%s&pagesize=all", baseUrl, componentApiPath, componentDefinition)
+		urlPath := fmt.Sprintf("%s?search=%s&pagesize=all", componentApiPath, componentDefinition)
 
-		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](url)
+		componentResponse, err := api.Fetch[models.MeshmodelComponentsAPIResponse](urlPath)
 		if err != nil {
 			return err
 		}
@@ -84,7 +78,6 @@ mesheryctl component view [component-name]
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
 		outFormatFlag = strings.ToLower(outFormatFlag)
-
 		if outFormatFlag != "json" && outFormatFlag != "yaml" {
 			return errors.New("output-format choice is invalid or not provided, use [json|yaml]")
 		}

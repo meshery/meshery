@@ -1,0 +1,194 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Network Interface",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "azure-network",
+    "displayName": "Azure Network",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "schemaVersion": ""
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Networking Content Delivery",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#2384f1",
+      "secondaryColor": "#3990f2",
+      "shape": "rectangle",
+      "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"9.88\" y1=\"8.59\" x2=\"11.52\" y2=\"10.23\" gradientTransform=\"rotate(-.08 -285.464 -1454.08)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#86d633\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#5e9624\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"6.18\" y1=\"8.59\" x2=\"7.81\" y2=\"10.23\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#86d633\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#5e9624\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"c\" x1=\"2.48\" y1=\"8.59\" x2=\"4.11\" y2=\"10.23\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#86d633\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#5e9624\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"12.74\" cy=\"8.99\" r=\"1.16\" fill=\"url(#a)\"\u003e\u003c/circle\u003e\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"9.04\" cy=\"9\" r=\"1.16\" fill=\"url(#b)\"\u003e\u003c/circle\u003e\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"5.34\" cy=\"9\" r=\"1.16\" fill=\"url(#c)\"\u003e\u003c/circle\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.182 13.638l-.664.665a.3.3 0 01-.424 0L.18 9.404a.6.6 0 01-.001-.848l.663-.666 5.34 5.324a.3.3 0 010 .425z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M5.418 3.708l.666.664a.3.3 0 010 .424L.838 10.057l-.666-.663a.6.6 0 01-.001-.849L4.994 3.71a.3.3 0 01.424 0z\" fill=\"#1490df\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M17.157 7.88l.663.666a.6.6 0 010 .848l-4.915 4.9a.3.3 0 01-.424 0l-.664-.666a.3.3 0 010-.424l5.34-5.324z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M17.818 9.387l-.665.664-5.247-5.261a.3.3 0 010-.425l.674-.67a.3.3 0 01.424 0l4.823 4.836a.6.6 0 01-.002.849z\" fill=\"#1490df\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 18 18\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"a\" x1=\"9.88\" y1=\"8.59\" x2=\"11.52\" y2=\"10.23\" gradientTransform=\"rotate(-.08 -285.464 -1454.08)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#86d633\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#5e9624\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"b\" x1=\"6.18\" y1=\"8.59\" x2=\"7.81\" y2=\"10.23\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#86d633\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#5e9624\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"c\" x1=\"2.48\" y1=\"8.59\" x2=\"4.11\" y2=\"10.23\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#86d633\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#5e9624\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"12.74\" cy=\"8.99\" r=\"1.16\" fill=\"url(#a)\"\u003e\u003c/circle\u003e\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"9.04\" cy=\"9\" r=\"1.16\" fill=\"url(#b)\"\u003e\u003c/circle\u003e\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"5.34\" cy=\"9\" r=\"1.16\" fill=\"url(#c)\"\u003e\u003c/circle\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M6.182 13.638l-.664.665a.3.3 0 01-.424 0L.18 9.404a.6.6 0 01-.001-.848l.663-.666 5.34 5.324a.3.3 0 010 .425z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M5.418 3.708l.666.664a.3.3 0 010 .424L.838 10.057l-.666-.663a.6.6 0 01-.001-.849L4.994 3.71a.3.3 0 01.424 0z\" fill=\"#1490df\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M17.157 7.88l.663.666a.6.6 0 010 .848l-4.915 4.9a.3.3 0 01-.424 0l-.664-.666a.3.3 0 010-.424l5.34-5.324z\" fill=\"#50e6ff\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M17.818 9.387l-.665.664-5.247-5.261a.3.3 0 010-.425l.674-.67a.3.3 0 01.424 0l4.823 4.836a.6.6 0 01-.002.849z\" fill=\"#1490df\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+    },
+    "components_count": 0,
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
+  },
+  "styles": {
+    "primaryColor": "#2384f1",
+    "secondaryColor": "#3990f2",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg id=\"e0050721-e8d8-4c79-ae50-d8fc2871d932\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"fcad3287-b71c-44fa-971a-6a18bcf384a0\" x1=\"9.01\" y1=\"16.5\" x2=\"9.01\" y2=\"1.5\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#5e9641\" /\u003e\u003cstop offset=\"0.34\" stop-color=\"#6baa42\" /\u003e\u003cstop offset=\"0.67\" stop-color=\"#73b743\" /\u003e\u003cstop offset=\"1\" stop-color=\"#76bb43\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-networking-80\u003c/title\u003e\u003cpath d=\"M15.89,2.91h1.27a.34.34,0,0,1,.34.34v3.5a.34.34,0,0,1-.34.34H15.89a0,0,0,0,1,0,0V2.91A0,0,0,0,1,15.89,2.91Z\" fill=\"#ffca00\" /\u003e\u003cpath d=\"M15.89,9h1.27a.34.34,0,0,1,.34.34v5.86a.34.34,0,0,1-.34.34H15.89a0,0,0,0,1,0,0V9A0,0,0,0,1,15.89,9Z\" fill=\"#ffca00\" /\u003e\u003crect x=\"2.13\" y=\"1.5\" width=\"13.76\" height=\"15\" rx=\"0.69\" fill=\"url(#fcad3287-b71c-44fa-971a-6a18bcf384a0)\" /\u003e\u003cpath d=\"M5.9,12.9H5.19A.2.2,0,0,1,5,12.69V4.34a.19.19,0,0,1,.19-.2H7.12a.19.19,0,0,1,.19.2.2.2,0,0,1-.19.21H5.38v7.93H5.9a.2.2,0,0,1,.19.21A.21.21,0,0,1,5.9,12.9Z\" fill=\"#b4ec36\" /\u003e\u003cpath d=\"M6,13.92H4.4a.2.2,0,0,1-.19-.21L4.08,3.38a.2.2,0,0,1,.06-.15.16.16,0,0,1,.13-.06H7.12v.41H4.47l.12,9.92H6Z\" fill=\"#b4ec36\" /\u003e\u003cpath d=\"M12,13H10.41a.19.19,0,0,1-.14-.07.18.18,0,0,1-.06-.14V7.9a.19.19,0,0,1,.19-.2l.91,0,0-2.25h.38l0,2.44a.2.2,0,0,1-.18.21l-.91,0v4.42H12Z\" fill=\"#b4ec36\" /\u003e\u003crect x=\"7.07\" y=\"2.29\" width=\"6.14\" height=\"3.11\" rx=\"0.26\" fill=\"#365615\" /\u003e\u003crect x=\"5.86\" y=\"12.69\" width=\"4.9\" height=\"1.09\" rx=\"0.26\" transform=\"translate(21.54 4.93) rotate(90)\" fill=\"#365615\" /\u003e\u003crect x=\"3.99\" y=\"12.71\" width=\"4.9\" height=\"1.09\" rx=\"0.26\" transform=\"translate(19.7 6.82) rotate(90)\" fill=\"#365615\" /\u003e\u003crect x=\"9.98\" y=\"12.71\" width=\"4.9\" height=\"1.09\" rx=\"0.26\" transform=\"translate(25.68 0.83) rotate(90)\" fill=\"#f2f2f2\" /\u003e\u003cellipse cx=\"8.11\" cy=\"8.06\" rx=\"1.04\" ry=\"1.12\" fill=\"#f2f2f2\" /\u003e\u003cpath d=\"M.5,5.7H1.77A.34.34,0,0,1,2.11,6v5.86a.34.34,0,0,1-.34.34H.5a0,0,0,0,1,0,0V5.7A0,0,0,0,1,.5,5.7Z\" transform=\"translate(2.61 17.95) rotate(180)\" fill=\"#3b3b3b\" /\u003e\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003csvg id=\"e0050721-e8d8-4c79-ae50-d8fc2871d932\" xmlns=\"http://www.w3.org/2000/svg\" width=\"18\" height=\"18\" viewBox=\"0 0 18 18\"\u003e\u003cdefs\u003e\u003clinearGradient id=\"fcad3287-b71c-44fa-971a-6a18bcf384a0\" x1=\"9.01\" y1=\"16.5\" x2=\"9.01\" y2=\"1.5\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop offset=\"0\" stop-color=\"#5e9641\" /\u003e\u003cstop offset=\"0.34\" stop-color=\"#6baa42\" /\u003e\u003cstop offset=\"0.67\" stop-color=\"#73b743\" /\u003e\u003cstop offset=\"1\" stop-color=\"#76bb43\" /\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003ctitle\u003eIcon-networking-80\u003c/title\u003e\u003cpath d=\"M15.89,2.91h1.27a.34.34,0,0,1,.34.34v3.5a.34.34,0,0,1-.34.34H15.89a0,0,0,0,1,0,0V2.91A0,0,0,0,1,15.89,2.91Z\" fill=\"#ffca00\" /\u003e\u003cpath d=\"M15.89,9h1.27a.34.34,0,0,1,.34.34v5.86a.34.34,0,0,1-.34.34H15.89a0,0,0,0,1,0,0V9A0,0,0,0,1,15.89,9Z\" fill=\"#ffca00\" /\u003e\u003crect x=\"2.13\" y=\"1.5\" width=\"13.76\" height=\"15\" rx=\"0.69\" fill=\"url(#fcad3287-b71c-44fa-971a-6a18bcf384a0)\" /\u003e\u003cpath d=\"M5.9,12.9H5.19A.2.2,0,0,1,5,12.69V4.34a.19.19,0,0,1,.19-.2H7.12a.19.19,0,0,1,.19.2.2.2,0,0,1-.19.21H5.38v7.93H5.9a.2.2,0,0,1,.19.21A.21.21,0,0,1,5.9,12.9Z\" fill=\"#b4ec36\" /\u003e\u003cpath d=\"M6,13.92H4.4a.2.2,0,0,1-.19-.21L4.08,3.38a.2.2,0,0,1,.06-.15.16.16,0,0,1,.13-.06H7.12v.41H4.47l.12,9.92H6Z\" fill=\"#b4ec36\" /\u003e\u003cpath d=\"M12,13H10.41a.19.19,0,0,1-.14-.07.18.18,0,0,1-.06-.14V7.9a.19.19,0,0,1,.19-.2l.91,0,0-2.25h.38l0,2.44a.2.2,0,0,1-.18.21l-.91,0v4.42H12Z\" fill=\"#b4ec36\" /\u003e\u003crect x=\"7.07\" y=\"2.29\" width=\"6.14\" height=\"3.11\" rx=\"0.26\" fill=\"#365615\" /\u003e\u003crect x=\"5.86\" y=\"12.69\" width=\"4.9\" height=\"1.09\" rx=\"0.26\" transform=\"translate(21.54 4.93) rotate(90)\" fill=\"#365615\" /\u003e\u003crect x=\"3.99\" y=\"12.71\" width=\"4.9\" height=\"1.09\" rx=\"0.26\" transform=\"translate(19.7 6.82) rotate(90)\" fill=\"#365615\" /\u003e\u003crect x=\"9.98\" y=\"12.71\" width=\"4.9\" height=\"1.09\" rx=\"0.26\" transform=\"translate(25.68 0.83) rotate(90)\" fill=\"#f2f2f2\" /\u003e\u003cellipse cx=\"8.11\" cy=\"8.06\" rx=\"1.04\" ry=\"1.12\" fill=\"#f2f2f2\" /\u003e\u003cpath d=\"M.5,5.7H1.77A.34.34,0,0,1,2.11,6v5.86a.34.34,0,0,1-.34.34H.5a0,0,0,0,1,0,0V5.7A0,0,0,0,1,.5,5.7Z\" transform=\"translate(2.61 17.95) rotate(180)\" fill=\"#3b3b3b\" /\u003e\u003c/svg\u003e"
+  },
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://github.com/Azure/azure-service-operator/releases/download/v2.13.0/azureserviceoperator_customresourcedefinitions_v2.13.0.yaml"
+  },
+  "configuration": null,
+  "component": {
+    "version": "network.azure.com/v1api20201101",
+    "kind": "NetworkInterface",
+    "schema": "{\n \"description\": \"Generator information:\\n- Generated from: /network/resource-manager/Microsoft.Network/stable/2020-11-01/networkInterface.json\\n- ARM URI: /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/networkInterfaces/{networkInterfaceName}\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"azureName\": {\n     \"description\": \"AzureName: The name of the resource in Azure. This is often the same as the name of the resource in Kubernetes but it\\ndoesn't have to be.\",\n     \"type\": \"string\"\n    },\n    \"dnsSettings\": {\n     \"description\": \"DnsSettings: The DNS settings in network interface.\",\n     \"properties\": {\n      \"dnsServers\": {\n       \"description\": \"DnsServers: List of DNS servers IP addresses. Use 'AzureProvidedDNS' to switch to azure provided DNS resolution.\\n'AzureProvidedDNS' value cannot be combined with other IPs, it must be the only value in dnsServers collection.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"internalDnsNameLabel\": {\n       \"description\": \"InternalDnsNameLabel: Relative DNS name for this NIC used for internal communications between VMs in the same virtual\\nnetwork.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"enableAcceleratedNetworking\": {\n     \"description\": \"EnableAcceleratedNetworking: If the network interface is accelerated networking enabled.\",\n     \"type\": \"boolean\"\n    },\n    \"enableIPForwarding\": {\n     \"description\": \"EnableIPForwarding: Indicates whether IP forwarding is enabled on this network interface.\",\n     \"type\": \"boolean\"\n    },\n    \"extendedLocation\": {\n     \"description\": \"ExtendedLocation: The extended location of the network interface.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name: The name of the extended location.\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type: The type of the extended location.\",\n       \"enum\": [\n        \"EdgeZone\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"ipConfigurations\": {\n     \"description\": \"IpConfigurations: A list of IPConfigurations of the network interface.\",\n     \"items\": {\n      \"description\": \"IPConfiguration in a network interface.\",\n      \"properties\": {\n       \"applicationGatewayBackendAddressPools\": {\n        \"description\": \"ApplicationGatewayBackendAddressPools: The reference to ApplicationGatewayBackendAddressPool resource.\",\n        \"items\": {\n         \"description\": \"Backend Address Pool of an application gateway.\",\n         \"properties\": {\n          \"reference\": {\n           \"description\": \"Reference: Resource ID.\",\n           \"properties\": {\n            \"armId\": {\n             \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n             \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n             \"type\": \"string\"\n            },\n            \"group\": {\n             \"description\": \"Group is the Kubernetes group of the resource.\",\n             \"type\": \"string\"\n            },\n            \"kind\": {\n             \"description\": \"Kind is the Kubernetes kind of the resource.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the Kubernetes name of the resource.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"applicationSecurityGroups\": {\n        \"description\": \"ApplicationSecurityGroups: Application security groups in which the IP configuration is included.\",\n        \"items\": {\n         \"description\": \"An application security group in a resource group.\",\n         \"properties\": {\n          \"reference\": {\n           \"description\": \"Reference: Resource ID.\",\n           \"properties\": {\n            \"armId\": {\n             \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n             \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n             \"type\": \"string\"\n            },\n            \"group\": {\n             \"description\": \"Group is the Kubernetes group of the resource.\",\n             \"type\": \"string\"\n            },\n            \"kind\": {\n             \"description\": \"Kind is the Kubernetes kind of the resource.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the Kubernetes name of the resource.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"loadBalancerBackendAddressPools\": {\n        \"description\": \"LoadBalancerBackendAddressPools: The reference to LoadBalancerBackendAddressPool resource.\",\n        \"items\": {\n         \"description\": \"Pool of backend IP addresses.\",\n         \"properties\": {\n          \"reference\": {\n           \"description\": \"Reference: Resource ID.\",\n           \"properties\": {\n            \"armId\": {\n             \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n             \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n             \"type\": \"string\"\n            },\n            \"group\": {\n             \"description\": \"Group is the Kubernetes group of the resource.\",\n             \"type\": \"string\"\n            },\n            \"kind\": {\n             \"description\": \"Kind is the Kubernetes kind of the resource.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the Kubernetes name of the resource.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"loadBalancerInboundNatRules\": {\n        \"description\": \"LoadBalancerInboundNatRules: A list of references of LoadBalancerInboundNatRules.\",\n        \"items\": {\n         \"description\": \"Inbound NAT rule of the load balancer.\",\n         \"properties\": {\n          \"reference\": {\n           \"description\": \"Reference: Resource ID.\",\n           \"properties\": {\n            \"armId\": {\n             \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n             \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n             \"type\": \"string\"\n            },\n            \"group\": {\n             \"description\": \"Group is the Kubernetes group of the resource.\",\n             \"type\": \"string\"\n            },\n            \"kind\": {\n             \"description\": \"Kind is the Kubernetes kind of the resource.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the Kubernetes name of the resource.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name: The name of the resource that is unique within a resource group. This name can be used to access the resource.\",\n        \"type\": \"string\"\n       },\n       \"primary\": {\n        \"description\": \"Primary: Whether this is a primary customer address on the network interface.\",\n        \"type\": \"boolean\"\n       },\n       \"privateIPAddress\": {\n        \"description\": \"PrivateIPAddress: Private IP address of the IP configuration.\",\n        \"type\": \"string\"\n       },\n       \"privateIPAddressVersion\": {\n        \"description\": \"PrivateIPAddressVersion: Whether the specific IP configuration is IPv4 or IPv6. Default is IPv4.\",\n        \"enum\": [\n         \"IPv4\",\n         \"IPv6\"\n        ],\n        \"type\": \"string\"\n       },\n       \"privateIPAllocationMethod\": {\n        \"description\": \"PrivateIPAllocationMethod: The private IP address allocation method.\",\n        \"enum\": [\n         \"Dynamic\",\n         \"Static\"\n        ],\n        \"type\": \"string\"\n       },\n       \"publicIPAddress\": {\n        \"description\": \"PublicIPAddress: Public IP address bound to the IP configuration.\",\n        \"properties\": {\n         \"reference\": {\n          \"description\": \"Reference: Resource ID.\",\n          \"properties\": {\n           \"armId\": {\n            \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n            \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n            \"type\": \"string\"\n           },\n           \"group\": {\n            \"description\": \"Group is the Kubernetes group of the resource.\",\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"description\": \"Kind is the Kubernetes kind of the resource.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name is the Kubernetes name of the resource.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"subnet\": {\n        \"description\": \"Subnet: Subnet bound to the IP configuration.\",\n        \"properties\": {\n         \"reference\": {\n          \"description\": \"Reference: Resource ID.\",\n          \"properties\": {\n           \"armId\": {\n            \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n            \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n            \"type\": \"string\"\n           },\n           \"group\": {\n            \"description\": \"Group is the Kubernetes group of the resource.\",\n            \"type\": \"string\"\n           },\n           \"kind\": {\n            \"description\": \"Kind is the Kubernetes kind of the resource.\",\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"description\": \"Name is the Kubernetes name of the resource.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"virtualNetworkTaps\": {\n        \"description\": \"VirtualNetworkTaps: The reference to Virtual Network Taps.\",\n        \"items\": {\n         \"description\": \"Virtual Network Tap resource.\",\n         \"properties\": {\n          \"reference\": {\n           \"description\": \"Reference: Resource ID.\",\n           \"properties\": {\n            \"armId\": {\n             \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n             \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n             \"type\": \"string\"\n            },\n            \"group\": {\n             \"description\": \"Group is the Kubernetes group of the resource.\",\n             \"type\": \"string\"\n            },\n            \"kind\": {\n             \"description\": \"Kind is the Kubernetes kind of the resource.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name is the Kubernetes name of the resource.\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"location\": {\n     \"description\": \"Location: Resource location.\",\n     \"type\": \"string\"\n    },\n    \"networkSecurityGroup\": {\n     \"description\": \"NetworkSecurityGroup: The reference to the NetworkSecurityGroup resource.\",\n     \"properties\": {\n      \"reference\": {\n       \"description\": \"Reference: Resource ID.\",\n       \"properties\": {\n        \"armId\": {\n         \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n         \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n         \"type\": \"string\"\n        },\n        \"group\": {\n         \"description\": \"Group is the Kubernetes group of the resource.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind is the Kubernetes kind of the resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the Kubernetes name of the resource.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"nicType\": {\n     \"description\": \"NicType: Type of Network Interface resource.\",\n     \"enum\": [\n      \"Elastic\",\n      \"Standard\"\n     ],\n     \"type\": \"string\"\n    },\n    \"operatorSpec\": {\n     \"description\": \"OperatorSpec: The specification for configuring operator behavior. This field is interpreted by the operator and not\\npassed directly to Azure\",\n     \"properties\": {\n      \"configMapExpressions\": {\n       \"description\": \"ConfigMapExpressions: configures where to place operator written dynamic ConfigMaps (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secretExpressions\": {\n       \"description\": \"SecretExpressions: configures where to place operator written dynamic secrets (created with CEL expressions).\",\n       \"items\": {\n        \"description\": \"DestinationExpression is a CEL expression and a destination to store the result in. The destination may\\nbe a secret or a configmap. The value of the expression is stored at the specified location in\\nthe destination.\",\n        \"properties\": {\n         \"key\": {\n          \"description\": \"Key is the key in the ConfigMap or Secret being written to. If the CEL expression in Value returns a string\\nthis is required to identify what key to write to. If the CEL expression in Value returns a map[string]string\\nKey must not be set, instead the keys written will be determined dynamically based on the keys of the resulting\\nmap[string]string.\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name is the name of the Kubernetes configmap or secret to write to.\\nThe configmap or secret will be created in the same namespace as the resource.\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"Value is a CEL expression. The CEL expression may return a string or a map[string]string. For more information\\non CEL in ASO see https://azure.github.io/azure-service-operator/guide/expressions/\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"owner\": {\n     \"description\": \"Owner: The owner of the resource. The owner controls where the resource goes when it is deployed. The owner also\\ncontrols the resources lifecycle. When the owner is deleted the resource will also be deleted. Owner is expected to be a\\nreference to a resources.azure.com/ResourceGroup resource\",\n     \"properties\": {\n      \"armId\": {\n       \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"This is the name of the Kubernetes resource to reference.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"privateLinkService\": {\n     \"description\": \"PrivateLinkService: Privatelinkservice of the network interface resource.\",\n     \"properties\": {\n      \"reference\": {\n       \"description\": \"Reference: Resource ID.\",\n       \"properties\": {\n        \"armId\": {\n         \"description\": \"ARMID is a string of the form /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.\\nThe /resourcegroups/{resourceGroupName} bit is optional as some resources are scoped at the subscription level\\nARMID is mutually exclusive with Group, Kind, Namespace and Name.\",\n         \"pattern\": \"(?i)(^(/subscriptions/([^/]+)(/resourcegroups/([^/]+))?)?/providers/([^/]+)/([^/]+/[^/]+)(/([^/]+/[^/]+))*$|^/subscriptions/([^/]+)(/resourcegroups/([^/]+))?$)\",\n         \"type\": \"string\"\n        },\n        \"group\": {\n         \"description\": \"Group is the Kubernetes group of the resource.\",\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"description\": \"Kind is the Kubernetes kind of the resource.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name is the Kubernetes name of the resource.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tags\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Tags: Resource tags.\",\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"owner\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Network Interface\",\n \"type\": \"object\"\n}"
+  }
+}

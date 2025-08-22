@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import {
   Button,
   TextField,
   MenuItem,
-  Grid,
+  Grid2,
   Dialog,
   DialogContent,
   DialogContentText,
@@ -14,7 +14,7 @@ import {
   Switch,
   IconButton,
   styled,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import Moment from 'react-moment';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';
@@ -64,13 +64,13 @@ const DateTimePicker = styled(MesheryDateTimePicker)(({ theme }) => ({
   marginBottom: theme.spacing(1),
 }));
 
-const InnerGrid = styled(Grid)(({ theme }) => ({
+const InnerGrid = styled(Grid2)(({ theme }) => ({
   borderTop: `1px solid ${theme.palette.divider}`,
   paddingTop: theme.spacing(2),
   marginTop: theme.spacing(2),
 }));
 
-const TimeList = styled(Grid)(() => ({
+const TimeList = styled(Grid2)(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',
@@ -600,8 +600,8 @@ const GrafanaDateRangePicker = (props) => {
         </DialogTitleBar>
         <DialogContent>
           <DialogContentText>
-            <Grid container>
-              <Grid item xs={12}>
+            <Grid2 container size="grow">
+              <Grid2 size={{ xs: 12 }}>
                 Custom Range
                 <RangeDialogRow>
                   <DateTimePicker
@@ -645,12 +645,12 @@ const GrafanaDateRangePicker = (props) => {
                     ))}
                   </TextField>
                 </RangeDialogRow>
-              </Grid>
-              <InnerGrid item xs={12}>
+              </Grid2>
+              <InnerGrid size={{ xs: 12 }}>
                 Quick Ranges
-                <Grid container spacing={0}>
+                <Grid2 container spacing={0} size="grow">
                   {quickRanges.map((qr, index) => (
-                    <TimeList item key={`qr-${index}`} xs={12} sm={3}>
+                    <TimeList item key={`qr-${index}`} size={{ xs: 12, sm: 3 }}>
                       {qr.map((q) => (
                         <Button key={q} variant="text" onClick={setRange(q)}>
                           {q}
@@ -658,9 +658,9 @@ const GrafanaDateRangePicker = (props) => {
                       ))}
                     </TimeList>
                   ))}
-                </Grid>
+                </Grid2>
               </InnerGrid>
-            </Grid>
+            </Grid2>
           </DialogContentText>
         </DialogContent>
         <Divider light variant="fullWidth" />

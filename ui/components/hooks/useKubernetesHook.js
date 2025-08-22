@@ -1,5 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { errorHandlerGenerator, successHandlerGenerator } from '../../utils/helpers/common';
 import { pingKubernetes } from '../../utils/helpers/kubernetesHelpers';
@@ -11,18 +9,20 @@ import fetchMesheryOperatorStatus from '../graphql/queries/OperatorStatusQuery';
 import NatsStatusQuery from '../graphql/queries/NatsStatusQuery';
 import { CONTROLLERS, CONTROLLER_STATES } from '../../utils/Enum';
 import _ from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProgressAction } from '@/store/slices/mesheryUi';
 
 export default function useKubernetesHook() {
   const { notify } = useNotification();
   const dispatch = useDispatch();
   const ping = (name, server, connectionID) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     pingKubernetes(
       successHandlerGenerator(notify, `Kubernetes context ${name} at ${server} pinged`, () =>
-        dispatch(updateProgress({ showProgress: false })),
+        dispatch(updateProgressAction({ showProgress: false })),
       ),
       errorHandlerGenerator(notify, `Kubernetes context ${name} at ${server} not reachable`, () =>
-        dispatch(updateProgress({ showProgress: false })),
+        dispatch(updateProgressAction({ showProgress: false })),
       ),
       connectionID,
     );
@@ -31,7 +31,7 @@ export default function useKubernetesHook() {
   return ping;
 }
 const handleErrorGenerator = (dispatch, notify) => (message, error) => {
-  dispatch(updateProgress({ showProgress: false }));
+  dispatch(updateProgressAction({ showProgress: false }));
   console.error(message, error);
   notify({
     message: message,
@@ -41,7 +41,7 @@ const handleErrorGenerator = (dispatch, notify) => (message, error) => {
 };
 
 const handleSuccessGenerator = (dispatch, notify) => (message) => {
-  dispatch(updateProgress({ showProgress: false }));
+  dispatch(updateProgressAction({ showProgress: false }));
   notify({
     message: message,
     event_type: EVENT_TYPES.SUCCESS,
@@ -62,7 +62,7 @@ export function useMesheryOperator() {
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
 
   const ping = ({ connectionID }) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     pingMesheryOperator(
       connectionID,
       () => handleSuccess(`Meshery Operator  pinged`),
@@ -81,11 +81,11 @@ export function useMeshsSyncController() {
 
   // takes connectionID as input not the contextID
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
 
     const subscription = MeshsyncStatusQuery({ connectionID: connectionID }).subscribe({
       next: (res) => {
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
 
         if (res.controller.name === 'MeshSync' && res.controller.status.includes('Connected')) {
           let publishEndpoint = res.controller.status.substring('Connected'.length);
@@ -107,7 +107,7 @@ export function useMeshsSyncController() {
         !subscribe && subscription && subscription?.unsubscribe();
       },
       error: (err) => {
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
         handleError('MeshSync status could not be retrieved', err);
         onError && onError(err);
         !subscribe && subscription && subscription?.unsubscribe();
@@ -131,7 +131,7 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     handleInfo('Fetching Meshery Operator status');
     // react-realy fetchQuery function returns a "Observable". To start a request subscribe needs to be called.
     // The data is stored into the react-relay store, the data is retrieved by subscribing to the relay store.
@@ -140,7 +140,7 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
       next: () => {
         setIsLoading(false);
 
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
         // const [isReachable, operatorInfo] = getOperatorStatusFromQueryResult(res);
         // setOperatorInfo({
         //   isReachable,
@@ -158,7 +158,7 @@ export const useGetOperatorInfoQuery = ({ connectionID }) => {
     });
     return () => {
       setIsLoading(false);
-      dispatch(updateProgress({ showProgress: false }));
+      dispatch(updateProgressAction({ showProgress: false }));
       tempSubscription?.unsubscribe();
     };
   }, []);
@@ -176,10 +176,10 @@ export const useNatsController = () => {
   const handleSuccess = handleSuccessGenerator(dispatch, notify);
 
   const ping = ({ connectionID, subscribe = false, onSuccess, onError }) => {
-    dispatch(updateProgress({ showProgress: true }));
+    dispatch(updateProgressAction({ showProgress: true }));
     const subscription = NatsStatusQuery({ connectionID }).subscribe({
       next: (res) => {
-        dispatch(updateProgress({ showProgress: false }));
+        dispatch(updateProgressAction({ showProgress: false }));
 
         if (
           res.controller.name === 'MesheryBroker' &&
@@ -291,7 +291,7 @@ export const useControllerStatus = (controllerState) => {
 };
 
 export const useFilterK8sContexts = (k8sContexts, predicate) => {
-  const meshsyncControllerState = useSelector((state) => state.get('controllerState'));
+  const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   return k8sContexts.filter((ctx) => {

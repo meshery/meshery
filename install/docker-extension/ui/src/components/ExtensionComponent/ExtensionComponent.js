@@ -38,8 +38,8 @@ import {
   CatalogCard,
   FeedbackButton,
   SistentThemeProviderWithoutBaseLine,
-} from "@layer5/sistent";
-import { MESHMAP, providerUrl } from "../utils/constants";
+} from "@sistent/sistent";
+import { MESHMAP, providerUrl,SELECTED_PROVIDER_NAME } from "../utils/constants";
 
 const AuthenticatedMsg = "Authenticated";
 const UnauthenticatedMsg = "Unauthenticated";
@@ -318,7 +318,7 @@ const ExtensionsComponent = () => {
       });
       if (!(type.includes(".yaml") || type.includes(".yml"))) {
         window.ddClient.desktopUI.toast.error(
-          "Some error occured while uploading the compose file. ",
+          "Some error occured while uploading the compose file. "
         );
         return;
       }
@@ -332,13 +332,13 @@ const ExtensionsComponent = () => {
       })
         .then((res) => {
           window.ddClient.desktopUI.toast.success(
-            "Compose file has been uploaded with name: " + name,
+            "Compose file has been uploaded with name: " + name
           );
         })
         .catch(() =>
           window.ddClient.desktopUI.toast.error(
-            "Some error occured while uploading the compose file.",
-          ),
+            "Some error occured while uploading the compose file."
+          )
         );
     });
     reader.readAsText(file);
@@ -346,7 +346,7 @@ const ExtensionsComponent = () => {
 
   const OpenDocs = () => {
     window.ddClient.host.openExternal(
-      `https://docs.meshery.io/installation/docker/docker-extension`,
+      `https://docs.meshery.io/installation/docker/docker-extension`
     );
   };
 
@@ -400,9 +400,9 @@ const ExtensionsComponent = () => {
                   style={{ textDecoration: "none" }}
                   href={
                     token &&
-                    "http://localhost:9081/api/user/token?token=" +
+                    `http://localhost:9081/api/user/token?token=" +
                       token +
-                      "&provider=Meshery"
+                      "&provider=${SELECTED_PROVIDER_NAME}`
                   }
                 >
                   {isLoggedIn ? (
@@ -428,9 +428,9 @@ const ExtensionsComponent = () => {
                       style={{ textDecoration: "none", color: "white" }}
                       href={
                         token &&
-                        "http://localhost:9081/api/user/token?token=" +
+                        `http://localhost:9081/api/user/token?token=" +
                           token +
-                          "&provider=Meshery"
+                          "&provider=${SELECTED_PROVIDER_NAME}`
                       }
                     >
                       Launch Meshery
@@ -448,9 +448,10 @@ const ExtensionsComponent = () => {
                   color="primary"
                   component="span"
                   onClick={() => {
+                    const url =  providerUrl + "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14"
+                    console.log("provider url",url)
                     window.ddClient.host.openExternal(
-                      providerUrl +
-                        "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14",
+                      url
                     );
                   }}
                 >
@@ -607,7 +608,7 @@ const ExtensionsComponent = () => {
                                 <CatalogCard
                                   onCardClick={() => {
                                     window.ddClient.host.openExternal(
-                                      `${providerUrl}/catalog/content/catalog/${pattern?.id}`,
+                                      `${providerUrl}/catalog/content/catalog/${pattern?.id}`
                                     );
                                   }}
                                   pattern={pattern}
@@ -624,7 +625,7 @@ const ExtensionsComponent = () => {
                       <StyledButton
                         onClick={() => {
                           window.ddClient.host.openExternal(
-                            `${providerUrl}/catalog`,
+                            `${providerUrl}/catalog`
                           );
                         }}
                       >

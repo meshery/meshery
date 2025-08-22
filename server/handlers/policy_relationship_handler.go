@@ -11,19 +11,19 @@ import (
 	"github.com/Masterminds/semver/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshkit/models/events"
 
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/meshery/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	mutils "github.com/meshery/meshkit/utils"
 )
 
 const (
@@ -389,12 +389,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	case evaluationResponse := <-evalRespChan:
 		// include trace instead of design file in the event
-		event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+		description := fmt.Sprintf("Relationship evaluation complete: %d changes in '%s' at version '%s'", len(evaluationResponse.Actions), evaluationResponse.Design.Name, evaluationResponse.Design.Version)
+		event := eventBuilder.WithDescription(description).
 			WithMetadata(map[string]interface{}{
-				"trace":        evaluationResponse.Trace,
-				"evaluated_at": *evaluationResponse.Timestamp,
+				"history_title":       fmt.Sprintf("%d changes made at version %s", len(evaluationResponse.Actions), evaluationResponse.Design.Version),
+				"trace":               evaluationResponse.Trace,
+				"evaluation_response": evaluationResponse,
+				"evaluated_at":        *evaluationResponse.Timestamp,
 			}).WithSeverity(events.Informational).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 
 		// write the response
 		ec := json.NewEncoder(rw)

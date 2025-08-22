@@ -1,0 +1,85 @@
+name: Trivy Container Image Scan
+
+on:
+  workflow_dispatch:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "mesheryctl/**"
+      - "*.md"
+      - "*.github/**"
+      - "Makefile"
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "*.github/**"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  build-and-scan:
+    name: Build & Scan Container Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: make docker-build
+      
+      - name: Run Trivy scan on built image
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'meshery/meshery'
+          format: 'json'
+          output: 'trivy-scan-results.json'
+
+      - name: Upload scan results
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-scan-results
+          path: trivy-scan-results.json
+
+      - name: Parse Trivy Results
+        id: parse_trivy
+        run: |
+          vuln_count=$(jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] 
+            | select(.Severity == "CRITICAL" or .Severity == "HIGH")] | length' trivy-scan-results.json)
+          echo "Found $vuln_count critical/high vulnerabilities" > issue_body.txt
+          echo '```json' >> issue_body.txt
+          jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] 
+            | select(.Severity == "CRITICAL" or .Severity == "HIGH")][0:5]' trivy-scan-results.json >> issue_body.txt
+          echo '```' >> issue_body.txt
+          echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
+          
+      - name: Check for existing Trivy issue
+        id: check_issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing_issue=$(gh issue list --label "security" --state open --limit 100 --json title,number | \
+            jq -r '.[] | select(.title | contains("Trivy Scan")) | .number' | head -n 1)
+          echo "existing_issue=$existing_issue" >> $GITHUB_OUTPUT
+
+      - name: Create or update GitHub issue
+        if: steps.parse_trivy.outputs.vuln_count != '0'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [ -z "${{ steps.check_issue.outputs.existing_issue }}" ]; then
+            gh issue create \
+              --title "Trivy Scan: CRITICAL/HIGH Vulnerabilities Found - $(date +'%Y-%m-%d %H:%M:%S')" \
+              --body-file issue_body.txt \
+              --label "security,auto-triaged"
+          else
+            gh issue comment ${{ steps.check_issue.outputs.existing_issue }} --body "$(cat issue_body.txt)"
+          fi

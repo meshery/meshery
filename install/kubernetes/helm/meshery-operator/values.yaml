@@ -7,7 +7,7 @@ replicaCount: 1
 mesheryOperator:
   name: manager
   image:
-    repository: layer5/meshery-operator:stable-latest
+    repository: meshery/meshery-operator:stable-latest
     pullPolicy: Always
   args:
     - --metrics-addr=127.0.0.1:8080

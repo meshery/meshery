@@ -10,7 +10,7 @@ import {
   Slide,
   CloseIcon,
   styled,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
   margin: 0,
@@ -87,7 +87,7 @@ export default function PlaygroundMeshDeploy(props) {
           <Typography gutterBottom>
             Meshery Playground gives you hands-on experience with designing cloud native systems -
             from your browser - using every CNCF project. Choose a{' '}
-            <a href="https://layer5.io/learn/learning-paths" style={{ color: '#00b39f' }}>
+            <a href="https://docs.meshery.io/guides/tutorials" style={{ color: '#00b39f' }}>
               Learning Path
             </a>{' '}
             and work through labs as you visually and collaboratively learn-by-doing without having

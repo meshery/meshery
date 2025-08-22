@@ -21,11 +21,11 @@ import (
 	"github.com/briandowns/spinner"
 	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/logger"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -35,7 +35,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 )
 
 const (
@@ -285,7 +285,7 @@ var TemplateContext = config.Context{
 
 var Services = map[string]Service{
 	"meshery": {
-		Image:  "layer5/meshery:stable-latest",
+		Image:  "meshery/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
 			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
@@ -297,7 +297,7 @@ var Services = map[string]Service{
 		Ports:   []string{"9081:9081"},
 	},
 	"meshery-istio": {
-		Image:  "layer5/meshery-istio:stable-latest",
+		Image:  "meshery/meshery-istio:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10000:10000"},
 	},
@@ -307,12 +307,12 @@ var Services = map[string]Service{
 		Ports:  []string{"10001:10001"},
 	},
 	"meshery-consul": {
-		Image:  "layer5/meshery-consul:stable-latest",
+		Image:  "meshery/meshery-consul:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10002:10002"},
 	},
 	"meshery-nsm": {
-		Image:  "layer5/meshery-nsm:stable-latest",
+		Image:  "meshery/meshery-nsm:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10004:10004"},
 	},
@@ -322,33 +322,35 @@ var Services = map[string]Service{
 		Ports:  []string{"10005:10005"},
 	},
 	"meshery-traefik-mesh": {
-		Image:  "layer5/meshery-traefik-mesh:stable-latest",
+		Image:  "meshery/meshery-traefik-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10006:10006"},
 	},
 	"meshery-kuma": {
-		Image:  "layer5/meshery-kuma:stable-latest",
+		Image:  "meshery/meshery-kuma:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10007:10007"},
 	},
 	"meshery-osm": {
-		Image:  "layer5/meshery-osm:stable-latest",
+		Image:  "meshery/meshery-osm:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10009:10009"},
 	},
 	"meshery-nginx-sm": {
-		Image:  "layer5/meshery-nginx-sm:stable-latest",
+		Image:  "meshery/meshery-nginx-sm:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10010:10010"},
 	},
 	"meshery-cilium": {
-		Image:  "layer5/meshery-cilium:stable-latest",
+		Image:  "meshery/meshery-cilium:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10012:10012"},
 	},
 	"watchtower": {
-		Image:  "containrrr/watchtower",
-		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
+		Image:   "containrrr/watchtower",
+		Labels:  []string{"com.centurylinklabs.watchtower.enable=true"},
+		Volumes: []string{"/var/run/docker.sock:/var/run/docker.sock"},
+		Command: []string{"--label-enable"},
 	},
 }
 
@@ -1165,6 +1167,46 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 		},
 	}
 
+	envOverrides := make(map[string]any)
+
+	setToEnvMap := func(key string, value any) {
+		// Ensure the environment variable value is a string.
+		// If the value is not a string (e.g., an int or bool), Helm will render it as a raw type,
+		// causing Kubernetes to fail with an error like:
+		// "Deployment in version 'v1' cannot be handled as a Deployment:
+		//  json: cannot unmarshal number into Go struct field
+		//  EnvVar.spec.template.spec.containers.env.value of type string"
+		strVal := ""
+		switch v := value.(type) {
+		case string:
+			strVal = v
+		default:
+			strVal = fmt.Sprintf("%v", v)
+		}
+
+		// Helper to detect numeric strings
+		isNumeric := func(s string) bool {
+			_, err := strconv.ParseFloat(s, 64)
+			return err == nil
+		}
+
+		// Define values that need quoting (even if already strings)
+		shouldQuote := func(s string) bool {
+			lower := strings.ToLower(s)
+			return lower == "true" || lower == "false" ||
+				lower == "yes" || lower == "no" ||
+				isNumeric(s)
+		}
+
+		// we need this because even if value is a string, but contains numeric or boolean
+		// when pass to helm error described above occurs
+		if shouldQuote(strVal) {
+			envOverrides[key] = fmt.Sprintf("\"%s\"", strVal)
+		} else {
+			envOverrides[key] = strVal
+		}
+	}
+
 	// set the "enabled" field to true only for the components listed in the context
 	for _, component := range ctx.GetComponents() {
 		if _, ok := valueOverrides[component]; ok {
@@ -1181,30 +1223,31 @@ func SetOverrideValues(ctx *config.Context, mesheryImageVersion, callbackURL, pr
 
 	// set the provider
 	if ctx.GetProvider() != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.ProviderENV: ctx.GetProvider(),
-		}
+		setToEnvMap(constants.ProviderENV, ctx.GetProvider())
 	}
 
 	if callbackURL != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.CallbackURLENV: callbackURL,
-		}
+		setToEnvMap(constants.CallbackURLENV, callbackURL)
 	}
 
 	if providerURL != "" {
-		valueOverrides["env"] = map[string]interface{}{
-			constants.ProviderURLsENV: providerURL,
-		}
+		setToEnvMap(constants.ProviderURLsENV, providerURL)
 	}
 
 	// disable the operator
 	if ctx.GetOperatorStatus() == "disabled" {
-		if _, ok := valueOverrides["env"]; !ok {
-			valueOverrides["env"] = map[string]interface{}{}
+		setToEnvMap("DISABLE_OPERATOR", "true")
+	}
+
+	if len(ctx.GetEnvs()) > 0 {
+		for k, v := range ctx.GetEnvs() {
+			// use to upper here, as meshery keeps its context yaml lowercased
+			setToEnvMap(strings.ToUpper(k), v)
 		}
-		envOverrides := valueOverrides["env"].(map[string]interface{})
-		envOverrides["DISABLE_OPERATOR"] = "'true'"
+	}
+
+	if len(envOverrides) > 0 {
+		valueOverrides["env"] = envOverrides
 	}
 
 	return valueOverrides

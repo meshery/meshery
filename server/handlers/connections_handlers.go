@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -10,13 +11,14 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/machines/helpers"
-	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/models/events"
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/machines/helpers"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/models/events"
+	regv1beta1 "github.com/meshery/meshkit/models/meshmodel/registry/v1beta1"
+	schemasConnection "github.com/meshery/schemas/models/v1beta1/connection"
 )
 
 type connectionStatusPayload map[uuid.UUID]connections.ConnectionStatus
@@ -59,7 +61,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 			event := eventBuilder.WithSeverity(events.Error).WithDescription("Unable to perisit the \"%s\" connection details").WithMetadata(map[string]interface{}{
 				"error": err,
 			}).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
 
@@ -67,7 +69,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		if err != nil {
 			h.log.Error(err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userUUID, event)
 		}
 	}
@@ -156,7 +158,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Error creating connection %s", connection.Name)).WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -167,7 +169,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 	description := fmt.Sprintf("Connection %s created.", connection.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info(description)
@@ -207,8 +209,8 @@ func (h *Handler) GetConnections(w http.ResponseWriter, req *http.Request, prefO
 		pageSize, _ = strconv.Atoi(pageSizeStr)
 	}
 
-	if pageSize > 50 {
-		pageSize = 50
+	if pageSize > 100 {
+		pageSize = 100
 	}
 	if pageSize <= 0 {
 		pageSize = 10
@@ -359,7 +361,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				"error": errUnmarshal,
 			})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
@@ -377,7 +379,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					"error": err,
 				})
 				_event := eventBuilder.Build()
-				_ = provider.PersistEvent(_event)
+				_ = provider.PersistEvent(*_event, nil)
 				go h.config.EventBroadcaster.Publish(userID, _event)
 				continue
 			}
@@ -388,7 +390,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					"connectionName": k8scontext.Name,
 				}).
 				Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			go h.config.EventBroadcaster.Publish(userID, event)
 
 			machineCtx := &kubernetes.MachineCtx{
@@ -418,7 +420,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("Failed to update connection status for %s", id)).WithMetadata(map[string]interface{}{
 					"error": err,
 				}).Build()
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				go h.config.EventBroadcaster.Publish(userID, event)
 				continue
 			}
@@ -427,7 +429,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				event, err = inst.SendEvent(req.Context(), machines.EventType(helpers.StatusToEvent(status)), nil)
 				if err != nil {
 					h.log.Error(err)
-					_ = provider.PersistEvent(event)
+					_ = provider.PersistEvent(*event, nil)
 					h.config.EventBroadcaster.Publish(userID, event)
 					return
 				}
@@ -436,7 +438,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 					smInstanceTracker.Remove(inst.ID)
 				}
 
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				h.config.EventBroadcaster.Publish(userID, event)
 			}(inst, status)
 		}
@@ -447,7 +449,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 
 			if err != nil {
 				event := events.NewEvent().WithCategory("connection").WithAction("update").WithSeverity(events.Error).ActedUpon(id).FromUser(userID).FromSystem(*h.SystemID).WithDescription(fmt.Sprintf("Unable to update connection status to %s", status)).WithMetadata(map[string]interface{}{"error": err}).Build()
-				_ = provider.PersistEvent(event)
+				_ = provider.PersistEvent(*event, nil)
 				h.config.EventBroadcaster.Publish(userID, event)
 				h.log.Error(err)
 				continue
@@ -458,7 +460,7 @@ func (h *Handler) UpdateConnectionStatus(w http.ResponseWriter, req *http.Reques
 				eb.WithDescription(fmt.Sprintf("Connection \"%s\" deleted", connection.Name)).WithAction("delete")
 			}
 			event := eb.WithCategory("connection").WithSeverity(events.Success).FromUser(userID).FromSystem(*h.SystemID).ActedUpon(id).Build()
-			_ = provider.PersistEvent(event)
+			_ = provider.PersistEvent(*event, nil)
 			h.config.EventBroadcaster.Publish(userID, event)
 
 			h.log.Debug("connection", connection, statusCode)
@@ -503,7 +505,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -514,7 +516,7 @@ func (h *Handler) UpdateConnection(w http.ResponseWriter, req *http.Request, _ *
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info(description)
@@ -549,6 +551,53 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	// Check if meshsync deployment mode is specified in the payload metadata.
+	// Only handle mode changes if a mode is explicitly provided (not undefined).
+	// In fact this method is used (for now) only for perform meshsync deployment mode change.
+	// If mode change fails return error.
+	// TODO: also check that kind = "kubernetes" (when client starts to send full connection object)
+	if schemasConnection.MeshsyncDeploymentModeFromMetadata(connection.MetaData) != schemasConnection.MeshsyncDeploymentModeUndefined {
+		// Handle meshsync deployment mode changes before connection update
+		token, _ := req.Context().Value(models.TokenCtxKey).(string)
+		oldMode, newMode, modeChanged, err := h.handleMeshSyncDeploymentModeChange(
+			req.Context(),
+			connectionID,
+			connection,
+			token,
+			userID,
+			provider,
+		)
+		if err != nil {
+			meshSyncErr := fmt.Errorf("error handling meshsync deployment mode change: %w", err)
+			metadata := map[string]any{
+				"error":         meshSyncErr,
+				"connection_id": connectionID.String(),
+			}
+			event := eventBuilder.WithSeverity(events.Error).WithDescription("Failed to handle meshsync deployment mode change").WithMetadata(metadata).Build()
+			_ = provider.PersistEvent(*event, nil)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			h.log.Error(meshSyncErr)
+			http.Error(w, meshSyncErr.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Log and emit event if mode actually changed
+		if modeChanged {
+			description := fmt.Sprintf("MeshSync deployment mode changed from '%s' to '%s' for connection %s", oldMode, newMode, connectionID)
+			metadata := map[string]any{
+				"meshsync_deployment_mode_old": oldMode,
+				"meshsync_deployment_mode_new": newMode,
+				"connection_id":                connectionID.String(),
+			}
+			event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+			_ = provider.PersistEvent(*event, nil)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			h.log.Info(description)
+		}
+	}
+
 	updatedConnection, err := provider.UpdateConnectionById(req, connection, mux.Vars(req)["connectionId"])
 	if err != nil {
 		_err := ErrFailToSave(err, obj)
@@ -556,7 +605,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error updating connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -564,10 +613,11 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
+	// TODO enhance event with information about meshsync deployment mode change
 	description := fmt.Sprintf("Connection %s updated.", updatedConnection.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 	h.log.Info(description)
 	w.WriteHeader(http.StatusOK)
@@ -592,7 +642,7 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 			"error": _err,
 		}
 		event := eventBuilder.WithSeverity(events.Error).WithDescription("Error deleting connection").WithMetadata(metadata).Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 
 		h.log.Error(_err)
@@ -603,9 +653,98 @@ func (h *Handler) DeleteConnection(w http.ResponseWriter, req *http.Request, _ *
 	description := fmt.Sprintf("Connection %s deleted.", deletedConnection.Name)
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
 
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
 	h.log.Info("connection deleted.")
 	w.WriteHeader(http.StatusOK)
+}
+
+// handleMeshSyncDeploymentModeChange retrieves existing connection, compares meshsync deployment modes
+// between existing and new connections, and performs necessary actions when they differ
+// Returns: oldMode, newMode, changed, error
+func (h *Handler) handleMeshSyncDeploymentModeChange(
+	ctx context.Context,
+	connectionID uuid.UUID,
+	newConnection *connections.ConnectionPayload,
+	token string,
+	userID uuid.UUID,
+	provider models.Provider,
+) (schemasConnection.MeshsyncDeploymentMode, schemasConnection.MeshsyncDeploymentMode, bool, error) {
+	if newConnection == nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("new connection is nil, cannot compare meshsync deployment modes")
+	}
+
+	if h.SystemID == nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("system ID is not configured in handler")
+	}
+	// TODO is h.SystemID a correct instance id here?
+	mesheryInstanceID := *h.SystemID
+
+	// Retrieve existing connection for mode comparison
+	existingConnection, statusCode, err := provider.GetConnectionByIDAndKind(token, connectionID, "kubernetes")
+	if err != nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("failed to retrieve existing connection (status %d): %w", statusCode, err)
+	}
+
+	if existingConnection == nil {
+		return schemasConnection.MeshsyncDeploymentModeUndefined, schemasConnection.MeshsyncDeploymentModeUndefined, false, fmt.Errorf("existing connection is nil, cannot compare meshsync deployment modes")
+	}
+
+	existingMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(existingConnection.Metadata)
+	newMeshSyncMode := schemasConnection.MeshsyncDeploymentModeFromMetadata(newConnection.MetaData)
+
+	// draw back to default mode
+	if newMeshSyncMode == schemasConnection.MeshsyncDeploymentModeUndefined {
+		newMeshSyncMode = h.MeshsyncDefaultDeploymentMode
+	}
+
+	meshSyncModeChanged := existingMeshSyncMode != newMeshSyncMode
+	if meshSyncModeChanged {
+		instanceTracker := h.ConnectionToStateMachineInstanceTracker
+		if instanceTracker == nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker is nil in handler instance")
+		}
+
+		machine, ok := instanceTracker.Get(connectionID)
+		if !ok || machine == nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("instance tracker does not contain machine for connection %s", connectionID)
+		}
+
+		machineCtx, err := kubernetes.GetMachineCtx(machine.Context, nil)
+		if err != nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("failed to get machine context for connection %s: %w", connectionID, err)
+		}
+
+		if machineCtx == nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context is nil for connection %s", connectionID)
+		}
+
+		ctrlHelper := machineCtx.MesheryCtrlsHelper
+		if ctrlHelper == nil {
+			return existingMeshSyncMode, newMeshSyncMode, false, fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper for connection %s", connectionID)
+		}
+
+		// disconnect
+		{
+			contextID := machineCtx.K8sContext.ID
+			ctrlHelper.
+				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
+				UndeployDeployedOperators(machineCtx.OperatorTracker).
+				RemoveCtxControllerHandler(ctx, contextID)
+			ctrlHelper.RemoveMeshSyncDataHandler(ctx, contextID)
+		}
+		// connect
+		{
+			ctrlHelper.
+				AddCtxControllerHandlers(machineCtx.K8sContext).
+				SetMeshsyncDeploymentMode(newMeshSyncMode).
+				UpdateOperatorsStatusMap(machineCtx.OperatorTracker).
+				DeployUndeployedOperators(machineCtx.OperatorTracker).
+				AddMeshsynDataHandlers(ctx, machineCtx.K8sContext, userID, mesheryInstanceID, provider)
+		}
+
+	}
+
+	return existingMeshSyncMode, newMeshSyncMode, meshSyncModeChanged, nil
 }

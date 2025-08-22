@@ -1,6 +1,6 @@
 package format
 
-import "github.com/layer5io/meshkit/errors"
+import "github.com/meshery/meshkit/errors"
 
 var (
 	ErrOutputToJsonCode = "mesheryctl-1147"

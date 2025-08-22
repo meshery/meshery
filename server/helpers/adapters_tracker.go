@@ -14,9 +14,9 @@ import (
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 	"github.com/docker/go-connections/nat"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
-	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshery/server/models"
+	meshkitkube "github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
 )
 
@@ -87,7 +87,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 		var mesheryNetworkSettings *container.NetworkSettingsSummary
 		for _, container := range containers {
-			if strings.Contains(container.Image, "layer5/meshery") {
+			if strings.Contains(container.Image, "meshery/meshery") {
 				mesheryNetworkSettings = container.NetworkSettings
 			}
 		}
@@ -165,12 +165,16 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 			return ErrDeployingAdapterInK8s(err)
 		}
 		var k8scontext models.K8sContext
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
 			return ErrDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
-		for _, k8sctx := range allContexts {
+		for _, k8sctxPtr := range allContexts {
+			if k8sctxPtr == nil {
+				continue
+			}
+			k8sctx := *k8sctxPtr
 			if k8sctx.Name == "in-cluster" {
 				k8scontext = k8sctx
 				break
@@ -255,12 +259,16 @@ func (a *AdaptersTracker) UndeployAdapter(ctx context.Context, adapter models.Ad
 			return ErrUnDeployingAdapterInK8s(err)
 		}
 		var k8scontext models.K8sContext
-		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]models.K8sContext)
+		allContexts, ok := ctx.Value(models.AllKubeClusterKey).([]*models.K8sContext)
 		if !ok || len(allContexts) == 0 {
 			fmt.Println("No context found")
 			return ErrUnDeployingAdapterInK8s(fmt.Errorf("no context found"))
 		}
-		for _, k8sctx := range allContexts {
+		for _, k8sctxPtr := range allContexts {
+			if k8sctxPtr == nil {
+				continue
+			}
+			k8sctx := *k8sctxPtr
 			if k8sctx.Name == "in-cluster" {
 				k8scontext = k8sctx
 				break

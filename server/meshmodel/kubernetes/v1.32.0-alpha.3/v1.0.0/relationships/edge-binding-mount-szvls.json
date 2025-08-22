@@ -21,15 +21,14 @@
     "registrant": {
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
       "type": "",
       "sub_type": "",
       "kind": "",
       "status": "",
-      "user_id": "00000000-0000-0000-0000-000000000000",
       "created_at": "0001-01-01T00:00:00Z",
       "updated_at": "0001-01-01T00:00:00Z",
-      "deleted_at": "0001-01-01T00:00:00Z"
+      "deleted_at": null,
+      "schemaVersion": ""
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
@@ -83,6 +82,7 @@
                 }
               ]
             },
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -93,15 +93,14 @@
               "registrant": {
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
                 "type": "",
                 "sub_type": "",
                 "kind": "github",
                 "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z"
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
@@ -162,6 +161,7 @@
                 }
               ]
             },
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -172,15 +172,14 @@
               "registrant": {
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
                 "type": "",
                 "sub_type": "",
                 "kind": "github",
                 "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z"
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
@@ -207,6 +206,7 @@
             "id": null,
             "kind": "Pod",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -217,15 +217,14 @@
               "registrant": {
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
                 "type": "",
                 "sub_type": "",
                 "kind": "github",
                 "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z"
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {
@@ -250,6 +249,7 @@
             "id": null,
             "kind": "Pod",
             "match": {},
+            "match_strategy_matrix": null,
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
               "schemaVersion": "",
@@ -260,15 +260,14 @@
               "registrant": {
                 "id": "00000000-0000-0000-0000-000000000000",
                 "name": "",
-                "credential_id": "00000000-0000-0000-0000-000000000000",
                 "type": "",
                 "sub_type": "",
                 "kind": "github",
                 "status": "",
-                "user_id": "00000000-0000-0000-0000-000000000000",
                 "created_at": "0001-01-01T00:00:00Z",
                 "updated_at": "0001-01-01T00:00:00Z",
-                "deleted_at": "0001-01-01T00:00:00Z"
+                "deleted_at": null,
+                "schemaVersion": ""
               },
               "connection_id": "00000000-0000-0000-0000-000000000000",
               "category": {

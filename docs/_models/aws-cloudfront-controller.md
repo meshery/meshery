@@ -46,12 +46,13 @@ components:
   colorIcon: assets/img/integrations/aws-cloudfront-controller/components/origin-access-control/icons/color/origin-access-control-color.svg
   whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/origin-access-control/icons/white/origin-access-control-white.svg
   description: 
-components-count: 9
+- name: vpc-origin
+  colorIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/color/vpc-origin-color.svg
+  whiteIcon: assets/img/integrations/aws-cloudfront-controller/components/vpc-origin/icons/white/vpc-origin-white.svg
+  description: 
+components-count: 10
 relationships: 
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the FieldExport (parent) component is patched with the configuration as received from Pod (child) component."
-relationship-count: 1
+relationship-count: 0
 featureList: [
   "Global content delivery",
   "Improves website and application performance",

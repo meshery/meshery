@@ -1,4 +1,4 @@
-FROM golang:1.23 AS meshery-server
+FROM golang:1.24 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -49,7 +49,7 @@ RUN npm run build
 # RUN git config --global user.name "meshery"
 # RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
-FROM alpine:3.19.7 AS seed_content
+FROM alpine:3.21.3 AS seed_content
 RUN apk add --no-cache curl
 WORKDIR /
 RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/latest | grep "browser_download_url.*wasm" | cut -d : -f 2,3 | sed 's/"//g') \
@@ -69,13 +69,13 @@ RUN lines=$(curl -s https://api.github.com/repos/layer5io/wasm-filters/releases/
 #FROM ubuntu AS nighthawk
 #RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 #RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-#RUN git config --global user.email "meshery@layer5.io"
+#RUN git config --global user.email "ci@meshery.io"
 #RUN git config --global user.name "meshery"
 #RUN git clone https://github.com/layer5io/nighthawk-go
 #RUN cd nighthawk-go/apinighthawk/bin && chmod +x ./nighthawk_client
 
 
-FROM alpine:3.19.7
+FROM alpine:3.21.3
 ENV GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ENV GLIBC_VERSION=2.35-r1
 RUN set -ex && \

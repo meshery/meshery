@@ -7,11 +7,11 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
-	"github.com/layer5io/meshery/server/machines"
-	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	"github.com/layer5io/meshery/server/machines/kubernetes"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/machines"
+	mhelpers "github.com/meshery/meshery/server/machines/helpers"
+	"github.com/meshery/meshery/server/machines/kubernetes"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
 )
 
 // swagger:route GET /api/system/kubernetes/contexts GetAllContexts idGetAllContexts
@@ -100,7 +100,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 	description := fmt.Sprintf("Delete request received for kubernetes context \"%s\"", k8scontext.Name)
 
 	event := eventBuilder.WithSeverity(events.Informational).WithDescription(description).Build()
-	_ = provider.PersistEvent(event)
+	_ = provider.PersistEvent(*event, nil)
 
 	machineCtx := &kubernetes.MachineCtx{
 		K8sContext:         k8scontext,
@@ -143,7 +143,7 @@ func (h *Handler) DeleteContext(w http.ResponseWriter, req *http.Request, _ *mod
 			"error": err,
 		})
 		event := eventBuilder.Build()
-		_ = provider.PersistEvent(event)
+		_ = provider.PersistEvent(*event, nil)
 		go h.config.EventBroadcaster.Publish(userID, event)
 	}
 	// go h.config.EventBroadcaster.Publish(userID, event)

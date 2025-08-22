@@ -17,6 +17,7 @@ List registered workspaces
 ## Synopsis
 
 List name of all registered workspaces
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/exp/workspace/list
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace list [flags]
@@ -26,7 +27,7 @@ mesheryctl exp workspace list [flags]
 
 ## Examples
 
-List all registered workspace
+List of workspace under a specific organization
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace list --orgId [orgId]
@@ -34,10 +35,18 @@ mesheryctl exp workspace list --orgId [orgId]
 </div>
 </pre> 
 
-Documentation for workspace can be found at:
+List of workspace under a specific organization for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/workspaces/
+mesheryctl exp workspace list --orgId [orgId] --page [page-number]
+
+</div>
+</pre> 
+
+Display number of available  workspace under a specific organization
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp workspace list --orgId [orgId] --count
 
 </div>
 </pre> 
@@ -46,6 +55,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+      --count          total number of registered workspaces
   -h, --help           help for list
   -o, --orgId string   Organization ID
 

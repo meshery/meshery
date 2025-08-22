@@ -1,0 +1,18 @@
+{% if page.training-video %}
+  {% assign video_id = nil %}
+
+  {% if page.training-video contains "youtube.com/watch?v=" %}
+    {% assign video_id = page.training-video | split: "v=" | last | split: "&" | first %}
+  {% elsif page.training-video contains "youtu.be/" %}
+    {% assign video_id = page.training-video | split: "youtu.be/" | last | split: "?" | first %}
+  {% endif %}
+
+  {% if video_id %}
+    <div class="training-video">
+      <iframe width="560" height="315"
+        src="https://www.youtube.com/embed/{{ video_id }}"
+        title="Training Video" frameborder="0" allowfullscreen>
+      </iframe>
+    </div>
+  {% endif %}
+{% endif %}

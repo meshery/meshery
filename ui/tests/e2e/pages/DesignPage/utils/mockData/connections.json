@@ -1,0 +1,29 @@
+{
+    "connections": [
+      {
+        "id": "96f33ba3-3a05-4810-91d2-7fa87cd06c24",
+        "name": "minikube",
+        "type": "platform",
+        "sub_type": "orchestrator",
+        "kind": "kubernetes",
+        "metadata": {
+          "deployment_type": "",
+          "id": "96f33ba3-3a05-4810-91d2-7fa87cd06c24",
+          "kubernetes_server_id": "5a47f66d-392a-47f0-bf9d-ae4409bc526d",
+          "meshery_instance_id": "a1312e10-8c75-4558-8e75-ab1b8791dc39",
+          "name": "minikube",
+          "server": "https://localhost",
+          "version": "v1.31.0"
+        },
+        "status": "connected",
+        "user_id": "00000000-0000-0000-0000-000000000000",
+        "created_at": "2025-08-02T20:51:08.52934-06:00",
+        "updated_at": "2025-08-02T20:51:08.536928-06:00",
+        "deleted_at": null
+      }
+    ],
+    "total_count": 1,
+    "page": 0,
+    "page_size": 1
+  }
+  
