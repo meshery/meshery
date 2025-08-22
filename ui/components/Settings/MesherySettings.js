@@ -14,8 +14,8 @@ import {
   LeftArrowIcon,
   PollIcon,
   DatabaseIcon,
-  FileIcon,
   MendeleyIcon,
+  FileIcon,
   useTheme,
 } from '@sistent/sistent';
 import DashboardMeshModelGraph from '../Dashboard/charts/DashboardMeshModelGraph';
@@ -25,7 +25,6 @@ import MeshAdapterConfigComponent from '../MeshAdapterConfigComponent';
 import PrometheusComponent from '../telemetry/prometheus/PrometheusComponent';
 import _PromptComponent from '../PromptComponent';
 import { iconMedium } from '../../css/icons.styles';
-import MeshModelComponent from './Registry/MeshModelComponent';
 import DatabaseSummary from '../DatabaseSummary';
 import {
   getComponentsDetail,
@@ -36,15 +35,16 @@ import {
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import {
-  REGISTRY,
   METRICS,
   ADAPTERS,
   RESET,
   GRAFANA,
   PROMETHEUS,
   OVERVIEW,
+  REGISTRY,
 } from '@/constants/navigator';
 import { removeDuplicateVersions } from './Registry/helper';
+import MeshModelComponent from './Registry/MeshModelComponent';
 import DefaultError from '../General/error-404';
 import MesheryConfigurationChart from '../Dashboard/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from '../Dashboard/charts/ConnectionCharts';
@@ -298,12 +298,12 @@ const MesherySettings = () => {
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
                   />
                 </CustomTooltip>
+
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
                     icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
                     data-testid="settings-tab-registry"
-                    // tab="registry"
                     value={REGISTRY}
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
                   />
@@ -396,19 +396,10 @@ const MesherySettings = () => {
                 )}
               </TabContainer>
             )}
-            {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
+
+            {tabVal === REGISTRY && (
               <TabContainer>
-                <TabContainer>
-                  <TabContainer>
-                    <MeshModelComponent
-                      modelsCount={state.modelsCount}
-                      componentsCount={state.componentsCount}
-                      relationshipsCount={state.relationshipsCount}
-                      registrantCount={state.registrantCount}
-                      settingsRouter={settingsRouter}
-                    />
-                  </TabContainer>
-                </TabContainer>
+                <MeshModelComponent settingsRouter={settingsRouter} />
               </TabContainer>
             )}
 
