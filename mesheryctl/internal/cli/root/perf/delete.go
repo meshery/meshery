@@ -49,7 +49,7 @@ mesheryctl perf delete any-profile
 // Delete multiple profiles matching a pattern
 mesheryctl perf delete some-profile-XXXXX
 
-// Delete all performance profiles (with confirmation)
+// Delete all performance profiles
 mesheryctl perf delete --all
 	`,
 	Annotations: linkDocPerfDelete,

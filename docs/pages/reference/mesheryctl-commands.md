@@ -451,18 +451,6 @@ Installation, troubleshooting and debugging of Meshery and its adapters
         <td>{{ flag.description }}</td>
       </tr>
   {% endfor %}
-  {% assign subcommand4 = command5.subcommands.delete %}
-      <tr>
-        <td rowspan=3><a href="{{ site.baseurl }}/reference/mesheryctl/perf/delete">{{ subcommand4.name }}</a></td>
-        <td></td>
-        <td>{{ subcommand4.description }}</td>
-      </tr>
-  {% for flag_hash in subcommand4.flags %}{% assign flag = flag_hash[1] %}
-      <tr>
-        <td>{{ flag.name }}</td>
-        <td>{{ flag.description }}</td>
-      </tr>
-  {% endfor %}
 </thead>
 </table>
 
