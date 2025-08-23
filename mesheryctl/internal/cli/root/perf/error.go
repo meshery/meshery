@@ -118,6 +118,8 @@ func formatErrorWithReference() string {
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/profile")
 	case "result":
 		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/result")
+	case "delete":
+		return fmt.Sprintf("\nSee %s for usage details\n", baseURL+"/delete")
 	}
 	return fmt.Sprintf("\nSee %s for usage details\n", baseURL)
 }

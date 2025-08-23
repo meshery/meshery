@@ -108,7 +108,7 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 		} else {
 			index, err := userPrompt("profile", "Enter index of the profile to delete (or 'all' for all matching profiles)", data)
 			if err != nil {
-				return err
+				return ErrorArgumentOverflow()
 			}
 
 			if index == -1 { // User selected 'all'
@@ -224,7 +224,7 @@ func deleteProfileByID(mctlCfg *config.MesheryCtlConfig, profileID, profileName 
 		}
 		return ErrPerformanceProfileDelete(fmt.Errorf("%s", data))
 	}
-	
+
 	log.Debugf("Profile '%s' deleted successfully", profileName)
 	return nil
 }
