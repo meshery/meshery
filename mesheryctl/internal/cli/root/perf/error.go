@@ -25,7 +25,7 @@ const (
 	ErrInvalidJSONFileCode          = "mesheryctl-1052"
 	ErrHealthCheckerCode            = "mesheryctl-1053"
 	ErrPerformanceProfileResultCode = "mesheryctl-1054"
-	ErrPerformanceProfileDeleteCode = "mesheryctl-1055"
+	ErrPerformanceProfileDeleteCode = "mesheryctl-1154"
 )
 
 func ErrReadFilepath(err error) error {
