@@ -136,18 +136,25 @@ func (u *UrlModelGenerator) Generate() error {
 func (c *CsvModelGenerator) Generate() error {
 	utils.Log.Info("Generating model from CSV files")
 
-	modelData, err := os.ReadFile(c.ModelFile)
-	if err != nil {
-		return utils.ErrFileRead(err)
+	var modelData, componentData, relationshipData []byte
+	var err error
+
+	filePaths := []struct {
+		path string
+		data *[]byte
+	}{
+		{c.ModelFile, &modelData},
+		{c.ComponentFile, &componentData},
+		{c.RelationshipFile, &relationshipData},
 	}
-	componentData, err := os.ReadFile(c.ComponentFile)
-	if err != nil {
-		return utils.ErrFileRead(err)
+
+	for _, f := range filePaths {
+		*f.data, err = os.ReadFile(f.path)
+		if err != nil {
+			return utils.ErrFileRead(err)
+		}
 	}
-	relationshipData, err := os.ReadFile(c.RelationshipFile)
-	if err != nil {
-		return utils.ErrFileRead(err)
-	}
+
 	err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !c.SkipRegister)
 	if err != nil {
 		return err
