@@ -30,28 +30,22 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
   const chipStyle = { width };
   const theme = useTheme();
 
+  const STATUS_LEVEL_MAP = Object.fromEntries([
+    ...[CONNECTION_STATES.CONNECTED, CONTROLLER_STATES.DEPLOYED].map((status) => [
+      status.toLowerCase(),
+      'healthy',
+    ]),
+    ...[
+      CONTROLLER_STATES.ENABLED,
+      CONTROLLER_STATES.RUNNING,
+      CONTROLLER_STATES.DEPLOYING,
+      CONNECTION_STATES.REGISTERED,
+    ].map((status) => [status.toLowerCase(), 'partial']),
+  ]);
+
   const getStatusLevel = (status) => {
     if (!status) return 'error';
-
-    const statusLower = status.toLowerCase();
-
-    const fullyHealthyStates = [
-      CONNECTION_STATES.CONNECTED.toLowerCase(),
-      CONNECTION_STATES.REGISTERED.toLowerCase(),
-      CONTROLLER_STATES.DEPLOYED.toLowerCase(),
-    ];
-
-     if (fullyHealthyStates.includes(statusLower)) {
-       return 'healthy';
-     }
-
-    const partialStates = ['enabled', 'running', 'deploying', 'registered'];
-
-    if (partialStates.includes(statusLower)) {
-      return 'partial';
-    }
-
-    return 'error';
+    return STATUS_LEVEL_MAP[status.toLowerCase()] || 'error';
   };
 
   const getStatusColor = (statusLevel) => {

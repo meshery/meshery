@@ -601,9 +601,7 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
     if (k8sConfig?.length > 0) {
       const { mesheryControllerSubscription } = state;
       const ids = getK8sConfigIdsFromK8sConfig(k8sConfig);
-      if (
-        mesheryControllerSubscription
-      ) {
+      if (mesheryControllerSubscription) {
         mesheryControllerSubscription.updateSubscription(
           getConnectionIDsFromContextIds(ids, k8sConfig),
         );

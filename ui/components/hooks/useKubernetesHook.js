@@ -101,8 +101,6 @@ export function useMeshsSyncController() {
           handleInfo(
             `MeshSync is running (${res.controller.version}) but not fully connected to Meshery Broker.`,
           );
-        } else if (res.controller.name === 'MeshSync' && res.controller.status === 'Enabled') {
-          handleInfo('MeshSync is enabled but not fully connected to Meshery Broker');
         } else if (res.controller.name === 'MeshSync' && res.controller.status === 'Deployed') {
           handleInfo('MeshSync is deployed but connection status unclear');
         } else if (
@@ -209,8 +207,6 @@ export const useNatsController = () => {
           handleInfo(
             `Meshery Broker is deployed (${res.controller.version}) but not connected to Meshery Server`,
           );
-        } else if (res.controller.name === 'MesheryBroker' && res.controller.status === 'Enabled') {
-          handleInfo('Meshery Broker is enabled but not fully operational');
         } else {
           handleError(
             'Meshery Broker could not be reached',
