@@ -29,7 +29,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/github/downloads/meshery/meshery/total" /></a>
 <a href="https://scorecard.dev/viewer/?uri=github.com/meshery/meshery" alt="OpenSSF Scorecard">
   <img src="https://api.scorecard.dev/projects/github.com/meshery/meshery/badge" /></a> 
-
+<a href="https://trendshift.io/repositories/888" target="_blank"><img src="https://trendshift.io/api/badge/repositories/888" alt="meshery%2Fmeshery | Trendshift" style="width: 150px;" width="150px" /></a>
 <!-- <a href="https://app.fossa.com/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery?ref=badge_shield" alt="License Scan Report">
   <img src="https://app.fossa.com/api/projects/git%2Bgithub.com%2Fmeshery%2Fmeshery.svg?type=shield"/></a>  
   -->
