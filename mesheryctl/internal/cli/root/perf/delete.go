@@ -81,12 +81,10 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 	// Fetch profiles matching the name
 	profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), profileName, pageSize, pageNumber-1)
 	if err != nil {
-		utils.Log.Error(err)
 		return err
 	}
 
 	if len(profiles) == 0 {
-		utils.Log.Error(ErrNoProfileFound())
 		return ErrNoProfileFound()
 	}
 
@@ -110,7 +108,6 @@ func deletePerformanceProfile(mctlCfg *config.MesheryCtlConfig, profileName stri
 		} else {
 			index, err := userPrompt("profile", "Enter index of the profile to delete (or 'all' for all matching profiles)", data)
 			if err != nil {
-				utils.Log.Error(err)
 				return err
 			}
 
@@ -169,7 +166,6 @@ func deleteAllPerformanceProfiles(mctlCfg *config.MesheryCtlConfig) error {
 	// Fetch all profiles
 	profiles, _, err := fetchPerformanceProfiles(mctlCfg.GetBaseMesheryURL(), "", 0, 0)
 	if err != nil {
-		utils.Log.Error(err)
 		return err
 	}
 
@@ -226,7 +222,7 @@ func deleteProfileByID(mctlCfg *config.MesheryCtlConfig, profileID, profileName 
 		if err != nil {
 			return ErrFailUnmarshal(err)
 		}
-		return fmt.Errorf("failed to delete profile: %s", string(data))
+		return ErrPerformanceProfileDelete(fmt.Errorf("%s", data))
 	}
 	
 	log.Debugf("Profile '%s' deleted successfully", profileName)
