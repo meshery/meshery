@@ -195,17 +195,13 @@ func (r *Resolver) resyncCluster(ctx context.Context, provider models.Provider, 
 			)
 		}
 
-		k8sCtx := func(id string, ctxts []*models.K8sContext) *models.K8sContext {
-			for _, v := range ctxts {
-				if v == nil {
-					continue
-				}
-				if v.ID == id {
-					return v
-				}
+		var k8sCtx *models.K8sContext
+		for _, v := range k8sCtxs {
+			if v != nil && v.ID == k8scontextID {
+				k8sCtx = v
+				break
 			}
-			return nil
-		}(k8scontextID, k8sCtxs)
+		}
 
 		if k8sCtx == nil {
 			return "", ErrResyncCluster(
