@@ -180,7 +180,10 @@ func (l *DefaultLocalProvider) DeleteEnvironment(_ *http.Request, environmentID 
 }
 
 func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+       orgId, err := uuid.FromString(environmentPayload.OrgId)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
 	environment := &environment.Environment{
 		CreatedAt:      time.Now(),
 		Description:    environmentPayload.Description,
@@ -193,8 +196,14 @@ func (l *DefaultLocalProvider) SaveEnvironment(_ *http.Request, environmentPaylo
 }
 
 func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPayload *environment.EnvironmentPayload, environmentID string) (*environment.Environment, error) {
-	id, _ := uuid.FromString(environmentID)
-	orgId, _ := uuid.FromString(environmentPayload.OrgId)
+       id, err := uuid.FromString(environmentID)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
+       orgId, err := uuid.FromString(environmentPayload.OrgId)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
 	environment := &environment.Environment{
 		ID:             id,
 		CreatedAt:      time.Now(),
@@ -208,20 +217,35 @@ func (l *DefaultLocalProvider) UpdateEnvironment(_ *http.Request, environmentPay
 }
 
 func (l *DefaultLocalProvider) AddConnectionToEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
-	return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
+       envId, err := uuid.FromString(environmentID)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
+       conId, err := uuid.FromString(connectionID)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
+       return l.EnvironmentPersister.AddConnectionToEnvironment(envId, conId)
 }
 
 func (l *DefaultLocalProvider) RemoveConnectionFromEnvironment(_ *http.Request, environmentID string, connectionID string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	conId, _ := uuid.FromString(connectionID)
-	return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
+       envId, err := uuid.FromString(environmentID)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
+       conId, err := uuid.FromString(connectionID)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
+       return l.EnvironmentPersister.DeleteConnectionFromEnvironment(envId, conId)
 }
 
 func (l *DefaultLocalProvider) GetConnectionsOfEnvironment(_ *http.Request, environmentID, page, pageSize, search, order, filter string) ([]byte, error) {
-	envId, _ := uuid.FromString(environmentID)
-	return l.EnvironmentPersister.GetEnvironmentConnections(envId, search, order, page, pageSize, filter)
+       envId, err := uuid.FromString(environmentID)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
+       return l.EnvironmentPersister.GetEnvironmentConnections(envId, search, order, page, pageSize, filter)
 }
 
 // GetSession - returns the session
@@ -426,10 +450,10 @@ func (l *DefaultLocalProvider) GetResult(_ string, resultID uuid.UUID) (*Meshery
 
 // PublishResults - publishes results to the provider backend synchronously
 func (l *DefaultLocalProvider) PublishResults(req *http.Request, result *MesheryResult, profileID string) (string, error) {
-	profileUUID, err := uuid.FromString(profileID)
-	if err != nil {
-		return "", ErrPerfID(err)
-	}
+       profileUUID, err := uuid.FromString(profileID)
+       if err != nil {
+	       return "", ErrInvalidUUID(err)
+       }
 
 	result.PerformanceProfile = &profileUUID
 	data, err := json.Marshal(result)
@@ -617,11 +641,11 @@ func (l *DefaultLocalProvider) SMPTestConfigStore(_ *http.Request, perfConfig *S
 
 // SMPTestConfigGet gets the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigGet(_ *http.Request, testUUID string) (*SMP.PerformanceTestConfig, error) {
-	uid, err := uuid.FromString(testUUID)
-	if err != nil {
-		return nil, ErrGenerateUUID(err)
-	}
-	return l.TestProfilesPersister.GetTestConfig(uid)
+       uid, err := uuid.FromString(testUUID)
+       if err != nil {
+	       return nil, ErrInvalidUUID(err)
+       }
+       return l.TestProfilesPersister.GetTestConfig(uid)
 }
 
 // SMPTestConfigFetch gets all the PerformanceTestConfigs from the local datastore
@@ -639,11 +663,11 @@ func (l *DefaultLocalProvider) SMPTestConfigFetch(_ *http.Request, page, pageSiz
 
 // SMPTestConfigDelete deletes the given PerformanceTestConfig from the local datastore
 func (l *DefaultLocalProvider) SMPTestConfigDelete(_ *http.Request, testUUID string) error {
-	uid, err := uuid.FromString(testUUID)
-	if err != nil {
-		return ErrGenerateUUID(err)
-	}
-	return l.TestProfilesPersister.DeleteTestConfig(uid)
+       uid, err := uuid.FromString(testUUID)
+       if err != nil {
+	       return ErrInvalidUUID(err)
+       }
+       return l.TestProfilesPersister.DeleteTestConfig(uid)
 }
 
 // SaveMesheryPatternSourceContent nothing needs to be done as pattern is saved with source content for local provider
@@ -1444,7 +1468,10 @@ func (l *DefaultLocalProvider) GetUsersKeys(_, _, _, search, order, updatedAfter
 
 // GetKey returns the key for the given keyID
 func (l *DefaultLocalProvider) GetUsersKey(_ *http.Request, keyID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(keyID)
+	id, err := uuid.FromString(keyID)
+	if err != nil {
+		return nil, err
+	}
 	return l.KeyPersister.GetUsersKey(id)
 }
 
@@ -1459,17 +1486,26 @@ func (l *DefaultLocalProvider) GetWorkspaces(_, page, pageSize, search, order, f
 }
 
 func (l *DefaultLocalProvider) GetWorkspaceByID(_ *http.Request, workspaceID string, _ string) ([]byte, error) {
-	id := uuid.FromStringOrNil(workspaceID)
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil,err
+	}
 	return l.WorkspacePersister.GetWorkspaceByID(id)
 }
 
 func (l *DefaultLocalProvider) DeleteWorkspace(_ *http.Request, workspaceID string) ([]byte, error) {
-	id := uuid.FromStringOrNil(workspaceID)
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
 	return l.WorkspacePersister.DeleteWorkspaceByID(id)
 }
 
 func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, _ string, _ bool) ([]byte, error) {
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	orgId, err := uuid.FromString(workspacePayload.OrganizationID)
+	if err != nil {
+		return nil, err
+	}
 	workspace := &workspace.Workspace{
 		CreatedAt:      time.Now(),
 		Description:    workspacePayload.Description,
@@ -1482,8 +1518,14 @@ func (l *DefaultLocalProvider) SaveWorkspace(_ *http.Request, workspacePayload *
 }
 
 func (l *DefaultLocalProvider) UpdateWorkspace(_ *http.Request, workspacePayload *workspace.WorkspacePayload, workspaceID string) (*workspace.Workspace, error) {
-	id, _ := uuid.FromString(workspaceID)
-	orgId, _ := uuid.FromString(workspacePayload.OrganizationID)
+	id, err := uuid.FromString(workspaceID)
+	if err != nil {
+		return nil, err
+	}
+	orgId, err := uuid.FromString(workspacePayload.OrganizationID)
+	if err != nil {
+		return nil, err
+	}
 	workspace := &workspace.Workspace{
 		ID:             id,
 		CreatedAt:      time.Now(),
