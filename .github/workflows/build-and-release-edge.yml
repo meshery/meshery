@@ -98,7 +98,7 @@ jobs:
           commit_message: "[Docs] Updated GraphQL API Documentation"
 
   docker-build-push:
-    name: Docker build and push
+    name: Docker build, push & sign
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
     env:
       RELEASE_CHANNEL: "edge"
@@ -116,6 +116,11 @@ jobs:
       - name: Fetch latest tag
         run: |
           echo "LATEST_TAG=$(curl --silent "https://api.github.com/repos/meshery/meshery/releases" | jq ' .[] | ."tag_name"' | sed -n 1p$'\n' | tr -d '"')" >> $GITHUB_ENV
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v2.2.4'
+
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -136,7 +141,21 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
-
+        
+      - name: Sign Docker images with Cosign
+        run: |
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:edge-latest
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          cosign sign --keyless ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+      - name: Verify Docker signatures
+        run: |
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:edge-latest
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          cosign verify --keyless ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+        env:
+          COSIGN_EXPERIMENTAL: "true"
   update-staging-playground:
     needs:
       - docker-build-push
