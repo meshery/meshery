@@ -175,7 +175,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                         <TooltipWrappedConnectionChip
                           tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
                           title={'MeshSync'}
-                          status={meshSyncState?.toLowerCase()}
+                          status={meshSyncState}
                           handlePing={handleMeshSyncClick}
                           iconSrc="/static/img/meshsync.svg"
                           width="9rem"
@@ -189,7 +189,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                         <TooltipWrappedConnectionChip
                           tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
                           title={'NATS'}
-                          status={natsState?.toLowerCase()}
+                          status={natsState}
                           handlePing={() => handleNATSClick()}
                           iconSrc="/static/img/nats-icon-color.svg"
                           width="9rem"
@@ -234,12 +234,12 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                   <List>
                     <ListItem>
                       <StyledListItemText
-                        primary="NATS State"
+                        primary="Broker State"
                         secondary={formatToTitleCase(natsState) || 'Not Connected'}
                       />
                     </ListItem>
                     <ListItem>
-                      <StyledListItemText primary="NATS Version" secondary={natsVersion} />
+                      <StyledListItemText primary="Broker Version" secondary={natsVersion} />
                     </ListItem>
                   </List>
                 </Grid2>
