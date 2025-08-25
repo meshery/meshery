@@ -325,20 +325,20 @@ func (h *Handler) EventStreamHandler(w http.ResponseWriter, req *http.Request, p
 
 	var err error
 
-	localMeshAdapters := map[string]*meshes.MeshClient{}
+	localMeshAdapters := map[string]*meshes.AdapterClient{}
 	localMeshAdaptersLock := &sync.Mutex{}
 
 	respChan := make(chan []byte, 100)
 
-	newAdaptersChan := make(chan *meshes.MeshClient)
+	newAdaptersChan := make(chan *meshes.AdapterClient)
 
 	go func() {
-		for mClient := range newAdaptersChan {
+		for aClient := range newAdaptersChan {
 			h.log.Debug("received a new mesh client, listening for events")
-			go func(mClient *meshes.MeshClient) {
-				listenForAdapterEvents(req.Context(), mClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID)
-				_ = mClient.Close()
-			}(mClient)
+			go func(aClient *meshes.AdapterClient) {
+				listenForAdapterEvents(req.Context(), aClient, respChan, h.log, p, h.config.EventBroadcaster, *h.SystemID, user.ID)
+				_ = aClient.Close()
+			}(aClient)
 		}
 
 		h.log.Debug("new adapters channel closed")
@@ -376,21 +376,21 @@ STOP:
 			} else {
 				localMeshAdaptersLock.Lock()
 				for _, ma := range meshAdapters {
-					mClient, ok := localMeshAdapters[ma.Location]
+					aClient, ok := localMeshAdapters[ma.Location]
 					if !ok {
-						mClient, err = meshes.CreateClient(req.Context(), ma.Location)
+						aClient, err = meshes.CreateClient(req.Context(), ma.Location)
 						if err == nil {
-							localMeshAdapters[ma.Location] = mClient
+							localMeshAdapters[ma.Location] = aClient
 						}
 					}
-					if mClient != nil {
-						_, err = mClient.MClient.MeshName(req.Context(), &meshes.MeshNameRequest{})
+					if aClient != nil {
+						_, err = aClient.AClient.AdapterName(req.Context(), &meshes.AdapterNameRequest{})
 						if err != nil {
-							_ = mClient.Close()
+							_ = aClient.Close()
 							delete(localMeshAdapters, ma.Location)
 						} else {
 							if !ok { // reusing the map check, only when ok is false a new entry will be added
-								newAdaptersChan <- mClient
+								newAdaptersChan <- aClient
 							}
 						}
 					}
@@ -425,10 +425,10 @@ func listenForCoreEvents(ctx context.Context, eb *_events.EventStreamer, resp ch
 		}
 	}
 }
-func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
+func listenForAdapterEvents(ctx context.Context, aClient *meshes.AdapterClient, respChan chan []byte, log logger.Handler, p models.Provider, ec *models.Broadcast, systemID uuid.UUID, userID string) {
 	log.Debug("Received a stream client...")
 	userUUID := uuid.FromStringOrNil(userID)
-	streamClient, err := mClient.MClient.StreamEvents(ctx, &meshes.EventsRequest{})
+	streamClient, err := aClient.AClient.StreamEvents(ctx, &meshes.EventsRequest{})
 	if err != nil {
 		log.Error(ErrStreamEvents(err))
 		// errChan <- err
@@ -476,14 +476,14 @@ func listenForAdapterEvents(ctx context.Context, mClient *meshes.MeshClient, res
 	}
 }
 
-func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapters map[string]*meshes.MeshClient) map[string]*meshes.MeshClient {
+func closeAdapterConnections(localMeshAdaptersLock *sync.Mutex, localMeshAdapters map[string]*meshes.AdapterClient) map[string]*meshes.AdapterClient {
 	localMeshAdaptersLock.Lock()
 	for _, mcl := range localMeshAdapters {
 		_ = mcl.Close()
 	}
 	localMeshAdaptersLock.Unlock()
 
-	return map[string]*meshes.MeshClient{}
+	return map[string]*meshes.AdapterClient{}
 }
 
 // swagger:route POST /api/events EventsAPI idClientEventHandler
