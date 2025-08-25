@@ -1028,8 +1028,8 @@ github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0 h1:p104kn46Q8Wd
 github.com/go-task/slim-sprig v0.0.0-20210107165309-348f09dbbbc0/go.mod h1:fyg7847qk6SyHyPtNmDHnmrv/HOrqktSC+C9fM+CJOE=
 github.com/go-task/slim-sprig/v3 v3.0.0 h1:sUs3vkvUymDpBKi3qH1YSqBQk9+9D/8M2mN1vB6EwHI=
 github.com/go-task/slim-sprig/v3 v3.0.0/go.mod h1:W848ghGpv3Qj3dhTPRyJypKRiqCdHZiAzKg9hl15HA8=
-github.com/go-viper/mapstructure/v2 v2.3.0 h1:27XbWsHIqhbdR5TIC911OfYvgSaW93HM+dX7970Q7jk=
-github.com/go-viper/mapstructure/v2 v2.3.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
+github.com/go-viper/mapstructure/v2 v2.4.0 h1:EBsztssimR/CONLSZZ04E8qAkxNYq4Qp9LvH92wZUgs=
+github.com/go-viper/mapstructure/v2 v2.4.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
 github.com/gobwas/glob v0.2.3 h1:A4xDbljILXROh+kObIiy5kIaPYD8e96x1tgBhUI5J+Y=
 github.com/gobwas/glob v0.2.3/go.mod h1:d3Ez4x06l9bZtSvzIay5+Yzi0fmZzPgnTbPcKjJAkT8=
 github.com/gobwas/httphead v0.1.0 h1:exrUm0f4YX0L7EBwZHuCF4GDp8aJfVeBrlLQrs6NqWU=
@@ -1342,8 +1342,8 @@ github.com/maxatome/go-testdeep v1.14.0 h1:rRlLv1+kI8eOI3OaBXZwb3O7xY3exRzdW5QyX
 github.com/maxatome/go-testdeep v1.14.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
 github.com/meshery/meshery-operator v0.8.7 h1:SsiyDiPEcibYtoHlYyziwvCcBVfZOCJxq4HgMPLZKMM=
 github.com/meshery/meshery-operator v0.8.7/go.mod h1:hQEtFKKa5Fr/Mskk6bV5ip3bQ0+3F0u1voYS3XisBp4=
-github.com/meshery/meshkit v0.8.37 h1:lg4lH4gyhI6GYw0uLGzCq1oAnychykQfW6qfOEFgKnM=
-github.com/meshery/meshkit v0.8.37/go.mod h1:RGZmBTRNMXQs2rdJNF5m7tlQRvOBn/9l5hAxNq8bFA0=
+github.com/meshery/meshkit v0.8.39 h1:zDsZpyKedsRjuNwPyXvwyrHcuvIv6WtbH91BDF2FSv4=
+github.com/meshery/meshkit v0.8.39/go.mod h1:RGZmBTRNMXQs2rdJNF5m7tlQRvOBn/9l5hAxNq8bFA0=
 github.com/meshery/meshsync v0.8.20 h1:iuTYXs3AJBrYfljcEjoFkNYAn0IB0Gpi8j2uj5QLR1I=
 github.com/meshery/meshsync v0.8.20/go.mod h1:6D/aCTyK8+2VJNFnpJz1IdwvPsdV3ETEJo12VRKfY6I=
 github.com/meshery/schemas v0.8.51 h1:u0eYt8w1tn149by+RuKQX29ELkc57EG0IsUXr+4hzbc=
