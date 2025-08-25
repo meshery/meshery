@@ -1,17 +1,17 @@
 ### END-TO-END TESTS
 
-- Testing started at: August 20th 2025, 11:50:22 pm
+- Testing started at: August 24th 2025, 11:49:34 pm
 
 **📦 Test Result Summary**
 
-- ✅ 86 passed
-- ❌ 1 failed
+- ✅ 87 passed
+- ❌ 0 failed
 - ⚠️ 0 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 7 minutes and 57 seconds_
+⌛ _Duration: 6 minutes and 51 seconds_
 
-**Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👍 All tests passed.
 
 
 
@@ -21,7 +21,6 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
-| 1 | chromium-local-provider | deploys a published design to a connected cluster |  | ❌ |
 
 </div>
 </details>

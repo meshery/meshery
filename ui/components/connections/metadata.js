@@ -16,7 +16,7 @@ import useKubernetesHook, {
   useNatsController,
 } from '../hooks/useKubernetesHook';
 import { TooltipWrappedConnectionChip } from './ConnectionChip';
-import { CONTROLLER_STATES } from '../../utils/Enum';
+import { CONTROLLER_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
 
 import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } from './styles';
@@ -81,6 +81,8 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
 
   const { operatorState, meshSyncState, natsState, operatorVersion, meshSyncVersion, natsVersion } =
     getControllerStatesByConnectionID(connection.id);
+
+  const isEmbeddedMode = metadata?.meshsync_deployment_mode === MESHSYNC_DEPLOYMENT_TYPE.EMBEDDED;
 
   return (
     <Grid2 container spacing={1} sx={{ textTransform: 'none' }} size="grow">
@@ -147,94 +149,109 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
       </Grid2>
       <Grid2 size={{ xs: 12, md: 6 }}>
         <ColumnWrapper>
-          <Grid2 container spacing={1} size="grow">
-            <OperationButton size={{ xs: 12, md: 4 }}>
-              <List>
-                <ListItem>
-                  <TooltipWrappedConnectionChip
-                    tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
-                    title={'Operator'}
-                    disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
-                    status={operatorState}
-                    handlePing={handleOperatorClick}
-                    iconSrc="/static/img/meshery-operator.svg"
-                    width="9rem"
-                  />
-                </ListItem>
-              </List>
-            </OperationButton>
+          {!isEmbeddedMode && (
+            <Grid2 container spacing={1} size="grow">
+              <OperationButton size={{ xs: 12, md: 4 }}>
+                <List>
+                  <ListItem>
+                    <TooltipWrappedConnectionChip
+                      tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
+                      title={'Operator'}
+                      disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
+                      status={operatorState}
+                      handlePing={handleOperatorClick}
+                      iconSrc="/static/img/meshery-operator.svg"
+                      width="9rem"
+                    />
+                  </ListItem>
+                </List>
+              </OperationButton>
 
-            {(meshSyncState || natsState) && (
+              {(meshSyncState || natsState) && (
+                <>
+                  <Grid2 size={{ xs: 12, md: 4 }}>
+                    <List>
+                      <ListItem>
+                        <TooltipWrappedConnectionChip
+                          tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
+                          title={'MeshSync'}
+                          status={meshSyncState?.toLowerCase()}
+                          handlePing={handleMeshSyncClick}
+                          iconSrc="/static/img/meshsync.svg"
+                          width="9rem"
+                        />
+                      </ListItem>
+                    </List>
+                  </Grid2>
+                  <Grid2 size={{ xs: 12, md: 4 }}>
+                    <List>
+                      <ListItem>
+                        <TooltipWrappedConnectionChip
+                          tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
+                          title={'NATS'}
+                          status={natsState?.toLowerCase()}
+                          handlePing={() => handleNATSClick()}
+                          iconSrc="/static/img/nats-icon-color.svg"
+                          width="9rem"
+                        />
+                      </ListItem>
+                    </List>
+                  </Grid2>
+                </>
+              )}
+            </Grid2>
+          )}
+          <ContentContainer container spacing={1} size="grow">
+            {!isEmbeddedMode && (
               <>
-                <Grid2 size={{ xs: 12, md: 4 }}>
+                <Grid2 size={{ xs: 12, md: 5 }}>
                   <List>
                     <ListItem>
-                      <TooltipWrappedConnectionChip
-                        tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
-                        title={'MeshSync'}
-                        status={meshSyncState?.toLowerCase()}
-                        handlePing={handleMeshSyncClick}
-                        iconSrc="/static/img/meshsync.svg"
-                        width="9rem"
+                      <StyledListItemText
+                        primary="Operator State"
+                        secondary={formatToTitleCase(operatorState)}
                       />
+                    </ListItem>
+                    <ListItem>
+                      <StyledListItemText primary="Operator Version" secondary={operatorVersion} />
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
+                <Grid2 size={{ xs: 12, md: 5 }}>
                   <List>
                     <ListItem>
-                      <TooltipWrappedConnectionChip
-                        tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
-                        title={'NATS'}
-                        status={natsState?.toLowerCase()}
-                        handlePing={() => handleNATSClick()}
-                        iconSrc="/static/img/nats-icon-color.svg"
-                        width="9rem"
+                      <StyledListItemText
+                        primary="MeshSync State"
+                        secondary={formatToTitleCase(meshSyncState) || 'Undeployed'}
                       />
+                    </ListItem>
+                    <ListItem>
+                      <StyledListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
+                    </ListItem>
+                  </List>
+                </Grid2>
+                <Grid2 size={{ xs: 12, md: 5 }}>
+                  <List>
+                    <ListItem>
+                      <StyledListItemText
+                        primary="NATS State"
+                        secondary={formatToTitleCase(natsState) || 'Not Connected'}
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <StyledListItemText primary="NATS Version" secondary={natsVersion} />
                     </ListItem>
                   </List>
                 </Grid2>
               </>
             )}
-          </Grid2>
-
-          <ContentContainer container spacing={1} size="grow">
-            <Grid2 size={{ xs: 12, md: 5 }}>
+            <Grid2 size={{ xs: 12, md: 8 }}>
               <List>
                 <ListItem>
                   <StyledListItemText
-                    primary="Operator State"
-                    secondary={formatToTitleCase(operatorState)}
+                    primary="Deployment Mode"
+                    secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
                   />
-                </ListItem>
-                <ListItem>
-                  <StyledListItemText primary="Operator Version" secondary={operatorVersion} />
-                </ListItem>
-              </List>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 5 }}>
-              <List>
-                <ListItem>
-                  <StyledListItemText
-                    primary="MeshSync State"
-                    secondary={formatToTitleCase(meshSyncState) || 'Undeployed'}
-                  />
-                </ListItem>
-                <ListItem>
-                  <StyledListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
-                </ListItem>
-              </List>
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 5 }}>
-              <List>
-                <ListItem>
-                  <StyledListItemText
-                    primary="NATS State"
-                    secondary={formatToTitleCase(natsState) || 'Not Connected'}
-                  />
-                </ListItem>
-                <ListItem>
-                  <StyledListItemText primary="NATS Version" secondary={natsVersion} />
                 </ListItem>
               </List>
             </Grid2>

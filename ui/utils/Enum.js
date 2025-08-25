@@ -95,6 +95,11 @@ export const CONNECTION_KINDS = {
   GITHUB: 'github',
 };
 
+export const MESHSYNC_DEPLOYMENT_TYPE = {
+  OPERATOR: 'operator',
+  EMBEDDED: 'embedded',
+};
+
 export const MESHSYNC_STATES = {
   DISCOVERED: 'discovered',
   REGISTER: 'register',
