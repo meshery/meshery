@@ -587,11 +587,11 @@ function MesheryPatterns({
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
-                                       Below is a graphql query that fetches the catalog patterns that is published so
-                                       when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
-                                       which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
-                                       Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
-                                      */
+                                        Below is a graphql query that fetches the catalog patterns that is published so
+                                        when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
+                                        which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
+                                        Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
+                                        */
     // const fetchCatalogPatterns = fetchCatalogPattern({
     //   selector: {
     //     search: '',
@@ -1052,8 +1052,16 @@ function MesheryPatterns({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ ...column }) {
-          return <DefaultTableCell columnData={column} />;
+        customHeadRender: function CustomHead(props, sortColumn, columnMeta) {
+          const { index, ...column } = props;
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
         },
       },
     },
@@ -1152,12 +1160,12 @@ function MesheryPatterns({
 
             /* Publish action can be done through Info modal so we might not need separate publish action */
             /*{
-              label="Publish",
-              icon: <PublicIcon fill="#F91313" data-cy="publish-button" />,
-              onClick: (e) => handlePublishModal(e, rowData)(),
-              disabled: !CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject),
-              condition: canPublishPattern && visibility !== VISIBILITY.PUBLISHED,
-            },*/
+                label="Publish",
+                icon: <PublicIcon fill="#F91313" data-cy="publish-button" />,
+                onClick: (e) => handlePublishModal(e, rowData)(),
+                disabled: !CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject),
+                condition: canPublishPattern && visibility !== VISIBILITY.PUBLISHED,
+              },*/
 
             {
               label: 'Unpublish',
@@ -1511,12 +1519,12 @@ function MesheryPatterns({
                   {!selectedPattern.show && (
                     <div style={{ display: 'flex' }}>
                       {/* <StyledCatalogFilter>
-                      <CatalogFilter
-                        catalogVisibility={catalogVisibility}
-                        handleCatalogVisibility={handleCatalogVisibility}
-                        classes={classes}
-                      />
-                      </StyledCatalogFilter>*/}
+                        <CatalogFilter
+                          catalogVisibility={catalogVisibility}
+                          handleCatalogVisibility={handleCatalogVisibility}
+                          classes={classes}
+                        />
+                        </StyledCatalogFilter>*/}
                     </div>
                   )}
                 </CreateButton>
