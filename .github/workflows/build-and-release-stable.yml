@@ -5,7 +5,6 @@ on:
       - "v*"
 
 jobs:
-
   update-rest-api-docs:
     name: Update REST API Documentation
     if: github.repository == 'meshery/meshery'
@@ -30,10 +29,10 @@ jobs:
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
         run: make swagger-docs-build
-        
+
       - name: Pull changes from remote
         run: git pull origin master
-        
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -71,10 +70,10 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
-          
+
       - name: Pull changes from remote
         run: git pull origin master
-        
+
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -128,7 +127,7 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:playground-latest
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
-     
+
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
       - name: Sign Docker images (keyless)
@@ -193,13 +192,14 @@ jobs:
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
-    call-dde-release-workflow:
+  call-dde-release-workflow:
     needs:
       - build
       - ctlrelease
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
+
   call-helm-chart-releaser:
     needs:
       - build
@@ -211,14 +211,16 @@ jobs:
   #   name: Deploy Meshery Playground
   #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
   #   secrets: inherit
+
   deploy-delay:
-    name: Playground Deploy Delay
-    runs-on: ubuntu-24.04
     needs:
       - build
+    name: Playground Deploy Delay
+    runs-on: ubuntu-24.04
     steps:
-      - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
+      - name: Delay Playground Deployment
         run: sleep 780
+
   email-meshery-release-notes-workflow:
     needs:
       - build
@@ -234,6 +236,7 @@ jobs:
     with:
       release-tag: ${{github.ref_name}}
       to: developers@meshery.io
+
   call-cncf-playground-rollout:
     needs: [build, deploy-delay]
     name: Deploy CNCF Playground
@@ -241,21 +244,30 @@ jobs:
     with:
       image: meshery/meshery:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
+
   email-on-failure:
-    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
+    needs:
+      [
+        update-rest-api-docs,
+        update-graphql-docs,
+        build,
+        ctlrelease,
+        call-dde-release-workflow,
+        call-helm-chart-releaser,
+        email-meshery-release-notes-workflow,
+        call-cncf-playground-rollout,
+      ]
     if: ${{ failure() }}
     runs-on: ubuntu-24.04
     steps:
-      - name: Find failed jobs.
+      - name: Find failed jobs
         run: |
           curl "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.conclusion == "failure") | "\(.name): \(.steps[] | select(.conclusion == "failure") | .name)\n\(.html_url)\n"' >> output.txt
-          # Save multi-line environment variables by using the delimiters syntex.
           echo "EMAIL_BODY<<EOF" >> $GITHUB_ENV
           echo "$(cat ./output.txt)" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
       - name: Failed jobs summary
-        run: |
-          echo "${{ env.EMAIL_BODY }}"
+        run: echo "${{ env.EMAIL_BODY }}"
       - name: Send Email Notification
         if: env.EMAIL_BODY != ''
         uses: dawidd6/action-send-mail@v4
