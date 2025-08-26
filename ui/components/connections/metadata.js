@@ -149,63 +149,22 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
       </Grid2>
       <Grid2 size={{ xs: 12, md: 6 }}>
         <ColumnWrapper>
-          {!isEmbeddedMode && (
-            <Grid2 container spacing={1} size="grow">
-              <OperationButton size={{ xs: 12, md: 4 }}>
-                <List>
-                  <ListItem>
-                    <TooltipWrappedConnectionChip
-                      tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
-                      title={'Operator'}
-                      disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
-                      status={operatorState}
-                      handlePing={handleOperatorClick}
-                      iconSrc="/static/img/meshery-operator.svg"
-                      width="9rem"
-                    />
-                  </ListItem>
-                </List>
-              </OperationButton>
-
-              {(meshSyncState || natsState) && (
-                <>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
-                    <List>
-                      <ListItem>
-                        <TooltipWrappedConnectionChip
-                          tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
-                          title={'MeshSync'}
-                          status={meshSyncState}
-                          handlePing={handleMeshSyncClick}
-                          iconSrc="/static/img/meshsync.svg"
-                          width="9rem"
-                        />
-                      </ListItem>
-                    </List>
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, md: 4 }}>
-                    <List>
-                      <ListItem>
-                        <TooltipWrappedConnectionChip
-                          tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
-                          title={'NATS'}
-                          status={natsState}
-                          handlePing={() => handleNATSClick()}
-                          iconSrc="/static/img/nats-icon-color.svg"
-                          width="9rem"
-                        />
-                      </ListItem>
-                    </List>
-                  </Grid2>
-                </>
-              )}
-            </Grid2>
-          )}
-          <ContentContainer container spacing={1} size="grow">
+          <ContentContainer container spacing={16} size="grow">
             {!isEmbeddedMode && (
               <>
-                <Grid2 size={{ xs: 12, md: 5 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
+                    <ListItem>
+                      <TooltipWrappedConnectionChip
+                        tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
+                        title={'Operator'}
+                        disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
+                        status={operatorState}
+                        handlePing={handleOperatorClick}
+                        iconSrc="/static/img/meshery-operator.svg"
+                        width="9rem"
+                      />
+                    </ListItem>
                     <ListItem>
                       <StyledListItemText
                         primary="Operator State"
@@ -217,8 +176,20 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 5 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
+                    {(meshSyncState || natsState) && (
+                      <ListItem>
+                        <TooltipWrappedConnectionChip
+                          tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
+                          title={'MeshSync'}
+                          status={meshSyncState}
+                          handlePing={handleMeshSyncClick}
+                          iconSrc="/static/img/meshsync.svg"
+                          width="9rem"
+                        />
+                      </ListItem>
+                    )}
                     <ListItem>
                       <StyledListItemText
                         primary="MeshSync State"
@@ -230,8 +201,22 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 5 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
+                    {(meshSyncState || natsState) && (
+                      <ListItem>
+                        <TooltipWrappedConnectionChip
+                          tooltip={
+                            natsState === 'Not Active' ? 'Not Available' : `Reconnect BROKER`
+                          }
+                          title={'BROKER'}
+                          status={natsState}
+                          handlePing={() => handleNATSClick()}
+                          iconSrc="/static/img/nats-icon-color.svg"
+                          width="9rem"
+                        />
+                      </ListItem>
+                    )}
                     <ListItem>
                       <StyledListItemText
                         primary="Broker State"
@@ -245,12 +230,22 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 </Grid2>
               </>
             )}
-            <Grid2 size={{ xs: 12, md: 8 }}>
+            <Grid2 size={{ xs: 12, md: 12 }}>
               <List>
                 <ListItem>
                   <StyledListItemText
                     primary="Deployment Mode"
                     secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
+                  />
+                </ListItem>
+                <ListItem>
+                  <StyledListItemText
+                    primary="Deployment Type"
+                    secondary={
+                      metadata.deployment_type === ''
+                        ? 'Manual (Kubeconfig)'
+                        : formatToTitleCase(metadata?.deployment_type)
+                    }
                   />
                 </ListItem>
               </List>
