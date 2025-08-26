@@ -188,7 +188,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       <ListItem>
                         <TooltipWrappedConnectionChip
                           tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
-                          title={'NATS'}
+                          title={'BROKER'}
                           status={natsState}
                           handlePing={() => handleNATSClick()}
                           iconSrc="/static/img/nats-icon-color.svg"
