@@ -1,5 +1,4 @@
 name: Meshery CLI Build and Releaser (stable)
-
 on:
   workflow_dispatch:
     inputs:
@@ -10,13 +9,8 @@ on:
 
 jobs:
   ctlrelease:
-    name: Mesheryctl Build & Release
-    if: github.repository == 'meshery/meshery' &&
-      github.event.inputs.release-tag &&
-      !contains(github.event.inputs.release-tag, 'patch') &&
-      !contains(github.event.inputs.release-tag, 'alpha') &&
-      !contains(github.event.inputs.release-tag, 'beta') &&
-      !contains(github.event.inputs.release-tag, 'rc')
+    name: Mesheryctl build & release
+    if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
 
     steps:
@@ -24,48 +18,51 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
       - name: Set up Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@master
         with:
           go-version: "1.24"
-
-      - name: Goreleaser with tag
+      - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
+          TAG: ${{inputs.release-tag}}
         with:
-          version: "v2.28.0" # pinned version for stability
-          args: release --clean --skip-validate --tag ${{ github.event.inputs.release-tag }} -f .github/.goreleaser.yml
+          version: 2
+          args: release --clean --skip=validate -f .github/.goreleaser.yml
 
-      # ---------------- Cosign signing for binaries ----------------
+        # ---------------- Cosign signing step----------------
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
-        with:
-          cosign-release: "v2.2.3"
 
-      - name: Sign Mesheryctl binaries
+      - name: Sign mesheryctl artifacts (keyless)
         run: |
-          set -e
-          for file in ./dist/mesheryctl_*.tar.gz; do
-            echo "Signing $file"
-            cosign sign $file --key ${{ secrets.COSIGN_PRIVATE_KEY }} --password ${{ secrets.COSIGN_PASSWORD }}
+          for artifact in dist/*; do
+            cosign sign-blob \
+              --yes \
+              --bundle "${artifact}.sigstore" \
+              --output-signature "${artifact}.sig" \
+              --output-certificate "${artifact}.pem" \
+              "$artifact"
           done
 
-      - name: Verify Mesheryctl signatures
+      - name: Verify mesheryctl artifacts
         run: |
-          set -e
-          for file in ./dist/mesheryctl_*.tar.gz; do
-            echo "Verifying $file"
-            cosign verify $file --key ${{ secrets.COSIGN_PUBLIC_KEY }}
+          for artifact in dist/*; do
+            cosign verify-blob \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              --signature "${artifact}.sig" \
+              --certificate "${artifact}.pem" \
+              "$artifact"
           done
-      # ------------------------------------------------------------
-      - name: Bump Homebrew-core formula
+
+        # ------------------------------------------------------------
+      - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
-          tag-name: ${{ github.event.inputs.release-tag }}
         env:
           COMMITTER_TOKEN: ${{ secrets.MESHERY_CI }}
