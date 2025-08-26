@@ -1,8 +1,9 @@
 name: Meshery Build and Releaser (edge)
+
 on:
   workflow_dispatch:
     inputs:
-     branch:
+      branch:
         description: "Branch to deploy in the staging environment. If not provided, master branch of the repository will be used."
         default: "master"
         type: string
@@ -35,16 +36,12 @@ jobs:
           version: v0.30.5
       - name: swagger-spec
         if: steps.changes.outputs.modified == 'true'
-        run: |
-          make swagger-build
+        run: make swagger-build
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
-        run: |
-          make swagger-docs-build
-          
+        run: make swagger-docs-build
       - name: Pull changes from remote
         run: git pull origin master
-        
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -60,8 +57,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
           ref: ${{ inputs.branch }}
@@ -83,10 +79,8 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
-          
       - name: Pull changes from remote
         run: git pull origin master
-        
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -138,7 +132,6 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
-     
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
       - name: Sign Docker images (keyless)
@@ -147,7 +140,6 @@ jobs:
             echo "Signing ${{ secrets.IMAGE_NAME }}:$tag"
             cosign sign docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
           done
-          
       - name: Verify Docker image signatures
         run: |
           for tag in edge-latest edge-${GITHUB_SHA::8} edge-${{ env.LATEST_TAG }}; do
