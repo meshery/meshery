@@ -30,6 +30,36 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
   const chipStyle = { width };
   const theme = useTheme();
 
+  const STATUS_LEVEL_MAP = Object.fromEntries([
+    ...[CONNECTION_STATES.CONNECTED, CONTROLLER_STATES.DEPLOYED].map((status) => [
+      status.toLowerCase(),
+      'healthy',
+    ]),
+    ...[
+      CONTROLLER_STATES.ENABLED,
+      CONTROLLER_STATES.RUNNING,
+      CONTROLLER_STATES.DEPLOYING,
+      CONNECTION_STATES.REGISTERED,
+    ].map((status) => [status.toLowerCase(), 'partial']),
+  ]);
+
+  const getStatusLevel = (status) => {
+    if (!status) return 'error';
+    return STATUS_LEVEL_MAP[status.toLowerCase()] || 'error';
+  };
+
+  const getStatusColor = (statusLevel) => {
+    switch (statusLevel) {
+      case 'healthy':
+        return theme.palette.background.brand.default;
+      case 'partial':
+        return theme.palette.background.warning.default;
+      case 'error':
+      default:
+        return theme.palette.text.disabled;
+    }
+  };
+
   return (
     <ChipWrapper
       label={title}
@@ -40,13 +70,7 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
       onDelete={onDelete}
       avatar={
         status ? (
-          <BadgeAvatars
-            color={
-              status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
-                ? theme.palette.background.brand.default
-                : theme.palette.text.disabled
-            }
-          >
+          <BadgeAvatars color={getStatusColor(getStatusLevel(status))}>
             <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
               <ConnectionIcon {...iconSmall} />
             </Avatar>
