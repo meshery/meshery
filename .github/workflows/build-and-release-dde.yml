@@ -1,273 +1,101 @@
-name: Meshery Build and Releaser (stable)
+name: Docker Extension for Meshery
 on:
-  push:
-    tags:
-      - "v*"
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      release-ver:
+        description: "Stable Release Version"
+        required: true
+        default: "v"
+      stripped-release-ver:
+        description: "Stripped Stable Release Version"
+        required: true
+        default: ""
+      release-channel:
+        description: "Release Channel"
+        required: true
+        default: "edge"
+
+env:
+  GIT_VERSION: ${{ github.event.inputs.release-ver }}
+  GIT_STRIPPED_VERSION: ${{ github.event.inputs.stripped-release-ver }}
+  RELEASE_CHANNEL: ${{ github.event.inputs.release-channel }}
+  GIT_TAG: ${{ github.event.release.tag_name }}
 
 jobs:
-
-  update-rest-api-docs:
-    name: Update REST API Documentation
-    if: github.repository == 'meshery/meshery'
+  print-inputs:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - name: Check if handlers were modified
-        uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            modified:
-              - added|modified: "server/handlers/**"
-      - name: Setup go-swagger
-        if: steps.changes.outputs.modified == 'true'
-        uses: minchao/setup-go-swagger@v1
-        with:
-          version: v0.30.5
-      - name: swagger-spec
-        if: steps.changes.outputs.modified == 'true'
-        run: make swagger-build
-      - name: swagger-docs
-        if: steps.changes.outputs.modified == 'true'
-        run: make swagger-docs-build
-        
-      - name: Pull changes from remote
-        run: git pull origin master
-        
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          file_pattern: docs
-          commit_user_name: l5io
-          commit_user_email: ci@meshery.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated Swagger Docs for REST API"
+      - run: |
+          echo "Dispatched GIT_VERSION: ${{ github.event.inputs.release-ver }}"
+          echo "Dispatched GIT_STRIPPED_VERSION: ${{ github.event.inputs.stripped-release-ver }}"
+          echo "Env RELEASE_CHANNEL: ${{ env.RELEASE_CHANNEL }}"
+          echo "Env GIT_VERSION: ${{ env.GIT_VERSION }}"
+          echo "Env GIT_STRIPPED_VERSION: ${{ env.GIT_STRIPPED_VERSION }}"
+          echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
 
-  update-graphql-docs:
-    name: Update GraphQL API Documentation
-    if: github.repository == 'meshery/meshery'
+  docker-extension:
     runs-on: ubuntu-24.04
     steps:
-      - name: Check out code
+      - name: Checkout 🛎️ repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-      - name: Check if schema was modified
-        uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            modified:
-              - added|modified: 'server/internal/graphql/schema/schema.graphql'
-      - name: Set up Ruby
-        if: steps.filter.outputs.modified == 'true'
-        uses: ruby/setup-ruby@v1.162.0
-        with:
-          ruby-version: 3.2.6
-          bundler-cache: true
-      - name: graphql-docs
-        if: steps.filter.outputs.modified == 'true'
+      - name: Identify Release Values
+        if: ${{ github.event.inputs.release-ver != 'v' }}
         run: |
-          cd docs; bundle install; cd ..; \
-          make graphql-docs-build
-          
-      - name: Pull changes from remote
-        run: git pull origin master
-        
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          file_pattern: docs
-          commit_user_name: l5io
-          commit_user_email: ci@meshery.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated GraphQL API Documentation"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "RELEASE_CHANNEL=stable" >> $GITHUB_ENV
+          else
+            echo "RELEASE_CHANNEL=edge" >> $GITHUB_ENV
+          fi
 
-  build:
-    name: Docker build and push
-    if: github.repository == 'meshery/meshery'
-    env:
-      RELEASE_CHANNEL: "stable"
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
+          LATEST_VERSION=$(git ls-remote --sort='v:refname' --tags | tail -1 | cut -f2 | sed 's/refs\/tags\///g')
+          GIT_VERSION=$LATEST_VERSION
+          GIT_STRIPPED_VERSION=$(echo "$LATEST_VERSION" | cut -c2-)
+
+          echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV
+          echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
+          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
+          echo "Release channel determined to be $RELEASE_CHANNEL"
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker Meta
+        id: meta
+        uses: docker/metadata-action@v5
         with:
-          fetch-depth: 1
-      - name: Free up disk space
-        run: |
-          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
-          sudo apt-get clean
-          sudo rm -rf /var/lib/apt/lists/*
-          docker system prune -af
+          images: meshery/docker-extension-meshery
+          flavor: |
+            latest=true
+          tags: |
+            type=raw,value=${{ env.RELEASE_CHANNEL }}-${{ github.sha }}
+            type=semver,pattern={{version}},value=${{ env.GIT_STRIPPED_VERSION }}
+            type=raw,value=${{ env.RELEASE_CHANNEL }}-${{ github.ref_name }},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
+            type=raw,value=${{ env.RELEASE_CHANNEL }}-latest
+            type=raw,value=${{ env.RELEASE_CHANNEL }}-${{ env.GIT_VERSION }},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Docker stable and playground build & tag
-        run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache \
-            -t ${{ secrets.IMAGE_NAME }}:stable-latest \
-            --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} \
-            --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} \
-            --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} \
-            --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} \
-            --build-arg PLAYGROUND=true .
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-latest
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
-      - name: Docker stable and playground push
-        run: |
-          docker push ${{ secrets.IMAGE_NAME }}:stable-latest
-          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
-          docker push ${{ secrets.IMAGE_NAME }}:playground-latest
-          docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
-     
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
-      - name: Sign Docker images (keyless)
-        run: |
-          for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
-            echo "Signing ${{ secrets.IMAGE_NAME }}:$tag"
-            cosign sign docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
-          done
-      - name: Verify Docker image signatures
-        run: |
-          for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
-            echo "Verifying ${{ secrets.IMAGE_NAME }}:$tag"
-            cosign verify docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
+      - name: Build and Push
+        uses: docker/build-push-action@v6
+        with:
+          context: ./install/docker-extension
+          push: true
+          build-args: |
+            GIT_STRIPPED_VERSION=${{ env.GIT_STRIPPED_VERSION }}
+            GIT_VERSION=${{ env.GIT_VERSION }}
+            RELEASE_CHANNEL=${{ env.RELEASE_CHANNEL }}
+          tags: ${{ steps.meta.outputs.tags }}
+          platforms: linux/amd64,linux/arm64
 
-  ctlrelease:
-    name: Mesheryctl build & release
-    if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@master
-        with:
-          go-version: "1.24"
-      - name: goreleaser with tag
-        uses: goreleaser/goreleaser-action@v6
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
-          RELEASE_CHANNEL: "stable"
-        with:
-          version: 2
-          args: release --clean --skip=validate -f .github/.goreleaser.yml
-      - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
-      - name: Sign mesheryctl artifacts (keyless)
-        run: |
-          for artifact in dist/*; do
-            cosign sign-blob \
-              --yes \
-              --bundle "${artifact}.sigstore" \
-              --output-signature "${artifact}.sig" \
-              --output-certificate "${artifact}.pem" \
-              "$artifact"
-          done
-      - name: Verify mesheryctl artifacts
-        run: |
-          for artifact in dist/*; do
-            cosign verify-blob \
-              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
-              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-              --signature "${artifact}.sig" \
-              --certificate "${artifact}.pem" \
-              "$artifact"
-          done
-      - name: bump homebrew-core formula
-        uses: mislav/bump-homebrew-formula-action@v3
-        with:
-          formula-name: mesheryctl
-          download-url: https://github.com/meshery/meshery.git
-        env:
-          COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-
-  call-dde-release-workflow:
-    needs:
-      - build
-      - ctlrelease
-    name: Build and Release Docker Extension
-    uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
-    secrets: inherit
-  call-helm-chart-releaser:
-    needs:
-      - build
-    name: Release Helm Charts
-    uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
-    secrets: inherit
-  # call-aks-playground-deploy-workflow:
-  #   needs: build
-  #   name: Deploy Meshery Playground
-  #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
-  #   secrets: inherit
-  deploy-delay:
-    name: Playground Deploy Delay
-    runs-on: ubuntu-24.04
-    needs:
-      - build
-    steps:
-      - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
-        run: sleep 780
-  email-meshery-release-notes-workflow:
-    needs:
-      - build
-      - ctlrelease
-      - call-helm-chart-releaser
-      - call-dde-release-workflow
-    name: Email Meshery Release Notes
-    uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
-    secrets:
-      token: ${{ secrets.GH_ACCESS_TOKEN }}
-      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-    with:
-      release-tag: ${{github.ref_name}}
-      to: developers@meshery.io
-  call-cncf-playground-rollout:
-    needs: [build, deploy-delay]
-    name: Deploy CNCF Playground
-    uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
-    with:
-      image: meshery/meshery:playground-${GITHUB_REF/refs\/tags\//}
-    secrets: inherit
-  email-on-failure:
-    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
-    if: ${{ failure() }}
-    runs-on: ubuntu-24.04
-    steps:
-      - name: Find failed jobs.
-        run: |
-          curl "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.conclusion == "failure") | "\(.name): \(.steps[] | select(.conclusion == "failure") | .name)\n\(.html_url)\n"' >> output.txt
-          # Save multi-line environment variables by using the delimiters syntex.
-          echo "EMAIL_BODY<<EOF" >> $GITHUB_ENV
-          echo "$(cat ./output.txt)" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-      - name: Failed jobs summary
-        run: |
-          echo "${{ env.EMAIL_BODY }}"
-      - name: Send Email Notification
-        if: env.EMAIL_BODY != ''
-        uses: dawidd6/action-send-mail@v4
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.MAIL_USERNAME }}
-          password: ${{ secrets.MAIL_PASSWORD }}
-          subject: Job(s) failure in the build-and-release-stable workflow
-          to: maintainers@meshery.io
-          from: Build and Release Stable workflow
-          body: |
-            The workflow failed. Here are the details:
-            ${{ env.EMAIL_BODY }}
-            Workflow run log URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      # -
+      #   name: Docker Hub Description
+      #   uses: peter-evans/dockerhub-description@v3
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #     repository: meshery/meshery-docker-extension
+      #     readme-filepath: /install/docker-extension/README.md
