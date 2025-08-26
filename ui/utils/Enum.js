@@ -78,6 +78,7 @@ export const CONTROLLER_STATES = {
   RUNNING: 'RUNNING',
   CONNECTED: 'CONNECTED',
   DISABLED: 'DISABLED',
+  UNKNOWN: 'UNKNOWN',
 };
 
 export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
