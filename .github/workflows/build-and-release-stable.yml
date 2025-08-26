@@ -29,10 +29,8 @@ jobs:
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
         run: make swagger-docs-build
-
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -70,10 +68,8 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
-
       - name: Pull changes from remote
         run: git pull origin master
-
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -206,11 +202,6 @@ jobs:
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit
-  # call-aks-playground-deploy-workflow:
-  #   needs: build
-  #   name: Deploy Meshery Playground
-  #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
-  #   secrets: inherit
 
   deploy-delay:
     needs:
@@ -234,7 +225,7 @@ jobs:
       MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
       MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
     with:
-      release-tag: ${{github.ref_name}}
+      release-tag: ${{ github.ref_name }}
       to: developers@meshery.io
 
   call-cncf-playground-rollout:
