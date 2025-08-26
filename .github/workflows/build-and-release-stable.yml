@@ -5,6 +5,7 @@ on:
       - "v*"
 
 jobs:
+
   update-rest-api-docs:
     name: Update REST API Documentation
     if: github.repository == 'meshery/meshery'
@@ -29,8 +30,10 @@ jobs:
       - name: swagger-docs
         if: steps.changes.outputs.modified == 'true'
         run: make swagger-docs-build
+        
       - name: Pull changes from remote
         run: git pull origin master
+        
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -46,7 +49,8 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 1
       - name: Check if schema was modified
@@ -67,8 +71,10 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
+          
       - name: Pull changes from remote
         run: git pull origin master
+        
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -80,8 +86,8 @@ jobs:
           commit_message: "[Docs] Updated GraphQL API Documentation"
 
   build:
-    name: Docker build, push and sign
-    if: github.repository == 'meshery/meshery' && github.event_name == 'push'
+    name: Docker build and push
+    if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
     runs-on: ubuntu-24.04
@@ -89,20 +95,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
-
       - name: Free up disk space
         run: |
           sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
           docker system prune -af
-
       - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-
       - name: Docker stable and playground build & tag
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache \
@@ -117,9 +120,7 @@ jobs:
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-latest
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
           docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
-
       - name: Docker stable and playground push
-        if: github.repository == 'meshery/meshery' && github.event_name == 'push'
         run: |
           docker push ${{ secrets.IMAGE_NAME }}:stable-latest
           docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
@@ -127,33 +128,20 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:playground-latest
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
           docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
-
+     
       - name: Install Cosign
         uses: sigstore/cosign-installer@v3.5.0
-        with:
-          cosign-release: "v2.2.3"
-
-      - name: Sign Docker images
-        if: github.repository == 'meshery/meshery' && github.event_name == 'push'
+      - name: Sign Docker images (keyless)
         run: |
-          images=(
-            "${{ secrets.IMAGE_NAME }}:stable-latest"
-            "${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}"
-            "${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}"
-            "${{ secrets.IMAGE_NAME }}:playground-latest"
-            "${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}"
-            "${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}"
-          )
-          for img in "${images[@]}"; do
-            cosign sign $img --key ${{ secrets.COSIGN_PRIVATE_KEY }} --password ${{ secrets.COSIGN_PASSWORD }}
+          for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
+            echo "Signing ${{ secrets.IMAGE_NAME }}:$tag"
+            cosign sign docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
           done
-
       - name: Verify Docker image signatures
-        if: github.repository == 'meshery/meshery' && github.event_name == 'push'
         run: |
-          for img in "${images[@]}"; do
-            cosign verify $img --key ${{ secrets.COSIGN_PUBLIC_KEY }}
-          done
+          for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
+            echo "Verifying ${{ secrets.IMAGE_NAME }}:$tag"
+            cosign verify docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
 
   ctlrelease:
     name: Mesheryctl build & release
@@ -172,26 +160,31 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
-          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
         with:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
-
-      - name: Sign release artifacts
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+      - name: Sign mesheryctl artifacts (keyless)
         run: |
-          ARTIFACTS_DIR=dist
-          for file in $ARTIFACTS_DIR/*; do
-            echo "Signing $file"
-            cosign sign-blob --key ${{ secrets.COSIGN_PRIVATE_KEY }} $file
+          for artifact in dist/*; do
+            cosign sign-blob \
+              --yes \
+              --bundle "${artifact}.sigstore" \
+              --output-signature "${artifact}.sig" \
+              --output-certificate "${artifact}.pem" \
+              "$artifact"
           done
-
-      - name: Verify signed artifacts
+      - name: Verify mesheryctl artifacts
         run: |
-          for file in $ARTIFACTS_DIR/*; do
-            echo "Verifying $file"
-            cosign verify-blob --key ${{ secrets.COSIGN_PUBLIC_KEY }} $file
+          for artifact in dist/*; do
+            cosign verify-blob \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+              --signature "${artifact}.sig" \
+              --certificate "${artifact}.pem" \
+              "$artifact"
           done
-
       - name: bump homebrew-core formula
         uses: mislav/bump-homebrew-formula-action@v3
         with:
@@ -200,17 +193,81 @@ jobs:
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
-  call-dde-release-workflow:
+    call-dde-release-workflow:
     needs:
       - build
       - ctlrelease
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
-
   call-helm-chart-releaser:
     needs:
       - build
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit
+  # call-aks-playground-deploy-workflow:
+  #   needs: build
+  #   name: Deploy Meshery Playground
+  #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
+  #   secrets: inherit
+  deploy-delay:
+    name: Playground Deploy Delay
+    runs-on: ubuntu-24.04
+    needs:
+      - build
+    steps:
+      - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
+        run: sleep 780
+  email-meshery-release-notes-workflow:
+    needs:
+      - build
+      - ctlrelease
+      - call-helm-chart-releaser
+      - call-dde-release-workflow
+    name: Email Meshery Release Notes
+    uses: layer5labs/meshery-extensions-packages/.github/workflows/notify-email.yml@master
+    secrets:
+      token: ${{ secrets.GH_ACCESS_TOKEN }}
+      MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+      MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+    with:
+      release-tag: ${{github.ref_name}}
+      to: developers@meshery.io
+  call-cncf-playground-rollout:
+    needs: [build, deploy-delay]
+    name: Deploy CNCF Playground
+    uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
+    with:
+      image: meshery/meshery:playground-${GITHUB_REF/refs\/tags\//}
+    secrets: inherit
+  email-on-failure:
+    needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
+    if: ${{ failure() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Find failed jobs.
+        run: |
+          curl "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" | jq -r '.jobs[] | select(.conclusion == "failure") | "\(.name): \(.steps[] | select(.conclusion == "failure") | .name)\n\(.html_url)\n"' >> output.txt
+          # Save multi-line environment variables by using the delimiters syntex.
+          echo "EMAIL_BODY<<EOF" >> $GITHUB_ENV
+          echo "$(cat ./output.txt)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: Failed jobs summary
+        run: |
+          echo "${{ env.EMAIL_BODY }}"
+      - name: Send Email Notification
+        if: env.EMAIL_BODY != ''
+        uses: dawidd6/action-send-mail@v4
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: Job(s) failure in the build-and-release-stable workflow
+          to: maintainers@meshery.io
+          from: Build and Release Stable workflow
+          body: |
+            The workflow failed. Here are the details:
+            ${{ env.EMAIL_BODY }}
+            Workflow run log URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
