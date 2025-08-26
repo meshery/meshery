@@ -41,10 +41,10 @@ jobs:
         if: steps.changes.outputs.modified == 'true'
         run: |
           make swagger-docs-build
-
+          
       - name: Pull changes from remote
         run: git pull origin master
-
+        
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -83,10 +83,10 @@ jobs:
         run: |
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
-
+          
       - name: Pull changes from remote
         run: git pull origin master
-
+        
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -98,7 +98,7 @@ jobs:
           commit_message: "[Docs] Updated GraphQL API Documentation"
 
   docker-build-push:
-    name: Docker build and push
+    name: Docker build, push & sign
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
     env:
       RELEASE_CHANNEL: "edge"
@@ -106,10 +106,7 @@ jobs:
     steps:
       - name: Free up disk space
         run: |
-          sudo rm -rf /usr/share/dotnet
-          sudo rm -rf /usr/local/lib/android
-          sudo rm -rf /opt/ghc
-          sudo rm -rf /opt/hostedtoolcache
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache
           sudo apt-get clean
           sudo rm -rf /var/lib/apt/lists/*
           docker system prune -af
@@ -120,7 +117,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          ref: ${{ inputs.branch }} 
+          ref: ${{ inputs.branch }}
       - name: Docker login
         uses: azure/docker-login@v1
         with:
@@ -128,7 +125,12 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Docker edge build & tag
         run: |
-          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t ${{ secrets.IMAGE_NAME }}:edge-latest --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg GIT_VERSION=${{ env.LATEST_TAG }} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
+          DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache \
+            -t ${{ secrets.IMAGE_NAME }}:edge-latest \
+            --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} \
+            --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} \
+            --build-arg GIT_VERSION=${{ env.LATEST_TAG }} \
+            --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
       - name: Docker edge push
@@ -136,6 +138,21 @@ jobs:
           docker push ${{ secrets.IMAGE_NAME }}:edge-latest
           docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
           docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+     
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.5.0
+      - name: Sign Docker images (keyless)
+        run: |
+          for tag in edge-latest edge-${GITHUB_SHA::8} edge-${{ env.LATEST_TAG }}; do
+            echo "Signing ${{ secrets.IMAGE_NAME }}:$tag"
+            cosign sign docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
+          done
+          
+      - name: Verify Docker image signatures
+        run: |
+          for tag in edge-latest edge-${GITHUB_SHA::8} edge-${{ env.LATEST_TAG }}; do
+            echo "Verifying ${{ secrets.IMAGE_NAME }}:$tag"
+            cosign verify docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
 
   update-staging-playground:
     needs:
