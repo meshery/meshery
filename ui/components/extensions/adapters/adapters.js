@@ -136,7 +136,6 @@ const Adapters = () => {
               justifyContent="space-between"
               alignItems="baseline"
               style={{
-                position: 'absolute',
                 paddingRight: '3rem',
                 paddingLeft: '.5rem',
                 bottom: '1.5rem',
