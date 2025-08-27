@@ -4,6 +4,7 @@ title: Meshery Adapter for Traefik Mesh
 name: Meshery Adapter for Traefik Mesh
 component: Traefik Mesh
 earliest_version: v1.0
+adapter_version: v0.6.9
 port: 10006/gRPC
 project_status: stable
 lab: traefik-meshery-adapter
