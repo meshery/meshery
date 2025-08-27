@@ -25,7 +25,7 @@ Follow these steps and you'll be right at home.
 
 2. Sign up for a [_MeshMate_](https://meshery.io/community#meshmates) to find the perfect Mentor to help you explore the projects and find your place in the community:
 
-- **Familiarize** yourself with the broader set of community projects (take a look at the [Repository Overview](https://layer5.io/community/handbook/repository-overview): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.
+- **Familiarize** yourself with the broader set of projects in Meshery's ecosystem. See the https://github.com/meshery-extensions repositories (this [Repository Overview](https://layer5.io/community/handbook/repository-overview) is a helpful resource): Spend time understanding each of the initiatives through high-level overviews available in the community drive and through discussions with your MeshMate.
 - **Identify** your area of interest: Use the time with your MeshMate to familiarize yourself with the architecture and technologies used in the projects. Inform your MeshMate of your current skills and what skills you aim to develop.
 - **Run** Meshery: Put on your user hat and walk-through all of Meshery’s features and functions as a user.
 - **Build** Meshery: Confirm that you have a usable development environment.
