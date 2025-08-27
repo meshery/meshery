@@ -13,24 +13,19 @@ import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@sistent/sistent';
 import { updateProgress } from '@/store/slices/mesheryUi';
 
-const StyledTableContainer = styled('div')(({ theme }) => ({
+const Z_INDEX_STICKY_HEADER = 10;
+const StyledTableContainer = styled('div')({
   '& .MuiTableHead-root': {
     position: 'sticky',
     top: 0,
-    backgroundColor: theme.palette.background.tabs,
-    zIndex: theme.zIndex.appBar,
-  },
-  '& .MuiPaper-root': {
-    position: 'relative',
-  },
-  '& .MuiTable-root': {
-    tableLayout: 'fixed',
+    zIndex: Z_INDEX_STICKY_HEADER,
   },
   '& .MuiTableCell-head': {
-    backgroundColor: theme.palette.background.tabs,
-    color: theme.palette.background.constant.white,
+    position: 'sticky !important',
+    top: 0,
+    zIndex: Z_INDEX_STICKY_HEADER,
   },
-}));
+});
 
 const DatabaseSummary = (props) => {
   const [page, setPage] = useState(0);
