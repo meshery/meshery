@@ -19,7 +19,7 @@ Meshery can manage your minikube clusters and is particularly useful for multi-c
 
 For Meshery to manage your Minikube cluster, it has to be discovered and added as a Kubernetes connection in the Meshery server.
 
-After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your [Meshery Designs](https://cloud.layer5.io/academy/learning-paths/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to your cluster. To learn more about this, See [Deploying Meshery Designs](https://cloud.layer5.io/academy/learning-paths/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). You can also Visualize the resources in your cluster in Operator Mode, See [Views in Visualizer](https://docs.layer5.io/kanvas/operator/operator-views/).
+After your cluster has been added as a connection, you can use Meshery to make infrastructure deployments of your [Meshery Designs](https://cloud.layer5.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=creating-designs) to your cluster. To learn more about this, See [Deploying Meshery Designs](https://cloud.layer5.io/academy/learning-paths/11111111-1111-1111-1111-111111111111/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). You can also Visualize the resources in your cluster in Operator Mode, See [Views in Visualizer](https://docs.layer5.io/kanvas/operator/operator-views/).
 
 **There are two ways to create this connection:**
 
