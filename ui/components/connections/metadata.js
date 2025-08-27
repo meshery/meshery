@@ -152,7 +152,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
           <ContentContainer container spacing={2} size="grow">
             {!isEmbeddedMode && (
               <>
-                <Grid2 size={{ xs: 12,md: 4 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
                     <ListItem>
                       <TooltipWrappedConnectionChip
@@ -176,7 +176,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12,md: 4 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
                     {(meshSyncState || natsState) && (
                       <ListItem>
@@ -201,7 +201,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12,md: 4 }}>
+                <Grid2 size={{ xs: 12, md: 4 }}>
                   <List>
                     {(meshSyncState || natsState) && (
                       <ListItem>
@@ -236,7 +236,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
               <ListItem>
                 <StyledListItemText
                   primary="Deployment Mode"
-                  secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
+                  secondary={formatToTitleCase(metadata?.meshsync_deployment_mode || 'N/A')}
                 />
               </ListItem>
             </Grid2>
@@ -245,9 +245,9 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 <StyledListItemText
                   primary="Deployment Type"
                   secondary={
-                    metadata.deployment_type === ''
+                    metadata?.deployment_type === ''
                       ? 'Manual (Kubeconfig)'
-                      : formatToTitleCase(metadata?.deployment_type)
+                      : formatToTitleCase(metadata?.deployment_type || 'N/A')
                   }
                 />
               </ListItem>
