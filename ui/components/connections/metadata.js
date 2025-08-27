@@ -149,10 +149,10 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
       </Grid2>
       <Grid2 size={{ xs: 12, md: 6 }}>
         <ColumnWrapper>
-          <ContentContainer container spacing={16} size="grow">
+          <ContentContainer container spacing={2} size="grow">
             {!isEmbeddedMode && (
               <>
-                <Grid2 size={{ xs: 12, md: 4 }}>
+                <Grid2 size={{ xs: 12,md: 4 }}>
                   <List>
                     <ListItem>
                       <TooltipWrappedConnectionChip
@@ -162,7 +162,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                         status={operatorState}
                         handlePing={handleOperatorClick}
                         iconSrc="/static/img/meshery-operator.svg"
-                        width="9rem"
+                        width="7rem"
                       />
                     </ListItem>
                     <ListItem>
@@ -176,7 +176,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
+                <Grid2 size={{ xs: 12,md: 4 }}>
                   <List>
                     {(meshSyncState || natsState) && (
                       <ListItem>
@@ -186,7 +186,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                           status={meshSyncState}
                           handlePing={handleMeshSyncClick}
                           iconSrc="/static/img/meshsync.svg"
-                          width="9rem"
+                          width="7rem"
                         />
                       </ListItem>
                     )}
@@ -201,7 +201,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                     </ListItem>
                   </List>
                 </Grid2>
-                <Grid2 size={{ xs: 12, md: 4 }}>
+                <Grid2 size={{ xs: 12,md: 4 }}>
                   <List>
                     {(meshSyncState || natsState) && (
                       <ListItem>
@@ -213,7 +213,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                           status={natsState}
                           handlePing={() => handleNATSClick()}
                           iconSrc="/static/img/nats-icon-color.svg"
-                          width="9rem"
+                          width="7rem"
                         />
                       </ListItem>
                     )}
@@ -230,27 +230,29 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 </Grid2>
               </>
             )}
-            <Grid2 size={{ xs: 12, md: 12 }}>
-              <List>
-                <ListItem>
-                  <StyledListItemText
-                    primary="Deployment Mode"
-                    secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
-                  />
-                </ListItem>
-                <ListItem>
-                  <StyledListItemText
-                    primary="Deployment Type"
-                    secondary={
-                      metadata.deployment_type === ''
-                        ? 'Manual (Kubeconfig)'
-                        : formatToTitleCase(metadata?.deployment_type)
-                    }
-                  />
-                </ListItem>
-              </List>
-            </Grid2>
           </ContentContainer>
+          <Grid2 container size={{ xs: 12 }} direction={{ xs: 'column', lg: 'row' }}>
+            <Grid2>
+              <ListItem>
+                <StyledListItemText
+                  primary="Deployment Mode"
+                  secondary={formatToTitleCase(metadata.meshsync_deployment_mode || 'N/A')}
+                />
+              </ListItem>
+            </Grid2>
+            <Grid2>
+              <ListItem>
+                <StyledListItemText
+                  primary="Deployment Type"
+                  secondary={
+                    metadata.deployment_type === ''
+                      ? 'Manual (Kubeconfig)'
+                      : formatToTitleCase(metadata?.deployment_type)
+                  }
+                />
+              </ListItem>
+            </Grid2>
+          </Grid2>
         </ColumnWrapper>
       </Grid2>
     </Grid2>
