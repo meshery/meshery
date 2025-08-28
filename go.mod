@@ -10,7 +10,7 @@ replace github.com/openshift/api v3.9.0+incompatible => github.com/openshift/api
 
 // replace github.com/meshery/schemas v0.8.51 => ../schemas
 
-// replace github.com/meshery/meshkit v0.8.37 => ../meshkit
+// replace github.com/meshery/meshkit v0.8.39 => ../meshkit
 
 // replace github.com/meshery/meshsync v0.8.20 => ../meshsync
 
@@ -47,7 +47,7 @@ require (
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/meshkit v0.8.37
+	github.com/meshery/meshkit v0.8.39
 	github.com/meshery/meshsync v0.8.20
 	github.com/meshery/schemas v0.8.51
 	github.com/nsf/termbox-go v1.1.1
@@ -188,7 +188,7 @@ require (
 	github.com/go-openapi/validate v0.24.0 // indirect
 	github.com/go-redis/redis/v8 v8.11.5 // indirect
 	github.com/go-redis/redis_rate/v9 v9.1.2 // indirect
-	github.com/go-viper/mapstructure/v2 v2.3.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.4.0 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocarina/gocsv v0.0.0-20240520201108-78e41c74b4b1 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect

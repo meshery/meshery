@@ -1,15 +1,15 @@
 ### END-TO-END TESTS
 
-- Testing started at: August 19th 2025, 11:48:59 pm
+- Testing started at: August 28th 2025, 1:10:45 am
 
 **📦 Test Result Summary**
 
-- ✅ 87 passed
+- ✅ 86 passed
 - ❌ 0 failed
-- ⚠️ 0 flaked
+- ⚠️ 1 flaked
 - ⏩ 0 skipped
 
-⌛ _Duration: 6 minutes and 49 seconds_
+⌛ _Duration: 7 minutes and 11 seconds_
 
 **Overall Result**: 👍 All tests passed.
 
@@ -21,6 +21,7 @@
 
 | Test | Browser | Test Case | Tags | Result |
 | :---: | :---: | :--- | :---: | :---: |
+| 1 | chromium-meshery-provider | Verify Meshery Adapter for Istio Section |  | ⚠️ |
 
 </div>
 </details>
