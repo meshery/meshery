@@ -99,7 +99,7 @@ export function useMeshsSyncController() {
           (res.controller.status === 'Running' || res.controller.status.includes('Running'))
         ) {
           handleInfo(
-            `MeshSync is running (${res.controller.version}) but not fully connected to Meshery Broker.`,
+            `MeshSync is running (${res.controller.version}) but not connected to Meshery Broker.`,
           );
         } else if (res.controller.name === 'MeshSync' && res.controller.status === 'Deployed') {
           handleInfo('MeshSync is deployed but connection status unclear');
