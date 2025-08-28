@@ -15,7 +15,9 @@ const LEFT_NAV = {
   },
   CONFIGURATION: {
     name: 'configuration',
-    NAV_ITEMS: {},
+    NAV_ITEMS: {
+      DESIGNS: 'design',
+    },
   },
   PERFORMANCE: {
     name: 'performance',
@@ -123,6 +125,13 @@ export class DashboardPage {
 
   async navigateToPreferences() {
     await this.navigateToHeaderItem(HEADER_NAV.NAV_ITEMS.PREFERENCES);
+  }
+
+  async navigateToDesigns() {
+    await this.navigateToSubMenuItem(
+      LEFT_NAV.CONFIGURATION.name,
+      LEFT_NAV.CONFIGURATION.NAV_ITEMS.DESIGNS,
+    );
   }
 
   async navigateToLogout() {
