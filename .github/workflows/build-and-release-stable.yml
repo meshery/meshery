@@ -195,14 +195,12 @@ jobs:
     name: Build and Release Docker Extension
     uses: meshery/meshery/.github/workflows/build-and-release-dde.yml@master
     secrets: inherit
-
   call-helm-chart-releaser:
     needs:
       - build
     name: Release Helm Charts
     uses: meshery/meshery/.github/workflows/helm-chart-releaser.yml@master
     secrets: inherit
-
   deploy-delay:
     needs:
       - build
@@ -211,7 +209,6 @@ jobs:
     steps:
       - name: Delay Playground Deployment
         run: sleep 780
-
   email-meshery-release-notes-workflow:
     needs:
       - build
@@ -227,7 +224,6 @@ jobs:
     with:
       release-tag: ${{ github.ref_name }}
       to: developers@meshery.io
-
   call-cncf-playground-rollout:
     needs: [build, deploy-delay]
     name: Deploy CNCF Playground
@@ -235,7 +231,6 @@ jobs:
     with:
       image: meshery/meshery:playground-${GITHUB_REF/refs\/tags\//}
     secrets: inherit
-
   email-on-failure:
     needs:
       [
