@@ -114,7 +114,7 @@ func (h *Handler) GetEventTypes(w http.ResponseWriter, req *http.Request, prefOb
 
 	if err != nil {
 		msg := "error retrieving event categories and actions"
-		h.log.WithError(err).Error(msg)
+		h.log.Error(fmt.Errorf("%s: %w", msg, err))
 		http.Error(w, msg, http.StatusInternalServerError)
 		return
 	}
