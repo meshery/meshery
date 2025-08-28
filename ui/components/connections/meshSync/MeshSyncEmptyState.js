@@ -118,7 +118,7 @@ const MeshSyncEmptyState = () => {
 
           <StepList>
             <li>
-              <strong>Cluster Detection</strong> - Meshery automatically discovers yours available
+              <strong>Cluster Detection</strong> - Meshery automatically discovers your available
               clusters. You can also upload your kubeconfig in Connections.
             </li>
             <Box>
