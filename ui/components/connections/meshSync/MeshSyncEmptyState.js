@@ -133,7 +133,7 @@ const MeshSyncEmptyState = () => {
               cluster, use the Cluster Switcher in the Nav bar to select it.
             </li>
             <Box>
-              <img src={SwitchClusters?.src} style={{ maxWidth: '100%' }} />
+              <img src={SwitchClusters?.src} style={{ maxWidth: '100%' }} alt="Add Kubernetes connections by importing your kubeconfig" />
             </Box>
           </StepList>
 
