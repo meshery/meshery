@@ -15,6 +15,32 @@ import BellIcon from '../../assets/icons/BellIcon';
 import { AddClassRecursively } from '../Elements';
 import { useCallback } from 'react';
 
+// -> universal notification queue
+let notificationQueue = [];
+let isProcessingQueue = false;
+
+// -> helper function to process queue
+const processNotificationQueue = (enqueueSnackbar, closeSnackbar) => {
+  if (notificationQueue.length === 0 || isProcessingQueue) {
+    return;
+  }
+
+  isProcessingQueue = true;
+  const notification = notificationQueue.shift();
+
+  closeSnackbar();
+
+  setTimeout(() => {
+    enqueueSnackbar(notification.message, {
+      ...notification.options,
+      onExit: () => {
+        isProcessingQueue = false;
+        setTimeout(() => processNotificationQueue(enqueueSnackbar, closeSnackbar), 50);
+      },
+    });
+  }, 100);
+};
+
 /**
  * A React hook to facilitate emitting events from the client.
  * The hook takes care of storing the events on the client through Redux
@@ -23,7 +49,6 @@ import { useCallback } from 'react';
  * @returns {Object} An object with the `notify` property.
  */
 export const useNotification = () => {
-  const x = useSnackbar();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   /**
@@ -35,6 +60,18 @@ export const useNotification = () => {
     rtkStore.dispatch(toggleNotificationCenter());
   };
 
+  const processQueue = useCallback(() => {
+    processNotificationQueue(enqueueSnackbar, closeSnackbar);
+  }, [enqueueSnackbar, closeSnackbar]);
+
+   //->adding notification to queue
+  const addToQueue = useCallback(
+    (notificationData) => {
+      notificationQueue.push(notificationData);
+      processQueue();
+    },
+    [processQueue],
+  ); 
   /**
    * Notifies and stores the event.
    *
@@ -62,10 +99,8 @@ export const useNotification = () => {
     timestamp = timestamp ?? moment.utc().valueOf();
     id = id || v4();
 
-    enqueueSnackbar(message, {
-      //NOTE: Need to Consolidate the variant and event_type
-      variant: typeof event_type === 'string' ? event_type : event_type?.type,
-      action: function Action(key) {
+
+    const action = function Action(key) {
         return (
           <ToggleButtonGroup data-testid={dataTestID}>
             {showInNotificationCenter && (
@@ -90,6 +125,14 @@ export const useNotification = () => {
             </IconButton>
           </ToggleButtonGroup>
         );
+    };
+
+    //-> adding notification to queue
+    addToQueue({
+      message,
+      options: {
+        variant: typeof event_type === 'string' ? event_type : event_type?.type,
+        action,
       },
     });
   };
@@ -118,7 +161,10 @@ export const useNotificationHandlers = () => {
   const handleNotification = useCallback(
     (type, msg) => {
       let message = typeof msg === 'string' ? msg : msg?.response?.data;
-      enqueueSnackbar(message, {
+
+      notificationQueue.push({
+        message,
+        options: {
         variant: type,
         action: (key) => (
           <IconButton
@@ -130,12 +176,14 @@ export const useNotificationHandlers = () => {
             <CloseIcon />
           </IconButton>
         ),
-        autoHideDuration: 8000,
         style: {
           display: 'flex',
           flexWrap: 'nowrap',
         },
+        },
       });
+
+      processNotificationQueue(enqueueSnackbar, closeSnackbar);
     },
     [enqueueSnackbar, closeSnackbar],
   );

@@ -10,6 +10,7 @@ const MesheryProgressBar = () => {
 
   useEffect(() => {
     if (showProgress) {
+      closeSnackbar();
       snackbarKey.current = enqueueSnackbar(
         <div style={{ width: 250 }}>
           <LinearProgress />
