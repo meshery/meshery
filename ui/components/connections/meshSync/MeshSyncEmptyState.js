@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AddKubeconfig from "@/assets/gifs/add-kubeConfig.gif"
+import AddKubeconfig from "@/assets/gifs/add-kubeconfig.gif"
 import SwitchClusters from '@/assets/gifs/switch-clusters.gif';
 
 import {
