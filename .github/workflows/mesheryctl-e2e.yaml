@@ -29,7 +29,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        port: ["10000", "11000"]
         go: ["1.24"]
         k8s_version: ["v1.31.4", "v1.32.0"]
         platform: ["kubernetes"]
