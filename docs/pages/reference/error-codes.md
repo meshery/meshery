@@ -123,7 +123,7 @@ Troubleshooting guides to using Meshery's various features and components.
             {% elsif component[1].component_type == 'component' %}
                {% capture link %}meshery-server{% endcapture %}
             {% elsif component[1].component_type == 'library' %}
-               {% capture link %}meshery-library-for-{{component[1].component_name | lowercase}}{% endcapture %}
+               {% capture link %}meshery-library-for-{{component[1].component_name | slugify}}{% endcapture %}
             {% else %}
               {% capture link %}{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}{% endcapture %}      
             {% endif %}
