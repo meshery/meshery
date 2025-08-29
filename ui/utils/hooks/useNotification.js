@@ -64,14 +64,14 @@ export const useNotification = () => {
     processNotificationQueue(enqueueSnackbar, closeSnackbar);
   }, [enqueueSnackbar, closeSnackbar]);
 
-   //->adding notification to queue
+  //->adding notification to queue
   const addToQueue = useCallback(
     (notificationData) => {
       notificationQueue.push(notificationData);
       processQueue();
     },
     [processQueue],
-  ); 
+  );
   /**
    * Notifies and stores the event.
    *
@@ -99,32 +99,31 @@ export const useNotification = () => {
     timestamp = timestamp ?? moment.utc().valueOf();
     id = id || v4();
 
-
     const action = function Action(key) {
-        return (
-          <ToggleButtonGroup data-testid={dataTestID}>
-            {showInNotificationCenter && (
-              <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
-                <IconButton
-                  key={`openevent-${id}`}
-                  aria-label="Open"
-                  color="inherit"
-                  onClick={() => openEvent(id)}
-                >
-                  <BellIcon {...iconMedium} />
-                </IconButton>
-              </AddClassRecursively>
-            )}
-            <IconButton
-              key={`closeevent-${id}`}
-              aria-label="Close"
-              color="inherit"
-              onClick={() => closeSnackbar(key)}
-            >
-              <CloseIcon style={iconMedium} />
-            </IconButton>
-          </ToggleButtonGroup>
-        );
+      return (
+        <ToggleButtonGroup data-testid={dataTestID}>
+          {showInNotificationCenter && (
+            <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
+              <IconButton
+                key={`openevent-${id}`}
+                aria-label="Open"
+                color="inherit"
+                onClick={() => openEvent(id)}
+              >
+                <BellIcon {...iconMedium} />
+              </IconButton>
+            </AddClassRecursively>
+          )}
+          <IconButton
+            key={`closeevent-${id}`}
+            aria-label="Close"
+            color="inherit"
+            onClick={() => closeSnackbar(key)}
+          >
+            <CloseIcon style={iconMedium} />
+          </IconButton>
+        </ToggleButtonGroup>
+      );
     };
 
     //-> adding notification to queue
@@ -165,21 +164,21 @@ export const useNotificationHandlers = () => {
       notificationQueue.push({
         message,
         options: {
-        variant: type,
-        action: (key) => (
-          <IconButton
-            key="close"
-            aria-label="Close"
-            color="inherit"
-            onClick={() => closeSnackbar(key)}
-          >
-            <CloseIcon />
-          </IconButton>
-        ),
-        style: {
-          display: 'flex',
-          flexWrap: 'nowrap',
-        },
+          variant: type,
+          action: (key) => (
+            <IconButton
+              key="close"
+              aria-label="Close"
+              color="inherit"
+              onClick={() => closeSnackbar(key)}
+            >
+              <CloseIcon />
+            </IconButton>
+          ),
+          style: {
+            display: 'flex',
+            flexWrap: 'nowrap',
+          },
         },
       });
 
