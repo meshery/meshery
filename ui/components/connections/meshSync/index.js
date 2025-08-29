@@ -33,6 +33,7 @@ import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 import { useSelector } from 'react-redux';
 import { updateProgress } from '@/store/slices/mesheryUi';
+import MeshSyncEmptyState from './MeshSyncEmptyState';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -665,14 +666,19 @@ export default function MeshSyncTable(props) {
           />
         </div>
       </ToolWrapper>
-      <ResponsiveDataTable
-        data={meshSyncResources}
-        columns={columns}
-        options={options}
-        tableCols={tableCols}
-        updateCols={updateCols}
-        columnVisibility={columnVisibility}
-      />
+
+      {!meshSyncResources || meshSyncResources.length === 0 ? (
+        <MeshSyncEmptyState />
+      ) : (
+        <ResponsiveDataTable
+          data={meshSyncResources}
+          columns={columns}
+          options={options}
+          tableCols={tableCols}
+          updateCols={updateCols}
+          columnVisibility={columnVisibility}
+        />
+      )}
       <RegisterConnectionModal
         handleRegistrationModalClose={handleRegistrationModalClose}
         openRegistrationModal={openRegistrationModal}
