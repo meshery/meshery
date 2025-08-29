@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import AddKubeconfig from "@/assets/gifs/add-kubeconfig.gif"
+import AddKubeconfig from '@/assets/gifs/add-kubeconfig.gif';
 import SwitchClusters from '@/assets/gifs/switch-clusters.gif';
 
 import {
@@ -133,7 +133,11 @@ const MeshSyncEmptyState = () => {
               cluster, use the Cluster Switcher in the Nav bar to select it.
             </li>
             <Box>
-              <img src={SwitchClusters?.src} style={{ maxWidth: '100%' }} alt="Add Kubernetes connections by importing your kubeconfig" />
+              <img
+                src={SwitchClusters?.src}
+                style={{ maxWidth: '100%' }}
+                alt="Add Kubernetes connections by importing your kubeconfig"
+              />
             </Box>
           </StepList>
 
