@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
@@ -26,27 +27,64 @@ var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export registered models",
 	Long: `Export the registered model to the specified output type
-Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export`,
+		    Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export`,
 	Example: `
-// Export a model by name 
-mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
+				// Export a model by name 
+				mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
 
-// Export a model by name in JSON type
-mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
+				// Export a model by name in JSON type
+				mesheryctl model export [model-name] -t [yaml|json] (default is YAML)
 
-// Export a model by name in YAML type in a specific location
-mesheryctl model export [model-name] -l [path-to-location]
+				// Export a model by name in YAML type in a specific location
+				mesheryctl model export [model-name] -l [path-to-location]
 
-// Export a model by name in YAML type discarding components and relationships
-mesheryctl model export [model-name] --discard-components --discard-relationships
+				// Export a model by name in YAML type discarding components and relationships
+				mesheryctl model export [model-name] --discard-components --discard-relationships
 
-// Export a model version by name in YAML type
-mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
-`,
+				// Export a model version by name in YAML type
+				mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
+				`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model export [model-name ]\nRun 'mesheryctl model export --help' to see detailed help message"
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
+		}
+		return nil
+	},
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		_, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			return err
+		}
+		outputFormat, _ := cmd.Flags().GetString("output-format")
+		validFormat := map[string]bool{"yaml": true, "json": true}
+		if !validFormat[outputFormat] {
+			return ErrModelUnsupportedOutputFormat(fmt.Sprintf("invalid value %q  for flag -t, allowed: yaml, json", outputFormat))
+		}
+		outputType, _ := cmd.Flags().GetString("output-type")
+		validType := map[string]bool{"oci": true, "tar": true}
+		if !validType[outputType] {
+			return ErrModelUnsupportedOutputType(fmt.Sprintf("invalid value %q for flag -o, allowed: oci, tar", outputType))
+		}
+
+		page, _ := cmd.Flags().GetInt("page")
+		if page < 0 {
+			return ErrModelInvalidPageNumber(fmt.Sprintf("invalid page number %d, only page number > 0 allowed", page))
+		}
+		version, _ := cmd.Flags().GetString("version")
+		if version != "" {
+			matched, _ := regexp.MatchString(`^v[0-9]+\.[0-9]+\.[0-9]+$`, version)
+			if !matched {
+				return ErrModelUnsupportedVersion(fmt.Sprintf("invalid format %q, expected format: vMAJOR:MINOR:PATCH (ex:0.7.3)", version))
+			}
+		}
+		outputPath, _ := cmd.Flags().GetString(("output-location"))
+		info, err := os.Stat(outputPath)
+		if err != nil {
+			return ErrFolderNotPresent(fmt.Sprintf("folder %q is not a directory", outputPath))
+		}
+		if !info.IsDir() {
+			return ErrFolderNotPresent(fmt.Sprintf("%q is not a directory", outputPath))
 		}
 		return nil
 	},
@@ -58,8 +96,20 @@ mesheryctl model export [model-name] --version [version (ex: v0.7.3)]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
 		outputFormat, _ := cmd.Flags().GetString("output-format")
+		validFormat := map[string]bool{"yaml": true, "json": true}
+		if !validFormat[outputFormat] {
+
+			return fmt.Errorf("invalid value %q for flag -t, allowed: yaml, json", outputFormat)
+		}
+
 		outputType, _ := cmd.Flags().GetString("output-type")
+
+		validType := map[string]bool{"oci": true, "tar": true}
+		if !validType[outputType] {
+			return fmt.Errorf("invalid value %q for flag -o, allowed: yaml, json", outputType)
+		}
 		discardComponents, _ := cmd.Flags().GetBool("discard-components")
+
 		discardRelationships, _ := cmd.Flags().GetBool("discard-relationships")
 		version, _ := cmd.Flags().GetString("version")
 		page, _ := cmd.Flags().GetInt("page")
@@ -85,35 +135,38 @@ func export(modelName string, url string, output *outputDetail) error {
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		return err
 	}
-
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed to export model: status %d %s", resp.StatusCode, resp.Status)
+	}
 	// ensure proper cleaning of resources
 	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		utils.Log.Error(err)
-		return nil
+		return err
 	}
 
 	var exportedModelPath string
 
-	if output.Type != "oci" {
-		exportedModelPath = filepath.Join(output.Path, modelName+".tar.gz")
-	} else {
+	if output.Type == "oci" {
 		exportedModelPath = filepath.Join(output.Path, modelName+".tar")
+	} else if output.Type == "tar" {
+		exportedModelPath = filepath.Join(output.Path, modelName+".tar.gz")
 	}
 
 	err = os.WriteFile(exportedModelPath, data, 0644)
 	if err != nil {
 		utils.LogError.Error(err)
-		return nil
+		return err
+
 	}
 
 	utils.Log.Infof("Exported model to %s", exportedModelPath)

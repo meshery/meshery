@@ -9,12 +9,15 @@ import (
 )
 
 const (
-	ErrExportModelCode                  = "mesheryctl-1127"
-	ErrTemplateFileNotPresentCode       = "mesheryctl-1131"
-	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
-	ErrModelInitCode                    = "mesheryctl-1148"
-	ErrModelUnsupportedVersionCode      = "mesheryctl-1149"
-	ErrModelBuildCode                   = "mesheryctl-1151"
+	ErrExportModelCode                      = "mesheryctl-1127"
+	ErrTemplateFileNotPresentCode           = "mesheryctl-1131"
+	ErrModelUnsupportedOutputFormatCode     = "mesheryctl-1146"
+	ErrModelInitCode                        = "mesheryctl-1148"
+	ErrModelUnsupportedVersionCode          = "mesheryctl-1149"
+	ErrModelBuildCode                       = "mesheryctl-1151"
+	ErrModelUnsupportedOutputTypeFormatCode = "mesheryctl-1155"
+	ErrorModelInvalidPageNumberCode         = "mesheryctl-1156"
+	ErrFolderNotPresentCode                 = "mesheryctl-1157"
 )
 
 func ErrExportModel(err error, name string) error {
@@ -24,15 +27,23 @@ func ErrExportModel(err error, name string) error {
 func ErrTemplateFileNotPresent() error {
 	return errors.New(ErrTemplateFileNotPresentCode, errors.Fatal, []string{"error no template file provided"}, []string{"no template file is provided while using url for importing a model "}, []string{"template file not present"}, []string{"ensure that the template file is present in the given path"})
 }
-
+func ErrFolderNotPresent(message string) error {
+	return errors.New(ErrFolderNotPresentCode, errors.Fatal, []string{"error folder not provided"}, []string{message}, []string{"folder not present"}, []string{"ensure that the folder is present in the given path"})
+}
 func ErrModelUnsupportedOutputFormat(message string) error {
 	return errors.New(ErrModelUnsupportedOutputFormatCode, errors.Fatal, []string{"Error viewing model"}, []string{message}, []string{"Output format not supported"}, []string{"Ensure giving a valid format"})
+}
+
+func ErrModelUnsupportedOutputType(message string) error {
+	return errors.New(ErrModelUnsupportedOutputTypeFormatCode, errors.Fatal, []string{"Error in output type"}, []string{message}, []string{"Ouput type not supported"}, []string{"Ensure giving a valid format"})
 }
 
 func ErrModelUnsupportedVersion(message string) error {
 	return errors.New(ErrModelUnsupportedVersionCode, errors.Fatal, []string{"Error in model version format"}, []string{message}, []string{"Version format not supported"}, []string{"Ensure giving a semver version format"})
 }
-
+func ErrModelInvalidPageNumber(message string) error {
+	return errors.New(ErrorModelInvalidPageNumberCode, errors.Fatal, []string{"Error in page number"}, []string{message}, []string{"Page number format not supported"}, []string{"Ensure giving a valid page number ( i.e > 0 )"})
+}
 func ErrModelInitFromString(message string) error {
 	return errors.New(ErrModelInitCode, errors.Fatal, []string{"Error model init"}, []string{message}, []string{"Error during run of model init command"}, []string{"Ensure passing all params according to the command description"})
 }
