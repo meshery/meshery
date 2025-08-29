@@ -1,0 +1,61 @@
+version: 0.0.310
+name: all-relationships
+displayName: All relationships
+createdAt: "2025-08-29T19:06:11Z"
+description: |-
+    This design incorporates all the key relationships, including the following:
+
+
+
+    1.  Hierarchical-Parent-Inventory: This represents a parent-child relationship where the configuration of a parent component influences the child component.
+
+
+
+    2.  Hierarchical-Parent-Wallet: In this relationship, one component (the "wallet") serves as a container or host for another, similar to a parent-child structure.
+
+
+
+    3.  **Hierarchical-Sibling-MatchLabels:** A Match-Labels Relationship links components based on shared labels, indicating they are siblings that operate together.
+
+
+
+    4.  Edge-Mount: An Edge-Mount Relationship represents the assignment of persistent storage to a workload via a PersistentVolumeClaim (PVC).
+
+
+
+    5.  Edge-Permission: The Edge-Permission Relationship defines how components connect to establish access control, where bindings link subjects (like users or services) to roles with specific permissions.
+
+
+
+    6.  Edge-Firewall: An Edge-Firewall Relationship models a network policy that controls ingress and egress traffic between components.
+
+
+
+    7.  Edge-Network: An Edge-Network Relationship represents the networking configuration between components, typically illustrated by a service providing a stable endpoint for a deployment.
+
+
+
+    8.  Edge-Annotation: An Annotation Relationship is a visual indicator used to show a connection between two components without assigning any functional, semantic meaning to that relationship.
+
+
+
+    9.  Edge-Reference: An Edge-Reference Relationship represents a logical link where one component refers to another by its name or identifier. It enables interaction by declaring intent, such as a Pod referencing a ConfigMap for its configuration data.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f/0.0.310/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For detailed considerations on each relationship type, refer to the corresponding individual published designs. These designs provide in-depth insights into best practices, configuration strategies, and potential impacts for each type of relationship. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 830c0932-b05c-4c99-b12b-872f6cf12202
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png
