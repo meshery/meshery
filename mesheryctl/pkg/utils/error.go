@@ -53,6 +53,7 @@ var (
 	ErrInvalidModelCode           = "mesheryctl-1150"
 	ErrInvalidOrgIDCode           = "mesheryctl-1152"
 	ErrFetchEnvironmentsCode      = "mesheryctl-1153"
+	ErrTableRenderCode            = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -702,4 +703,12 @@ func ErrKubernetesConnectivity(err error) error {
 
 func ErrKubernetesQuery(err error) error {
 	return errors.New(ErrKubernetesQueryCode, errors.Alert, []string{"Failed to query Kubernetes API"}, []string{err.Error()}, []string{"Kubernetes API query failed"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
+}
+
+func ErrTableRender(err error) error {
+	return errors.New(ErrTableRenderCode, errors.Alert,
+		[]string{"Failed to display output in table format"},
+		[]string{err.Error()},
+		[]string{"Table rendering issue"},
+		[]string{"Ensure the data being rendered is valid and properly structured."})
 }
