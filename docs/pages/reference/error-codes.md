@@ -122,9 +122,8 @@ Troubleshooting guides to using Meshery's various features and components.
               {% capture link %}meshery-adapter-for-{{component[1].component_name | lowercase}}{% endcapture %}
             {% elsif component[1].component_type == 'component' %}
                {% capture link %}meshery-server{% endcapture %}
-            {% else %}
             {% elsif component[1].component_type == 'library' %}
-               {% capture link %}meshkit{% endcapture %}
+               {% capture link %}meshery-library-for-{{component[1].component_name | lowercase}}{% endcapture %}
             {% else %}
               {% capture link %}{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}{% endcapture %}      
             {% endif %}
@@ -157,7 +156,7 @@ Meshery Adapter for {{ component[1].component_name }}
 {% endcapture %}
 {% elsif component[1].component_type == 'library' %}
 {% capture heading %}
-{{ component[1].component_name }} {{ component[1].component_type | camelcase }}
+Meshery Library for {{ component[1].component_name }}
 {% endcapture %}
 {% elsif component[1].component_name == 'meshery-server' %}
 {% capture heading %}
