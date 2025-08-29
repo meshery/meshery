@@ -177,8 +177,8 @@ Meshery provides real-time user notifications through a simple event system. Whe
 
 ### How It Works
 
-1. **Create Event**: Use `events.NewEvent()` in your Go handler
-2. **Broadcast**: Call `EventBroadcaster.Publish(userID, event)` to send it to the user
+1. **Create Event**: Use [`events.NewEvent()`](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/build.go#L13) in your Go handler
+2. **Broadcast**: Call [`EventBroadcaster.Publish(userID, event)`](https://github.com/meshery/meshery/blob/995ab671a12013088f874430cfa2c0f025b073d2/server/models/event_broadcast.go#L40) to send it to the user
 3. **Display**: Event appears as toast popup and is stored in notification center
 
 **Two Types of Notifications:**
