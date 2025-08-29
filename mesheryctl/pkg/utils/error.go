@@ -53,7 +53,7 @@ var (
 	ErrInvalidModelCode           = "mesheryctl-1150"
 	ErrInvalidOrgIDCode           = "mesheryctl-1152"
 	ErrFetchEnvironmentsCode      = "mesheryctl-1153"
-	ErrTableRenderCode            = "replace_me"
+	ErrTableRenderCode            = "mesheryctl-1154"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
