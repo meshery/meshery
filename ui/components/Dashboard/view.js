@@ -75,8 +75,8 @@ const View = (props) => {
 
   if (!resource) return null;
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
- const connection = connections?.connections.find((conn) => conn.id === context?.connection_id);
- const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
+  const connection = connections?.connections.find((conn) => conn.id === context?.connection_id);
+  const connectionStatus = connection?.status || CONNECTION_STATES.DISCONNECTED;
 
   return (
     <Container>
