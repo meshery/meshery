@@ -98,7 +98,7 @@ export const TooltipWrappedConnectionChip = (props) => {
   );
 };
 
-const DiscoveredStateChip = ({ value }) => {
+export const DiscoveredStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value} sx={{ padding: 0 }}>
       <DiscoveredChip
@@ -111,7 +111,7 @@ const DiscoveredStateChip = ({ value }) => {
   );
 };
 
-const RegisteredStateChip = ({ value }) => {
+export const RegisteredStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <RegisteredChip
@@ -124,7 +124,7 @@ const RegisteredStateChip = ({ value }) => {
   );
 };
 
-const ConnectedStateChip = ({ value }) => {
+export const ConnectedStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <ConnectedChip
@@ -137,7 +137,7 @@ const ConnectedStateChip = ({ value }) => {
   );
 };
 
-const DisconnectedStateChip = ({ value }) => {
+export const DisconnectedStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <DisconnectedChip
@@ -149,8 +149,7 @@ const DisconnectedStateChip = ({ value }) => {
   );
 };
 
-const IgnoredStateChip = ({ value }) => {
-  // const classes = styles/();
+export const IgnoredStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <IgnoredChip
@@ -163,7 +162,7 @@ const IgnoredStateChip = ({ value }) => {
   );
 };
 
-const DeletedStateChip = ({ value }) => {
+export const DeletedStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <DeletedChip
@@ -176,7 +175,7 @@ const DeletedStateChip = ({ value }) => {
   );
 };
 
-const MaintainanceStateChip = ({ value }) => {
+export const MaintainanceStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <MaintainanceChip
@@ -189,7 +188,7 @@ const MaintainanceStateChip = ({ value }) => {
   );
 };
 
-const NotFoundStateChip = ({ value }) => {
+export const NotFoundStateChip = ({ value }) => {
   return (
     <ConnectionStyledMenuItem value={value}>
       <NotFoundChip
