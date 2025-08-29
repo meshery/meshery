@@ -185,7 +185,6 @@ Meshery provides real-time user notifications through a simple event system. Whe
 - **Toast**: Temporary popup for immediate feedback (auto-hides after 8 seconds)
 - **Notification Center**: Permanent history that users can filter and review
 
-
 ### How Notification Control Works
 
 **1. Severity-Based Control**
@@ -210,12 +209,9 @@ notify({
 });
 ```
 
-
 **3. User Filtering**
 
 Users can filter notifications by severity, category, and time range in the notification center.
-
-
 
 
 ### Anti-Spam Measures
