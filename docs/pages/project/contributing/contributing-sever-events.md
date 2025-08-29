@@ -173,54 +173,176 @@ sendClientEvent(clientId, eventPayload);
 
 ## Sending Events to Meshery UI for immediate user notification
 
-Meshery delivers immediate notifications through the GraphQL subscription → XState machine → Redux → UI notification pipeline. Events are both persisted and broadcast in real time. In addition, Meshery provides comprehensive controls to balance user awareness with notification fatigue, enabling developers and users to fine-tune the notification experience based on context and preferences.
+Meshery provides real-time user notifications through a simple event system. When your server code creates an event, it's automatically delivered to the user's browser and displayed as both a toast notification and stored in the notification center.
 
+### How It Works
 
-### How User Notifications Are Sent
+1. **Create Event**: Use `events.NewEvent()` in your Go handler
+2. **Broadcast**: Call `EventBroadcaster.Publish(userID, event)` to send it to the user
+3. **Display**: Event appears as toast popup and is stored in notification center
 
-
-**1. Notification Flow Architecture**
-
-1. Event Creation: [events.NewEvent()]() builder pattern in Go
-2. Broadcasting: [EventBroadcaster.Publish(userID, event)]()
-3. GraphQL Subscription: Real-time delivery via [subscribeEvents]()
-4. XState Processing: Operations center machine processes events
-5. Multiple UI Channels:
-    - Toast Notifications: Immediate popups via [enqueueSnackbar()]()
-    - Notification Center: Persistent storage in Redux + UI drawer
-    - Event Persistence: Database storage via [provider.PersistEvent()]()
-
-**2. Notification Types & Delivery**
-
-Toast Notifications:
-  - Immediate visual feedback via snackbar
-  - Auto-hide after 8 seconds (autoHideDuration: 8000)
-  - Action buttons for opening notification center or dismissing
-
-Notification Center:
-  - Persistent event history and management
-  - Real-time updates via Redux state
-  - Filtering and bulk operations
+**Two Types of Notifications:**
+- **Toast**: Temporary popup for immediate feedback (auto-hides after 8 seconds)
+- **Notification Center**: Permanent history that users can filter and review
 
 
 ### How Notification Control Works
 
 **1. Severity-Based Control**
 
+Event severity determines both visual appearance and notification priority. Choose the right severity to help users focus on what matters most:
+
+```go
+events.Success  // Green - Operations completed successfully
+events.Error    // Red - Failed operations, user needs to know
+events.Warning  // Yellow - Issues that may need attention
+events.Info     // Blue - General information
+```
+
 **2. Visibility Controls**
 
-**3. User Filtering System**
+```javascript
+notify({
+  message: "Operation completed",
+  showInNotificationCenter: true,
+  showAsToast: true,
+  event_type: SEVERITY.SUCCESS
+});
+```
 
-**4. Event Processing Controls**
 
-### Anti-Spam & Rate Limiting Measures
+**3. User Filtering**
+
+Users can filter notifications by severity, category, and time range in the notification center.
+
+
+
+
+### Anti-Spam Measures
+
+Meshery prevents notification spam through:
+- **Rate limiting**: Maximum 5 events per source per minute
+- **Deduplication**: Identical events are merged with occurrence counts
+- **User filtering**: Users can disable by severity level or category
+
 
 ### Best Practices to Avoid Under/Over-Notification
 
 **1. Preventing Over-Notification**
 
+Avoid flooding users with too many notifications:
+
+```go
+// Bad: Notify on every step
+events.NewEvent().WithSeverity(events.Info).WithDescription("Starting validation")
+events.NewEvent().WithSeverity(events.Info).WithDescription("Checking credentials")
+events.NewEvent().WithSeverity(events.Success).WithDescription("Connection established")
+
+// Good: Notify on completion only
+events.NewEvent().WithSeverity(events.Success).WithDescription("Connection established")
+```
+
+**Guidelines:**
+- Batch progress updates instead of notifying each step
+- Use appropriate severity levels
+- Avoid redundancy if UI already shows status
+
 **2. Preventing Under-Notification**
 
-**3. Smart Notification Strategies**
+Ensure users know about important events:
 
-### Example
+```go
+// Bad: Silent failure
+if err := validateConnection(ctx) {
+    log.Error("Connection failed", err)
+    return err
+}
+
+// Good: Always notify on failures
+if err := validateConnection(ctx) {
+    event := events.NewEvent().
+        WithSeverity(events.Error).
+        WithDescription("Connection validation failed: " + err.Error())
+    go h.config.EventBroadcaster.Publish(userID, &event)
+    return err
+}
+```
+
+**Guidelines:**
+- Always notify on errors and failures
+- Confirm user-initiated actions when complete
+- Include help links for complex errors
+
+**3. Best Practices**
+
+- Use appropriate severity levels
+- Always notify on errors and failures
+- Keep success messages simple
+- Include error details for failures
+
+### Implementation Example
+
+```go
+func (h *Handler) SaveDesignHandler(w http.ResponseWriter, req *http.Request, user *models.User, provider models.Provider) {
+    userID := uuid.FromStringOrNil(user.ID)
+    
+    design, err := parseDesignFromRequest(req)
+    if err != nil {
+        event := events.NewEvent().
+            FromUser(userID).
+            FromSystem(*h.SystemID).
+            WithCategory("design").
+            WithAction("save").
+            WithSeverity(events.Error).
+            WithDescription("Failed to save design: " + err.Error()).
+            Build()
+        
+        _ = provider.PersistEvent(event)
+        go h.config.EventBroadcaster.Publish(userID, event)
+        
+        http.Error(w, "Invalid design", http.StatusBadRequest)
+        return
+    }
+    
+    savedDesign, err := provider.SaveDesign(design)
+    if err != nil {
+        event := events.NewEvent().
+            FromUser(userID).
+            FromSystem(*h.SystemID).
+            WithCategory("design").
+            WithAction("save").
+            WithSeverity(events.Error).
+            WithDescription("Could not save design").
+            Build()
+        
+        _ = provider.PersistEvent(event)
+        go h.config.EventBroadcaster.Publish(userID, event)
+        
+        http.Error(w, "Save failed", http.StatusInternalServerError)
+        return
+    }
+    
+    // Success notification
+    event := events.NewEvent().
+        FromUser(userID).
+        FromSystem(*h.SystemID).
+        WithCategory("design").
+        WithAction("save").
+        WithSeverity(events.Success).
+        WithDescription(fmt.Sprintf("Design '%s' saved", savedDesign.Name)).
+        Build()
+    
+    _ = provider.PersistEvent(event)
+    go h.config.EventBroadcaster.Publish(userID, event)
+    
+    w.WriteHeader(http.StatusOK)
+    json.NewEncoder(w).Encode(savedDesign)
+}
+```
+
+**Key Steps:**
+1. Create event with `events.NewEvent()`
+2. Set user and system context with `FromUser()` and `FromSystem()`
+3. Set category, action, and severity
+4. Persist event with `provider.PersistEvent()`
+5. Broadcast with `h.config.EventBroadcaster.Publish()`
