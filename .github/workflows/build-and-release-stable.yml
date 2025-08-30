@@ -85,7 +85,11 @@ jobs:
     if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
+      IMAGE_NAME: ${{ vars.IMAGE_NAME }}
     runs-on: ubuntu-24.04
+    permissions:
+      id-token: write # needed for Cosign keyless signing
+      contents: read # needed for checkout
     steps:
       - uses: actions/checkout@v4
         with:
@@ -104,46 +108,53 @@ jobs:
       - name: Docker stable and playground build & tag
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache \
-            -t ${{ secrets.IMAGE_NAME }}:stable-latest \
+            -t ${{ env.IMAGE_NAME }}:stable-latest \
             --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} \
             --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} \
             --build-arg GIT_VERSION=${GITHUB_REF/refs\/tags\//} \
             --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} \
             --build-arg PLAYGROUND=true .
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-latest
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
-          docker tag ${{ secrets.IMAGE_NAME }}:stable-latest ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:playground-latest
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
+          docker tag ${{ env.IMAGE_NAME }}:stable-latest ${{ env.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
       - name: Docker stable and playground push
         run: |
-          docker push ${{ secrets.IMAGE_NAME }}:stable-latest
-          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
-          docker push ${{ secrets.IMAGE_NAME }}:playground-latest
-          docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
-          docker push ${{ secrets.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
+          docker push ${{ env.IMAGE_NAME }}:stable-latest
+          docker push ${{ env.IMAGE_NAME }}:stable-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ env.IMAGE_NAME }}:stable-${GITHUB_SHA::8}
+          docker push ${{ env.IMAGE_NAME }}:playground-latest
+          docker push ${{ env.IMAGE_NAME }}:playground-${GITHUB_REF/refs\/tags\//}
+          docker push ${{ env.IMAGE_NAME }}:playground-${GITHUB_SHA::8}
 
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
+        uses: sigstore/cosign-installer@v3.9.2
       - name: Sign Docker images (keyless)
         run: |
           for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
-            echo "Signing ${{ secrets.IMAGE_NAME }}:$tag"
-            cosign sign docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
+            echo "Signing ${{ env.IMAGE_NAME }}:$tag"
+            cosign sign docker.io/${{ env.IMAGE_NAME }}:$tag --keyless --yes
           done
       - name: Verify Docker image signatures
         run: |
           for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
-            echo "Verifying ${{ secrets.IMAGE_NAME }}:$tag"
-            cosign verify docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
+            echo "Verifying ${{ env.IMAGE_NAME }}:$tag"
+            cosign verify docker.io/${{ env.IMAGE_NAME }}:$tag \
+              --keyless \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 
   ctlrelease:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && startsWith(github.ref, 'refs/tags/v') && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
+    permissions:
+      id-token: write # needed for Cosign keyless signing
+      contents: read # needed for actions/checkout
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out code
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - name: Set up Go
@@ -159,25 +170,22 @@ jobs:
           version: 2
           args: release --clean --skip=validate -f .github/.goreleaser.yml
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
+        uses: sigstore/cosign-installer@v3.9.2
       - name: Sign mesheryctl artifacts (keyless)
         run: |
           for artifact in dist/*; do
             cosign sign-blob \
               --yes \
               --bundle "${artifact}.sigstore" \
-              --output-signature "${artifact}.sig" \
-              --output-certificate "${artifact}.pem" \
               "$artifact"
           done
       - name: Verify mesheryctl artifacts
         run: |
           for artifact in dist/*; do
             cosign verify-blob \
+              --bundle "${artifact}.sigstore" \
               --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
               --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-              --signature "${artifact}.sig" \
-              --certificate "${artifact}.pem" \
               "$artifact"
           done
       - name: bump homebrew-core formula
