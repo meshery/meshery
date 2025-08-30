@@ -37,7 +37,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 
 - `DOCKER_USERNAME`: Username of the Docker Hub user with the right privileges to push images
 - `DOCKER_PASSWORD`: Password for the Docker Hub user
-- `GO_VERSION`: As of December, 2024 is 1.23
 - `IMAGE_NAME`: appropriate image name for each of the Docker container images. All are under the `meshery` org.
 - `SLACK_BOT_TOKEN`: Used for notification of new GitHub stars given to the Meshery repo.
 - `GLOBAL_TOKEN`: Used for securely transmitting performance test results for the None Provider.
@@ -50,8 +49,6 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `MESHERY_TOKEN`: General Meshery authentication token
 - `METAL_AUTH_TOKEN`: Authentication token for metal provider
 - `METAL_SERVER1`: Configuration for metal server 1
-- `METAL_SERVER2`: Configuration for metal server 2
-- `METAL_SERVER3`: Configuration for metal server 3
 - `NETLIFY_AUTH_TOKEN`: Authentication token for Netlify
 - `NETLIFY_SITE_ID`: Site ID for Netlify deployments
 - `PLAYGROUND_CONFIG`: Configuration for playground environments

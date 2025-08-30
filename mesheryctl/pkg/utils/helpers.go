@@ -27,6 +27,8 @@ import (
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/renderer"
+	"github.com/olekukonko/tablewriter/tw"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -566,57 +568,71 @@ func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
 }
 
+func generateTableOptions() []tablewriter.Option {
+	options := []tablewriter.Option{
+		tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{
+			Symbols: tw.NewSymbols(tw.StyleNone),
+			Settings: tw.Settings{
+				Separators: tw.Separators{BetweenRows: tw.Off},
+				Lines:      tw.Lines{ShowTop: tw.Off, ShowHeaderLine: tw.Off, ShowFooterLine: tw.On},
+			},
+		})),
+		tablewriter.WithConfig(tablewriter.Config{
+			Header: tw.CellConfig{
+				Formatting: tw.CellFormatting{AutoFormat: tw.On},
+				Alignment:  tw.CellAlignment{Global: tw.AlignLeft},
+				Padding:    tw.CellPadding{Global: tw.PaddingDefault},
+			},
+			Row: tw.CellConfig{
+				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
+				Padding:   tw.CellPadding{Global: tw.PaddingDefault},
+			},
+			Footer: tw.CellConfig{
+				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
+				Padding:   tw.CellPadding{Global: tw.PaddingDefault},
+			},
+		}),
+	}
+
+	return options
+}
+
+func renderTable(table *tablewriter.Table, data [][]string, header, footer []string) {
+	table.Header(header)
+	err := table.Bulk(data)
+	if err != nil {
+		Log.Error(ErrTableRender(err))
+
+	}
+	if footer != nil {
+		table.Footer(footer)
+	}
+	err = table.Render()
+	if err != nil {
+		Log.Error(ErrTableRender(err))
+	}
+}
+
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(false)
+	options := generateTableOptions()
 
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
-	}
-	table.SetHeaderColor(boldHeader...)
+	table := tablewriter.NewTable(os.Stdout,
+		options...,
+	)
 
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
+	renderTable(table, data, header, nil)
 }
 
 // PrintToTableWithFooter prints the given data into a table format but with a footer
 func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
+	options := generateTableOptions()
 
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
-	}
-	table.SetHeaderColor(boldHeader...)
+	table := tablewriter.NewTable(os.Stdout,
+		options...,
+	)
 
-	table.AppendBulk(data) // The data in the table
-	table.SetFooter(footer)
-	table.Render() // Render the table
+	renderTable(table, data, header, footer)
 }
 
 // ClearLine clears the last line from output
@@ -836,28 +852,6 @@ func ParseURLGithub(URL string) (string, string, error) {
 		return resURL, "", nil
 	}
 	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
-}
-
-// PrintToTableInStringFormat prints the given data into a table format but return as a string
-func PrintToTableInStringFormat(header []string, data [][]string) string {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	tableString := &strings.Builder{}
-	table := tablewriter.NewWriter(tableString)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
-
-	return tableString.String()
 }
 
 // Indicate an ongoing Process at a given time on CLI

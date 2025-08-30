@@ -296,10 +296,6 @@ func (l *DefaultLocalProvider) SaveK8sContext(_ string, k8sContext K8sContext, a
 	}
 	connectionCreated, err := l.SaveConnection(conn, "", true)
 	if err != nil {
-		// if connection already exists,return in chain that context is already persisted
-		if errors.Is(err, ErrConnectionAlreadyExist) {
-			err = fmt.Errorf("%v: %v", err, ErrContextAlreadyPersisted)
-		}
 		return connections.Connection{}, fmt.Errorf("error in saving k8s context %v", err)
 	}
 
