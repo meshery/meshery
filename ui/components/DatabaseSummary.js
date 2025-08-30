@@ -89,7 +89,7 @@ const DatabaseSummary = (props) => {
     filter: false,
     sort: true,
     selectableRows: 'none',
-    responsive: 'scrollMaxHeight',
+    responsive: 'standard',
     print: false,
     download: false,
     viewColumns: false,
