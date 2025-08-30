@@ -13,9 +13,7 @@ description: |-
 
     2.  Hierarchical-Parent-Wallet: In this relationship, one component (the "wallet") serves as a container or host for another, similar to a parent-child structure.
 
-
-
-    3.  **Hierarchical-Sibling-MatchLabels:** A Match-Labels Relationship links components based on shared labels, indicating they are siblings that operate together.
+    3.  Hierarchical-Sibling-MatchLabels: A Match-Labels Relationship links components based on shared labels, indicating they are siblings that operate together.
 
 
 

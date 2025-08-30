@@ -2,7 +2,7 @@
   "id": "2fdf5dcb-a3c0-4c2c-a64f-a3943ac87d5f",
   "name": "All relationships",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.310",
+  "version": "0.0.321",
   "metadata": {
     "resolvedAliases": {
       "18c1e229-1a54-4b9d-a3f3-6289aa4b360a": {
@@ -180,106 +180,6 @@
       }
     },
     {
-      "id": "1809c565-b6db-4def-b73e-51994f0b0214",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-08-29T15:54:41.041997471Z",
-          "updated_at": "2025-08-29T15:54:41.041997471Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-opacity": 0,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-color": "#808080",
-        "border-width": 0,
-        "height": 22,
-        "menu-forground-color": "#424242",
-        "opacity": 1,
-        "padding": 2,
-        "position": {
-          "x": 651.2702449209377,
-          "y": 477.13392731230704
-        },
-        "primaryColor": "#FFDE00",
-        "secondaryColor": "#FFDE00",
-        "shape": "tag",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg",
-        "svgComplete": "ui/public/static/img/meshmodels/meshery-core/complete/comment-complete.svg",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/comment-white.svg",
-        "width": 22,
-        "x": 1.5,
-        "y": 7.5,
-        "z-index": 96
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "userMessages": []
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Comment",
-        "schema": ""
-      }
-    },
-    {
       "id": "ee116a42-1caf-4a0f-a3d3-5e5a9271399d",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
@@ -417,7 +317,8 @@
         "shape": "rectangle",
         "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg",
         "svgComplete": "ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg",
-        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg"
+        "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg",
+        "z-index": 98
       },
       "capabilities": [],
       "status": "enabled",
@@ -430,7 +331,7 @@
         "published": false,
         "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
       },
-      "configuration": null,
+      "configuration": {},
       "component": {
         "version": "v1",
         "kind": "Namespace",
@@ -775,106 +676,6 @@
       }
     },
     {
-      "id": "d0c6002e-77ea-4ac5-a61e-3c94c4cdba59",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "6b49e0cc-6d83-f917-b2bd-30b69792bb20",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "meshery-core",
-        "displayName": "Meshery Core",
-        "status": "enabled",
-        "registrant": {
-          "id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-          "name": "meshery",
-          "type": "registry",
-          "sub_type": "",
-          "kind": "meshery",
-          "status": "registered",
-          "created_at": "2025-08-29T15:54:41.041997471Z",
-          "updated_at": "2025-08-29T15:54:41.041997471Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "13df38ce-edc0-8c01-ed9f-0414912a43fd",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Application Definition \u0026 Image Build",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#00B39F",
-          "secondaryColor": "#00D3A9",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg"
-        },
-        "model": {
-          "version": "0.7.2"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": {
-        "background-image": "none",
-        "background-opacity": 0,
-        "body-text": "",
-        "body-text-color": "#808080",
-        "body-text-font-family": "Qanelas Soft",
-        "body-text-font-size": 12,
-        "body-text-font-weight": "400",
-        "body-text-horizontal-align": "center",
-        "body-text-text-decoration": "none",
-        "body-text-vertical-align": "center",
-        "border-style": "dashed",
-        "border-width": 1,
-        "data": {
-          "label": ""
-        },
-        "height": 30,
-        "opacity": 1,
-        "padding": 6,
-        "position": {
-          "x": 867.1670734548891,
-          "y": 503.96856136737443
-        },
-        "primaryColor": "#00B39F",
-        "secondaryColor": "#00D3A9",
-        "shape": "rectangle",
-        "svgColor": "ui/public/static/img/meshmodels/meshery-core/color/section-color.svg",
-        "svgComplete": "",
-        "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/section-white.svg",
-        "width": 30,
-        "z-index": 97
-      },
-      "capabilities": [],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "parent",
-        "hasInvalidSchema": true,
-        "instanceDetails": null,
-        "isAnnotation": true,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {},
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Section",
-        "schema": ""
-      }
-    },
-    {
       "id": "0e39b40e-e1a8-4dff-8168-3e5af9f8daed",
       "schemaVersion": "components.meshery.io/v1beta1",
       "version": "v1.0.0",
@@ -1119,7 +920,13 @@
         "components": null,
         "relationships": null
       },
-      "styles": null,
+      "styles": {
+        "primaryColor": "",
+        "svgColor": "",
+        "svgComplete": "",
+        "svgWhite": "",
+        "z-index": 99
+      },
       "capabilities": [
         {
           "description": "Configure the visual styles for the component",
@@ -1153,88 +960,6 @@
         ],
         "isTemporary": false,
         "order": 1756498913413
-      },
-      "component": {
-        "version": "core.meshery.io/v1alpha1",
-        "kind": "Group",
-        "schema": ""
-      }
-    },
-    {
-      "id": "e78056e5-f1fd-4702-a5b9-ee41a08d9f2e",
-      "schemaVersion": "components.meshery.io/v1beta1",
-      "version": "v1.0.0",
-      "displayName": "",
-      "description": "",
-      "format": "JSON",
-      "model": {
-        "id": "00000000-0000-0000-0000-000000000000",
-        "schemaVersion": "",
-        "version": "",
-        "name": "kanvas-local",
-        "displayName": "",
-        "status": "",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "00000000-0000-0000-0000-000000000000",
-        "category": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": ""
-        },
-        "subCategory": "",
-        "metadata": null,
-        "model": {
-          "version": ""
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "styles": null,
-      "capabilities": [
-        {
-          "description": "Configure the visual styles for the component",
-          "displayName": "Styling",
-          "entityState": [
-            "declaration"
-          ],
-          "key": "",
-          "kind": "mutate",
-          "schemaVersion": "capability.meshery.io/v1alpha1",
-          "status": "enabled",
-          "subType": "",
-          "type": "style",
-          "version": "0.7.0"
-        }
-      ],
-      "status": "enabled",
-      "metadata": {
-        "configurationUISchema": "",
-        "genealogy": "",
-        "instanceDetails": null,
-        "isAnnotation": false,
-        "isNamespaced": false,
-        "published": false
-      },
-      "configuration": {
-        "child_component_ids": [
-          "31dd1e9c-6c3b-49c2-b8c3-1c4f3f0d81aa",
-          "6da926f8-c97c-495f-bf00-a428ac6f5962",
-          "8ee8b2cf-8332-43c8-bd56-b5ed861c7efd"
-        ],
-        "isTemporary": true,
-        "order": 1756498923080
       },
       "component": {
         "version": "core.meshery.io/v1alpha1",
@@ -18538,298 +18263,6 @@
       "version": "v1.0.0"
     },
     {
-      "id": "179eea26-bd7b-42f4-9bee-3b2c77900f94",
-      "evaluationQuery": "",
-      "kind": "hierarchical",
-      "metadata": {
-        "description": "A relationship between two objects that are siblings",
-        "styles": {
-          "primaryColor": "",
-          "svgColor": "",
-          "svgWhite": ""
-        },
-        "isAnnotation": false
-      },
-      "model": {
-        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
-        "schemaVersion": "models.meshery.io/v1beta1",
-        "version": "v1.0.0",
-        "name": "kubernetes",
-        "displayName": "Kubernetes",
-        "status": "enabled",
-        "registrant": {
-          "id": "00000000-0000-0000-0000-000000000000",
-          "name": "",
-          "type": "",
-          "sub_type": "",
-          "kind": "",
-          "status": "",
-          "created_at": "0001-01-01T00:00:00Z",
-          "updated_at": "0001-01-01T00:00:00Z",
-          "deleted_at": null,
-          "schemaVersion": ""
-        },
-        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
-        "category": {
-          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
-          "name": "Orchestration \u0026 Management"
-        },
-        "subCategory": "Scheduling \u0026 Orchestration",
-        "metadata": {
-          "isAnnotation": false,
-          "primaryColor": "#326CE5",
-          "secondaryColor": "#7aa1f0",
-          "shape": "circle",
-          "styleOverrides": "",
-          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-          "svgComplete": "",
-          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-        },
-        "model": {
-          "version": "v1.32.0-alpha.3"
-        },
-        "components_count": 0,
-        "relationships_count": 0,
-        "components": null,
-        "relationships": null
-      },
-      "schemaVersion": "relationships.meshery.io/v1alpha3",
-      "selectors": [
-        {
-          "allow": {
-            "from": [
-              {
-                "id": "6da926f8-c97c-495f-bf00-a428ac6f5962",
-                "kind": "CSIDriver",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
-                  "schemaVersion": "models.meshery.io/v1beta1",
-                  "version": "v1.0.0",
-                  "name": "kubernetes",
-                  "displayName": "Kubernetes",
-                  "status": "enabled",
-                  "registrant": {
-                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                    "name": "Artifact Hub",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "registry",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "registered",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "2024-09-29T20:24:01.879421913Z",
-                    "updated_at": "2024-09-29T20:24:01.879421913Z",
-                    "deleted_at": "0001-01-01T00:00:00Z",
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "Orchestration \u0026 Management"
-                  },
-                  "subCategory": "",
-                  "metadata": {
-                    "isAnnotation": false,
-                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-                  },
-                  "model": {
-                    "version": "v1.25.2"
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "meshery"
-                    ]
-                  ]
-                }
-              },
-              {
-                "id": "8ee8b2cf-8332-43c8-bd56-b5ed861c7efd",
-                "kind": "Role",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
-                  "schemaVersion": "models.meshery.io/v1beta1",
-                  "version": "v1.0.0",
-                  "name": "kubernetes",
-                  "displayName": "Kubernetes",
-                  "status": "enabled",
-                  "registrant": {
-                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                    "name": "Artifact Hub",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "registry",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "registered",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "2024-09-29T20:24:01.879421913Z",
-                    "updated_at": "2024-09-29T20:24:01.879421913Z",
-                    "deleted_at": "0001-01-01T00:00:00Z",
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "Orchestration \u0026 Management"
-                  },
-                  "subCategory": "",
-                  "metadata": {
-                    "isAnnotation": false,
-                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-                  },
-                  "model": {
-                    "version": "v1.25.2"
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "meshery"
-                    ]
-                  ]
-                }
-              }
-            ],
-            "to": [
-              {
-                "id": "6da926f8-c97c-495f-bf00-a428ac6f5962",
-                "kind": "CSIDriver",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
-                  "schemaVersion": "models.meshery.io/v1beta1",
-                  "version": "v1.0.0",
-                  "name": "kubernetes",
-                  "displayName": "Kubernetes",
-                  "status": "enabled",
-                  "registrant": {
-                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                    "name": "Artifact Hub",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "registry",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "registered",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "2024-09-29T20:24:01.879421913Z",
-                    "updated_at": "2024-09-29T20:24:01.879421913Z",
-                    "deleted_at": "0001-01-01T00:00:00Z",
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "Orchestration \u0026 Management"
-                  },
-                  "subCategory": "",
-                  "metadata": {
-                    "isAnnotation": false,
-                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-                  },
-                  "model": {
-                    "version": "v1.25.2"
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "meshery"
-                    ]
-                  ]
-                }
-              },
-              {
-                "id": "8ee8b2cf-8332-43c8-bd56-b5ed861c7efd",
-                "kind": "Role",
-                "match": {},
-                "match_strategy_matrix": null,
-                "model": {
-                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
-                  "schemaVersion": "models.meshery.io/v1beta1",
-                  "version": "v1.0.0",
-                  "name": "kubernetes",
-                  "displayName": "Kubernetes",
-                  "status": "enabled",
-                  "registrant": {
-                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                    "name": "Artifact Hub",
-                    "credential_id": "00000000-0000-0000-0000-000000000000",
-                    "type": "registry",
-                    "sub_type": "",
-                    "kind": "artifacthub",
-                    "status": "registered",
-                    "user_id": "00000000-0000-0000-0000-000000000000",
-                    "created_at": "2024-09-29T20:24:01.879421913Z",
-                    "updated_at": "2024-09-29T20:24:01.879421913Z",
-                    "deleted_at": "0001-01-01T00:00:00Z",
-                    "schemaVersion": ""
-                  },
-                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
-                  "category": {
-                    "id": "00000000-0000-0000-0000-000000000000",
-                    "name": "Orchestration \u0026 Management"
-                  },
-                  "subCategory": "",
-                  "metadata": {
-                    "isAnnotation": false,
-                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
-                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
-                  },
-                  "model": {
-                    "version": "v1.25.2"
-                  },
-                  "components_count": 0,
-                  "relationships_count": 0,
-                  "components": null,
-                  "relationships": null
-                },
-                "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                    [
-                      "meshery"
-                    ]
-                  ]
-                }
-              }
-            ]
-          },
-          "deny": {
-            "from": [],
-            "to": []
-          }
-        }
-      ],
-      "subType": "matchlabels",
-      "status": "approved",
-      "type": "sibling",
-      "version": "v1.0.0"
-    },
-    {
       "id": "1d291fb2-5ff2-48f4-8661-2601aab197ef",
       "evaluationQuery": "",
       "kind": "hierarchical",
@@ -22459,6 +21892,298 @@
       "subType": "inventory",
       "status": "approved",
       "type": "parent",
+      "version": "v1.0.0"
+    },
+    {
+      "id": "ac5adc8e-4c5d-4e71-bcff-caca65855f12",
+      "evaluationQuery": "",
+      "kind": "hierarchical",
+      "metadata": {
+        "description": "A relationship between two objects that are siblings",
+        "styles": {
+          "primaryColor": "",
+          "svgColor": "",
+          "svgWhite": ""
+        },
+        "isAnnotation": false
+      },
+      "model": {
+        "id": "b3f5bc0d-30f7-607d-6c73-784ddde6cad8",
+        "schemaVersion": "models.meshery.io/v1beta1",
+        "version": "v1.0.0",
+        "name": "kubernetes",
+        "displayName": "Kubernetes",
+        "status": "enabled",
+        "registrant": {
+          "id": "00000000-0000-0000-0000-000000000000",
+          "name": "",
+          "type": "",
+          "sub_type": "",
+          "kind": "",
+          "status": "",
+          "created_at": "0001-01-01T00:00:00Z",
+          "updated_at": "0001-01-01T00:00:00Z",
+          "deleted_at": null,
+          "schemaVersion": ""
+        },
+        "connection_id": "5bc80e3c-5d43-9eb4-d16c-78a2769247a6",
+        "category": {
+          "id": "9ca27d0d-66ce-42a9-8c85-6236563f2ddb",
+          "name": "Orchestration \u0026 Management"
+        },
+        "subCategory": "Scheduling \u0026 Orchestration",
+        "metadata": {
+          "isAnnotation": false,
+          "primaryColor": "#326CE5",
+          "secondaryColor": "#7aa1f0",
+          "shape": "circle",
+          "styleOverrides": "",
+          "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+          "svgComplete": "",
+          "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+        },
+        "model": {
+          "version": "v1.32.0-alpha.3"
+        },
+        "components_count": 0,
+        "relationships_count": 0,
+        "components": null,
+        "relationships": null
+      },
+      "schemaVersion": "relationships.meshery.io/v1alpha3",
+      "selectors": [
+        {
+          "allow": {
+            "from": [
+              {
+                "id": "6da926f8-c97c-495f-bf00-a428ac6f5962",
+                "kind": "CSIDriver",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
+                  "schemaVersion": "models.meshery.io/v1beta1",
+                  "version": "v1.0.0",
+                  "name": "kubernetes",
+                  "displayName": "Kubernetes",
+                  "status": "enabled",
+                  "registrant": {
+                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                    "name": "Artifact Hub",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "registry",
+                    "sub_type": "",
+                    "kind": "artifacthub",
+                    "status": "registered",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "2024-09-29T20:24:01.879421913Z",
+                    "updated_at": "2024-09-29T20:24:01.879421913Z",
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "Orchestration \u0026 Management"
+                  },
+                  "subCategory": "",
+                  "metadata": {
+                    "isAnnotation": false,
+                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+                  },
+                  "model": {
+                    "version": "v1.25.2"
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "meshery"
+                    ]
+                  ]
+                }
+              },
+              {
+                "id": "8ee8b2cf-8332-43c8-bd56-b5ed861c7efd",
+                "kind": "Role",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
+                  "schemaVersion": "models.meshery.io/v1beta1",
+                  "version": "v1.0.0",
+                  "name": "kubernetes",
+                  "displayName": "Kubernetes",
+                  "status": "enabled",
+                  "registrant": {
+                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                    "name": "Artifact Hub",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "registry",
+                    "sub_type": "",
+                    "kind": "artifacthub",
+                    "status": "registered",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "2024-09-29T20:24:01.879421913Z",
+                    "updated_at": "2024-09-29T20:24:01.879421913Z",
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "Orchestration \u0026 Management"
+                  },
+                  "subCategory": "",
+                  "metadata": {
+                    "isAnnotation": false,
+                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+                  },
+                  "model": {
+                    "version": "v1.25.2"
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "meshery"
+                    ]
+                  ]
+                }
+              }
+            ],
+            "to": [
+              {
+                "id": "6da926f8-c97c-495f-bf00-a428ac6f5962",
+                "kind": "CSIDriver",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
+                  "schemaVersion": "models.meshery.io/v1beta1",
+                  "version": "v1.0.0",
+                  "name": "kubernetes",
+                  "displayName": "Kubernetes",
+                  "status": "enabled",
+                  "registrant": {
+                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                    "name": "Artifact Hub",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "registry",
+                    "sub_type": "",
+                    "kind": "artifacthub",
+                    "status": "registered",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "2024-09-29T20:24:01.879421913Z",
+                    "updated_at": "2024-09-29T20:24:01.879421913Z",
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "Orchestration \u0026 Management"
+                  },
+                  "subCategory": "",
+                  "metadata": {
+                    "isAnnotation": false,
+                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+                  },
+                  "model": {
+                    "version": "v1.25.2"
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "meshery"
+                    ]
+                  ]
+                }
+              },
+              {
+                "id": "8ee8b2cf-8332-43c8-bd56-b5ed861c7efd",
+                "kind": "Role",
+                "match": {},
+                "match_strategy_matrix": null,
+                "model": {
+                  "id": "4394fd4f-7d35-78e1-2cba-a265d8e33b70",
+                  "schemaVersion": "models.meshery.io/v1beta1",
+                  "version": "v1.0.0",
+                  "name": "kubernetes",
+                  "displayName": "Kubernetes",
+                  "status": "enabled",
+                  "registrant": {
+                    "id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                    "name": "Artifact Hub",
+                    "credential_id": "00000000-0000-0000-0000-000000000000",
+                    "type": "registry",
+                    "sub_type": "",
+                    "kind": "artifacthub",
+                    "status": "registered",
+                    "user_id": "00000000-0000-0000-0000-000000000000",
+                    "created_at": "2024-09-29T20:24:01.879421913Z",
+                    "updated_at": "2024-09-29T20:24:01.879421913Z",
+                    "deleted_at": "0001-01-01T00:00:00Z",
+                    "schemaVersion": ""
+                  },
+                  "connection_id": "cdd66d14-bdd9-1a24-ba16-faec2953d9d5",
+                  "category": {
+                    "id": "00000000-0000-0000-0000-000000000000",
+                    "name": "Orchestration \u0026 Management"
+                  },
+                  "subCategory": "",
+                  "metadata": {
+                    "isAnnotation": false,
+                    "svgColor": "ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg",
+                    "svgWhite": "ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg"
+                  },
+                  "model": {
+                    "version": "v1.25.2"
+                  },
+                  "components_count": 0,
+                  "relationships_count": 0,
+                  "components": null,
+                  "relationships": null
+                },
+                "patch": {
+                  "patchStrategy": "replace",
+                  "mutatorRef": [
+                    [
+                      "meshery"
+                    ]
+                  ]
+                }
+              }
+            ]
+          },
+          "deny": {
+            "from": [],
+            "to": []
+          }
+        }
+      ],
+      "subType": "matchlabels",
+      "status": "approved",
+      "type": "sibling",
       "version": "v1.0.0"
     },
     {
