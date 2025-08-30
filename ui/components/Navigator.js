@@ -10,10 +10,15 @@ import LifecycleHover from '../public/static/img/drawer-icons/lifecycle_hover_sv
 import PerformanceHover from '../public/static/img/drawer-icons/performance_hover_svg';
 import ConfigurationHover from '../public/static/img/drawer-icons/configuration_hover_svg';
 import ConfigurationIcon from '../assets/icons/ConfigurationIcon';
+import HoverIcon from '../components/HoverIcon';
 import DocumentIcon from '../assets/icons/DocumentIcon';
+import DocumentColorIcon from '../assets/icons/DocumentColorIcon';
 import SlackIcon from '../assets/icons/SlackIcon';
+import SlackColorIcon from '../assets/icons/SlackColorIcon';
 import GithubIcon from '../assets/icons/GithubIcon';
+import GithubColorIcon from '../assets/icons/GithubColorIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
+import ChatColorIcon from '../assets/icons/ChatColorIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
@@ -364,7 +369,13 @@ const Navigator_ = () => {
       id: 'doc',
       href: 'https://docs.meshery.io',
       title: 'Documentation',
-      icon: <DocumentIcon style={drawerIconsStyle} />,
+      icon: (
+        <HoverIcon
+          defaultIcon={DocumentIcon}
+          hoverIcon={DocumentColorIcon}
+          style={drawerIconsStyle}
+        />
+      ),
       external_icon: ExternalLinkIcon,
     },
     {
@@ -372,7 +383,9 @@ const Navigator_ = () => {
       href: 'https://slack.meshery.io',
       title: 'Community',
       icon: (
-        <SlackIcon
+        <HoverIcon
+          defaultIcon={SlackIcon}
+          hoverIcon={SlackColorIcon}
           style={{ ...drawerIconsStyle, height: '1.5rem', width: '1.5rem', marginTop: '' }}
         />
       ),
@@ -382,14 +395,16 @@ const Navigator_ = () => {
       id: 'forum',
       href: 'https://meshery.io/community#community-forums',
       title: 'Discussion Forum',
-      icon: <ChatIcon style={drawerIconsStyle} />,
+      icon: <HoverIcon defaultIcon={ChatIcon} hoverIcon={ChatColorIcon} style={drawerIconsStyle} />,
       external_icon: ExternalLinkIcon,
     },
     {
       id: 'issues',
       href: 'https://github.com/meshery/meshery/issues/new/choose',
       title: 'Issues',
-      icon: <GithubIcon style={drawerIconsStyle} />,
+      icon: (
+        <HoverIcon defaultIcon={GithubIcon} hoverIcon={GithubColorIcon} style={drawerIconsStyle} />
+      ),
       external_icon: ExternalLinkIcon,
     },
   ];
