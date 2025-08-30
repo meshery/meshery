@@ -117,7 +117,7 @@
     "http-proxy": "^1.18.1",
     "husky": "^9.1.7",
     "js-yaml": "^4.1.0",
-    "lint-staged": "^15.5.0",
+    "lint-staged": "^16.1.2",
     "node-polyfill-webpack-plugin": "^4.1.0",
     "nodemon": "^3.1.9",
     "nyc": "^17.1.0",
