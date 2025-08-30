@@ -653,7 +653,9 @@ const MesheryApp = ({ Component, pageProps, relayEnvironment }) => {
                               warning: ThemeResponsiveSnackbar,
                               loading: ThemeResponsiveSnackbar,
                             }}
-                            maxSnack={10}
+                            autoHideDuration={1500}
+                            maxSnack={1}
+                            preventDuplicate
                           >
                             <NotificationCenterProvider>
                               <MesheryProgressBar />
