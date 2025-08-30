@@ -68,8 +68,8 @@ By the end of this tutorial, you will have:
 ---
 
 ## Step 5 — Save the Design
-- Save the design and name it:  
-  **Expose NGINX with Ingress — Tutorial (Sapna Mohanta)**
+- Save the design and name it something like:  
+  **Expose NGINX with Ingress — Tutorial**
 
 ---
 
