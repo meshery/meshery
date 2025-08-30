@@ -173,7 +173,7 @@ func processData(cmd *cobra.Command, data [][]string, header []string, totalCoun
 	}
 	utils.DisplayCount("patterns", totalCount)
 	if cmd.Flags().Changed("page") {
-		utils.PrintToTable(header, data)
+		utils.PrintToTable(header, data, nil)
 	} else {
 		err := utils.HandlePagination(pageSize, "patterns", data, header)
 		if err != nil {

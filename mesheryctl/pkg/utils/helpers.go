@@ -568,37 +568,85 @@ func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
 }
 
+type TableHeader string
+
+func (h TableHeader) Format() string {
+	c := color.New(color.Bold).SprintFunc()
+	return c(tw.Title(string(h)))
+}
+
 func generateTableOptions() []tablewriter.Option {
 	options := []tablewriter.Option{
 		tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{
-			Symbols: tw.NewSymbols(tw.StyleNone),
+			Borders: tw.BorderNone,
 			Settings: tw.Settings{
-				Separators: tw.Separators{BetweenRows: tw.Off},
-				Lines:      tw.Lines{ShowTop: tw.Off, ShowHeaderLine: tw.Off, ShowFooterLine: tw.On},
+				Separators: tw.Separators{
+					ShowHeader:     tw.Off,
+					ShowFooter:     tw.Off,
+					BetweenRows:    tw.Off,
+					BetweenColumns: tw.Off},
+				Lines: tw.Lines{
+					ShowTop:        tw.Off,
+					ShowBottom:     tw.Off,
+					ShowHeaderLine: tw.Off,
+					ShowFooterLine: tw.Off,
+				},
 			},
 		})),
 		tablewriter.WithConfig(tablewriter.Config{
+			MaxWidth: 255,
 			Header: tw.CellConfig{
-				Formatting: tw.CellFormatting{AutoFormat: tw.On},
-				Alignment:  tw.CellAlignment{Global: tw.AlignLeft},
-				Padding:    tw.CellPadding{Global: tw.PaddingDefault},
+				Alignment: tw.CellAlignment{
+					Global: tw.AlignLeft,
+				},
+				Formatting: tw.CellFormatting{
+					AutoWrap:   tw.WrapNone,
+					MergeMode:  tw.MergeNone,
+					AutoFormat: tw.Off, // switch off AutoFormat
+				},
+				Padding: tw.CellPadding{
+					Global: tw.Padding{
+						Left:      tw.Empty,
+						Right:     "  ",
+						Top:       tw.Empty,
+						Bottom:    tw.Empty,
+						Overwrite: true,
+					},
+				},
 			},
 			Row: tw.CellConfig{
-				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
-				Padding:   tw.CellPadding{Global: tw.PaddingDefault},
+				Formatting: tw.CellFormatting{
+					AutoWrap:   tw.WrapNone,
+					MergeMode:  tw.MergeNone,
+					AutoFormat: tw.Off,
+				},
+				Alignment: tw.CellAlignment{
+					Global: tw.AlignLeft,
+				},
+				Padding: tw.CellPadding{
+					Global: tw.Padding{
+						Left:      tw.Empty,
+						Right:     "  ",
+						Top:       tw.Empty,
+						Bottom:    tw.Empty,
+						Overwrite: true,
+					},
+				},
 			},
 			Footer: tw.CellConfig{
-				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
-				Padding:   tw.CellPadding{Global: tw.PaddingDefault},
+				Alignment: tw.CellAlignment{Global: tw.AlignRight},
 			},
 		}),
 	}
-
 	return options
 }
 
 func renderTable(table *tablewriter.Table, data [][]string, header, footer []string) {
-	table.Header(header)
+	tableHeader := make([]any, len(header))
+	for i, h := range header {
+		tableHeader[i] = TableHeader(h)
+	}
+	table.Header(tableHeader...)
 	err := table.Bulk(data)
 	if err != nil {
 		Log.Error(ErrTableRender(err))
@@ -614,7 +662,7 @@ func renderTable(table *tablewriter.Table, data [][]string, header, footer []str
 }
 
 // PrintToTable prints the given data into a table format
-func PrintToTable(header []string, data [][]string) {
+func PrintToTable(header []string, data [][]string, footer []string) {
 	options := generateTableOptions()
 
 	table := tablewriter.NewTable(os.Stdout,
@@ -622,17 +670,6 @@ func PrintToTable(header []string, data [][]string) {
 	)
 
 	renderTable(table, data, header, nil)
-}
-
-// PrintToTableWithFooter prints the given data into a table format but with a footer
-func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
-	options := generateTableOptions()
-
-	table := tablewriter.NewTable(os.Stdout,
-		options...,
-	)
-
-	renderTable(table, data, header, footer)
 }
 
 // ClearLine clears the last line from output
@@ -1281,9 +1318,9 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		fmt.Println()
 
 		if len(footer) > 0 {
-			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+			PrintToTable(header, data[startIndex:endIndex], footer[0])
 		} else {
-			PrintToTable(header, data[startIndex:endIndex])
+			PrintToTable(header, data[startIndex:endIndex], nil)
 		}
 
 		// No user interaction required if no more data to display
