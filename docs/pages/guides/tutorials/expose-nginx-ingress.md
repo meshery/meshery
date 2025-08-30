@@ -39,7 +39,7 @@ By the end of this tutorial, you will have:
 ---
 
 ## Step 3 — Add Service
-- Drag a **Service** resource onto the canvas.  
+- Drag a **Service** resource onto the Kanvas.  
 - Configure it:
   - **Name:** `nginx-service`
   - **Type:** `ClusterIP`
