@@ -12,6 +12,9 @@ jobs:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
+    permissions:
+      id-token: write # needed for Cosign keyless signing
+      contents: read # needed for actions/checkout
 
     steps:
       - name: Check out code
@@ -34,7 +37,7 @@ jobs:
 
         # ---------------- Cosign signing step----------------
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
+        uses: sigstore/cosign-installer@v3.9.2
 
       - name: Sign mesheryctl artifacts (keyless)
         run: |
@@ -42,8 +45,6 @@ jobs:
             cosign sign-blob \
               --yes \
               --bundle "${artifact}.sigstore" \
-              --output-signature "${artifact}.sig" \
-              --output-certificate "${artifact}.pem" \
               "$artifact"
           done
 
@@ -51,10 +52,9 @@ jobs:
         run: |
           for artifact in dist/*; do
             cosign verify-blob \
+              --bundle "${artifact}.sigstore" \
               --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
               --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-              --signature "${artifact}.sig" \
-              --certificate "${artifact}.pem" \
               "$artifact"
           done
 

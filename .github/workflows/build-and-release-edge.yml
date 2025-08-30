@@ -96,7 +96,11 @@ jobs:
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
     env:
       RELEASE_CHANNEL: "edge"
+      IMAGE_NAME: ${{ vars.IMAGE_NAME }}
     runs-on: ubuntu-24.04
+    permissions:
+      id-token: write # needed for Cosign keyless signing
+      contents: read # needed for checkout
     steps:
       - name: Free up disk space
         run: |
@@ -120,31 +124,34 @@ jobs:
       - name: Docker edge build & tag
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache \
-            -t ${{ secrets.IMAGE_NAME }}:edge-latest \
+            -t ${{ env.IMAGE_NAME }}:edge-latest \
             --build-arg TOKEN=${{ secrets.GLOBAL_TOKEN }} \
             --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} \
             --build-arg GIT_VERSION=${{ env.LATEST_TAG }} \
             --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
-          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-          docker tag ${{ secrets.IMAGE_NAME }}:edge-latest ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+          docker tag ${{ env.IMAGE_NAME }}:edge-latest ${{ env.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          docker tag ${{ env.IMAGE_NAME }}:edge-latest ${{ env.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
       - name: Docker edge push
         run: |
-          docker push ${{ secrets.IMAGE_NAME }}:edge-latest
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
-          docker push ${{ secrets.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
+          docker push ${{ env.IMAGE_NAME }}:edge-latest
+          docker push ${{ env.IMAGE_NAME }}:edge-${GITHUB_SHA::8}
+          docker push ${{ env.IMAGE_NAME }}:edge-${{ env.LATEST_TAG }}
       - name: Install Cosign
-        uses: sigstore/cosign-installer@v3.5.0
+        uses: sigstore/cosign-installer@v3.9.2
       - name: Sign Docker images (keyless)
         run: |
           for tag in edge-latest edge-${GITHUB_SHA::8} edge-${{ env.LATEST_TAG }}; do
-            echo "Signing ${{ secrets.IMAGE_NAME }}:$tag"
-            cosign sign docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
+            echo "Signing ${{ env.IMAGE_NAME }}:$tag"
+            cosign sign docker.io/${{ env.IMAGE_NAME }}:$tag --keyless --yes
           done
       - name: Verify Docker image signatures
         run: |
           for tag in edge-latest edge-${GITHUB_SHA::8} edge-${{ env.LATEST_TAG }}; do
-            echo "Verifying ${{ secrets.IMAGE_NAME }}:$tag"
-            cosign verify docker.io/${{ secrets.IMAGE_NAME }}:$tag --keyless
+            echo "Verifying ${{ env.IMAGE_NAME }}:$tag"
+            cosign verify docker.io/${{ env.IMAGE_NAME }}:$tag \
+              --keyless \
+              --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
+              --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 
   update-staging-playground:
     needs:
