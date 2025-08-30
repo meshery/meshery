@@ -1,4 +1,10 @@
-import { deleteEvent, deleteEvents, updateEventStatus, updateEvents } from '../store/slices/events';
+import {
+  deleteEvent,
+  deleteEvents,
+  updateEventStatus,
+  updateEvents,
+  updateEvent,
+} from '../store/slices/events';
 import { api } from './index';
 
 /**
@@ -87,15 +93,16 @@ export const notificationCenterApi = api
       getEvents: builder.query({
         query: ({ page = 0, filters = {} }) => {
           const parsedFilters = parseFilters(filters);
+          const params = {
+            ...parsedFilters,
+            page: page,
+            sort: 'created_at',
+            order: 'desc',
+            pagesize: 15,
+          };
           return {
             url: `system/events`,
-            params: {
-              ...parsedFilters,
-              page: page,
-              sort: 'created_at',
-              order: 'desc',
-              pagesize: 15,
-            },
+            params,
           };
         },
         providesTags: [PROVIDER_TAGS.EVENT],
@@ -138,8 +145,12 @@ export const notificationCenterApi = api
           method: 'DELETE',
         }),
         async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
+          // Immediately mark as deleted for optimistic update
+          dispatch(deleteEvent({ id }));
           const res = await safeQueryResolve(queryFulfilled);
-          res && dispatch(deleteEvent({ id }));
+          if (!res) {
+            dispatch(updateEvent({ id, changes: { is_deleted: false } }));
+          }
         },
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
@@ -186,8 +197,21 @@ export const notificationCenterApi = api
           },
         }),
         async onQueryStarted({ ids }, { dispatch, queryFulfilled }) {
+          // Immediately mark as deleted for optimistic update
+          dispatch(deleteEvents({ ids }));
           const res = await safeQueryResolve(queryFulfilled);
-          res && dispatch(deleteEvents({ ids }));
+          if (!res) {
+            dispatch(
+              updateEvents(
+                ids.map((id) => ({
+                  id,
+                  changes: {
+                    is_deleted: false,
+                  },
+                })),
+              ),
+            );
+          }
         },
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),
