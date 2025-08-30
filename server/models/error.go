@@ -138,6 +138,7 @@ const (
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
 	ErrStatusCodeCode                     = "meshery-server-1368"
 	ErrMeshsyncDataHandlerCode            = "meshery-server-1370"
+	ErrInvalidUUIDCode                    = "meshery-server-1371"
 )
 
 var (
@@ -319,6 +320,10 @@ func ErrUnableToPersistsResult(err error) error {
 
 func ErrGenerateUUID(err error) error {
 	return errors.New(ErrGenerateUUIDCode, errors.Alert, []string{"Unable to generate a new UUID"}, []string{err.Error()}, []string{}, []string{})
+}
+
+func ErrInvalidUUID(err error) error {
+	return errors.New(ErrInvalidUUIDCode, errors.Alert, []string{"Invalid UUID format"}, []string{err.Error()}, []string{}, []string{})
 }
 
 func ErrGrafanaOrg(err error) error {
