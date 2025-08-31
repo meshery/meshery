@@ -108,7 +108,7 @@ When it runs in operator mode, it is managed by the <a href="{{site.baseurl}}/co
 
 ## Embedded mode
 
-When it runs in embedded mode, it is integrated into the Meshery server as a library and no additional resources are deployed to the managed cluster. 
+When it runs in embedded mode, it is integrated into the Meshery server as a library and no additional resources are deployed to the managed cluster.
 
 ## Mode selection and switch
 
