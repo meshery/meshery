@@ -256,22 +256,24 @@ var linkDocContextView = map[string]string{
 
 // viewContextCmd represents the view command
 var viewContextCmd = &cobra.Command{
-	Use:   "view [context-name | --context context-name| --all] --flags",
-	Short: "view current context",
-	Long:  `Display active Meshery context`,
+	Use:   "view [context-name | --context context-name | --all] --flags",
+	Short: "Display the current Meshery CLI configuration context",
+	Long: `Display the current Meshery CLI context configuration.
+This command shows which Kubernetes cluster, platform, and provider Meshery is configured to communicate with.
+Use this to verify or debug your current CLI settings.`,
 	Example: `
-// View default context
+// View the default context
 mesheryctl system context view
 
-// View specified context
+// View a specified context
 mesheryctl system context view context-name
 
-// View specified context with context flag
+// View a specified context using the --context flag
 mesheryctl system context view --context context-name
 
-// View config of all contexts
+// View configuration of all contexts
 mesheryctl system context view --all
-	`,
+    `,
 	Annotations:  linkDocContextView,
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {

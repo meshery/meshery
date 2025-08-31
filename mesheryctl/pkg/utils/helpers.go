@@ -27,6 +27,8 @@ import (
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
 	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/renderer"
+	"github.com/olekukonko/tablewriter/tw"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -566,57 +568,108 @@ func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
 }
 
-// PrintToTable prints the given data into a table format
-func PrintToTable(header []string, data [][]string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(false)
+type TableHeader string
 
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
-	}
-	table.SetHeaderColor(boldHeader...)
-
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
+func (h TableHeader) Format() string {
+	c := color.New(color.Bold).SprintFunc()
+	return c(tw.Title(string(h)))
 }
 
-// PrintToTableWithFooter prints the given data into a table format but with a footer
-func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
-
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+func generateTableOptions() []tablewriter.Option {
+	options := []tablewriter.Option{
+		tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{
+			Borders: tw.BorderNone,
+			Settings: tw.Settings{
+				Separators: tw.Separators{
+					ShowHeader:     tw.Off,
+					ShowFooter:     tw.Off,
+					BetweenRows:    tw.Off,
+					BetweenColumns: tw.Off},
+				Lines: tw.Lines{
+					ShowTop:        tw.Off,
+					ShowBottom:     tw.Off,
+					ShowHeaderLine: tw.Off,
+					ShowFooterLine: tw.Off,
+				},
+			},
+		})),
+		tablewriter.WithConfig(tablewriter.Config{
+			MaxWidth: 255,
+			Header: tw.CellConfig{
+				Alignment: tw.CellAlignment{
+					Global: tw.AlignLeft,
+				},
+				Formatting: tw.CellFormatting{
+					AutoWrap:   tw.WrapNone,
+					MergeMode:  tw.MergeNone,
+					AutoFormat: tw.Off, // switch off AutoFormat
+				},
+				Padding: tw.CellPadding{
+					Global: tw.Padding{
+						Left:      tw.Empty,
+						Right:     "  ",
+						Top:       tw.Empty,
+						Bottom:    tw.Empty,
+						Overwrite: true,
+					},
+				},
+			},
+			Row: tw.CellConfig{
+				Formatting: tw.CellFormatting{
+					AutoWrap:   tw.WrapNone,
+					MergeMode:  tw.MergeNone,
+					AutoFormat: tw.Off,
+				},
+				Alignment: tw.CellAlignment{
+					Global: tw.AlignLeft,
+				},
+				Padding: tw.CellPadding{
+					Global: tw.Padding{
+						Left:      tw.Empty,
+						Right:     "  ",
+						Top:       tw.Empty,
+						Bottom:    tw.Empty,
+						Overwrite: true,
+					},
+				},
+			},
+			Footer: tw.CellConfig{
+				Alignment: tw.CellAlignment{Global: tw.AlignRight},
+			},
+		}),
 	}
-	table.SetHeaderColor(boldHeader...)
+	return options
+}
 
-	table.AppendBulk(data) // The data in the table
-	table.SetFooter(footer)
-	table.Render() // Render the table
+func renderTable(table *tablewriter.Table, data [][]string, header, footer []string) {
+	tableHeader := make([]any, len(header))
+	for i, h := range header {
+		tableHeader[i] = TableHeader(h)
+	}
+	table.Header(tableHeader...)
+	err := table.Bulk(data)
+	if err != nil {
+		Log.Error(ErrTableRender(err))
+
+	}
+	if footer != nil {
+		table.Footer(footer)
+	}
+	err = table.Render()
+	if err != nil {
+		Log.Error(ErrTableRender(err))
+	}
+}
+
+// PrintToTable prints the given data into a table format
+func PrintToTable(header []string, data [][]string, footer []string) {
+	options := generateTableOptions()
+
+	table := tablewriter.NewTable(os.Stdout,
+		options...,
+	)
+
+	renderTable(table, data, header, nil)
 }
 
 // ClearLine clears the last line from output
@@ -836,28 +889,6 @@ func ParseURLGithub(URL string) (string, string, error) {
 		return resURL, "", nil
 	}
 	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
-}
-
-// PrintToTableInStringFormat prints the given data into a table format but return as a string
-func PrintToTableInStringFormat(header []string, data [][]string) string {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	tableString := &strings.Builder{}
-	table := tablewriter.NewWriter(tableString)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
-
-	return tableString.String()
 }
 
 // Indicate an ongoing Process at a given time on CLI
@@ -1287,9 +1318,9 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		fmt.Println()
 
 		if len(footer) > 0 {
-			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+			PrintToTable(header, data[startIndex:endIndex], footer[0])
 		} else {
-			PrintToTable(header, data[startIndex:endIndex])
+			PrintToTable(header, data[startIndex:endIndex], nil)
 		}
 
 		// No user interaction required if no more data to display

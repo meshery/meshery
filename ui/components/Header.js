@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
@@ -16,6 +16,8 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RegistryModal from './Registry/RegistryModal';
+
 import {
   Checkbox,
   Box,
@@ -57,6 +59,7 @@ import {
   getUserProfile,
   useGetProviderCapabilitiesQuery,
 } from '@/rtk-query/user';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
@@ -84,6 +87,7 @@ const K8sContextConnectionChip_ = ({
   meshsyncControllerState,
   selected,
   onDelete,
+  connections = [],
 }) => {
   const ping = useKubernetesHook();
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
@@ -92,13 +96,21 @@ const K8sContextConnectionChip_ = ({
     ctx.connection_id,
   );
 
+  const connectionStatus = useMemo(() => {
+    if (!connections || !ctx.connection_id) return null;
+    const connection = connections.find((conn) => conn.id === ctx.connection_id);
+    return connection?.status || null;
+  }, [connections, ctx.connection_id]);
+
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
       <CustomTooltip
         placement="left-end"
         leaveDelay={200}
         interactive={true}
-        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
+        title={`Server: ${ctx.server}, Connection: ${formatToTitleCase(
+          connectionStatus || 'Unknown',
+        )}, Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
       >
@@ -123,7 +135,7 @@ const K8sContextConnectionChip_ = ({
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                 : '/static/img/kubernetes.svg'
             }
-            status={operatorState}
+            status={connectionStatus}
           />
         </div>
       </CustomTooltip>
@@ -147,6 +159,18 @@ function K8sContextMenu({
   const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { connectionMetadataState } = useSelector((state) => state.ui);
+
+  // ->using same data source as we use in conn.table
+  const { data: connectionData } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 100,
+    search: '',
+    order: '',
+    status: '',
+    kind: JSON.stringify(['kubernetes']), // -> Kubernetes connections
+  });
+
+  const connections = connectionData?.connections || [];
 
   const styleSlider = {
     position: 'absolute',
@@ -376,6 +400,7 @@ function K8sContextMenu({
                           onSelectChange={() => setActiveContexts(ctx.id)}
                           meshsyncControllerState={meshsyncControllerState}
                           connectionMetadataState={connectionMetadataState}
+                          connections={connections}
                         />
                       );
                     })}
@@ -518,6 +543,7 @@ const Header = ({
             </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
+        <RegistryModal />
       </>
     </NoSsr>
   );
