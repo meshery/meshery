@@ -100,7 +100,7 @@ Meshery's event-driven approach ensures high-speed operations, making it suitabl
 
 # MeshSync deployment mode
 
-Meshsync operates in one of two modes: operator or embedded.
+MeshSync operates in one of two modes: operator or embedded.
 
 ## Operator mode (default)
 
