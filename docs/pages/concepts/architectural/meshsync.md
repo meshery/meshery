@@ -116,9 +116,9 @@ The user selects the deployment mode when creating a new Kubernetes connection (
 
 The user can switch the deployment mode per connection on the connections list page.
 
-When the deployment mode is switched from operator to embedded: the operator is undeployed from the managed cluster, and the meshsync library routine is started inside the Meshery server for the managed cluster.
+When the deployment mode is switched from operator to embedded: the operator is undeployed from the managed cluster, and the MeshSync library routine is started inside the Meshery server for the managed cluster.
 
-When the deployment mode is switched from embedded to operator: the meshsync library routine is stopped for the managed cluster, and the operator is deployed to the managed cluster.
+When the deployment mode is switched from embedded to operator: the MeshSync library routine is stopped for the managed cluster, and the operator is deployed to the managed cluster.
 
 # MeshSync FAQs
 
