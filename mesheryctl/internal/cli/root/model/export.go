@@ -110,7 +110,7 @@ var exportModelCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return ErrProcessingConfig(fmt.Sprintf("error processing config %s", err))
+			return err
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
@@ -141,15 +141,16 @@ var exportModelCmd = &cobra.Command{
 func exportWithClient(modelName string, url string, output *outputDetail, client HTTPClient) error {
 	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {
-		return ErrExportModel(err, modelName)
+		return err
 	}
 	if req == nil {
 		return ErrExportModel(fmt.Errorf("request is nil"), modelName)
+
 	}
 
 	resp, err := client.MakeRequest(req)
 	if err != nil {
-		return ErrExportModel(fmt.Errorf("request failed: %w", err), modelName)
+		return err
 	}
 	if resp == nil {
 		return ErrExportModel(fmt.Errorf("response is nil"), modelName)
