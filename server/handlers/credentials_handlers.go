@@ -21,7 +21,12 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 		return
 	}
 
-	userUUID := uuid.FromStringOrNil(user.ID)
+	userUUID,err := uuid.FromString(user.ID)
+	if err != nil {
+	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
+	       return
+	}
+
 	credential := models.Credential{
 		UserID: &userUUID,
 		Secret: map[string]interface{}{},
