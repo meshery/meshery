@@ -33,7 +33,7 @@ setup() {
     assert_output --partial "no template file is provided while using url for importing a model"
 }
 
-@test "mesheryctl model generate fails with invalid URL and template" {
+@test "mesheryctl model generate fails with non-existent template" {
     run $MESHERYCTL_BIN model generate -f "https://example.com/model" -t "nonexistent-template.json"
     assert_failure
     assert_output --partial "open nonexistent-template.json: no such file or directory"
