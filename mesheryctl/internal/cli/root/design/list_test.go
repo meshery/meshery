@@ -22,22 +22,22 @@ func TestDesignListCmd(t *testing.T) {
 	// test scenrios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "Fetch Pattern List",
-			Args:             []string{"list", "--page", "2"},
+			Name:             "Fetch Design List",
+			Args:             []string{"list", "--page", "1"},
 			ExpectedResponse: "list.design.output.golden",
 			Fixture:          "list.design.api.response.golden",
-			URL:              "/api/pattern",
+			URL:              "/api/pattern?page=0&pagesize=10",
 			ExpectError:      false,
 		},
 		{
-			Name:             "Fetch Pattern List with Local provider",
+			Name:             "Fetch Design List with Local provider",
 			Args:             []string{"list", "--page", "1"},
 			ExpectedResponse: "list.design.local.output.golden",
 			Fixture:          "list.design.local.api.response.golden",
-			URL:              "/api/pattern",
+			URL:              "/api/pattern?page=0&pagesize=10",
 			ExpectError:      false,
 		},
 	}
 
-	utils.InvokeMesheryctlTestListCommand(t, update, DesignCmd, tests, currDir, "designs")
+	utils.InvokeMesheryctlTestListCommand(t, update, DesignCmd, tests, currDir, "design")
 }
