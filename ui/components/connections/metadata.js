@@ -1,5 +1,15 @@
 import React from 'react';
-import { Grid2, List, ListItem, ListItemText, Box, styled, useTheme } from '@sistent/sistent';
+import {
+  Grid2,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+  styled,
+  useTheme,
+  CustomTooltip,
+  IconButton,
+} from '@sistent/sistent';
 
 import {
   FormatId,
@@ -9,6 +19,7 @@ import {
   Link,
   createColumnUiSchema,
 } from '../DataFormatter';
+import InfoOutlinedIcon from '../../assets/icons/InfoOutlined';
 import useKubernetesHook, {
   useControllerStatus,
   useMesheryOperator,
@@ -24,6 +35,29 @@ import { ColumnWrapper, ContentContainer, OperationButton, FormatterWrapper } fr
 const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
+
+const formatDeploymentType = (deploymentType) => {
+  if (!deploymentType || deploymentType === '') {
+    return 'Manual (Kubeconfig)';
+  }
+  return formatToTitleCase(deploymentType.replace(/_/g, ' '));
+};
+
+const InfoButton = ({ tooltip }) => {
+  return (
+    <CustomTooltip title={tooltip} placement="top">
+      <IconButton
+        color="default"
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+      >
+        <InfoOutlinedIcon height={20} width={20} />
+      </IconButton>
+    </CustomTooltip>
+  );
+};
 
 const customIdFormatter = (title, id) => (
   <FormatterWrapper>
@@ -235,7 +269,12 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
             <Grid2>
               <ListItem>
                 <StyledListItemText
-                  primary="Deployment Mode"
+                  primary={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Deployment Mode
+                      <InfoButton tooltip="MeshSync supports two modes: operator mode (managed by Meshery Operator in cluster) and embedded mode (runs inside Meshery Server without extra deployments). [Learn more](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)" />
+                    </Box>
+                  }
                   secondary={formatToTitleCase(metadata?.meshsync_deployment_mode || 'N/A')}
                 />
               </ListItem>
@@ -243,12 +282,13 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
             <Grid2>
               <ListItem>
                 <StyledListItemText
-                  primary="Deployment Type"
-                  secondary={
-                    metadata?.deployment_type === ''
-                      ? 'Manual (Kubeconfig)'
-                      : formatToTitleCase(metadata?.deployment_type || 'N/A')
+                  primary={
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      Deployment Type
+                      <InfoButton tooltip="Deployment Type refers to whether Meshery Server and Operator run in-cluster together or out-of-cluster across separate environments. [Learn more](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync#meshery-operator-deployment-scenarios)" />
+                    </Box>
                   }
+                  secondary={formatDeploymentType(metadata?.deployment_type)}
                 />
               </ListItem>
             </Grid2>
