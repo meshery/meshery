@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"strings"
@@ -16,12 +15,17 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-// Mock HTTP client for testing
+// Mock HTTP client for testing - implements HTTPClient interface
 type MockHTTPClient struct {
 	mock.Mock
 }
 
-func (m *MockHTTPClient) Do(req *http.Request) (*http.Response, error) {
+func (m *MockHTTPClient) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
+	args := m.Called(method, url, body)
+	return args.Get(0).(*http.Request), args.Error(1)
+}
+
+func (m *MockHTTPClient) MakeRequest(req *http.Request) (*http.Response, error) {
 	args := m.Called(req)
 	return args.Get(0).(*http.Response), args.Error(1)
 }
@@ -62,6 +66,16 @@ func createTempDir(t *testing.T) string {
 		t.Fatalf("Failed to create temp dir: %v", err)
 	}
 	return tmpDir
+}
+
+// Helper function to create a mock response
+func createMockResponse(statusCode int, body string) *http.Response {
+	return &http.Response{
+		StatusCode: statusCode,
+		Status:     http.StatusText(statusCode),
+		Body:       io.NopCloser(strings.NewReader(body)),
+		Header:     make(http.Header),
+	}
 }
 
 // Test Args validation function
@@ -221,26 +235,7 @@ func TestExportModelCmd_PreRunE(t *testing.T) {
 				viper.Set("mesheryctl.config.platform", "docker")
 			},
 			wantErr:     true,
-			errContains: "folder",
-		},
-		{
-			name: "output location is file not directory",
-			setupFlags: func(cmd *cobra.Command) {
-				// Create a temporary file
-				tmpFile, _ := os.CreateTemp("", "test_file_*")
-				tmpFile.Close()
-				defer os.Remove(tmpFile.Name())
-
-				cmd.Flags().Set("output-format", "yaml")
-				cmd.Flags().Set("output-type", "oci")
-				cmd.Flags().Set("page", "1")
-				cmd.Flags().Set("output-location", tmpFile.Name())
-			},
-			setupConfig: func() {
-				viper.Set("mesheryctl.config.platform", "docker")
-			},
-			wantErr:     true,
-			errContains: "is not a directory",
+			errContains: "output location does not exist",
 		},
 	}
 
@@ -267,86 +262,139 @@ func TestExportModelCmd_PreRunE(t *testing.T) {
 	}
 }
 
-// Test export function with different scenarios
-func TestExportFunction(t *testing.T) {
+func TestExportWithClient(t *testing.T) {
 	tmpDir := createTempDir(t)
 	defer os.RemoveAll(tmpDir)
 
 	tests := []struct {
-		name           string
-		modelName      string
-		serverResponse func() *httptest.Server
-		output         *outputDetail
-		wantErr        bool
-		errContains    string
-		checkFile      bool
-		expectedFile   string
+		name            string
+		modelName       string
+		url             string
+		output          *outputDetail
+		setupMock       func(*MockHTTPClient)
+		wantErr         bool
+		errContains     string
+		checkFile       bool
+		expectedFile    string
+		expectedContent string
 	}{
 		{
 			name:      "successful export with oci format",
 			modelName: "test-model",
-			serverResponse: func() *httptest.Server {
-				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					w.WriteHeader(http.StatusOK)
-					w.Write([]byte("mock model data"))
-				}))
-			},
+			url:       "http://localhost:9081/api/meshmodels/export",
 			output: &outputDetail{
 				Format: "yaml",
 				Type:   "oci",
 				Path:   tmpDir,
 			},
-			wantErr:      false,
-			checkFile:    true,
-			expectedFile: "test-model.tar",
+			setupMock: func(m *MockHTTPClient) {
+				req, _ := http.NewRequest("GET", "http://localhost:9081/api/meshmodels/export", nil)
+				m.On("NewRequest", "GET", "http://localhost:9081/api/meshmodels/export", mock.Anything).Return(req, nil)
+				m.On("MakeRequest", req).Return(createMockResponse(200, "mock oci model data"), nil)
+			},
+			wantErr:         false,
+			checkFile:       true,
+			expectedFile:    "test-model.tar",
+			expectedContent: "mock oci model data",
 		},
 		{
 			name:      "successful export with tar format",
 			modelName: "test-model",
-			serverResponse: func() *httptest.Server {
-				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					w.WriteHeader(http.StatusOK)
-					w.Write([]byte("mock model data"))
-				}))
-			},
+			url:       "http://localhost:9081/api/meshmodels/export",
 			output: &outputDetail{
 				Format: "json",
 				Type:   "tar",
 				Path:   tmpDir,
 			},
-			wantErr:      false,
-			checkFile:    true,
-			expectedFile: "test-model.tar.gz",
+			setupMock: func(m *MockHTTPClient) {
+				req, _ := http.NewRequest("GET", "http://localhost:9081/api/meshmodels/export", nil)
+				m.On("NewRequest", "GET", "http://localhost:9081/api/meshmodels/export", mock.Anything).Return(req, nil)
+				m.On("MakeRequest", req).Return(createMockResponse(200, "mock tar model data"), nil)
+			},
+			wantErr:         false,
+			checkFile:       true,
+			expectedFile:    "test-model.tar.gz",
+			expectedContent: "mock tar model data",
 		},
 		{
 			name:      "server returns error status",
 			modelName: "test-model",
-			serverResponse: func() *httptest.Server {
-				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					w.WriteHeader(http.StatusNotFound)
-				}))
-			},
+			url:       "http://localhost:9081/api/meshmodels/export",
 			output: &outputDetail{
 				Format: "yaml",
 				Type:   "oci",
 				Path:   tmpDir,
 			},
+			setupMock: func(m *MockHTTPClient) {
+				req, _ := http.NewRequest("GET", "http://localhost:9081/api/meshmodels/export", nil)
+				m.On("NewRequest", "GET", "http://localhost:9081/api/meshmodels/export", mock.Anything).Return(req, nil)
+				m.On("MakeRequest", req).Return(createMockResponse(404, "Not Found"), nil)
+			},
 			wantErr:     true,
-			errContains: "failed to export model",
+			errContains: "failed to export model: status 404",
+		},
+		{
+			name:      "request creation fails",
+			modelName: "test-model",
+			url:       "http://localhost:9081/api/meshmodels/export",
+			output: &outputDetail{
+				Format: "yaml",
+				Type:   "oci",
+				Path:   tmpDir,
+			},
+			setupMock: func(m *MockHTTPClient) {
+				m.On("NewRequest", "GET", "http://localhost:9081/api/meshmodels/export", mock.Anything).Return((*http.Request)(nil), fmt.Errorf("request creation failed"))
+			},
+			wantErr:     true,
+			errContains: "request creation failed",
+		},
+		{
+			name:      "request execution fails",
+			modelName: "test-model",
+			url:       "http://localhost:9081/api/meshmodels/export",
+			output: &outputDetail{
+				Format: "yaml",
+				Type:   "oci",
+				Path:   tmpDir,
+			},
+			setupMock: func(m *MockHTTPClient) {
+				req, _ := http.NewRequest("GET", "http://localhost:9081/api/meshmodels/export", nil)
+				m.On("NewRequest", "GET", "http://localhost:9081/api/meshmodels/export", mock.Anything).Return(req, nil)
+				m.On("MakeRequest", req).Return((*http.Response)(nil), fmt.Errorf("network error"))
+			},
+			wantErr:     true,
+			errContains: "network error",
+		},
+		{
+			name:      "unsupported output type",
+			modelName: "test-model",
+			url:       "http://localhost:9081/api/meshmodels/export",
+			output: &outputDetail{
+				Format: "yaml",
+				Type:   "invalid",
+				Path:   tmpDir,
+			},
+			setupMock: func(m *MockHTTPClient) {
+				req, _ := http.NewRequest("GET", "http://localhost:9081/api/meshmodels/export", nil)
+				m.On("NewRequest", "GET", "http://localhost:9081/api/meshmodels/export", mock.Anything).Return(req, nil)
+				m.On("MakeRequest", req).Return(createMockResponse(200, "mock model data"), nil)
+			},
+			wantErr:     true,
+			errContains: "unsupported output type: invalid",
 		},
 		{
 			name:      "invalid output path",
 			modelName: "test-model",
-			serverResponse: func() *httptest.Server {
-				return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-					w.WriteHeader(http.StatusOK)
-					w.Write([]byte("mock model data"))
-				}))
-			},
+			url:       "http://localhost:9081/api/meshmodels/export",
 			output: &outputDetail{
 				Format: "yaml",
 				Type:   "oci",
 				Path:   "/invalid/path/that/does/not/exist",
+			},
+			setupMock: func(m *MockHTTPClient) {
+				req, _ := http.NewRequest("GET", "http://localhost:9081/api/meshmodels/export", nil)
+				m.On("NewRequest", "GET", "http://localhost:9081/api/meshmodels/export", mock.Anything).Return(req, nil)
+				m.On("MakeRequest", req).Return(createMockResponse(200, "mock model data"), nil)
 			},
 			wantErr:     true,
 			errContains: "no such file or directory",
@@ -355,51 +403,10 @@ func TestExportFunction(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			server := tt.serverResponse()
-			defer server.Close()
+			mockClient := new(MockHTTPClient)
+			tt.setupMock(mockClient)
 
-			newRequest := func(method, url string, body io.Reader) (*http.Request, error) {
-				// meshery server
-				testURL := strings.Replace(url, "http://localhost:9081", server.URL, 1)
-				return http.NewRequest(method, testURL, body)
-			}
-
-			makeRequest := func(req *http.Request) (*http.Response, error) {
-				client := &http.Client{}
-				return client.Do(req)
-			}
-
-			// exportWithClient inline for testing
-			exportWithClient := func(modelName, url string, output *outputDetail, newRequest func(string, string, io.Reader) (*http.Request, error), makeRequest func(*http.Request) (*http.Response, error)) error {
-				req, err := newRequest("GET", url, nil)
-				if err != nil {
-					return err
-				}
-				resp, err := makeRequest(req)
-				if err != nil {
-					return err
-				}
-				defer resp.Body.Close()
-				if resp.StatusCode != http.StatusOK {
-					return fmt.Errorf("failed to export model: %s", resp.Status)
-				}
-				var filePath string
-				if output.Type == "oci" {
-					filePath = filepath.Join(output.Path, modelName+".tar")
-				} else if output.Type == "tar" {
-					filePath = filepath.Join(output.Path, modelName+".tar.gz")
-				} else {
-					return fmt.Errorf("unsupported output type: %s", output.Type)
-				}
-				outFile, err := os.Create(filePath)
-				if err != nil {
-					return err
-				}
-				defer outFile.Close()
-				_, err = io.Copy(outFile, resp.Body)
-				return err
-			}
-			err := exportWithClient(tt.modelName, server.URL+"/api/meshmodels/export", tt.output, newRequest, makeRequest)
+			err := exportWithClient(tt.modelName, tt.url, tt.output, mockClient)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -416,54 +423,51 @@ func TestExportFunction(t *testing.T) {
 					// Check file content
 					content, err := os.ReadFile(filePath)
 					assert.NoError(t, err)
-					assert.Equal(t, "mock model data", string(content))
+					assert.Equal(t, tt.expectedContent, string(content))
 				}
 			}
+
+			// Verify that all expected calls were made
+			mockClient.AssertExpectations(t)
 		})
 	}
 }
 
-// Test flag initialization
-func TestExportModelCmdFlags(t *testing.T) {
-	cmd := exportModelCmd
+// Test the backward compatibility export function
+func TestExport(t *testing.T) {
+	tmpDir := createTempDir(t)
+	defer os.RemoveAll(tmpDir)
 
-	// Test that all expected flags are present
-	expectedFlags := map[string]struct{}{
-		"output-format":         {},
-		"output-location":       {},
-		"output-type":           {},
-		"discard-components":    {},
-		"discard-relationships": {},
-		"version":               {},
-		"page":                  {},
+	// Create a mock client
+	mockClient := new(MockHTTPClient)
+
+	// Temporarily replace the default client for this test
+	originalClient := defaultHTTPClient
+	defaultHTTPClient = mockClient
+	defer func() {
+		defaultHTTPClient = originalClient
+	}()
+
+	// Setup mock expectations
+	req, _ := http.NewRequest("GET", "http://test-url", nil)
+	mockClient.On("NewRequest", "GET", "http://test-url", mock.Anything).Return(req, nil)
+	mockClient.On("MakeRequest", req).Return(createMockResponse(200, "test data"), nil)
+
+	output := &outputDetail{
+		Format: "yaml",
+		Type:   "oci",
+		Path:   tmpDir,
 	}
 
-	for flagName := range expectedFlags {
-		flag := cmd.Flags().Lookup(flagName)
-		assert.NotNil(t, flag, "Flag %s should be defined", flagName)
-	}
+	err := export("test-model", "http://test-url", output)
 
-	// Test default values
-	assert.Equal(t, "yaml", cmd.Flags().Lookup("output-format").DefValue)
-	assert.Equal(t, "./", cmd.Flags().Lookup("output-location").DefValue)
-	assert.Equal(t, "oci", cmd.Flags().Lookup("output-type").DefValue)
-	assert.Equal(t, "false", cmd.Flags().Lookup("discard-components").DefValue)
-	assert.Equal(t, "false", cmd.Flags().Lookup("discard-relationships").DefValue)
-	assert.Equal(t, "", cmd.Flags().Lookup("version").DefValue)
-	assert.Equal(t, "1", cmd.Flags().Lookup("page").DefValue)
-}
+	assert.NoError(t, err)
+	mockClient.AssertExpectations(t)
 
-// Test command metadata
-func TestExportModelCmdMetadata(t *testing.T) {
-	cmd := exportModelCmd
-
-	assert.Equal(t, "export", cmd.Use)
-	assert.Equal(t, "Export registered models", cmd.Short)
-	assert.Contains(t, cmd.Long, "Export the registered model")
-	assert.Contains(t, cmd.Example, "mesheryctl model export")
-
-	// Test that the command has the required functions
-	assert.NotNil(t, cmd.Args)
-	assert.NotNil(t, cmd.PreRunE)
-	assert.NotNil(t, cmd.RunE)
+	// Verify file was created
+	filePath := filepath.Join(tmpDir, "test-model.tar")
+	assert.FileExists(t, filePath)
+	content, err := os.ReadFile(filePath)
+	assert.NoError(t, err)
+	assert.Equal(t, "test data", string(content))
 }

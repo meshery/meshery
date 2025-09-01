@@ -22,7 +22,25 @@ type outputDetail struct {
 	Path   string
 }
 
-// mesheryctl model export <designname>
+// HTTPClient interface for dependency injection
+type HTTPClient interface {
+	NewRequest(method, url string, body io.Reader) (*http.Request, error)
+	MakeRequest(req *http.Request) (*http.Response, error)
+}
+
+// DefaultHTTPClient implements HTTPClient
+type DefaultHTTPClient struct{}
+
+func (d *DefaultHTTPClient) NewRequest(method, url string, body io.Reader) (*http.Request, error) {
+	return utils.NewRequest(method, url, body)
+}
+
+func (d *DefaultHTTPClient) MakeRequest(req *http.Request) (*http.Response, error) {
+	return utils.MakeRequest(req)
+}
+
+var defaultHTTPClient HTTPClient = &DefaultHTTPClient{}
+
 var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export registered models",
@@ -68,23 +86,25 @@ var exportModelCmd = &cobra.Command{
 		}
 
 		page, _ := cmd.Flags().GetInt("page")
-		if page < 0 {
+		if page < 1 {
 			return ErrModelInvalidPageNumber(fmt.Sprintf("invalid page number %d, only page number > 0 allowed", page))
 		}
 		version, _ := cmd.Flags().GetString("version")
 		if version != "" {
 			matched, _ := regexp.MatchString(`^v[0-9]+\.[0-9]+\.[0-9]+$`, version)
 			if !matched {
-				return ErrModelUnsupportedVersion(fmt.Sprintf("invalid format %q, expected format: vMAJOR:MINOR:PATCH (ex:0.7.3)", version))
+				return ErrModelUnsupportedVersion(fmt.Sprintf("invalid format %q, expected format: vMAJOR:MINOR:PATCH (ex:v0.7.3)", version))
 			}
 		}
 		outputPath, _ := cmd.Flags().GetString(("output-location"))
 		info, err := os.Stat(outputPath)
-		if err != nil {
-			return ErrFolderNotPresent(fmt.Sprintf("folder %q is not a directory", outputPath))
+		if os.IsNotExist(err) {
+			return ErrFolderNotPresent(fmt.Sprintf("output location does not exist %q", outputPath))
+		} else if err != nil {
+			return ErrFolderNotPresent(fmt.Sprintf("error accessing output location %q: %v", outputPath, err))
 		}
 		if !info.IsDir() {
-			return ErrFolderNotPresent(fmt.Sprintf("%q is not a directory", outputPath))
+			return ErrFolderNotPresent(fmt.Sprintf("output location %q is not a directory", outputPath))
 		}
 		return nil
 	},
@@ -92,24 +112,13 @@ var exportModelCmd = &cobra.Command{
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			log.Fatalln(err, "error processing config")
+			return ErrProcessingConfig(fmt.Sprintf("error processing config %s", err))
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelName := args[0]
 		outputFormat, _ := cmd.Flags().GetString("output-format")
-		validFormat := map[string]bool{"yaml": true, "json": true}
-		if !validFormat[outputFormat] {
-
-			return fmt.Errorf("invalid value %q for flag -t, allowed: yaml, json", outputFormat)
-		}
-
 		outputType, _ := cmd.Flags().GetString("output-type")
-
-		validType := map[string]bool{"oci": true, "tar": true}
-		if !validType[outputType] {
-			return fmt.Errorf("invalid value %q for flag -o, allowed: yaml, json", outputType)
-		}
 		discardComponents, _ := cmd.Flags().GetBool("discard-components")
-
 		discardRelationships, _ := cmd.Flags().GetBool("discard-relationships")
 		version, _ := cmd.Flags().GetString("version")
 		page, _ := cmd.Flags().GetInt("page")
@@ -126,51 +135,57 @@ var exportModelCmd = &cobra.Command{
 			Path:   outputPath,
 		}
 
-		return export(args[0], url, output)
+		return exportWithClient(modelName, url, output, defaultHTTPClient)
 	},
 }
 
-func export(modelName string, url string, output *outputDetail) error {
-	// Find the entity with the model name
-	req, err := utils.NewRequest(http.MethodGet, url, nil)
+// function to accept HTTPClient for DI
+func exportWithClient(modelName string, url string, output *outputDetail, client HTTPClient) error {
+	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {
-		utils.Log.Error(err)
-		return err
+		return ErrExportModel(err, modelName)
+	}
+	if req == nil {
+		return ErrExportModel(fmt.Errorf("request is nil"), modelName)
 	}
 
-	resp, err := utils.MakeRequest(req)
+	resp, err := client.MakeRequest(req)
 	if err != nil {
-		return err
+		return fmt.Errorf("request failed: %w", err)
 	}
+	if resp == nil {
+		return ErrExportModel(fmt.Errorf("response is nil"), modelName)
+	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("failed to export model: status %d %s", resp.StatusCode, resp.Status)
 	}
-	// ensure proper cleaning of resources
-	defer resp.Body.Close()
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		utils.Log.Error(err)
-		return err
+		return ErrExportModel(err, modelName)
 	}
 
 	var exportedModelPath string
-
 	if output.Type == "oci" {
 		exportedModelPath = filepath.Join(output.Path, modelName+".tar")
 	} else if output.Type == "tar" {
 		exportedModelPath = filepath.Join(output.Path, modelName+".tar.gz")
+	} else {
+		return ErrModelUnsupportedOutputType(fmt.Sprintf("unsupported output type: %s", output.Type))
 	}
 
 	err = os.WriteFile(exportedModelPath, data, 0644)
 	if err != nil {
-		utils.LogError.Error(err)
-		return err
-
+		return ErrExportModel(err, modelName)
 	}
 
-	utils.Log.Infof("Exported model to %s", exportedModelPath)
 	return nil
+}
+
+func export(modelName string, url string, output *outputDetail) error {
+	return exportWithClient(modelName, url, output, defaultHTTPClient)
 }
 
 func init() {
