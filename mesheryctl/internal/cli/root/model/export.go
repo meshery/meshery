@@ -11,7 +11,6 @@ import (
 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -111,7 +110,6 @@ var exportModelCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
 			return ErrProcessingConfig(fmt.Sprintf("error processing config %s", err))
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
@@ -151,7 +149,7 @@ func exportWithClient(modelName string, url string, output *outputDetail, client
 
 	resp, err := client.MakeRequest(req)
 	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
+		return ErrorExportModel(fmt.Errorf("request failed: %w", err))
 	}
 	if resp == nil {
 		return ErrExportModel(fmt.Errorf("response is nil"), modelName)
@@ -159,7 +157,7 @@ func exportWithClient(modelName string, url string, output *outputDetail, client
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to export model: status %d %s", resp.StatusCode, resp.Status)
+		return ErrExportModel(fmt.Errorf("failed to export model: status %d %s", resp.StatusCode, resp.Status))
 	}
 
 	data, err := io.ReadAll(resp.Body)

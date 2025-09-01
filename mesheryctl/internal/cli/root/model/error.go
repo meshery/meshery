@@ -99,3 +99,36 @@ func ErrInvalidStatus(modelName string, statusCode int, statusText string) error
 		[]string{"Server returned non-200 status"},
 		[]string{"Verify the API endpoint and parameters"})
 }
+
+func ErrNilRequest(modelName string) error {
+	return errors.New(
+		ErrExportModelCode,
+		errors.Fatal,
+		[]string{"Failed to create request"},
+		[]string{fmt.Sprintf("HTTP request is nil for model %q", modelName)},
+		[]string{"Invalid request construction"},
+		[]string{"Check request creation logic and base URL"},
+	)
+}
+
+func ErrNilResponse(modelName string) error {
+	return errors.New(
+		ErrExportModelCode,
+		errors.Fatal,
+		[]string{"Failed to get response"},
+		[]string{fmt.Sprintf("HTTP response is nil for model %q", modelName)},
+		[]string{"Invalid response from server"},
+		[]string{"Check server availability and endpoint correctness"},
+	)
+}
+
+func ErrInvalidStatus(modelName string, statusCode int, statusText string) error {
+	return errors.New(
+		ErrExportModelCode,
+		errors.Fatal,
+		[]string{"Unexpected response status"},
+		[]string{fmt.Sprintf("Model %q export failed with status %d (%s)", modelName, statusCode, statusText)},
+		[]string{"Server returned non-200 response"},
+		[]string{"Verify API endpoint and parameters"},
+	)
+}
