@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import {
-  Grid,
+  Grid2,
   Typography,
   IconButton,
   Paper,
@@ -8,8 +8,8 @@ import {
   Fade,
   Popper,
   styled,
-} from '@layer5/sistent';
-import { NoSsr } from '@layer5/sistent';
+} from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
 import {
   fortioResultToJsChartData,
   makeChart,
@@ -57,9 +57,10 @@ const ShareIconButton = styled(IconButton)({
   transform: 'scaleX(-1)',
 });
 
-const SocialPopper = styled(Popper)({
-  width: 500,
-});
+const SocialPopper = styled(Popper)(({ theme }) => ({
+  maxWidth: theme.spacing(30),
+  zIndex: theme.zIndex.modal + 1,
+}));
 
 const SocialPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(1),
@@ -358,7 +359,7 @@ function MesheryChart(props) {
           <ReplyIcon />
         </ShareIconButton>
       </ShareIconContainer>
-      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition style={{ zIndex: '1301' }}>
+      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition placement="bottom-end">
         {({ TransitionProps }) => (
           <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
             <Fade {...TransitionProps} timeout={350}>
@@ -393,13 +394,13 @@ function MesheryChart(props) {
       </SocialPopper>
       <div>
         <ChartTitle ref={titleRef} style={{ display: 'none' }} />
-        <Grid container justifyContent="center" style={{ padding: '0.5rem' }}>
+        <Grid2 container justifyContent="center" style={{ padding: '0.5rem' }} size="grow">
           {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => (
-            <Grid item xs={4} key={`nri-${i}`}>
+            <Grid2 key={`nri-${i}`} size={{ xs: 4 }}>
               {el}
-            </Grid>
+            </Grid2>
           ))}
-        </Grid>
+        </Grid2>
         <ChartWrapper>
           <ChartContainer ref={chartRef}></ChartContainer>
           <ChartPercentiles

@@ -170,7 +170,7 @@ Git Bash is a terminal emulator which provides git command line experience. This
 
 ### Get the code
 
-- Fork and then clone the [Meshery repository](https://github.com/layer5io/meshery)
+- Fork and then clone the [Meshery repository](https://github.com/meshery/meshery)
   ```bash
   $ git clone https://github.com/YOUR-USERNAME/meshery
   ```

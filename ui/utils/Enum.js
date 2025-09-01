@@ -78,6 +78,7 @@ export const CONTROLLER_STATES = {
   RUNNING: 'RUNNING',
   CONNECTED: 'CONNECTED',
   DISABLED: 'DISABLED',
+  UNKNOWN: 'UNKNOWN',
 };
 
 export const MesheryPatternsCatalog = 'meshery-patterns-catalog';
@@ -93,6 +94,11 @@ export const CONNECTION_KINDS = {
   PROMETHEUS: 'prometheus',
   GRAFANA: 'grafana',
   GITHUB: 'github',
+};
+
+export const MESHSYNC_DEPLOYMENT_TYPE = {
+  OPERATOR: 'operator',
+  EMBEDDED: 'embedded',
 };
 
 export const MESHSYNC_STATES = {
@@ -119,13 +125,15 @@ export const CONNECTION_STATE_TO_TRANSITION_MAP = {
 export const FILTER = 'filter';
 export const PATTERN = 'pattern';
 
-//ExtensionPoint: Insert extension details here
+// Meshery Extension Point
+// Add your UI plugin into this extension point.
+// Learn more: https://docs.meshery.io/extensibility/ui
 export const EXTENSIONS = {
   [EXTENSION_NAMES.KANVAS]: {
     name: 'Kanvas',
-    signup_header: 'Get early access to Kanvas!',
+    signup_header: 'Visual design and operation',
     signup_button: 'Open Kanvas',
-    signup_url: 'https://layer5.io/cloud-native-management/kanvas',
+    signup_url: '/extension/meshmap',
     show_popup: true,
   },
   Catalog: {
@@ -133,7 +141,7 @@ export const EXTENSIONS = {
   },
   KanvasSnapshot: {
     name: 'Kanvas Snapshot',
-    signup_url: 'https://cloud.layer5.io/connect/github/new/',
+    signup_url: 'https://meshery.io/extensions/github-action-meshery-snapshot',
   },
   PerformanceAnalysis: {
     name: 'Performance Analysis',

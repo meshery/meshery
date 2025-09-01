@@ -23,9 +23,9 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -153,7 +153,7 @@ mesheryctl filter list 'Test Filter' (maximum 25 filters)
 		}
 
 		if cmd.Flags().Changed("page") {
-			utils.PrintToTableWithFooter(header, data, footer)
+			utils.PrintToTable(header, data, footer)
 			return nil
 		}
 		err = utils.HandlePagination(pageSize, "filter files", data, header, footer)

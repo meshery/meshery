@@ -19,7 +19,7 @@ List registered orgs
 Print all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
 	
 	Documentation for organizations can be found at 
-	https://docs.layer5.io/cloud/identity/organizations/
+	https://docs.meshery.io/concepts/logical
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>

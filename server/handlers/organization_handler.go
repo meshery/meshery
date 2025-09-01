@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/server/models"
 )
 
 // swagger:route GET /api/identity/orgs OrganizationsAPI idGetOrganizations

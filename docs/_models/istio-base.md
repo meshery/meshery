@@ -72,16 +72,7 @@ components:
   description: 
 components-count: 15
 relationships: 
-- type: "Non Binding"
-  kind: "Edge"
-  description: "A relationship that defines network edges between components"
-- type: "Non Binding"
-  kind: "Edge"
-  description: "A relationship that defines network edges between components"
-- type: "Parent"
-  kind: "Hierarchical"
-  description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component."
-relationship-count: 3
+relationship-count: 0
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",

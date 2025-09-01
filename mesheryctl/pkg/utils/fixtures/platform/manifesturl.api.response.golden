@@ -10543,7 +10543,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/0380510070f6bda6a20ce268d645c5a567210715"
 },
 {
-"path": "server/oam/traits/meshmap.meshery.layer5.io.schema.json",
+"path": "server/oam/traits/meshmap.meshery.io.schema.json",
 "mode": "100644",
 "type": "blob",
 "sha": "071a6ebfd42affbb854395fafddd454293803d25",
@@ -10566,7 +10566,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/trees/d41bc898de6e55a8ece331c7f251c6029f284939"
 },
 {
-"path": "server/oam/workloads/application.meshery.layer5.io.schema.json",
+"path": "server/oam/workloads/application.meshery.io.schema.json",
 "mode": "100644",
 "type": "blob",
 "sha": "676b41291e30d8cce10bbd90c752f3d743f84de7",
@@ -10582,7 +10582,7 @@
 "url": "https://api.github.com/repos/meshery/meshery/git/blobs/568e479cc330f5ac8ef3c7244e862cb71be626e8"
 },
 {
-"path": "server/oam/workloads/service.k8s.meshery.layer5.io.schema.json",
+"path": "server/oam/workloads/service.k8s.meshery.io.schema.json",
 "mode": "100644",
 "type": "blob",
 "sha": "477db4141bd0f8c2e1340c9771519cf5d98ac3a9",

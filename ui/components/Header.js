@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
@@ -16,6 +16,8 @@ import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHoo
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import SettingsIcon from '@mui/icons-material/Settings';
+import RegistryModal from './Registry/RegistryModal';
+
 import {
   Checkbox,
   Box,
@@ -26,20 +28,18 @@ import {
   TextField,
   ClickAwayListener,
   IconButton,
-  Grid,
   Slide,
+  Grid2,
   Hidden,
   NoSsr,
   useTheme,
   useMediaQuery,
-} from '@layer5/sistent';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
+} from '@sistent/sistent';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import Router from 'next/router';
+import OrganizationAndWorkSpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './Modals/ConnectionModal';
+import ConnectionModal from './General/Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
@@ -53,17 +53,18 @@ import {
   CBadge,
   StyledToolbar,
   UserInfoContainer,
-  SettingsWrapper,
 } from './Header.styles';
 import {
   getUserAccessToken,
   getUserProfile,
   useGetProviderCapabilitiesQuery,
 } from '@/rtk-query/user';
+import { useGetConnectionsQuery } from '@/rtk-query/connection';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateK8SConfig } from '@/store/slices/mesheryUi';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary } from '@sistent/sistent';
+import { WorkspaceModalContext } from '../utils/context/WorkspaceModalContextProvider';
 
 async function loadActiveK8sContexts() {
   try {
@@ -86,6 +87,7 @@ const K8sContextConnectionChip_ = ({
   meshsyncControllerState,
   selected,
   onDelete,
+  connections = [],
 }) => {
   const ping = useKubernetesHook();
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
@@ -94,13 +96,21 @@ const K8sContextConnectionChip_ = ({
     ctx.connection_id,
   );
 
+  const connectionStatus = useMemo(() => {
+    if (!connections || !ctx.connection_id) return null;
+    const connection = connections.find((conn) => conn.id === ctx.connection_id);
+    return connection?.status || null;
+  }, [connections, ctx.connection_id]);
+
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
-      <CustomTextTooltip
+      <CustomTooltip
         placement="left-end"
         leaveDelay={200}
         interactive={true}
-        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
+        title={`Server: ${ctx.server}, Connection: ${formatToTitleCase(
+          connectionStatus || 'Unknown',
+        )}, Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
       >
@@ -125,10 +135,10 @@ const K8sContextConnectionChip_ = ({
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                 : '/static/img/kubernetes.svg'
             }
-            status={operatorState}
+            status={connectionStatus}
           />
         </div>
-      </CustomTextTooltip>
+      </CustomTooltip>
     </Box>
   );
 };
@@ -149,6 +159,18 @@ function K8sContextMenu({
   const { controllerState: meshsyncControllerState } = useSelector((state) => state.ui);
   const dispatch = useDispatch();
   const { connectionMetadataState } = useSelector((state) => state.ui);
+
+  // ->using same data source as we use in conn.table
+  const { data: connectionData } = useGetConnectionsQuery({
+    page: 0,
+    pagesize: 100,
+    search: '',
+    order: '',
+    status: '',
+    kind: JSON.stringify(['kubernetes']), // -> Kubernetes connections
+  });
+
+  const connections = connectionData?.connections || [];
 
   const styleSlider = {
     position: 'absolute',
@@ -274,7 +296,22 @@ function K8sContextMenu({
                 height="24px"
                 style={{ objectFit: 'contain' }}
               />
-              <CBadge>{contexts?.total_count || 0}</CBadge>
+              <CBadge
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowFullContextMenu((prev) => !prev);
+                }}
+                onMouseOver={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(true);
+                }}
+                onMouseLeave={(e) => {
+                  e.stopPropagation();
+                  setAnchorEl(false);
+                }}
+              >
+                {contexts?.total_count || 0}
+              </CBadge>
             </CBadgeContainer>
           </IconButton>
         </CanShow>
@@ -327,6 +364,7 @@ function K8sContextMenu({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          marginTop: '1rem',
                         }}
                       >
                         <div>
@@ -362,6 +400,7 @@ function K8sContextMenu({
                           onSelectChange={() => setActiveContexts(ctx.id)}
                           meshsyncControllerState={meshsyncControllerState}
                           connectionMetadataState={connectionMetadataState}
+                          connections={connections}
                         />
                       );
                     })}
@@ -389,13 +428,17 @@ function K8sContextMenu({
 const Header = ({
   onDrawerToggle,
   onDrawerCollapse,
-  abilityUpdated,
   contexts,
   activeContexts,
   setActiveContexts,
   searchContexts,
+  // eslint-disable-next-line no-unused-vars
+  abilityUpdated,
 }) => {
   const { notify } = useNotification;
+  const { openModal } = useContext(WorkspaceModalContext) || {};
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const {
     data: providerCapabilities,
@@ -415,22 +458,20 @@ const Header = ({
   const collaboratorExtensionUri = providerCapabilities?.extensions?.collaborator?.[0]?.component;
 
   const loaderType = 'circular';
-  const theme = useTheme();
-  const isDesktop = useMediaQuery(theme.breakpoints.up('sm'));
   return (
     <NoSsr>
       <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar disableGutters isDrawerCollapsed={onDrawerCollapse}>
-            <Grid container alignItems="center">
+            <Grid2 container alignItems="center" size="grow">
               <Hidden smUp>
-                <Grid item style={{ display: 'none' }}>
+                <Grid2 style={{ display: 'none' }}>
                   <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
                     <HeaderIcons style={iconMedium} />
                   </MenuIconButton>
-                </Grid>
+                </Grid2>
               </Hidden>
-              <Grid item xs container alignItems="center" component={PageTitleWrapper}>
+              <Grid2 container alignItems="center" component={PageTitleWrapper} size="grow">
                 {/* Extension Point for   Logo */}
                 <div
                   id="nav-header-logo"
@@ -438,35 +479,45 @@ const Header = ({
                     height: '100%',
                     display: 'flex',
                     alignItems: 'center',
-                    minWidth: '34px',
+                    width: 'fit-content',
                     justifyContent: 'center',
+                    position: 'relative',
                   }}
                 ></div>
-                <SpaceSwitcher />
-              </Grid>
+                <OrganizationAndWorkSpaceSwitcher />
+              </Grid2>
               <Box
                 component={UserContainer}
                 style={{
                   position: 'relative',
                   display: 'flex',
-                  flexWrap: 'wrap',
                   gap: '1rem 0.5rem',
+                  width: 'fit-content',
                 }}
               >
                 {/* According to the capabilities load the component */}
                 <ErrorBoundary customFallback={() => null}>
-                  {collaboratorExtensionUri && (
+                  {collaboratorExtensionUri && isSmallScreen && (
                     <RemoteComponent
                       url={{ url: createPathForRemoteComponent(collaboratorExtensionUri) }}
                       loaderType={loaderType}
                       providerUrl={remoteProviderUrl}
                       getUserAccessToken={getUserAccessToken}
                       getUserProfile={getUserProfile}
+                      onOpenWorkspace={openModal}
                     />
                   )}
                 </ErrorBoundary>
                 <UserInfoContainer>
-                  <UserSpan style={{ position: 'relative' }}>
+                  <UserSpan
+                    sx={{
+                      display: {
+                        xs: 'none',
+                        sm: 'inline-flex',
+                      },
+                    }}
+                    style={{ position: 'relative' }}
+                  >
                     <K8sContextMenu
                       contexts={contexts}
                       activeContexts={activeContexts}
@@ -474,32 +525,25 @@ const Header = ({
                       searchContexts={searchContexts}
                     />
                   </UserSpan>
-                  <SettingsWrapper
-                    isDesktop={isDesktop}
-                    data-testid="settings-button"
-                    aria-describedby={abilityUpdated}
-                  >
-                    <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')}>
-                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
-                      </IconButton>
-                    </CanShow>
-                  </SettingsWrapper>
-                  <div data-testid="notification-button">
-                    <NotificationDrawerButton />
-                  </div>
-
-                  <UserSpan>
-                    <User />
-                  </UserSpan>
+                  <CustomTooltip title="Notifications">
+                    <div data-testid="notification-button">
+                      <NotificationDrawerButton />
+                    </div>
+                  </CustomTooltip>
+                  <CustomTooltip title={'User Profile'}>
+                    <UserSpan>
+                      <User />
+                    </UserSpan>
+                  </CustomTooltip>
                   <UserSpan data-testid="header-menu">
                     <HeaderMenu />
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
-            </Grid>
+            </Grid2>
           </StyledToolbar>
         </HeaderAppBar>
+        <RegistryModal />
       </>
     </NoSsr>
   );

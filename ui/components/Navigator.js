@@ -31,7 +31,7 @@ import {
   ExternalLinkIcon as IconExternalLink,
   TachographDigitalIcon,
   useTheme,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -48,6 +48,7 @@ import {
   CONNECTION,
   ENVIRONMENT,
   WORKSPACE,
+  EXTENSIONS,
 } from '../constants/navigator';
 import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
@@ -253,11 +254,11 @@ const getNavigatorComponents = (
     ],
   },
   {
-    id: 'Extensions',
+    id: EXTENSIONS,
     icon: <ExtensionIcon style={drawerIconsStyle} />,
     hovericon: <ExtensionIcon style={drawerIconsStyle} />,
     title: 'Extensions',
-    show: capabilityRegistryObj.isNavigatorComponentEnabled(['Extensions']),
+    show: capabilityRegistryObj.isNavigatorComponentEnabled([EXTENSIONS]),
     width: 12,
     link: true,
     href: '/extensions',
@@ -657,7 +658,7 @@ const Navigator_ = () => {
   const extensionPointContent = (icon, href, name, drawerCollapsed) => {
     let content = (
       <>
-        <LinkContainer data-cy={name}>
+        <LinkContainer data-testid={name}>
           <CustomTooltip
             title={name}
             placement="right"
@@ -743,6 +744,7 @@ const Navigator_ = () => {
                   <div key={idc}>
                     <NavigatorListItemII
                       button
+                      data-testid={idc}
                       key={idc}
                       depth={depth}
                       isDrawerCollapsed={isDrawerCollapsed}
@@ -790,7 +792,7 @@ const Navigator_ = () => {
                     <div key={idc} style={!showc ? cursorNotAllowed : null}>
                       <NavigatorListItemIII
                         component="a"
-                        data-cy={idc}
+                        data-testid={idc}
                         button
                         key={idc}
                         depth={depth}
@@ -922,7 +924,7 @@ const Navigator_ = () => {
                   disabled={permission ? !CAN(permission.action, permission.subject) : false}
                 >
                   <Link href={link ? href : ''}>
-                    <NavigatorLink data-cy={childId}>
+                    <NavigatorLink data-testid={childId}>
                       <CustomTooltip
                         title={childId}
                         placement="right"

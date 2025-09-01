@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models/environments"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models/environments"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -73,7 +73,7 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		payload := &environments.EnvironmentPayload{
 			Name:        name,
 			Description: description,
-			OrgID:       orgID,
+			OrgId:       orgID, // TODO update OrgId in schema to OrgID
 		}
 
 		payloadBytes, err := json.Marshal(payload)
@@ -92,7 +92,8 @@ mesheryctl environment create --orgID [orgID] --name [name] --description [descr
 		}
 
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgID))
+			// TODO update OrgId in schema to OrgID
+			utils.Log.Info(fmt.Sprintf("Environment named %s created in organization id %s", payload.Name, payload.OrgId))
 			return nil
 		}
 		utils.Log.Info("Error creating environment")

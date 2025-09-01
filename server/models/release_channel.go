@@ -7,9 +7,9 @@ import (
 	"net/url"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/models/connections"
-	"github.com/layer5io/meshkit/encoding"
-	"github.com/layer5io/meshkit/logger"
+	"github.com/meshery/meshery/server/models/connections"
+	"github.com/meshery/meshkit/encoding"
+	"github.com/meshery/meshkit/logger"
 	"github.com/pkg/errors"
 )
 

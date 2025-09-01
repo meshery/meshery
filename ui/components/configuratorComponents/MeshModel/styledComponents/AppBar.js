@@ -1,4 +1,4 @@
-import { AppBar, styled } from '@layer5/sistent';
+import { AppBar, styled } from '@sistent/sistent';
 
 const AppBarComponent = styled(AppBar)(({ theme }) => {
   return {

@@ -24,7 +24,7 @@ assignees: ''
 
 ---
 
-### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://layer5.io/community/handbook)
+### Contributor [Guides](https://docs.meshery.io/project/contributing) and [Handbook](https://meshery.io/community#handbook)
 - 📚 [Meshery Build and Release Strategy](https://docs.meshery.io/project/contributing/build-and-release)
 - 🎨 UI Design For Meshery Extensions [Figma](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI) in Figma [(open invite)](https://www.figma.com/team_invite/redeem/qJy1c95qirjgWQODApilR9)
 - 📚 [Meshery Extensibility Providers](https://docs.meshery.io/extensibility/providers)

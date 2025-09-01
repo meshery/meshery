@@ -1,13 +1,11 @@
 import { useGetOrgsQuery } from '@/rtk-query/organization';
-import { useNotification } from '@/utils/hooks/useNotification';
-import { EVENT_TYPES } from '../../lib/event-types';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useContext } from 'react';
 import {
   Button,
   FormControl,
   FormControlLabel,
   FormGroup,
-  Grid,
+  Grid2,
   MenuItem,
   styled,
   TextField,
@@ -15,17 +13,25 @@ import {
   Select,
   useTheme,
   WorkspaceIcon,
-} from '@layer5/sistent';
-import { NoSsr } from '@layer5/sistent';
+  CircularProgress,
+  CustomTooltip,
+  useMediaQuery,
+} from '@sistent/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { useRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconLarge, iconXLarge } from 'css/icons.styles';
-import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import _ from 'lodash';
 import WorkspaceSwitcher from './WorkspaceSwitcher';
-import { useDispatch, useSelector } from 'react-redux';
-import { setOrganization, setKeys } from '@/store/slices/mesheryUi';
+import { useSelector } from 'react-redux';
+import {
+  useGetSelectedOrganization,
+  useUpdateSelectedOrganizationMutation,
+} from '@/rtk-query/user';
+import { MobileOrgWksSwither } from './MobileViewSwitcher';
+import WorkspaceModal from './WorkspaceModal';
+import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
 
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
@@ -45,6 +51,12 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   alignItems: 'center',
   textAlign: 'center',
   fill: theme.palette.text.default,
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.action.selected,
+    '&:hover': {
+      backgroundColor: theme.palette.action.selected + '!important',
+    },
+  },
 }));
 
 export const StyledSelect = styled(Select)(({ theme }) => ({
@@ -55,6 +67,32 @@ export const StyledSelect = styled(Select)(({ theme }) => ({
   },
   '& svg': {
     fill: '#eee',
+  },
+
+  [theme.breakpoints.down('md')]: {
+    '& .MuiInputBase-input, & span': {
+      minWidth: '8rem',
+      maxWidth: '8rem',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
+  },
+
+  '@media (max-width: 400px)': {
+    '& .MuiInputBase-input,': {
+      maxWidth: 'unset',
+      minWidth: 'unset',
+      width: '100%',
+    },
+
+    '& span': {
+      minWidth: '8rem',
+      maxWidth: '10rem',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+    },
   },
 }));
 
@@ -70,9 +108,16 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
 }));
 
 export const StyledHeader = styled(Typography)(({ theme }) => ({
-  paddingLeft: theme.spacing(2),
-  fontSize: '1.25rem',
-  [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
+  paddingLeft: theme.spacing(1),
+  fontSize: '1.65rem',
+
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '1.25rem',
+    maxWidth: '7rem',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
   color: theme.palette.common.white,
 }));
 export const StyledBetaHeader = styled('sup')(() => ({
@@ -90,55 +135,56 @@ const StyledSwitcher = styled('div')(({ theme }) => ({
   userSelect: 'none',
   transition: 'width 2s ease-in',
   color: theme.palette.common.white,
-  flexWrap: 'wrap',
   gap: '0.5rem 0rem',
 }));
 
-function OrgMenu(props) {
-  const {
-    data: orgsResponse,
-    isSuccess: isOrgsSuccess,
-    isError: isOrgsError,
-    error: orgsError,
-  } = useGetOrgsQuery({});
+export function OrgMenu(props) {
+  const { data: orgsResponse, isSuccess: isOrgsSuccess } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
 
-  const { organization, setOrganization, open, setKeys } = props;
-  const { notify } = useNotification();
-  const dispatch = useDispatch();
-  const abilitiesResult = useGetCurrentAbilities(organization);
-  useEffect(() => {
-    if (abilitiesResult?.currentData?.keys) {
-      dispatch(setKeys({ keys: abilitiesResult.currentData.keys }));
-    }
-  }, [abilitiesResult?.currentData?.keys]);
-  useEffect(() => {
-    if (isOrgsError) {
-      notify({
-        message: `There was an error fetching available data ${orgsError?.data}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-  }, [isOrgsError, notify, orgsError]);
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery('(max-width:400px)');
+  const { selectedOrganization } = useGetSelectedOrganization();
+
+  const [updateSelectedOrg, { isLoading: isUpdatingOrg }] = useUpdateSelectedOrganizationMutation();
+
+  if (isUpdatingOrg) {
+    return <CircularProgress size={24} style={{ color: theme.palette.background.brand.default }} />;
+  }
+
+  if (!selectedOrganization) return null;
+
+  const organization = selectedOrganization;
+  const { open, fromMobileView } = props;
 
   const handleOrgSelect = (e) => {
     const id = e.target.value;
-    const selected = orgs.find((org) => org.id === id);
-    setOrganization({ organization: selected });
+    updateSelectedOrg(id);
   };
-  const theme = useTheme();
+
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && open && (
-        <SlideInMenuOpen>
-          <FormControl component="fieldset">
+        <Grid2
+          sx={{
+            width: isSmallScreen ? '80%' : open ? 'auto' : 0,
+            overflow: open ? '' : 'hidden',
+            transition: 'all 1s',
+          }}
+        >
+          <FormControl
+            sx={{
+              width: isSmallScreen ? '100%' : 'auto',
+            }}
+            component="fieldset"
+          >
             <FormGroup>
               <FormControlLabel
                 key="OrgPreferences"
                 control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
+                  <Grid2 container spacing={1} alignItems="flex-end" size="grow">
+                    <Grid2 data-cy="mesh-adapter-url" size={{ xs: 12 }}>
                       <StyledSelect
                         value={organization.id}
                         onChange={handleOrgSelect}
@@ -149,7 +195,9 @@ function OrgMenu(props) {
                             fill: '#eee',
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
-                            color: theme.palette.background.constant.white,
+                            color: fromMobileView
+                              ? theme.palette.text.default
+                              : theme.palette.background.constant.white,
                           },
                         }}
                         MenuProps={{
@@ -179,13 +227,13 @@ function OrgMenu(props) {
                           </StyledMenuItem>
                         ))}
                       </StyledSelect>
-                    </Grid>
-                  </Grid>
+                    </Grid2>
+                  </Grid2>
                 }
               />
             </FormGroup>
           </FormControl>
-        </SlideInMenuOpen>
+        </Grid2>
       )}
     </NoSsr>
   );
@@ -200,51 +248,73 @@ function DefaultHeader({ title, isBeta }) {
   );
 }
 
-function SpaceSwitcher() {
+function OrganizationAndWorkSpaceSwitcher() {
   const [orgOpen, setOrgOpen] = useState(false);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
+
   const { DynamicComponent } = useDynamicComponent();
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('md'));
   const router = useRouter();
-  const rtkDispatch = useDispatch();
   const { organization } = useSelector((state) => state.ui);
   const { isBeta } = useSelector((state) => state.ui.page);
   const { title } = useSelector((state) => state.ui.page);
-  const dispatchSetOrganization = (org) => rtkDispatch(setOrganization(org));
-  const dispatchSetKeys = (keys) => rtkDispatch(setKeys(keys));
+  const { selectedOrganization } = useGetSelectedOrganization();
+
+  //->using the wksp cntxt
+  const { open: workspaceModal, closeModal: closeWorkspaceModal } =
+    useContext(WorkspaceModalContext);
+
+  if (!selectedOrganization) return null;
 
   return (
     <NoSsr>
       <StyledSwitcher>
-        <Button
-          onClick={() => setOrgOpen(!orgOpen)}
-          style={{ marginRight: orgOpen ? '1rem' : '0' }}
-        >
-          <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
-        </Button>
-        <OrgMenu
-          open={orgOpen}
-          organization={organization}
-          setOrganization={dispatchSetOrganization}
-          setKeys={dispatchSetKeys}
-        />
-        /
-        <Button
-          onClick={() => setWorkspaceOpen(!workspaceOpen)}
-          style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
-        >
-          <WorkspaceIcon
-            {...iconLarge}
-            secondaryFill={theme.palette.common.white}
-            fill={theme.palette.common.white}
-          />
-        </Button>
-        <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
-        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+        {isSmallScreen && (
+          <>
+            <MobileOrgWksSwither organization={organization} router={router} />/
+          </>
+        )}
+        {!isSmallScreen && (
+          <>
+            <CustomTooltip title={'Organization'}>
+              <div>
+                <Button
+                  onClick={() => {
+                    setOrgOpen(!orgOpen);
+                  }}
+                  style={{ marginRight: orgOpen ? '1rem' : '0' }}
+                >
+                  <OrgOutlinedIcon {...iconXLarge} fill={theme.palette.common.white} />
+                </Button>
+              </div>
+            </CustomTooltip>
+            <OrgMenu open={orgOpen} organization={organization} />/
+            <CustomTooltip title={'Workspaces'}>
+              <div>
+                <Button
+                  onClick={() => {
+                    setWorkspaceOpen(!workspaceOpen);
+                  }}
+                  style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
+                >
+                  <WorkspaceIcon
+                    {...iconLarge}
+                    secondaryFill={theme.palette.common.white}
+                    fill={theme.palette.common.white}
+                  />
+                </Button>
+              </div>
+            </CustomTooltip>
+            <WorkspaceSwitcher open={workspaceOpen} organization={organization} router={router} />/
+          </>
+        )}
+        <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '0' : '' }} />
         {!DynamicComponent && <DefaultHeader title={title} isBeta={isBeta} />}
+        <WorkspaceModal workspaceModal={workspaceModal} closeWorkspaceModal={closeWorkspaceModal} />
       </StyledSwitcher>
     </NoSsr>
   );
 }
 
-export default SpaceSwitcher;
+export default OrganizationAndWorkSpaceSwitcher;

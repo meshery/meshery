@@ -6,7 +6,7 @@ import {
   InputAdornment,
   useTheme,
   Divider,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import { InputField, Root, DropDown } from './style';
 import React, { useState, useEffect } from 'react';
 import { iconSmall } from 'css/icons.styles';

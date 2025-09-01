@@ -1,4 +1,4 @@
-import { styled, Accordion, AccordionSummary } from '@layer5/sistent';
+import { styled, Accordion, AccordionSummary } from '@sistent/sistent';
 
 export const StyledAccordion = styled(Accordion)({
   border: '1px solid rgba(0,0,0,.125)',

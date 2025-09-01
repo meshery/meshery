@@ -1,7 +1,7 @@
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
-import DashboardComponent from '../components/DashboardComponent';
+import Dashboard from '../components/Dashboard';
 import { getPath } from '../lib/path';
 import { useDispatch } from 'react-redux';
 import { updatePage } from '@/store/slices/mesheryUi';
@@ -17,7 +17,7 @@ function Index() {
       <Head>
         <title>Dashboard | Meshery</title>
       </Head>
-      <DashboardComponent />
+      <Dashboard />
     </NoSsr>
   );
 }

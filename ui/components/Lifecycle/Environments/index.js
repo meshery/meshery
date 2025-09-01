@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Pagination, PaginationItem } from '@layer5/sistent';
+import { Pagination, PaginationItem } from '@sistent/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@mui/icons-material';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
@@ -13,7 +13,7 @@ import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { useNotification } from '../../../utils/hooks/useNotification';
-import { RJSFModalWrapper } from '../../Modal';
+import { RJSFModalWrapper } from '../../General/Modals/Modal';
 import _PromptComponent from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
@@ -26,11 +26,11 @@ import {
   createAndEditEnvironmentUiSchema,
   ErrorBoundary,
   Button,
-  Grid,
+  Grid2,
   Typography,
   SearchBar,
   PROMPT_VARIANTS,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
 import {
@@ -503,9 +503,9 @@ const Environments = () => {
           )}
           {environments.length > 0 ? (
             <>
-              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+              <Grid2 container spacing={2} sx={{ marginTop: '10px' }} size="grow">
                 {environments.map((environment) => (
-                  <Grid item xs={12} md={6} key={environment.id}>
+                  <Grid2 key={environment.id} size={{ xs: 12, md: 6 }}>
                     <EnvironmentCard
                       // classes={classes}
                       environmentDetails={environment}
@@ -515,15 +515,16 @@ const Environments = () => {
                       onSelect={(e) => handleBulkSelect(e, environment.id)}
                       onAssignConnection={(e) => handleonAssignConnectionModalOpen(e, environment)}
                     />
-                  </Grid>
+                  </Grid2>
                 ))}
-              </Grid>
-              <Grid
+              </Grid2>
+              <Grid2
                 container
                 sx={{ padding: '2rem 0', marginTop: '20px' }}
                 flex
                 justifyContent="center"
                 spacing={2}
+                size="grow"
               >
                 <Pagination
                   count={Math.ceil(environmentsData?.total_count / pageSize)}
@@ -537,7 +538,7 @@ const Environments = () => {
                     />
                   )}
                 />
-              </Grid>
+              </Grid2>
             </>
           ) : (
             <EmptyState

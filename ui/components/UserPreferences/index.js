@@ -3,7 +3,7 @@ import {
   Tab,
   Tabs,
   Typography,
-  Grid,
+  Grid2,
   FormGroup,
   FormControlLabel,
   Switch,
@@ -15,7 +15,7 @@ import {
   TachometerIcon,
   useTheme,
   ErrorBoundary,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
 import {
@@ -40,7 +40,7 @@ import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
-import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
+import MesherySettingsPerformanceComponent from '../Settings/MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -52,7 +52,7 @@ import {
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
-import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
+import { SecondaryTab, SecondaryTabs } from '../Dashboard/style';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCatalogContent, updateProgress } from '@/store/slices/mesheryUi';
 
@@ -239,12 +239,12 @@ const UserPreference = (props) => {
           <RootContainer>
             <Typography variant="h5">Provider Information</Typography>
             <ErrorBoundary>
-              <Grid container spacing={2}>
+              <Grid2 container spacing={2} size="grow">
                 {providerInfo &&
                   Object.entries(providerInfo).map(
                     ([providerName, provider], index) =>
                       (index < 2 || index === 3) && (
-                        <Grid key={index} item md={4} xs={12}>
+                        <Grid2 key={index} size={{ xs: 12, md: 4 }}>
                           <ProviderCard>
                             <CardHeader
                               title={
@@ -273,10 +273,10 @@ const UserPreference = (props) => {
                               </BoxWrapper>
                             </CardContent>
                           </ProviderCard>
-                        </Grid>
+                        </Grid2>
                       ),
                   )}
-              </Grid>
+              </Grid2>
               {providerInfo &&
                 Object.entries(providerInfo).map(
                   ([providerName, provider], index) =>
@@ -355,14 +355,13 @@ const UserPreference = (props) => {
               Capabilities
             </Typography>
 
-            <Grid
+            <Grid2
               container
-              spacing={2}
+              size="grow"
               style={{ display: 'flex', justifyContent: 'space-between' }}
             >
               <GridCapabilityHeader
-                item
-                xs={6}
+                size={{ xs: 6 }}
                 style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
               >
                 <Typography variant="body1" style={{ fontWeight: 'bold' }}>
@@ -370,8 +369,7 @@ const UserPreference = (props) => {
                 </Typography>
               </GridCapabilityHeader>
               <GridCapabilityHeader
-                item
-                xs={6}
+                size={{ xs: 6 }}
                 style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
               >
                 <Typography variant="body1" style={{ fontWeight: 'bold' }}>
@@ -382,9 +380,8 @@ const UserPreference = (props) => {
                 providerInfo.capabilities.map((capability, index) => (
                   <>
                     <GridCapabilityHeader
-                      item
                       key={`${index}-${capability.feature}`}
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',
                         backgroundColor:
@@ -400,9 +397,8 @@ const UserPreference = (props) => {
                       <Typography variant="body1">{capability.feature}</Typography>
                     </GridCapabilityHeader>
                     <GridCapabilityHeader
-                      item
                       key={`${index}-${capability.endpoint}`}
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         padding: '20px 20px',
                         backgroundColor:
@@ -419,7 +415,7 @@ const UserPreference = (props) => {
                     </GridCapabilityHeader>
                   </>
                 ))}
-            </Grid>
+            </Grid2>
             <Divider />
             <Typography variant="h5" style={{ margin: '20px 0' }}>
               Extensions
@@ -428,10 +424,9 @@ const UserPreference = (props) => {
               Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
                 <div key={index} margin="20px 0px">
                   <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
-                  <Grid container spacing={2} style={{ margin: '10px 0 20px 0' }}>
+                  <Grid2 container spacing={2} size="grow" style={{ margin: '10px 0 20px 0' }}>
                     <GridExtensionHeader
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '10px 0 0 0',
                         padding: '10px 20px',
@@ -442,8 +437,7 @@ const UserPreference = (props) => {
                       </Typography>
                     </GridExtensionHeader>
                     <GridExtensionHeader
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '0 10px 0 0',
                         padding: '10px 20px',
@@ -455,8 +449,7 @@ const UserPreference = (props) => {
                     </GridExtensionHeader>
 
                     <GridExtensionItem
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '0 0 0 10px',
                         padding: '20px 20px',
@@ -465,8 +458,7 @@ const UserPreference = (props) => {
                       <Typography variant="body1">{extension[0].component}</Typography>
                     </GridExtensionItem>
                     <GridExtensionItem
-                      item
-                      xs={6}
+                      size={{ xs: 6 }}
                       style={{
                         borderRadius: '0 0 10px 0',
                         padding: '20px 20px',
@@ -476,7 +468,7 @@ const UserPreference = (props) => {
                         {convertToTitleCase(extension[0].type)}
                       </Typography>
                     </GridExtensionItem>
-                  </Grid>
+                  </Grid2>
                 </div>
               ))}
           </RootContainer>

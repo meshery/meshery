@@ -1,4 +1,4 @@
-import { CustomTooltip, IconButton, useTheme } from '@layer5/sistent';
+import { CustomTooltip, IconButton, useTheme } from '@sistent/sistent';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import TableChartIcon from '@mui/icons-material/TableChart';
 

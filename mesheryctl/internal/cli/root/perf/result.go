@@ -24,9 +24,9 @@ import (
 	"github.com/ghodss/yaml"
 	"github.com/gofrs/uuid"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
@@ -151,7 +151,7 @@ mesheryctl perf result saturday-profile --view
 			}
 			utils.Log.Info(string(body))
 		} else if !viewSingleResult { // print all results
-			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data)
+			utils.PrintToTable([]string{"NAME", "MESH", "QPS", "DURATION", "P50", "P99.9", "START-TIME"}, data, nil)
 		} else {
 			index := 0
 			// if more than one result exist ask for index

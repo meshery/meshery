@@ -1,7 +1,7 @@
 package display
 
 import (
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 )
 
 const pageSize = 10
@@ -40,7 +40,7 @@ func List(data DisplayedData) error {
 	}
 
 	if data.IsPage {
-		utils.PrintToTable(data.Header, data.Rows)
+		utils.PrintToTable(data.Header, data.Rows, nil)
 	} else {
 		maxRowsPerPage := 25
 		err := utils.HandlePagination(maxRowsPerPage, data.DataType, data.Rows, data.Header)

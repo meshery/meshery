@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   styled,
-  Grid,
+  Grid2,
   Table,
   Typography,
   NoSsr,
   TableRow,
   TableCell,
   TableBody,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import MesheryChartDialog from './MesheryChartDialog';
 
 const StyledTableRow = styled(TableRow)(() => ({
@@ -166,23 +166,19 @@ function MesheryResultDialog(props) {
         open={dialogOpen}
         content={
           <div>
-            <Grid container spacing={1}>
+            <Grid2 container spacing={1} size="grow">
               {rowData && rowData.runner_results && rowData.runner_results.kubernetes && (
-                <Grid item xs={12} sm={6}>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   {renderKubernetesInfo(rowData.runner_results.kubernetes)}
-                </Grid>
+                </Grid2>
               )}
-              {rowData && (
-                <Grid item xs={12} sm={6}>
-                  {renderLoadProfile(rowData)}
-                </Grid>
-              )}
+              {rowData && <Grid2 size={{ xs: 12, sm: 6 }}>{renderLoadProfile(rowData)}</Grid2>}
               {rowData && rowData.runner_results && rowData.runner_results['detected-meshes'] && (
-                <Grid item xs={12} sm={6}>
+                <Grid2 size={{ xs: 12, sm: 6 }}>
                   {renderMeshesInfo(rowData.runner_results['detected-meshes'])}
-                </Grid>
+                </Grid2>
               )}
-            </Grid>
+            </Grid2>
           </div>
         }
       />

@@ -111,7 +111,7 @@ There could be redisual Images and Networks to remove after removing/uninstallin
 
 Meshery pulls Docker images for deploying the extension and there could be additional Meshery/Layer5 images based on how it was configured. You can remove these images using the `docker rmi` command. Start by listing all the images and then running the command for each image you want to remove. For example:
 
-{% capture code_content %}$ docker rmi layer5/meshery:stable-latest{% endcapture %}
+{% capture code_content %}$ docker rmi meshery/meshery:stable-latest{% endcapture %}
 {% include code.html code=code_content %}
 
 

@@ -1,4 +1,4 @@
-import { LinearProgress } from '@layer5/sistent';
+import { LinearProgress } from '@sistent/sistent';
 import React, { useEffect, useRef } from 'react';
 import { useSnackbar } from 'notistack';
 import { useSelector } from 'react-redux';

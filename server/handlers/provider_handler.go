@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	models "github.com/layer5io/meshery/server/models"
+	models "github.com/meshery/meshery/server/models"
 )
 
 // swagger:route GET /api/provider ProvidersAPI idChoiceProvider

@@ -15,7 +15,7 @@
 package components
 
 import (
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/spf13/cobra"
 )
 

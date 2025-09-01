@@ -5,7 +5,7 @@ import { APP_MODE, EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
-import { Tooltip } from '@layer5/sistent';
+import { Tooltip } from '@sistent/sistent';
 import jsyaml from 'js-yaml';
 import yaml from 'js-yaml';
 import { mesheryExtensionRoute } from '../pages/_app';
@@ -473,6 +473,16 @@ export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
+export const KANVAS_MODE = {
+  DESIGN: 'design',
+  OPERATOR: 'operator',
+};
+
+export function isDesignOpenInKanvas() {
+  const params = new URLSearchParams(window.location.search);
+  return params.has('design') && params.get('mode') === KANVAS_MODE.DESIGN;
+}
+
 export const isKanvasEnabled = (capabilitiesRegistry) => {
   const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
   return navigatorExtension.some((ext) => ext.title === 'Kanvas');
@@ -503,6 +513,17 @@ export const openViewScopedToDesignInOperator = (designName, designId, router) =
   }
 
   router.push(`/extension/meshmap?mode=operator&type=view&design_id=${designId}`);
+};
+
+export const mergeDesignWithCurrent = (designId, designName) => {
+  mesheryEventBus.publish({
+    type: 'MERGE_DESIGN',
+    data: {
+      id: designId,
+      name: designName,
+    },
+  });
+  return;
 };
 
 export const openDesignInKanvas = (designId, designName, router) => {

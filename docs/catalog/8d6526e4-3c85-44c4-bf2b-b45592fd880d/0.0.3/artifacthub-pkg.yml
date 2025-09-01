@@ -1,0 +1,24 @@
+version: 0.0.3
+name: understanding-persistent-storage-in-kubernetes
+displayName: understanding persistent storage in kubernetes
+createdAt: "2025-06-23T20:26:13Z"
+description: "---\n\n### ✅ **Case 1: Dynamic PVC Binding (Most Common)**\n\n**Label/Title:**\n\U0001F4E6 Dynamic Volume Provisioning\n\n**Description:**\nThe Deployment references a PVC that dynamically provisions a PersistentVolume using a StorageClass. This is the standard and most portable way to request persistent storage in Kubernetes.\n\n**Key Notes:**\n\n* No need to pre-create a PV.\n* PVC requests storage using a `storageClassName`.\n* Backed by cloud or CSI volumes (e.g., EBS, Ceph, GCE PD).\n\n---\n\n### ✅ **Case 2: Static Binding (Manually Pre-bound PV)**\n\n**Label/Title:**\n\U0001F4E6 Statically Pre-bound Volume\n\n**Description:**\nA PersistentVolume is manually created with a `claimRef` that points to a specific PVC. This PVC is then used by a Deployment. This setup is used when the underlying storage is already provisioned, such as an NFS export or disk device.\n\n**Key Notes:**\n\n* The `PersistentVolume` and `PersistentVolumeClaim` must match in size, access mode, etc.\n* Binding is static and happens only if names and selectors match.\n* Useful in clusters with manual or legacy provisioning workflows.\n\n---\n\n### ✅ **Case 3: Shared Volume (PVC Used by Multiple Pods)**\n\n**Label/Title:**\n\U0001F4C2 Shared Volume Claim\n\n**Description:**\nMultiple Deployments reference the same PVC, allowing them to share data. This setup is only valid when the backing PersistentVolume supports `ReadWriteMany` or `ReadOnlyMany`.\n\n**Key Notes:**\n\n* PVC must have `accessModes: [ReadWriteMany]`.\n* PV type must support multiple mounts (e.g., NFS, CephFS).\n* Suitable for logs, shared configs, or caches.\n\n---\n\n### \U0001F4D8 General Relationships\n\n**Pod/Deployment → PVC:**\nUses the PVC as a volume via `volumeMounts` and `volumes.persistentVolumeClaim.claimName`.\n\n**PVC → PV:**\nPVC gets bound to a matching PV either dynamically (via `StorageClass`) or statically (via `claimRef`).\n\n**PV → Storage Backend:**\nPV is the abstraction over physical or virtual storage (disk, cloud volume, NFS, etc).\n\n---\n"
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/8d6526e4-3c85-44c4-bf2b-b45592fd880d/0.0.3/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "--- \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 969bfd5e-28fb-4c20-a020-ee9db65da812
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8d6526e4-3c85-44c4-bf2b-b45592fd880d-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/8d6526e4-3c85-44c4-bf2b-b45592fd880d-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

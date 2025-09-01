@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshkit/database"
+	"github.com/meshery/meshery/server/helpers/utils"
+	"github.com/meshery/meshkit/database"
 	"github.com/meshery/schemas/models/v1beta1/environment"
 	"github.com/meshery/schemas/models/v1beta1/workspace"
 	"gorm.io/gorm"
@@ -354,6 +354,14 @@ func (wp *WorkspacePersister) DeleteEnvironmentFromWorkspace(workspaceID, enviro
 }
 
 func (wp *WorkspacePersister) AddDesignToWorkspace(workspaceID, designID uuid.UUID) ([]byte, error) {
+
+	// delete any existing mapping for the design in the workspace
+	_, err := wp.DeleteDesignFromWorkspace(workspaceID, designID)
+
+	if err != nil && !strings.Contains(err.Error(), "record not found") {
+		return nil, fmt.Errorf("failed to delete existing design mapping: %w", err)
+	}
+
 	wsDesignMapping := workspace.WorkspacesDesignsMapping{
 		DesignId:    designID,
 		WorkspaceId: workspaceID,

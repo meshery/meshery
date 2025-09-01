@@ -7,7 +7,7 @@ import {
   MenuItem,
   MenuList,
   ClickAwayListener,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function ActionButton({ defaultActionClick, options }) {
@@ -57,6 +57,7 @@ export default function ActionButton({ defaultActionClick, options }) {
           size="small"
           onClick={handleToggle}
           variant="outlined"
+          data-testid="action-btn-toggle"
         >
           <ArrowDropDownIcon />
         </Button>
@@ -81,6 +82,7 @@ export default function ActionButton({ defaultActionClick, options }) {
             <MenuList id="split-button-menu" autoFocusItem>
               {options.map((option, index) => (
                 <MenuItem
+                  data-testid={`action-btn-option-${option.label}`}
                   disabled={option.disabled}
                   key={option}
                   onClick={(event) => {

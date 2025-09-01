@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled, Badge } from '@layer5/sistent';
+import { styled, Badge } from '@sistent/sistent';
 
 const StyledBadge = styled(Badge)(({ theme, color }) => ({
   '& .MuiBadge-badge': {

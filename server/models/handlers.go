@@ -5,8 +5,8 @@ import (
 
 	"time"
 
-	"github.com/layer5io/meshery/server/models/meshmodel"
-	"github.com/layer5io/meshkit/utils/events"
+	"github.com/meshery/meshery/server/models/meshmodel"
+	"github.com/meshery/meshkit/utils/events"
 )
 
 // HandlerInterface defines the methods a Handler should define
@@ -235,7 +235,6 @@ type HandlerInterface interface {
 	RemoveEnvironmentFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
-	RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
 	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
 }

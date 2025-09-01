@@ -6,9 +6,9 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/events"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/models/events"
 )
 
 type DiscoverAction struct{}
@@ -48,7 +48,7 @@ func (da *DiscoverAction) Execute(ctx context.Context, machineCtx interface{}, d
 	}
 	token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-	_, err = provider.SaveK8sContext(token, machinectx.K8sContext)
+	_, err = provider.SaveK8sContext(token, machinectx.K8sContext, nil)
 	if errors.Is(err, models.ErrContextAlreadyPersisted) {
 		machinectx.log.Info(fmt.Sprintf("context already persisted (\"%s\" at %s)", k8sContext.Name, k8sContext.Server))
 	} else if err != nil {

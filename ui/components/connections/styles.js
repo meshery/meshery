@@ -14,7 +14,8 @@ import {
   StepLabel,
   Stepper,
   TableContainer,
-} from '@layer5/sistent';
+  Grid2,
+} from '@sistent/sistent';
 
 export const CreateButton = styled(Grid)({
   display: 'flex',
@@ -216,7 +217,7 @@ export const ColumnWrapper = styled('div')(({ theme }) => ({
   background: `${theme.palette.background.secondary}10`,
 }));
 
-export const OperationButton = styled(Grid)(({ theme }) => ({
+export const OperationButton = styled(Grid2)(({ theme }) => ({
   [theme?.breakpoints?.down(1180)]: {
     marginRight: '25px',
   },
@@ -225,7 +226,7 @@ export const OperationButton = styled(Grid)(({ theme }) => ({
 export const FormatterWrapper = styled(Box)({
   marginBlock: '0.4rem',
 });
-export const ContentContainer = styled(Grid)(({ theme }) => ({
+export const ContentContainer = styled(Grid2)(({ theme }) => ({
   [theme?.breakpoints?.down(1050)]: {
     flexDirection: 'column',
   },

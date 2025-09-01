@@ -8,8 +8,11 @@ import {
   DARK_BLUE_GRAY,
   Box,
   Avatar,
-  Grid,
-} from '@layer5/sistent';
+  Button,
+  Checkbox,
+  Typography,
+  Modal,
+} from '@sistent/sistent';
 
 const DRAWER_WIDTH = 300;
 
@@ -28,7 +31,7 @@ export const StyledDrawer = styled(MuiDrawer, { shouldForwardProp: (prop) => pro
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('xl')]: {
       position: 'absolute',
       height: '100%',
       zIndex: theme.zIndex.drawer,
@@ -85,7 +88,7 @@ export const StyledMainContent = styled(Box)(({ theme }) => ({
   height: '100%',
   padding: '1rem 2rem',
   overflowY: 'auto',
-  [theme.breakpoints.down('lg')]: {
+  [theme.breakpoints.down('xl')]: {
     paddingLeft: '5rem',
   },
 }));
@@ -129,10 +132,6 @@ export const StyledListItem = styled(ListItem)({
   position: 'relative',
 });
 
-export const StyledTextContainer = styled(Grid)({});
-
-export const StyledUserInfoContainer = styled(Grid)({});
-
 export const StyledUserDetailsContainer = styled('div')({
   display: 'flex',
   alignItems: 'start',
@@ -140,10 +139,6 @@ export const StyledUserDetailsContainer = styled('div')({
   marginLeft: '1rem',
   gap: '0.1rem',
 });
-
-export const StyledVisibilityContainer = styled(Grid)({});
-
-export const StyledActionsContainer = styled(Grid)({});
 
 export const StyledAvatarContainer = styled('div')({
   display: 'flex',
@@ -158,14 +153,22 @@ export const StyledMainMenuComponent = styled('div')({
   cursor: 'pointer',
 });
 
-export const StyledListItemText = styled(ListItemText)({
+export const StyledListItemText = styled(ListItemText, {
+  shouldForwardProp: (prop) => prop !== 'showWorkspaceName',
+})(({ theme, showWorkspaceName = true }) => ({
   cursor: 'pointer',
-  width: '100%',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   margin: '0',
-});
+  maxWidth: showWorkspaceName ? theme.spacing(25) : theme.spacing(50),
+
+  '& .MuiTypography-root': {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+  },
+}));
 
 export const StyledListIcon = styled(ListItemIcon)({
   minWidth: '0px',
@@ -195,4 +198,59 @@ export const StyledSmallAvatar = styled(Avatar)(({ borderColor }) => ({
   height: '23px',
   width: '23px',
   border: borderColor ? `2px solid ${borderColor}` : undefined,
+}));
+
+export const StyledResponsiveButton = styled(Button)(({ theme }) => ({
+  '& .MuiButton-startIcon': {
+    [theme.breakpoints.down('sm')]: {
+      margin: 0,
+    },
+  },
+  [theme.breakpoints.down('sm')]: {
+    minWidth: '40px',
+    padding: '8px',
+  },
+}));
+
+export const StyledMuiDoubleCheckbox = styled(Checkbox)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  '&.Mui-checked': {
+    color: theme.palette.text.secondary,
+  },
+  '& .MuiSvgIcon-root': {
+    width: '1.25rem',
+    height: '1.25rem',
+  },
+}));
+
+export const StyledTypography = styled(Typography)(({ theme }) => ({
+  [theme.breakpoints.up('lg')]: {
+    width: theme.spacing(12),
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+}));
+
+export const StyledModal = styled(Modal)(({ theme }) => ({
+  '& .MuiDialog-paperFullScreen': {
+    margin: '0',
+  },
+
+  '& .MuiDialog-paperFullWidth': {
+    width: '90%',
+    height: '80%',
+  },
+
+  '& .MuiDialog-paper': {
+    maxWidth: '100%',
+
+    [theme.breakpoints.down('md')]: {
+      margin: '0',
+      width: '100%',
+      maxWidth: '100%',
+      height: '100%',
+      maxHeight: '100%',
+    },
+  },
 }));

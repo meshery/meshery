@@ -4,12 +4,12 @@ import (
 	"fmt"
 
 	"github.com/gofrs/uuid"
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/machines"
-	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/utils/kubernetes"
+	"github.com/meshery/meshery/server/helpers"
+	"github.com/meshery/meshery/server/machines"
+	"github.com/meshery/meshery/server/models"
+	"github.com/meshery/meshkit/logger"
+	"github.com/meshery/meshkit/models/events"
+	"github.com/meshery/meshkit/utils/kubernetes"
 	"github.com/spf13/viper"
 )
 
@@ -35,9 +35,11 @@ func GetMachineCtx(machinectx interface{}, eb *events.EventBuilder) (*MachineCtx
 	machineCtx, ok := machinectx.(*MachineCtx)
 	if !ok {
 		err := machines.ErrAssertMachineCtx(fmt.Errorf("asserting of context %v failed", machinectx))
-		eb.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": err,
-		})
+		if eb != nil {
+			eb.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": err,
+			})
+		}
 		return nil, err
 	}
 	return machineCtx, nil

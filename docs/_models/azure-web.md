@@ -7,7 +7,7 @@ permalink: extensibility/integrations/azure-web
 docURL: https://docs.meshery.io/extensibility/integrations/azure-web
 description: 
 integrations-category: Serverless
-integrations-subcategory: Uncategorized
+integrations-subcategory: API Gateway
 registrant: GitHub
 components: 
 - name: server-farm
@@ -24,7 +24,10 @@ components:
   description: 
 components-count: 3
 relationships: 
-relationship-count: 0
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent component) is patched with the configuration of (child component). "
+relationship-count: 1
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

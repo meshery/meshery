@@ -1,4 +1,4 @@
-import { Typography, useTheme, styled } from '@layer5/sistent';
+import { Typography, useTheme, styled } from '@sistent/sistent';
 import React from 'react';
 import PropTypes from 'prop-types';
 import AnimatedMeshSync from './Animations/AnimatedMeshSync';
@@ -52,7 +52,7 @@ function LoadingScreen(props) {
   const theme = useTheme();
 
   return (
-    <LoadingContainer className={className} {...other}>
+    <LoadingContainer data-testid="page-loader" className={className} {...other}>
       {theme.palette.mode === 'light'
         ? animatedIconList[animatedIcon]
         : animatedLightIconList[animatedIcon]}

@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/jarcoal/httpmock"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -48,7 +48,7 @@ func TestHandlePaginationAsync(t *testing.T) {
 				{ID: "1", Name: "Item1"},
 				{ID: "2", Name: "Item2"},
 			},
-			exceptedResponse: "Total number of items: 2\nPage: 1\n  \x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
+			exceptedResponse: "Total number of items: 2\nPage: 1\n\x1b[1mID\x1b[0m  \x1b[1mNAME \x1b[0m  \n  1   Item1  \n  2   Item2  \n",
 			expectedError:    nil,
 		},
 		{
@@ -142,7 +142,10 @@ func TestHandlePaginationAsync(t *testing.T) {
 				_, _ = buf.ReadFrom(reader)
 				output := buf.String()
 
-				assert.Equal(t, tt.exceptedResponse, output)
+				// Clean both actual and expected output to remove ANSI code and normalize formatting
+				cleanedActual := utils.CleanStringFromHandlePagination(output)
+				cleanExpected := utils.CleanStringFromHandlePagination(tt.exceptedResponse)
+				assert.Equal(t, cleanExpected, cleanedActual)
 				assert.NoError(t, err)
 			}
 

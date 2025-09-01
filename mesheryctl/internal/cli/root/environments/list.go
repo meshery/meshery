@@ -17,10 +17,11 @@ package environments
 import (
 	"fmt"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models/environments"
+	"github.com/google/uuid"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models/environments"
 	"github.com/pkg/errors"
 
 	"github.com/spf13/cobra"
@@ -49,10 +50,15 @@ mesheryctl environment list --orgID [orgID]
 	RunE: func(cmd *cobra.Command, args []string) error {
 		orgID, _ := cmd.Flags().GetString("orgID")
 
+		// Validate UUID before making API call
+		if _, err := uuid.Parse(orgID); err != nil {
+			return utils.ErrInvalidOrgID(err)
+		}
+
 		environmentResponse, err := api.Fetch[environments.EnvironmentPage](fmt.Sprintf("api/environments?orgID=%s", orgID))
 
 		if err != nil {
-			return err
+			return utils.ErrFetchEnvironments(err)
 		}
 
 		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}

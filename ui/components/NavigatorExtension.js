@@ -4,14 +4,14 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-import MesheryPerformanceComponent from './MesheryPerformance';
+import MesheryPerformanceComponent from './Performance';
 import PatternServiceFormCore from './MesheryMeshInterface/PatternServiceFormCore';
-import InfoModal from '../components/Modals/Information/InfoModal';
+import InfoModal from '../components/General/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
 import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
-import Modal from './Modal';
+import Modal from './General/Modals/Modal';
 import ExportModal from './ExportModal';
 import { FormatStructuredData } from './DataFormatter';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
@@ -27,14 +27,16 @@ import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
 import Troubleshoot from './TroubleshootingComponent';
 import TypingFilter from './TypingFilter';
-import CreateModelModal from './Registry/CreateModelModal';
-import ImportModelModal from './Registry/ImportModelModal';
+import CreateModelModal from './Settings/Registry/CreateModelModal';
+import ImportModelModal from './Settings/Registry/ImportModelModal';
 import { ViewInfoModal } from './ViewInfoModal';
 import { selectK8sConfig, selectSelectedK8sClusters } from '@/store/slices/mesheryUi';
 import { useSelector } from 'react-redux';
 import { store } from '../store';
 import ProviderStoreWrapper from '@/store/ProviderStoreWrapper';
 import { WorkspaceModalContext } from '@/utils/context/WorkspaceModalContextProvider';
+import { RelationshipEvaluationTraceFormatter } from './NotificationCenter/formatters/relationship_evaluation';
+import { useRegistryModal } from '@/utils/hooks/useRegistryModal';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -45,7 +47,7 @@ function NavigatorExtension({ url }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
   const { organization: currentOrganization } = useSelector((state) => state.ui);
   const { openModalWithDefault } = useContext(WorkspaceModalContext);
-
+  const registryModal = useRegistryModal();
   if (err != null) {
     return (
       <div role="alert">
@@ -86,6 +88,7 @@ function NavigatorExtension({ url }) {
       <RemoteComponent
         injectProps={{
           PatternServiceFormCore,
+          RelationshipEvaluationResponseFormatter: RelationshipEvaluationTraceFormatter,
           MesheryPerformanceComponent: PerformanceTestComponent,
           selectedK8sContexts,
           resolver: {
@@ -123,6 +126,7 @@ function NavigatorExtension({ url }) {
           mesheryStore: extensionExposedMesheryStore,
           currentOrganization,
           openWorkspaceModal: openModalWithDefault,
+          openRegistryModal: registryModal,
         }}
       />
     </DynamicFullScrrenLoader>

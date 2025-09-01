@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { TextField, Grid, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@layer5/sistent';
+import { TextField, Grid2, Button, Chip, MenuItem, styled, NoSsr, Alert } from '@sistent/sistent';
 import { Controlled as CodeMirror } from 'react-codemirror2';
 import { trueRandom } from '../../../lib/trueRandom';
 import { usePostBoardImportMutation, useLazyQueryTemplateVarsQuery } from '@/rtk-query/telemetry';
@@ -271,8 +271,8 @@ const PrometheusSelectionComponent = (props) => {
           />
         </AlignRight>
 
-        <Grid container spacing={1}>
-          <Grid item xs={12}>
+        <Grid2 container spacing={1} size="grow">
+          <Grid2 size={{ xs: 12 }}>
             <div style={{ padding: '20px', display: 'flex' }}>
               <CodeIcon style={{ marginRight: '6px' }} />
               Paste your custom board JSON below.
@@ -294,12 +294,12 @@ const PrometheusSelectionComponent = (props) => {
               onBeforeChange={handleCodeChange}
               onChange={() => {}}
             />
-          </Grid>
+          </Grid2>
 
           {templateVars.map(
             ({ name }, ind) =>
               (ind === 0 || selectedTemplateVars[ind - 1]) && (
-                <Grid item xs={12} sm={4} key={ind}>
+                <Grid2 key={ind} size={{ xs: 12, sm: 4 }}>
                   <FormControlWrapper>
                     <TextField
                       select
@@ -325,20 +325,20 @@ const PrometheusSelectionComponent = (props) => {
                       ))}
                     </TextField>
                   </FormControlWrapper>
-                </Grid>
+                </Grid2>
               ),
           )}
 
           {panels.length === 0 && (
-            <Grid item xs={12} style={{ marginTop: '10px' }}>
+            <Grid2 size={{ xs: 12 }} style={{ marginTop: '10px' }}>
               <Alert severity="error">
                 Please load a valid Board JSON to be able to view the panels
               </Alert>
-            </Grid>
+            </Grid2>
           )}
 
           {panels.length > 0 && (
-            <Grid item xs={12}>
+            <Grid2 size={{ xs: 12 }}>
               <TextField
                 select
                 id="panels"
@@ -369,9 +369,9 @@ const PrometheusSelectionComponent = (props) => {
                   </MenuItem>
                 ))}
               </TextField>
-            </Grid>
+            </Grid2>
           )}
-        </Grid>
+        </Grid2>
 
         {selectedPanels.length > 0 && (
           <ButtonContainer>

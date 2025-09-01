@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { NoSsr, Box } from '@layer5/sistent';
+import { NoSsr, Box } from '@sistent/sistent';
 import { connect, useDispatch } from 'react-redux';
 import Head from 'next/head';
 import { EnvironmentComponent } from '../../components/Lifecycle';

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { IconButton, Tooltip, styled } from '@layer5/sistent';
+import { IconButton, Tooltip, styled } from '@sistent/sistent';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
-import { NoSsr } from '@layer5/sistent';
+import { NoSsr } from '@sistent/sistent';
 import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';

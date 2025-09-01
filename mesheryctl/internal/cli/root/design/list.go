@@ -23,9 +23,9 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/meshery/server/models"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -173,7 +173,7 @@ func processData(cmd *cobra.Command, data [][]string, header []string, totalCoun
 	}
 	utils.DisplayCount("patterns", totalCount)
 	if cmd.Flags().Changed("page") {
-		utils.PrintToTable(header, data)
+		utils.PrintToTable(header, data, nil)
 	} else {
 		err := utils.HandlePagination(pageSize, "patterns", data, header)
 		if err != nil {

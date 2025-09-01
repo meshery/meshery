@@ -7,7 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 
 function MesheryChartDialog(props) {
   const { open, title, handleClose, content } = props;

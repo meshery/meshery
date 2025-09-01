@@ -12,14 +12,14 @@ import {
   IconButton,
   Typography,
   Table,
-  Grid,
+  Grid2,
   Button,
   FormControl,
   useTheme,
   TableCell,
   TableRow,
   Popover,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import {
   ContentContainer,
   CreateButton,
@@ -40,7 +40,7 @@ import _PromptComponent from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import SyncIcon from '@mui/icons-material/Sync';
 
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
+import { CONNECTION_KINDS, CONNECTION_STATES, MESHSYNC_DEPLOYMENT_TYPE } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
 import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
@@ -57,10 +57,14 @@ import {
 } from '../../rtk-query/environments';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query/connection';
+import {
+  useGetConnectionsQuery,
+  useUpdateConnectionMutation,
+  useUpdateConnectionByIdMutation,
+} from '@/rtk-query/connection';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DeleteIcon } from '@layer5/sistent';
+import { DeleteIcon } from '@sistent/sistent';
 
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
@@ -102,7 +106,7 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState();
+  const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('created_at desc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
@@ -115,11 +119,14 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
   const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
+  const [useUpdateConnectionByIdMutator] = useUpdateConnectionByIdMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
   const [saveEnvironmentMutator] = useSaveEnvironmentMutation();
   const [anchorEl, setAnchorEl] = useState(null);
+  const [deploymentModeAnchorEl, setDeploymentModeAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const deploymentModeOpen = Boolean(deploymentModeAnchorEl);
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -363,6 +370,40 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
   const handleActionMenuClose = () => {
     setAnchorEl(null);
     setRowData(null);
+  };
+
+  const handleDeploymentModeMenuClose = () => {
+    setDeploymentModeAnchorEl(null);
+  };
+
+  const handleDeploymentModeChange = async (newMode) => {
+    const connection = filteredConnections[rowData.rowIndex];
+
+    try {
+      await useUpdateConnectionByIdMutator({
+        connectionId: connection.id,
+        body: {
+          ...connection,
+          metadata: {
+            ...connection.metadata,
+            meshsync_deployment_mode: newMode,
+          },
+        },
+      }).unwrap();
+
+      notify({
+        message: `Deployment mode changed to ${newMode}`,
+        event_type: EVENT_TYPES.SUCCESS,
+      });
+    } catch (err) {
+      notify({
+        message: `Failed to change deployment mode: ${err.error}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+
+    handleDeploymentModeMenuClose();
+    handleActionMenuClose();
   };
 
   const handleFlushMeshSync = () => {
@@ -694,8 +735,8 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
           return (
             isEnvironmentsSuccess && (
               <div onClick={(e) => e.stopPropagation()}>
-                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                <Grid2 size={{ xs: 12 }} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid2 size={{ xs: 12 }} style={{ marginTop: '2rem', cursor: 'pointer' }}>
                     <MultiSelectWrapper
                       updating={updatingEnvs}
                       onChange={(selected, unselected) =>
@@ -719,8 +760,8 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
                         )
                       }
                     />
-                  </Grid>
-                </Grid>
+                  </Grid2>
+                </Grid2>
               </div>
             )
           );
@@ -1109,14 +1150,14 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
               <Table>
                 <TableRow style={{ padding: 0 }}>
                   <TableCell style={{ overflowX: 'hidden', padding: 0 }}>
-                    <Grid container style={{ textTransform: 'lowercase' }}>
-                      <ContentContainer item xs={12} md={12}>
+                    <Grid2 container style={{ textTransform: 'lowercase' }} size="grow">
+                      <ContentContainer size={{ xs: 12 }}>
                         <FormatConnectionMetadata
                           connection={connection}
                           meshsyncControllerState={meshsyncControllerState}
                         />
                       </ContentContainer>
-                    </Grid>
+                    </Grid2>
                   </TableCell>
                 </TableRow>
               </Table>
@@ -1215,6 +1256,39 @@ const ConnectionTable = ({ selectedFilter, selectedConnectionId, updateUrlWithCo
             <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
               Flush MeshSync
             </Typography>
+          </Button>
+        </ActionListItem>
+        <ActionListItem>
+          <Button
+            type="submit"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDeploymentModeAnchorEl(e.currentTarget);
+            }}
+            data-cy="btnChangeDeploymentMode"
+          >
+            <Typography variant="body1">Modify Deployment Mode</Typography>
+          </Button>
+        </ActionListItem>
+      </Popover>
+
+      <Popover
+        open={deploymentModeOpen}
+        anchorEl={deploymentModeAnchorEl}
+        onClose={handleDeploymentModeMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <ActionListItem>
+          <Button onClick={() => handleDeploymentModeChange(MESHSYNC_DEPLOYMENT_TYPE.OPERATOR)}>
+            <Typography variant="body1">Operator</Typography>
+          </Button>
+        </ActionListItem>
+        <ActionListItem>
+          <Button onClick={() => handleDeploymentModeChange(MESHSYNC_DEPLOYMENT_TYPE.EMBEDDED)}>
+            <Typography variant="body1">Embedded</Typography>
           </Button>
         </ActionListItem>
       </Popover>

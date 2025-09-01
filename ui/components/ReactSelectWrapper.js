@@ -10,7 +10,7 @@ import {
   useTheme,
   styled,
   NoSsr,
-} from '@layer5/sistent';
+} from '@sistent/sistent';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({

@@ -1,0 +1,8 @@
+Usage:
+mesheryctl model build [model-name]
+or
+mesheryctl model build [model-name]/[model-version]
+
+Run 'mesheryctl model build --help' to see detailed help message
+
+folder not_existing_folder/aws-ec2-controller/v0.1.0 does not exist

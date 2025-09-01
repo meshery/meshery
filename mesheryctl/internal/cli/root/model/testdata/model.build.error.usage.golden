@@ -1,0 +1,6 @@
+Usage:
+mesheryctl model build [model-name]
+or
+mesheryctl model build [model-name]/[model-version]
+
+Run 'mesheryctl model build --help' to see detailed help message
