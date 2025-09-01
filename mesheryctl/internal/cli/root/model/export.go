@@ -141,6 +141,7 @@ var exportModelCmd = &cobra.Command{
 func exportWithClient(modelName string, url string, output *outputDetail, client HTTPClient) error {
 	req, err := client.NewRequest("GET", url, nil)
 	if err != nil {
+		utils.Log.Error(err)
 		return err
 	}
 	if req == nil {
@@ -177,8 +178,10 @@ func exportWithClient(modelName string, url string, output *outputDetail, client
 
 	err = os.WriteFile(exportedModelPath, data, 0644)
 	if err != nil {
+		utils.LogError.Error(err)
 		return ErrExportModel(err, modelName)
 	}
+	utils.Log.Infof("Exported model to %s", exportedModelPath)
 
 	return nil
 }
