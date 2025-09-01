@@ -26,7 +26,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
-	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -566,59 +565,6 @@ func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
 }
 
-// PrintToTable prints the given data into a table format
-func PrintToTable(header []string, data [][]string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(false)
-
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
-	}
-	table.SetHeaderColor(boldHeader...)
-
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
-}
-
-// PrintToTableWithFooter prints the given data into a table format but with a footer
-func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
-
-	boldHeader := make([]tablewriter.Colors, len(header))
-	for i := range header {
-		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
-	}
-	table.SetHeaderColor(boldHeader...)
-
-	table.AppendBulk(data) // The data in the table
-	table.SetFooter(footer)
-	table.Render() // Render the table
-}
-
 // ClearLine clears the last line from output
 func ClearLine() {
 	clearCmd := exec.Command("clear") // for UNIX-like systems
@@ -836,28 +782,6 @@ func ParseURLGithub(URL string) (string, string, error) {
 		return resURL, "", nil
 	}
 	return URL, "", ErrParsingUrl(errors.New("only github urls are supported"))
-}
-
-// PrintToTableInStringFormat prints the given data into a table format but return as a string
-func PrintToTableInStringFormat(header []string, data [][]string) string {
-	// The tables are formatted to look similar to how it looks in say `kubectl get deployments`
-	tableString := &strings.Builder{}
-	table := tablewriter.NewWriter(tableString)
-	table.SetHeader(header) // The header of the table
-	table.SetAutoFormatHeaders(true)
-	table.SetHeaderAlignment(tablewriter.ALIGN_LEFT)
-	table.SetAlignment(tablewriter.ALIGN_LEFT)
-	table.SetCenterSeparator("")
-	table.SetColumnSeparator("")
-	table.SetRowSeparator("")
-	table.SetHeaderLine(false)
-	table.SetBorder(false)
-	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
-	table.AppendBulk(data) // The data in the table
-	table.Render()         // Render the table
-
-	return tableString.String()
 }
 
 // Indicate an ongoing Process at a given time on CLI
@@ -1287,9 +1211,9 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		fmt.Println()
 
 		if len(footer) > 0 {
-			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+			PrintToTable(header, data[startIndex:endIndex], footer[0])
 		} else {
-			PrintToTable(header, data[startIndex:endIndex])
+			PrintToTable(header, data[startIndex:endIndex], nil)
 		}
 
 		// No user interaction required if no more data to display

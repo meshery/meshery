@@ -55,7 +55,7 @@ func HandlePaginationAsync[T any](
 		fmt.Println()
 
 		// Display the data in a table
-		utils.PrintToTable(displayData.Header, rows)
+		utils.PrintToTable(displayData.Header, rows, nil)
 
 		if displayData.IsPage {
 			break
