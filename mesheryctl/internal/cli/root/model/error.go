@@ -76,29 +76,6 @@ func ErrModelBuild(err error) error {
 		[]string{"Error during run of model build command"},
 		[]string{"Ensure passing all params according to the command description"})
 }
-func ErrNilRequest(modelName string) error {
-	return errors.New(ErrExportModelCode, errors.Fatal,
-		[]string{"Request creation failed"},
-		[]string{fmt.Sprintf("Request returned nil for model %s", modelName)},
-		[]string{"HTTP client returned nil request"},
-		[]string{"Check the request building logic and ensure valid URL"})
-}
-
-func ErrNilResponse(modelName string) error {
-	return errors.New(ErrExportModelCode, errors.Fatal,
-		[]string{"Response handling failed"},
-		[]string{fmt.Sprintf("Response returned nil for model %s", modelName)},
-		[]string{"HTTP client returned nil response"},
-		[]string{"Check the server availability and request execution"})
-}
-
-func ErrInvalidStatus(modelName string, statusCode int, statusText string) error {
-	return errors.New(ErrExportModelCode, errors.Fatal,
-		[]string{"Invalid response status"},
-		[]string{fmt.Sprintf("Failed exporting model %s: status %d %s", modelName, statusCode, statusText)},
-		[]string{"Server returned non-200 status"},
-		[]string{"Verify the API endpoint and parameters"})
-}
 
 func ErrNilRequest(modelName string) error {
 	return errors.New(

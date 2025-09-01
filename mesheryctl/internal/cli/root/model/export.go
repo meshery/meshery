@@ -149,7 +149,7 @@ func exportWithClient(modelName string, url string, output *outputDetail, client
 
 	resp, err := client.MakeRequest(req)
 	if err != nil {
-		return ErrorExportModel(fmt.Errorf("request failed: %w", err))
+		return ErrExportModel(fmt.Errorf("request failed: %w", err), modelName)
 	}
 	if resp == nil {
 		return ErrExportModel(fmt.Errorf("response is nil"), modelName)
@@ -157,7 +157,7 @@ func exportWithClient(modelName string, url string, output *outputDetail, client
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return ErrExportModel(fmt.Errorf("failed to export model: status %d %s", resp.StatusCode, resp.Status))
+		return ErrExportModel(fmt.Errorf("failed to export model: status %d %s", resp.StatusCode, resp.Status), modelName)
 	}
 
 	data, err := io.ReadAll(resp.Body)
