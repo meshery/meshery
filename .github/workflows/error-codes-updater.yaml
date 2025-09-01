@@ -5,11 +5,13 @@ on:
       - "master"
     paths:
       - "**.go"
+      - ".github/workflows/error-codes-updater.yaml"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - ".github/workflows/error-codes-updater.yaml"
 
 jobs:
   Update-error-codes:
@@ -49,13 +51,12 @@ jobs:
 
       - name: Run Utility For Mesheryctl
         run: |
-          cd ./mesheryctl
-          ~/errorutil update -d . -i ./helpers -o ./helpers
-          output=$(~/errorutil -d . analyze -i ./helpers -o ./helpers | wc -c)
+          ~/errorutil update -d . -i ./mesehryctl/helpers -o ./mesheryctl/helpers --skip-dirs server,docs
+          output=$(~/errorutil -d . analyze -i ./mesheryctl/helpers -o ./mesehryctl/helpers | wc -c)
           if [ "$output" -ne 0 ]; then
             exit 1
           fi
-          echo '{ "errors_export": "" }' | jq --slurpfile export ../mesheryctl/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ../docs/_data/errorref/mesheryctl_errors_export.json
+          echo '{ "errors_export": "" }' | jq --slurpfile export ./mesheryctl/helpers/errorutil_errors_export.json '.errors_export = $export[0]' > ./docs/_data/errorref/mesheryctl_errors_export.json
 
       - name: Pull changes from remote
         run: git pull origin master
