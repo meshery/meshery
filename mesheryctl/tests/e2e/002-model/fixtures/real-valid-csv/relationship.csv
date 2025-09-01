@@ -1,0 +1,2 @@
+Model,Version,kind,type,subType,metadata.description,docs,metadata.styles,evalPolicy,selectors.deny.from,selectors.deny.to,selectors.allow.from,selectors.allow.to,selector,filename,Complete Definition,metadata.isAnnotation,Visualization Example,,Component,Relationship Type,Relationship With,Constraints
+test-model,v1.0.0,Edge,Binding,Test,A test relationship,,,,,,,,,,,,,,,,,
