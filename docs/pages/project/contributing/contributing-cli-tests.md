@@ -10,12 +10,6 @@ list: include
 display-title: false
 ---
 
-{% include alert.html
-    type="danger"
-    title="DOCUMENT INCOMPLETE"
-    content="This document is incomplete and is still under improvement. Help wanted! 😃" %}
-
-
 Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{site.baseurl}}/extensibility/api). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
 
 This document is intended to help you contribute to the end-to-end tests for `mesheryctl`, the Meshery CLI. It is designed to be a guide for developers who are new to the project and want to contribute to the testing of `mesheryctl`.
@@ -160,37 +154,39 @@ For consistency, we will keep the prefix *00-* for the command under test in the
 
 ## Run End-to-End (locally)
 
-<!-- 
-    TODO: Add make e2e support with following changes
-    1. move to tests/e2e/helpers
-    2. Assert the following lbats libraries are available if not git clone
-    - https://github.com/bats-core/bats-file.git
-    - https://github.com/bats-core/bats-detik.git
-    - https://github.com/bats-core/bats-support.git
-    3. back to tests/e2e
-    5. run bats *-*/*.bats
-
-```bash
-make cli-tests _not yet implemented_
-```
--->
 
 Make sure you are in `meshery/mesheryctl` directory
 
 **Run all tests** 
 
 ```bash
+# run tests building mesheryctl binary
 make e2e
-```
-<!-- TODO: https://github.com/meshery/meshery/issues/14105
-**Run a specific test file**
 
-Switch to the directory containing the test file and execute:
+# run tests without buiding mesheryctl binary
+make e2e-no-build
+```
+
+**Run a specific commmand tests suite**
+
 
 ```bash
-MESHERYCTL_BIN=<path to mesheryctl binary> bats <file_name>.bats
+make e2e-no-build BATS_FOLDER_PATTERN=<test folder name>
+
+# Example to run mesheryctl model subcommand tests
+make e2e-no-build BATS_FOLDER_PATTERN=002-model
 ```
--->
+
+**Run a specific test file**
+
+
+```bash
+make e2e-no-build BATS_FOLDER_PATTERN=<test folder name> BATS_FILE_PATTERN=<test command name>
+
+# Example to run mesheryctl model genereate tests
+make e2e-no-build BATS_FOLDER_PATTERN=002-model BATS_FILE_PATTERN=06-model-generate
+```
+
 
 **More on running tests locally**
 
