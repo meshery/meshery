@@ -36,7 +36,7 @@
     "@eslint/js": "^9.32.0",
     "@eslint/eslintrc": "^3.2.0",
     "@babel/preset-react": "^7.26.3",
-    "start-server-and-test": "^2.0.11"
+    "start-server-and-test": "^2.0.13"
   },
   "engines": {
     "node": "^18 || ^20"
