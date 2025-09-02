@@ -341,18 +341,18 @@ const WorkspaceDataTable = ({
       direction: sortOrder.split(' ')[1],
     },
     onTableChange: (action, tableState) => {
-      const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
-      if (tableState.activeColumn) {
-        const columnName = columns[tableState.activeColumn].name;
+
+      if (tableState.sortOrder?.name) {
+        const { name: columnName, direction } = tableState.sortOrder;
 
         if (['designCount', 'viewCount', 'teamCount'].includes(columnName)) {
           setClientSortField(columnName);
-          setClientSortDirection(sortInfo[1] === 'ascending' ? 'asc' : 'desc');
+          setClientSortDirection(direction);
           return;
         }
 
-        order = `${columnName} desc`;
+        order = `${columnName} ${direction}`;
       }
 
       switch (action) {
@@ -371,14 +371,7 @@ const WorkspaceDataTable = ({
           break;
 
         case 'sort':
-          if (sortInfo.length == 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columns[tableState.activeColumn].name} asc`;
-            } else {
-              order = `${columns[tableState.activeColumn].name} desc`;
-            }
-          }
-          if (order !== sortOrder) {
+          if (order && order !== sortOrder) {
             setSortOrder(order);
             setClientSortField(null);
             setClientSortDirection('desc');
