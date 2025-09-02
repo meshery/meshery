@@ -23,7 +23,7 @@ func (h *Handler) SaveUserCredential(w http.ResponseWriter, req *http.Request, _
 
 	userUUID,err := uuid.FromString(user.ID)
 	if err != nil {
-	       http.Error(w, models.ErrInvalidUUID(nil).Error(), http.StatusBadRequest)
+	       http.Error(w, models.ErrInvalidUUID(err).Error(), http.StatusBadRequest)
 	       return
 	}
 
