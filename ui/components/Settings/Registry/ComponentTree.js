@@ -44,7 +44,7 @@ const ComponentTree = ({
           }}
         />
       ))}
-      <div ref={lastComponentRef} style={{ height: '3rem' }}></div>
+      <div ref={lastComponentRef} style={{ height: '48px' }}></div>
       {isComponentFetching ? <CircularProgress /> : null}
     </TreeView>
   );
