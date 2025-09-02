@@ -1,4 +1,5 @@
 import InfoIcon from '@/assets/icons/InfoIcon';
+import React from 'react';
 import {
   useAssignEnvironmentToWorkspaceMutation,
   useGetEnvironmentsOfWorkspaceQuery,
@@ -78,6 +79,24 @@ const WorkspaceDataTable = ({
   });
 
   const workspacesData = workspaces?.workspaces ? workspaces.workspaces : [];
+
+  const [clientSortField, setClientSortField] = useState(null);
+  const [clientSortDirection, setClientSortDirection] = useState('desc');
+
+  const sortedWorkspacesData = React.useMemo(() => {
+    if (!clientSortField) return workspacesData;
+
+    return [...workspacesData].sort((a, b) => {
+      const aValue = a[clientSortField] || 0;
+      const bValue = b[clientSortField] || 0;
+
+      if (clientSortDirection === 'asc') {
+        return aValue - bValue;
+      } else {
+        return bValue - aValue;
+      }
+    });
+  }, [workspacesData, clientSortField, clientSortDirection]);
 
   const columns = [
     {
@@ -218,21 +237,21 @@ const WorkspaceDataTable = ({
       name: 'designCount',
       label: 'Designs',
       options: {
-        sort: false,
+        sort: true,
       },
     },
     {
       name: 'viewCount',
       label: 'Views',
       options: {
-        sort: false,
+        sort: true,
       },
     },
     {
       name: 'teamCount',
       label: 'Teams',
       options: {
-        sort: false,
+        sort: true,
       },
     },
     {
@@ -325,7 +344,15 @@ const WorkspaceDataTable = ({
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
       if (tableState.activeColumn) {
-        order = `${columns[tableState.activeColumn].name} desc`;
+        const columnName = columns[tableState.activeColumn].name;
+
+        if (['designCount', 'viewCount', 'teamCount'].includes(columnName)) {
+          setClientSortField(columnName);
+          setClientSortDirection(sortInfo[1] === 'ascending' ? 'asc' : 'desc');
+          return;
+        }
+
+        order = `${columnName} desc`;
       }
 
       switch (action) {
@@ -353,6 +380,8 @@ const WorkspaceDataTable = ({
           }
           if (order !== sortOrder) {
             setSortOrder(order);
+            setClientSortField(null);
+            setClientSortDirection('desc');
           }
           break;
         default:
@@ -387,7 +416,7 @@ const WorkspaceDataTable = ({
             {!selectedWorkspace?.id && (
               <ResponsiveDataTable
                 columns={columns}
-                data={workspacesData}
+                data={sortedWorkspacesData}
                 options={options}
                 columnVisibility={columnVisibility}
                 tableCols={tableCols}
