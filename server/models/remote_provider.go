@@ -4123,41 +4123,30 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	}()
 	
 	// Check if response is compressed and decompress if needed
-	var bdr []byte
-	
-	// Handle compression based on Content-Encoding header
-	contentEncoding := resp.Header.Get("Content-Encoding")
-	
-	if contentEncoding == "gzip" {
+	var reader io.Reader = resp.Body
+
+	switch resp.Header.Get("Content-Encoding") {
+	case "gzip":
 		// Decompress gzip response
 		gzReader, err := gzip.NewReader(resp.Body)
 		if err != nil {
 			return nil, err
 		}
 		defer gzReader.Close()
-		
-		bdr, err = io.ReadAll(gzReader)
-		if err != nil {
-			return nil, err
-		}
-	} else if contentEncoding == "zstd" {
+		reader = gzReader
+	case "zstd":
 		// Decompress zstd response
 		zstdReader, err := zstd.NewReader(resp.Body)
 		if err != nil {
 			return nil, err
 		}
 		defer zstdReader.Close()
-		
-		bdr, err = io.ReadAll(zstdReader)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		// Read uncompressed response
-		bdr, err = io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
+		reader = zstdReader
+	}
+
+	bdr, err := io.ReadAll(reader)
+	if err != nil {
+		return nil, err
 	}
 
 	response := &ExtensionProxyResponse{
