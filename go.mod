@@ -41,6 +41,7 @@ require (
 	github.com/grafana-tools/sdk v0.0.0-20220919052116-6562121319fc
 	github.com/jarcoal/httpmock v1.4.0
 	github.com/jinzhu/copier v0.4.0
+	github.com/klauspost/compress v1.18.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
 	github.com/layer5io/nighthawk-go v1.0.6
@@ -226,7 +227,6 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect
-	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/kortschak/goroutine v1.1.2 // indirect
 	github.com/kubernetes/kompose v1.35.0 // indirect
 	github.com/kylelemons/godebug v1.1.0 // indirect

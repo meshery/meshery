@@ -21,7 +21,7 @@ import (
 	"strings"
 	"sync"
 	"time"
-
+	"github.com/klauspost/compress/zstd"
 	"github.com/gofrs/uuid"
 	SMP "github.com/layer5io/service-mesh-performance/spec"
 	"github.com/meshery/meshery/server/models/connections"
@@ -4121,9 +4121,43 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	defer func() {
 		_ = resp.Body.Close()
 	}()
-	bdr, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
+	
+	// Check if response is compressed and decompress if needed
+	var bdr []byte
+	
+	// Handle compression based on Content-Encoding header
+	contentEncoding := resp.Header.Get("Content-Encoding")
+	
+	if contentEncoding == "gzip" {
+		// Decompress gzip response
+		gzReader, err := gzip.NewReader(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+		defer gzReader.Close()
+		
+		bdr, err = io.ReadAll(gzReader)
+		if err != nil {
+			return nil, err
+		}
+	} else if contentEncoding == "zstd" {
+		// Decompress zstd response
+		zstdReader, err := zstd.NewReader(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+		defer zstdReader.Close()
+		
+		bdr, err = io.ReadAll(zstdReader)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// Read uncompressed response
+		bdr, err = io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	response := &ExtensionProxyResponse{
