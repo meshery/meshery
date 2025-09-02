@@ -25,7 +25,7 @@ const MesheryTreeViewItem = ({
       top
       labelText={
         <StyledTreeItemDiv>
-          {imgSrc ? <img src={imgSrc} style={{ height: '1.5rem', width: '1.5rem' }} /> : null}
+          {imgSrc ? <img src={imgSrc} style={{ height: '24px', width: '24px' }} /> : null}
           <StyledTreeItemNameDiv>
             {modelDef.displayName ? modelDef.displayName : modelDef.name}
           </StyledTreeItemNameDiv>

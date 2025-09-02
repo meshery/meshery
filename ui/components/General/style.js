@@ -268,8 +268,8 @@ export const RootDiv = styled('div', {
 })(({ show }) => ({
   cursor: show ? '' : 'not-allowed',
   '& svg': {
-    width: '1.21rem',
-    height: '1.21rem',
+    width: '19.36px',
+    height: '19.36px',
   },
 }));
 
@@ -415,7 +415,7 @@ export const HelpButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
 })(({ isCollapsed }) => ({
   ...(isCollapsed && {
-    height: '1.45rem',
+    height: '23.2px',
     marginTop: '-4px',
     transform: 'translateX(0px)',
   }),
