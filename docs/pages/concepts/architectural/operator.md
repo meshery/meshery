@@ -58,7 +58,7 @@ Yes, Meshery Operator used the Operator SDK.
 
 ### How does the operator expose information about broker endpoints?
 
-During the broker reconciliation step (a concept from the Operator SDK), the operator reads the deployed broker service and populates the `status` field of the `brokers/meshery-broker` Custom Resource (CR) with endpoint information:
+During the broker reconciliation step (a concept from the Operator SDK), the operator reads the deployed broker Service and populates the `status` field of the `brokers/meshery-broker` Custom Resource (CR) with endpoint information:
 
 For example, for an in-cluster Meshery deployment:
 ```yaml
@@ -76,9 +76,9 @@ status:
     internal: 10.96.49.130:4222
 ```
 
-The internal endpoint is always set up to service's ClusterIP + clusterPort.
+The internal endpoint is always set up to Service's ClusterIP + clusterPort.
 
-The external endpoint is selected as one of the following based on service configuration and network accessibility: 
+The external endpoint is selected as one of the following based on Service configuration and network accessibility: 
 
 - LoadBalancer hostname (if available and not IP): LoadBalancer hostname + clusterPort
 - LoadBalancer IP (if valid and not ClusterIP): LoadBalancer IP + clusterPort
