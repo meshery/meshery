@@ -56,6 +56,38 @@ Meshery UI offers more granular control over the deployment of Meshery Operator 
 ### Does the Meshery Operator use an SDK or framework? 
 Yes, Meshery Operator used the Operator SDK.
 
+### How does operator expose information about broker Endpoints?
+
+During broker reconcile step (refer to Operator SDK), operator reads deployed broker service and populates CR brokers/meshery-broker status field with endpoint information:
+
+e.g. for in-cluster meshery deployment:
+```yaml
+status:
+  endpoint:
+    external: localhost:31670
+    internal: 10.96.49.130:4222
+```
+
+e.g. for out-of-cluster meshery deployment:
+```yaml
+status:
+  endpoint:
+    external: 1e2cd15619524f569e695f648ae7c74e-0123456789.us-south-3.elb.cloud-provider.com:4222
+    internal: 10.96.49.130:4222
+```
+
+The internal endpoint is always set up to service's ClusterIP, cluster port.
+
+The external endpoint is selected as one of the following based on service configuration and network accessibility: 
+
+- LoadBalancer hostname (if available and not IP): LoadBalancer hostname + clusterPort
+- LoadBalancer IP (if valid and not ClusterIP): LoadBalancer IP + clusterPort
+- kube config host + nodePort
+- ClusterIP + clusterPort
+- WorkerNodeIP + nodePort
+
+refer to [meshkit/utils/kubernetes::GetEndpoint](https://github.com/meshery/meshkit/blob/master/utils/kubernetes/service.go) function for more precise logic.
+
 ### Troubleshooting Meshery Operator and Related Components
 
 To verify that your Meshery Operator and related components are functioning properly, perform the following checks:
