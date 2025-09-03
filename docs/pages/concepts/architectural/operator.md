@@ -86,7 +86,7 @@ The external endpoint is selected as one of the following based on service confi
 - ClusterIP + clusterPort
 - WorkerNodeIP + nodePort
 
-refer to [meshkit/utils/kubernetes::GetEndpoint](https://github.com/meshery/meshkit/blob/master/utils/kubernetes/service.go) function for more precise logic.
+Refer to [meshkit/utils/kubernetes::GetEndpoint](https://github.com/meshery/meshkit/blob/master/utils/kubernetes/service.go) function for more precise logic.
 
 ### Troubleshooting Meshery Operator and Related Components
 
