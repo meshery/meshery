@@ -76,7 +76,7 @@ status:
     internal: 10.96.49.130:4222
 ```
 
-The internal endpoint is always set up to service's ClusterIP, cluster port.
+The internal endpoint is always set up to service's ClusterIP + clusterPort.
 
 The external endpoint is selected as one of the following based on service configuration and network accessibility: 
 
