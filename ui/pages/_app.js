@@ -182,6 +182,7 @@ const KubernetesSubscription = ({ setAppState }) => {
             const savedContexts = userPrefs?.usersExtensionPreferences?.selectedK8sContexts;
 
             if (savedContexts && Array.isArray(savedContexts) && savedContexts.length > 0) {
+              // ->user has saved preferences in the api
               const existingContextIds = result.k8sContext?.contexts?.map((ctx) => ctx.id) || [];
               activeContexts = savedContexts.filter(
                 (contextId) => contextId === 'all' || existingContextIds.includes(contextId),
@@ -191,7 +192,16 @@ const KubernetesSubscription = ({ setAppState }) => {
                 activeContexts = [];
               }
             } else {
-              activeContexts = [];
+              // ->user has no saved preferences
+              if (result.k8sContext?.contexts?.length > 0) {
+                // but user has available clusters  -> DEFAULT to selecting ALL
+                activeContexts = [];
+                result.k8sContext.contexts.forEach((ctx) => activeContexts.push(ctx.id));
+                activeContexts.push('all');
+              } else {
+                //->no context available
+                activeContexts = [];
+              }
             }
 
             // TODO: Remove local state and only use redux store
