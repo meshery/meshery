@@ -76,15 +76,15 @@ status:
     internal: 10.96.49.130:4222
 ```
 
-The internal endpoint is always set up to Service's ClusterIP + clusterPort.
+The internal endpoint is always set up to the Service's `ClusterIP` + `clusterPort`.
 
 The external endpoint is selected as one of the following based on Service configuration and network accessibility: 
 
-- LoadBalancer hostname (if available and not IP): LoadBalancer hostname + clusterPort
-- LoadBalancer IP (if valid and not ClusterIP): LoadBalancer IP + clusterPort
-- kube config host + nodePort
-- ClusterIP + clusterPort
-- WorkerNodeIP + nodePort
+- LoadBalancer hostname (if available and not an IP) + `clusterPort`
+- LoadBalancer IP (if valid and not the ClusterIP) + `clusterPort`
+- `kubeconfig` host + `nodePort`
+- `ClusterIP` + `clusterPort`
+- `WorkerNodeIP` + `nodePort`
 
 Refer to [meshkit/utils/kubernetes::GetEndpoint](https://github.com/meshery/meshkit/blob/master/utils/kubernetes/service.go) function for more precise logic.
 
