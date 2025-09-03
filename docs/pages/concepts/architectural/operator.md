@@ -56,7 +56,7 @@ Meshery UI offers more granular control over the deployment of Meshery Operator 
 ### Does the Meshery Operator use an SDK or framework? 
 Yes, Meshery Operator used the Operator SDK.
 
-### How does operator expose information about broker Endpoints?
+### How does the operator expose information about broker endpoints?
 
 During broker reconcile step (refer to Operator SDK), operator reads deployed broker service and populates CR brokers/meshery-broker status field with endpoint information:
 
