@@ -4123,7 +4123,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	}()
 	
 	// Check if response is compressed and decompress if needed
-	var reader io.Reader = resp.Body
+	var reader io.Reader
 
 	switch resp.Header.Get("Content-Encoding") {
 	case "gzip":
@@ -4142,6 +4142,8 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 		}
 		defer zstdReader.Close()
 		reader = zstdReader
+	default:
+	  reader = resp.Body
 	}
 
 	bdr, err := io.ReadAll(reader)
