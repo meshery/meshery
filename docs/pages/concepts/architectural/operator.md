@@ -68,7 +68,7 @@ status:
     internal: 10.96.49.130:4222
 ```
 
-e.g. for out-of-cluster meshery deployment:
+For example, for an out-of-cluster Meshery deployment:
 ```yaml
 status:
   endpoint:
