@@ -64,8 +64,8 @@ export const UserSpan = styled('span')(({ theme }) => ({
 
 export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   fontSize: '1.5rem',
-  height: '1.5rem',
-  width: '1.5rem',
+  height: '24px',
+  width: '24px',
   fill: theme.palette.background.constant.white,
   '&:hover': {
     fill: theme.palette.background.brand.default,
