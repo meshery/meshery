@@ -60,7 +60,7 @@ Yes, Meshery Operator used the Operator SDK.
 
 During the broker reconciliation step (a concept from the Operator SDK), the operator reads the deployed broker service and populates the `status` field of the `brokers/meshery-broker` Custom Resource (CR) with endpoint information:
 
-e.g. for in-cluster meshery deployment:
+For example, for an in-cluster Meshery deployment:
 ```yaml
 status:
   endpoint:
