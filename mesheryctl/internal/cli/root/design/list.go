@@ -137,9 +137,9 @@ func processDesignData(data *models.PatternsAPIResponse) ([][]string, int64) {
 
 func formatTimeToString(t *time.Time, isVerbose bool) string {
 	if isVerbose {
-		return t.Format("1-2-2006 3:4:5") // M-D-YYYY H:M:S
+		return t.Format("01-02-2006 15:04:05") // M-D-YYYY HH:MM:SS
 	}
-	return t.Format("1-2-2006") // M-D-YYYY
+	return t.Format("01-02-2006") // MM-DD-YYYY
 }
 
 func init() {
