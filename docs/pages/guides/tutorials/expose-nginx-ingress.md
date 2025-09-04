@@ -10,7 +10,6 @@ tags:
   - meshery
 ---
 
-# Expose a Kubernetes App with NGINX Ingress using Meshery Playground
 
 In this tutorial, we will learn how to expose a simple NGINX application using **Kubernetes Ingress** with the help of **Meshery Playground**.  
 By the end of this tutorial, you will have:  
