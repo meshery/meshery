@@ -19,21 +19,9 @@ jobs:
         - name: Pull latest images and restart containers
           uses: appleboy/ssh-action@master
           with:
-              host: ${{ secrets.METAL_SERVER1 }}
+              host: ${{ secrets.METAL_SERVER4 }}
               username: root
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
-                cd meshery
-                git restore .
-                git pull
-                docker system prune --force
-                docker compose -f install/playground/docker/docker-compose.yaml pull
-                docker compose -f install/playground/docker/docker-compose.yaml down
-                docker compose -f install/playground/docker/docker-compose.yaml up -d --remove-orphans
-#         steps:
-#          - uses: azure/setup-kubectl@v3
-#          - name: Extract kubeconfig
-#            run: mkdir ~/.kube; touch ~/.kube/config ;echo "${{ secrets.PLAYGROUND_CONFIG }}" | base64 --decode > ~/.kube/config
-#          - name: Rollout Meshery so that pods can restart with latest Meshery image
-#            run: |
-#             kubectl -n meshery rollout restart deployment meshery
+                kubectl -n meshery rollout restart deployment/playground
+
