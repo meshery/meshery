@@ -2,7 +2,7 @@
   "id": "69fdde5f-c7fb-404f-b785-154586b354ae",
   "name": "Design Annotation Patterns",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.3",
+  "version": "0.0.5",
   "metadata": {
     "resolvedAliases": {}
   },
@@ -2037,7 +2037,7 @@
         "svgComplete": "",
         "svgWhite": "ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg",
         "width": 206.64168,
-        "z-index": 479
+        "z-index": 490
       },
       "capabilities": [
         {
