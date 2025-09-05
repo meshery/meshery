@@ -7,14 +7,15 @@ on:
         required: true
         default: v0.x.x
 
+permissions:
+  id-token: write # needed for Cosign keyless signing
+  contents: read # needed for actions/checkout
+
 jobs:
   ctlrelease:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
-    permissions:
-      id-token: write # needed for Cosign keyless signing
-      contents: read # needed for actions/checkout
 
     steps:
       - name: Check out code
@@ -64,5 +65,6 @@ jobs:
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
+          tag-name: ${{ inputs.release-tag }}
         env:
           COMMITTER_TOKEN: ${{ secrets.MESHERY_CI }}

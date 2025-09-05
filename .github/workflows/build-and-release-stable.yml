@@ -4,6 +4,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: read # needed for checkout
+
 jobs:
   update-rest-api-docs:
     name: Update REST API Documentation
@@ -134,14 +137,13 @@ jobs:
         run: |
           for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
             echo "Signing ${{ env.IMAGE_NAME }}:$tag"
-            cosign sign docker.io/${{ env.IMAGE_NAME }}:$tag --keyless --yes
+            cosign sign docker.io/${{ env.IMAGE_NAME }}:$tag --yes
           done
       - name: Verify Docker image signatures
         run: |
           for tag in stable-latest stable-${GITHUB_REF/refs\/tags\//} stable-${GITHUB_SHA::8} playground-latest playground-${GITHUB_REF/refs\/tags\//} playground-${GITHUB_SHA::8}; do
             echo "Verifying ${{ env.IMAGE_NAME }}:$tag"
             cosign verify docker.io/${{ env.IMAGE_NAME }}:$tag \
-              --keyless \
               --certificate-identity-regexp "https://github.com/meshery/meshery/.*" \
               --certificate-oidc-issuer "https://token.actions.githubusercontent.com"
 
@@ -215,7 +217,7 @@ jobs:
     name: Playground Deploy Delay
     runs-on: ubuntu-24.04
     steps:
-      - name: Delay Playground Deployment
+      - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
         run: sleep 780
   email-meshery-release-notes-workflow:
     needs:
