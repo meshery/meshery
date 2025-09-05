@@ -26,7 +26,7 @@ export const ComponentIcon = ({ iconSrc, label }) => {
   }
 
   return (
-    <div style={{ height: '1.5rem', width: '1.5rem' }}>
+    <div style={{ height: '24px', width: '24px' }}>
       <img
         src={iconSrc}
         style={{

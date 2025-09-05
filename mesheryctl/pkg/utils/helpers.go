@@ -26,9 +26,6 @@ import (
 	"github.com/meshery/meshery/server/models"
 	"github.com/meshery/meshkit/encoding"
 	"github.com/meshery/meshkit/logger"
-	"github.com/olekukonko/tablewriter"
-	"github.com/olekukonko/tablewriter/renderer"
-	"github.com/olekukonko/tablewriter/tw"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -566,73 +563,6 @@ func TruncateID(id string) string {
 }
 func BoldString(s string) string {
 	return fmt.Sprintf("\033[1m%s\033[0m", s)
-}
-
-func generateTableOptions() []tablewriter.Option {
-	options := []tablewriter.Option{
-		tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{
-			Symbols: tw.NewSymbols(tw.StyleNone),
-			Settings: tw.Settings{
-				Separators: tw.Separators{BetweenRows: tw.Off},
-				Lines:      tw.Lines{ShowTop: tw.Off, ShowHeaderLine: tw.Off, ShowFooterLine: tw.On},
-			},
-		})),
-		tablewriter.WithConfig(tablewriter.Config{
-			Header: tw.CellConfig{
-				Formatting: tw.CellFormatting{AutoFormat: tw.On},
-				Alignment:  tw.CellAlignment{Global: tw.AlignLeft},
-				Padding:    tw.CellPadding{Global: tw.PaddingDefault},
-			},
-			Row: tw.CellConfig{
-				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
-				Padding:   tw.CellPadding{Global: tw.PaddingDefault},
-			},
-			Footer: tw.CellConfig{
-				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
-				Padding:   tw.CellPadding{Global: tw.PaddingDefault},
-			},
-		}),
-	}
-
-	return options
-}
-
-func renderTable(table *tablewriter.Table, data [][]string, header, footer []string) {
-	table.Header(header)
-	err := table.Bulk(data)
-	if err != nil {
-		Log.Error(ErrTableRender(err))
-
-	}
-	if footer != nil {
-		table.Footer(footer)
-	}
-	err = table.Render()
-	if err != nil {
-		Log.Error(ErrTableRender(err))
-	}
-}
-
-// PrintToTable prints the given data into a table format
-func PrintToTable(header []string, data [][]string) {
-	options := generateTableOptions()
-
-	table := tablewriter.NewTable(os.Stdout,
-		options...,
-	)
-
-	renderTable(table, data, header, nil)
-}
-
-// PrintToTableWithFooter prints the given data into a table format but with a footer
-func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
-	options := generateTableOptions()
-
-	table := tablewriter.NewTable(os.Stdout,
-		options...,
-	)
-
-	renderTable(table, data, header, footer)
 }
 
 // ClearLine clears the last line from output
@@ -1281,9 +1211,9 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		fmt.Println()
 
 		if len(footer) > 0 {
-			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
+			PrintToTable(header, data[startIndex:endIndex], footer[0])
 		} else {
-			PrintToTable(header, data[startIndex:endIndex])
+			PrintToTable(header, data[startIndex:endIndex], nil)
 		}
 
 		// No user interaction required if no more data to display

@@ -188,8 +188,8 @@ export const StyledAvatarStack = styled(Box)(() => ({
   justifyContent: 'center',
   gap: '0',
   '& .MuiAvatar-root': {
-    width: '2rem',
-    height: '2rem',
+    width: '32px',
+    height: '32px',
   },
 }));
 export const ActorAvatar = styled(Box)(() => ({
