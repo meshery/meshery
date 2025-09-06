@@ -562,7 +562,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			addr += ":" + strconv.Itoa(hostPort)
 		}
 		// Create mesh client
-		mClient, err := meshes.CreateClient(
+		aClient, err := meshes.CreateClient(
 			context.TODO(),
 			addr,
 		)
@@ -570,7 +570,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			return nil, fmt.Errorf("error creating a mesh client: %v", err)
 		}
 		defer func() {
-			_ = mClient.Close()
+			_ = aClient.Close()
 		}()
 
 		// Else it is an  adapter call
@@ -584,7 +584,7 @@ func (sap *serviceActionProvider) Provision(ccp stages.CompConfigPair) ([]patter
 			err = errors.Wrapf(err, "error marshalling component \"%s\" of type : %s", ccp.Component.DisplayName, ccp.Component.Component.Kind)
 			return nil, err
 		}
-		resp, err := mClient.MClient.Provision(context.TODO(), &meshes.ProvisionRequest{
+		resp, err := aClient.AClient.Provision(context.TODO(), &meshes.ProvisionRequest{
 			Username:     sap.userID,
 			DeleteOp:     sap.opIsDelete,
 			KubeConfigs:  kconfigs,
